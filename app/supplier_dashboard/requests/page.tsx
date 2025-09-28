@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import {
   CheckCircle, LayoutGrid, FilePlus, ShoppingCart,
-  User, Phone, Settings, LogOut, Mail, Search, Filter, ChevronDown
+  User, Phone, Settings, LogOut, Mail, Search, Filter
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -17,6 +17,27 @@ const Logo = () => (
     </span>
   </div>
 );
+
+const requestData = [
+  { id: "R001", farmer: "Christine Uwera", address: "123 Kicukiro Street, Kigali 250", date: "04 Aug 2024", input: "NPK fertilizer", quantity: "120", status: "Approved" },
+  { id: "R002", farmer: "Jean Ntawukuriryayo", address: "456 Remera Avenue, Gasabo 250", date: "03 Aug 2024", input: "Maize Seeds", quantity: "80", status: "Pending" },
+  { id: "R003", farmer: "Marie Mukamana", address: "789 Nyamirambo Road, Nyarugenge 250", date: "02 Aug 2024", input: "NPK fertilizer", quantity: "150", status: "Approved" },
+  { id: "R004", farmer: "Robert Nshimiye", address: "321 Kimisagara Street, Nyarugenge 250", date: "01 Aug 2024", input: "Maize Seeds", quantity: "100", status: "Pending" },
+  { id: "R005", farmer: "Alice Uwimana", address: "654 Gikondo Avenue, Kicukiro 250", date: "31 Jul 2024", input: "Fertilizer Seeds", quantity: "75", status: "Approved" },
+  { id: "R006", farmer: "Eric Cyiza", address: "987 Kanombe Road, Kicukiro 250", date: "30 Jul 2024", input: "Fertilizer Seeds", quantity: "90", status: "Pending" },
+  { id: "R007", farmer: "Grace Mukantwari", address: "147 Gisozi Street, Gasabo 250", date: "29 Jul 2024", input: "Fertilizer Seeds", quantity: "110", status: "Approved" },
+  { id: "R008", farmer: "Patrick Habimana", address: "258 Muhima Avenue, Nyarugenge 250", date: "28 Jul 2024", input: "Fertilizer Seeds", quantity: "85", status: "Pending" },
+  { id: "R009", farmer: "Alice Cyiza", address: "369 Kacyiru Road, Gasabo 250", date: "27 Jul 2024", input: "Fertilizer Seeds", quantity: "95", status: "Approved" },
+  { id: "R010", farmer: "Alice Cyiza", address: "741 Nyakabanda Street, Nyarugenge 250", date: "26 Jul 2024", input: "Fertilizer Seeds", quantity: "105", status: "Pending" },
+  { id: "R011", farmer: "Alice Cyiza", address: "852 Kimihurura Avenue, Gasabo 250", date: "25 Jul 2024", input: "Fertilizer Seeds", quantity: "125", status: "Approved" },
+  { id: "R012", farmer: "Alice Cyiza", address: "963 Rugando Road, Gasabo 250", date: "24 Jul 2024", input: "Fertilizer Seeds", quantity: "70", status: "Pending" },
+  { id: "R013", farmer: "Alice Cyiza", address: "159 Kabuga Street, Gasabo 250", date: "23 Jul 2024", input: "Fertilizer Seeds", quantity: "115", status: "Approved" },
+  { id: "R014", farmer: "Alice Cyiza", address: "357 Nyarutarama Avenue, Gasabo 250", date: "22 Jul 2024", input: "Fertilizer Seeds", quantity: "140", status: "Pending" },
+  { id: "R015", farmer: "Alice Cyiza", address: "468 Kinyinya Road, Gasabo 250", date: "21 Jul 2024", input: "Fertilizer Seeds", quantity: "160", status: "Approved" },
+  { id: "R016", farmer: "Alice Cyiza", address: "579 Jabana Street, Gasabo 250", date: "20 Jul 2024", input: "Fertilizer Seeds", quantity: "130", status: "Pending" },
+  { id: "R017", farmer: "Alice Cyiza", address: "681 Rusororo Avenue, Gasabo 250", date: "19 Jul 2024", input: "Fertilizer Seeds", quantity: "180", status: "Approved" },
+  { id: "R018", farmer: "Alice Cyiza", address: "792 Ndera Road, Gasabo 250", date: "18 Jul 2024", input: "Fertilizer Seeds", quantity: "200", status: "Pending" }
+];
 
 const menuItems = [
   { label: 'Dashboard', href: '/supplier_dashboard', icon: CheckCircle },
@@ -33,8 +54,8 @@ const menuItems = [
 
 function FarmerRequests() {
   const router = useRouter();
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  // const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  // const [selectedLanguage, setSelectedLanguage] = useState('en');
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -159,26 +180,7 @@ function FarmerRequests() {
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      { id: "R001", farmer: "Christine Uwera", address: "123 Kicukiro Street, Kigali 250", date: "04 Aug 2024", input: "NPK fertilizer", quantity: "120", status: "Approved" },
-                      { id: "R002", farmer: "Jean Ntawukuriryayo", address: "456 Remera Avenue, Gasabo 250", date: "03 Aug 2024", input: "Maize Seeds", quantity: "80", status: "Pending" },
-                      { id: "R003", farmer: "Marie Mukamana", address: "789 Nyamirambo Road, Nyarugenge 250", date: "02 Aug 2024", input: "NPK fertilizer", quantity: "150", status: "Approved" },
-                      { id: "R004", farmer: "Robert Nshimiye", address: "321 Kimisagara Street, Nyarugenge 250", date: "01 Aug 2024", input: "Maize Seeds", quantity: "100", status: "Pending" },
-                      { id: "R005", farmer: "Alice Uwimana", address: "654 Gikondo Avenue, Kicukiro 250", date: "31 Jul 2024", input: "Fertilizer Seeds", quantity: "75", status: "Approved" },
-                      { id: "R006", farmer: "Eric Cyiza", address: "987 Kanombe Road, Kicukiro 250", date: "30 Jul 2024", input: "Fertilizer Seeds", quantity: "90", status: "Pending" },
-                      { id: "R007", farmer: "Grace Mukantwari", address: "147 Gisozi Street, Gasabo 250", date: "29 Jul 2024", input: "Fertilizer Seeds", quantity: "110", status: "Approved" },
-                      { id: "R008", farmer: "Patrick Habimana", address: "258 Muhima Avenue, Nyarugenge 250", date: "28 Jul 2024", input: "Fertilizer Seeds", quantity: "85", status: "Pending" },
-                      { id: "R009", farmer: "Alice Cyiza", address: "369 Kacyiru Road, Gasabo 250", date: "27 Jul 2024", input: "Fertilizer Seeds", quantity: "95", status: "Approved" },
-                      { id: "R010", farmer: "Alice Cyiza", address: "741 Nyakabanda Street, Nyarugenge 250", date: "26 Jul 2024", input: "Fertilizer Seeds", quantity: "105", status: "Pending" },
-                      { id: "R011", farmer: "Alice Cyiza", address: "852 Kimihurura Avenue, Gasabo 250", date: "25 Jul 2024", input: "Fertilizer Seeds", quantity: "125", status: "Approved" },
-                      { id: "R012", farmer: "Alice Cyiza", address: "963 Rugando Road, Gasabo 250", date: "24 Jul 2024", input: "Fertilizer Seeds", quantity: "70", status: "Pending" },
-                      { id: "R013", farmer: "Alice Cyiza", address: "159 Kabuga Street, Gasabo 250", date: "23 Jul 2024", input: "Fertilizer Seeds", quantity: "115", status: "Approved" },
-                      { id: "R014", farmer: "Alice Cyiza", address: "357 Nyarutarama Avenue, Gasabo 250", date: "22 Jul 2024", input: "Fertilizer Seeds", quantity: "140", status: "Pending" },
-                      { id: "R015", farmer: "Alice Cyiza", address: "468 Kinyinya Road, Gasabo 250", date: "21 Jul 2024", input: "Fertilizer Seeds", quantity: "160", status: "Approved" },
-                      { id: "R016", farmer: "Alice Cyiza", address: "579 Jabana Street, Gasabo 250", date: "20 Jul 2024", input: "Fertilizer Seeds", quantity: "130", status: "Pending" },
-                      { id: "R017", farmer: "Alice Cyiza", address: "681 Rusororo Avenue, Gasabo 250", date: "19 Jul 2024", input: "Fertilizer Seeds", quantity: "180", status: "Approved" },
-                      { id: "R018", farmer: "Alice Cyiza", address: "792 Ndera Road, Gasabo 250", date: "18 Jul 2024", input: "Fertilizer Seeds", quantity: "200", status: "Pending" }
-                    ].map((request, index) => (
+                    {requestData.map((request, index) => (
                       <tr key={request.id} className={index < 17 ? "border-b border-gray-100" : ""}>
                         <td className="py-3 px-4 text-gray-900 text-sm">{request.id}</td>
                         <td className="py-3 px-4 text-gray-900 text-sm">{request.farmer}</td>
