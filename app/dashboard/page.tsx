@@ -119,7 +119,7 @@ export default function Dashboard() {
             <div>
               <h2 className="text-xl font-bold mb-2">Welcome back, {currentUser.name}!</h2>
               <p className="text-green-100">
-                Manage your crops ({currentUser.crops.join(", ")}) and connect with buyers in {currentUser.location}
+                Manage your crops ({(currentUser.crops ?? []).join(", ")}) and connect with buyers in {currentUser.location}
               </p>
             </div>
           </div>
