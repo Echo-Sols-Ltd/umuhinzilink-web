@@ -9,12 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/use-toast";
 import { data } from "../signin/navbar";
 
 export default function SignUp() {
   const router = useRouter();
-  const { addToast } = useToast();
 
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: "https://facebook.com" },
@@ -68,58 +67,69 @@ export default function SignUp() {
     validateField(name, formData[name as keyof typeof formData]);
   };
 
-  const validateField = (name: string, value: any) => {
+  const validateField = (name: string, value: string | boolean) => {
     let error = "";
+
+    const stringValue = typeof value === 'string' ? value : '';
 
     switch (name) {
       case "names":
-        if (!value.trim()) {
+        if (!stringValue.trim()) {
           error = "Full name is required";
-        } else if (value.trim().length < 2) {
+        } else if (stringValue.trim().length < 2) {
           error = "Name must be at least 2 characters long";
         }
         break;
       case "email":
-        if (!value.trim()) {
+        if (!stringValue.trim()) {
           error = "Email is required";
         } else {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(value)) {
+          if (!emailRegex.test(stringValue.trim())) {
             error = "Please enter a valid email address";
           }
         }
         break;
       case "phoneNumber":
-        if (!value.trim()) {
+        if (!stringValue.trim()) {
           error = "Phone number is required";
-        } else if (value.replace(/\D/g, '').length < 10) {
-          error = "Phone number must be at least 10 digits";
+        } else {
+          const phoneRegex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/;
+          const phoneValue = stringValue.replace(/[^0-9+]/g, "");
+          if (!phoneRegex.test(phoneValue)) {
+            error = "Please enter a valid phone number";
+          } else if (phoneValue.length < 10) {
+            error = "Phone number must be at least 10 digits";
+          }
         }
         break;
       case "password":
-        if (!value.trim()) {
+        if (!stringValue) {
           error = "Password is required";
-        } else if (value.length < 6) {
-          error = "Password must be at least 6 characters long";
-        } else if (!/(?=.*[a-z])/.test(value)) {
-          error = "Password must contain at least one lowercase letter";
-        } else if (!/(?=.*\d)/.test(value)) {
+        } else if (stringValue.length < 8) {
+          error = "Password must be at least 8 characters long";
+        } else if (!/[A-Z]/.test(stringValue)) {
+          error = "Password must contain at least one uppercase letter";
+        } else if (!/[0-9]/.test(stringValue)) {
           error = "Password must contain at least one number";
+        } else if (!/[!@#$%^&*]/.test(stringValue)) {
+          error = "Password must contain at least one special character";
         }
         break;
       case "agreeToTerms":
-        if (!value) {
+        if (value !== true) {
           error = "You must agree to the terms and conditions";
         }
         break;
-      case "role":
-        if (!value) {
-          error = "Please select an account type";
-        }
+      default:
         break;
     }
 
-    setFieldErrors((prev) => ({ ...prev, [name]: error }));
+    setFieldErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+
     return error === "";
   };
 
@@ -149,11 +159,10 @@ export default function SignUp() {
 
     // Validate form data
     if (!validateForm()) {
-      addToast({
-        type: 'error',
-        title: 'Validation Error',
+      toast({
+        title: "Validation Error",
         description: 'Please fix the errors below and try again.',
-        duration: 4000,
+        variant: "error"
       });
       setLoading(false);
       return;
@@ -201,71 +210,49 @@ export default function SignUp() {
 
         // Show success message
         const userName = response.data.user?.names || 'User';
-        addToast({
-          type: 'success',
-          title: 'Registration Successful',
+        toast({
+          title: "Welcome!",
           description: `Welcome, ${userName}! You're being redirected...`,
-          duration: 3000,
+          variant: "success"
         });
       } else {
         // If no token but registration was successful, redirect to login
-        addToast({
-          type: 'success',
-          title: 'Registration Successful',
-          description: 'Please log in with your new credentials.',
-          duration: 3000,
+        toast({
+          title: "Registration Successful",
+          description: 'Registration successful! Please log in with your new credentials.',
+          variant: "success"
         });
         router.push('/signin');
       }
-    } catch (err: any) {
+    } catch (error) {
       // Error handling
-      let errorTitle = "Registration Failed";
-      let errorDescription = "Please try again.";
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      const errorMessageLower = errorMessage.toLowerCase();
 
-      const errorMessage = err instanceof Error ? err.message : String(err);
-
-      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-        errorTitle = "Network Error";
-        errorDescription = "Unable to reach the registration server. Please check your connection and try again.";
-      } else if (errorMessage.includes('400')) {
-        errorTitle = "Invalid Data";
-        errorDescription = "Please check your information and try again.";
-      } else if (errorMessage.includes('409') || errorMessage.toLowerCase().includes('already exists')) {
-        errorTitle = "Account Already Exists";
-        errorDescription = "An account with this email already exists. Please try signing in instead.";
-        setFieldErrors(prev => ({ ...prev, email: "Email already registered" }));
-        setTouched(prev => ({ ...prev, email: true }));
-      } else if (errorMessage.includes('422')) {
-        errorTitle = "Invalid Format";
-        errorDescription = "Please check your information and try again.";
-      } else if (errorMessage.includes('500')) {
-        errorTitle = "Server Error";
-        errorDescription = "Our servers are experiencing issues. Please try again in a few minutes.";
-      } else if (errorMessage.toLowerCase().includes('email')) {
-        errorTitle = "Email Error";
-        errorDescription = errorMessage;
+      if (errorMessageLower.includes('failed to fetch') || errorMessageLower.includes('networkerror')) {
+        // Network error - show toast with appropriate message
+        toast({
+          title: "Network Error",
+          description: "Unable to reach the registration server. Please check your connection and try again.",
+          variant: "error"
+        });
+      } else if (errorMessageLower.includes('email')) {
         setFieldErrors(prev => ({ ...prev, email: errorMessage }));
         setTouched(prev => ({ ...prev, email: true }));
-      } else if (errorMessage.toLowerCase().includes('password')) {
-        errorTitle = "Password Error";
-        errorDescription = errorMessage;
+      } else if (errorMessageLower.includes('password')) {
         setFieldErrors(prev => ({ ...prev, password: errorMessage }));
         setTouched(prev => ({ ...prev, password: true }));
-      } else if (errorMessage.toLowerCase().includes('phone')) {
-        errorTitle = "Phone Number Error";
-        errorDescription = errorMessage;
+      } else if (errorMessageLower.includes('phone')) {
         setFieldErrors(prev => ({ ...prev, phoneNumber: errorMessage }));
         setTouched(prev => ({ ...prev, phoneNumber: true }));
-      } else if (errorMessage) {
-        errorDescription = errorMessage;
+      } else {
+        // For all other errors, show a generic error toast
+        toast({
+          title: "Registration Failed",
+          description: errorMessage,
+          variant: "error"
+        });
       }
-
-      addToast({
-        type: 'error',
-        title: errorTitle,
-        description: errorDescription,
-        duration: 6000,
-      });
     } finally {
       setLoading(false);
     }

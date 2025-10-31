@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import {
   storeAuthData,
@@ -18,12 +18,11 @@ import {
 
 export default function SignIn() {
   const router = useRouter();
-  const { addToast } = useToast();
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
   const [touched, setTouched] = useState({ email: false, password: false });
 
@@ -127,11 +126,10 @@ export default function SignIn() {
 
     // Validate form data
     if (!validateForm()) {
-      addToast({
-        type: 'error',
-        title: 'Validation Error',
-        description: 'Please fix the errors below and try again.',
-        duration: 4000,
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "error"
       });
       setLoading(false);
       return;
@@ -159,83 +157,66 @@ export default function SignIn() {
       }
 
       if (response.success && response.data) {
-        // Store authentication data using utility
+        // Store auth data if remember me is checked
+        if (rememberMe) {
+          handleRememberMe(formData.email);
+        }
+
+        // Store the auth token
         storeAuthData(response.data);
 
-        // Handle remember me functionality
-        handleRememberMe(formData.email);
-
-        console.log("Login successful for user:", response.data.user.names);
-        console.log("User role:", response.data.user.role);
-
         // Show success message
-        const userName = response.data.user.names || 'User';
-        const userRole = response.data.user.role;
-        addToast({
-          type: 'success',
-          title: 'Login Successful!',
-          description: `Welcome back ${userName}! Redirecting to your ${userRole.toLowerCase()} dashboard...`,
-          duration: 3000,
+        toast({
+          title: "Login Successful",
+          description: "Redirecting to your dashboard...",
+          variant: "success",
         });
 
-        // Redirect based on role using utility after a short delay
+        // Redirect to dashboard after a short delay
         setTimeout(() => {
           redirectToDashboard(router, response.data.user.role);
-        }, 1500);
+        }, 2000);
       } else {
-        throw new Error(response.message || "Login failed");
+        throw new Error(response.message || 'Login failed');
       }
     } catch (error: unknown) {
       console.error("Error signing in:", error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      const errorMessageLower = errorMessage.toLowerCase();
+      
+      let toastTitle = 'Error';
+      let toastMessage = errorMessage;
 
-      // Provide specific error messages
-      let errorTitle = "Login Failed";
-      let errorDescription = "Please try again.";
-
-      const errorMessage = error instanceof Error ? error.message : String(error);
-
-      if (errorMessage.includes('401')) {
-        errorTitle = "Invalid Credentials";
-        errorDescription = "The email or password you entered is incorrect. Please check your credentials and try again.";
-        // Highlight password field for wrong credentials
-        setFieldErrors(prev => ({ ...prev, password: "Invalid email or password" }));
-        setTouched({ email: true, password: true });
-      } else if (errorMessage.includes('404')) {
-        errorTitle = "Account Not Found";
-        errorDescription = "No account found with this email address. Please check your email or create a new account.";
-        setFieldErrors(prev => ({ ...prev, email: "Account not found" }));
-        setTouched({ email: true, password: true });
-      } else if (errorMessage.includes('403')) {
-        errorTitle = "Account Disabled";
-        errorDescription = "Your account has been disabled. Please contact support for assistance.";
-      } else if (errorMessage.includes('429')) {
-        errorTitle = "Too Many Attempts";
-        errorDescription = "Too many login attempts. Please wait a few minutes before trying again.";
-      } else if (errorMessage.includes('500')) {
-        errorTitle = "Server Error";
-        errorDescription = "Our servers are experiencing issues. Please try again in a few minutes.";
-      } else if (errorMessage.includes('Failed to fetch')) {
-        errorTitle = "Connection Error";
-        errorDescription = "Unable to connect to our servers. Please check your internet connection and try again.";
-      } else if (errorMessage.toLowerCase().includes('password')) {
-        errorTitle = "Password Error";
-        errorDescription = errorMessage;
-        setFieldErrors(prev => ({ ...prev, password: errorMessage }));
-        setTouched({ email: true, password: true });
-      } else if (errorMessage.toLowerCase().includes('email')) {
-        errorTitle = "Email Error";
-        errorDescription = errorMessage;
-        setFieldErrors(prev => ({ ...prev, email: errorMessage }));
-        setTouched({ email: true, password: true });
-      } else if (errorMessage) {
-        errorDescription = errorMessage;
+      // Handle different error cases
+      if (errorMessageLower.includes('invalid credentials') || errorMessage.includes('401')) {
+        setFieldErrors({ 
+          email: 'Invalid email or password', 
+          password: 'Invalid email or password' 
+        });
+        toastTitle = 'Authentication Failed';
+      } else if (errorMessageLower.includes('email')) {
+        setFieldErrors(prev => ({ 
+          ...prev, 
+          email: errorMessage 
+        }));
+        toastTitle = 'Email Error';
+      } else if (errorMessageLower.includes('network') || errorMessageLower.includes('failed to fetch')) {
+        toastTitle = 'Network Error';
+        toastMessage = 'Unable to connect to the server. Please check your internet connection.';
+      } else if (errorMessageLower.includes('server') || errorMessageLower.includes('500')) {
+        toastTitle = 'Server Error';
+        toastMessage = 'Our servers are experiencing issues. Please try again later.';
       }
+      
+      // Always mark fields as touched to show errors
+      setTouched({ email: true, password: true });
 
-      addToast({
-        type: 'error',
-        title: errorTitle,
-        description: errorDescription,
-        duration: 6000,
+      // Show error toast
+      toast({
+        title: toastTitle,
+        description: toastMessage,
+        variant: 'error' as const
       });
     } finally {
       setLoading(false);

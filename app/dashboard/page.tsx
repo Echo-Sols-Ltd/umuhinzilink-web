@@ -1,6 +1,22 @@
 "use client"
 
 import { useEffect, useState } from "react"
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
+  location?: string;
+  crops?: Array<{
+    id: string;
+    name: string;
+    status: string;
+    plantedDate: string;
+    harvestDate: string;
+  }>;
+}
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -60,7 +76,7 @@ const recentOrders = [
 ]
 
 export default function Dashboard() {
-  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   useEffect(() => {
     // Get user data from localStorage
@@ -167,14 +183,14 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Cloud className="h-5 w-5" />
-              Today's Weather
+              Today&apos;s Weather
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold">24°C</p>
+                  <p className="text-3xl font-bold">24&deg;C</p>
                   <p className="text-blue-100">Partly Cloudy</p>
                   <p className="text-sm text-blue-200">Kigali, Rwanda</p>
                 </div>
@@ -184,17 +200,17 @@ export default function Dashboard() {
                 <div className="text-center">
                   <p className="text-blue-200">Tomorrow</p>
                   <Sun className="h-4 w-4 mx-auto my-1" />
-                  <p>26°C</p>
+                  <p>26&deg;C</p>
                 </div>
                 <div className="text-center">
                   <p className="text-blue-200">Thu</p>
                   <CloudRain className="h-4 w-4 mx-auto my-1" />
-                  <p>23°C</p>
+                  <p>23&deg;C</p>
                 </div>
                 <div className="text-center">
                   <p className="text-blue-200">Fri</p>
                   <Sun className="h-4 w-4 mx-auto my-1" />
-                  <p>25°C</p>
+                  <p>25&deg;C</p>
                 </div>
               </div>
             </div>
@@ -212,9 +228,9 @@ export default function Dashboard() {
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                <h4 className="font-medium text-sm">Umusaruro w'amaru</h4>
+                <h4 className="font-medium text-sm">Umusaruro w&apos;amaru</h4>
                 <p className="text-xs text-muted-foreground">
-                  Ku gihe cy'itemberere rya ibigori ni ukwezi kwa mbere rugira inyungu y'amazi
+                  Ku gihe cy&apos;itemberere rya ibigori ni ukwezi kwa mbere rugira inyungu y&apos;amazi
                 </p>
               </div>
               <div className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg">
@@ -226,7 +242,7 @@ export default function Dashboard() {
               <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
                 <h4 className="font-medium text-sm">Market Price</h4>
                 <p className="text-xs text-muted-foreground">
-                  Igiciro cy'amaru cyiyongereye 15% muri uyu kwezi. Ni igihe cyo kugurisha
+                  Igiciro cy&apos;amaru cyiyongereye 15% muri uyu kwezi. Ni igihe cyo kugurisha
                 </p>
               </div>
             </div>

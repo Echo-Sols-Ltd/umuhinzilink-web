@@ -1,0 +1,57 @@
+"use client";
+
+import { toast as hotToast, ToastOptions } from 'react-hot-toast';
+
+type ToastFunction = (message: string, options?: ToastOptions) => string;
+
+interface ToastWithMethods extends ToastFunction {
+  success: ToastFunction;
+  error: ToastFunction;
+  loading: ToastFunction;
+  dismiss: (toastId?: string) => void;
+  remove: (toastId?: string) => void;
+  promise: typeof hotToast.promise;
+}
+
+const toast = ((message: string, options?: ToastOptions) => {
+  return hotToast(message, {
+    duration: 4000,
+    position: 'top-right',
+    ...options,
+  });
+}) as ToastWithMethods;
+
+toast.success = (message: string, options?: ToastOptions) => {
+  return hotToast.success(message, {
+    duration: 4000,
+    position: 'top-right',
+    ...options,
+  });
+};
+
+toast.error = (message: string, options?: ToastOptions) => {
+  return hotToast.error(message, {
+    duration: 5000,
+    position: 'top-right',
+    ...options,
+  });
+};
+
+toast.loading = (message: string, options?: ToastOptions) => {
+  return hotToast.loading(message, {
+    position: 'top-right',
+    ...options,
+  });
+};
+
+toast.dismiss = hotToast.dismiss;
+toast.remove = hotToast.remove;
+toast.promise = hotToast.promise;
+
+// For backward compatibility
+export const useToast = () => ({
+  toast,
+  dismiss: toast.dismiss,
+});
+
+export { toast };

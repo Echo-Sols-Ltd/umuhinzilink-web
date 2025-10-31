@@ -1,24 +1,30 @@
 "use client"
 
 import type React from "react"
+import { useRouter, usePathname } from "next/navigation"
+import Link from "next/link"
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
+  location?: string;
+  // Add other user properties as needed
+}
 
 import {
   SidebarProvider,
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarInset,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   Package,
@@ -56,20 +62,16 @@ export default function DashboardLayout({
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
   const router = useRouter()
-  const [currentUser, setCurrentUser] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   useEffect(() => {
-    // Check if user is logged in
-    const userData = localStorage.getItem("currentUser")
-    if (userData) {
-      setCurrentUser(JSON.parse(userData))
+    // Get user from localStorage if available
+    const user = typeof window !== 'undefined' ? localStorage.getItem("currentUser") : null
+    if (user) {
+      setCurrentUser(JSON.parse(user))
     } else {
-      // Redirect to login if not authenticated
       router.push("/login")
-      return
     }
-    setIsLoading(false)
   }, [router])
 
   const handleLogout = () => {
@@ -77,7 +79,7 @@ export default function DashboardLayout({
     router.push("/")
   }
 
-  if (isLoading) {
+  if (!currentUser) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -86,10 +88,6 @@ export default function DashboardLayout({
         </div>
       </div>
     )
-  }
-
-  if (!currentUser) {
-    return null
   }
 
   return (

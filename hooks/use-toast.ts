@@ -4,7 +4,6 @@
 import * as React from "react"
 
 import type {
-  ToastActionElement,
   ToastProps,
 } from "@/components/ui/toast"
 
@@ -15,15 +14,18 @@ type ToasterToast = ToastProps & {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
-  action?: ToastActionElement
+  action?: React.ReactNode
+  visible?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-const actionTypes = {
+// Action types for internal use
+const _actionTypes = {
   ADD_TOAST: "ADD_TOAST",
   UPDATE_TOAST: "UPDATE_TOAST",
   DISMISS_TOAST: "DISMISS_TOAST",
   REMOVE_TOAST: "REMOVE_TOAST",
-} as const
+} as const;
 
 let count = 0
 
@@ -32,25 +34,29 @@ function genId() {
   return count.toString()
 }
 
-type ActionType = typeof actionTypes
+type ActionType = typeof _actionTypes
 
-type Action =
-  | {
-      type: ActionType["ADD_TOAST"]
-      toast: ToasterToast
-    }
-  | {
-      type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast>
-    }
-  | {
-      type: ActionType["DISMISS_TOAST"]
-      toastId?: ToasterToast["id"]
-    }
-  | {
-      type: ActionType["REMOVE_TOAST"]
-      toastId?: ToasterToast["id"]
-    }
+interface AddToastAction {
+  type: ActionType["ADD_TOAST"]
+  toast: ToasterToast
+}
+
+interface UpdateToastAction {
+  type: ActionType["UPDATE_TOAST"]
+  toast: Partial<ToasterToast>
+}
+
+interface DismissToastAction {
+  type: ActionType["DISMISS_TOAST"]
+  toastId?: ToasterToast["id"]
+}
+
+interface RemoveToastAction {
+  type: ActionType["REMOVE_TOAST"]
+  toastId?: ToasterToast["id"]
+}
+
+type Action = AddToastAction | UpdateToastAction | DismissToastAction | RemoveToastAction
 
 interface State {
   toasts: ToasterToast[]
@@ -76,31 +82,33 @@ const addToRemoveQueue = (toastId: string) => {
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "ADD_TOAST":
+    case _actionTypes.ADD_TOAST:
       return {
         ...state,
         toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
       }
 
-    case "UPDATE_TOAST":
+    case _actionTypes.UPDATE_TOAST: {
+      const { id, ...updates } = action.toast;
       return {
         ...state,
         toasts: state.toasts.map((t) =>
-          t.id === action.toast.id ? { ...t, ...action.toast } : t
+          t.id === id ? { ...t, ...updates } : t
         ),
       }
+    }
 
-    case "DISMISS_TOAST": {
-      const { toastId } = action
+    case _actionTypes.DISMISS_TOAST: {
+      const { toastId } = action;
 
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
       if (toastId) {
-        addToRemoveQueue(toastId)
+        addToRemoveQueue(toastId);
       } else {
         state.toasts.forEach((toast) => {
-          addToRemoveQueue(toast.id)
-        })
+          addToRemoveQueue(toast.id);
+        });
       }
 
       return {
@@ -113,19 +121,25 @@ export const reducer = (state: State, action: Action): State => {
               }
             : t
         ),
-      }
+      };
     }
-    case "REMOVE_TOAST":
-      if (action.toastId === undefined) {
+    
+    case _actionTypes.REMOVE_TOAST: {
+      const { toastId } = action;
+      if (toastId === undefined) {
         return {
           ...state,
           toasts: [],
-        }
+        };
       }
       return {
         ...state,
-        toasts: state.toasts.filter((t) => t.id !== action.toastId),
-      }
+        toasts: state.toasts.filter((t) => t.id !== toastId),
+      };
+    }
+    
+    default:
+      return state;
   }
 }
 
@@ -157,8 +171,8 @@ function toast({ ...props }: Toast) {
     toast: {
       ...props,
       id,
-      open: true,
-      onOpenChange: (open) => {
+      visible: true,
+      onOpenChange: (open: boolean) => {
         if (!open) dismiss()
       },
     },

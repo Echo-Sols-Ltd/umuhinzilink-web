@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React from 'react';
 import {
   CheckCircle, LayoutGrid, FilePlus, ShoppingCart,
   User, Phone, Settings, LogOut, Mail, Search, Filter
@@ -54,14 +54,6 @@ const menuItems = [
 
 function FarmerRequests() {
   const router = useRouter();
-  // const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  // const [selectedLanguage, setSelectedLanguage] = useState('en');
-
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  ];
 
   const handleLogout = () => {
     logout(router);

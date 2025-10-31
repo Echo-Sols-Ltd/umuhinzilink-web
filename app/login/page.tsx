@@ -2,12 +2,13 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, User, Phone, Lock, Sprout, Smartphone } from "lucide-react"
+import { Loader2, User, Phone, Lock, Smartphone } from "lucide-react"
 import Link from "next/link"
 
 // Mock user data for farmers
@@ -76,12 +77,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[linear-gradient(135deg,#f0fdf4_0%,#dcfce7_100%)] dark:bg-[linear-gradient(135deg,#052e16_0%,#14532d_100%)] flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Logo and Header */}
         <div className="text-center space-y-2">
           <Link href="/" className="flex items-center justify-center gap-2 text-2xl font-bold text-green-600">
-            <img src="/favicon.png" alt="UmuhinziLink Logo" className="h-10 w-10" />
+            <div className="relative h-10 w-10">
+              <Image 
+                src="/favicon.png" 
+                alt="UmuhinziLink Logo" 
+                fill 
+                className="object-contain"
+                priority
+              />
+            </div>
             UmuhinziLink
           </Link>
           <p className="text-muted-foreground">

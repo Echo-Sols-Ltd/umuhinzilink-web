@@ -1,3 +1,6 @@
+import React from 'react';
+import Image from 'next/image';
+
 export default function Hero() {
   return (
     <section className="bg-green-50 pt-20">
@@ -49,9 +52,15 @@ export default function Hero() {
 
        
         <div className="flex justify-center">
-          
-            <img  className = 'w-xl' src='/hero.png'/>
-          
+          <div className="relative w-full h-64 md:h-96">
+            <Image
+              src="/hero.png"
+              alt="Farmer using digital technology in the field"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
         </div>
       </div>
     </section>
