@@ -138,80 +138,19 @@ export default function SignIn() {
     console.log('Attempting login with:', { email: formData.email });
 
     try {
-      // Use mock authentication by default in all environments
-      // Set NEXT_PUBLIC_USE_REAL_API=true to use the real API
-      const useRealApi = process.env.NEXT_PUBLIC_USE_REAL_API === 'true';
+      // Always use mock authentication in this version
+      console.log('Using mock authentication');
+      const { mockLogin, mockUsers } = await import('@/lib/mockAuth');
 
-      if (!useRealApi) {
-        console.log('Using mock authentication');
-        const { mockLogin, mockUsers } = await import('@/lib/mockAuth');
+      // Log available mock users for debugging
+      console.log(
+        'Available mock users:',
+        mockUsers.map(u => u.email)
+      );
 
-        // Log available mock users for debugging
-        console.log(
-          'Available mock users:',
-          mockUsers.map(u => u.email)
-        );
-
-        // Check if the email exists in mock users
-        const user = mockUsers.find(user => user.email === formData.email);
-        if (!user) {
-          console.error('No mock user found with email:', formData.email);
-          throw new Error('No user found with this email');
-        }
-
-        // Verify password
-        if (user.password !== formData.password) {
-          console.error('Incorrect password for user:', formData.email);
-          throw new Error('Incorrect password');
-        }
-
-        const authData = await mockLogin(formData.email, formData.password);
-        console.log('Mock authentication successful for user:', formData.email);
-
-        // Store auth data if remember me is checked
-        if (rememberMe) {
-          handleRememberMe(formData.email);
-        }
-
-        // Store the auth token
-        storeAuthData(authData);
-
-        // Show success message
-        toast({
-          title: 'Login Successful',
-          description: 'Redirecting to your dashboard...',
-          variant: 'success',
-        });
-
-        // Redirect to dashboard after a short delay
-        setTimeout(() => {
-          redirectToDashboard(router, authData.user.role);
-        }, 1000);
-        return;
-      }
-
-      // Real API call - only used when NEXT_PUBLIC_USE_REAL_API=true
-      const res = await fetch('https://agricommerce.vercel.app/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const response: LoginResponse = await res.json();
-      console.log('API Login response:', response);
-
-      if (!res.ok) {
-        throw new Error(response.message || `Login failed: ${res.status}`);
-      }
-
-      if (!response.success || !response.data) {
-        throw new Error(response.message || 'Login failed');
-      }
+      // Try to log in with mock authentication
+      const authData = await mockLogin(formData.email, formData.password);
+      console.log('Mock authentication successful for user:', formData.email);
 
       // Store auth data if remember me is checked
       if (rememberMe) {
@@ -219,7 +158,13 @@ export default function SignIn() {
       }
 
       // Store the auth token
-      storeAuthData(response.data);
+      storeAuthData({
+        token: authData.token,
+        user: {
+          ...authData.user,
+          password: '', // Ensure password is not stored
+        },
+      });
 
       // Show success message
       toast({
@@ -230,8 +175,12 @@ export default function SignIn() {
 
       // Redirect to dashboard after a short delay
       setTimeout(() => {
-        redirectToDashboard(router, response.data.user.role);
-      }, 2000);
+        redirectToDashboard(router, authData.user.role as any);
+      }, 1000);
+      return;
+
+      // This code is now unreachable as we're always using mock authentication
+      // It's kept here for future reference if needed
     } catch (error: unknown) {
       console.error('Error signing in:', error);
 

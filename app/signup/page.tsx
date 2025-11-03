@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { data } from '../signin/navbar';
+import { storeAuthData, redirectToDashboard } from '@/lib/auth';
 
 export default function SignUp() {
   const router = useRouter();
@@ -168,62 +169,41 @@ export default function SignUp() {
       return;
     }
 
-    // Prepare the request body according to the API specification
-    const requestBody = {
-      names: formData.names,
-      email: formData.email,
-      phoneNumber: formData.phoneNumber,
-      password: formData.password,
-      role: formData.role,
-    };
-
-    // Debug: Log the request body to ensure role is included
-    console.log('Request body being sent:', requestBody);
-    console.log('Current form data:', formData);
-
     try {
-      // Use the Next.js API route to avoid CORS issues
+      // Import mock signup function
+      const { mockSignup } = await import('@/lib/mockAuth');
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(requestBody),
+      // Call mock signup with form data
+      const authData = await mockSignup({
+        names: formData.names,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password,
+        role: formData.role as 'BUYER' | 'FARMER' | 'SUPPLIER',
       });
 
-      const response = await res.json();
+      console.log('Mock signup successful:', authData);
 
-      if (!res.ok) {
-        throw new Error(response.message || `Registration failed: ${res.status}`);
-      }
+      // Store the auth token
+      storeAuthData({
+        token: authData.token,
+        user: {
+          ...authData.user,
+          password: '', // Ensure password is not stored
+        },
+      });
 
-      console.log('Account created successfully:', response);
+      // Show success message
+      toast({
+        title: 'Registration Successful',
+        description: 'Your account has been created and you are now logged in!',
+        variant: 'success',
+      });
 
-      // Store auth data immediately if available
-      if (response.success && response.data?.token) {
-        localStorage.setItem('authToken', response.data.token);
-        if (response.data.user) {
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-        }
-
-        // Show success message
-        const userName = response.data.user?.names || 'User';
-        toast({
-          title: 'Welcome!',
-          description: `Welcome, ${userName}! You're being redirected...`,
-          variant: 'success',
-        });
-      } else {
-        // If no token but registration was successful, redirect to login
-        toast({
-          title: 'Registration Successful',
-          description: 'Registration successful! Please log in with your new credentials.',
-          variant: 'success',
-        });
-        router.push('/signin');
-      }
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        redirectToDashboard(router, authData.user.role as any);
+      }, 2000);
     } catch (error) {
       // Error handling
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';

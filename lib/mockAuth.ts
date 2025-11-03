@@ -1,7 +1,33 @@
-import { AuthData, User } from './auth';
+interface Address {
+  district: string;
+  province: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  password: string;
+  role: 'BUYER' | 'FARMER' | 'SUPPLIER' | 'ADMIN';
+  names: string;
+  phoneNumber: string;
+  avatar: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastLogin: string | null;
+  verified: boolean;
+  language: string;
+  address: Address;
+}
+
+export interface AuthData {
+  token: string;
+  user: Omit<User, 'password'>;
+  message?: string;
+  success?: boolean;
+}
 
 // Mock users with different roles
-export const mockUsers = [
+export let mockUsers: User[] = [
   {
     id: '1',
     email: 'buyer@gmail.com',
@@ -77,6 +103,58 @@ export const mockUsers = [
   },
 ];
 
+// Mock signup function
+export const mockSignup = async (
+  userData: Omit<
+    User,
+    'id' | 'createdAt' | 'updatedAt' | 'lastLogin' | 'verified' | 'avatar' | 'language' | 'address'
+  > & { role: 'BUYER' | 'FARMER' | 'SUPPLIER' }
+): Promise<AuthData> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // Check if user already exists
+      const userExists = mockUsers.some(user => user.email === userData.email);
+
+      if (userExists) {
+        reject(new Error('User with this email already exists'));
+        return;
+      }
+
+      // Create new user
+      const newUser: User = {
+        ...userData,
+        id: (mockUsers.length + 1).toString(),
+        avatar: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        lastLogin: null,
+        verified: true,
+        language: 'en',
+        address: {
+          district: 'Kigali',
+          province: 'Kigali',
+        },
+      };
+
+      // Add to mock users
+      mockUsers = [...mockUsers, newUser];
+
+      // Create user object without password
+      const { password, ...userWithoutPassword } = newUser;
+
+      // Return auth data
+      const authData: AuthData = {
+        token: `mock-jwt-token-${newUser.id}`,
+        user: userWithoutPassword,
+        message: 'User registered successfully',
+        success: true,
+      };
+
+      resolve(authData);
+    }, 500);
+  });
+};
+
 // Mock login function
 export const mockLogin = async (email: string, password: string): Promise<AuthData> => {
   return new Promise((resolve, reject) => {
@@ -85,13 +163,22 @@ export const mockLogin = async (email: string, password: string): Promise<AuthDa
       const user = mockUsers.find(user => user.email === email && user.password === password);
 
       if (user) {
+        // Update last login
+        const updatedUser = {
+          ...user,
+          lastLogin: new Date().toISOString(),
+        };
+
+        // Update the user in the mock database
+        mockUsers = mockUsers.map(u => (u.id === user.id ? updatedUser : u));
+
+        // Create user object without password
+        const { password, ...userWithoutPassword } = updatedUser;
+
         const authData: AuthData = {
           token: `mock-jwt-token-${user.id}`,
-          user: {
-            ...user,
-            // Remove password from user object
-            password: '',
-          },
+          user: userWithoutPassword,
+          success: true,
         };
         resolve(authData);
       } else {
