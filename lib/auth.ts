@@ -16,7 +16,7 @@ export interface User {
   } | null;
   phoneNumber: string;
   password: string;
-  role: 'BUYER' | 'FARMER' | 'SUPPLIER';
+  role: 'BUYER' | 'FARMER' | 'SUPPLIER' | 'ADMIN';
 }
 
 export interface AuthData {
@@ -41,6 +41,7 @@ export const DASHBOARD_ROUTES = {
   BUYER: '/buyer_dashboard',
   FARMER: '/farmer_dashboard',
   SUPPLIER: '/supplier_dashboard',
+  ADMIN: '/admin/dashboard',
 } as const;
 
 // Authentication storage keys

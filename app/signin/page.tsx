@@ -138,6 +138,35 @@ export default function SignIn() {
     console.log('Attempting login with:', { email: formData.email });
 
     try {
+      // Use mock authentication in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Using mock authentication');
+        const { mockLogin } = await import('@/lib/mockAuth');
+        const authData = await mockLogin(formData.email, formData.password);
+        
+        // Store auth data if remember me is checked
+        if (rememberMe) {
+          handleRememberMe(formData.email);
+        }
+
+        // Store the auth token
+        storeAuthData(authData);
+
+        // Show success message
+        toast({
+          title: 'Login Successful',
+          description: 'Redirecting to your dashboard...',
+          variant: 'success',
+        });
+
+        // Redirect to dashboard after a short delay
+        setTimeout(() => {
+          redirectToDashboard(router, authData.user.role);
+        }, 1000);
+        return;
+      }
+
+      // Production API call
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {

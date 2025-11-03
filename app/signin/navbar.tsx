@@ -5,7 +5,6 @@ import React from 'react';
 
 export const data = [
   { name: 'HOME PAGE', icon: <House size={12} />, url: '/' },
-  { name: 'PROFILE', icon: <User size={12} />, url: '/profile' },
   { name: 'SIGN UP', icon: <User2 size={12} />, url: '/signup' },
   { name: 'SIGN IN', icon: <Key size={12} />, url: '/signin' },
 ];
