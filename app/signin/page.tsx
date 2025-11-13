@@ -29,11 +29,18 @@ export default function SignIn() {
     const registered = urlParams.get('registered');
 
     if (isLogout) {
-      console.log('User logged out successfully');
+      toast({
+        title: 'Signed Out',
+        description: 'You have been logged out successfully.',
+      });
     }
 
     if (fromSignup && registered) {
-      console.log('Registration successful, please sign in');
+      toast({
+        title: 'Account Created',
+        description: 'Registration successful. Please sign in to continue.',
+        variant: 'success',
+      });
     }
 
     if (isAuthenticated() && !isLogout) {
@@ -130,52 +137,82 @@ export default function SignIn() {
       return;
     }
 
-    console.log('Attempting login with:', { email: formData.email });
-
     try {
-      // Always use mock authentication in this version
-      console.log('Using mock authentication');
-      const { mockLogin, mockUsers } = await import('@/lib/mockAuth');
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          password: formData.password,
+        }),
+      });
 
-      // Log available mock users for debugging
-      console.log(
-        'Available mock users:',
-        mockUsers.map(u => u.email)
-      );
+      const responseBody = await response.json().catch(() => null);
 
-      // Try to log in with mock authentication
-      const authData = await mockLogin(formData.email, formData.password);
-      console.log('Mock authentication successful for user:', formData.email);
+      if (!response.ok) {
+        const serverMessage =
+          (responseBody && (responseBody.message || responseBody.error)) ||
+          'Login failed. Please try again.';
 
-      // Store auth data if remember me is checked
-      if (rememberMe) {
-        handleRememberMe(formData.email);
+        if (responseBody?.errors && typeof responseBody.errors === 'object') {
+          const serverFieldErrors: Partial<typeof fieldErrors> = {};
+          Object.entries(responseBody.errors).forEach(([key, value]) => {
+            if (key in fieldErrors) {
+              const message = Array.isArray(value) ? value.join(' ') : String(value);
+              serverFieldErrors[key as keyof typeof fieldErrors] = message;
+            }
+          });
+
+          if (Object.keys(serverFieldErrors).length > 0) {
+            setFieldErrors(prev => ({ ...prev, ...serverFieldErrors }));
+          }
+        } else {
+          const lowerMessage = serverMessage.toLowerCase();
+          if (lowerMessage.includes('email')) {
+            setFieldErrors(prev => ({ ...prev, email: serverMessage }));
+          } else if (lowerMessage.includes('password')) {
+            setFieldErrors(prev => ({ ...prev, password: serverMessage }));
+          }
+        }
+
+        setTouched({ email: true, password: true });
+
+        toast({
+          title: 'Login Failed',
+          description: serverMessage,
+          variant: 'error',
+        });
+        return;
       }
 
-      // Store the auth token
+      const payload = responseBody?.data ?? responseBody;
+
+      if (!payload || !payload.token || !payload.user) {
+        throw new Error('Invalid response received from the login service.');
+      }
+
+      if (rememberMe) {
+        handleRememberMe(formData.email.trim());
+      }
+
       storeAuthData({
-        token: authData.token,
+        token: payload.token,
         user: {
-          ...authData.user,
-          password: '', // Ensure password is not stored
+          ...payload.user,
+          password: '',
         },
       });
 
-      // Show success message
       toast({
         title: 'Login Successful',
         description: 'Redirecting to your dashboard...',
         variant: 'success',
       });
 
-      // Redirect to dashboard after a short delay
       setTimeout(() => {
-        redirectToDashboard(router, authData.user.role);
+        redirectToDashboard(router, payload.user.role);
       }, 1000);
       return;
-
-      // This code is now unreachable as we're always using mock authentication
-      // It's kept here for future reference if needed
     } catch (error: unknown) {
       console.error('Error signing in:', error);
 
@@ -212,7 +249,6 @@ export default function SignIn() {
       // Always mark fields as touched to show errors
       setTouched({ email: true, password: true });
 
-      // Show error toast
       toast({
         title: toastTitle,
         description: toastMessage,

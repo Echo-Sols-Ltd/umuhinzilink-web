@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
-  // Handle CORS preflight
-  if (request.method === 'OPTIONS') {
-    return new NextResponse(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    });
-  }
-
   try {
     // Get the request body
     const body = await request.json();
@@ -34,40 +22,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Make the request to the actual API server
-    const apiUrl = 'https://umuhinzi-api.echo-solution.com/api/v1/auth/login';
+    const backendBaseUrl =
+      process.env.API_BASE_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      'https://api.umuhinzi-backend.echo-solution.com/api/v1';
+
+    const apiUrl = `${backendBaseUrl.replace(/\/$/, '')}/auth/login`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        Origin: 'http://localhost:3000',
       },
       body: JSON.stringify(body),
     });
 
-    // Get the response data
-    const data = await response.json();
+    let data: unknown = null;
+    const contentType = response.headers.get('content-type') || '';
 
-    // Create response headers
-    const headers = new Headers();
-    headers.set('Content-Type', 'application/json');
-    headers.set('Access-Control-Allow-Origin', '*');
-    headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-    // Forward any cookies from the API
-    const cookies = response.headers.getSetCookie();
-    if (cookies && cookies.length > 0) {
-      headers.set('Set-Cookie', cookies.join(', '));
+    if (contentType.includes('application/json')) {
+      data = await response.json().catch(() => null);
+    } else {
+      const text = await response.text().catch(() => '');
+      data = text ? { message: text } : null;
     }
 
-    // Return the response with proper CORS headers
-    return new NextResponse(JSON.stringify(data), {
-      status: response.status,
-      headers,
-    });
+    const nextResponse =
+      data !== null
+        ? NextResponse.json(data, { status: response.status })
+        : new NextResponse(null, { status: response.status });
+
+    nextResponse.headers.set('Access-Control-Allow-Origin', '*');
+    nextResponse.headers.set(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, DELETE, OPTIONS'
+    );
+    nextResponse.headers.set(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization'
+    );
+
+    return nextResponse;
   } catch (error: unknown) {
     console.error('Login API error:', error);
 

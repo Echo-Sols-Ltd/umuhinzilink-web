@@ -11,7 +11,6 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { data } from '../signin/navbar';
-import { storeAuthData, redirectToDashboard } from '@/lib/auth';
 
 export default function SignUp() {
   const router = useRouter();
@@ -170,40 +169,82 @@ export default function SignUp() {
     }
 
     try {
-      // Import mock signup function
-      const { mockSignup } = await import('@/lib/mockAuth');
-
-      // Call mock signup with form data
-      const authData = await mockSignup({
-        names: formData.names,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        password: formData.password,
-        role: formData.role as 'BUYER' | 'FARMER' | 'SUPPLIER',
-      });
-
-      console.log('Mock signup successful:', authData);
-
-      // Store the auth token
-      storeAuthData({
-        token: authData.token,
-        user: {
-          ...authData.user,
-          password: '', // Ensure password is not stored
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          names: formData.names.trim(),
+          email: formData.email.trim(),
+          phoneNumber: formData.phoneNumber.trim(),
+          password: formData.password,
+          role: formData.role,
+        }),
       });
 
-      // Show success message
+      const responseBody = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const serverMessage =
+          (responseBody && (responseBody.message || responseBody.error)) ||
+          'Registration failed. Please try again.';
+
+        if (responseBody?.errors && typeof responseBody.errors === 'object') {
+          const serverFieldErrors: Partial<typeof fieldErrors> = {};
+          const updatedTouched: Partial<typeof touched> = {};
+
+          Object.entries(responseBody.errors).forEach(([key, value]) => {
+            if (key in fieldErrors) {
+              const message = Array.isArray(value) ? value.join(' ') : String(value);
+              serverFieldErrors[key as keyof typeof fieldErrors] = message;
+              updatedTouched[key as keyof typeof touched] = true;
+            }
+          });
+
+          if (Object.keys(serverFieldErrors).length > 0) {
+            setFieldErrors(prev => ({ ...prev, ...serverFieldErrors }));
+            setTouched(prev => ({ ...prev, ...updatedTouched }));
+          }
+        } else {
+          const lowerMessage = serverMessage.toLowerCase();
+
+          if (lowerMessage.includes('email')) {
+            setFieldErrors(prev => ({ ...prev, email: serverMessage }));
+            setTouched(prev => ({ ...prev, email: true }));
+          } else if (lowerMessage.includes('password')) {
+            setFieldErrors(prev => ({ ...prev, password: serverMessage }));
+            setTouched(prev => ({ ...prev, password: true }));
+          } else if (lowerMessage.includes('phone')) {
+            setFieldErrors(prev => ({ ...prev, phoneNumber: serverMessage }));
+            setTouched(prev => ({ ...prev, phoneNumber: true }));
+          }
+        }
+
+        toast({
+          title: 'Registration Failed',
+          description: serverMessage,
+          variant: 'error',
+        });
+
+        return;
+      }
+
+      const payload = responseBody?.data ?? responseBody;
+
+      if (!payload) {
+        throw new Error('Invalid response received from the registration service.');
+      }
+
       toast({
         title: 'Registration Successful',
-        description: 'Your account has been created and you are now logged in!',
+        description: 'Your account has been created successfully. Please sign in to continue.',
         variant: 'success',
       });
 
-      // Redirect to dashboard after a short delay
       setTimeout(() => {
-        redirectToDashboard(router, authData.user.role);
-      }, 2000);
+        router.push('/signin?from=signup&registered=true');
+      }, 1500);
     } catch (error) {
       // Error handling
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';

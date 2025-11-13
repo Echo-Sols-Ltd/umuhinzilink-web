@@ -16,31 +16,55 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Make the request to the actual API server
-    const apiUrl = 'https://umuhinzi-api.echo-solution.com/api/v1/auth/register';
+    // Determine backend base URL from environment
+    const backendBaseUrl =
+      process.env.API_BASE_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      'https://api.umuhinzi-backend.echo-solution.com/api/v1';
+
+    if (!backendBaseUrl) {
+      throw new Error('Backend API URL is not configured');
+    }
+
+    const apiUrl = `${backendBaseUrl.replace(/\/$/, '')}/auth/register`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Accept: '*/*',
-        Origin: 'http://localhost:3000',
+        Accept: 'application/json',
       },
       body: JSON.stringify(body),
     });
 
     // Get the response data
-    const data = await response.json();
+    let data: unknown = null;
+    const contentType = response.headers.get('content-type') || '';
+
+    if (contentType.includes('application/json')) {
+      data = await response.json().catch(() => null);
+    } else {
+      const text = await response.text().catch(() => '');
+      data = text ? { message: text } : null;
+    }
 
     // Return the response with proper CORS headers
-    return NextResponse.json(data, {
-      status: response.status,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    });
+    const nextResponse =
+      data !== null
+        ? NextResponse.json(data, { status: response.status })
+        : new NextResponse(null, { status: response.status });
+
+    nextResponse.headers.set('Access-Control-Allow-Origin', '*');
+    nextResponse.headers.set(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, DELETE, OPTIONS'
+    );
+    nextResponse.headers.set(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization'
+    );
+
+    return nextResponse;
   } catch (error: unknown) {
     console.error('Registration API error:', error);
 
