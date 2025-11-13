@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   CheckCircle,
   Heart,
@@ -20,7 +20,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Line } from 'react-chartjs-2';
 import { BuyerGuard } from '@/components/auth/AuthGuard';
-import { logout } from '@/lib/auth';
+import { getAuthToken, getCurrentUser, logout } from '@/lib/auth';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -56,40 +56,6 @@ const menuItems = [
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
-const stats = [
-  {
-    title: 'Total Orders',
-    value: '247',
-    subtitle: 'This month',
-    icon: ShoppingCart,
-    color: 'bg-green-500',
-    textColor: 'text-white',
-  },
-  {
-    title: 'Active Farmers',
-    value: '12',
-    subtitle: 'Connected',
-    icon: Users,
-    color: 'bg-blue-500',
-    textColor: 'text-white',
-  },
-  {
-    title: 'Avg Rating',
-    value: '4.8',
-    subtitle: 'From farmers',
-    icon: Star,
-    color: 'bg-green-500',
-    textColor: 'text-white',
-  },
-  {
-    title: 'Growth',
-    value: '+23%',
-    subtitle: 'This month',
-    icon: TrendingUp,
-    color: 'bg-green-500',
-    textColor: 'text-white',
-  },
-];
 
 const produce = [
   {
@@ -139,44 +105,52 @@ const produce = [
   },
 ];
 
-const orders = [
-  {
-    id: '001',
-    farmer: 'Jean Baptiste',
-    address: '123 Kigali Avenue, Kigali City',
-    date: '12 Jan 2024',
-    product: 'Maize Seeds',
-    status: 'Processing',
-    action: 'View Order',
-  },
-  {
-    id: '002',
-    farmer: 'Marie Claire',
-    address: '456 Nyamirambo Street, Kigali',
-    date: '10 Jan 2024',
-    product: 'Bean Seeds',
-    status: 'Delivered',
-    action: 'View Order',
-  },
-  {
-    id: '003',
-    farmer: 'Patrick Ndayimana',
-    address: '789 Kimisagara Road, Kigali',
-    date: '08 Jan 2024',
-    product: 'Potato Seeds',
-    status: 'In Transit',
-    action: 'View Order',
-  },
-  {
-    id: '004',
-    farmer: 'Alice Uwimana',
-    address: '321 Remera Avenue, Gasabo',
-    date: '05 Jan 2024',
-    product: 'Corn Seeds',
-    status: 'Processing',
-    action: 'View Order',
-  },
-];
+type Order = {
+  id: string;
+  buyer: {
+    names: string;
+    email: string;
+    phoneNumber: string;
+    address: {
+      district: string;
+      province: string;
+    } | null;
+  };
+  product: {
+    name: string;
+    category: string;
+    unitPrice: number;
+    measurementUnit: string;
+    farmer: {
+      user: {
+        names: string;
+        address: {
+          district: string;
+          province: string;
+        } | null;
+      };
+    };
+  };
+  quantity: number;
+  totalPrice: number;
+  isPaid: boolean;
+  status: string;
+  delivery?: {
+    deliveryAddress?: string;
+    status?: string;
+    estimatedDelivery?: string;
+  };
+  paymentMethod?: string;
+  deliveryDate?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type OrdersResponse = {
+  success: boolean;
+  data: Order[];
+  message?: string;
+};
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -187,6 +161,115 @@ const Logo = () => (
 
 function BuyerDashboard() {
   const router = useRouter();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersError, setOrdersError] = useState<string | null>(null);
+  const [buyerName, setBuyerName] = useState<string>('Buyer');
+
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (currentUser?.names) {
+      setBuyerName(currentUser.names.split(' ')[0] || currentUser.names);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const token = getAuthToken();
+
+      if (!token) {
+        setOrdersError('You need to sign in to view orders.');
+        setOrdersLoading(false);
+        return;
+      }
+
+      try {
+        setOrdersLoading(true);
+        const response = await fetch('/api/orders/buyer', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const body: OrdersResponse | null = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          const message =
+            body?.message || body?.data
+              ? Array.isArray(body?.data)
+                ? 'Failed to load orders'
+                : JSON.stringify(body?.data)
+              : 'Failed to load orders';
+          throw new Error(message);
+        }
+
+        const ordersData = body?.data ?? [];
+        setOrders(ordersData);
+        setOrdersError(null);
+      } catch (error: unknown) {
+        console.error('Error fetching buyer orders:', error);
+        const message =
+          error instanceof Error ? error.message : 'Unable to load orders. Please try again.';
+        setOrdersError(message);
+      } finally {
+        setOrdersLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const stats = useMemo(
+    () => [
+      {
+        title: 'Total Orders',
+        value: String(orders.length),
+        subtitle: 'All time',
+        icon: ShoppingCart,
+        color: 'bg-green-500',
+        textColor: 'text-white',
+      },
+      {
+        title: 'Paid Orders',
+        value: String(orders.filter(order => order.isPaid).length),
+        subtitle: 'Completed payments',
+        icon: Users,
+        color: 'bg-blue-500',
+        textColor: 'text-white',
+      },
+      {
+        title: 'Pending Delivery',
+        value: String(orders.filter(order => order.status?.toLowerCase() === 'pending').length),
+        subtitle: 'Awaiting delivery',
+        icon: Star,
+        color: 'bg-green-500',
+        textColor: 'text-white',
+      },
+      {
+        title: 'Total Value',
+        value: `${orders
+          .reduce((total, order) => total + (Number(order.totalPrice) || 0), 0)
+          .toLocaleString()} RWF`,
+        subtitle: 'Gross order value',
+        icon: TrendingUp,
+        color: 'bg-green-500',
+        textColor: 'text-white',
+      },
+    ],
+    [orders]
+  );
+
+  const formatDate = (value?: string) => {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
 
   const handleLogout = () => {
     logout(router);
@@ -262,7 +345,7 @@ function BuyerDashboard() {
         <main className="flex-1 p-6 overflow-y-auto">
           {/* Green Welcome Bar */}
           <div className="bg-green-600 rounded-2xl mt-0 text-white px-6 py-8 shadow-sm mb-4">
-            <h1 className="text-lg font-semibold mb-2">Welcome back, Buyer Chance!</h1>
+            <h1 className="text-lg font-semibold mb-2">Welcome back, {buyerName}!</h1>
             <p className="text-sm opacity-90">
               Manage your agricultural purchases and connect with farmers across Rwanda
             </p>
@@ -414,43 +497,97 @@ function BuyerDashboard() {
                   <tr className="border-b border-gray-200">
                     <th className="py-3 text-left text-gray-500 font-medium">ID</th>
                     <th className="py-3 text-left text-gray-500 font-medium">FARMER</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">ADDRESS</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">DATE</th>
+                    <th className="py-3 text-left text-gray-500 font-medium">LOCATION</th>
+                    <th className="py-3 text-left text-gray-500 font-medium">ORDERED</th>
                     <th className="py-3 text-left text-gray-500 font-medium">PRODUCT</th>
+                    <th className="py-3 text-left text-gray-500 font-medium">QTY</th>
+                    <th className="py-3 text-left text-gray-500 font-medium">TOTAL</th>
                     <th className="py-3 text-left text-gray-500 font-medium">STATUS</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">ACTION</th>
+                    <th className="py-3 text-left text-gray-500 font-medium">DELIVERY</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map(order => (
-                    <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-4 text-gray-900">{order.id}</td>
-                      <td className="py-4 text-gray-900">{order.farmer}</td>
-                      <td className="py-4 text-gray-600">{order.address}</td>
-                      <td className="py-4 text-gray-600">{order.date}</td>
-                      <td className="py-4 text-gray-900">{order.product}</td>
-                      <td className="py-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            order.status === 'Processing'
-                              ? 'bg-purple-100 text-purple-700'
-                              : order.status === 'Delivered'
-                                ? 'bg-green-100 text-green-700'
-                                : order.status === 'In Transit'
-                                  ? 'bg-blue-100 text-blue-700'
-                                  : 'bg-gray-100 text-gray-700'
-                          }`}
-                        >
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="py-4">
-                        <button className="text-green-600 hover:text-green-700 font-medium">
-                          {order.action}
-                        </button>
+                  {ordersLoading && (
+                    <tr>
+                      <td colSpan={9} className="py-6 text-center text-gray-500">
+                        Loading orders...
                       </td>
                     </tr>
-                  ))}
+                  )}
+                  {!ordersLoading && ordersError && (
+                    <tr>
+                      <td colSpan={9} className="py-6 text-center text-red-500">
+                        {ordersError}
+                      </td>
+                    </tr>
+                  )}
+                  {!ordersLoading && !ordersError && orders.length === 0 && (
+                    <tr>
+                      <td colSpan={9} className="py-6 text-center text-gray-500">
+                        You have no orders yet.
+                      </td>
+                    </tr>
+                  )}
+                  {!ordersLoading &&
+                    !ordersError &&
+                    orders.map(order => {
+                      const farmerName =
+                        order.product?.farmer?.user?.names || order.buyer?.names || '—';
+                      const farmerAddress =
+                        order.product?.farmer?.user?.address ||
+                        order.buyer?.address || {
+                          district: '—',
+                          province: '',
+                        };
+                      const productName = order.product?.name || '—';
+                      const quantity = Number(order.quantity) || 0;
+                      const unitPrice = Number(order.product?.unitPrice) || 0;
+                      const totalPrice =
+                        Number.isFinite(Number(order.totalPrice)) && Number(order.totalPrice) > 0
+                          ? Number(order.totalPrice)
+                          : quantity * unitPrice;
+
+                      return (
+                        <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-4 text-gray-900">{order.id}</td>
+                          <td className="py-4 text-gray-900">{farmerName}</td>
+                          <td className="py-4 text-gray-600">
+                            {farmerAddress?.district
+                              ? `${farmerAddress.district}, ${farmerAddress?.province ?? ''}`
+                              : '—'}
+                          </td>
+                          <td className="py-4 text-gray-600">{formatDate(order.createdAt)}</td>
+                          <td className="py-4 text-gray-900">{productName}</td>
+                          <td className="py-4 text-gray-600">
+                            {quantity} {order.product?.measurementUnit || ''}
+                          </td>
+                          <td className="py-4 text-gray-900">
+                            {totalPrice.toLocaleString()} RWF
+                          </td>
+                          <td className="py-4">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                order.status?.toLowerCase() === 'pending'
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : order.status?.toLowerCase() === 'completed' ||
+                                      order.status?.toLowerCase() === 'delivered'
+                                    ? 'bg-green-100 text-green-700'
+                                    : order.status?.toLowerCase() === 'cancelled'
+                                      ? 'bg-red-100 text-red-700'
+                                      : 'bg-gray-100 text-gray-700'
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                          </td>
+                          <td className="py-4 text-gray-600">
+                            {order.delivery?.status
+                              ? `${order.delivery.status} · ${formatDate(order.delivery.estimatedDelivery)}`
+                              : '—'}
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
