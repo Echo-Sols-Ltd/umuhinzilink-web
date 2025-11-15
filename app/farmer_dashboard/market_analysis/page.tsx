@@ -135,7 +135,7 @@ const Dashboard = () => {
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+        <aside className="w-64 bg-[#00A63E] border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
           <div className="p-6"></div>
           <nav className="flex-1 px-4 space-y-2">
             {menuItems.map((m, index) => {
