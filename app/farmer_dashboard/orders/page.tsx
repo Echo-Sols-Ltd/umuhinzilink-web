@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useOrder } from '@/contexts/OrderContext';
+
 import {
   LayoutGrid,
   FilePlus,
@@ -19,10 +22,8 @@ import {
   Loader2,
   LogOut,
 } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, getCurrentUser, logout, type User } from '@/lib/auth';
 
-type FarmerOrder = {
+type FarmerOrderType = {
   id: string;
   buyer?: {
     id?: string;
@@ -110,63 +111,15 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
 export default function FarmerOrdersPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [orders, setOrders] = useState<FarmerOrder[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, logout } = useAuth();
+  const { farmerOrders, loading } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
-
-  useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
-      setLoading(false);
-      setError('You need to sign in to view your orders.');
-      return;
-    }
-
-    let cancelled = false;
-
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('/api/orders/farmer', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message = body?.message || 'Failed to load orders.';
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerOrder[];
-          setOrders(Array.isArray(data) ? data : []);
-          setError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer orders:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load orders.';
-          setError(message);
-          setOrders([]);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    fetchOrders();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // Use context data instead of manual state
+  const currentUser = user;
+  const orders = useMemo(() => farmerOrders || [], [farmerOrders]);
+  const error = null;
 
   const filteredOrders = useMemo(() => {
     if (statusFilter === 'all') return orders;
@@ -183,39 +136,14 @@ export default function FarmerOrdersPage() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
-
+    
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (err) {
-      console.error('Error during logout:', err);
-      const message = err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
+      await logout();
+      router.push('/auth/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };

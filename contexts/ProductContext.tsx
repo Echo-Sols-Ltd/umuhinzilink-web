@@ -24,6 +24,7 @@ type ProductContextValue = {
   updateFarmerProduct: (id: string, data: FarmerProduct) => void;
   updateBuyerProduct: (id: string, data: FarmerProduct) => void;
   updateSupplierProduct: (id: string, data: SupplierProduct) => void;
+  refreshProducts: () => Promise<void>;
   loading: boolean;
   error: string | null;
   farmerProducts: FarmerProduct[] | null;
@@ -32,7 +33,7 @@ type ProductContextValue = {
   supplierStats: SupplierProductionStat[] | null;
   currentFarmerProduct: FarmerProduct | null;
   currentSupplierProduct: SupplierProduct | null;
-  currentFarmerBuyerProduct: SupplierProduct | null;
+  currentFarmerBuyerProduct: SupplierProduct | null; 
   currentBuyerProduct: FarmerProduct | null;
   editFarmerProduct: FarmerProduct | null;
   editSupplierProduct: SupplierProduct | null;
@@ -110,68 +111,64 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     loadCachedData();
   }, []);
 
-  // 🔹 Fetch fresh data when user logs in
-  useEffect(() => {
+  // 🔹 Manual refresh function - only fetch when explicitly called
+  const refreshProducts = async () => {
     if (!user?.id) return;
 
-    const fetchAll = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const [
-          farmerRes,
-          supplierRes,
-          buyerRes,
-          farmerBuyerRes,
-          farmerStatsRes,
-          supplierStatsRes,
-        ] = await Promise.all([
-          productService.getProductsByFarmer(),
-          productService.getProductsBySupplier(),
-          productService.getBuyerProducts(),
-          productService.getFarmerBuyerProducts(),
-          productService.getFarmerStats(),
-          productService.getSupplierStats(),
-        ]);
+    try {
+      setLoading(true);
+      setError(null);
+      const [
+        farmerRes,
+        supplierRes,
+        buyerRes,
+        farmerBuyerRes,
+        farmerStatsRes,
+        supplierStatsRes,
+      ] = await Promise.all([
+        productService.getProductsByFarmer(),
+        productService.getProductsBySupplier(),
+        productService.getBuyerProducts(),
+        productService.getFarmerBuyerProducts(),
+        productService.getFarmerStats(),
+        productService.getSupplierStats(),
+      ]);
 
-        if (farmerRes.success) {
-          setFarmerProducts(farmerRes.data ?? []);
-          localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(farmerRes.data ?? []));
-        }
-
-        if (supplierRes.success) {
-          setSupplierProducts(supplierRes.data ?? []);
-          localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(supplierRes.data ?? []));
-        }
-
-        if (buyerRes.success) {
-          setBuyerProducts(buyerRes.data?.content ?? []);
-          localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(buyerRes.data?.content ?? []));
-        }
-
-        if (farmerBuyerRes.success) {
-          setFarmerBuyerProducts(farmerBuyerRes.data?.content ?? []);
-          localStorage.setItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS, JSON.stringify(farmerBuyerRes.data?.content ?? []));
-        }
-
-        if (farmerStatsRes.success) {
-          setFarmerStats(farmerStatsRes.data ?? []);
-          localStorage.setItem(STORAGE_KEYS.FARMER_STATS, JSON.stringify(farmerStatsRes.data ?? []));
-        }
-
-        if (supplierStatsRes.success) {
-          setSupplierStats(supplierStatsRes.data ?? []);
-          localStorage.setItem(STORAGE_KEYS.SUPPLIER_STATS, JSON.stringify(supplierStatsRes.data ?? []));
-        }
-      } catch (err) { 
-        setError(err instanceof Error ? err.message : 'Failed to fetch products');
-      } finally {
-        setLoading(false);
+      if (farmerRes.success) {
+        setFarmerProducts(farmerRes.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(farmerRes.data ?? []));
       }
-    };
 
-    fetchAll();
-  }, [user?.id]);
+      if (supplierRes.success) {
+        setSupplierProducts(supplierRes.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(supplierRes.data ?? []));
+      }
+
+      if (buyerRes.success) {
+        setBuyerProducts(buyerRes.data?.content ?? []);
+        localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(buyerRes.data?.content ?? []));
+      }
+
+      if (farmerBuyerRes.success) {
+        setFarmerBuyerProducts(farmerBuyerRes.data?.content ?? []);
+        localStorage.setItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS, JSON.stringify(farmerBuyerRes.data?.content ?? []));
+      }
+
+      if (farmerStatsRes.success) {
+        setFarmerStats(farmerStatsRes.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.FARMER_STATS, JSON.stringify(farmerStatsRes.data ?? []));
+      }
+
+      if (supplierStatsRes.success) {
+        setSupplierStats(supplierStatsRes.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.SUPPLIER_STATS, JSON.stringify(supplierStatsRes.data ?? []));
+      }
+    } catch (err) { 
+      setError(err instanceof Error ? err.message : 'Failed to fetch products');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const addFarmerProduct = (data: FarmerProduct) => {
     setFarmerProducts((prev) => {
@@ -272,6 +269,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     updateFarmerProduct,
     updateBuyerProduct,
     updateSupplierProduct,
+    refreshProducts,
     loading,
     error,
     farmerProducts,

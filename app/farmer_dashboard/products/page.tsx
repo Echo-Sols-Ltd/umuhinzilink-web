@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutGrid,
   MessageSquare,
@@ -20,8 +22,6 @@ import {
   LogOut,
   Plus,
 } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, getCurrentUser, logout, type User } from '@/lib/auth';
 
 type FarmerProduct = {
   id: string;
@@ -75,70 +75,17 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
 export default function FarmerProductsPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  const [products, setProducts] = useState<FarmerProduct[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<FarmerProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, logout } = useAuth();
+  const { farmerProducts, loading } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
+  const currentUser = user;
+  const products = useMemo(() => farmerProducts || [], [farmerProducts]);
+  const error = null;
 
-  useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
-      setLoading(false);
-      setError('You need to sign in to view your products.');
-      return;
-    }
-
-    let cancelled = false;
-
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('/api/farmers/products', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message = body?.message || 'Failed to load products.';
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerProduct[];
-          setProducts(Array.isArray(data) ? data : []);
-          setError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer products:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load products.';
-          setError(message);
-          setProducts([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchProducts();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
+  const filteredProducts = useMemo(() => {
     let filtered = [...products];
 
     if (statusFilter !== 'all') {
@@ -154,7 +101,7 @@ export default function FarmerProductsPage() {
       );
     }
 
-    setFilteredProducts(filtered);
+    return filtered;
   }, [products, statusFilter, searchTerm]);
 
   const totalProducts = products.length;

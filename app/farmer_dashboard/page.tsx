@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
+import { useOrder } from '@/contexts/OrderContext';
 import {
   LayoutGrid,
   FilePlus,
@@ -183,221 +186,24 @@ function getInitials(name: string) {
 
 function Dashboard() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
-  const [profile, setProfile] = useState<FarmerProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
-  const [profileError, setProfileError] = useState<string | null>(null);
-
-  const [rawOrders, setRawOrders] = useState<FarmerOrder[]>([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
-  const [ordersError, setOrdersError] = useState<string | null>(null);
-
-  const [rawProducts, setRawProducts] = useState<FarmerProduct[]>([]);
-  const [productsLoading, setProductsLoading] = useState(true);
-  const [productsError, setProductsError] = useState<string | null>(null);
-
-  const [rawRequests, setRawRequests] = useState<FarmerRequest[]>([]);
-  const [requestsLoading, setRequestsLoading] = useState(true);
-  const [requestsError, setRequestsError] = useState<string | null>(null);
-
+  const { user, farmer, loading: authLoading, logout } = useAuth();
+  const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
+  const { farmerOrders, loading: ordersLoading, error: ordersError } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
+  // Use context data instead of manual state
+  const currentUser = user;
+  const profile = farmer;
+  const rawProducts = useMemo(() => farmerProducts || [], [farmerProducts]);
+  const rawOrders = useMemo(() => farmerOrders || [], [farmerOrders]);
+  const rawRequests = useMemo(() => [] as FarmerRequest[], []); // Empty for now
+  
+  const profileLoading = authLoading;
+  const profileError = null;
+  const requestsLoading = false;
+  const requestsError = null;
 
-  useEffect(() => {
-    const token = getAuthToken();
-
-    if (!token) {
-      setProfileLoading(false);
-      setProfileError('You need to sign in to view your profile.');
-      setOrdersLoading(false);
-      setOrdersError('You need to sign in to view your orders.');
-      setProductsLoading(false);
-      setProductsError('You need to sign in to view your products.');
-      setRequestsLoading(false);
-      setRequestsError('You need to sign in to view your requests.');
-      return;
-    }
-
-    let cancelled = false;
-    const headers = { Authorization: `Bearer ${token}` };
-
-    const fetchProfile = async () => {
-      setProfileLoading(true);
-      try {
-        const response = await fetch('/api/farmers/profile', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load farmer profile.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setProfile(null);
-              setProfileError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body) as FarmerProfile;
-          setProfile(data);
-          setProfileError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer profile:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load profile information.';
-          setProfileError(message);
-          setProfile(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setProfileLoading(false);
-        }
-      }
-    };
-
-    const fetchOrders = async () => {
-      setOrdersLoading(true);
-      try {
-        const response = await fetch('/api/orders/farmer', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load orders.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawOrders([]);
-              setOrdersError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerOrder[];
-          setRawOrders(Array.isArray(data) ? data : []);
-          setOrdersError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer orders:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load orders. Please try again.';
-          setOrdersError(message);
-          setRawOrders([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setOrdersLoading(false);
-        }
-      }
-    };
-
-    const fetchProducts = async () => {
-      setProductsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/products', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message =
-          body?.message || 'Failed to load products. Please try again later.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawProducts([]);
-              setProductsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerProduct[];
-          setRawProducts(Array.isArray(data) ? data : []);
-          setProductsError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer products:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load products.';
-          setProductsError(message);
-          setRawProducts([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setProductsLoading(false);
-        }
-      }
-    };
-
-    const fetchRequests = async () => {
-      setRequestsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/requests', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load requests.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawRequests([]);
-              setRequestsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerRequest[];
-          setRawRequests(Array.isArray(data) ? data : []);
-          setRequestsError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer requests:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load requests.';
-          setRequestsError(message);
-          setRawRequests([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setRequestsLoading(false);
-        }
-      }
-    };
-
-    fetchProfile();
-    fetchOrders();
-    fetchProducts();
-    fetchRequests();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // No more API calls needed - using contexts!
 
   const farmerId = profile?.id || currentUser?.id || null;
 
@@ -529,40 +335,12 @@ function Dashboard() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
-
+    
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (error) {
-      console.error('Error during logout:', error);
-      const message =
-        error instanceof Error ? error.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
+      await logout();
+      router.push('/auth/login');
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };
