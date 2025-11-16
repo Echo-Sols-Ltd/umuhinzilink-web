@@ -23,46 +23,6 @@ import {
   LogOut,
 } from 'lucide-react';
 
-type FarmerOrderType = {
-  id: string;
-  buyer?: {
-    id?: string;
-    names?: string;
-    email?: string;
-    phoneNumber?: string;
-    address?: {
-      district?: string;
-      province?: string;
-    } | null;
-  };
-  product?: {
-    id?: string;
-    name?: string;
-    unitPrice?: number;
-    measurementUnit?: string;
-    quantity?: number;
-    farmer?: {
-      id?: string;
-      user?: {
-        id?: string;
-        names?: string;
-      };
-    };
-  };
-  quantity?: number;
-  totalPrice?: number;
-  isPaid?: boolean;
-  status?: string;
-  paymentMethod?: string;
-  delivery?: {
-    status?: string;
-    deliveryAddress?: string;
-    estimatedDelivery?: string;
-  };
-  createdAt?: string;
-  updatedAt?: string;
-};
-
 type MenuItem = {
   label: string;
   href: string;

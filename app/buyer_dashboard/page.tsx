@@ -578,7 +578,6 @@ function BuyerDashboard() {
                     >
                       <div className="h-32 w-full bg-gray-100 flex items-center justify-center">
                         {product.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={product.image}
                             alt={product.name}

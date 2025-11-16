@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
@@ -23,29 +23,6 @@ import {
   Plus,
 } from 'lucide-react';
 
-type FarmerProduct = {
-  id: string;
-  name: string;
-  category?: string;
-  description?: string;
-  unitPrice?: number;
-  measurementUnit?: string;
-  quantity?: number;
-  productStatus?: string;
-  isNegotiable?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  harvestDate?: string;
-  location?: string;
-  image?: string | null;
-  farmer?: {
-    id?: string;
-    user?: {
-      id?: string;
-      names?: string;
-    };
-  };
-};
 
 type MenuItem = {
   label: string;
@@ -123,39 +100,14 @@ export default function FarmerProductsPage() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
-
+    
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (err) {
-      console.error('Error during logout:', err);
-      const message = err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
+      await logout();
+      router.push('/auth/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };
@@ -316,9 +268,8 @@ export default function FarmerProductsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map(product => (
                   <article key={product.id} className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-                    <div className="aspect-[4/3] bg-gray-50 flex items-center justify-center">
+                    <div className="aspect-4/3 bg-gray-50 flex items-center justify-center">
                       {product.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="text-xs text-gray-400">No image provided</div>
