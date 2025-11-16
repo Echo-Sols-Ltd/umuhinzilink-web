@@ -127,7 +127,7 @@ const Logo = () => (
 
 const Dashboard = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-white">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
         <Logo />
@@ -135,9 +135,9 @@ const Dashboard = () => {
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <aside className="w-64 bg-[#00A63E] border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+        <aside className="w-64 bg-[#00A63E] text-white border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
           <div className="p-6"></div>
-          <nav className="flex-1 px-4 space-y-2">
+          <nav className="flex-1 px-4 space-y-2 ">
             {menuItems.map((m, index) => {
               const isActive = m.label === 'Market Analytics';
               const showDivider = index === 4 || index === 8;
@@ -147,11 +147,11 @@ const Dashboard = () => {
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
                         isActive
-                          ? 'bg-green-600 text-white shadow-sm'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                          ? 'bg-white text-green-500 shadow-sm'
+                          : 'text-white hover:bg-gray-50 hover:text-gray-900'
                       }`}
                     >
-                      <m.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                      <m.icon className={`w-5 h-5 ${isActive ? 'text-green-500' : 'text-white'}`} />
                       <span>{m.label}</span>
                     </div>
                   </Link>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBackendBaseUrlFromEnv } from '@/lib/backend-config';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,14 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine backend base URL from environment
-    const backendBaseUrl =
-      process.env.API_BASE_URL ||
-      process.env.NEXT_PUBLIC_API_URL ||
-      'https://api.umuhinzi-backend.echo-solution.com/api/v1';
-
-    if (!backendBaseUrl) {
-      throw new Error('Backend API URL is not configured');
-    }
+    const backendBaseUrl = getBackendBaseUrlFromEnv();
 
     const apiUrl = `${backendBaseUrl.replace(/\/$/, '')}/auth/register`;
 

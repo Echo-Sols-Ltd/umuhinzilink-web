@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${poppins.variable} antialiased`}>
-      <body className="bg-gray-50 text-gray-900">
+      <body className="bg-white text-gray-900">
         <ToastProvider>
           <main>{children}</main>
         </ToastProvider>

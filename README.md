@@ -146,11 +146,32 @@ app/
 npm run build
 ```
 
-### **Environment**
+### **Backend Configuration**
 
-- No environment variables required
-- All data is client-side for demo purposes
-- Ready for production API integration
+The frontend is configured to connect to the Spring Boot backend API. To configure the connection:
+
+1. **Create a `.env.local` file** in the root directory:
+
+   ```bash
+   # Backend API Configuration
+   # For local development, use http://localhost:8080
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+   API_BASE_URL=http://localhost:8080
+   ```
+
+2. **For production or remote backend**, update the values:
+
+   ```bash
+   NEXT_PUBLIC_API_BASE_URL=https://your-backend-domain.com
+   API_BASE_URL=https://your-backend-domain.com
+   ```
+
+3. **Backend Server Requirements:**
+   - Backend should be running on port 8080 (default)
+   - API endpoints should be available at `/api/v1/*`
+   - CORS should be enabled for the frontend domain
+
+**Note:** The frontend will automatically fallback to `http://localhost:8080` if no environment variables are set, making local development easier.
 
 ## 📄 License
 

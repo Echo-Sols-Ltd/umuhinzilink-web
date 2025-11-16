@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBackendBaseUrlFromEnv } from '@/lib/backend-config';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,10 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const backendBaseUrl =
-      process.env.API_BASE_URL ||
-      process.env.NEXT_PUBLIC_API_URL ||
-      'https://api.umuhinzi-backend.echo-solution.com/api/v1';
+    const backendBaseUrl = getBackendBaseUrlFromEnv();
 
     const apiUrl = `${backendBaseUrl.replace(/\/$/, '')}/auth/login`;
 

@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const getBackendBaseUrl = () =>
-  process.env.API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  'https://api.umuhinzi-backend.echo-solution.com/api/v1';
+import { getBackendBaseUrlFromEnv } from '@/lib/backend-config';
 
 const PRODUCT_PATHS = ['/products', '/products/all', '/products/available', '/market/products'];
 
@@ -23,7 +19,7 @@ async function tryFetchProducts(
 }
 
 export async function GET(request: NextRequest) {
-  const backendBaseUrl = getBackendBaseUrl();
+  const backendBaseUrl = getBackendBaseUrlFromEnv();
   const url = new URL(request.url);
   const searchParams = url.searchParams.toString();
 

@@ -630,7 +630,7 @@ function Dashboard() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1 min-h-0">
         <aside
           className="w-64 bg-[#00A63E] border-r flex flex-col fixed left-0 top-0 h-screen overflow-y-auto"
@@ -690,7 +690,7 @@ function Dashboard() {
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-auto ml-64 relative">
+        <main className="flex-1 overflow-auto ml-64 relative bg-white ">
           <header className="fixed top-0 left-64 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             <div className="flex items-center space-x-4">
               <div className="relative">
@@ -723,7 +723,7 @@ function Dashboard() {
             </div>
           </header>
 
-          <div className="p-6 mt-16 space-y-6">
+          <div className="p-6 mt-16 space-y-6 ">
             <div>
               <p className="text-sm text-gray-500 mb-1">{todayLabel}</p>
               <h1 className="text-2xl font-bold text-gray-900 mb-1">
@@ -1114,10 +1114,7 @@ function Dashboard() {
 export default function FarmerDashboard() {
   return (
     <FarmerGuard>
-      <div className="container mx-auto px-4 py-6">
-        <BackButton />
-        <Dashboard />
-      </div>
+      <Dashboard />
     </FarmerGuard>
   );
 }

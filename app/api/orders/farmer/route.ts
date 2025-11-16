@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const getBackendBaseUrl = () =>
-  process.env.API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  'https://api.umuhinzi-backend.echo-solution.com/api/v1';
+import { getBackendBaseUrlFromEnv } from '@/lib/backend-config';
 
 const ORDER_PATHS = ['/orders/farmer', '/orders/farmers', '/farmers/orders'];
 
@@ -34,7 +30,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const backendBaseUrl = getBackendBaseUrl();
+  const backendBaseUrl = getBackendBaseUrlFromEnv();
   const headers: HeadersInit = {
     Accept: 'application/json',
     Authorization: authHeader,
