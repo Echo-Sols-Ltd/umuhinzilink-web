@@ -53,7 +53,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                console.error('Failed to fetch farmer:', res.error)
             }
             if (res.data) {
-                await localStorage.setItemAsync('farmer', JSON.stringify(res.data))
+                localStorage.setItem('farmer', JSON.stringify(res.data))
                 if (!res.data) {
                     router.push('/auth/farmerSignup')
                     return
@@ -73,7 +73,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 toast({ title: 'Fetching Buyer failed', description: 'Please try again later', variant: 'destructive' })
             }
             if (res.data) {
-                await localStorage.setItemAsync('buyer', JSON.stringify(res.data))
+                localStorage.setItem('buyer', JSON.stringify(res.data))
                 if (!res.data) {
                     router.push('/auth/buyerSignup')
                     return
@@ -94,7 +94,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 toast({ title: 'Fetching supplier failed', description: 'Please try again later', variant: 'destructive' })
             }
             if (res.data) {
-                await localStorage.setItemAsync('supplier', JSON.stringify(res.data))
+                localStorage.setItem('supplier', JSON.stringify(res.data))
                 if (!res.data) {
                     router.push('/auth/supplierSignup')
                     return
@@ -108,29 +108,29 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
 
-    const getUser = async () => {
-        const stringUser = await localStorage.getItemAsync('user')
+    const getUser = () => {
+        const stringUser = localStorage.getItem('user')
         if (!stringUser) return null
         const user: User = JSON.parse(stringUser)
         return user
     }
 
-    const getFarmer = async () => {
-        const stringUser = await localStorage.getItemAsync('farmer')
+    const getFarmer = () => {
+        const stringUser = localStorage.getItem('farmer')
         if (!stringUser) return null
         const user: Farmer = JSON.parse(stringUser)
         return user
     }
 
-    const getBuyer = async () => {
-        const stringUser = await localStorage.getItemAsync('buyer')
+    const getBuyer = () => {
+        const stringUser = localStorage.getItem('buyer')
         if (!stringUser) return null
         const user: Buyer = JSON.parse(stringUser)
         return user
     }
 
-    const getSupplier = async () => {
-        const stringUser = await    localStorage.getItemAsync('supplier')
+    const getSupplier = () => {
+        const stringUser = localStorage.getItem('supplier')
         if (!stringUser) return null
         const user: Supplier = JSON.parse(stringUser)
         return user
@@ -140,13 +140,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loadAuthState = async () => {
         try {
-            // await localStorage.removeItemAsync('auth_token')
+            // localStorage.removeItem('auth_token')
 
-            const token = await localStorage.getItemAsync('auth_token')
-            const user = await getUser()
-            const farmer = await getFarmer()
-            const supplier = await getSupplier()
-            const buyer = await getBuyer()
+            const token = localStorage.getItem('auth_token')
+            const user = getUser()
+            const farmer = getFarmer()
+            const supplier = getSupplier()
+            const buyer = getBuyer()
 
             if (token && user) {
                 setUser(user)
@@ -215,8 +215,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             if (res.success && res.data) {
 
-                await localStorage.setItemAsync('auth_token', res.data.token)
-                await localStorage.setItemAsync('user', JSON.stringify(res.data.user))
+                localStorage.setItem('auth_token', res.data.token)
+                localStorage.setItem('user', JSON.stringify(res.data.user))
                 setUser(res.data.user)
 
                 if (res.data.user.role === UserType.BUYER) {
@@ -257,8 +257,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (res.success && res.data) {
 
-                await localStorage.setItemAsync('auth_token', res.data.token)
-                await localStorage.setItemAsync('user', JSON.stringify(res.data.user))
+                localStorage.setItem('auth_token', res.data.token)
+                localStorage.setItem('user', JSON.stringify(res.data.user))
                 setUser(res.data.user)
                 router.push('/auth/profileCreate')
             }
@@ -285,7 +285,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 })
             }
             if (res.success && res.data) {
-                await localStorage.setItemAsync('buyer', JSON.stringify(res.data))
+                localStorage.setItem('buyer', JSON.stringify(res.data))
                 setBuyer(res.data)
                 router.replace('/')
             }
@@ -312,7 +312,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 })
             }
             if (res.success && res.data) {
-                await localStorage.setItemAsync('supplier', JSON.stringify(res.data))
+                localStorage.setItem('supplier', JSON.stringify(res.data))
                 setSupplier(res.data)
                 router.replace('/')
             }
@@ -339,7 +339,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 })
             }
             if (res.success && res.data) {
-                await localStorage.setItemAsync('farmer', JSON.stringify(res.data))
+                localStorage.setItem('farmer', JSON.stringify(res.data))
                 setFarmer(res.data)
                 router.replace('/')
             }
@@ -367,7 +367,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             if (res.success && res.data && user) {
                 user.verified = true
-                await localStorage.setItemAsync('user', JSON.stringify(user))
+                localStorage.setItem('user', JSON.stringify(user))
                 setUser(user)
                 router.replace('/')
             }
@@ -406,12 +406,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const logout = async () => {
-        await localStorage.removeItemAsync('auth_token')
-        await localStorage.removeItemAsync('user')
-        await localStorage.removeItemAsync('farmer')
-        await localStorage.removeItemAsync('supplier')
-        await localStorage.removeItemAsync('buyer')
-        await localStorage.clear()
+        localStorage.removeItem('auth_token')
+        localStorage.removeItem('user')
+        localStorage.removeItem('farmer')
+        localStorage.removeItem('supplier')
+        localStorage.removeItem('buyer')
+        localStorage.clear()
         setUser(null)
         setFarmer(null)
         setSupplier(null)
@@ -426,7 +426,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             prev.avatar = data
             return prev
         })
-        await localStorage.setItemAsync('user', JSON.stringify(user))
+        localStorage.setItem('user', JSON.stringify(user))
 
     }
 

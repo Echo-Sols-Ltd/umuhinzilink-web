@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useMemo, useState, ReactNode, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { productService } from '@/services/products';
 import {
   FarmerProductionStat,
@@ -9,7 +8,6 @@ import {
   SupplierProductionStat,
 } from '@/types';
 import { useAuth } from './AuthContext';
-import { useToast } from '@/components/ui/toast/Toast';
 
 const STORAGE_KEYS = {
   FARMER_PRODUCTS: 'farmerProducts',
@@ -67,7 +65,6 @@ type ProductContextValue = {
 const ProductContext = createContext<ProductContextValue | undefined>(undefined);
 
 export function ProductProvider({ children }: { children: ReactNode }) {
-  const { showToast } = useToast()
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,28 +88,26 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   // 🔹 Load cached data
   useEffect(() => {
-    const loadCachedData = async () => {
+    const loadCachedData = () => {
       try {
-        const cached = await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.FARMER_PRODUCTS),
-          AsyncStorage.getItem(STORAGE_KEYS.SUPPLIER_PRODUCTS),
-          AsyncStorage.getItem(STORAGE_KEYS.BUYER_PRODUCTS),
-          AsyncStorage.getItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS),
-          AsyncStorage.getItem(STORAGE_KEYS.FARMER_STATS),
-          AsyncStorage.getItem(STORAGE_KEYS.SUPPLIER_STATS),
-        ]);
+        const farmerProducts = localStorage.getItem(STORAGE_KEYS.FARMER_PRODUCTS);
+        const supplierProducts = localStorage.getItem(STORAGE_KEYS.SUPPLIER_PRODUCTS);
+        const buyerProducts = localStorage.getItem(STORAGE_KEYS.BUYER_PRODUCTS);
+        const farmerBuyerProducts = localStorage.getItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS);
+        const farmerStats = localStorage.getItem(STORAGE_KEYS.FARMER_STATS);
+        const supplierStats = localStorage.getItem(STORAGE_KEYS.SUPPLIER_STATS);
 
-        if (cached[0]) setFarmerProducts(JSON.parse(cached[0]));
-        if (cached[1]) setSupplierProducts(JSON.parse(cached[1]));
-        if (cached[2]) setBuyerProducts(JSON.parse(cached[2]));
-        if (cached[3]) setFarmerBuyerProducts(JSON.parse(cached[3]));
-        if (cached[4]) setFarmerStats(JSON.parse(cached[4]));
-        if (cached[5]) setSupplierStats(JSON.parse(cached[5]));
+        if (farmerProducts) setFarmerProducts(JSON.parse(farmerProducts));
+        if (supplierProducts) setSupplierProducts(JSON.parse(supplierProducts));
+        if (buyerProducts) setBuyerProducts(JSON.parse(buyerProducts));
+        if (farmerBuyerProducts) setFarmerBuyerProducts(JSON.parse(farmerBuyerProducts));
+        if (farmerStats) setFarmerStats(JSON.parse(farmerStats));
+        if (supplierStats) setSupplierStats(JSON.parse(supplierStats));
       } catch (e) {
         console.warn('Failed to load cached product data', e);
       }
     };
-    // loadCachedData();
+    loadCachedData();
   }, []);
 
   // 🔹 Fetch fresh data when user logs in
@@ -141,35 +136,35 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
         if (farmerRes.success) {
           setFarmerProducts(farmerRes.data ?? []);
-          AsyncStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(farmerRes.data ?? []));
+          localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(farmerRes.data ?? []));
         }
 
         if (supplierRes.success) {
           setSupplierProducts(supplierRes.data ?? []);
-          AsyncStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(supplierRes.data ?? []));
+          localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(supplierRes.data ?? []));
         }
 
         if (buyerRes.success) {
           setBuyerProducts(buyerRes.data?.content ?? []);
-          AsyncStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(buyerRes.data?.content ?? []));
+          localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(buyerRes.data?.content ?? []));
         }
 
         if (farmerBuyerRes.success) {
           setFarmerBuyerProducts(farmerBuyerRes.data?.content ?? []);
-          AsyncStorage.setItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS, JSON.stringify(farmerBuyerRes.data?.content ?? []));
+          localStorage.setItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS, JSON.stringify(farmerBuyerRes.data?.content ?? []));
         }
 
         if (farmerStatsRes.success) {
           setFarmerStats(farmerStatsRes.data ?? []);
-          AsyncStorage.setItem(STORAGE_KEYS.FARMER_STATS, JSON.stringify(farmerStatsRes.data ?? []));
+          localStorage.setItem(STORAGE_KEYS.FARMER_STATS, JSON.stringify(farmerStatsRes.data ?? []));
         }
 
         if (supplierStatsRes.success) {
           setSupplierStats(supplierStatsRes.data ?? []);
-          AsyncStorage.setItem(STORAGE_KEYS.SUPPLIER_STATS, JSON.stringify(supplierStatsRes.data ?? []));
+          localStorage.setItem(STORAGE_KEYS.SUPPLIER_STATS, JSON.stringify(supplierStatsRes.data ?? []));
         }
-      } catch (err: any) { 
-        setError(err?.message || 'Failed to fetch products');
+      } catch (err) { 
+        setError(err instanceof Error ? err.message : 'Failed to fetch products');
       } finally {
         setLoading(false);
       }
@@ -181,7 +176,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const addFarmerProduct = (data: FarmerProduct) => {
     setFarmerProducts((prev) => {
       const updated = prev ? [...prev, data] : [data];
-      AsyncStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
   };
@@ -189,7 +184,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const addSupplierProduct = (data: SupplierProduct) => {
     setSupplierProducts((prev) => {
       const updated = prev ? [...prev, data] : [data];
-      AsyncStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
   };
@@ -197,17 +192,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const updateBuyerProduct = (id: string, data: FarmerProduct) => {
     setBuyerProducts((prev) => {
       const updated = prev?.map((p) => (p.id === id ? data : p)) ?? [data];
-      AsyncStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
   };
 
-
-
   const updateFarmerProduct = (id: string, data: FarmerProduct) => {
     setFarmerProducts((prev) => {
       const updated = prev?.map((p) => (p.id === id ? data : p)) ?? [data];
-      AsyncStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
   };
@@ -215,7 +208,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const updateSupplierProduct = (id: string, data: SupplierProduct) => {
     setSupplierProducts((prev) => {
       const updated = prev?.map((p) => (p.id === id ? data : p)) ?? [data];
-      AsyncStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
   };

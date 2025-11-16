@@ -13,7 +13,6 @@ const STORAGE_KEYS = {
 
 export type OrderContextValue = {
     loading: boolean;
-    error: string | null;
     buyerOrders: FarmerOrder[] | null;
     farmerOrders: FarmerOrder[] | null;
     supplierOrders: SupplierOrder[] | null;
@@ -71,7 +70,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const { updateBuyerProduct } = useProduct()
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
 
     const [buyerOrders, setBuyerOrders] = useState<FarmerOrder[] | null>(null);
@@ -87,12 +85,12 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
     // 🔹 Load cached orders on mount
     useEffect(() => {
-        const loadCachedOrders = async () => {
+        const loadCachedOrders = () => {
             try {
-                const cachedBuyer = await localStorage.getItemAsync(STORAGE_KEYS.BUYER);
-                const cachedFarmer = await localStorage.getItemAsync(STORAGE_KEYS.FARMER);
-                const cachedSupplier = await localStorage.getItemAsync(STORAGE_KEYS.SUPPLIER);
-                const cachedFarmerBuyer = await localStorage.getItemAsync(STORAGE_KEYS.FARMER_BUYER);
+                const cachedBuyer = localStorage.getItem(STORAGE_KEYS.BUYER);
+                const cachedFarmer = localStorage.getItem(STORAGE_KEYS.FARMER);
+                const cachedSupplier = localStorage.getItem(STORAGE_KEYS.SUPPLIER);
+                const cachedFarmerBuyer = localStorage.getItem(STORAGE_KEYS.FARMER_BUYER);
 
                 if (cachedBuyer) setBuyerOrders(JSON.parse(cachedBuyer));
                 if (cachedFarmer) setFarmerOrders(JSON.parse(cachedFarmer));
@@ -110,17 +108,14 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const fetchBuyerOrders = async (): Promise<FarmerOrder[] | null> => {
         try {
             setLoading(true);
-            setError(null);
             const res = await orderService.getBuyerOrders();
             if (!res.success) {
-                setError(res.message || 'Failed to fetch orders');
                 return null;
             }
             setBuyerOrders(res.data ?? null);
-            await localStorage.setItemAsync(STORAGE_KEYS.BUYER, JSON.stringify(res.data ?? []));
+            localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(res.data ?? []));
             return res.data ?? null;
         } catch (err) {
-            setError(err?.message || 'Failed to fetch orders');
             return null;
         } finally {
             setLoading(false);
@@ -131,17 +126,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const fetchFarmerOrders = async (): Promise<FarmerOrder[] | null> => {
         try {
             setLoading(true);
-            setError(null);
             const res = await orderService.getFarmerOrders();
             if (!res.success) {
-                setError(res.message || 'Failed to fetch orders');
+                
                 return null;
             }
             setFarmerOrders(res.data ?? null);
-            await localStorage.setItemAsync(STORAGE_KEYS.FARMER, JSON.stringify(res.data ?? []));
+            localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(res.data ?? []));
             return res.data ?? null;
         } catch (err) {
-            setError(err?.message || 'Failed to fetch orders');
             return null;
         } finally {
             setLoading(false);
@@ -152,17 +145,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const fetchSupplierOrders = async (): Promise<SupplierOrder[] | null> => {
         try {
             setLoading(true);
-            setError(null);
             const res = await orderService.getSupplierOrders();
             if (!res.success) {
-                setError(res.message || 'Failed to fetch orders');
+                
                 return null;
             }
             setSupplierOrders(res.data ?? null);
-            await localStorage.setItemAsync(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data ?? []));
+            localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data ?? []));
             return res.data ?? null;
         } catch (err) {
-            setError(err?.message || 'Failed to fetch orders');
             return null;
         } finally {
             setLoading(false);
@@ -173,17 +164,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const fetchFarmerBuyerOrders = async (): Promise<SupplierOrder[] | null> => {
         try {
             setLoading(true);
-            setError(null);
             const res = await orderService.getFarmerBuyerOrders();
             if (!res.success) {
-                setError(res.message || 'Failed to fetch orders');
+                
                 return null;
             }
             setFarmerBuyerOrders(res.data ?? null);
-            await localStorage.setItemAsync(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(res.data ?? []));
+            localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(res.data ?? []));
             return res.data ?? null;
         } catch (err) {
-            setError(err?.message || 'Failed to fetch orders');
             return null;
         } finally {
             setLoading(false);
@@ -193,7 +182,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const addFarmerOrder = (data: FarmerOrder) => {
         setBuyerOrders((prev) => {
             const updated = prev ? [data, ...prev] : [data];
-            localStorage.setItemAsync(STORAGE_KEYS.FARMER, JSON.stringify(updated));
+            localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
             return updated;
         });
         updateBuyerProduct(data.product.id, data.product)
@@ -203,7 +192,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const addFarmerBuyerOrder = (data: SupplierOrder) => {
         setFarmerBuyerOrders((prev) => {
             const updated = prev ? [data, ...prev] : [data];
-            localStorage.setItemAsync(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
+            localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
             return updated;
         });
         setCurrentFarmerBuyerOrder(data);
@@ -212,7 +201,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const editFarmerOrder = (data: FarmerOrder) => {
         setFarmerOrders((prev) => {
             const updated = prev?.map((order) => (order.id === data.id ? data : order)) ?? [data];
-            localStorage.setItemAsync(STORAGE_KEYS.FARMER, JSON.stringify(updated));
+            localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
             return updated;
         });
         setCurrentFarmerOrder(data);
@@ -221,7 +210,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const editSupplierOrder = (data: SupplierOrder) => {
         setSupplierOrders((prev) => {
             const updated = prev?.map((order) => (order.id === data.id ? data : order)) ?? [data];
-            localStorage.setItemAsync(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
+            localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
             return updated;
         });
         setCurrentSupplierOrder(data);
@@ -230,7 +219,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const editFarmerBuyerOrder = (data: SupplierOrder) => {
         setFarmerBuyerOrders((prev) => {
             const updated = prev?.map((order) => (order.id === data.id ? data : order)) ?? [data];
-            localStorage.setItemAsync(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
+            localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
             return updated;
         });
         setCurrentFarmerBuyerOrder(data);
@@ -268,7 +257,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
     const value: OrderContextValue = {
         loading,
-        error,
         buyerOrders,
         farmerOrders,
         supplierOrders,
