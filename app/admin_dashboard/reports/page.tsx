@@ -15,7 +15,7 @@ import {
   Package,
   Filter,
   Search,
-  Eye
+  Eye,
 } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -157,10 +157,11 @@ function ReportsPageComponent() {
   };
 
   const filteredReports = reports.filter(report => {
-    const matchesSearch = report.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         report.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      report.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || report.type === filterType;
-    
+
     return matchesSearch && matchesType;
   });
 
@@ -198,7 +199,10 @@ function ReportsPageComponent() {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/admin_dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/admin_dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ChevronLeft className="w-5 h-5 mr-1" />
                 Back to Dashboard
               </Link>
@@ -240,14 +244,14 @@ function ReportsPageComponent() {
                   type="text"
                   placeholder="Search reports..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
             </div>
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              onChange={e => setFilterType(e.target.value)}
               className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="all">All Types</option>
@@ -294,7 +298,7 @@ function ReportsPageComponent() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredReports.map((report) => (
+                {filteredReports.map(report => (
                   <tr key={report.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
@@ -311,7 +315,9 @@ function ReportsPageComponent() {
                       <span className="capitalize text-sm text-gray-900">{report.type}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getFormatColor(report.format)}`}>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getFormatColor(report.format)}`}
+                      >
                         {report.format}
                       </span>
                     </td>

@@ -12,8 +12,6 @@ import { Loader2, User, Phone, Lock, Smartphone } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 
-
-
 export default function LoginPage() {
   const { login } = useAuth();
   const [phone, setPhone] = useState('');
@@ -32,7 +30,7 @@ export default function LoginPage() {
 
     // Check if user exists in mock data
     const user = login({ email: phone, password });
-console.log(user)
+    console.log(user);
     setIsLoading(false);
   };
 

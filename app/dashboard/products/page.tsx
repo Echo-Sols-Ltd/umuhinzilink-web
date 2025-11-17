@@ -20,25 +20,27 @@ import { useState } from 'react';
 
 export default function ProductsPage() {
   const { user } = useAuth();
-  const { 
-    farmerProducts, 
-    supplierProducts, 
-    loading, 
+  const {
+    farmerProducts,
+    supplierProducts,
+    loading,
     error,
     setEditFarmerProduct,
-    setEditSupplierProduct 
+    setEditSupplierProduct,
   } = useProduct();
   const { deleteFarmerProduct, deleteSupplierProduct } = useProductAction();
   const [searchTerm, setSearchTerm] = useState('');
 
   // Determine which products to show based on user role
   const products = user?.role === 'FARMER' ? farmerProducts : supplierProducts;
-  
+
   // Filter products based on search term
-  const filteredProducts = products?.filter(product => 
-    product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredProducts =
+    products?.filter(
+      product =>
+        product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
 
   if (loading) {
     return (
@@ -72,7 +74,8 @@ export default function ProductsPage() {
             My {user?.role === 'FARMER' ? 'Produce' : 'Products'}
           </h1>
           <p className="text-muted-foreground">
-            Manage your {user?.role === 'FARMER' ? 'farm produce' : 'supplier products'} and connect with buyers
+            Manage your {user?.role === 'FARMER' ? 'farm produce' : 'supplier products'} and connect
+            with buyers
           </p>
         </div>
         <Button className="bg-green-600 hover:bg-green-700 text-white">
@@ -82,11 +85,11 @@ export default function ProductsPage() {
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <Input 
-          placeholder="Search your produce..." 
-          className="max-w-sm" 
+        <Input
+          placeholder="Search your produce..."
+          className="max-w-sm"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => setSearchTerm(e.target.value)}
         />
         <Select>
           <SelectTrigger className="w-[180px]">
@@ -122,73 +125,77 @@ export default function ProductsPage() {
           </div>
         ) : (
           filteredProducts.map(product => (
-          <Card key={product.id} className="overflow-hidden">
-            <div className="relative">
-              <img
-                src={product.image || '/placeholder.svg'}
-                alt={product.name}
-                className="w-full h-48 object-cover"
-              />
-              <Badge className="absolute top-2 right-2 bg-green-600 text-white">Available</Badge>
-            </div>
-            <CardContent className="p-4 space-y-3">
-              <h3 className="font-semibold text-lg">{product.name}</h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex justify-between">
-                  <span>Quantity:</span>
-                  <span className="font-medium text-foreground">{product.quantity || 'N/A'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Price:</span>
-                  <span className="font-medium text-foreground">{product.unitPrice ? `${product.unitPrice} RWF` : 'N/A'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Status:</span>
-                  <span className="font-medium text-foreground">{product.productStatus || 'Available'}</span>
-                </div>
+            <Card key={product.id} className="overflow-hidden">
+              <div className="relative">
+                <img
+                  src={product.image || '/placeholder.svg'}
+                  alt={product.name}
+                  className="w-full h-48 object-cover"
+                />
+                <Badge className="absolute top-2 right-2 bg-green-600 text-white">Available</Badge>
               </div>
-              <div className="flex gap-2 pt-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1 bg-transparent"
-                  onClick={() => {
-                    if (user?.role === 'FARMER') {
-                      setEditFarmerProduct(product as FarmerProduct);
-                    } else {
-                      setEditSupplierProduct(product as SupplierProduct);
-                    }
-                  }}
-                >
-                  <Edit className="h-4 w-4 mr-1" />
-                  Edit
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300"
-                >
-                  <Check className="h-4 w-4 mr-1" />
-                  Sold
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-red-600 hover:bg-red-50 dark:hover:bg-red-950 bg-transparent"
-                  onClick={() => {
-                    if (user?.role === 'FARMER') {
-                      deleteFarmerProduct(product.id);
-                    } else {
-                      deleteSupplierProduct(product.id);
-                    }
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))
+              <CardContent className="p-4 space-y-3">
+                <h3 className="font-semibold text-lg">{product.name}</h3>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex justify-between">
+                    <span>Quantity:</span>
+                    <span className="font-medium text-foreground">{product.quantity || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Price:</span>
+                    <span className="font-medium text-foreground">
+                      {product.unitPrice ? `${product.unitPrice} RWF` : 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Status:</span>
+                    <span className="font-medium text-foreground">
+                      {product.productStatus || 'Available'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 bg-transparent"
+                    onClick={() => {
+                      if (user?.role === 'FARMER') {
+                        setEditFarmerProduct(product as FarmerProduct);
+                      } else {
+                        setEditSupplierProduct(product as SupplierProduct);
+                      }
+                    }}
+                  >
+                    <Edit className="h-4 w-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300"
+                  >
+                    <Check className="h-4 w-4 mr-1" />
+                    Sold
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:bg-red-50 dark:hover:bg-red-950 bg-transparent"
+                    onClick={() => {
+                      if (user?.role === 'FARMER') {
+                        deleteFarmerProduct(product.id);
+                      } else {
+                        deleteSupplierProduct(product.id);
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
         )}
       </div>
 

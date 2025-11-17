@@ -14,7 +14,7 @@ import {
   Menu,
   X,
   Eye,
-  Trash2
+  Trash2,
 } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -187,17 +187,20 @@ function OrderManagement() {
   };
 
   const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch = transaction.senderName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.receiverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.senderType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.receiverType.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      transaction.senderName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.receiverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.senderType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.receiverType.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
 
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar - Green */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-green-600 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+      <div
+        className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-green-600 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+      >
         <div className="flex items-center justify-between h-16 px-6">
           <div className="flex items-center space-x-2">
             <span className="font-bold text-xl text-white">UmuhiniLink</span>
@@ -208,7 +211,7 @@ function OrderManagement() {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {MENU_ITEMS.map((item) => {
+          {MENU_ITEMS.map(item => {
             const isActive = item.label === 'Payments';
             const Icon = item.icon;
 
@@ -217,9 +220,7 @@ function OrderManagement() {
                 key={item.label}
                 href={item.href}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-white text-green-600'
-                    : 'text-white hover:bg-green-700'
+                  isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -227,10 +228,10 @@ function OrderManagement() {
               </Link>
             );
           })}
-          
+
           <div className="border-t border-green-500 my-4"></div>
-          
-          {MENU_ITEMS_BOTTOM.map((item) => {
+
+          {MENU_ITEMS_BOTTOM.map(item => {
             const Icon = item.icon;
             return (
               <Link
@@ -250,10 +251,7 @@ function OrderManagement() {
       <div className="flex-1 flex flex-col">
         {/* Header - White with Search */}
         <header className="bg-white border-b h-16 flex items-center px-6">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden mr-4"
-          >
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
             <Menu className="w-6 h-6" />
           </button>
           <div className="relative flex-1 max-w-md">
@@ -262,7 +260,7 @@ function OrderManagement() {
               type="text"
               placeholder="Search here..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
@@ -279,25 +277,51 @@ function OrderManagement() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sender</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Receiver</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">STATUS</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ACTION</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Sender
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Receiver
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      STATUS
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ACTION
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredTransactions.map((transaction) => (
+                  {filteredTransactions.map(transaction => (
                     <tr key={transaction.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.senderType}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{transaction.senderName}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.receiverType}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.receiverName}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.date}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {transaction.senderType}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {transaction.senderName}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {transaction.receiverType}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {transaction.receiverName}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {transaction.date}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(transaction.status)}`}>
+                        <span
+                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(transaction.status)}`}
+                        >
                           {transaction.status}
                         </span>
                       </td>

@@ -18,7 +18,7 @@ import {
   ToggleRight,
   CheckCircle,
   AlertTriangle,
-  Info
+  Info,
 } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -129,12 +129,12 @@ function SystemSettingsPage() {
 
   const handleSave = async () => {
     setSaveStatus('saving');
-    
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       setSaveStatus('success');
-      
+
       // Reset status after 3 seconds
       setTimeout(() => setSaveStatus('idle'), 3000);
     } catch (error) {
@@ -150,7 +150,10 @@ function SystemSettingsPage() {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/admin_dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/admin_dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ChevronLeft className="w-5 h-5 mr-1" />
                 Back to Dashboard
               </Link>
@@ -195,13 +198,11 @@ function SystemSettingsPage() {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Site Name
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
                   <input
                     type="text"
                     value={settings.siteName}
-                    onChange={(e) => handleToggle('siteName', e.target.value)}
+                    onChange={e => handleToggle('siteName', e.target.value)}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -211,19 +212,17 @@ function SystemSettingsPage() {
                   </label>
                   <textarea
                     value={settings.siteDescription}
-                    onChange={(e) => handleToggle('siteDescription', e.target.value)}
+                    onChange={e => handleToggle('siteDescription', e.target.value)}
                     rows={3}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Currency
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
                     <select
                       value={settings.currency}
-                      onChange={(e) => handleToggle('currency', e.target.value)}
+                      onChange={e => handleToggle('currency', e.target.value)}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="RWF">RWF - Rwandan Franc</option>
@@ -232,12 +231,10 @@ function SystemSettingsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Timezone
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
                     <select
                       value={settings.timezone}
-                      onChange={(e) => handleToggle('timezone', e.target.value)}
+                      onChange={e => handleToggle('timezone', e.target.value)}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="Africa/Kigali">Africa/Kigali</option>
@@ -245,12 +242,10 @@ function SystemSettingsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Language
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
                     <select
                       value={settings.language}
-                      onChange={(e) => handleToggle('language', e.target.value)}
+                      onChange={e => handleToggle('language', e.target.value)}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="en">English</option>
@@ -276,7 +271,7 @@ function SystemSettingsPage() {
                   <input
                     type="email"
                     value={settings.contactEmail}
-                    onChange={(e) => handleToggle('contactEmail', e.target.value)}
+                    onChange={e => handleToggle('contactEmail', e.target.value)}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -287,7 +282,7 @@ function SystemSettingsPage() {
                   <input
                     type="tel"
                     value={settings.supportPhone}
-                    onChange={(e) => handleToggle('supportPhone', e.target.value)}
+                    onChange={e => handleToggle('supportPhone', e.target.value)}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -336,7 +331,9 @@ function SystemSettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium text-gray-900">Auto-approve Products</p>
-                    <p className="text-sm text-gray-500">Automatically approve new product listings</p>
+                    <p className="text-sm text-gray-500">
+                      Automatically approve new product listings
+                    </p>
                   </div>
                   <button
                     onClick={() => handleToggle('autoApproveProducts')}
@@ -352,7 +349,9 @@ function SystemSettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium text-gray-900">Email Verification</p>
-                    <p className="text-sm text-gray-500">Require email verification for new accounts</p>
+                    <p className="text-sm text-gray-500">
+                      Require email verification for new accounts
+                    </p>
                   </div>
                   <button
                     onClick={() => handleToggle('requireEmailVerification')}
@@ -381,7 +380,11 @@ function SystemSettingsPage() {
                     <p className="text-sm text-gray-500">MTN, Airtel Money</p>
                   </div>
                   <button
-                    onClick={() => handleToggle('paymentMethods', { mobileMoney: !settings.paymentMethods.mobileMoney })}
+                    onClick={() =>
+                      handleToggle('paymentMethods', {
+                        mobileMoney: !settings.paymentMethods.mobileMoney,
+                      })
+                    }
                     className="text-gray-400 hover:text-gray-600"
                   >
                     {settings.paymentMethods.mobileMoney ? (
@@ -397,7 +400,11 @@ function SystemSettingsPage() {
                     <p className="text-sm text-gray-500">Direct bank transfers</p>
                   </div>
                   <button
-                    onClick={() => handleToggle('paymentMethods', { bankTransfer: !settings.paymentMethods.bankTransfer })}
+                    onClick={() =>
+                      handleToggle('paymentMethods', {
+                        bankTransfer: !settings.paymentMethods.bankTransfer,
+                      })
+                    }
                     className="text-gray-400 hover:text-gray-600"
                   >
                     {settings.paymentMethods.bankTransfer ? (
@@ -413,7 +420,11 @@ function SystemSettingsPage() {
                     <p className="text-sm text-gray-500">Pay when receiving</p>
                   </div>
                   <button
-                    onClick={() => handleToggle('paymentMethods', { cashOnDelivery: !settings.paymentMethods.cashOnDelivery })}
+                    onClick={() =>
+                      handleToggle('paymentMethods', {
+                        cashOnDelivery: !settings.paymentMethods.cashOnDelivery,
+                      })
+                    }
                     className="text-gray-400 hover:text-gray-600"
                   >
                     {settings.paymentMethods.cashOnDelivery ? (
@@ -429,7 +440,11 @@ function SystemSettingsPage() {
                     <p className="text-sm text-gray-500">Visa, Mastercard</p>
                   </div>
                   <button
-                    onClick={() => handleToggle('paymentMethods', { creditCard: !settings.paymentMethods.creditCard })}
+                    onClick={() =>
+                      handleToggle('paymentMethods', {
+                        creditCard: !settings.paymentMethods.creditCard,
+                      })
+                    }
                     className="text-gray-400 hover:text-gray-600"
                   >
                     {settings.paymentMethods.creditCard ? (
@@ -486,7 +501,7 @@ function SystemSettingsPage() {
                     max="100"
                     step="0.1"
                     value={settings.commissionRate}
-                    onChange={(e) => handleToggle('commissionRate', parseFloat(e.target.value))}
+                    onChange={e => handleToggle('commissionRate', parseFloat(e.target.value))}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -514,7 +529,7 @@ function SystemSettingsPage() {
                     min="1"
                     max="100"
                     value={settings.maxFileSize}
-                    onChange={(e) => handleToggle('maxFileSize', parseInt(e.target.value))}
+                    onChange={e => handleToggle('maxFileSize', parseInt(e.target.value))}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -534,7 +549,7 @@ function SystemSettingsPage() {
                     min="1"
                     max="168"
                     value={settings.sessionTimeout}
-                    onChange={(e) => handleToggle('sessionTimeout', parseInt(e.target.value))}
+                    onChange={e => handleToggle('sessionTimeout', parseInt(e.target.value))}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>

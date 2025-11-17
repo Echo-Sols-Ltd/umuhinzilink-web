@@ -97,7 +97,7 @@ export default function FarmerOrdersPage() {
   const handleLogout = async () => {
     if (logoutPending) return;
     setLogoutPending(true);
-    
+
     try {
       await logout();
       router.push('/auth/signin');
@@ -152,7 +152,9 @@ export default function FarmerOrdersPage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                        isActive ? 'bg-white text-green-600 shadow-sm' : 'text-white hover:bg-green-700'
+                        isActive
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                       }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -180,7 +182,11 @@ export default function FarmerOrdersPage() {
 
         <div className="p-6 space-y-6">
           <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <SummaryCard title="Total orders" value={formatNumber(metrics.total)} caption="All time" />
+            <SummaryCard
+              title="Total orders"
+              value={formatNumber(metrics.total)}
+              caption="All time"
+            />
             <SummaryCard
               title="Revenue"
               value={`RWF ${formatNumber(metrics.totalRevenue)}`}
@@ -234,15 +240,29 @@ export default function FarmerOrdersPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Order ID</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Order ID
+                    </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Buyer</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Address</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Address
+                    </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Date</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Product</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Quantity</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Amount</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Status</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Action</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Product
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Quantity
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Amount
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -271,27 +291,39 @@ export default function FarmerOrdersPage() {
                       const buyerAddress = order.buyer?.address
                         ? `${order.buyer.address.district || ''}${order.buyer.address.province ? `, ${order.buyer.address.province}` : ''}`.trim()
                         : '—';
-                      const quantity = Number(order.quantity) || Number(order.product?.quantity) || 0;
-                      const amount = Number(order.totalPrice) ||
+                      const quantity =
+                        Number(order.quantity) || Number(order.product?.quantity) || 0;
+                      const amount =
+                        Number(order.totalPrice) ||
                         (Number(order.product?.unitPrice) || 0) * quantity;
 
                       return (
                         <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="py-4 px-4 text-sm font-medium text-gray-900">#{order.id}</td>
+                          <td className="py-4 px-4 text-sm font-medium text-gray-900">
+                            #{order.id}
+                          </td>
                           <td className="py-4 px-4 text-sm text-gray-900">
                             {order.buyer?.names || order.buyer?.email || 'Unknown buyer'}
                           </td>
                           <td className="py-4 px-4 text-sm text-gray-600">{buyerAddress || '—'}</td>
-                          <td className="py-4 px-4 text-sm text-gray-600">{formatDate(order.createdAt)}</td>
-                          <td className="py-4 px-4 text-sm text-gray-900">{order.product?.name || '—'}</td>
                           <td className="py-4 px-4 text-sm text-gray-600">
-                            {quantity ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}` : '—'}
+                            {formatDate(order.createdAt)}
+                          </td>
+                          <td className="py-4 px-4 text-sm text-gray-900">
+                            {order.product?.name || '—'}
+                          </td>
+                          <td className="py-4 px-4 text-sm text-gray-600">
+                            {quantity
+                              ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}`
+                              : '—'}
                           </td>
                           <td className="py-4 px-4 text-sm text-gray-900">
                             RWF {formatNumber(amount)}
                           </td>
                           <td className="py-4 px-4">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusMeta.badge}`}>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${statusMeta.badge}`}
+                            >
                               {statusMeta.label}
                             </span>
                           </td>

@@ -17,7 +17,7 @@ export function RoleBasedDashboard({ children }: RoleBasedDashboardProps) {
     if (!loading && user) {
       // Route users to their appropriate dashboard based on role
       const currentPath = window.location.pathname;
-      
+
       // If user is on generic /dashboard, redirect to role-specific dashboard
       if (currentPath === '/dashboard') {
         switch (user.role) {

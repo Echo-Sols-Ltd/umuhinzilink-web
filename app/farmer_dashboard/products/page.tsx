@@ -23,7 +23,6 @@ import {
   Plus,
 } from 'lucide-react';
 
-
 type MenuItem = {
   label: string;
   href: string;
@@ -66,7 +65,9 @@ export default function FarmerProductsPage() {
     let filtered = [...products];
 
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(product => (product.productStatus || '').toLowerCase() === statusFilter);
+      filtered = filtered.filter(
+        product => (product.productStatus || '').toLowerCase() === statusFilter
+      );
     }
 
     if (searchTerm.trim()) {
@@ -101,7 +102,7 @@ export default function FarmerProductsPage() {
   const handleLogout = async () => {
     if (logoutPending) return;
     setLogoutPending(true);
-    
+
     try {
       await logout();
       router.push('/auth/signin');
@@ -156,7 +157,9 @@ export default function FarmerProductsPage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                        isActive ? 'bg-white text-green-600 shadow-sm' : 'text-white hover:bg-green-700'
+                        isActive
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                       }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -187,7 +190,11 @@ export default function FarmerProductsPage() {
 
         <div className="p-6 space-y-6">
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <SummaryCard title="Total Products" value={formatNumber(totalProducts)} caption="Listings overall" />
+            <SummaryCard
+              title="Total Products"
+              value={formatNumber(totalProducts)}
+              caption="Listings overall"
+            />
             <SummaryCard
               title="Active"
               value={formatNumber(activeProducts)}
@@ -267,17 +274,26 @@ export default function FarmerProductsPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map(product => (
-                  <article key={product.id} className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+                  <article
+                    key={product.id}
+                    className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden"
+                  >
                     <div className="aspect-4/3 bg-gray-50 flex items-center justify-center">
                       {product.image ? (
-                        <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="text-xs text-gray-400">No image provided</div>
                       )}
                     </div>
                     <div className="p-4 space-y-3">
                       <header>
-                        <h3 className="text-lg font-semibold text-gray-900">{product.name || 'Unnamed product'}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {product.name || 'Unnamed product'}
+                        </h3>
                         <p className="text-xs uppercase tracking-wide text-gray-400">
                           {product.category || 'Uncategorized'}
                         </p>

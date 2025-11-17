@@ -18,7 +18,7 @@ import {
   User,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
 } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -91,7 +91,7 @@ function ProductManagement() {
         category: 'Vegetables',
         farmer: 'John Farmer',
         farmerEmail: 'john@farm.com',
-        price: 2.50,
+        price: 2.5,
         quantity: 500,
         unit: 'kg',
         status: 'active',
@@ -108,7 +108,7 @@ function ProductManagement() {
         category: 'Vegetables',
         farmer: 'Jane Farmer',
         farmerEmail: 'jane@farm.com',
-        price: 3.00,
+        price: 3.0,
         quantity: 0,
         unit: 'kg',
         status: 'out_of_stock',
@@ -125,7 +125,7 @@ function ProductManagement() {
         category: 'Vegetables',
         farmer: 'John Farmer',
         farmerEmail: 'john@farm.com',
-        price: 1.80,
+        price: 1.8,
         quantity: 200,
         unit: 'kg',
         status: 'pending',
@@ -169,12 +169,13 @@ function ProductManagement() {
   };
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.farmer.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.farmer.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === 'all' || product.category === filterCategory;
     const matchesStatus = filterStatus === 'all' || product.status === filterStatus;
-    
+
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
@@ -185,7 +186,10 @@ function ProductManagement() {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/admin_dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/admin_dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ChevronLeft className="w-5 h-5 mr-1" />
                 Back to Dashboard
               </Link>
@@ -264,14 +268,14 @@ function ProductManagement() {
                   type="text"
                   placeholder="Search products..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
             </div>
             <select
               value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
+              onChange={e => setFilterCategory(e.target.value)}
               className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="all">All Categories</option>
@@ -283,7 +287,7 @@ function ProductManagement() {
             </select>
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={e => setFilterStatus(e.target.value)}
               className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="all">All Status</option>
@@ -297,35 +301,44 @@ function ProductManagement() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+          {filteredProducts.map(product => (
+            <div
+              key={product.id}
+              className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+            >
               {/* Product Image */}
               <div className="h-48 bg-gray-200 flex items-center justify-center">
                 <Image className="w-12 h-12 text-gray-400" />
               </div>
-              
+
               {/* Product Info */}
               <div className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-semibold text-gray-900 text-sm">{product.name}</h3>
                   <div className="flex items-center space-x-1">
                     {getStatusIcon(product.status)}
-                    <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(product.status)}`}>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${getStatusColor(product.status)}`}
+                    >
                       {product.status}
                     </span>
                   </div>
                 </div>
-                
+
                 <p className="text-gray-600 text-xs mb-3 line-clamp-2">{product.description}</p>
-                
+
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Price:</span>
-                    <span className="font-medium">${product.price}/{product.unit}</span>
+                    <span className="font-medium">
+                      ${product.price}/{product.unit}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Quantity:</span>
-                    <span className="font-medium">{product.quantity} {product.unit}</span>
+                    <span className="font-medium">
+                      {product.quantity} {product.unit}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Category:</span>
@@ -344,7 +357,7 @@ function ProductManagement() {
                     <span className="font-medium">{product.orders}</span>
                   </div>
                 </div>
-                
+
                 <div className="mt-4 pt-3 border-t flex items-center justify-between">
                   <span className="text-xs text-gray-500">Listed: {product.listedDate}</span>
                   <div className="flex items-center space-x-2">

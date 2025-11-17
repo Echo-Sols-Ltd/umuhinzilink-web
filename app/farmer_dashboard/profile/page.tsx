@@ -90,7 +90,7 @@ export default function FarmerProfilePage() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        // DISABLED: const response = // DISABLED: await fetch('/api/farmers/profile', {
+        const response = await fetch('/api/farmers/profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const body = await response.json().catch(() => null);
@@ -141,7 +141,7 @@ export default function FarmerProfilePage() {
 
     try {
       if (token) {
-        // DISABLED: const response = // DISABLED: await fetch('/api/auth/logout', {
+        const response = await fetch('/api/auth/logout', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -149,8 +149,7 @@ export default function FarmerProfilePage() {
 
         if (!response.ok) {
           const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
+            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
           throw new Error(message);
         }
       }
@@ -161,7 +160,8 @@ export default function FarmerProfilePage() {
       });
     } catch (err) {
       console.error('Error during logout:', err);
-      const message = err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
+      const message =
+        err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
       toast({
         title: 'Logout Issue',
         description: message,
@@ -219,7 +219,9 @@ export default function FarmerProfilePage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                        isActive ? 'bg-white text-green-600 shadow-sm' : 'text-white hover:bg-green-700'
+                        isActive
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                       }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -275,8 +277,16 @@ export default function FarmerProfilePage() {
 
               <div className="space-y-6">
                 <Section title="Personal Information">
-                  <Field label="First Name" value={firstName} icon={<User className="w-4 h-4 text-gray-500" />} />
-                  <Field label="Last Name" value={lastName || '—'} icon={<User className="w-4 h-4 text-gray-500" />} />
+                  <Field
+                    label="First Name"
+                    value={firstName}
+                    icon={<User className="w-4 h-4 text-gray-500" />}
+                  />
+                  <Field
+                    label="Last Name"
+                    value={lastName || '—'}
+                    icon={<User className="w-4 h-4 text-gray-500" />}
+                  />
                 </Section>
 
                 <Section title="Contact Information">
@@ -285,7 +295,11 @@ export default function FarmerProfilePage() {
                     value={profile.phoneNumber || '—'}
                     icon={<Phone className="w-4 h-4 text-gray-500" />}
                   />
-                  <Field label="Email" value={profile.email || '—'} icon={<Mail className="w-4 h-4 text-gray-500" />} />
+                  <Field
+                    label="Email"
+                    value={profile.email || '—'}
+                    icon={<Mail className="w-4 h-4 text-gray-500" />}
+                  />
                 </Section>
 
                 <Section title="Address">
@@ -338,15 +352,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function Field({
-  label,
-  value,
-  icon,
-}: {
-  label: string;
-  value: string;
-  icon?: React.ReactNode;
-}) {
+function Field({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
   const content = value ? (
     <span>{value}</span>
   ) : (

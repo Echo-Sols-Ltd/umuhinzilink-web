@@ -31,7 +31,7 @@ export default function AuthGuard({
 
     // Check if user is authenticated via auth token
     const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-    
+
     if (!authToken || !user) {
       console.log('User not authenticated, redirecting to signin');
       router.replace(redirectTo);

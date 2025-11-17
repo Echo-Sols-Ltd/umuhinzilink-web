@@ -27,7 +27,13 @@ export class UserService {
     cancelToken?: CancelToken,
     timeout: number = 60000
   ): Promise<ApiResponse<string>> {
-    return await apiClient.uploadFile<string>(API_ENDPOINTS.FILES.UPLOAD_AVATAR, file, onUploadProgress, cancelToken, timeout);
+    return await apiClient.uploadFile<string>(
+      API_ENDPOINTS.FILES.UPLOAD_AVATAR,
+      file,
+      onUploadProgress,
+      cancelToken,
+      timeout
+    );
   }
 }
 

@@ -2,7 +2,6 @@ import axios, { AxiosInstance, AxiosResponse, AxiosProgressEvent, CancelToken } 
 import { API_CONFIG, HTTP_STATUS } from './constants';
 import { ApiResponse } from '@/types';
 
-
 class ApiClient {
   private axiosInstance: AxiosInstance;
 
@@ -20,10 +19,10 @@ class ApiClient {
 
     // Request interceptor to add auth token
     this.axiosInstance.interceptors.request.use(
-      async (config) => {
+      async config => {
         try {
           const token = this.getAuthToken();
-          console.log(token)
+          console.log(token);
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }
@@ -32,7 +31,7 @@ class ApiClient {
           return Promise.reject(error);
         }
       },
-      (error) => {
+      error => {
         return Promise.reject(error);
       }
     );
@@ -40,7 +39,7 @@ class ApiClient {
     // Response interceptor to handle errors
     this.axiosInstance.interceptors.response.use(
       (response: AxiosResponse) => response,
-      async (error) => {
+      async error => {
         const originalRequest = error.config;
         // Initialize retry count per request
         if (!originalRequest._retryCount) {
@@ -58,10 +57,14 @@ class ApiClient {
             }
 
             // Retry only server-side errors (5xx)
-            if (status >= 500 && status < 600 && originalRequest._retryCount < this.maxRefreshAttempts) {
+            if (
+              status >= 500 &&
+              status < 600 &&
+              originalRequest._retryCount < this.maxRefreshAttempts
+            ) {
               originalRequest._retryCount++;
               const delay = 1000 * originalRequest._retryCount; // 1s, 2s, 3s backoff
-              await new Promise((res) => setTimeout(res, delay));
+              await new Promise(res => setTimeout(res, delay));
               return this.axiosInstance(originalRequest);
             }
 
@@ -73,7 +76,7 @@ class ApiClient {
             if (originalRequest._retryCount < this.maxRefreshAttempts) {
               originalRequest._retryCount++;
               const delay = 1000 * originalRequest._retryCount;
-              await new Promise((res) => setTimeout(res, delay));
+              await new Promise(res => setTimeout(res, delay));
               return this.axiosInstance(originalRequest);
             }
             throw new Error('Network error after multiple retries');
@@ -85,12 +88,11 @@ class ApiClient {
         }
       }
     );
-
   }
 
-  private  getAuthToken() {
-    try { 
-      return localStorage.getItem('auth_token')
+  private getAuthToken() {
+    try {
+      return localStorage.getItem('auth_token');
     } catch {
       this.logout();
       return null;
@@ -129,22 +131,18 @@ class ApiClient {
 
   public async logout() {
     try {
-
-      await localStorage.removeItemAsync('auth_token')
-      await localStorage.removeItemAsync('user')
-      await localStorage.removeItemAsync('farmer')
-      await localStorage.removeItemAsync('supplier')
-      await localStorage.removeItemAsync('buyer')
-      await localStorage.clear()
-
-
+      await localStorage.removeItemAsync('auth_token');
+      await localStorage.removeItemAsync('user');
+      await localStorage.removeItemAsync('farmer');
+      await localStorage.removeItemAsync('supplier');
+      await localStorage.removeItemAsync('buyer');
+      await localStorage.clear();
     } catch {
     } finally {
-      this.logoutListeners.forEach((callback) => {
+      this.logoutListeners.forEach(callback => {
         try {
           callback();
-        } catch {
-        }
+        } catch {}
       });
     }
   }
@@ -152,15 +150,13 @@ class ApiClient {
   public onLogout(callback: () => void) {
     try {
       this.logoutListeners.push(callback);
-    } catch {
-    }
+    } catch {}
   }
 
   public removeLogoutListener(callback: () => void) {
     try {
       this.logoutListeners = this.logoutListeners.filter(cb => cb !== callback);
-    } catch {
-    }
+    } catch {}
   }
 
   async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
@@ -177,7 +173,6 @@ class ApiClient {
       const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, data);
       return response.data;
     } catch (error) {
-
       throw error;
     }
   }
@@ -218,19 +213,19 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     try {
       // extract filename from uri
-      const filename = fileUri.split("/").pop() ?? "upload.jpg";
+      const filename = fileUri.split('/').pop() ?? 'upload.jpg';
 
       // detect file extension
-      const ext = filename.split(".").pop()?.toLowerCase();
+      const ext = filename.split('.').pop()?.toLowerCase();
 
       // basic mime detection
-      let type = "image/jpeg";
-      if (ext === "png") type = "image/png";
-      else if (ext === "jpg" || ext === "jpeg") type = "image/jpeg";
-      else if (ext === "gif") type = "image/gif";
+      let type = 'image/jpeg';
+      if (ext === 'png') type = 'image/png';
+      else if (ext === 'jpg' || ext === 'jpeg') type = 'image/jpeg';
+      else if (ext === 'gif') type = 'image/gif';
 
       const formData = new FormData();
-      formData.append("file", {
+      formData.append('file', {
         uri: fileUri,
         type,
         name: filename,
@@ -238,7 +233,7 @@ class ApiClient {
 
       const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
         onUploadProgress,
         cancelToken,
@@ -250,7 +245,6 @@ class ApiClient {
       throw error;
     }
   }
-
 }
 
 export const apiClient = new ApiClient();

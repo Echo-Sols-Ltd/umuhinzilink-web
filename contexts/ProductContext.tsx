@@ -33,7 +33,7 @@ type ProductContextValue = {
   supplierStats: SupplierProductionStat[] | null;
   currentFarmerProduct: FarmerProduct | null;
   currentSupplierProduct: SupplierProduct | null;
-  currentFarmerBuyerProduct: SupplierProduct | null; 
+  currentFarmerBuyerProduct: SupplierProduct | null;
   currentBuyerProduct: FarmerProduct | null;
   editFarmerProduct: FarmerProduct | null;
   editSupplierProduct: SupplierProduct | null;
@@ -79,12 +79,17 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [supplierStats, setSupplierStats] = useState<SupplierProductionStat[] | null>([]);
 
   const [currentFarmerProduct, setCurrentFarmerProduct] = useState<FarmerProduct | null>(null);
-  const [currentSupplierProduct, setCurrentSupplierProduct] = useState<SupplierProduct | null>(null);
-  const [currentFarmerBuyerProduct, setCurrentFarmerBuyerProduct] = useState<SupplierProduct | null>(null);
+  const [currentSupplierProduct, setCurrentSupplierProduct] = useState<SupplierProduct | null>(
+    null
+  );
+  const [currentFarmerBuyerProduct, setCurrentFarmerBuyerProduct] =
+    useState<SupplierProduct | null>(null);
   const [currentBuyerProduct, setCurrentBuyerProduct] = useState<FarmerProduct | null>(null);
   const [editFarmerProduct, setEditFarmerProduct] = useState<FarmerProduct | null>(null);
   const [editSupplierProduct, setEditSupplierProduct] = useState<SupplierProduct | null>(null);
-  const [editFarmerBuyerProduct, setEditFarmerBuyerProduct] = useState<SupplierProduct | null>(null);
+  const [editFarmerBuyerProduct, setEditFarmerBuyerProduct] = useState<SupplierProduct | null>(
+    null
+  );
   const [editBuyerProduct, setEditBuyerProduct] = useState<FarmerProduct | null>(null);
 
   // 🔹 Load cached data
@@ -118,21 +123,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      const [
-        farmerRes,
-        supplierRes,
-        buyerRes,
-        farmerBuyerRes,
-        farmerStatsRes,
-        supplierStatsRes,
-      ] = await Promise.all([
-        productService.getProductsByFarmer(),
-        productService.getProductsBySupplier(),
-        productService.getBuyerProducts(),
-        productService.getFarmerBuyerProducts(),
-        productService.getFarmerStats(),
-        productService.getSupplierStats(),
-      ]);
+      const [farmerRes, supplierRes, buyerRes, farmerBuyerRes, farmerStatsRes, supplierStatsRes] =
+        await Promise.all([
+          productService.getProductsByFarmer(),
+          productService.getProductsBySupplier(),
+          productService.getBuyerProducts(),
+          productService.getFarmerBuyerProducts(),
+          productService.getFarmerStats(),
+          productService.getSupplierStats(),
+        ]);
 
       if (farmerRes.success) {
         setFarmerProducts(farmerRes.data ?? []);
@@ -141,17 +140,26 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
       if (supplierRes.success) {
         setSupplierProducts(supplierRes.data ?? []);
-        localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(supplierRes.data ?? []));
+        localStorage.setItem(
+          STORAGE_KEYS.SUPPLIER_PRODUCTS,
+          JSON.stringify(supplierRes.data ?? [])
+        );
       }
 
       if (buyerRes.success) {
         setBuyerProducts(buyerRes.data?.content ?? []);
-        localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(buyerRes.data?.content ?? []));
+        localStorage.setItem(
+          STORAGE_KEYS.BUYER_PRODUCTS,
+          JSON.stringify(buyerRes.data?.content ?? [])
+        );
       }
 
       if (farmerBuyerRes.success) {
         setFarmerBuyerProducts(farmerBuyerRes.data?.content ?? []);
-        localStorage.setItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS, JSON.stringify(farmerBuyerRes.data?.content ?? []));
+        localStorage.setItem(
+          STORAGE_KEYS.FARMER_BUYER_PRODUCTS,
+          JSON.stringify(farmerBuyerRes.data?.content ?? [])
+        );
       }
 
       if (farmerStatsRes.success) {
@@ -161,9 +169,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
       if (supplierStatsRes.success) {
         setSupplierStats(supplierStatsRes.data ?? []);
-        localStorage.setItem(STORAGE_KEYS.SUPPLIER_STATS, JSON.stringify(supplierStatsRes.data ?? []));
+        localStorage.setItem(
+          STORAGE_KEYS.SUPPLIER_STATS,
+          JSON.stringify(supplierStatsRes.data ?? [])
+        );
       }
-    } catch (err) { 
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch products');
     } finally {
       setLoading(false);
@@ -171,7 +182,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   };
 
   const addFarmerProduct = (data: FarmerProduct) => {
-    setFarmerProducts((prev) => {
+    setFarmerProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
       return updated;
@@ -179,7 +190,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   };
 
   const addSupplierProduct = (data: SupplierProduct) => {
-    setSupplierProducts((prev) => {
+    setSupplierProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
       localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
       return updated;
@@ -187,24 +198,24 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   };
 
   const updateBuyerProduct = (id: string, data: FarmerProduct) => {
-    setBuyerProducts((prev) => {
-      const updated = prev?.map((p) => (p.id === id ? data : p)) ?? [data];
+    setBuyerProducts(prev => {
+      const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
   };
 
   const updateFarmerProduct = (id: string, data: FarmerProduct) => {
-    setFarmerProducts((prev) => {
-      const updated = prev?.map((p) => (p.id === id ? data : p)) ?? [data];
+    setFarmerProducts(prev => {
+      const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
   };
 
   const updateSupplierProduct = (id: string, data: SupplierProduct) => {
-    setSupplierProducts((prev) => {
-      const updated = prev?.map((p) => (p.id === id ? data : p)) ?? [data];
+    setSupplierProducts(prev => {
+      const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
@@ -212,54 +223,54 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   // 🔹 Filters
   const instockFarmerProducts = useMemo(
-    () => farmerProducts?.filter((p) => p.productStatus === ProductStatus.IN_STOCK) ?? [],
+    () => farmerProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
     [farmerProducts]
   );
   const outOfStockFarmerProducts = useMemo(
-    () => farmerProducts?.filter((p) => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
+    () => farmerProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
     [farmerProducts]
   );
   const lowInStockFarmerProducts = useMemo(
-    () => farmerProducts?.filter((p) => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
+    () => farmerProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
     [farmerProducts]
   );
 
   const instockSupplierProducts = useMemo(
-    () => supplierProducts?.filter((p) => p.productStatus === ProductStatus.IN_STOCK) ?? [],
+    () => supplierProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
     [supplierProducts]
   );
   const outOfStockSupplierProducts = useMemo(
-    () => supplierProducts?.filter((p) => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
+    () => supplierProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
     [supplierProducts]
   );
   const lowInStockSupplierProducts = useMemo(
-    () => supplierProducts?.filter((p) => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
+    () => supplierProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
     [supplierProducts]
   );
 
   const inStockBuyerProducts = useMemo(
-    () => buyerProducts?.filter((p) => p.productStatus === ProductStatus.IN_STOCK) ?? [],
+    () => buyerProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
     [buyerProducts]
   );
   const outOfStockBuyerProducts = useMemo(
-    () => buyerProducts?.filter((p) => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
+    () => buyerProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
     [buyerProducts]
   );
   const lowInStockBuyerProducts = useMemo(
-    () => buyerProducts?.filter((p) => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
+    () => buyerProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
     [buyerProducts]
   );
 
   const inStockFarmerBuyerProducts = useMemo(
-    () => farmerBuyerProducts?.filter((p) => p.productStatus === ProductStatus.IN_STOCK) ?? [],
+    () => farmerBuyerProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
     [farmerBuyerProducts]
   );
   const outOfStockFarmerBuyerProducts = useMemo(
-    () => farmerBuyerProducts?.filter((p) => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
+    () => farmerBuyerProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
     [farmerBuyerProducts]
   );
   const lowInStockFarmerBuyerProducts = useMemo(
-    () => farmerBuyerProducts?.filter((p) => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
+    () => farmerBuyerProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
     [farmerBuyerProducts]
   );
 

@@ -17,7 +17,7 @@ import {
   Clock,
   Ban,
   ShieldCheck,
-  Settings
+  Settings,
 } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -195,9 +195,7 @@ function SecurityPage() {
   const toggleSetting = (settingId: string) => {
     setSecuritySettings(prev =>
       prev.map(setting =>
-        setting.id === settingId
-          ? { ...setting, enabled: !setting.enabled }
-          : setting
+        setting.id === settingId ? { ...setting, enabled: !setting.enabled } : setting
       )
     );
   };
@@ -216,7 +214,10 @@ function SecurityPage() {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/admin_dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/admin_dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ChevronLeft className="w-5 h-5 mr-1" />
                 Back to Dashboard
               </Link>
@@ -282,8 +283,11 @@ function SecurityPage() {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Security Settings</h2>
               <div className="space-y-4">
-                {securitySettings.map((setting) => (
-                  <div key={setting.id} className="flex items-center justify-between p-4 border rounded-lg">
+                {securitySettings.map(setting => (
+                  <div
+                    key={setting.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <h3 className="font-medium text-gray-900">{setting.name}</h3>
                       <p className="text-sm text-gray-500 mt-1">{setting.description}</p>
@@ -312,15 +316,18 @@ function SecurityPage() {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Security Events</h2>
               <div className="space-y-3">
-                {securityLogs.map((log) => (
-                  <div key={log.id} className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                    <div className="mt-1">
-                      {getStatusIcon(log.status)}
-                    </div>
+                {securityLogs.map(log => (
+                  <div
+                    key={log.id}
+                    className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="mt-1">{getStatusIcon(log.status)}</div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <p className="font-medium text-gray-900">{log.action}</p>
-                        <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(log.status)}`}>
+                        <span
+                          className={`text-xs px-2 py-1 rounded-full ${getStatusColor(log.status)}`}
+                        >
                           {log.status}
                         </span>
                       </div>
@@ -386,9 +393,7 @@ function SecurityPage() {
                     <p className="text-sm text-gray-500">192.168.1.105</p>
                     <p className="text-xs text-gray-400">Started 1 day ago</p>
                   </div>
-                  <button className="text-red-600 hover:text-red-800 text-sm">
-                    Terminate
-                  </button>
+                  <button className="text-red-600 hover:text-red-800 text-sm">Terminate</button>
                 </div>
               </div>
             </div>

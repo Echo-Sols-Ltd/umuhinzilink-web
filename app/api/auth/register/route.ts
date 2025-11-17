@@ -49,14 +49,8 @@ export async function POST(request: NextRequest) {
         : new NextResponse(null, { status: response.status });
 
     nextResponse.headers.set('Access-Control-Allow-Origin', '*');
-    nextResponse.headers.set(
-      'Access-Control-Allow-Methods',
-      'GET, POST, PUT, DELETE, OPTIONS'
-    );
-    nextResponse.headers.set(
-      'Access-Control-Allow-Headers',
-      'Content-Type, Authorization'
-    );
+    nextResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    nextResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     return nextResponse;
   } catch (error: unknown) {

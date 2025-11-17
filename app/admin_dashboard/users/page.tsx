@@ -15,7 +15,7 @@ import {
   Eye,
   Trash2,
   Loader2,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -57,16 +57,20 @@ function UserManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const filteredUsers = users?.filter(user => 
-    user.names.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredUsers =
+    users?.filter(
+      user =>
+        user.names.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
 
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar - Green */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-green-600 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+      <div
+        className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-green-600 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+      >
         <div className="flex items-center justify-between h-16 px-6">
           <div className="flex items-center space-x-2">
             <span className="font-bold text-xl text-white">UmuhinziLink</span>
@@ -77,7 +81,7 @@ function UserManagement() {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {MENU_ITEMS.map((item) => {
+          {MENU_ITEMS.map(item => {
             const isActive = item.label === 'Users';
             const Icon = item.icon;
 
@@ -86,9 +90,7 @@ function UserManagement() {
                 key={item.label}
                 href={item.href}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-white text-green-600'
-                    : 'text-white hover:bg-green-700'
+                  isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -96,10 +98,10 @@ function UserManagement() {
               </Link>
             );
           })}
-          
+
           <div className="border-t border-green-500 my-4"></div>
-          
-          {MENU_ITEMS_BOTTOM.map((item) => {
+
+          {MENU_ITEMS_BOTTOM.map(item => {
             const Icon = item.icon;
             return (
               <Link
@@ -119,10 +121,7 @@ function UserManagement() {
       <div className="flex-1 flex flex-col">
         {/* Header - White with Search */}
         <header className="bg-white border-b h-16 flex items-center px-6">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden mr-4"
-          >
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
             <Menu className="w-6 h-6" />
           </button>
           <div className="relative flex-1 max-w-md">
@@ -131,7 +130,7 @@ function UserManagement() {
               type="text"
               placeholder="Search users..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="w-full pl-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
@@ -143,7 +142,7 @@ function UserManagement() {
           <div className="bg-white rounded-xl border shadow-sm">
             <div className="p-6 border-b flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">Users</h2>
-              <button 
+              <button
                 onClick={refreshUsers}
                 className="p-2 text-green-600 hover:bg-green-50 rounded-full"
                 disabled={loading}
@@ -155,12 +154,24 @@ function UserManagement() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Phone
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -171,7 +182,7 @@ function UserManagement() {
                       </td>
                     </tr>
                   ) : filteredUsers.length > 0 ? (
-                    filteredUsers.map((user) => (
+                    filteredUsers.map(user => (
                       <tr key={user.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
@@ -188,9 +199,13 @@ function UserManagement() {
                           {user.phoneNumber}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                            user.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                          }`}>
+                          <span
+                            className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                              user.verified
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}
+                          >
                             {user.verified ? 'Verified' : 'Pending'}
                           </span>
                         </td>
@@ -199,7 +214,7 @@ function UserManagement() {
                             <button className="text-green-600 hover:text-green-800 flex items-center gap-1">
                               <Eye className="w-4 h-4" /> View
                             </button>
-                            <button 
+                            <button
                               onClick={() => deleteUser(user.id)}
                               className="text-red-600 hover:text-red-800 flex items-center gap-1"
                             >

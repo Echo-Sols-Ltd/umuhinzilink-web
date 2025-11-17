@@ -143,7 +143,20 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
-const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_LABELS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 const BackButton = ({ href = '/farmer_dashboard' }: { href?: string }) => (
   <Link
@@ -157,7 +170,12 @@ const BackButton = ({ href = '/farmer_dashboard' }: { href?: string }) => (
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M10 19l-7-7m0 0l7-7m-7 7h18"
+      />
     </svg>
     Back to Dashboard
   </Link>
@@ -194,14 +212,13 @@ function Dashboard() {
   const { farmerOrders, loading: ordersLoading } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
 
-
   // Use context data - all hooks must be called before any early returns
   const currentUser = user;
   const profile = farmer;
   const rawProducts = useMemo(() => farmerProducts || [], [farmerProducts]);
   const rawOrders = useMemo(() => farmerOrders || [], [farmerOrders]);
   const rawRequests = useMemo(() => [] as FarmerRequest[], []);
-  
+
   const profileLoading = authLoading;
   const profileError = null;
   const requestsLoading = false;
@@ -245,8 +262,7 @@ function Dashboard() {
   const paidOrdersCount = useMemo(() => orders.filter(order => order.isPaid).length, [orders]);
 
   const pendingOrdersCount = useMemo(
-    () =>
-      orders.filter(order => (order.status || '').toLowerCase() === 'pending').length,
+    () => orders.filter(order => (order.status || '').toLowerCase() === 'pending').length,
     [orders]
   );
 
@@ -338,7 +354,7 @@ function Dashboard() {
   const handleLogout = async () => {
     if (logoutPending) return;
     setLogoutPending(true);
-    
+
     try {
       await logout();
       router.push('/auth/signin');
@@ -472,7 +488,9 @@ function Dashboard() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive ? 'bg-white text-green-600 shadow-sm' : 'text-white hover:bg-green-700'
+                          isActive
+                            ? 'bg-white text-green-600 shadow-sm'
+                            : 'text-white hover:bg-green-700'
                         }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -529,9 +547,7 @@ function Dashboard() {
               <p className="text-gray-600">
                 Here&apos;s what&apos;s happening with your farm today{profileLoading ? '...' : '.'}
               </p>
-              {profileError && (
-                <p className="text-sm text-red-500 mt-2">{profileError}</p>
-              )}
+              {profileError && <p className="text-sm text-red-500 mt-2">{profileError}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -540,7 +556,9 @@ function Dashboard() {
                   key={card.id}
                   className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4"
                 >
-                  <div className={`w-12 h-12 ${card.iconBg} rounded-xl flex items-center justify-center`}>
+                  <div
+                    className={`w-12 h-12 ${card.iconBg} rounded-xl flex items-center justify-center`}
+                  >
                     {card.icon}
                   </div>
                   <div>
@@ -562,7 +580,9 @@ function Dashboard() {
                     {products.length ? `${formatNumber(products.length)} listings` : '—'}
                   </span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{formatNumber(activeProductsCount)}</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  {formatNumber(activeProductsCount)}
+                </h3>
                 <p className="text-sm text-gray-500">Active product listings</p>
               </div>
 
@@ -575,7 +595,9 @@ function Dashboard() {
                     {uniqueBuyersCount ? '+ customers' : '—'}
                   </span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{formatNumber(uniqueBuyersCount)}</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  {formatNumber(uniqueBuyersCount)}
+                </h3>
                 <p className="text-sm text-gray-500">Unique buyers engaged</p>
               </div>
 
@@ -605,7 +627,9 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">RWF {formatNumber(totalRevenue)}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    RWF {formatNumber(totalRevenue)}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {paidOrdersCount ? `${paidOrdersCount} paid orders` : 'No paid orders yet'}
                   </p>
@@ -659,7 +683,8 @@ function Dashboard() {
                   <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
                     <p className="font-medium text-gray-900 mb-1">💰 Market Price</p>
                     <p className="text-sm text-gray-600">
-                      Tomato prices increased by 15% this month. Great time to sell if you have stock.
+                      Tomato prices increased by 15% this month. Great time to sell if you have
+                      stock.
                     </p>
                   </div>
                 </div>
@@ -676,11 +701,16 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <p className="text-3xl font-bold text-gray-900">RWF {formatNumber(totalRevenue)}</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    RWF {formatNumber(totalRevenue)}
+                  </p>
                 </div>
                 <div style={{ width: '100%', height: 220 }}>
                   <ResponsiveContainer>
-                    <AreaChart data={revenueByMonth} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                    <AreaChart
+                      data={revenueByMonth}
+                      margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+                    >
                       <defs>
                         <linearGradient id="revenueColor" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
@@ -723,7 +753,9 @@ function Dashboard() {
               </div>
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Current regions to work with</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Current regions to work with
+                </h3>
                 <div className="space-y-4">
                   {regionStats.length ? (
                     regionStats.map(region => (
@@ -747,7 +779,10 @@ function Dashboard() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
-                <Link href="/farmer_dashboard/products" className="text-sm text-green-600 hover:underline">
+                <Link
+                  href="/farmer_dashboard/products"
+                  className="text-sm text-green-600 hover:underline"
+                >
                   Manage products
                 </Link>
               </div>
@@ -802,8 +837,12 @@ function Dashboard() {
                         <tr key={product.id} className="border-b border-gray-200">
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
                             <div>
-                              <p className="font-medium text-gray-900">{product.name || 'Unnamed product'}</p>
-                              <p className="text-xs text-gray-500">{product.category || 'Uncategorized'}</p>
+                              <p className="font-medium text-gray-900">
+                                {product.name || 'Unnamed product'}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {product.category || 'Uncategorized'}
+                              </p>
                             </div>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
@@ -860,7 +899,10 @@ function Dashboard() {
                   <h3 className="text-lg font-semibold text-gray-900">Input requests</h3>
                   <p className="text-sm text-gray-500">Track your farm input needs</p>
                 </div>
-                <Link href="/farmer_dashboard/requests" className="text-sm text-green-600 hover:underline">
+                <Link
+                  href="/farmer_dashboard/requests"
+                  className="text-sm text-green-600 hover:underline"
+                >
                   View all
                 </Link>
               </div>
@@ -877,7 +919,9 @@ function Dashboard() {
                   requests.slice(0, 5).map(request => (
                     <div key={request.id} className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{request.item || 'Requested item'}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {request.item || 'Requested item'}
+                        </p>
                         <p className="text-xs text-gray-500">
                           {request.quantity != null
                             ? `${request.quantity} units`
