@@ -100,7 +100,7 @@ export default function FarmerOrdersPage() {
     
     try {
       await logout();
-      router.push('/auth/login');
+      router.push('/auth/signin');
     } catch (error) {
       console.error('Error during logout:', error);
     } finally {

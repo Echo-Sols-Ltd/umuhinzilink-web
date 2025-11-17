@@ -8,6 +8,7 @@ import { UserProvider } from '@/contexts/UserContext';
 import { BuyerProvider } from '@/contexts/BuyerContext';
 import { FarmerProvider } from '@/contexts/FarmerContext';
 import { SupplierProvider } from '@/contexts/SupplierContext';
+import { AdminProvider } from '@/contexts/AdminContext';
 import { Toaster } from '@/components/ui/toaster';
 
 interface AppProvidersProps {
@@ -23,8 +24,10 @@ export function AppProviders({ children }: AppProvidersProps) {
             <BuyerProvider>
               <FarmerProvider>
                 <SupplierProvider>
-                  {children}
-                  <Toaster />
+                  <AdminProvider>
+                    {children}
+                    <Toaster />
+                  </AdminProvider>
                 </SupplierProvider>
               </FarmerProvider>
             </BuyerProvider>

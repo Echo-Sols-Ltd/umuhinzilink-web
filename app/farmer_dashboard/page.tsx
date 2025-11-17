@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -39,7 +39,6 @@ import {
 } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { FarmerGuard } from '@/components/auth/AuthGuard';
-import { getAuthToken, getCurrentUser, logout, type User as AuthUser } from '@/lib/auth';
 import { toast } from '@/components/ui/use-toast';
 
 type MenuItem = {
@@ -85,6 +84,10 @@ type FarmerProduct = {
       id?: string;
       names?: string;
     };
+  };
+  user?: {
+    id?: string;
+    names?: string;
   };
 };
 
@@ -188,22 +191,21 @@ function Dashboard() {
   const router = useRouter();
   const { user, farmer, loading: authLoading, logout } = useAuth();
   const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
-  const { farmerOrders, loading: ordersLoading, error: ordersError } = useOrder();
+  const { farmerOrders, loading: ordersLoading } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
 
-  // Use context data instead of manual state
+
+  // Use context data - all hooks must be called before any early returns
   const currentUser = user;
   const profile = farmer;
   const rawProducts = useMemo(() => farmerProducts || [], [farmerProducts]);
   const rawOrders = useMemo(() => farmerOrders || [], [farmerOrders]);
-  const rawRequests = useMemo(() => [] as FarmerRequest[], []); // Empty for now
+  const rawRequests = useMemo(() => [] as FarmerRequest[], []);
   
   const profileLoading = authLoading;
   const profileError = null;
   const requestsLoading = false;
   const requestsError = null;
-
-  // No more API calls needed - using contexts!
 
   const farmerId = profile?.id || currentUser?.id || null;
 
@@ -277,8 +279,8 @@ function Dashboard() {
   const recentProducts = useMemo(() => {
     return [...products]
       .sort((a, b) => {
-        const aDate = new Date(a.updatedAt || a.createdAt || '').getTime();
-        const bDate = new Date(b.updatedAt || b.createdAt || '').getTime();
+        const aDate = new Date(a.harvestDate || '').getTime();
+        const bDate = new Date(b.harvestDate || '').getTime();
         return bDate - aDate;
       })
       .slice(0, 10);
@@ -339,7 +341,7 @@ function Dashboard() {
     
     try {
       await logout();
-      router.push('/auth/login');
+      router.push('/auth/signin');
     } finally {
       setLogoutPending(false);
     }
@@ -406,6 +408,23 @@ function Dashboard() {
       requests,
     ]
   );
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-green-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white">

@@ -131,123 +131,16 @@ const Logo = () => (
   </span>
 );
 
-function BuyerDashboard() {
-  const router = useRouter();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
-  const [ordersError, setOrdersError] = useState<string | null>(null);
-  const [buyerName, setBuyerName] = useState<string>('Buyer');
-  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
-  const [productsLoading, setProductsLoading] = useState(true);
-  const [productsError, setProductsError] = useState<string | null>(null);
+export default function BuyerDashboard() {
+  const { user, logout } = useAuth();
+  const { buyerOrders, loading: ordersLoading, error: ordersError } = useOrder();
+  const { buyerProducts, loading: productsLoading, error: productsError } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
 
-  useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (currentUser?.names) {
-      setBuyerName(currentUser.names.split(' ')[0] || currentUser.names);
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const token = getAuthToken();
-
-      if (!token) {
-        setOrdersError('You need to sign in to view orders.');
-        setOrdersLoading(false);
-        return;
-      }
-
-      try {
-        setOrdersLoading(true);
-        const response = await fetch('/api/orders/buyer', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const body: OrdersResponse | null = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            body?.message || body?.data
-              ? Array.isArray(body?.data)
-                ? 'Failed to load orders'
-                : JSON.stringify(body?.data)
-              : 'Failed to load orders';
-          throw new Error(message);
-        }
-
-        const ordersData = body?.data ?? [];
-        setOrders(ordersData);
-        setOrdersError(null);
-      } catch (error: unknown) {
-        console.error('Error fetching buyer orders:', error);
-        const message =
-          error instanceof Error ? error.message : 'Unable to load orders. Please try again.';
-        setOrdersError(message);
-      } finally {
-        setOrdersLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, []);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const token = getAuthToken();
-      try {
-        setProductsLoading(true);
-        const response = await fetch('/api/products?limit=5&status=IN_STOCK', {
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        });
-
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message =
-          body?.message || 'Failed to load recommended produce. Please try again later.';
-
-        if (!response.ok || apiSuccess === false) {
-          const lowerMessage = message.toLowerCase();
-          if (lowerMessage.includes('no static resource')) {
-            setRecommendedProducts([]);
-            setProductsError(null);
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        const products: Product[] = body?.data ?? body ?? [];
-        setRecommendedProducts(Array.isArray(products) ? products : []);
-        setProductsError(null);
-      } catch (error: unknown) {
-        console.error('Error fetching products:', error);
-        let message =
-          error instanceof Error ? error.message : 'Unable to load recommended produce.';
-
-        if (typeof message === 'string') {
-          const lowerMessage = message.toLowerCase();
-          if (lowerMessage.includes('no static resource')) {
-            message = 'No produce available at the moment.';
-          }
-        }
-
-        setProductsError(message);
-        setRecommendedProducts([]);
-      } finally {
-        setProductsLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  // Use context data
+  const buyerName = user?.names?.split(' ')[0] || user?.names || 'Buyer';
+  const orders = useMemo(() => buyerOrders || [], [buyerOrders]);
+  const recommendedProducts = useMemo(() => buyerProducts || [], [buyerProducts]);
 
   const stats = useMemo(
     () => [
@@ -308,7 +201,7 @@ function BuyerDashboard() {
 
     try {
       if (token) {
-        const response = await fetch('/api/auth/logout', {
+        // DISABLED: const response = // DISABLED: await fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,

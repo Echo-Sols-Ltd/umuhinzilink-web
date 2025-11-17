@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAuthenticated, getUserRole, type User } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
+import { UserType } from '@/types/enums';
 
 interface AuthGuardProps {
   children: React.ReactNode;
-  requiredRoles?: User['role'][];
+  requiredRoles?: UserType[];
   redirectTo?: string;
   fallback?: React.ReactNode;
 }
@@ -14,39 +15,43 @@ interface AuthGuardProps {
 export default function AuthGuard({
   children,
   requiredRoles,
-  redirectTo = '/signin',
+  redirectTo = '/auth/signin',
   fallback,
 }: AuthGuardProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, loading: authLoading } = useAuth();
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = () => {
-      // Check if user is authenticated
-      if (!isAuthenticated()) {
-        console.log('User not authenticated, redirecting to signin');
-        router.push(redirectTo);
+    // Still loading auth state
+    if (authLoading) {
+      return;
+    }
+
+    // Check if user is authenticated via auth token
+    const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    
+    if (!authToken || !user) {
+      console.log('User not authenticated, redirecting to signin');
+      router.replace(redirectTo);
+      return;
+    }
+
+    // If specific roles are required, check user role
+    if (requiredRoles && requiredRoles.length > 0) {
+      const userRole = user.role;
+
+      if (!userRole || !requiredRoles.includes(userRole)) {
+        console.log(`User role ${userRole} not authorized for required roles:`, requiredRoles);
+        router.replace('/unauthorized');
         return;
       }
+    }
 
-      // If specific roles are required, check user role
-      if (requiredRoles && requiredRoles.length > 0) {
-        const userRole = getUserRole();
-
-        if (!userRole || !requiredRoles.includes(userRole)) {
-          console.log(`User role ${userRole} not authorized for required roles:`, requiredRoles);
-          router.push('/unauthorized');
-          return;
-        }
-      }
-
-      setIsAuthorized(true);
-      setIsLoading(false);
-    };
-
-    checkAuth();
-  }, [router, requiredRoles, redirectTo]);
+    setIsAuthorized(true);
+    setIsLoading(false);
+  }, [user, authLoading, router, requiredRoles, redirectTo]);
 
   // Show loading state
   if (isLoading) {
@@ -74,7 +79,7 @@ export default function AuthGuard({
 // Convenience components for specific roles
 export function FarmerGuard({ children, ...props }: Omit<AuthGuardProps, 'requiredRoles'>) {
   return (
-    <AuthGuard requiredRoles={['FARMER']} {...props}>
+    <AuthGuard requiredRoles={[UserType.FARMER]} {...props}>
       {children}
     </AuthGuard>
   );
@@ -82,7 +87,7 @@ export function FarmerGuard({ children, ...props }: Omit<AuthGuardProps, 'requir
 
 export function SupplierGuard({ children, ...props }: Omit<AuthGuardProps, 'requiredRoles'>) {
   return (
-    <AuthGuard requiredRoles={['SUPPLIER']} {...props}>
+    <AuthGuard requiredRoles={[UserType.SUPPLIER]} {...props}>
       {children}
     </AuthGuard>
   );
@@ -90,7 +95,7 @@ export function SupplierGuard({ children, ...props }: Omit<AuthGuardProps, 'requ
 
 export function BuyerGuard({ children, ...props }: Omit<AuthGuardProps, 'requiredRoles'>) {
   return (
-    <AuthGuard requiredRoles={['BUYER']} {...props}>
+    <AuthGuard requiredRoles={[UserType.BUYER]} {...props}>
       {children}
     </AuthGuard>
   );
@@ -98,7 +103,7 @@ export function BuyerGuard({ children, ...props }: Omit<AuthGuardProps, 'require
 
 export function AdminGuard({ children, ...props }: Omit<AuthGuardProps, 'requiredRoles'>) {
   return (
-    <AuthGuard requiredRoles={['FARMER', 'SUPPLIER', 'BUYER']} {...props}>
+    <AuthGuard requiredRoles={[UserType.FARMER, UserType.SUPPLIER, UserType.BUYER]} {...props}>
       {children}
     </AuthGuard>
   );

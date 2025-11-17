@@ -169,7 +169,7 @@ export default function SignUp() {
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
+      // DISABLED: const response = // DISABLED: await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

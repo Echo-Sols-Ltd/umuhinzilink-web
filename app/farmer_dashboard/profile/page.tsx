@@ -90,7 +90,7 @@ export default function FarmerProfilePage() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/farmers/profile', {
+        // DISABLED: const response = // DISABLED: await fetch('/api/farmers/profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const body = await response.json().catch(() => null);
@@ -141,7 +141,7 @@ export default function FarmerProfilePage() {
 
     try {
       if (token) {
-        const response = await fetch('/api/auth/logout', {
+        // DISABLED: const response = // DISABLED: await fetch('/api/auth/logout', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });

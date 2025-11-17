@@ -109,7 +109,7 @@ export default function SavedItems() {
 
     try {
       if (token) {
-        const response = await fetch('/api/auth/logout', {
+        // DISABLED: const response = // DISABLED: await fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,

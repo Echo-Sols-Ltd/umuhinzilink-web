@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
 import {
   LayoutGrid,
   FilePlus,
@@ -21,7 +23,6 @@ import {
   LogOut,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, getCurrentUser, logout, type User } from '@/lib/auth';
 
 type FarmerRequest = {
   id: string;
@@ -33,17 +34,6 @@ type FarmerRequest = {
   createdAt?: string;
   updatedAt?: string;
   farmerId?: string;
-};
-
-type FarmerProduct = {
-  id: string;
-  name: string;
-  category?: string;
-  unitPrice?: number;
-  measurementUnit?: string;
-  quantity?: number;
-  image?: string | null;
-  productStatus?: string;
 };
 
 type MenuItem = {
@@ -92,117 +82,16 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
 export default function FarmerRequestsPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [requests, setRequests] = useState<FarmerRequest[]>([]);
-  const [products, setProducts] = useState<FarmerProduct[]>([]);
-  const [requestsLoading, setRequestsLoading] = useState(true);
-  const [requestsError, setRequestsError] = useState<string | null>(null);
-  const [productsLoading, setProductsLoading] = useState(true);
-  const [productsError, setProductsError] = useState<string | null>(null);
+  const { user, logout } = useAuth();
+  const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
-
-  useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
-      setRequestsLoading(false);
-      setRequestsError('You need to sign in to view your requests.');
-      setProductsLoading(false);
-      setProductsError('You need to sign in to view inputs.');
-      return;
-    }
-
-    let cancelled = false;
-    const headers = { Authorization: `Bearer ${token}` };
-
-    const fetchRequests = async () => {
-      setRequestsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/requests', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load requests.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRequests([]);
-              setRequestsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerRequest[];
-          setRequests(Array.isArray(data) ? data : []);
-          setRequestsError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer requests:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load requests.';
-          setRequestsError(message);
-          setRequests([]);
-        }
-      } finally {
-        if (!cancelled) setRequestsLoading(false);
-      }
-    };
-
-    const fetchProducts = async () => {
-      setProductsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/products', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message =
-          body?.message || 'Failed to load products. Please try again later.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setProducts([]);
-              setProductsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerProduct[];
-          setProducts(Array.isArray(data) ? data : []);
-          setProductsError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer inputs:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load inputs.';
-          setProductsError(message);
-          setProducts([]);
-        }
-      } finally {
-        if (!cancelled) setProductsLoading(false);
-      }
-    };
-
-    fetchRequests();
-    fetchProducts();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // Use context data
+  const currentUser = user;
+  const requests = useMemo(() => [] as FarmerRequest[], []);
+  const products = useMemo(() => farmerProducts || [], [farmerProducts]);
+  const requestsLoading = false;
 
   const filteredRequests = useMemo(() => {
     if (statusFilter === 'all') return requests;
@@ -219,25 +108,11 @@ export default function FarmerRequestsPage() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
 
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
+      await logout();
+      router.push('/auth/signin');
       toast({
         title: 'Signed out',
         description: 'You have been logged out successfully.',
@@ -251,7 +126,6 @@ export default function FarmerRequestsPage() {
         variant: 'error',
       });
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };

@@ -1,7 +1,8 @@
 export enum UserType {
     FARMER = 'FARMER',
     BUYER = 'BUYER',
-    SUPPLIER = 'SUPPLIER'
+    SUPPLIER = 'SUPPLIER',
+    ADMIN = 'ADMIN'
 }
 
 export interface Address {
