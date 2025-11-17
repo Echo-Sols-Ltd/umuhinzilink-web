@@ -16,10 +16,15 @@ import {
   Menu,
   X,
   Eye,
-  Trash2
+  Trash2,
+  Loader2,
+  Package,
+  ShoppingCart
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
-import { User, getCurrentUser, logout } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAdmin } from '@/contexts/AdminContext';
+import { toast } from '@/components/ui/use-toast';
 
 interface AdminStats {
   totalUsers: number;
@@ -95,95 +100,33 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 function Dashboard() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user, logout } = useAuth();
+  const { users, products, orders, loading, userStats, productStats, orderStats, deleteUser } = useAdmin();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [stats, setStats] = useState<AdminStats>({
-    totalUsers: 0,
-    totalFarmers: 0,
-    totalBuyers: 0,
-    totalSuppliers: 0,
-    totalOrders: 0,
-    totalRevenue: 0,
-    pendingApprovals: 0,
-    activeListings: 0,
-  });
-
-  const [tableUsers, setTableUsers] = useState<TableUser[]>([
-    {
-      type: 'Farmer',
-      name: 'Christine Brooks',
-      address: '089 Kutch Green Apt. 448',
-      date: '04 Sep 2019',
-      lastActivity: '02 Nov 2025',
-      status: 'Active',
-    },
-    {
-      type: 'Farmer',
-      name: 'Rosie Pearson',
-      address: '979 Immanuel Ferry Suite 526',
-      date: '28 May 2019',
-      lastActivity: '02 Nov 2025',
-      status: 'Processing',
-    },
-    {
-      type: 'Buyer',
-      name: 'Darrell Caldwell',
-      address: '8587 Frida Ports',
-      date: '23 Nov 2019',
-      lastActivity: '02 Nov 2025',
-      status: 'Inactive',
-    },
-    {
-      type: 'Supplier',
-      name: 'Gilbert Johnston',
-      address: '768 Destiny Lake Suite 600',
-      date: '05 Feb 2019',
-      lastActivity: '02 Nov 2025',
-      status: 'Active',
-    },
-    {
-      type: 'Buyer',
-      name: 'Alan Cain',
-      address: '042 Mylene Throughway',
-      date: '29 Jul 2019',
-      lastActivity: '02 Nov 2025',
-      status: 'Processing',
-    },
-  ]);
-
-  useEffect(() => {
-    const user = getCurrentUser();
-    if (user) {
-      setCurrentUser(user);
-    }
-    
-    // Mock stats data - replace with actual API calls
-    setStats({
-      totalUsers: 1500,
-      totalFarmers: 12456,
-      totalBuyers: 948,
-      totalSuppliers: 1234567,
-      totalOrders: 3421,
-      totalRevenue: 95000,
-      pendingApprovals: 23,
-      activeListings: 892,
-    });
-  }, []);
 
   const handleLogout = async () => {
-    await logout();
-    router.push('/signin');
+    try {
+      await logout();
+      router.push('/auth/signin');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to logout',
+        variant: 'error',
+      });
+    }
   };
 
   // Chart data for doughnut chart
   const chartData = [
-    { name: 'Farmers', value: stats.totalFarmers, color: '#16a34a' },
-    { name: 'Suppliers', value: stats.totalSuppliers, color: '#22c55e' },
-    { name: 'Buyers', value: stats.totalBuyers, color: '#86efac' },
+    { name: 'Farmers', value: userStats.farmerCount, color: '#16a34a' },
+    { name: 'Suppliers', value: userStats.supplierCount, color: '#22c55e' },
+    { name: 'Buyers', value: userStats.buyerCount, color: '#86efac' },
   ];
 
-  // Total value for the chart center (matching the image)
-  const totalValue = 5824213;
+  // Total value for the chart center
+  const totalValue = userStats.totalUsers;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -280,7 +223,8 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-2">Active Users</p>
-                  <p className="text-4xl font-bold">{stats.totalUsers.toLocaleString()}</p>
+                  <p className="text-4xl font-bold">{userStats.totalUsers.toLocaleString()}</p>
+                  <p className="text-xs opacity-75 mt-1">Farmers: {userStats.farmerCount} | Buyers: {userStats.buyerCount}</p>
                 </div>
                 <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
                   <Users className="w-8 h-8 text-green-600" />
@@ -288,18 +232,34 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Active Payments Card - White Background */}
+            {/* Products Card - White Background */}
             <div className="bg-white rounded-xl p-6 border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">Active Payments</p>
+                  <p className="text-sm text-gray-600 mb-2">Total Products</p>
                   <div className="flex items-baseline space-x-2">
-                    <p className="text-4xl font-bold text-gray-900">95.000</p>
-                    <span className="text-green-600 font-semibold">+55%</span>
+                    <p className="text-4xl font-bold text-gray-900">{productStats.totalProducts}</p>
+                    <span className="text-green-600 font-semibold text-sm">In Stock: {productStats.inStockCount}</span>
                   </div>
                 </div>
                 <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center">
-                  <Wallet className="w-8 h-8 text-green-600" />
+                  <Package className="w-8 h-8 text-green-600" />
+                </div>
+              </div>
+            </div>
+
+            {/* Orders Card - White Background */}
+            <div className="bg-white rounded-xl p-6 border shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">Total Orders</p>
+                  <div className="flex items-baseline space-x-2">
+                    <p className="text-4xl font-bold text-gray-900">{orderStats.totalOrders}</p>
+                    <span className="text-yellow-600 font-semibold text-sm">Pending: {orderStats.pendingCount}</span>
+                  </div>
+                </div>
+                <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center">
+                  <ShoppingCart className="w-8 h-8 text-green-600" />
                 </div>
               </div>
             </div>
@@ -347,43 +307,62 @@ function Dashboard() {
 
           {/* Users Table */}
           <div className="bg-white rounded-xl border shadow-sm">
-            <div className="p-6 border-b">
+            <div className="p-6 border-b flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">Users</h2>
+              {loading && <Loader2 className="w-5 h-5 animate-spin text-green-600" />}
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ADDRESS</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DATE</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Activity</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">STATUS</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verified</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ACTION</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {tableUsers.map((user, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.type}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.address}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.date}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.lastActivity}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(user.status)}`}>
-                          {user.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center space-x-4">
-                          <button className="text-green-600 hover:text-green-800">View</button>
-                          <button className="text-red-600 hover:text-red-800">Delete</button>
-                        </div>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                        Loading users...
                       </td>
                     </tr>
-                  ))}
+                  ) : users && users.length > 0 ? (
+                    users.slice(0, 10).map((user) => (
+                      <tr key={user.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">{user.role}</span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.names}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phoneNumber}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${user.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                            {user.verified ? 'Verified' : 'Pending'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex items-center space-x-4">
+                            <button className="text-green-600 hover:text-green-800 flex items-center gap-1">
+                              <Eye className="w-4 h-4" /> View
+                            </button>
+                            <button onClick={() => deleteUser(user.id)} className="text-red-600 hover:text-red-800 flex items-center gap-1">
+                              <Trash2 className="w-4 h-4" /> Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                        No users found
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

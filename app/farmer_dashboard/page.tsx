@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
+import { useOrder } from '@/contexts/OrderContext';
 import {
   LayoutGrid,
   FilePlus,
@@ -36,7 +39,6 @@ import {
 } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { FarmerGuard } from '@/components/auth/AuthGuard';
-import { getAuthToken, getCurrentUser, logout, type User as AuthUser } from '@/lib/auth';
 import { toast } from '@/components/ui/use-toast';
 
 type MenuItem = {
@@ -82,6 +84,10 @@ type FarmerProduct = {
       id?: string;
       names?: string;
     };
+  };
+  user?: {
+    id?: string;
+    names?: string;
   };
 };
 
@@ -183,221 +189,23 @@ function getInitials(name: string) {
 
 function Dashboard() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
-  const [profile, setProfile] = useState<FarmerProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
-  const [profileError, setProfileError] = useState<string | null>(null);
-
-  const [rawOrders, setRawOrders] = useState<FarmerOrder[]>([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
-  const [ordersError, setOrdersError] = useState<string | null>(null);
-
-  const [rawProducts, setRawProducts] = useState<FarmerProduct[]>([]);
-  const [productsLoading, setProductsLoading] = useState(true);
-  const [productsError, setProductsError] = useState<string | null>(null);
-
-  const [rawRequests, setRawRequests] = useState<FarmerRequest[]>([]);
-  const [requestsLoading, setRequestsLoading] = useState(true);
-  const [requestsError, setRequestsError] = useState<string | null>(null);
-
+  const { user, farmer, loading: authLoading, logout } = useAuth();
+  const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
+  const { farmerOrders, loading: ordersLoading } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
 
-  useEffect(() => {
-    const token = getAuthToken();
-
-    if (!token) {
-      setProfileLoading(false);
-      setProfileError('You need to sign in to view your profile.');
-      setOrdersLoading(false);
-      setOrdersError('You need to sign in to view your orders.');
-      setProductsLoading(false);
-      setProductsError('You need to sign in to view your products.');
-      setRequestsLoading(false);
-      setRequestsError('You need to sign in to view your requests.');
-      return;
-    }
-
-    let cancelled = false;
-    const headers = { Authorization: `Bearer ${token}` };
-
-    const fetchProfile = async () => {
-      setProfileLoading(true);
-      try {
-        const response = await fetch('/api/farmers/profile', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load farmer profile.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setProfile(null);
-              setProfileError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body) as FarmerProfile;
-          setProfile(data);
-          setProfileError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer profile:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load profile information.';
-          setProfileError(message);
-          setProfile(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setProfileLoading(false);
-        }
-      }
-    };
-
-    const fetchOrders = async () => {
-      setOrdersLoading(true);
-      try {
-        const response = await fetch('/api/orders/farmer', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load orders.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawOrders([]);
-              setOrdersError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerOrder[];
-          setRawOrders(Array.isArray(data) ? data : []);
-          setOrdersError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer orders:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load orders. Please try again.';
-          setOrdersError(message);
-          setRawOrders([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setOrdersLoading(false);
-        }
-      }
-    };
-
-    const fetchProducts = async () => {
-      setProductsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/products', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message =
-          body?.message || 'Failed to load products. Please try again later.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawProducts([]);
-              setProductsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerProduct[];
-          setRawProducts(Array.isArray(data) ? data : []);
-          setProductsError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer products:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load products.';
-          setProductsError(message);
-          setRawProducts([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setProductsLoading(false);
-        }
-      }
-    };
-
-    const fetchRequests = async () => {
-      setRequestsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/requests', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load requests.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawRequests([]);
-              setRequestsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerRequest[];
-          setRawRequests(Array.isArray(data) ? data : []);
-          setRequestsError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer requests:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load requests.';
-          setRequestsError(message);
-          setRawRequests([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setRequestsLoading(false);
-        }
-      }
-    };
-
-    fetchProfile();
-    fetchOrders();
-    fetchProducts();
-    fetchRequests();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // Use context data - all hooks must be called before any early returns
+  const currentUser = user;
+  const profile = farmer;
+  const rawProducts = useMemo(() => farmerProducts || [], [farmerProducts]);
+  const rawOrders = useMemo(() => farmerOrders || [], [farmerOrders]);
+  const rawRequests = useMemo(() => [] as FarmerRequest[], []);
+  
+  const profileLoading = authLoading;
+  const profileError = null;
+  const requestsLoading = false;
+  const requestsError = null;
 
   const farmerId = profile?.id || currentUser?.id || null;
 
@@ -471,8 +279,8 @@ function Dashboard() {
   const recentProducts = useMemo(() => {
     return [...products]
       .sort((a, b) => {
-        const aDate = new Date(a.updatedAt || a.createdAt || '').getTime();
-        const bDate = new Date(b.updatedAt || b.createdAt || '').getTime();
+        const aDate = new Date(a.harvestDate || '').getTime();
+        const bDate = new Date(b.harvestDate || '').getTime();
         return bDate - aDate;
       })
       .slice(0, 10);
@@ -529,40 +337,12 @@ function Dashboard() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
-
+    
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (error) {
-      console.error('Error during logout:', error);
-      const message =
-        error instanceof Error ? error.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
+      await logout();
+      router.push('/auth/signin');
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };
@@ -628,6 +408,23 @@ function Dashboard() {
       requests,
     ]
   );
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-green-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white">

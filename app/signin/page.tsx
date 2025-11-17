@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AuthNavbar from './navbar';
 import { Label } from '@/components/ui/label';
@@ -9,23 +8,20 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { Eye, EyeOff } from 'lucide-react';
-import { storeAuthData, redirectToDashboard, isAuthenticated } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignIn() {
-  const router = useRouter();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({ email: false, password: false });
+  const { login, loading } = useAuth();
 
-  // Check if user is already authenticated and handle URL parameters
+  // Handle URL parameters and redirect if already authenticated
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isLogout = urlParams.get('logout');
-    const fromSignup = urlParams.get('from');
     const registered = urlParams.get('registered');
 
     if (isLogout) {
@@ -35,21 +31,14 @@ export default function SignIn() {
       });
     }
 
-    if (fromSignup && registered) {
+    if (registered) {
       toast({
         title: 'Account Created',
         description: 'Registration successful. Please sign in to continue.',
         variant: 'success',
       });
     }
-
-    if (isAuthenticated() && !isLogout) {
-      console.log('User already authenticated, redirecting to dashboard');
-      redirectToDashboard(router);
-    } else {
-      setIsCheckingAuth(false);
-    }
-  }, [router]);
+  }, []);
 
   // Load saved credentials if remember me was enabled
   useEffect(() => {
@@ -124,7 +113,6 @@ export default function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     // Validate form data
     if (!validateForm()) {
@@ -133,143 +121,20 @@ export default function SignIn() {
         description: 'Please fill in all required fields',
         variant: 'error',
       });
-      setLoading(false);
       return;
     }
 
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email.trim(),
-          password: formData.password,
-        }),
-      });
-
-      const responseBody = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        const serverMessage =
-          (responseBody && (responseBody.message || responseBody.error)) ||
-          'Login failed. Please try again.';
-
-        if (responseBody?.errors && typeof responseBody.errors === 'object') {
-          const serverFieldErrors: Partial<typeof fieldErrors> = {};
-          Object.entries(responseBody.errors).forEach(([key, value]) => {
-            if (key in fieldErrors) {
-              const message = Array.isArray(value) ? value.join(' ') : String(value);
-              serverFieldErrors[key as keyof typeof fieldErrors] = message;
-            }
-          });
-
-          if (Object.keys(serverFieldErrors).length > 0) {
-            setFieldErrors(prev => ({ ...prev, ...serverFieldErrors }));
-          }
-        } else {
-          const lowerMessage = serverMessage.toLowerCase();
-          if (lowerMessage.includes('email')) {
-            setFieldErrors(prev => ({ ...prev, email: serverMessage }));
-          } else if (lowerMessage.includes('password')) {
-            setFieldErrors(prev => ({ ...prev, password: serverMessage }));
-          }
-        }
-
-        setTouched({ email: true, password: true });
-
-        toast({
-          title: 'Login Failed',
-          description: serverMessage,
-          variant: 'error',
-        });
-        return;
-      }
-
-      const payload = responseBody?.data ?? responseBody;
-
-      if (!payload || !payload.token || !payload.user) {
-        throw new Error('Invalid response received from the login service.');
-      }
-
-      if (rememberMe) {
-        handleRememberMe(formData.email.trim());
-      }
-
-      storeAuthData({
-        token: payload.token,
-        user: {
-          ...payload.user,
-          password: '',
-        },
-      });
-
-      toast({
-        title: 'Login Successful',
-        description: 'Redirecting to your dashboard...',
-        variant: 'success',
-      });
-
-      setTimeout(() => {
-        redirectToDashboard(router, payload.user.role);
-      }, 1000);
-      return;
-    } catch (error: unknown) {
-      console.error('Error signing in:', error);
-
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      const errorMessageLower = errorMessage.toLowerCase();
-
-      let toastTitle = 'Error';
-      let toastMessage = errorMessage;
-
-      // Handle different error cases
-      if (errorMessageLower.includes('invalid credentials') || errorMessage.includes('401')) {
-        setFieldErrors({
-          email: 'Invalid email or password',
-          password: 'Invalid email or password',
-        });
-        toastTitle = 'Authentication Failed';
-      } else if (errorMessageLower.includes('email')) {
-        setFieldErrors(prev => ({
-          ...prev,
-          email: errorMessage,
-        }));
-        toastTitle = 'Email Error';
-      } else if (
-        errorMessageLower.includes('network') ||
-        errorMessageLower.includes('failed to fetch')
-      ) {
-        toastTitle = 'Network Error';
-        toastMessage = 'Unable to connect to the server. Please check your internet connection.';
-      } else if (errorMessageLower.includes('server') || errorMessageLower.includes('500')) {
-        toastTitle = 'Server Error';
-        toastMessage = 'Our servers are experiencing issues. Please try again later.';
-      }
-
-      // Always mark fields as touched to show errors
-      setTouched({ email: true, password: true });
-
-      toast({
-        title: toastTitle,
-        description: toastMessage,
-        variant: 'error' as const,
-      });
-    } finally {
-      setLoading(false);
+    // Handle remember me
+    if (rememberMe) {
+      handleRememberMe(formData.email.trim());
     }
+
+    // Call login from auth context - it handles all backend errors and toasts
+    await login({
+      email: formData.email.trim(),
+      password: formData.password,
+    });
   };
-
-  // Show loading while checking authentication
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-h-screen bg-gray-50 flex justify-center">

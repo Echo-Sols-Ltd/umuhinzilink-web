@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutGrid,
   MessageSquare,
@@ -20,32 +22,7 @@ import {
   LogOut,
   Plus,
 } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, getCurrentUser, logout, type User } from '@/lib/auth';
 
-type FarmerProduct = {
-  id: string;
-  name: string;
-  category?: string;
-  description?: string;
-  unitPrice?: number;
-  measurementUnit?: string;
-  quantity?: number;
-  productStatus?: string;
-  isNegotiable?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  harvestDate?: string;
-  location?: string;
-  image?: string | null;
-  farmer?: {
-    id?: string;
-    user?: {
-      id?: string;
-      names?: string;
-    };
-  };
-};
 
 type MenuItem = {
   label: string;
@@ -75,70 +52,17 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
 export default function FarmerProductsPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  const [products, setProducts] = useState<FarmerProduct[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<FarmerProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, logout } = useAuth();
+  const { farmerProducts, loading } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
+  const currentUser = user;
+  const products = useMemo(() => farmerProducts || [], [farmerProducts]);
+  const error = null;
 
-  useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
-      setLoading(false);
-      setError('You need to sign in to view your products.');
-      return;
-    }
-
-    let cancelled = false;
-
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('/api/farmers/products', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message = body?.message || 'Failed to load products.';
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerProduct[];
-          setProducts(Array.isArray(data) ? data : []);
-          setError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer products:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load products.';
-          setError(message);
-          setProducts([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchProducts();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
+  const filteredProducts = useMemo(() => {
     let filtered = [...products];
 
     if (statusFilter !== 'all') {
@@ -154,7 +78,7 @@ export default function FarmerProductsPage() {
       );
     }
 
-    setFilteredProducts(filtered);
+    return filtered;
   }, [products, statusFilter, searchTerm]);
 
   const totalProducts = products.length;
@@ -176,39 +100,14 @@ export default function FarmerProductsPage() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
-
+    
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (err) {
-      console.error('Error during logout:', err);
-      const message = err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
+      await logout();
+      router.push('/auth/signin');
+    } catch (error) {
+      console.error('Error during logout:', error);
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };
@@ -369,9 +268,8 @@ export default function FarmerProductsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map(product => (
                   <article key={product.id} className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-                    <div className="aspect-[4/3] bg-gray-50 flex items-center justify-center">
+                    <div className="aspect-4/3 bg-gray-50 flex items-center justify-center">
                       {product.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="text-xs text-gray-400">No image provided</div>

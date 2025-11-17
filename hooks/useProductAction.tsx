@@ -1,14 +1,12 @@
-import { useToast } from "@/components/ui/toast/Toast";
-import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 import { useProduct } from "@/contexts/ProductContext";
 import { productService } from "@/services/products";
 import { FarmerProductRequest, SupplierProductRequest } from "@/types";
-import { router } from "expo-router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function useProductAction() {
-    const { showToast } = useToast()
-    const { user } = useAuth()
+    const router = useRouter()
     const { addFarmerProduct, addSupplierProduct, updateFarmerProduct, updateSupplierProduct } = useProduct()
     const [loading, setLoading] = useState(false)
 
@@ -20,45 +18,44 @@ export default function useProductAction() {
             const res = await productService.createFarmerProduct(payload);
 
             if (!res) {
-                showToast({
+                toast({
                     title: "Failed to Create product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             if (!res.success) {
-                showToast({
+                toast({
                     title: "Failed to Create product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             const newProduct = res.data;
             if (!newProduct) {
-                showToast({
+                toast({
                     title: "Failed to Create product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             addFarmerProduct(newProduct)
             router.push('/')
-            showToast({
+            toast({
                 title: "Product created",
                 description: "Product created successfully",
-                type: 'default'
-            })
+                            })
         } catch {
-            showToast({
+            toast({
                 title: "Failed to Create product",
                 description: "Try again later",
-                type: 'error'
+                variant: 'destructive'
             })
         } finally {
             setLoading(false);
@@ -72,29 +69,29 @@ export default function useProductAction() {
             const res = await productService.createSupplierProduct(payload);
 
             if (!res) {
-                showToast({
+                toast({
                     title: "Failed to Create product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             if (!res.success) {
-                showToast({
+                toast({
                     title: "Failed to Create product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             const newProduct = res.data;
             if (!newProduct) {
-                showToast({
+                toast({
                     title: "Failed to Create product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
@@ -102,16 +99,15 @@ export default function useProductAction() {
             addSupplierProduct(newProduct)
             router.push('/')
 
-            showToast({
+            toast({
                 title: "Product created",
                 description: "Product created successfully",
-                type: 'default'
-            })
+                            })
         } catch {
-            showToast({
+            toast({
                 title: "Failed to Create product",
                 description: "Try again later",
-                type: 'error'
+                variant: 'destructive'
             })
         } finally {
             setLoading(false);
@@ -125,46 +121,45 @@ export default function useProductAction() {
             const res = await productService.updateFarmerProduct(id, payload);
 
             if (!res) {
-                showToast({
+                toast({
                     title: "Failed to Edit product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             if (!res.success) {
-                showToast({
+                toast({
                     title: "Failed to Edit product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             const updatedProduct = res.data;
             if (!updatedProduct) {
-                showToast({
+                toast({
                     title: "Failed to Edit product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             updateFarmerProduct(updatedProduct.id, updatedProduct)
 
-            showToast({
+            toast({
                 title: "Product edited",
                 description:'The product was updated successfully',
-                type: 'default'
-            })
+                            })
             router.back()
         } catch {
-            showToast({
+            toast({
                 title: "Failed to Edit product",
                 description: "Try again later",
-                type: 'error'
+                variant: 'destructive'
             })
         } finally {
             setLoading(false);
@@ -178,29 +173,29 @@ export default function useProductAction() {
             const res = await productService.updateSupplierProduct(id, payload);
 
             if (!res) {
-                showToast({
+                toast({
                     title: "Failed to Edit product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             if (!res.success) {
-                showToast({
+                toast({
                     title: "Failed to Edit product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             const updatedProduct = res.data;
             if (!updatedProduct) {
-                showToast({
+                toast({
                     title: "Failed to Edit product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
@@ -209,15 +204,14 @@ export default function useProductAction() {
 
             router.back()
 
-            showToast({
+            toast({
                 title: "Product edited",
-                type: 'default'
-            })
+                            })
         } catch {
-            showToast({
+            toast({
                 title: "Failed to Edit product",
                 description: "Try again later",
-                type: 'error'
+                variant: 'destructive'
             })
         } finally {
             setLoading(false);
@@ -231,29 +225,29 @@ export default function useProductAction() {
             const res = await productService.deleteFarmerProduct(id);
 
             if (!res) {
-                showToast({
+                toast({
                     title: "Failed to delete product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             if (!res.success) {
-                showToast({
+                toast({
                     title: "Failed to delete product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
             router.back()
 
         } catch {
-            showToast({
+            toast({
                 title: "Failed to delete product",
                 description: "Try again later",
-                type: 'error'
+                variant: 'destructive'
             })
         } finally {
             setLoading(false);
@@ -267,19 +261,19 @@ export default function useProductAction() {
             const res = await productService.deleteSupplierProduct(id);
 
             if (!res) {
-                showToast({
+                toast({
                     title: "Failed to delete product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
 
             if (!res.success) {
-                showToast({
+                toast({
                     title: "Failed to delete product",
                     description: "Try again later",
-                    type: 'error'
+                    variant: 'destructive'
                 })
                 return;
             }
@@ -287,10 +281,10 @@ export default function useProductAction() {
             router.back()
 
         } catch {
-            showToast({
+            toast({
                 title: "Failed to delete product",
                 description: "Try again later",
-                type: 'error'
+                variant: 'destructive'
             })
         } finally {
             setLoading(false);

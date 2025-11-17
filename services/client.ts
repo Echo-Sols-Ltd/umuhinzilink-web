@@ -22,8 +22,8 @@ class ApiClient {
     this.axiosInstance.interceptors.request.use(
       async (config) => {
         try {
-          const token = await this.getAuthToken();
-
+          const token = this.getAuthToken();
+          console.log(token)
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }
@@ -88,9 +88,9 @@ class ApiClient {
 
   }
 
-  private async getAuthToken(): Promise<string | null> {
-    try {
-      return await localStorage.getItemAsync('auth_token')
+  private  getAuthToken() {
+    try { 
+      return localStorage.getItem('auth_token')
     } catch {
       this.logout();
       return null;
@@ -136,7 +136,7 @@ class ApiClient {
       await localStorage.removeItemAsync('supplier')
       await localStorage.removeItemAsync('buyer')
       await localStorage.clear()
-     
+
 
     } catch {
     } finally {
@@ -234,7 +234,7 @@ class ApiClient {
         uri: fileUri,
         type,
         name: filename,
-      }as any);
+      } as any);
 
       const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, formData, {
         headers: {
