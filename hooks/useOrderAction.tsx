@@ -2,10 +2,9 @@ import { DeliveryStatus, OrderRequest } from '@/types';
 import { useState } from 'react';
 import { orderService } from '@/services/orders';
 import { useOrder } from '@/contexts/OrderContext';
-import { useToast } from '@/components/ui/toast/Toast';
+import { toast } from '@/components/ui/use-toast';
 
 export default function useOrderAction() {
-  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const {
     addFarmerOrder,
@@ -20,34 +19,34 @@ export default function useOrderAction() {
       setLoading(true);
       const res = await orderService.createFarmerOrder(payload);
       if (!res.success) {
-        showToast({
+        toast({
           title: 'Failed to create order',
           description: res.message || 'Failed to create order',
-          type: 'error',
+          variant: 'error',
         });
         return;
       }
       const newOrder = res.data;
       if (!newOrder) {
-        showToast({
+        toast({
           title: 'Failed to create order',
           description: 'Failed to create order: empty response',
-          type: 'error',
+          variant: 'error',
         });
         return;
       }
       addFarmerOrder(newOrder);
-      showToast({
+      toast({
         title: 'Order created successfully',
         description: 'Order created successfully',
-        type: 'default',
       });
       // router.push('/payment/initiate')
-    } catch (err: any) {
-      showToast({
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
+      toast({
         title: 'Failed to create order',
-        description: err?.message || 'Failed to create order',
-        type: 'error',
+        description: errorMessage,
+        variant: 'error',
       });
     } finally {
       setLoading(false);
@@ -60,35 +59,35 @@ export default function useOrderAction() {
 
       const res = await orderService.createSupplierOrder(payload);
       if (!res.success) {
-        showToast({
+        toast({
           title: 'Failed to create order',
           description: res.message || 'Failed to create order',
-          type: 'error',
+          variant: 'error',
         });
         return;
       }
       const newOrder = res.data;
       if (!newOrder) {
-        showToast({
+        toast({
           title: 'Failed to create order',
           description: 'Failed to create order: empty response',
-          type: 'error',
+          variant: 'error',
         });
         return;
       }
 
       addFarmerBuyerOrder(newOrder);
-      showToast({
+      toast({
         title: 'Order created successfully',
         description: 'Order created successfully',
-        type: 'default',
       });
       // router.push('/payment/initiate')
-    } catch (err: any) {
-      showToast({
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
+      toast({
         title: 'Failed to create order',
-        description: err?.message || 'Failed to create order',
-        type: 'error',
+        description: errorMessage,
+        variant: 'error',
       });
     } finally {
       setLoading(false);
@@ -101,34 +100,34 @@ export default function useOrderAction() {
 
       const res = await orderService.acceptFarmerOrder(id);
       if (!res.success) {
-        showToast({
+        toast({
           title: 'Failed to accept order',
           description: res.message || 'Failed to accept order',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
       const updatedOrder = res.data;
       if (!updatedOrder) {
-        showToast({
+        toast({
           title: 'Failed to accept order',
           description: 'Failed to accept order: empty response',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
       editFarmerOrder(updatedOrder);
 
-      showToast({
+      toast({
         title: 'Order accepted successfully',
         description: 'Order accepted successfully',
-        type: 'default',
       });
-    } catch (err: any) {
-      showToast({
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to accept order';
+      toast({
         title: 'Failed to accept order',
-        description: err?.message || 'Failed to accept order',
-        type: 'error',
+        description: errorMessage,
+        variant: 'error',
       });
       return null;
     } finally {
@@ -142,34 +141,34 @@ export default function useOrderAction() {
 
       const res = await orderService.acceptSupplierOrder(id);
       if (!res.success) {
-        showToast({
+        toast({
           title: 'Failed to accept order',
           description: res.message || 'Failed to accept order',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
       const updatedOrder = res.data;
       if (!updatedOrder) {
-        showToast({
+        toast({
           title: 'Failed to accept order',
           description: 'Failed to accept order: empty response',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
 
       editSupplierOrder(updatedOrder);
-      showToast({
+      toast({
         title: 'Order accepted successfully',
         description: 'Order accepted successfully',
-        type: 'default',
       });
-    } catch (err: any) {
-      showToast({
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to accept order';
+      toast({
         title: 'Failed to accept order',
-        description: err?.message || 'Failed to accept order',
-        type: 'error',
+        description: errorMessage,
+        variant: 'error',
       });
       return null;
     } finally {
@@ -183,34 +182,34 @@ export default function useOrderAction() {
 
       const res = await orderService.cancelFarmerOrder(id);
       if (!res.success) {
-        showToast({
+        toast({
           title: 'Failed to cancel order',
           description: res.message || 'Failed to cancel order',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
       const updatedOrder = res.data;
       if (!updatedOrder) {
-        showToast({
+        toast({
           title: 'Failed to cancel order',
           description: 'Failed to cancel order: empty response',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
 
       editFarmerOrder(updatedOrder);
-      showToast({
+      toast({
         title: 'Order cancelled successfully',
         description: 'Order cancelled successfully',
-        type: 'default',
       });
-    } catch (err: any) {
-      showToast({
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to cancel order';
+      toast({
         title: 'Failed to cancel order',
-        description: err?.message || 'Failed to cancel order',
-        type: 'error',
+        description: errorMessage,
+        variant: 'error',
       });
       return null;
     } finally {
@@ -224,34 +223,34 @@ export default function useOrderAction() {
 
       const res = await orderService.cancelSupplierOrder(id);
       if (!res.success) {
-        showToast({
+        toast({
           title: 'Failed to cancel order',
           description: res.message || 'Failed to cancel order',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
       const updatedOrder = res.data;
       if (!updatedOrder) {
-        showToast({
+        toast({
           title: 'Failed to cancel order',
           description: 'Failed to cancel order: empty response',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
       editSupplierOrder(updatedOrder);
 
-      showToast({
+      toast({
         title: 'Order cancelled successfully',
         description: 'Order cancelled successfully',
-        type: 'default',
       });
-    } catch (err: any) {
-      showToast({
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to cancel order';
+      toast({
         title: 'Failed to cancel order',
-        description: err?.message || 'Failed to cancel order',
-        type: 'error',
+        description: errorMessage,
+        variant: 'error',
       });
       return null;
     } finally {
@@ -265,34 +264,34 @@ export default function useOrderAction() {
 
       const res = await orderService.updateFarmerOrderStatus(id, status);
       if (!res.success) {
-        showToast({
+        toast({
           title: 'Failed to update order status',
           description: res.message || 'Failed to update order status',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
       const updatedOrder = res.data;
       if (!updatedOrder) {
-        showToast({
+        toast({
           title: 'Failed to update order status',
           description: 'Failed to update order status: empty response',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
 
       editFarmerOrder(updatedOrder);
-      showToast({
+      toast({
         title: 'Order status updated successfully',
         description: 'Order status updated successfully',
-        type: 'default',
       });
-    } catch (err: any) {
-      showToast({
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update order status';
+      toast({
         title: 'Failed to update order status',
-        description: err?.message || 'Failed to update order status',
-        type: 'error',
+        description: errorMessage,
+        variant: 'error',
       });
       return null;
     } finally {
@@ -306,34 +305,34 @@ export default function useOrderAction() {
 
       const res = await orderService.updateSupplierOrderStatus(id, status);
       if (!res.success) {
-        showToast({
+        toast({
           title: 'Failed to update order status',
           description: res.message || 'Failed to update order status',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
       const updatedOrder = res.data;
       if (!updatedOrder) {
-        showToast({
+        toast({
           title: 'Failed to update order status',
           description: 'Failed to update order status: empty response',
-          type: 'error',
+          variant: 'error',
         });
         return null;
       }
 
       editSupplierOrder(updatedOrder);
-      showToast({
+      toast({
         title: 'Order status updated successfully',
         description: 'Order status updated successfully',
-        type: 'default',
       });
-    } catch (err: any) {
-      showToast({
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update order status';
+      toast({
         title: 'Failed to update order status',
-        description: err?.message || 'Failed to update order status',
-        type: 'error',
+        description: errorMessage,
+        variant: 'error',
       });
       return null;
     } finally {

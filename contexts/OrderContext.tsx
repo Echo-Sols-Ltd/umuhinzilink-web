@@ -13,6 +13,7 @@ const STORAGE_KEYS = {
 
 export type OrderContextValue = {
   loading: boolean;
+  error?: string | null;
   buyerOrders: FarmerOrder[] | null;
   farmerOrders: FarmerOrder[] | null;
   supplierOrders: SupplierOrder[] | null;
@@ -116,7 +117,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setBuyerOrders(res.data ?? null);
       localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(res.data ?? []));
       return res.data ?? null;
-    } catch (err) {
+    } catch {
       return null;
     } finally {
       setLoading(false);
@@ -134,7 +135,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setFarmerOrders(res.data ?? null);
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(res.data ?? []));
       return res.data ?? null;
-    } catch (err) {
+    } catch {
       return null;
     } finally {
       setLoading(false);
@@ -152,7 +153,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setSupplierOrders(res.data ?? null);
       localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data ?? []));
       return res.data ?? null;
-    } catch (err) {
+    } catch {
       return null;
     } finally {
       setLoading(false);

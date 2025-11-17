@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   CheckCircle,
   Heart,
@@ -18,10 +18,8 @@ import {
   Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Line } from 'react-chartjs-2';
-import { BuyerGuard } from '@/components/auth/AuthGuard';
-import { getAuthToken, getCurrentUser, logout } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth';
 import { toast } from '@/components/ui/use-toast';
 import {
   Chart as ChartJS,
@@ -60,72 +58,6 @@ const menuItems = [
   { label: 'Settings', href: '/buyer_dashboard/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
-
-// Define types
-type Product = {
-  id: string;
-  name: string;
-  category: string;
-  description?: string;
-  unitPrice: number;
-  measurementUnit: string;
-  image?: string | null;
-  quantity?: number;
-  isNegotiable?: boolean;
-  productStatus?: string;
-  farmer?: {
-    user?: {
-      names?: string;
-    };
-  };
-};
-
-type Order = {
-  id: string;
-  buyer: {
-    names: string;
-    email: string;
-    phoneNumber: string;
-    address: {
-      district: string;
-      province: string;
-    } | null;
-  };
-  product: {
-    name: string;
-    category: string;
-    unitPrice: number;
-    measurementUnit: string;
-    farmer: {
-      user: {
-        names: string;
-        address: {
-          district: string;
-          province: string;
-        } | null;
-      };
-    };
-  };
-  quantity: number;
-  totalPrice: number;
-  isPaid: boolean;
-  status: string;
-  delivery?: {
-    deliveryAddress?: string;
-    status?: string;
-    estimatedDelivery?: string;
-  };
-  paymentMethod?: string;
-  deliveryDate?: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type OrdersResponse = {
-  success: boolean;
-  data: Order[];
-  message?: string;
-};
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -215,8 +147,7 @@ export default function BuyerDashboard() {
 
         if (!response.ok) {
           const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
+            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
           throw new Error(message);
         }
 
@@ -241,7 +172,7 @@ export default function BuyerDashboard() {
         variant: 'error',
       });
     } finally {
-      logout(router);
+      await logout();
       setLogoutPending(false);
     }
   };
@@ -441,7 +372,9 @@ export default function BuyerDashboard() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {productsLoading && (
-                <div className="col-span-full text-center text-gray-500 py-6">Loading produce...</div>
+                <div className="col-span-full text-center text-gray-500 py-6">
+                  Loading produce...
+                </div>
               )}
               {!productsLoading && productsError && (
                 <div className="col-span-full text-center text-gray-600 bg-gray-100 border border-gray-200 rounded-lg py-6">
@@ -490,9 +423,7 @@ export default function BuyerDashboard() {
                         <p className="text-xs text-gray-500 mb-1 line-clamp-1">by {farmerName}</p>
                         <div className="mt-2">
                           <p className="text-green-600 font-bold text-sm">{priceText}</p>
-                          {quantityText && (
-                            <p className="text-xs text-gray-500">{quantityText}</p>
-                          )}
+                          {quantityText && <p className="text-xs text-gray-500">{quantityText}</p>}
                         </div>
                         <button className="mt-3 w-full bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-700">
                           Contact
@@ -554,8 +485,7 @@ export default function BuyerDashboard() {
                     orders.map(order => {
                       const farmerName =
                         order.product?.farmer?.user?.names || order.buyer?.names || '—';
-                      const farmerAddress =
-                        order.product?.farmer?.user?.address ||
+                      const farmerAddress = order.product?.farmer?.user?.address ||
                         order.buyer?.address || {
                           district: '—',
                           province: '',
@@ -582,9 +512,7 @@ export default function BuyerDashboard() {
                           <td className="py-4 text-gray-600">
                             {quantity} {order.product?.measurementUnit || ''}
                           </td>
-                          <td className="py-4 text-gray-900">
-                            {totalPrice.toLocaleString()} RWF
-                          </td>
+                          <td className="py-4 text-gray-900">{totalPrice.toLocaleString()} RWF</td>
                           <td className="py-4">
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-medium ${
