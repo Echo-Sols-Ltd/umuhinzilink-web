@@ -1,13 +1,10 @@
-import { useToast } from '@/components/ui/toast/Toast';
+import { toast } from '@/components/ui/use-toast';
 import axios, { isAxiosError, isCancel } from 'axios';
-import { useTranslation } from 'react-i18next';
 import { userService } from '@/services/users';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function useUserAction() {
-  const { showToast } = useToast();
-  const { t } = useTranslation();
   const { updateAvatar } = useAuth();
   const [loading, setLoading] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<
@@ -34,34 +31,32 @@ export default function useUserAction() {
       if (response.success && response.data) {
         updateAvatar(response.data);
         setLoading(false);
-        showToast({
-          title: t('success.uploadSuccess'),
-          description: t('success.uploadSuccessFor', { file }),
-          type: 'default',
+        toast({
+          title: 'Upload successful',
+          description: `File ${file} uploaded successfully`,
         });
       }
       setLoading(false);
     } catch (error) {
       setLoading(false);
       if (isCancel(error)) {
-        showToast({
-          title: t('errors.uploadCancelled'),
-          description: t('errors.uploadCancelledFor', { file }),
-          type: 'default',
+        toast({
+          title: 'Upload cancelled',
+          description: `Upload for ${file} was cancelled`,
         });
       } else if (isAxiosError(error)) {
-        showToast({
-          title: t('errors.fileUploadFailed'),
+        toast({
+          title: 'File upload failed',
           description: error?.message?.includes('timeout')
-            ? t('errors.uploadTimedOut', { file })
-            : t('errors.failedToUpload', { file }),
-          type: 'error',
+            ? `Upload for ${file} timed out`
+            : `Failed to upload ${file}`,
+          variant: 'error',
         });
       } else {
-        showToast({
-          title: t('errors.fileUploadFailed'),
-          description: t('errors.retryLater'),
-          type: 'error',
+        toast({
+          title: 'File upload failed',
+          description: 'Please try again later',
+          variant: 'error',
         });
       }
     } finally {

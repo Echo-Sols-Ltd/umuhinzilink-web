@@ -31,6 +31,8 @@ export interface Farmer {
   crops: RwandaCrop[];
   farmSize: FarmSizeCategory;
   experienceLevel: ExperienceLevel;
+  names?: string;
+  address?: Address | null;
 }
 
 export interface Buyer {

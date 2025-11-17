@@ -13,6 +13,8 @@ export interface Delivery {
   deliveryStartDate: string;
   deliveredDate: string;
   trackingSteps: DeliveryStep[];
+  status?: string;
+  estimatedDelivery?: string;
 }
 
 export interface FarmerOrder {

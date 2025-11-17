@@ -54,6 +54,8 @@ export interface FarmerProduct {
   isNegotiable: boolean;
   certification: CertificationType;
   productStatus: ProductStatus;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface SupplierProduct {
@@ -63,6 +65,7 @@ export interface SupplierProduct {
   description: string;
   unitPrice: number;
   images: string[];
+  image?: string;
   quantity: number;
   measurementUnit: MeasurementUnit;
   category: ProductCategory;

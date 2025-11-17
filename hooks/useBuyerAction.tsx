@@ -1,11 +1,8 @@
-import { useToast } from '@/components/ui/toast/Toast';
+import { toast } from '@/components/ui/use-toast';
 import { buyerService } from '@/services/buyers';
-import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 
 export default function useBuyerAction() {
-  const { showToast } = useToast();
-  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const bookmarkProduct = async (id: string) => {
@@ -13,22 +10,21 @@ export default function useBuyerAction() {
     try {
       const res = await buyerService.saveProduct(id);
       if (!res) {
-        showToast({
-          title: t('errors.failedToBookmark'),
-          description: t('errors.tryAgainLater'),
-          type: 'error',
+        toast({
+          title: 'Failed to bookmark',
+          description: 'Please try again later',
+          variant: 'error',
         });
       }
-      showToast({
-        title: t('success.productBookmarked'),
-        description: t('success.productBookmarkedSuccess'),
-        type: 'default',
+      toast({
+        title: 'Product bookmarked',
+        description: 'Product has been bookmarked successfully',
       });
-    } catch (error) {
-      showToast({
-        title: t('errors.failedToBookmark'),
-        description: t('errors.tryAgainLater'),
-        type: 'error',
+    } catch {
+      toast({
+        title: 'Failed to bookmark',
+        description: 'Please try again later',
+        variant: 'error',
       });
     } finally {
       setLoading(false);
