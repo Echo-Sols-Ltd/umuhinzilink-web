@@ -50,7 +50,7 @@ export default function BuyerSettingsPage() {
 
     try {
       if (token) {
-        // DISABLED: const response = // DISABLED: await fetch('/api/auth/logout', {
+        const response = await fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,8 +60,7 @@ export default function BuyerSettingsPage() {
 
         if (!response.ok) {
           const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
+            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
           throw new Error(message);
         }
       }

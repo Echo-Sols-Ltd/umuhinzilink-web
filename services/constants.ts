@@ -1,6 +1,6 @@
 // API Configuration Constants
 
-const SERVER_URL = 'https://api.umuhinzi-backend.echo-solution.com'
+const SERVER_URL = 'https://api.umuhinzi-backend.echo-solution.com';
 // const SERVER_URL = 'http://localhost:801'
 
 export const API_CONFIG = {
@@ -29,15 +29,15 @@ export const API_ENDPOINTS = {
     ALL: '/users',
     BY_ID: (id: string) => `/users/${id}`,
     ME: '/users/me',
-    UPLOAD_AVATAR: '/'
+    UPLOAD_AVATAR: '/',
   },
   FARMER: {
     BY_ID: (id: string) => `/farmers/${id}`,
-    ME: '/farmers/me'
+    ME: '/farmers/me',
   },
   SUPPLIER: {
     BY_ID: (id: string) => `/suppliers/${id}`,
-    ME: '/suppliers/me'
+    ME: '/suppliers/me',
   },
   DASHBOARD: {
     FARMER_STATS: '/dashboard/farmer',
@@ -58,12 +58,12 @@ export const API_ENDPOINTS = {
     FARMER_BUYER_ALL: '/products/supplier/all',
     SUPPLIER_ALL: '/products/supplier',
     FARMER_ALL: '/products/farmer',
-    BUYER_ALL: '/products/farmer/all'
+    BUYER_ALL: '/products/farmer/all',
   },
   BUYER: {
     BY_ID: (id: string) => `/buyers/${id}`,
     ME: '/buyers/me',
-    SAVE_PRODUCT: (id: string) => `/buyers/save-product/${id}`
+    SAVE_PRODUCT: (id: string) => `/buyers/save-product/${id}`,
   },
   ORDER: {
     CREATE_SUPPLIER: '/orders/supplier',
@@ -84,7 +84,7 @@ export const API_ENDPOINTS = {
   FILES: {
     UPLOAD_AVATAR: '/upload/user',
     UPLOAD_MESSAGE: '/upload/message',
-  }
+  },
 };
 
 export const HTTP_STATUS = {

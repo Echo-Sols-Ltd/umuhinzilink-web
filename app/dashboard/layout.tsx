@@ -167,9 +167,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </SidebarContent>
         </Sidebar>
         <SidebarInset className="flex-1">
-          <RoleBasedDashboard>
-            {children}
-          </RoleBasedDashboard>
+          <RoleBasedDashboard>{children}</RoleBasedDashboard>
         </SidebarInset>
       </div>
     </SidebarProvider>

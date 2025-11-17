@@ -114,7 +114,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm text-muted-foreground">Products Listed</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {productsLoading ? '...' : (farmerProducts?.length || 0)}
+                  {productsLoading ? '...' : farmerProducts?.length || 0}
                 </p>
               </div>
               <Package className="h-8 w-8 text-green-600" />
@@ -128,7 +128,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm text-muted-foreground">Active Orders</p>
                 <p className="text-2xl font-bold text-blue-600">
-                  {ordersLoading ? '...' : ((farmerOrders?.length || 0) + (buyerOrders?.length || 0))}
+                  {ordersLoading ? '...' : (farmerOrders?.length || 0) + (buyerOrders?.length || 0)}
                 </p>
               </div>
               <ShoppingCart className="h-8 w-8 text-blue-600" />

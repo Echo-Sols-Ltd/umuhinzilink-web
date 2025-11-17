@@ -99,7 +99,7 @@ export default function AddProduce() {
         title: 'Produce Added',
         description: 'Your product has been added to your inventory.',
       });
-      
+
       router.push('/farmer_dashboard/products');
     } catch (error) {
       console.error('Error adding produce:', error);
@@ -133,7 +133,10 @@ export default function AddProduce() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <form onSubmit={handleSubmit} className="xl:col-span-2 bg-white rounded-lg shadow-sm border p-6 space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            className="xl:col-span-2 bg-white rounded-lg shadow-sm border p-6 space-y-4"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Product Name</label>
@@ -275,7 +278,11 @@ export default function AddProduce() {
             </p>
             <div className="border border-dashed border-gray-200 rounded-lg p-4 text-center">
               {previewUrl ? (
-                <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover rounded-md" />
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="w-full h-48 object-cover rounded-md"
+                />
               ) : (
                 <div className="text-sm text-gray-400">Upload an image to preview it here.</div>
               )}
@@ -294,7 +301,9 @@ export default function AddProduce() {
               <div className="flex justify-between">
                 <span>Quantity</span>
                 <span className="font-medium text-gray-900">
-                  {formData.quantity ? `${formData.quantity} ${formData.measurementUnit || ''}` : '—'}
+                  {formData.quantity
+                    ? `${formData.quantity} ${formData.measurementUnit || ''}`
+                    : '—'}
                 </span>
               </div>
               <div className="flex justify-between">

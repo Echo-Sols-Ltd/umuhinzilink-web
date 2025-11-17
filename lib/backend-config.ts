@@ -49,18 +49,18 @@ export function getBackendBaseUrlFromEnv(): string {
   if (fullUrl && fullUrl.includes('/api/v1')) {
     return fullUrl;
   }
-  
+
   // Otherwise, construct from base URL
-  const baseUrl = process.env.API_BASE_URL || 
-                  process.env.NEXT_PUBLIC_API_BASE_URL ||
-                  process.env.NEXT_PUBLIC_API_URL ||
-                  'http://localhost:8080';
-  
+  const baseUrl =
+    process.env.API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    'http://localhost:8080';
+
   // If it doesn't already have /api/v1, add it
   if (!baseUrl.includes('/api/v1')) {
     return `${baseUrl.replace(/\/$/, '')}/api/v1`;
   }
-  
+
   return baseUrl;
 }
-

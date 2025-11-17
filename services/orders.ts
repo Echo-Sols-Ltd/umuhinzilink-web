@@ -1,4 +1,4 @@
-import { ApiResponse, DeliveryStatus, FarmerOrder, OrderRequest, SupplierOrder} from '@/types';
+import { ApiResponse, DeliveryStatus, FarmerOrder, OrderRequest, SupplierOrder } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -51,12 +51,21 @@ class OrderService {
     return await apiClient.put<FarmerOrder>(API_ENDPOINTS.ORDER.ACCEPT_FARMER(id));
   }
 
-  async updateFarmerOrderStatus(id: string, status: DeliveryStatus): Promise<ApiResponse<FarmerOrder>> {
-    return await apiClient.put<FarmerOrder>(API_ENDPOINTS.ORDER.UPDATE_FARMER_STATUS(id),  status );
+  async updateFarmerOrderStatus(
+    id: string,
+    status: DeliveryStatus
+  ): Promise<ApiResponse<FarmerOrder>> {
+    return await apiClient.put<FarmerOrder>(API_ENDPOINTS.ORDER.UPDATE_FARMER_STATUS(id), status);
   }
 
-  async updateSupplierOrderStatus(id: string, status: DeliveryStatus): Promise<ApiResponse<SupplierOrder>> {
-    return await apiClient.put<SupplierOrder>(API_ENDPOINTS.ORDER.UPDATE_SUPPLIER_STATUS(id),  status );
+  async updateSupplierOrderStatus(
+    id: string,
+    status: DeliveryStatus
+  ): Promise<ApiResponse<SupplierOrder>> {
+    return await apiClient.put<SupplierOrder>(
+      API_ENDPOINTS.ORDER.UPDATE_SUPPLIER_STATUS(id),
+      status
+    );
   }
 }
 

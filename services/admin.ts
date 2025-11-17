@@ -1,7 +1,6 @@
 import { FarmerOrder, FarmerProduct, User } from '@/types';
 import { apiClient } from './client';
 
-
 export const adminService = {
   // Get all users
   getAllUsers: async (): Promise<User[]> => {

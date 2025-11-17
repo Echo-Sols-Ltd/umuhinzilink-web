@@ -11,11 +11,9 @@ export class FarmerService {
     return await apiClient.get<Farmer>(API_ENDPOINTS.FARMER.BY_ID(id));
   }
 
-
   async getMe(): Promise<ApiResponse<Farmer>> {
     return await apiClient.get<Farmer>(API_ENDPOINTS.FARMER.ME);
   }
-
 }
 
 export const farmerService = new FarmerService();

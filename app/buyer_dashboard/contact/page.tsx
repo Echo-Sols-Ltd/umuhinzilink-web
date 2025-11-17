@@ -51,7 +51,7 @@ export default function ContactPage() {
 
     try {
       if (token) {
-        // DISABLED: const response = // DISABLED: await fetch('/api/auth/logout', {
+        const response = await fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,

@@ -19,7 +19,7 @@ import {
   Trash2,
   Loader2,
   Package,
-  ShoppingCart
+  ShoppingCart,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
@@ -101,7 +101,8 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 function Dashboard() {
   const router = useRouter();
   const { user, logout } = useAuth();
-  const { users, products, orders, loading, userStats, productStats, orderStats, deleteUser } = useAdmin();
+  const { users, products, orders, loading, userStats, productStats, orderStats, deleteUser } =
+    useAdmin();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -144,10 +145,11 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar - Green */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-green-600 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+      <div
+        className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-green-600 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+      >
         <div className="flex items-center justify-between h-16 px-6">
           <div className="flex items-center space-x-2">
-            
             <span className="font-bold text-xl text-white">umuhinziLink</span>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-white">
@@ -156,7 +158,7 @@ function Dashboard() {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {MENU_ITEMS.map((item) => {
+          {MENU_ITEMS.map(item => {
             const isActive = item.label === 'Dashboard';
             const Icon = item.icon;
 
@@ -165,9 +167,7 @@ function Dashboard() {
                 key={item.label}
                 href={item.href}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-white text-green-600'
-                    : 'text-white hover:bg-green-700'
+                  isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -175,10 +175,10 @@ function Dashboard() {
               </Link>
             );
           })}
-          
+
           <div className="border-t border-green-500 my-4"></div>
-          
-          {MENU_ITEMS_BOTTOM.map((item) => {
+
+          {MENU_ITEMS_BOTTOM.map(item => {
             const Icon = item.icon;
             return (
               <Link
@@ -198,10 +198,7 @@ function Dashboard() {
       <div className="flex-1 flex flex-col">
         {/* Header - White with Search */}
         <header className="bg-white border-b h-16 flex items-center px-6">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden mr-4"
-          >
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
             <Menu className="w-6 h-6" />
           </button>
           <div className="relative flex-1 max-w-md">
@@ -224,7 +221,9 @@ function Dashboard() {
                 <div>
                   <p className="text-sm opacity-90 mb-2">Active Users</p>
                   <p className="text-4xl font-bold">{userStats.totalUsers.toLocaleString()}</p>
-                  <p className="text-xs opacity-75 mt-1">Farmers: {userStats.farmerCount} | Buyers: {userStats.buyerCount}</p>
+                  <p className="text-xs opacity-75 mt-1">
+                    Farmers: {userStats.farmerCount} | Buyers: {userStats.buyerCount}
+                  </p>
                 </div>
                 <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
                   <Users className="w-8 h-8 text-green-600" />
@@ -239,7 +238,9 @@ function Dashboard() {
                   <p className="text-sm text-gray-600 mb-2">Total Products</p>
                   <div className="flex items-baseline space-x-2">
                     <p className="text-4xl font-bold text-gray-900">{productStats.totalProducts}</p>
-                    <span className="text-green-600 font-semibold text-sm">In Stock: {productStats.inStockCount}</span>
+                    <span className="text-green-600 font-semibold text-sm">
+                      In Stock: {productStats.inStockCount}
+                    </span>
                   </div>
                 </div>
                 <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center">
@@ -255,7 +256,9 @@ function Dashboard() {
                   <p className="text-sm text-gray-600 mb-2">Total Orders</p>
                   <div className="flex items-baseline space-x-2">
                     <p className="text-4xl font-bold text-gray-900">{orderStats.totalOrders}</p>
-                    <span className="text-yellow-600 font-semibold text-sm">Pending: {orderStats.pendingCount}</span>
+                    <span className="text-yellow-600 font-semibold text-sm">
+                      Pending: {orderStats.pendingCount}
+                    </span>
                   </div>
                 </div>
                 <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center">
@@ -286,14 +289,19 @@ function Dashboard() {
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <p className="text-2xl font-bold text-gray-900">{totalValue.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {totalValue.toLocaleString()}
+                    </p>
                     <p className="text-sm text-gray-500">All Now</p>
                   </div>
                 </div>
                 <div className="ml-6 space-y-3 flex-1">
                   {chartData.map((item, index) => (
                     <div key={index} className="flex items-center space-x-2">
-                      <div className={`w-4 h-1 rounded`} style={{ backgroundColor: item.color }}></div>
+                      <div
+                        className={`w-4 h-1 rounded`}
+                        style={{ backgroundColor: item.color }}
+                      ></div>
                       <div>
                         <p className="text-sm font-medium text-gray-900">{item.name}</p>
                         <p className="text-xs text-gray-500">{item.value.toLocaleString()}+</p>
@@ -315,12 +323,24 @@ function Dashboard() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verified</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ACTION</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Phone
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Verified
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ACTION
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -331,16 +351,26 @@ function Dashboard() {
                       </td>
                     </tr>
                   ) : users && users.length > 0 ? (
-                    users.slice(0, 10).map((user) => (
+                    users.slice(0, 10).map(user => (
                       <tr key={user.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">{user.role}</span>
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
+                            {user.role}
+                          </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.names}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phoneNumber}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {user.names}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.phoneNumber}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${user.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          <span
+                            className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${user.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
+                          >
                             {user.verified ? 'Verified' : 'Pending'}
                           </span>
                         </td>
@@ -349,7 +379,10 @@ function Dashboard() {
                             <button className="text-green-600 hover:text-green-800 flex items-center gap-1">
                               <Eye className="w-4 h-4" /> View
                             </button>
-                            <button onClick={() => deleteUser(user.id)} className="text-red-600 hover:text-red-800 flex items-center gap-1">
+                            <button
+                              onClick={() => deleteUser(user.id)}
+                              className="text-red-600 hover:text-red-800 flex items-center gap-1"
+                            >
                               <Trash2 className="w-4 h-4" /> Delete
                             </button>
                           </div>

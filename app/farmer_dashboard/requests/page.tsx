@@ -119,7 +119,8 @@ export default function FarmerRequestsPage() {
       });
     } catch (err) {
       console.error('Error during logout:', err);
-      const message = err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
+      const message =
+        err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
       toast({
         title: 'Logout Issue',
         description: message,
@@ -174,7 +175,9 @@ export default function FarmerRequestsPage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                        isActive ? 'bg-white text-green-600 shadow-sm' : 'text-white hover:bg-green-700'
+                        isActive
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                       }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -193,7 +196,9 @@ export default function FarmerRequestsPage() {
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Input Requests</h1>
-            <p className="text-xs text-gray-500">Manage your farm inputs, {displayName.split(' ')[0]}</p>
+            <p className="text-xs text-gray-500">
+              Manage your farm inputs, {displayName.split(' ')[0]}
+            </p>
           </div>
           <Link
             href="/farmer_dashboard/add_produce"
@@ -205,7 +210,11 @@ export default function FarmerRequestsPage() {
 
         <div className="p-6 space-y-6">
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <SummaryCard title="Total requests" value={formatNumber(requestsSummary.total)} caption="All time" />
+            <SummaryCard
+              title="Total requests"
+              value={formatNumber(requestsSummary.total)}
+              caption="All time"
+            />
             <SummaryCard
               title="Pending"
               value={formatNumber(requestsSummary.pending)}
@@ -275,17 +284,25 @@ export default function FarmerRequestsPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                 {products.slice(0, 8).map(product => (
-                  <article key={product.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                  <article
+                    key={product.id}
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+                  >
                     <div className="aspect-square bg-gray-50 flex items-center justify-center p-4">
                       {product.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-contain"
+                        />
                       ) : (
                         <div className="text-xs text-gray-400">No image</div>
                       )}
                     </div>
                     <div className="p-4 space-y-2">
-                      <h3 className="font-semibold text-gray-900">{product.name || 'Unnamed input'}</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {product.name || 'Unnamed input'}
+                      </h3>
                       <div className="flex items-center justify-between text-sm text-gray-600">
                         <span>
                           {product.unitPrice != null
@@ -314,7 +331,10 @@ export default function FarmerRequestsPage() {
                 <h2 className="text-lg font-semibold text-gray-900">Recent Requests</h2>
                 <p className="text-sm text-gray-500">Track your latest submissions</p>
               </div>
-              <Link href="/farmer_dashboard/requests" className="text-sm text-green-600 hover:underline">
+              <Link
+                href="/farmer_dashboard/requests"
+                className="text-sm text-green-600 hover:underline"
+              >
                 View all
               </Link>
             </div>
@@ -324,11 +344,21 @@ export default function FarmerRequestsPage() {
                   <tr className="text-left">
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">ID</th>
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Item</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Payment</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Requested</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Quantity
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Payment
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Requested
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -351,17 +381,23 @@ export default function FarmerRequestsPage() {
 
                       return (
                         <tr key={request.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 text-sm font-medium text-gray-900">#{request.id}</td>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                            #{request.id}
+                          </td>
                           <td className="px-6 py-4 text-sm text-gray-900">{request.item || '—'}</td>
                           <td className="px-6 py-4 text-sm text-gray-600">
                             {request.quantity != null ? formatNumber(request.quantity) : '—'}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">{request.paymentType || '—'}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600">
+                            {request.paymentType || '—'}
+                          </td>
                           <td className="px-6 py-4 text-sm text-gray-600">
                             {formatDate(request.requestDate || request.createdAt)}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${statusMeta.badge}`}>
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${statusMeta.badge}`}
+                            >
                               {statusMeta.label}
                             </span>
                           </td>

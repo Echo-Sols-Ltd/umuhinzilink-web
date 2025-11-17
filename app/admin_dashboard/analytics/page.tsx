@@ -14,7 +14,7 @@ import {
   ChevronLeft,
   Calendar,
   Download,
-  Filter
+  Filter,
 } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -195,7 +195,10 @@ function RevenueAnalytics() {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link href="/admin_dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
+              <Link
+                href="/admin_dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
                 <ChevronLeft className="w-5 h-5 mr-1" />
                 Back to Dashboard
               </Link>
@@ -204,7 +207,7 @@ function RevenueAnalytics() {
             <div className="flex items-center space-x-3">
               <select
                 value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value)}
+                onChange={e => setTimeRange(e.target.value)}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               >
                 <option value="week">Last Week</option>
@@ -229,7 +232,9 @@ function RevenueAnalytics() {
             return (
               <div key={index} className="bg-white rounded-xl shadow-sm p-6 border">
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
+                  <div
+                    className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
+                  >
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex items-center space-x-1">
@@ -238,9 +243,11 @@ function RevenueAnalytics() {
                     ) : (
                       <TrendingDown className="w-4 h-4 text-red-600" />
                     )}
-                    <span className={`text-sm font-medium ${
-                      stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                    }`}>
+                    <span
+                      className={`text-sm font-medium ${
+                        stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                      }`}
+                    >
                       {stat.change}
                     </span>
                   </div>
@@ -286,7 +293,10 @@ function RevenueAnalytics() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Products</h2>
             <div className="space-y-4">
               {analytics.topProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm font-medium text-green-800">
                       {index + 1}
@@ -310,7 +320,10 @@ function RevenueAnalytics() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Farmers</h2>
             <div className="space-y-4">
               {analytics.topFarmers.map((farmer, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-800">
                       {index + 1}

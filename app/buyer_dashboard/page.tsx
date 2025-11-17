@@ -34,6 +34,9 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
+import { useAuth } from '@/contexts/AuthContext';
+import { useOrder } from '@/contexts/OrderContext';
+import { useProduct } from '@/contexts/ProductContext';
 
 ChartJS.register(
   CategoryScale,
@@ -58,7 +61,7 @@ const menuItems = [
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
-
+// Define types
 type Product = {
   id: string;
   name: string;
@@ -201,7 +204,7 @@ export default function BuyerDashboard() {
 
     try {
       if (token) {
-        // DISABLED: const response = // DISABLED: await fetch('/api/auth/logout', {
+        const response = await fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -614,18 +617,10 @@ export default function BuyerDashboard() {
           {/* Footer */}
           <footer className="text-xs text-gray-500 mt-6">
             Contact Support: SMS Habla - +250 123 456 789
-            <span className="float-right">© 2024 UmuhinziLink, All rights reserved.</span>
+            <span className="float-right"> 2024 UmuhinziLink, All rights reserved.</span>
           </footer>
         </main>
       </div>
     </div>
-  );
-}
-
-export default function BuyerDashboardPage() {
-  return (
-    <BuyerGuard>
-      <BuyerDashboard />
-    </BuyerGuard>
   );
 }
