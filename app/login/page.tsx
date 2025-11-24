@@ -10,39 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, User, Phone, Lock, Smartphone } from 'lucide-react';
 import Link from 'next/link';
-
-// Mock user data for farmers
-const mockUsers = [
-  {
-    id: 1,
-    name: 'Marie Uwimana',
-    phone: '+250788123456',
-    password: 'farmer123',
-    location: 'Nyagatare',
-    crops: ['Maize', 'Beans'],
-    avatar: '/african-woman-farmer.png',
-  },
-  {
-    id: 2,
-    name: 'Jean Baptiste Nkurunziza',
-    phone: '+250788654321',
-    password: 'farmer456',
-    location: 'Nyagatare',
-    crops: ['Beans', 'Potatoes'],
-    avatar: '/african-woman-farmer.png', // We'll use this for now since we don't have a male farmer image
-  },
-  {
-    id: 3,
-    name: 'Agnes Mukamana',
-    phone: '+250788987654',
-    password: 'farmer789',
-    location: 'Nyagatare',
-    crops: ['Vegetables', 'Tomatoes'],
-    avatar: '/african-woman-farmer.png',
-  },
-];
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
+  const { login } = useAuth();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -58,16 +29,8 @@ export default function LoginPage() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Check if user exists in mock data
-    const user = mockUsers.find(u => u.phone === phone && u.password === password);
-
-    if (user) {
-      // Store user data in localStorage (in a real app, you'd use proper authentication)
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      router.push('/dashboard');
-    } else {
-      setError('Invalid phone number or password. Try: +250788123456 / farmer123');
-    }
-
+    const user = login({ email: phone, password });
+    console.log(user);
     setIsLoading(false);
   };
 

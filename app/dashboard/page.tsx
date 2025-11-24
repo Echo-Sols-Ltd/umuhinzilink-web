@@ -1,22 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatar?: string;
-  location?: string;
-  crops?: Array<{
-    id: string;
-    name: string;
-    status: string;
-    plantedDate: string;
-    harvestDate: string;
-  }>;
-}
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
+import { useOrder } from '@/contexts/OrderContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -76,17 +62,11 @@ const recentOrders = [
 ];
 
 export default function Dashboard() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user } = useAuth();
+  const { farmerProducts, loading: productsLoading } = useProduct();
+  const { farmerOrders, buyerOrders, loading: ordersLoading } = useOrder();
 
-  useEffect(() => {
-    // Get user data from localStorage
-    const userData = localStorage.getItem('currentUser');
-    if (userData) {
-      setCurrentUser(JSON.parse(userData));
-    }
-  }, []);
-
-  if (!currentUser) {
+  if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
@@ -112,15 +92,14 @@ export default function Dashboard() {
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <img
-              src={currentUser.avatar}
-              alt={currentUser.name}
+              src={user.avatar || '/default-avatar.png'}
+              alt={user.names || 'User'}
               className="w-16 h-16 rounded-full border-2 border-white/20"
             />
             <div>
-              <h2 className="text-xl font-bold mb-2">Welcome back, {currentUser.name}!</h2>
+              <h2 className="text-xl font-bold mb-2">Welcome back, {user.names}!</h2>
               <p className="text-green-100">
-                Manage your crops {(currentUser.crops ?? []).join(', ')} and connect with buyers in{' '}
-                {currentUser.location}
+                Manage your products and connect with buyers across Rwanda
               </p>
             </div>
           </div>
@@ -134,7 +113,9 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Products Listed</p>
-                <p className="text-2xl font-bold text-green-600">12</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {productsLoading ? '...' : farmerProducts?.length || 0}
+                </p>
               </div>
               <Package className="h-8 w-8 text-green-600" />
             </div>
@@ -146,7 +127,9 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Active Orders</p>
-                <p className="text-2xl font-bold text-blue-600">5</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {ordersLoading ? '...' : (farmerOrders?.length || 0) + (buyerOrders?.length || 0)}
+                </p>
               </div>
               <ShoppingCart className="h-8 w-8 text-blue-600" />
             </div>

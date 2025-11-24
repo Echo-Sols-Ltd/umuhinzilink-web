@@ -60,8 +60,7 @@ export default function BuyerSettingsPage() {
 
         if (!response.ok) {
           const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
+            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
           throw new Error(message);
         }
       }

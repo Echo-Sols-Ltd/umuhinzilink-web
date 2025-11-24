@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+<<<<<<< HEAD
+=======
+import { getBackendBaseUrlFromEnv } from '@/lib/backend-config';
+>>>>>>> b725023a91e881d2f9ed5610176694ddf07567aa
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine backend base URL from environment
+<<<<<<< HEAD
     const backendBaseUrl =
       process.env.API_BASE_URL ||
       process.env.NEXT_PUBLIC_API_URL ||
@@ -25,6 +30,9 @@ export async function POST(request: NextRequest) {
     if (!backendBaseUrl) {
       throw new Error('Backend API URL is not configured');
     }
+=======
+    const backendBaseUrl = getBackendBaseUrlFromEnv();
+>>>>>>> b725023a91e881d2f9ed5610176694ddf07567aa
 
     const apiUrl = `${backendBaseUrl.replace(/\/$/, '')}/auth/register`;
 
@@ -55,6 +63,7 @@ export async function POST(request: NextRequest) {
         : new NextResponse(null, { status: response.status });
 
     nextResponse.headers.set('Access-Control-Allow-Origin', '*');
+<<<<<<< HEAD
     nextResponse.headers.set(
       'Access-Control-Allow-Methods',
       'GET, POST, PUT, DELETE, OPTIONS'
@@ -63,6 +72,10 @@ export async function POST(request: NextRequest) {
       'Access-Control-Allow-Headers',
       'Content-Type, Authorization'
     );
+=======
+    nextResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    nextResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+>>>>>>> b725023a91e881d2f9ed5610176694ddf07567aa
 
     return nextResponse;
   } catch (error: unknown) {

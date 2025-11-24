@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/components/ui/use-toast';
-import { getAuthToken } from '@/lib/auth';
+import { toast } from '@/hooks/use-toast';
+import { useProduct } from '@/contexts/ProductContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 
 export default function AddProduce() {
   const router = useRouter();
+  const { user } = useAuth();
+  const { addFarmerProduct } = useProduct();
   const [formData, setFormData] = useState({
     name: '',
     quantity: '',
@@ -53,13 +56,11 @@ export default function AddProduce() {
 
     if (submitting) return;
 
-    const token = getAuthToken();
-
-    if (!token) {
+    if (!user) {
       toast({
         title: 'Authentication Required',
         description: 'Please sign in again to add produce.',
-        variant: 'error',
+        variant: 'destructive',
       });
       router.push('/signin');
       return;
@@ -72,61 +73,33 @@ export default function AddProduce() {
 
     setSubmitting(true);
 
-    const normalizedUnit = (formData.measurementUnit || 'UNIT').trim().toUpperCase();
-    const normalizedCategory = (formData.category || 'OTHER').trim().toUpperCase();
-
-    const payload: Record<string, unknown> = {
-      name: formData.name.trim(),
-      quantity: Number(formData.quantity) || 0,
-      unitPrice: Number(formData.unitPrice) || 0,
-      measurementUnit: normalizedUnit,
-      location: formData.location.trim(),
-      harvestDate: formData.harvestDate || '',
-      category: normalizedCategory,
-      description: formData.description || '',
-      isNegotiable: formData.isNegotiable,
-    };
-
-    // Backend expects multipart/form-data; include boolean/numeric values as strings
-    const data = new FormData();
-    Object.entries(payload).forEach(([key, value]) => {
-      if (value === undefined || value === null) return;
-      if (typeof value === 'string' && value.trim() === '') return;
-      data.append(key, String(value));
-    });
-    if (imageFile) {
-      data.append('image', imageFile);
-    }
-
     try {
-      const response = await fetch('/api/farmers/products', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: data,
-      });
+      // Create product object for context
+      const productData = {
+        id: Date.now().toString(), // Temporary ID
+        name: formData.name.trim(),
+        description: formData.description || '',
+        unitPrice: Number(formData.unitPrice) || 0,
+        image: previewUrl || '',
+        quantity: Number(formData.quantity) || 0,
+        measurementUnit: formData.measurementUnit || 'UNIT',
+        category: formData.category || 'OTHER',
+        harvestDate: new Date(formData.harvestDate || Date.now()),
+        location: formData.location.trim(),
+        isNegotiable: formData.isNegotiable,
+        certification: 'NONE' as any,
+        productStatus: 'IN_STOCK' as any,
+        farmer: user as any, // Temporary farmer reference
+      };
 
-      const body = await response.json().catch(() => null);
-
-      if (!response.ok || body?.success === false) {
-        const message =
-          body?.message ||
-          (body?.error ? String(body.error) : 'Failed to add produce. Please try again.');
-        if (message.toLowerCase().includes('no static resource')) {
-          throw new Error(
-            'Product creation endpoint is currently unavailable. Please contact support to enable this feature.'
-          );
-        }
-
-        throw new Error(message);
-      }
+      // Add to context (this will update localStorage)
+      addFarmerProduct(productData as any);
 
       toast({
         title: 'Produce Added',
-        description: 'Your product is now listed in the marketplace.',
-        variant: 'success',
+        description: 'Your product has been added to your inventory.',
       });
+
       router.push('/farmer_dashboard/products');
     } catch (error) {
       console.error('Error adding produce:', error);
@@ -134,7 +107,7 @@ export default function AddProduce() {
       toast({
         title: 'Unable to add produce',
         description: message,
-        variant: 'error',
+        variant: 'destructive',
       });
     } finally {
       setSubmitting(false);
@@ -160,7 +133,10 @@ export default function AddProduce() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <form onSubmit={handleSubmit} className="xl:col-span-2 bg-white rounded-lg shadow-sm border p-6 space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            className="xl:col-span-2 bg-white rounded-lg shadow-sm border p-6 space-y-4"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Product Name</label>
@@ -302,7 +278,11 @@ export default function AddProduce() {
             </p>
             <div className="border border-dashed border-gray-200 rounded-lg p-4 text-center">
               {previewUrl ? (
-                <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover rounded-md" />
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="w-full h-48 object-cover rounded-md"
+                />
               ) : (
                 <div className="text-sm text-gray-400">Upload an image to preview it here.</div>
               )}
@@ -321,7 +301,9 @@ export default function AddProduce() {
               <div className="flex justify-between">
                 <span>Quantity</span>
                 <span className="font-medium text-gray-900">
-                  {formData.quantity ? `${formData.quantity} ${formData.measurementUnit || ''}` : '—'}
+                  {formData.quantity
+                    ? `${formData.quantity} ${formData.measurementUnit || ''}`
+                    : '—'}
                 </span>
               </div>
               <div className="flex justify-between">

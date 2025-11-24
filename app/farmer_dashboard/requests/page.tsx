@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
 import {
   LayoutGrid,
   FilePlus,
@@ -21,7 +23,6 @@ import {
   LogOut,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, getCurrentUser, logout, type User } from '@/lib/auth';
 
 type FarmerRequest = {
   id: string;
@@ -33,17 +34,6 @@ type FarmerRequest = {
   createdAt?: string;
   updatedAt?: string;
   farmerId?: string;
-};
-
-type FarmerProduct = {
-  id: string;
-  name: string;
-  category?: string;
-  unitPrice?: number;
-  measurementUnit?: string;
-  quantity?: number;
-  image?: string | null;
-  productStatus?: string;
 };
 
 type MenuItem = {
@@ -92,117 +82,16 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
 export default function FarmerRequestsPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [requests, setRequests] = useState<FarmerRequest[]>([]);
-  const [products, setProducts] = useState<FarmerProduct[]>([]);
-  const [requestsLoading, setRequestsLoading] = useState(true);
-  const [requestsError, setRequestsError] = useState<string | null>(null);
-  const [productsLoading, setProductsLoading] = useState(true);
-  const [productsError, setProductsError] = useState<string | null>(null);
+  const { user, logout } = useAuth();
+  const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
-
-  useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
-      setRequestsLoading(false);
-      setRequestsError('You need to sign in to view your requests.');
-      setProductsLoading(false);
-      setProductsError('You need to sign in to view inputs.');
-      return;
-    }
-
-    let cancelled = false;
-    const headers = { Authorization: `Bearer ${token}` };
-
-    const fetchRequests = async () => {
-      setRequestsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/requests', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load requests.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRequests([]);
-              setRequestsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerRequest[];
-          setRequests(Array.isArray(data) ? data : []);
-          setRequestsError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer requests:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load requests.';
-          setRequestsError(message);
-          setRequests([]);
-        }
-      } finally {
-        if (!cancelled) setRequestsLoading(false);
-      }
-    };
-
-    const fetchProducts = async () => {
-      setProductsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/products', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message =
-          body?.message || 'Failed to load products. Please try again later.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setProducts([]);
-              setProductsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerProduct[];
-          setProducts(Array.isArray(data) ? data : []);
-          setProductsError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer inputs:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load inputs.';
-          setProductsError(message);
-          setProducts([]);
-        }
-      } finally {
-        if (!cancelled) setProductsLoading(false);
-      }
-    };
-
-    fetchRequests();
-    fetchProducts();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // Use context data
+  const currentUser = user;
+  const requests = useMemo(() => [] as FarmerRequest[], []);
+  const products = useMemo(() => farmerProducts || [], [farmerProducts]);
+  const requestsLoading = false;
 
   const filteredRequests = useMemo(() => {
     if (statusFilter === 'all') return requests;
@@ -219,39 +108,25 @@ export default function FarmerRequestsPage() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
 
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
+      await logout();
+      router.push('/auth/signin');
       toast({
         title: 'Signed out',
         description: 'You have been logged out successfully.',
       });
     } catch (err) {
       console.error('Error during logout:', err);
-      const message = err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
+      const message =
+        err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
       toast({
         title: 'Logout Issue',
         description: message,
         variant: 'error',
       });
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };
@@ -300,7 +175,9 @@ export default function FarmerRequestsPage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                        isActive ? 'bg-white text-green-600 shadow-sm' : 'text-white hover:bg-green-700'
+                        isActive
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                       }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -319,7 +196,9 @@ export default function FarmerRequestsPage() {
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Input Requests</h1>
-            <p className="text-xs text-gray-500">Manage your farm inputs, {displayName.split(' ')[0]}</p>
+            <p className="text-xs text-gray-500">
+              Manage your farm inputs, {displayName.split(' ')[0]}
+            </p>
           </div>
           <Link
             href="/farmer_dashboard/add_produce"
@@ -331,7 +210,11 @@ export default function FarmerRequestsPage() {
 
         <div className="p-6 space-y-6">
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <SummaryCard title="Total requests" value={formatNumber(requestsSummary.total)} caption="All time" />
+            <SummaryCard
+              title="Total requests"
+              value={formatNumber(requestsSummary.total)}
+              caption="All time"
+            />
             <SummaryCard
               title="Pending"
               value={formatNumber(requestsSummary.pending)}
@@ -401,17 +284,25 @@ export default function FarmerRequestsPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                 {products.slice(0, 8).map(product => (
-                  <article key={product.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                  <article
+                    key={product.id}
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+                  >
                     <div className="aspect-square bg-gray-50 flex items-center justify-center p-4">
                       {product.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-contain"
+                        />
                       ) : (
                         <div className="text-xs text-gray-400">No image</div>
                       )}
                     </div>
                     <div className="p-4 space-y-2">
-                      <h3 className="font-semibold text-gray-900">{product.name || 'Unnamed input'}</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {product.name || 'Unnamed input'}
+                      </h3>
                       <div className="flex items-center justify-between text-sm text-gray-600">
                         <span>
                           {product.unitPrice != null
@@ -440,7 +331,10 @@ export default function FarmerRequestsPage() {
                 <h2 className="text-lg font-semibold text-gray-900">Recent Requests</h2>
                 <p className="text-sm text-gray-500">Track your latest submissions</p>
               </div>
-              <Link href="/farmer_dashboard/requests" className="text-sm text-green-600 hover:underline">
+              <Link
+                href="/farmer_dashboard/requests"
+                className="text-sm text-green-600 hover:underline"
+              >
                 View all
               </Link>
             </div>
@@ -450,11 +344,21 @@ export default function FarmerRequestsPage() {
                   <tr className="text-left">
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">ID</th>
                     <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Item</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Payment</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Requested</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Quantity
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Payment
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Requested
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -477,17 +381,23 @@ export default function FarmerRequestsPage() {
 
                       return (
                         <tr key={request.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 text-sm font-medium text-gray-900">#{request.id}</td>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                            #{request.id}
+                          </td>
                           <td className="px-6 py-4 text-sm text-gray-900">{request.item || '—'}</td>
                           <td className="px-6 py-4 text-sm text-gray-600">
                             {request.quantity != null ? formatNumber(request.quantity) : '—'}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">{request.paymentType || '—'}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600">
+                            {request.paymentType || '—'}
+                          </td>
                           <td className="px-6 py-4 text-sm text-gray-600">
                             {formatDate(request.requestDate || request.createdAt)}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${statusMeta.badge}`}>
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${statusMeta.badge}`}
+                            >
                               {statusMeta.label}
                             </span>
                           </td>

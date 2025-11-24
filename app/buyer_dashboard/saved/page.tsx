@@ -92,14 +92,20 @@ const Logo = () => (
 
 export default function SavedItems() {
   const [activeTab, setActiveTab] = useState<'all' | 'expected' | 'available'>('all');
+  const [sortBy, setSortBy] = useState('Newest');
   const [logoutPending, setLogoutPending] = useState(false);
   const router = useRouter();
 
-  const filteredProducts = products.filter(product => {
-    if (activeTab === 'available') return product.isAvailable;
-    if (activeTab === 'expected') return !product.isAvailable;
-    return true;
-  });
+  const filteredProducts = products
+    .map(p => ({
+      ...p,
+      isAvailable: true, // Adding missing property
+    }))
+    .filter(product => {
+      if (activeTab === 'available') return product.isAvailable;
+      if (activeTab === 'expected') return !product.isAvailable;
+      return true;
+    });
 
   const handleLogout = async () => {
     if (logoutPending) return;
@@ -119,8 +125,7 @@ export default function SavedItems() {
 
         if (!response.ok) {
           const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
+            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
           throw new Error(message);
         }
       }
@@ -221,7 +226,7 @@ export default function SavedItems() {
           {/* Products Grid */}
           <main className="flex-1 overflow-auto p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map(p => (
+              {filteredProducts.map(p => (
                 <div key={p.name} className="bg-white rounded-lg shadow-sm border overflow-hidden">
                   <div className="relative">
                     <img src={p.image} alt={p.name} className="h-48 w-full object-cover" />

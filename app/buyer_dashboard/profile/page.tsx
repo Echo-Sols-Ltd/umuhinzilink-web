@@ -104,8 +104,7 @@ export default function BuyerProfile() {
 
         if (!response.ok) {
           const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
+            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
           throw new Error(message);
         }
       }
@@ -175,7 +174,9 @@ export default function BuyerProfile() {
                               : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                           }`}
                         >
-                          <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                          <Icon
+                            className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`}
+                          />
                           <span>{m.label}</span>
                         </div>
                       </Link>

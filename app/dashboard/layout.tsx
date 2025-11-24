@@ -1,21 +1,13 @@
 'use client';
 
 import type React from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatar?: string;
-  location?: string;
-  // Add other user properties as needed
-}
+import { useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { RoleBasedDashboard } from '@/components/RoleBasedDashboard';
 
 import {
   SidebarProvider,
@@ -57,25 +49,18 @@ const sidebarItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
-  const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user, loading, logout, loadAuthState } = useAuth();
 
   useEffect(() => {
-    // Get user from localStorage if available
-    const user = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
-    if (user) {
-      setCurrentUser(JSON.parse(user));
-    } else {
-      router.push('/login');
-    }
-  }, [router]);
+    // Load authentication state on mount
+    loadAuthState();
+  }, [loadAuthState]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    router.push('/');
+  const handleLogout = async () => {
+    await logout();
   };
 
-  if (!currentUser) {
+  if (loading || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -164,24 +149,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="mt-auto p-4 border-t border-border/40">
               <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                 <img
-                  src={currentUser.avatar}
-                  alt={currentUser.name}
+                  src={user.avatar || '/default-avatar.png'}
+                  alt={user.names || 'User'}
                   className="w-10 h-10 rounded-full border-2 border-green-200 dark:border-green-800"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-foreground truncate">
-                    {currentUser.name}
+                    {user.names || 'User'}
                   </p>
                   <p className="text-xs text-muted-foreground truncate flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
-                    {currentUser.location}
+                    {user.email || 'No location'}
                   </p>
                 </div>
               </div>
             </div>
           </SidebarContent>
         </Sidebar>
-        <SidebarInset className="flex-1">{children}</SidebarInset>
+        <SidebarInset className="flex-1">
+          <RoleBasedDashboard>{children}</RoleBasedDashboard>
+        </SidebarInset>
       </div>
     </SidebarProvider>
   );

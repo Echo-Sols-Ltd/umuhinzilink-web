@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useOrder } from '@/contexts/OrderContext';
+
 import {
   LayoutGrid,
   FilePlus,
@@ -19,48 +22,6 @@ import {
   Loader2,
   LogOut,
 } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, getCurrentUser, logout, type User } from '@/lib/auth';
-
-type FarmerOrder = {
-  id: string;
-  buyer?: {
-    id?: string;
-    names?: string;
-    email?: string;
-    phoneNumber?: string;
-    address?: {
-      district?: string;
-      province?: string;
-    } | null;
-  };
-  product?: {
-    id?: string;
-    name?: string;
-    unitPrice?: number;
-    measurementUnit?: string;
-    quantity?: number;
-    farmer?: {
-      id?: string;
-      user?: {
-        id?: string;
-        names?: string;
-      };
-    };
-  };
-  quantity?: number;
-  totalPrice?: number;
-  isPaid?: boolean;
-  status?: string;
-  paymentMethod?: string;
-  delivery?: {
-    status?: string;
-    deliveryAddress?: string;
-    estimatedDelivery?: string;
-  };
-  createdAt?: string;
-  updatedAt?: string;
-};
 
 type MenuItem = {
   label: string;
@@ -110,63 +71,15 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
 export default function FarmerOrdersPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [orders, setOrders] = useState<FarmerOrder[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, logout } = useAuth();
+  const { farmerOrders, loading } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
-
-  useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
-      setLoading(false);
-      setError('You need to sign in to view your orders.');
-      return;
-    }
-
-    let cancelled = false;
-
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('/api/orders/farmer', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message = body?.message || 'Failed to load orders.';
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerOrder[];
-          setOrders(Array.isArray(data) ? data : []);
-          setError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer orders:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load orders.';
-          setError(message);
-          setOrders([]);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    fetchOrders();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // Use context data instead of manual state
+  const currentUser = user;
+  const orders = useMemo(() => farmerOrders || [], [farmerOrders]);
+  const error = null;
 
   const filteredOrders = useMemo(() => {
     if (statusFilter === 'all') return orders;
@@ -183,39 +96,14 @@ export default function FarmerOrdersPage() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
 
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (err) {
-      console.error('Error during logout:', err);
-      const message = err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
+      await logout();
+      router.push('/auth/signin');
+    } catch (error) {
+      console.error('Error during logout:', error);
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };
@@ -264,7 +152,9 @@ export default function FarmerOrdersPage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                        isActive ? 'bg-white text-green-600 shadow-sm' : 'text-white hover:bg-green-700'
+                        isActive
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                       }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -292,7 +182,11 @@ export default function FarmerOrdersPage() {
 
         <div className="p-6 space-y-6">
           <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <SummaryCard title="Total orders" value={formatNumber(metrics.total)} caption="All time" />
+            <SummaryCard
+              title="Total orders"
+              value={formatNumber(metrics.total)}
+              caption="All time"
+            />
             <SummaryCard
               title="Revenue"
               value={`RWF ${formatNumber(metrics.totalRevenue)}`}
@@ -346,15 +240,29 @@ export default function FarmerOrdersPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Order ID</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Order ID
+                    </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Buyer</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Address</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Address
+                    </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Date</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Product</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Quantity</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Amount</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Status</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Action</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Product
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Quantity
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Amount
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -383,27 +291,39 @@ export default function FarmerOrdersPage() {
                       const buyerAddress = order.buyer?.address
                         ? `${order.buyer.address.district || ''}${order.buyer.address.province ? `, ${order.buyer.address.province}` : ''}`.trim()
                         : '—';
-                      const quantity = Number(order.quantity) || Number(order.product?.quantity) || 0;
-                      const amount = Number(order.totalPrice) ||
+                      const quantity =
+                        Number(order.quantity) || Number(order.product?.quantity) || 0;
+                      const amount =
+                        Number(order.totalPrice) ||
                         (Number(order.product?.unitPrice) || 0) * quantity;
 
                       return (
                         <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="py-4 px-4 text-sm font-medium text-gray-900">#{order.id}</td>
+                          <td className="py-4 px-4 text-sm font-medium text-gray-900">
+                            #{order.id}
+                          </td>
                           <td className="py-4 px-4 text-sm text-gray-900">
                             {order.buyer?.names || order.buyer?.email || 'Unknown buyer'}
                           </td>
                           <td className="py-4 px-4 text-sm text-gray-600">{buyerAddress || '—'}</td>
-                          <td className="py-4 px-4 text-sm text-gray-600">{formatDate(order.createdAt)}</td>
-                          <td className="py-4 px-4 text-sm text-gray-900">{order.product?.name || '—'}</td>
                           <td className="py-4 px-4 text-sm text-gray-600">
-                            {quantity ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}` : '—'}
+                            {formatDate(order.createdAt)}
+                          </td>
+                          <td className="py-4 px-4 text-sm text-gray-900">
+                            {order.product?.name || '—'}
+                          </td>
+                          <td className="py-4 px-4 text-sm text-gray-600">
+                            {quantity
+                              ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}`
+                              : '—'}
                           </td>
                           <td className="py-4 px-4 text-sm text-gray-900">
                             RWF {formatNumber(amount)}
                           </td>
                           <td className="py-4 px-4">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusMeta.badge}`}>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${statusMeta.badge}`}
+                            >
                               {statusMeta.label}
                             </span>
                           </td>

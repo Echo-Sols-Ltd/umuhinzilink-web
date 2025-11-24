@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
+import { useOrder } from '@/contexts/OrderContext';
 import {
   LayoutGrid,
   FilePlus,
@@ -36,7 +39,6 @@ import {
 } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { FarmerGuard } from '@/components/auth/AuthGuard';
-import { getAuthToken, getCurrentUser, logout, type User as AuthUser } from '@/lib/auth';
 import { toast } from '@/components/ui/use-toast';
 
 type MenuItem = {
@@ -82,6 +84,10 @@ type FarmerProduct = {
       id?: string;
       names?: string;
     };
+  };
+  user?: {
+    id?: string;
+    names?: string;
   };
 };
 
@@ -137,7 +143,20 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
-const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_LABELS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 const BackButton = ({ href = '/farmer_dashboard' }: { href?: string }) => (
   <Link
@@ -151,7 +170,12 @@ const BackButton = ({ href = '/farmer_dashboard' }: { href?: string }) => (
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M10 19l-7-7m0 0l7-7m-7 7h18"
+      />
     </svg>
     Back to Dashboard
   </Link>
@@ -183,221 +207,22 @@ function getInitials(name: string) {
 
 function Dashboard() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
-  const [profile, setProfile] = useState<FarmerProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
-  const [profileError, setProfileError] = useState<string | null>(null);
-
-  const [rawOrders, setRawOrders] = useState<FarmerOrder[]>([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
-  const [ordersError, setOrdersError] = useState<string | null>(null);
-
-  const [rawProducts, setRawProducts] = useState<FarmerProduct[]>([]);
-  const [productsLoading, setProductsLoading] = useState(true);
-  const [productsError, setProductsError] = useState<string | null>(null);
-
-  const [rawRequests, setRawRequests] = useState<FarmerRequest[]>([]);
-  const [requestsLoading, setRequestsLoading] = useState(true);
-  const [requestsError, setRequestsError] = useState<string | null>(null);
-
+  const { user, farmer, loading: authLoading, logout } = useAuth();
+  const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
+  const { farmerOrders, loading: ordersLoading } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
+  // Use context data - all hooks must be called before any early returns
+  const currentUser = user;
+  const profile = farmer;
+  const rawProducts = useMemo(() => farmerProducts || [], [farmerProducts]);
+  const rawOrders = useMemo(() => farmerOrders || [], [farmerOrders]);
+  const rawRequests = useMemo(() => [] as FarmerRequest[], []);
 
-  useEffect(() => {
-    const token = getAuthToken();
-
-    if (!token) {
-      setProfileLoading(false);
-      setProfileError('You need to sign in to view your profile.');
-      setOrdersLoading(false);
-      setOrdersError('You need to sign in to view your orders.');
-      setProductsLoading(false);
-      setProductsError('You need to sign in to view your products.');
-      setRequestsLoading(false);
-      setRequestsError('You need to sign in to view your requests.');
-      return;
-    }
-
-    let cancelled = false;
-    const headers = { Authorization: `Bearer ${token}` };
-
-    const fetchProfile = async () => {
-      setProfileLoading(true);
-      try {
-        const response = await fetch('/api/farmers/profile', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load farmer profile.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setProfile(null);
-              setProfileError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body) as FarmerProfile;
-          setProfile(data);
-          setProfileError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer profile:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load profile information.';
-          setProfileError(message);
-          setProfile(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setProfileLoading(false);
-        }
-      }
-    };
-
-    const fetchOrders = async () => {
-      setOrdersLoading(true);
-      try {
-        const response = await fetch('/api/orders/farmer', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load orders.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawOrders([]);
-              setOrdersError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerOrder[];
-          setRawOrders(Array.isArray(data) ? data : []);
-          setOrdersError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer orders:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load orders. Please try again.';
-          setOrdersError(message);
-          setRawOrders([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setOrdersLoading(false);
-        }
-      }
-    };
-
-    const fetchProducts = async () => {
-      setProductsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/products', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message =
-          body?.message || 'Failed to load products. Please try again later.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawProducts([]);
-              setProductsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerProduct[];
-          setRawProducts(Array.isArray(data) ? data : []);
-          setProductsError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer products:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load products.';
-          setProductsError(message);
-          setRawProducts([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setProductsLoading(false);
-        }
-      }
-    };
-
-    const fetchRequests = async () => {
-      setRequestsLoading(true);
-      try {
-        const response = await fetch('/api/farmers/requests', { headers });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load requests.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setRawRequests([]);
-              setRequestsError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body || []) as FarmerRequest[];
-          setRawRequests(Array.isArray(data) ? data : []);
-          setRequestsError(null);
-        }
-      } catch (error) {
-        console.error('Error fetching farmer requests:', error);
-        if (!cancelled) {
-          const message =
-            error instanceof Error ? error.message : 'Unable to load requests.';
-          setRequestsError(message);
-          setRawRequests([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setRequestsLoading(false);
-        }
-      }
-    };
-
-    fetchProfile();
-    fetchOrders();
-    fetchProducts();
-    fetchRequests();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const profileLoading = authLoading;
+  const profileError = null;
+  const requestsLoading = false;
+  const requestsError = null;
 
   const farmerId = profile?.id || currentUser?.id || null;
 
@@ -437,8 +262,7 @@ function Dashboard() {
   const paidOrdersCount = useMemo(() => orders.filter(order => order.isPaid).length, [orders]);
 
   const pendingOrdersCount = useMemo(
-    () =>
-      orders.filter(order => (order.status || '').toLowerCase() === 'pending').length,
+    () => orders.filter(order => (order.status || '').toLowerCase() === 'pending').length,
     [orders]
   );
 
@@ -471,8 +295,8 @@ function Dashboard() {
   const recentProducts = useMemo(() => {
     return [...products]
       .sort((a, b) => {
-        const aDate = new Date(a.updatedAt || a.createdAt || '').getTime();
-        const bDate = new Date(b.updatedAt || b.createdAt || '').getTime();
+        const aDate = new Date(a.harvestDate || '').getTime();
+        const bDate = new Date(b.harvestDate || '').getTime();
         return bDate - aDate;
       })
       .slice(0, 10);
@@ -529,40 +353,12 @@ function Dashboard() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
 
     try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (error) {
-      console.error('Error during logout:', error);
-      const message =
-        error instanceof Error ? error.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
+      await logout();
+      router.push('/auth/signin');
     } finally {
-      logout(router);
       setLogoutPending(false);
     }
   };
@@ -629,8 +425,25 @@ function Dashboard() {
     ]
   );
 
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-green-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!user) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1 min-h-0">
         <aside
           className="w-64 bg-[#00A63E] border-r flex flex-col fixed left-0 top-0 h-screen overflow-y-auto"
@@ -675,7 +488,9 @@ function Dashboard() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive ? 'bg-white text-green-600 shadow-sm' : 'text-white hover:bg-green-700'
+                          isActive
+                            ? 'bg-white text-green-600 shadow-sm'
+                            : 'text-white hover:bg-green-700'
                         }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -690,7 +505,7 @@ function Dashboard() {
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-auto ml-64 relative">
+        <main className="flex-1 overflow-auto ml-64 relative bg-white ">
           <header className="fixed top-0 left-64 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             <div className="flex items-center space-x-4">
               <div className="relative">
@@ -723,7 +538,7 @@ function Dashboard() {
             </div>
           </header>
 
-          <div className="p-6 mt-16 space-y-6">
+          <div className="p-6 mt-16 space-y-6 ">
             <div>
               <p className="text-sm text-gray-500 mb-1">{todayLabel}</p>
               <h1 className="text-2xl font-bold text-gray-900 mb-1">
@@ -732,9 +547,7 @@ function Dashboard() {
               <p className="text-gray-600">
                 Here&apos;s what&apos;s happening with your farm today{profileLoading ? '...' : '.'}
               </p>
-              {profileError && (
-                <p className="text-sm text-red-500 mt-2">{profileError}</p>
-              )}
+              {profileError && <p className="text-sm text-red-500 mt-2">{profileError}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -743,7 +556,9 @@ function Dashboard() {
                   key={card.id}
                   className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4"
                 >
-                  <div className={`w-12 h-12 ${card.iconBg} rounded-xl flex items-center justify-center`}>
+                  <div
+                    className={`w-12 h-12 ${card.iconBg} rounded-xl flex items-center justify-center`}
+                  >
                     {card.icon}
                   </div>
                   <div>
@@ -765,7 +580,9 @@ function Dashboard() {
                     {products.length ? `${formatNumber(products.length)} listings` : '—'}
                   </span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{formatNumber(activeProductsCount)}</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  {formatNumber(activeProductsCount)}
+                </h3>
                 <p className="text-sm text-gray-500">Active product listings</p>
               </div>
 
@@ -778,7 +595,9 @@ function Dashboard() {
                     {uniqueBuyersCount ? '+ customers' : '—'}
                   </span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{formatNumber(uniqueBuyersCount)}</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  {formatNumber(uniqueBuyersCount)}
+                </h3>
                 <p className="text-sm text-gray-500">Unique buyers engaged</p>
               </div>
 
@@ -808,7 +627,9 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">RWF {formatNumber(totalRevenue)}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    RWF {formatNumber(totalRevenue)}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {paidOrdersCount ? `${paidOrdersCount} paid orders` : 'No paid orders yet'}
                   </p>
@@ -862,7 +683,8 @@ function Dashboard() {
                   <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
                     <p className="font-medium text-gray-900 mb-1">💰 Market Price</p>
                     <p className="text-sm text-gray-600">
-                      Tomato prices increased by 15% this month. Great time to sell if you have stock.
+                      Tomato prices increased by 15% this month. Great time to sell if you have
+                      stock.
                     </p>
                   </div>
                 </div>
@@ -879,11 +701,16 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <p className="text-3xl font-bold text-gray-900">RWF {formatNumber(totalRevenue)}</p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    RWF {formatNumber(totalRevenue)}
+                  </p>
                 </div>
                 <div style={{ width: '100%', height: 220 }}>
                   <ResponsiveContainer>
-                    <AreaChart data={revenueByMonth} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                    <AreaChart
+                      data={revenueByMonth}
+                      margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+                    >
                       <defs>
                         <linearGradient id="revenueColor" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
@@ -926,7 +753,9 @@ function Dashboard() {
               </div>
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Current regions to work with</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Current regions to work with
+                </h3>
                 <div className="space-y-4">
                   {regionStats.length ? (
                     regionStats.map(region => (
@@ -950,7 +779,10 @@ function Dashboard() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
-                <Link href="/farmer_dashboard/products" className="text-sm text-green-600 hover:underline">
+                <Link
+                  href="/farmer_dashboard/products"
+                  className="text-sm text-green-600 hover:underline"
+                >
                   Manage products
                 </Link>
               </div>
@@ -1005,8 +837,12 @@ function Dashboard() {
                         <tr key={product.id} className="border-b border-gray-200">
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
                             <div>
-                              <p className="font-medium text-gray-900">{product.name || 'Unnamed product'}</p>
-                              <p className="text-xs text-gray-500">{product.category || 'Uncategorized'}</p>
+                              <p className="font-medium text-gray-900">
+                                {product.name || 'Unnamed product'}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {product.category || 'Uncategorized'}
+                              </p>
                             </div>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
@@ -1063,7 +899,10 @@ function Dashboard() {
                   <h3 className="text-lg font-semibold text-gray-900">Input requests</h3>
                   <p className="text-sm text-gray-500">Track your farm input needs</p>
                 </div>
-                <Link href="/farmer_dashboard/requests" className="text-sm text-green-600 hover:underline">
+                <Link
+                  href="/farmer_dashboard/requests"
+                  className="text-sm text-green-600 hover:underline"
+                >
                   View all
                 </Link>
               </div>
@@ -1080,7 +919,9 @@ function Dashboard() {
                   requests.slice(0, 5).map(request => (
                     <div key={request.id} className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{request.item || 'Requested item'}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {request.item || 'Requested item'}
+                        </p>
                         <p className="text-xs text-gray-500">
                           {request.quantity != null
                             ? `${request.quantity} units`
@@ -1114,10 +955,7 @@ function Dashboard() {
 export default function FarmerDashboard() {
   return (
     <FarmerGuard>
-      <div className="container mx-auto px-4 py-6">
-        <BackButton />
-        <Dashboard />
-      </div>
+      <Dashboard />
     </FarmerGuard>
   );
 }
