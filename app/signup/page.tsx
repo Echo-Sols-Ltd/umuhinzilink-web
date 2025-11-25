@@ -225,7 +225,7 @@ export default function SignUp() {
           title: 'Registration Failed',
           description: serverMessage,
           variant: 'error',
-        });
+      });
 
         return;
       }
