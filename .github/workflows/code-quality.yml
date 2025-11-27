@@ -1,0 +1,48 @@
+name: 🧹 Code Quality
+
+on:
+  push:
+    branches: [web_fro, main]
+  pull_request:
+    branches: [web_fro, main]
+
+jobs:
+  lint-and-format:
+    name: 🔍 Lint & Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🎯 TypeScript Check
+        run: |
+          echo "🎯 Checking TypeScript..."
+          npx tsc --noEmit --pretty
+
+      - name: 🧹 ESLint
+        run: |
+          echo "🧹 Running ESLint..."
+          npx eslint . --ext .ts,.tsx,.js,.jsx --format=stylish
+
+      - name: 💅 Prettier Check
+        run: |
+          echo "💅 Checking formatting..."
+          npx prettier --check "**/*.{ts,tsx,js,jsx,json,md,yml,yaml}"
+
+      - name: 📊 Report Results
+        if: always()
+        run: |
+          echo "## 🧹 Code Quality Report" >> $GITHUB_STEP_SUMMARY
+          echo "- TypeScript: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ESLint: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY  
+          echo "- Prettier: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY

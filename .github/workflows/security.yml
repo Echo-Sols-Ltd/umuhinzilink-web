@@ -1,0 +1,97 @@
+name: 🔒 Security Audit
+
+on:
+  push:
+    branches: [web_fro]
+  pull_request:
+    branches: [web_fro]
+  schedule:
+    # Run security audit daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  security-audit:
+    name: 🔒 Security & Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🔒 NPM Security Audit
+        id: npm-audit
+        run: |
+          echo "🔒 Running npm security audit..."
+          npm audit --audit-level=moderate --json > audit-results.json || true
+
+          # Parse results
+          CRITICAL=$(cat audit-results.json | jq -r '.metadata.vulnerabilities.critical // 0')
+          HIGH=$(cat audit-results.json | jq -r '.metadata.vulnerabilities.high // 0')
+          MODERATE=$(cat audit-results.json | jq -r '.metadata.vulnerabilities.moderate // 0')
+
+          echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
+          echo "high=$HIGH" >> $GITHUB_OUTPUT
+          echo "moderate=$MODERATE" >> $GITHUB_OUTPUT
+
+          echo "## 🔒 Security Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Critical | $CRITICAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| High | $HIGH |" >> $GITHUB_STEP_SUMMARY
+          echo "| Moderate | $MODERATE |" >> $GITHUB_STEP_SUMMARY
+
+      - name: 📋 Dependency Analysis
+        run: |
+          echo "📋 Analyzing dependencies..."
+
+          # Check for outdated packages
+          echo "## 📦 Dependency Status" >> $GITHUB_STEP_SUMMARY
+          npm outdated --json > outdated.json || true
+
+          if [ -s outdated.json ]; then
+            echo "⚠️ Some dependencies are outdated" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ All dependencies are up to date" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🚨 Security Alert
+        if: steps.npm-audit.outputs.critical > 0 || steps.npm-audit.outputs.high > 0
+        run: |
+          echo "🚨 SECURITY ALERT: Critical or High severity vulnerabilities found!"
+          echo "Critical: ${{ steps.npm-audit.outputs.critical }}"
+          echo "High: ${{ steps.npm-audit.outputs.high }}"
+          echo "Please review and update vulnerable packages."
+
+      - name: 📊 Upload Audit Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit-results
+          path: |
+            audit-results.json
+            outdated.json
+          retention-days: 30
+
+  dependency-review:
+    name: 🔍 Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔍 Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC

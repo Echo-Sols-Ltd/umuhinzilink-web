@@ -108,3 +108,11 @@ export function AdminGuard({ children, ...props }: Omit<AuthGuardProps, 'require
     </AuthGuard>
   );
 }
+
+export function GovernmentGuard({ children, ...props }: Omit<AuthGuardProps, 'requiredRoles'>) {
+  return (
+    <AuthGuard requiredRoles={[UserType.ADMIN]} {...props}>
+      {children}
+    </AuthGuard>
+  );
+}

@@ -131,12 +131,12 @@ class ApiClient {
 
   public async logout() {
     try {
-      await localStorage.removeItemAsync('auth_token');
-      await localStorage.removeItemAsync('user');
-      await localStorage.removeItemAsync('farmer');
-      await localStorage.removeItemAsync('supplier');
-      await localStorage.removeItemAsync('buyer');
-      await localStorage.clear();
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('farmer');
+      localStorage.removeItem('supplier');
+      localStorage.removeItem('buyer');
+      localStorage.clear();
     } catch {
     } finally {
       this.logoutListeners.forEach(callback => {
