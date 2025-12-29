@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
-import { data } from '../signin/navbar';
+
 
 export default function SignUp() {
   const router = useRouter();
@@ -301,25 +301,6 @@ export default function SignUp() {
           className="absolute right-0 top-0 object-cover w-full h-full"
         />
 
-        {/* Navbar */}
-        <div className="absolute top-4 left-0 right-0 max-w-5xl mx-auto flex justify-between items-center px-6 sm:px-8 z-20">
-          <h1 className="text-white font-bold text-lg">UmuhinziLink</h1>
-          <div className="flex gap-6">
-            {data.map((link, index) => (
-              <Link
-                key={index}
-                href={link.url}
-                className="flex items-center gap-2 text-white hover:text-green-400 transition text-xs font-medium"
-              >
-                {link.icon}
-                {link.name}
-              </Link>
-            ))}
-          </div>
-          <Button className="bg-white text-green-600 rounded-2xl px-4 py-2 hover:bg-green-50 transition">
-            Free Download
-          </Button>
-        </div>
 
         {/* Welcome Text */}
         <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
