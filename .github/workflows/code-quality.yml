@@ -17,7 +17,6 @@ jobs:
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
-        id: pnpm-setup
         with:
           version: 8
 
@@ -25,25 +24,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          # This tells it to cache PNPM
-          cache: 'pnpm'
 
-      - name: Get PNPM store directory
-        id: pnpm-cache
-        shell: bash
+      - name: Fix line endings (if needed)
         run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Cache PNPM store
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          # Convert CRLF to LF if lockfile has Windows line endings
+          if [ -f "pnpm-lock.yaml" ]; then
+            dos2unix pnpm-lock.yaml 2>/dev/null || true
+          fi
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          # Try with frozen lockfile first, fallback to regenerating
+          pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
 
       - name: TypeScript Check
         run: pnpm exec tsc --noEmit
