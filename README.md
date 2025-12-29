@@ -27,7 +27,7 @@ To empower Rwandan farmers through digital agriculture solutions, providing acce
 
 ### **Frontend**
 
-- **Framework:** Next.js 15.2.4 (App Router)
+- **Framework:** Next.js  (App Router)
 - **Language:** TypeScript 5
 - **Styling:** Tailwind CSS 4.1.9
 - **UI Components:** Radix UI + shadcn/ui
