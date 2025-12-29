@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-format:
-    name: Lint & Format
+  code-quality:
+    name: Code Quality
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +18,7 @@ jobs:
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
         with:
-          version: 8  # or 'latest' or specific version like '8.15.0'
+          version: 8 
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,16 +28,16 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: TypeScript Check
         run: |
-          echo "Checking TypeScript..."
+          echo "TypeScript Check..."
           pnpm exec tsc --noEmit
 
       - name: ESLint
         run: |
-          echo "Running ESLint..."
+          echo "ESLint Check..."
           pnpm exec eslint . --ext .ts,.tsx,.js,.jsx --format=stylish
 
       - name: Report Results
