@@ -1,7 +1,7 @@
 // API Configuration Constants
 
-const SERVER_URL = 'https://api.umuhinzi-backend.echo-solution.com';
-// const SERVER_URL = 'http://localhost:801'
+// const SERVER_URL = 'https://api.umuhinzi-backend.echo-solution.com';
+const SERVER_URL = 'http://localhost:6060'
 
 export const API_CONFIG = {
   BASE_URL: SERVER_URL,
