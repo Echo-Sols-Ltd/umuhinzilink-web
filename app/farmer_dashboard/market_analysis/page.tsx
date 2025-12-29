@@ -228,7 +228,7 @@ const Dashboard = () => {
                       color: '#fff',
                       padding: '6px 10px',
                     }}
-                    formatter={value => [`${value.toLocaleString()}`, '']}
+                   formatter={(value) => [`${value?.toLocaleString() || '0'}`, 'Price']}
                   />
                   <Area
                     type="monotone"
