@@ -1,11 +1,9 @@
 import Navbar from '@/components/Navbar';
-
 import Hero from '@/components/Hero';
 import AboutUmuhinzinLink from '@/components/AboutUmunhzinLink';
 import WhoWeServe from '@/components/WhoWeServe';
 import PlatformFeatures from '@/components/PlatformFeatures';
 import HowItWorks from '@/components/HowItWorks';
-import IntuitiveDashboards from '@/components/IntuitiveDashboards';
 import ImpactStories from '@/components/ImpactStories';
 import CallToAction from '@/components/CallToAction';
 import Footer from '@/components/Footer';
@@ -24,7 +22,6 @@ export default function Home() {
       </section>
       <section id="agribusiness" className="section-fade-up section-delay-3">
         <HowItWorks />
-        <IntuitiveDashboards />
       </section>
       <section id="lenders" className="section-fade-up section-delay-4">
         <ImpactStories />
