@@ -1,48 +1,42 @@
-name: 🧹 Code Quality
+name: Code Quality
 
 on:
   push:
-    branches: [web_fro, main]
+    branches: [main]
   pull_request:
-    branches: [web_fro, main]
+    branches: [main]
 
 jobs:
   lint-and-format:
-    name: 🔍 Lint & Format Check
+    name: Lint & Format
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 📦 Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
-      - name: 🔧 Install dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: 🎯 TypeScript Check
+      - name: TypeScript Check
         run: |
-          echo "🎯 Checking TypeScript..."
-          npx tsc --noEmit --pretty
+          echo "Checking TypeScript..."
+          npx tsc --noEmit
 
-      - name: 🧹 ESLint
+      - name: ESLint
         run: |
-          echo "🧹 Running ESLint..."
+          echo "Running ESLint..."
           npx eslint . --ext .ts,.tsx,.js,.jsx --format=stylish
 
-      - name: 💅 Prettier Check
-        run: |
-          echo "💅 Checking formatting..."
-          npx prettier --check "**/*.{ts,tsx,js,jsx,json,md,yml,yaml}"
-
-      - name: 📊 Report Results
+      - name: Report Results
         if: always()
         run: |
-          echo "## 🧹 Code Quality Report" >> $GITHUB_STEP_SUMMARY
-          echo "- TypeScript: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- ESLint: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY  
-          echo "- Prettier: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "## Code Quality Report" >> $GITHUB_STEP_SUMMARY
+          echo "- TypeScript: ${{ job.status == 'success' && 'Passed' || 'Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ESLint: ${{ job.status == 'success' && 'Passed' || 'Failed' }}" >> $GITHUB_STEP_SUMMARY

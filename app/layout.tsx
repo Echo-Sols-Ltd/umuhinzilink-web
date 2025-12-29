@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'; // Add Viewport import
 import { Poppins } from 'next/font/google';
-import { AppProviders } from '@/providers/AppProviders';
+import { AppProviders } from '@/contexts/AppProviders';
 import './globals.css';
 
 const poppins = Poppins({
