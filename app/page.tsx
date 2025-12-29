@@ -1,5 +1,5 @@
 import Navbar from '@/components/Navbar';
-import './section-animations.css';
+
 import Hero from '@/components/Hero';
 import AboutUmuhinzinLink from '@/components/AboutUmunhzinLink';
 import WhoWeServe from '@/components/WhoWeServe';

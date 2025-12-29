@@ -48,7 +48,7 @@ export default function Hero() {
         <div className="flex justify-center">
           <div className="relative w-full h-64 md:h-96">
             <Image
-              src="/hero.png"
+              src="/assets/hero.png"
               alt="Farmer using digital technology in the field"
               fill
               className="object-contain"
