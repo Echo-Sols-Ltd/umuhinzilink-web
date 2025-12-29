@@ -15,24 +15,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8  # or 'latest' or specific version like '8.15.0'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+          # Change cache to 'pnpm' instead of 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: TypeScript Check
         run: |
           echo "Checking TypeScript..."
-          npx tsc --noEmit
+          pnpm exec tsc --noEmit
 
       - name: ESLint
         run: |
           echo "Running ESLint..."
-          npx eslint . --ext .ts,.tsx,.js,.jsx --format=stylish
+          pnpm exec eslint . --ext .ts,.tsx,.js,.jsx --format=stylish
 
       - name: Report Results
         if: always()
