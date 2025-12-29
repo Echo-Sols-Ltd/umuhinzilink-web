@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  code-quality:
-    name: Code Quality
+  lint-and-format:
+    name: Lint & Format
     runs-on: ubuntu-latest
 
     steps:
@@ -17,28 +17,39 @@ jobs:
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
+        id: pnpm-setup
         with:
-          version: 8 
+          version: 8
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          # Change cache to 'pnpm' instead of 'npm'
+          # This tells it to cache PNPM
           cache: 'pnpm'
 
+      - name: Get PNPM store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache PNPM store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: TypeScript Check
-        run: |
-          echo "TypeScript Check..."
-          pnpm exec tsc --noEmit
+        run: pnpm exec tsc --noEmit
 
       - name: ESLint
-        run: |
-          echo "ESLint Check..."
-          pnpm exec eslint . --ext .ts,.tsx,.js,.jsx --format=stylish
+        run: pnpm exec eslint . --ext .ts,.tsx,.js,.jsx --format=stylish
 
       - name: Report Results
         if: always()
