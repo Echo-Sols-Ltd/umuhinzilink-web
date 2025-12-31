@@ -31,25 +31,7 @@ export default function NewRequest() {
     setErrorMsg('');
     setLoading(true);
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests/credit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        setSuccessMsg('Request submitted successfully!');
-        setTimeout(() => router.push('/farmer_dashboard/requests'), 1500);
-      } else {
-        setErrorMsg('Failed to submit request. Try again.');
-      }
-    } catch (err) {
-      setErrorMsg('Error connecting to the server.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  
   };
 
   return (

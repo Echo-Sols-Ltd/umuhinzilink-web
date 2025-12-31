@@ -88,43 +88,7 @@ export default function FarmerProfilePage() {
     let cancelled = false;
 
     const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('/api/farmers/profile', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load profile.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setProfile(null);
-              setError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body) as FarmerProfile;
-          setProfile(data);
-          setError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer profile:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load profile.';
-          setError(message);
-          setProfile(null);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+     
     };
 
     fetchProfile();
@@ -139,38 +103,7 @@ export default function FarmerProfilePage() {
     const token = getAuthToken();
     setLogoutPending(true);
 
-    try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (err) {
-      console.error('Error during logout:', err);
-      const message =
-        err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
-    } finally {
-      logout(router);
-      setLogoutPending(false);
-    }
+   
   };
 
   const displayName = profile?.names || currentUser?.names || 'Farmer';

@@ -25,7 +25,6 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({ ...userData });
 
   useEffect(() => {
-    // In a real app, you would fetch user data here
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       const user = JSON.parse(storedUser);
