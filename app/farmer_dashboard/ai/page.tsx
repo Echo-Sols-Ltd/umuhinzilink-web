@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 const menuItems = [
   { label: 'Dashboard', href: '/farmer_dashboard', icon: LayoutGrid },
@@ -81,9 +82,10 @@ const Logo = () => (
 export default function AiDashboard() {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth()
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
 
   return (
@@ -110,10 +112,9 @@ export default function AiDashboard() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium
-                        ${
-                          isActive
-                            ? 'bg-white text-green-600 shadow-sm rounded-lg'
-                            : 'text-white hover:bg-green-700'
+                        ${isActive
+                          ? 'bg-white text-green-600 shadow-sm rounded-lg'
+                          : 'text-white hover:bg-green-700'
                         }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
