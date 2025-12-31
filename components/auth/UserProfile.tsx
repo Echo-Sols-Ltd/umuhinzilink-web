@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, logout, type User } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,6 +13,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User as UserIcon, Settings, LogOut, Shield } from 'lucide-react';
+import { User } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UserProfileProps {
   showFullProfile?: boolean;
@@ -22,14 +23,11 @@ interface UserProfileProps {
 
 export default function UserProfile({ showFullProfile = false, className = '' }: UserProfileProps) {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const {user,logout}=useAuth()
 
-  useEffect(() => {
-    setUser(getCurrentUser());
-  }, []);
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
 
   const getInitials = (name: string) => {

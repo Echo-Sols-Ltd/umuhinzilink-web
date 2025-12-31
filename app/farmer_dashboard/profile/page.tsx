@@ -22,7 +22,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, getCurrentUser, logout, type User as AuthUser } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -67,19 +67,15 @@ const MENU_ITEMS: MenuItem[] = [
 export default function FarmerProfilePage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const { user:currentUser,logout } = useAuth();
   const [profile, setProfile] = useState<FarmerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [logoutPending, setLogoutPending] = useState(false);
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
 
   useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
+    if (!currentUser) {
       setLoading(false);
       setError('You need to sign in to view your profile.');
       return;
@@ -88,43 +84,7 @@ export default function FarmerProfilePage() {
     let cancelled = false;
 
     const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('/api/farmers/profile', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        const apiSuccess = body?.success;
-        const message = body?.message || 'Failed to load profile.';
-
-        if (!response.ok || apiSuccess === false) {
-          if (typeof message === 'string' && message.toLowerCase().includes('no static resource')) {
-            if (!cancelled) {
-              setProfile(null);
-              setError(null);
-            }
-            return;
-          }
-
-          throw new Error(message);
-        }
-
-        if (!cancelled) {
-          const data = (body?.data || body) as FarmerProfile;
-          setProfile(data);
-          setError(null);
-        }
-      } catch (err) {
-        console.error('Error fetching farmer profile:', err);
-        if (!cancelled) {
-          const message = err instanceof Error ? err.message : 'Unable to load profile.';
-          setError(message);
-          setProfile(null);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+     
     };
 
     fetchProfile();
@@ -136,41 +96,9 @@ export default function FarmerProfilePage() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
-
-    try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (err) {
-      console.error('Error during logout:', err);
-      const message =
-        err instanceof Error ? err.message : 'Failed to log out. Clearing local session.';
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
-    } finally {
-      logout(router);
-      setLogoutPending(false);
-    }
+    logout();
+   
   };
 
   const displayName = profile?.names || currentUser?.names || 'Farmer';

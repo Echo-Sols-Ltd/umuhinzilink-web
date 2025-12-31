@@ -20,7 +20,6 @@ import {
   XCircle,
   Clock,
 } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth';
 
 interface Product {
   id: string;

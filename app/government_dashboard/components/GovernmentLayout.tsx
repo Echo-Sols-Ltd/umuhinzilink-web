@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, logout } from '@/lib/auth';
 
 export type MenuItem = {
   label: string;
@@ -88,51 +87,7 @@ export function GovernmentLayout({
   const handleLogout = async () => {
     if (logoutPending) return;
 
-    const token = getAuthToken();
-    setLogoutPending(true);
 
-    try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-
-        toast({
-          title: 'Signed out',
-          description: 'You have been logged out successfully.',
-        });
-      } else {
-        toast({
-          title: 'Signed out',
-          description: 'You have been logged out successfully.',
-        });
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-      const message =
-        error instanceof Error ? error.message : 'Failed to log out. Clearing local session.';
-
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
-    } finally {
-      logout(router);
-      setLogoutPending(false);
-    }
   };
 
   const shortName = useMemo(() => {
@@ -187,9 +142,8 @@ export function GovernmentLayout({
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${
-                        logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
-                      }`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
+                        }`}
                     >
                       {logoutPending ? (
                         <>
@@ -206,11 +160,10 @@ export function GovernmentLayout({
                   ) : (
                     <Link href={item.href} className="block">
                       <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                             ? 'bg-white text-green-600 shadow-sm'
                             : 'text-white hover:bg-green-700'
-                        }`}
+                          }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
                         <span>{item.label}</span>

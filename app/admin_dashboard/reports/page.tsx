@@ -17,7 +17,6 @@ import {
   Search,
   Eye,
 } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth';
 
 interface Report {
   id: string;

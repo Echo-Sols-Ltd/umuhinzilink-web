@@ -40,7 +40,6 @@ import { Button } from '@/components/ui/button';
 import { GovernmentGuard } from '@/components/auth/AuthGuard';
 import { UserType } from '@/types/enums';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, logout } from '@/lib/auth';
 
 type MenuItem = {
   label: string;
@@ -184,60 +183,22 @@ function getInitials(name: string) {
 }
 
 function Dashboard() {
-  const router = useRouter();
-  const { user, loading: authLoading, logout: authLogout } = useAuth();
+  const { user, loading: authLoading, logout} = useAuth();
   const [logoutPending, setLogoutPending] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'farmers' | 'suppliers'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = async () => {
-    if (logoutPending) return;
-
-    const token = getAuthToken();
-    setLogoutPending(true);
-
-    try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) ||
-            'Failed to end the session with the server.';
-          throw new Error(message);
+        if (logoutPending) return;
+        setLogoutPending(true);
+        try {
+            await logout();
+        } catch (error) {
+            console.error('Logout failed:', error);
+            
+        } finally {
+            setLogoutPending(false);
         }
-
-        toast({
-          title: 'Signed out',
-          description: 'You have been logged out successfully.',
-        });
-      } else {
-        toast({
-          title: 'Signed out',
-          description: 'You have been logged out successfully.',
-        });
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-      const message =
-        error instanceof Error ? error.message : 'Failed to log out. Clearing local session.';
-
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
-    } finally {
-      logout(router);
-      setLogoutPending(false);
-    }
   };
 
   const shortName = useMemo(() => {
@@ -335,9 +296,8 @@ function Dashboard() {
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${
-                        logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
-                      }`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
+                        }`}
                     >
                       {logoutPending ? (
                         <>
@@ -354,11 +314,10 @@ function Dashboard() {
                   ) : (
                     <Link href={item.href} className="block">
                       <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                             ? 'bg-white text-green-600 shadow-sm'
                             : 'text-white hover:bg-green-700'
-                        }`}
+                          }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
                         <span>{item.label}</span>
@@ -719,11 +678,10 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span
-                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                item.status === 'completed'
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.status === 'completed'
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-yellow-100 text-yellow-800'
-                              }`}
+                                }`}
                             >
                               {item.status}
                             </span>

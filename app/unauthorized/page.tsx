@@ -1,29 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { getCurrentUser, logout, redirectToDashboard } from '@/lib/auth';
 import { AlertTriangle, Home, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Unauthorized() {
   const router = useRouter();
-  const [user, setUser] = useState(getCurrentUser());
-
-  useEffect(() => {
-    setUser(getCurrentUser());
-  }, []);
+  const { user, logout } = useAuth();
 
   const handleGoToDashboard = () => {
     if (user) {
-      redirectToDashboard(router, user.role);
+      router.push('/dashboard');
     } else {
       router.push('/signin');
     }
   };
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
 
   return (

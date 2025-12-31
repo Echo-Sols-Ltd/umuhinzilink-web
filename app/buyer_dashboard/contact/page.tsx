@@ -18,7 +18,6 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, logout } from '@/lib/auth';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -44,46 +43,7 @@ export default function ContactPage() {
   const [logoutPending, setLogoutPending] = useState(false);
 
   const handleLogout = async () => {
-    if (logoutPending) return;
 
-    const token = getAuthToken();
-    setLogoutPending(true);
-
-    try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-      }
-
-      toast({
-        title: 'Signed out',
-        description: 'You have been logged out successfully.',
-      });
-    } catch (error) {
-      console.error('Error during logout:', error);
-      const message =
-        error instanceof Error ? error.message : 'Failed to log out. Clearing local session.';
-
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
-    } finally {
-      logout(router);
-      setLogoutPending(false);
-    }
   };
 
   return (
@@ -108,11 +68,10 @@ export default function ContactPage() {
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${
-                        logoutPending
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${logoutPending
                           ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
                           : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                      }`}
+                        }`}
                     >
                       {logoutPending ? (
                         <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
@@ -124,11 +83,10 @@ export default function ContactPage() {
                   ) : (
                     <Link href={m.href} className="block">
                       <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                             ? 'bg-green-600 text-white shadow-sm'
                             : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
+                          }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                         <span>{m.label}</span>

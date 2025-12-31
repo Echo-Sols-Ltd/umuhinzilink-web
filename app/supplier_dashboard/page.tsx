@@ -19,8 +19,8 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SupplierGuard } from '@/components/auth/AuthGuard';
-import { logout } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Logo = () => (
   <div className="flex items-center gap-2 py-2">
@@ -47,6 +47,7 @@ function Dashboard() {
   const router = useRouter();
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const { logout } = useAuth()
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -55,7 +56,7 @@ function Dashboard() {
   ];
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
 
   return (
@@ -83,10 +84,9 @@ function Dashboard() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all text-sm font-medium
-                          ${
-                            isActive
-                              ? 'bg-white text-green-600 shadow-sm'
-                              : 'text-white hover:bg-green-700'
+                          ${isActive
+                            ? 'bg-white text-green-600 shadow-sm'
+                            : 'text-white hover:bg-green-700'
                           }`}
                       >
                         <Icon className={`w-4 h-4 ${isActive ? 'text-green-600' : 'text-white'}`} />

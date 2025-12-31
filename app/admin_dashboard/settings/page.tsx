@@ -20,7 +20,6 @@ import {
   AlertTriangle,
   Info,
 } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth';
 
 interface SystemSettings {
   siteName: string;

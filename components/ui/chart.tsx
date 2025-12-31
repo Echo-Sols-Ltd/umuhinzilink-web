@@ -216,7 +216,7 @@ function ChartTooltipContent({
                 formatter(
                   item.value?.toString() || '',
                   item.name || '',
-                  item,
+                  item ,
                   index,
                   payload as readonly TooltipPayloadItem[]
                 )

@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Line } from 'react-chartjs-2';
-import { getAuthToken } from '@/lib/auth';
+
 import { toast } from '@/components/ui/use-toast';
 import {
   Chart as ChartJS,
@@ -129,52 +129,7 @@ export default function BuyerDashboard() {
   };
 
   const handleLogout = async () => {
-    if (logoutPending) return;
 
-    const token = getAuthToken();
-    setLogoutPending(true);
-
-    try {
-      if (token) {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const body = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          const message =
-            (body && (body.message || body.error)) || 'Failed to end the session with the server.';
-          throw new Error(message);
-        }
-
-        toast({
-          title: 'Signed out',
-          description: 'You have been logged out successfully.',
-        });
-      } else {
-        toast({
-          title: 'Signed out',
-          description: 'You have been logged out successfully.',
-        });
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-      const message =
-        error instanceof Error ? error.message : 'Failed to log out. Clearing local session.';
-
-      toast({
-        title: 'Logout Issue',
-        description: message,
-        variant: 'error',
-      });
-    } finally {
-      await logout();
-      setLogoutPending(false);
-    }
   };
 
   const chartData = {
@@ -218,9 +173,8 @@ export default function BuyerDashboard() {
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${
-                        logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
-                      }`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
+                        }`}
                     >
                       {logoutPending ? (
                         <>
@@ -238,10 +192,9 @@ export default function BuyerDashboard() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium
-                          ${
-                            isActive
-                              ? 'bg-white text-green-600 shadow-sm'
-                              : 'text-white hover:bg-green-700'
+                          ${isActive
+                            ? 'bg-white text-green-600 shadow-sm'
+                            : 'text-white hover:bg-green-700'
                           }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -389,15 +342,13 @@ export default function BuyerDashboard() {
               {!productsLoading &&
                 !productsError &&
                 recommendedProducts.map(product => {
-                  const priceText = `${Number(product.unitPrice || 0).toLocaleString()} RWF/${
-                    product.measurementUnit || ''
-                  }`;
+                  const priceText = `${Number(product.unitPrice || 0).toLocaleString()} RWF/${product.measurementUnit || ''
+                    }`;
                   const farmerName = product.farmer?.user?.names || 'Unknown farmer';
                   const quantityText =
                     product.quantity !== undefined
-                      ? `${product.quantity?.toLocaleString?.() || product.quantity} ${
-                          product.measurementUnit || ''
-                        } available`
+                      ? `${product.quantity?.toLocaleString?.() || product.quantity} ${product.measurementUnit || ''
+                      } available`
                       : '';
 
                   return (
@@ -487,9 +438,9 @@ export default function BuyerDashboard() {
                         order.product?.farmer?.user?.names || order.buyer?.names || '—';
                       const farmerAddress = order.product?.farmer?.user?.address ||
                         order.buyer?.address || {
-                          district: '—',
-                          province: '',
-                        };
+                        district: '—',
+                        province: '',
+                      };
                       const productName = order.product?.name || '—';
                       const quantity = Number(order.quantity) || 0;
                       const unitPrice = Number(order.product?.unitPrice) || 0;
@@ -515,16 +466,15 @@ export default function BuyerDashboard() {
                           <td className="py-4 text-gray-900">{totalPrice.toLocaleString()} RWF</td>
                           <td className="py-4">
                             <span
-                              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                order.status?.toLowerCase() === 'pending'
+                              className={`px-3 py-1 rounded-full text-xs font-medium ${order.status?.toLowerCase() === 'pending'
                                   ? 'bg-yellow-100 text-yellow-700'
                                   : order.status?.toLowerCase() === 'completed' ||
-                                      order.status?.toLowerCase() === 'delivered'
+                                    order.status?.toLowerCase() === 'delivered'
                                     ? 'bg-green-100 text-green-700'
                                     : order.status?.toLowerCase() === 'cancelled'
                                       ? 'bg-red-100 text-red-700'
                                       : 'bg-gray-100 text-gray-700'
-                              }`}
+                                }`}
                             >
                               {order.status}
                             </span>

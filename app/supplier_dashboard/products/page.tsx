@@ -19,8 +19,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { SupplierGuard } from '@/components/auth/AuthGuard';
-import { logout } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Logo = () => (
   <div className="flex items-center gap-2 py-2">
@@ -46,9 +46,10 @@ const menuItems = [
 function ProductsPage() {
   const router = useRouter();
   const [showForm, setShowForm] = useState(false);
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
   const [inputs, setInputs] = useState([
     {
