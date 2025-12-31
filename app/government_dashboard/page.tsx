@@ -183,15 +183,22 @@ function getInitials(name: string) {
 }
 
 function Dashboard() {
-  const router = useRouter();
-  const { user, loading: authLoading, logout: authLogout } = useAuth();
+  const { user, loading: authLoading, logout} = useAuth();
   const [logoutPending, setLogoutPending] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'farmers' | 'suppliers'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = async () => {
-    if (logoutPending) return;
-
+        if (logoutPending) return;
+        setLogoutPending(true);
+        try {
+            await logout();
+        } catch (error) {
+            console.error('Logout failed:', error);
+            
+        } finally {
+            setLogoutPending(false);
+        }
   };
 
   const shortName = useMemo(() => {
