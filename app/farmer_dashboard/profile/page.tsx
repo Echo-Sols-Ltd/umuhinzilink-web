@@ -22,6 +22,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -66,19 +67,15 @@ const MENU_ITEMS: MenuItem[] = [
 export default function FarmerProfilePage() {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const { user:currentUser,logout } = useAuth();
   const [profile, setProfile] = useState<FarmerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [logoutPending, setLogoutPending] = useState(false);
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-  }, []);
 
   useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
+    if (!currentUser) {
       setLoading(false);
       setError('You need to sign in to view your profile.');
       return;
@@ -99,9 +96,8 @@ export default function FarmerProfilePage() {
 
   const handleLogout = async () => {
     if (logoutPending) return;
-    const token = getAuthToken();
     setLogoutPending(true);
-
+    logout();
    
   };
 
