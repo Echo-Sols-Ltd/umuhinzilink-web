@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SupplierGuard } from '@/components/auth/AuthGuard';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Logo = () => (
   <div className="flex items-center gap-2 py-2">
@@ -46,9 +47,10 @@ function OrdersPage() {
   const router = useRouter();
   const [openActionDropdown, setOpenActionDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
 
   // Orders data

@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SupplierGuard } from '@/components/auth/AuthGuard';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Contact {
   id: number;
@@ -76,7 +77,7 @@ function SupplierMessages() {
   const [message, setMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState('');
-
+  const { logout } = useAuth();
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' },
@@ -84,7 +85,7 @@ function SupplierMessages() {
   ];
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
 
   useEffect(() => {
@@ -101,19 +102,19 @@ function SupplierMessages() {
     const updated = conversations.map(conv =>
       conv.id === activeChat.id
         ? {
-            ...conv,
-            messages: [
-              ...conv.messages,
-              {
-                sender: 'Supplier',
-                text: message,
-                timestamp: new Date().toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                }),
-              },
-            ],
-          }
+          ...conv,
+          messages: [
+            ...conv.messages,
+            {
+              sender: 'Supplier',
+              text: message,
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+            },
+          ],
+        }
         : conv
     );
     setConversations(updated);
@@ -163,10 +164,9 @@ function SupplierMessages() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all text-sm font-medium
-                          ${
-                            isActive
-                              ? 'bg-white text-green-600 shadow-sm'
-                              : 'text-white hover:bg-green-700'
+                          ${isActive
+                            ? 'bg-white text-green-600 shadow-sm'
+                            : 'text-white hover:bg-green-700'
                           }`}
                       >
                         <Icon className={`w-4 h-4 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -278,9 +278,8 @@ function SupplierMessages() {
                 {conversations.map(conv => (
                   <div
                     key={conv.id}
-                    className={`p-4 cursor-pointer hover:bg-gray-50 border-b border-gray-200 ${
-                      activeChat?.id === conv.id ? 'bg-green-50' : ''
-                    }`}
+                    className={`p-4 cursor-pointer hover:bg-gray-50 border-b border-gray-200 ${activeChat?.id === conv.id ? 'bg-green-50' : ''
+                      }`}
                     onClick={() => setActiveChat(conv)}
                   >
                     <div className="font-medium">{conv.name}</div>
@@ -305,16 +304,14 @@ function SupplierMessages() {
                     {activeChat.messages.map((msg: Message, i: number) => (
                       <div
                         key={i}
-                        className={`flex ${
-                          msg.sender === 'Supplier' ? 'justify-end' : 'justify-start'
-                        }`}
+                        className={`flex ${msg.sender === 'Supplier' ? 'justify-end' : 'justify-start'
+                          }`}
                       >
                         <div
-                          className={`px-4 py-2 rounded-lg max-w-xs text-sm shadow-sm ${
-                            msg.sender === 'Supplier'
+                          className={`px-4 py-2 rounded-lg max-w-xs text-sm shadow-sm ${msg.sender === 'Supplier'
                               ? 'bg-green-600 text-white rounded-br-none'
                               : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
-                          }`}
+                            }`}
                         >
                           {msg.text}
                           <div className="text-[10px] mt-1 opacity-70">{msg.timestamp}</div>

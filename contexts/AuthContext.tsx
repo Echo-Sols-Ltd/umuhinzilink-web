@@ -429,9 +429,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     localStorage.setItem('user', JSON.stringify(user));
   };
+
+
   useEffect(() => {
     loadAuthState();
   }, []);
+  
   return (
     <AuthContext.Provider
       value={{

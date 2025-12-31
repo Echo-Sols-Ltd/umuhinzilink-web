@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SupplierGuard } from '@/components/auth/AuthGuard';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Logo = () => (
   <div className="flex items-center gap-2 py-2">
@@ -206,9 +207,10 @@ const menuItems = [
 
 function FarmerRequests() {
   const router = useRouter();
+const {logout}=useAuth()
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
 
   return (
