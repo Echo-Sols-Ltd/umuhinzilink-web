@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, logout } from '@/lib/auth';
 
 export type MenuItem = {
   label: string;
@@ -88,7 +87,7 @@ export function GovernmentLayout({
   const handleLogout = async () => {
     if (logoutPending) return;
 
- 
+
   };
 
   const shortName = useMemo(() => {
@@ -143,9 +142,8 @@ export function GovernmentLayout({
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${
-                        logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
-                      }`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
+                        }`}
                     >
                       {logoutPending ? (
                         <>
@@ -162,11 +160,10 @@ export function GovernmentLayout({
                   ) : (
                     <Link href={item.href} className="block">
                       <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                             ? 'bg-white text-green-600 shadow-sm'
                             : 'text-white hover:bg-green-700'
-                        }`}
+                          }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
                         <span>{item.label}</span>

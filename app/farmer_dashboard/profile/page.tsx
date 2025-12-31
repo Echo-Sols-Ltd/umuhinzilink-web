@@ -22,7 +22,6 @@ import {
   Loader2,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, getCurrentUser, logout, type User as AuthUser } from '@/lib/auth';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';

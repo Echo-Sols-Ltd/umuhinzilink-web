@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentUser, logout, type User } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

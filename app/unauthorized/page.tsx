@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { getCurrentUser, logout, redirectToDashboard } from '@/lib/auth';
 import { AlertTriangle, Home, LogOut } from 'lucide-react';
 
 export default function Unauthorized() {

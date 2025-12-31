@@ -40,7 +40,6 @@ import { Button } from '@/components/ui/button';
 import { GovernmentGuard } from '@/components/auth/AuthGuard';
 import { UserType } from '@/types/enums';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, logout } from '@/lib/auth';
 
 type MenuItem = {
   label: string;
@@ -290,9 +289,8 @@ function Dashboard() {
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${
-                        logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
-                      }`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
+                        }`}
                     >
                       {logoutPending ? (
                         <>
@@ -309,11 +307,10 @@ function Dashboard() {
                   ) : (
                     <Link href={item.href} className="block">
                       <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                             ? 'bg-white text-green-600 shadow-sm'
                             : 'text-white hover:bg-green-700'
-                        }`}
+                          }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
                         <span>{item.label}</span>
@@ -674,11 +671,10 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span
-                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                item.status === 'completed'
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.status === 'completed'
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-yellow-100 text-yellow-800'
-                              }`}
+                                }`}
                             >
                               {item.status}
                             </span>

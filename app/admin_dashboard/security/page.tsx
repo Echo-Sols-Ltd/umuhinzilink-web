@@ -19,7 +19,6 @@ import {
   ShieldCheck,
   Settings,
 } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth';
 
 interface SecurityLog {
   id: string;
@@ -297,14 +296,12 @@ function SecurityPage() {
                     </div>
                     <button
                       onClick={() => toggleSetting(setting.id)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        setting.enabled ? 'bg-green-600' : 'bg-gray-200'
-                      }`}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${setting.enabled ? 'bg-green-600' : 'bg-gray-200'
+                        }`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          setting.enabled ? 'translate-x-6' : 'translate-x-1'
-                        }`}
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${setting.enabled ? 'translate-x-6' : 'translate-x-1'
+                          }`}
                       />
                     </button>
                   </div>

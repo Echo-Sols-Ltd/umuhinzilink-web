@@ -16,7 +16,6 @@ import {
   Eye,
   Trash2,
 } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth';
 
 interface Transaction {
   id: string;
@@ -219,9 +218,8 @@ function OrderManagement() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
-                }`}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
+                  }`}
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium">{item.label}</span>

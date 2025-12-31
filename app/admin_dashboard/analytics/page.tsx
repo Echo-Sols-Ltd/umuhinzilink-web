@@ -16,7 +16,6 @@ import {
   Download,
   Filter,
 } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth';
 
 interface AnalyticsData {
   revenue: {
@@ -244,9 +243,8 @@ function RevenueAnalytics() {
                       <TrendingDown className="w-4 h-4 text-red-600" />
                     )}
                     <span
-                      className={`text-sm font-medium ${
-                        stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                      }`}
+                      className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                        }`}
                     >
                       {stat.change}
                     </span>

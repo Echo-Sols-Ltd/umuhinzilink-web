@@ -17,7 +17,6 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, logout } from '@/lib/auth';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -43,7 +42,7 @@ export default function BuyerSettingsPage() {
   const [logoutPending, setLogoutPending] = useState(false);
 
   const handleLogout = async () => {
- 
+
   };
 
   return (
@@ -68,11 +67,10 @@ export default function BuyerSettingsPage() {
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${
-                        logoutPending
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${logoutPending
                           ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
                           : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                      }`}
+                        }`}
                     >
                       {logoutPending ? (
                         <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
@@ -84,11 +82,10 @@ export default function BuyerSettingsPage() {
                   ) : (
                     <Link href={m.href} className="block">
                       <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                             ? 'bg-green-600 text-white shadow-sm'
                             : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
+                          }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                         <span>{m.label}</span>

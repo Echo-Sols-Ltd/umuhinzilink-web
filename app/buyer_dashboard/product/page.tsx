@@ -22,7 +22,6 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
-import { getAuthToken, logout } from '@/lib/auth';
 
 const menuItems = [
   { label: 'Dashboard', href: '/buyer_dashboard', icon: CheckCircle },
@@ -122,7 +121,7 @@ export default function ProductsPage() {
   });
 
   const handleLogout = async () => {
-    
+
   };
 
   return (
@@ -149,11 +148,10 @@ export default function ProductsPage() {
                     type="button"
                     onClick={handleLogout}
                     disabled={logoutPending}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${
-                      logoutPending
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${logoutPending
                         ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
                         : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
+                      }`}
                   >
                     {logoutPending ? (
                       <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
@@ -166,11 +164,10 @@ export default function ProductsPage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium
-                      ${
-                        isActive
+                      ${isActive
                           ? 'bg-green-600 text-white shadow-sm'
                           : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                      }`}
+                        }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                       <span>{item.label}</span>
