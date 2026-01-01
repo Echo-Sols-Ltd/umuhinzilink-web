@@ -78,7 +78,7 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         // }
         // setCurrentUser(user);
       } catch (error) {
-        // window.location.href = '/signin';
+        // window.location.href = '/auth/signin';
       } finally {
         setLoading(false);
       }
@@ -108,7 +108,7 @@ function Dashboard() {
   const handleLogout = async () => {
     try {
       await logout();
-      router.push('/auth/signin');
+      router.push('/auth/auth/signin');
     } catch (error) {
       console.error('Logout error:', error);
       toast({
@@ -166,9 +166,8 @@ function Dashboard() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
-                }`}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
+                  }`}
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium">{item.label}</span>

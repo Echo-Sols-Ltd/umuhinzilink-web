@@ -168,7 +168,7 @@ export default function SignUp() {
       return;
     }
 
-  
+
   };
 
   const accountTypes = [
@@ -233,11 +233,10 @@ export default function SignUp() {
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
-              className={`text-gray-700 font-medium text-sm border ${
-                touched.names && fieldErrors.names
+              className={`text-gray-700 font-medium text-sm border ${touched.names && fieldErrors.names
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                   : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-              }`}
+                }`}
               required
             />
             {touched.names && fieldErrors.names && (
@@ -261,11 +260,10 @@ export default function SignUp() {
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
-              className={`text-gray-700 font-medium text-sm border ${
-                touched.email && fieldErrors.email
+              className={`text-gray-700 font-medium text-sm border ${touched.email && fieldErrors.email
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                   : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-              }`}
+                }`}
               required
             />
             {touched.email && fieldErrors.email && (
@@ -289,11 +287,10 @@ export default function SignUp() {
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
-              className={`text-gray-700 font-medium text-sm border ${
-                touched.phoneNumber && fieldErrors.phoneNumber
+              className={`text-gray-700 font-medium text-sm border ${touched.phoneNumber && fieldErrors.phoneNumber
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                   : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-              }`}
+                }`}
               required
             />
             {touched.phoneNumber && fieldErrors.phoneNumber && (
@@ -336,11 +333,10 @@ export default function SignUp() {
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
-              className={`text-gray-700 font-medium text-sm border pr-10 ${
-                touched.password && fieldErrors.password
+              className={`text-gray-700 font-medium text-sm border pr-10 ${touched.password && fieldErrors.password
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                   : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-              }`}
+                }`}
               required
             />
             <button
@@ -381,7 +377,7 @@ export default function SignUp() {
 
           <p className="text-gray-700 text-sm text-center">
             Already have an account?{' '}
-            <Link href="/signin" className="text-green-600 font-semibold">
+            <Link href="/auth/signin" className="text-green-600 font-semibold">
               Sign in
             </Link>
           </p>
