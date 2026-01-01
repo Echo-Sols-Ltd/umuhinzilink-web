@@ -55,8 +55,8 @@ To empower Rwandan farmers through digital agriculture solutions, providing acce
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/EchoSols/FarmLink-Fro.git
-   cd FarmLink-Fro
+   git clone https://github.com/EchoSols/umuhinzilink-web.git
+   cd umuhinzilink-web
    ```
 
 2. **Install dependencies**
@@ -78,19 +78,9 @@ To empower Rwandan farmers through digital agriculture solutions, providing acce
 4. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 👥 Demo Accounts
-
-Try the platform with these demo farmer accounts:
-
-| Name           | Phone         | Password  | Location  | Crops                |
-| -------------- | ------------- | --------- | --------- | -------------------- |
-| Marie Uwimana  | +250788123456 | farmer123 | Nyagatare | Maize, Beans         |
-| Jean Baptiste  | +250788654321 | farmer456 | Nyagatare | Beans, Potatoes      |
-| Agnes Mukamana | +250788987654 | farmer789 | Nyagatare | Vegetables, Tomatoes |
-
 ## 📱 Application Structure
 
-```
+```sh
 app/
 ├── (auth)/
 │   └── login/              # Authentication system
