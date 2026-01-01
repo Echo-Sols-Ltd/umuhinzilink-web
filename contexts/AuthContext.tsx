@@ -180,19 +180,19 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (user.role === UserType.BUYER) {
           setBuyer(buyer);
-          router.push('/dashboard/buyer');
+          router.replace('/dashboard/buyer');
         }
         if (user.role === UserType.FARMER) {
           setFarmer(farmer);
-          router.push('/dashboard/farmer');
+          router.replace('/dashboard/farmer');
         }
         if (user.role === UserType.SUPPLIER) {
           setSupplier(supplier);
-          router.push('/dashboard/supplier');
+          router.replace('/dashboard/supplier');
         }
         return;
       }
-      router.replace('/auth/signin');
+      router.replace('/');
     } catch {
       toast({
         title: 'Loading auth state failed',
