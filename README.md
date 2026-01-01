@@ -173,7 +173,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 🌱 **UmuhinziLink** - _Connecting Farmers to Digital Markets_
 
-[![GitHub](https://img.shields.io/badge/GitHub-EchoSols/FarmLink--Fro-black?style=flat&logo=github)](https://github.com/EchoSols/FarmLink-Fro)
+[![GitHub](https://img.shields.io/badge/GitHub-EchoSols/umuhinzilink-web-black?style=flat&logo=github)](https://github.com/EchoSols/umuhinzilink-web)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-umuhinzilink.vercel.app-green?style=flat&logo=vercel)](https://umuhinzilink.vercel.app)
 
 </div>
