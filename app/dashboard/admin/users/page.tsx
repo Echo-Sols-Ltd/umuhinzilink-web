@@ -27,15 +27,15 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/admin_dashboard', icon: LayoutGrid },
-  { label: 'Users', href: '/admin_dashboard/users', icon: Users },
-  { label: 'Payments', href: '/admin_dashboard/orders', icon: ArrowUpDown },
-  { label: 'Notifications', href: '/admin_dashboard/reports', icon: Bell },
+  { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutGrid },
+  { label: 'Users', href: '/dashboard/admin/users', icon: Users },
+  { label: 'Payments', href: '/dashboard/admin/orders', icon: ArrowUpDown },
+  { label: 'Notifications', href: '/dashboard/admin/reports', icon: Bell },
 ];
 
 const MENU_ITEMS_BOTTOM: MenuItem[] = [
-  { label: 'Profile', href: '/admin_dashboard/settings', icon: UserIcon },
-  { label: 'Settings', href: '/admin_dashboard/settings', icon: Settings },
+  { label: 'Profile', href: '/dashboard/admin/settings', icon: UserIcon },
+  { label: 'Settings', href: '/dashboard/admin/settings', icon: Settings },
 ];
 
 const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -89,9 +89,8 @@ function UserManagement() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
-                }`}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-white text-green-600' : 'text-white hover:bg-green-700'
+                  }`}
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium">{item.label}</span>
@@ -200,11 +199,10 @@ function UserManagement() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                              user.verified
+                            className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${user.verified
                                 ? 'bg-green-100 text-green-800'
                                 : 'bg-yellow-100 text-yellow-800'
-                            }`}
+                              }`}
                           >
                             {user.verified ? 'Verified' : 'Pending'}
                           </span>

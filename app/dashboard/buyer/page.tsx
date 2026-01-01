@@ -48,14 +48,14 @@ ChartJS.register(
 );
 
 const menuItems = [
-  { label: 'Dashboard', href: '/buyer_dashboard', icon: CheckCircle },
-  { label: 'My Purchase', href: '/buyer_dashboard/purchases', icon: LayoutGrid },
-  { label: 'Browse Product', href: '/buyer_dashboard/product', icon: FilePlus },
-  { label: 'Saved Items', href: '/buyer_dashboard/saved', icon: Heart },
-  { label: 'Message', href: '/buyer_dashboard/message', icon: Mail },
-  { label: 'Profile', href: '/buyer_dashboard/profile', icon: User },
-  { label: 'Contact', href: '/buyer_dashboard/contact', icon: Phone },
-  { label: 'Settings', href: '/buyer_dashboard/settings', icon: Settings },
+  { label: 'Dashboard', href: '/dashboard/buyer', icon: CheckCircle },
+  { label: 'My Purchase', href: '/dashboard/buyer/purchases', icon: LayoutGrid },
+  { label: 'Browse Product', href: '/dashboard/buyer/product', icon: FilePlus },
+  { label: 'Saved Items', href: '/dashboard/buyer/saved', icon: Heart },
+  { label: 'Message', href: '/dashboard/buyer/message', icon: Mail },
+  { label: 'Profile', href: '/dashboard/buyer/profile', icon: User },
+  { label: 'Contact', href: '/dashboard/buyer/contact', icon: Phone },
+  { label: 'Settings', href: '/dashboard/buyer/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -467,13 +467,13 @@ export default function BuyerDashboard() {
                           <td className="py-4">
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-medium ${order.status?.toLowerCase() === 'pending'
-                                  ? 'bg-yellow-100 text-yellow-700'
-                                  : order.status?.toLowerCase() === 'completed' ||
-                                    order.status?.toLowerCase() === 'delivered'
-                                    ? 'bg-green-100 text-green-700'
-                                    : order.status?.toLowerCase() === 'cancelled'
-                                      ? 'bg-red-100 text-red-700'
-                                      : 'bg-gray-100 text-gray-700'
+                                ? 'bg-yellow-100 text-yellow-700'
+                                : order.status?.toLowerCase() === 'completed' ||
+                                  order.status?.toLowerCase() === 'delivered'
+                                  ? 'bg-green-100 text-green-700'
+                                  : order.status?.toLowerCase() === 'cancelled'
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-gray-100 text-gray-700'
                                 }`}
                             >
                               {order.status}

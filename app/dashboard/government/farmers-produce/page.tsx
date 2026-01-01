@@ -33,13 +33,13 @@ type MenuItem = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/government_dashboard', icon: LayoutGrid },
-  { label: 'Farmers Produce', href: '/government_dashboard/farmers-produce', icon: Tractor },
-  { label: 'Suppliers Produce', href: '/government_dashboard/suppliers-produce', icon: Package },
-  { label: 'Market analytics', href: '/government_dashboard/market-analytics', icon: BarChart2 },
-  { label: 'Notifications', href: '/government_dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/government_dashboard/profile', icon: UserIcon },
-  { label: 'Settings', href: '/government_dashboard/settings', icon: Settings },
+  { label: 'Dashboard', href: '/dashboard/government', icon: LayoutGrid },
+  { label: 'Farmers Produce', href: '/dashboard/government/farmers-produce', icon: Tractor },
+  { label: 'Suppliers Produce', href: '/dashboard/government/suppliers-produce', icon: Package },
+  { label: 'Market analytics', href: '/dashboard/government/market-analytics', icon: BarChart2 },
+  { label: 'Notifications', href: '/dashboard/government/notifications', icon: Bell },
+  { label: 'Profile', href: '/dashboard/government/profile', icon: UserIcon },
+  { label: 'Settings', href: '/dashboard/government/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -299,7 +299,7 @@ function FarmersProducePage() {
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">
             {MENU_ITEMS.map((item, index) => {
-              const isActive = item.href === '/government_dashboard/farmers-produce';
+              const isActive = item.href === '/dashboard/government/farmers-produce';
               const Icon = item.icon;
               const showDivider = index === 4;
 
@@ -329,8 +329,8 @@ function FarmersProducePage() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                            ? 'bg-white text-green-600 shadow-sm'
-                            : 'text-white hover:bg-green-700'
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                           }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -454,8 +454,8 @@ function FarmersProducePage() {
                             <Star
                               key={i}
                               className={`w-4 h-4 ${i < product.rating
-                                  ? 'fill-yellow-400 text-yellow-400'
-                                  : 'text-gray-300'
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
                                 }`}
                             />
                           ))}
@@ -464,8 +464,8 @@ function FarmersProducePage() {
                       <Button
                         onClick={() => (isDone ? undefined : handleGetPrice(product.id))}
                         className={`w-full ${isDone
-                            ? 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                            : 'bg-green-600 hover:bg-green-700 text-white'
+                          ? 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                          : 'bg-green-600 hover:bg-green-700 text-white'
                           }`}
                         disabled={isDone}
                       >
@@ -485,7 +485,7 @@ function FarmersProducePage() {
 
 export default function GovernmentFarmersProducePage() {
   return (
-      <FarmersProducePage />
+    <FarmersProducePage />
   );
 }
 

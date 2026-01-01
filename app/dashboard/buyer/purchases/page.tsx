@@ -37,14 +37,14 @@ const Logo = () => (
 );
 
 const menuItems = [
-  { label: 'Dashboard', href: '/buyer_dashboard', icon: CheckCircle },
-  { label: 'My Purchase', href: '/buyer_dashboard/purchases', icon: GridIcon },
-  { label: 'Browse product', href: '/buyer_dashboard/product', icon: FilePlus },
-  { label: 'Saved items', href: '/buyer_dashboard/saved', icon: MessageSquare },
-  { label: 'Message', href: '/buyer_dashboard/message', icon: Mail },
-  { label: 'Profile', href: '/buyer_dashboard/profile', icon: UserIcon },
-  { label: 'Contact', href: '/buyer_dashboard/contact', icon: Phone },
-  { label: 'Settings', href: '/buyer_dashboard/settings', icon: Settings },
+  { label: 'Dashboard', href: '/dashboard/buyer', icon: CheckCircle },
+  { label: 'My Purchase', href: '/dashboard/buyer/purchases', icon: GridIcon },
+  { label: 'Browse product', href: '/dashboard/buyer/product', icon: FilePlus },
+  { label: 'Saved items', href: '/dashboard/buyer/saved', icon: MessageSquare },
+  { label: 'Message', href: '/dashboard/buyer/message', icon: Mail },
+  { label: 'Profile', href: '/dashboard/buyer/profile', icon: UserIcon },
+  { label: 'Contact', href: '/dashboard/buyer/contact', icon: Phone },
+  { label: 'Settings', href: '/dashboard/buyer/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -79,8 +79,8 @@ export default function MyPurchases() {
                       onClick={handleLogout}
                       disabled={logoutPending}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${logoutPending
-                          ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                         }`}
                     >
                       {logoutPending ? (

@@ -44,16 +44,16 @@ type MenuItem = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/farmer_dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer_dashboard/products', icon: Package },
-  { label: 'Input Request', href: '/farmer_dashboard/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer_dashboard/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer_dashboard/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer_dashboard/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer_dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer_dashboard/profile', icon: User },
-  { label: 'Orders', href: '/farmer_dashboard/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer_dashboard/settings', icon: Settings },
+  { label: 'Dashboard', href: '/dashboard/farmer', icon: LayoutGrid },
+  { label: 'Products', href: '/dashboard/farmer/products', icon: Package },
+  { label: 'Input Request', href: '/dashboard/farmer/requests', icon: FilePlus },
+  { label: 'AI Tips', href: '/dashboard/farmer/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/dashboard/farmer/market_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/dashboard/farmer/message', icon: Mail },
+  { label: 'Notifications', href: '/dashboard/farmer/notifications', icon: Bell },
+  { label: 'Profile', href: '/dashboard/farmer/profile', icon: User },
+  { label: 'Orders', href: '/dashboard/farmer/orders', icon: ShoppingCart },
+  { label: 'Settings', href: '/dashboard/farmer/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -155,9 +155,8 @@ export default function FarmerRequestsPage() {
                     type="button"
                     onClick={handleLogout}
                     disabled={logoutPending}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${
-                      logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
-                    }`}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
+                      }`}
                   >
                     {logoutPending ? (
                       <>
@@ -174,11 +173,10 @@ export default function FarmerRequestsPage() {
                 ) : (
                   <Link href={item.href} className="block">
                     <div
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                        isActive
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                           ? 'bg-white text-green-600 shadow-sm'
                           : 'text-white hover:bg-green-700'
-                      }`}
+                        }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
                       <span>{item.label}</span>
@@ -201,7 +199,7 @@ export default function FarmerRequestsPage() {
             </p>
           </div>
           <Link
-            href="/farmer_dashboard/add_produce"
+            href="/dashboard/farmer/add_produce"
             className="bg-green-500 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-green-600 transition"
           >
             + Add New Product
@@ -332,7 +330,7 @@ export default function FarmerRequestsPage() {
                 <p className="text-sm text-gray-500">Track your latest submissions</p>
               </div>
               <Link
-                href="/farmer_dashboard/requests"
+                href="/dashboard/farmer/requests"
                 className="text-sm text-green-600 hover:underline"
               >
                 View all

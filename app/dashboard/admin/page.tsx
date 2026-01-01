@@ -44,15 +44,15 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/admin_dashboard', icon: LayoutGrid },
-  { label: 'Users', href: '/admin_dashboard/users', icon: Users },
-  { label: 'Payments', href: '/admin_dashboard/orders', icon: ArrowUpDown },
-  { label: 'Notifications', href: '/admin_dashboard/reports', icon: Bell },
+  { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutGrid },
+  { label: 'Users', href: '/dashboard/admin/users', icon: Users },
+  { label: 'Payments', href: '/dashboard/admin/orders', icon: ArrowUpDown },
+  { label: 'Notifications', href: '/dashboard/admin/reports', icon: Bell },
 ];
 
 const MENU_ITEMS_BOTTOM: MenuItem[] = [
-  { label: 'Profile', href: '/admin_dashboard/settings', icon: UserIcon },
-  { label: 'Settings', href: '/admin_dashboard/settings', icon: Settings },
+  { label: 'Profile', href: '/dashboard/admin/settings', icon: UserIcon },
+  { label: 'Settings', href: '/dashboard/admin/settings', icon: Settings },
 ];
 
 interface TableUser {

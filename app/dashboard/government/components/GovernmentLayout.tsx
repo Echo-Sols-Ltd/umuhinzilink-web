@@ -29,13 +29,13 @@ export type MenuItem = {
 };
 
 export const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/government_dashboard', icon: LayoutGrid },
-  { label: 'Farmers Produce', href: '/government_dashboard/farmers-produce', icon: Tractor },
-  { label: 'Suppliers Produce', href: '/government_dashboard/suppliers-produce', icon: Package },
-  { label: 'Market analytics', href: '/government_dashboard/market-analytics', icon: BarChart2 },
-  { label: 'Notifications', href: '/government_dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/government_dashboard/profile', icon: UserIcon },
-  { label: 'Settings', href: '/government_dashboard/settings', icon: Settings },
+  { label: 'Dashboard', href: '/dashboard/government', icon: LayoutGrid },
+  { label: 'Farmers Produce', href: '/dashboard/government/farmers-produce', icon: Tractor },
+  { label: 'Suppliers Produce', href: '/dashboard/government/suppliers-produce', icon: Package },
+  { label: 'Market analytics', href: '/dashboard/government/market-analytics', icon: BarChart2 },
+  { label: 'Notifications', href: '/dashboard/government/notifications', icon: Bell },
+  { label: 'Profile', href: '/dashboard/government/profile', icon: UserIcon },
+  { label: 'Settings', href: '/dashboard/government/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -161,8 +161,8 @@ export function GovernmentLayout({
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                            ? 'bg-white text-green-600 shadow-sm'
-                            : 'text-white hover:bg-green-700'
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                           }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />

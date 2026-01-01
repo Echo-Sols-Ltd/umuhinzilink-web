@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { GovernmentLayout } from '../components/GovernmentLayout';
 import { Banner, type BannerData } from '../components/Banner';
 import { Button } from '@/components/ui/button';
- 
+
 import { toast } from '@/components/ui/use-toast';
 import { Edit } from 'lucide-react';
 
@@ -149,7 +149,7 @@ function SuppliersProducePage() {
 
   return (
     <GovernmentLayout
-      activePath="/government_dashboard/suppliers-produce"
+      activePath="/dashboard/government/suppliers-produce"
       headerTitle="Suppliers produce"
       showDateInHeader={false}
     >
@@ -192,11 +192,10 @@ function SuppliersProducePage() {
                   <div className="flex items-center gap-2">
                     <Button
                       onClick={() => (isDone ? undefined : handleSetPrice(product.id))}
-                      className={`flex-1 ${
-                        isDone
+                      className={`flex-1 ${isDone
                           ? 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                           : 'bg-green-600 hover:bg-green-700 text-white'
-                      }`}
+                        }`}
                       disabled={isDone}
                     >
                       {isDone ? 'Done' : 'Set Price'}
@@ -222,9 +221,9 @@ function SuppliersProducePage() {
 
 export default function GovernmentSuppliersProducePage() {
   return (
-    
-      <SuppliersProducePage />
-    
+
+    <SuppliersProducePage />
+
   );
 }
 

@@ -48,13 +48,13 @@ type MenuItem = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/government_dashboard', icon: LayoutGrid },
-  { label: 'Farmers Produce', href: '/government_dashboard/farmers-produce', icon: Tractor },
-  { label: 'Suppliers Produce', href: '/government_dashboard/suppliers-produce', icon: Package },
-  { label: 'Market analytics', href: '/government_dashboard/market-analytics', icon: BarChart2 },
-  { label: 'Notifications', href: '/government_dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/government_dashboard/profile', icon: UserIcon },
-  { label: 'Settings', href: '/government_dashboard/settings', icon: Settings },
+  { label: 'Dashboard', href: '/dashboard/government', icon: LayoutGrid },
+  { label: 'Farmers Produce', href: '/dashboard/government/farmers-produce', icon: Tractor },
+  { label: 'Suppliers Produce', href: '/dashboard/government/suppliers-produce', icon: Package },
+  { label: 'Market analytics', href: '/dashboard/government/market-analytics', icon: BarChart2 },
+  { label: 'Notifications', href: '/dashboard/government/notifications', icon: Bell },
+  { label: 'Profile', href: '/dashboard/government/profile', icon: UserIcon },
+  { label: 'Settings', href: '/dashboard/government/settings', icon: Settings },
 ];
 
 // Chart data for Market Trends Prices
@@ -182,22 +182,22 @@ function getInitials(name: string) {
 }
 
 function Dashboard() {
-  const { user, loading: authLoading, logout} = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const [logoutPending, setLogoutPending] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'farmers' | 'suppliers'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = async () => {
-        if (logoutPending) return;
-        setLogoutPending(true);
-        try {
-            await logout();
-        } catch (error) {
-            console.error('Logout failed:', error);
-            
-        } finally {
-            setLogoutPending(false);
-        }
+    if (logoutPending) return;
+    setLogoutPending(true);
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+
+    } finally {
+      setLogoutPending(false);
+    }
   };
 
   const shortName = useMemo(() => {
@@ -314,8 +314,8 @@ function Dashboard() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                            ? 'bg-white text-green-600 shadow-sm'
-                            : 'text-white hover:bg-green-700'
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                           }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -678,8 +678,8 @@ function Dashboard() {
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.status === 'completed'
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-yellow-100 text-yellow-800'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
                                 }`}
                             >
                               {item.status}
@@ -714,8 +714,8 @@ function Dashboard() {
 
 export default function GovernmentDashboard() {
   return (
-   
-      <Dashboard />
-    
+
+    <Dashboard />
+
   );
 }

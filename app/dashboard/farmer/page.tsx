@@ -129,16 +129,16 @@ type FarmerRequest = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/farmer_dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer_dashboard/products', icon: Package },
-  { label: 'Input Request', href: '/farmer_dashboard/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer_dashboard/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer_dashboard/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer_dashboard/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer_dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer_dashboard/profile', icon: UserIcon },
-  { label: 'Orders', href: '/farmer_dashboard/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer_dashboard/settings', icon: Settings },
+  { label: 'Dashboard', href: '/dashboard/farmer', icon: LayoutGrid },
+  { label: 'Products', href: '/dashboard/farmer/products', icon: Package },
+  { label: 'Input Request', href: '/dashboard/farmer/requests', icon: FilePlus },
+  { label: 'AI Tips', href: '/dashboard/farmer/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/dashboard/farmer/market_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/dashboard/farmer/message', icon: Mail },
+  { label: 'Notifications', href: '/dashboard/farmer/notifications', icon: Bell },
+  { label: 'Profile', href: '/dashboard/farmer/profile', icon: UserIcon },
+  { label: 'Orders', href: '/dashboard/farmer/orders', icon: ShoppingCart },
+  { label: 'Settings', href: '/dashboard/farmer/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -157,7 +157,7 @@ const MONTH_LABELS = [
   'Dec',
 ];
 
-const BackButton = ({ href = '/farmer_dashboard' }: { href?: string }) => (
+const BackButton = ({ href = '/dashboard/farmer' }: { href?: string }) => (
   <Link
     href={href}
     className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 mb-4"
@@ -467,9 +467,8 @@ function Dashboard() {
                       type="button"
                       onClick={handleLogout}
                       disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${
-                        logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
-                      }`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
+                        }`}
                     >
                       {logoutPending ? (
                         <>
@@ -486,11 +485,10 @@ function Dashboard() {
                   ) : (
                     <Link href={item.href} className="block">
                       <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                          isActive
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                             ? 'bg-white text-green-600 shadow-sm'
                             : 'text-white hover:bg-green-700'
-                        }`}
+                          }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
                         <span>{item.label}</span>
@@ -779,7 +777,7 @@ function Dashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
                 <Link
-                  href="/farmer_dashboard/products"
+                  href="/dashboard/farmer/products"
                   className="text-sm text-green-600 hover:underline"
                 >
                   Manage products
@@ -865,20 +863,19 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span
-                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                (product.productStatus || '').toLowerCase() === 'in_stock'
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${(product.productStatus || '').toLowerCase() === 'in_stock'
                                   ? 'bg-green-100 text-green-800'
                                   : (product.productStatus || '').toLowerCase() === 'out_of_stock'
                                     ? 'bg-red-100 text-red-800'
                                     : 'bg-yellow-100 text-yellow-800'
-                              }`}
+                                }`}
                             >
                               {product.productStatus || 'Unknown'}
                             </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <Link
-                              href="/farmer_dashboard/products"
+                              href="/dashboard/farmer/products"
                               className="text-green-600 hover:text-green-900"
                             >
                               Manage
@@ -899,7 +896,7 @@ function Dashboard() {
                   <p className="text-sm text-gray-500">Track your farm input needs</p>
                 </div>
                 <Link
-                  href="/farmer_dashboard/requests"
+                  href="/dashboard/farmer/requests"
                   className="text-sm text-green-600 hover:underline"
                 >
                   View all
@@ -929,13 +926,12 @@ function Dashboard() {
                         </p>
                       </div>
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          (request.status || '').toLowerCase() === 'approved'
+                        className={`px-2 py-1 text-xs rounded-full ${(request.status || '').toLowerCase() === 'approved'
                             ? 'bg-green-100 text-green-700'
                             : (request.status || '').toLowerCase() === 'rejected'
                               ? 'bg-red-100 text-red-700'
                               : 'bg-yellow-100 text-yellow-700'
-                        }`}
+                          }`}
                       >
                         {request.status || 'Pending'}
                       </span>
@@ -953,6 +949,6 @@ function Dashboard() {
 
 export default function FarmerDashboard() {
   return (
-      <Dashboard />
+    <Dashboard />
   );
 }

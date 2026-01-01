@@ -33,16 +33,16 @@ import {
 } from 'recharts';
 
 const menuItems = [
-  { label: 'Dashboard', href: '/farmer_dashboard', icon: CheckCircle },
-  { label: 'My Products', href: '/farmer_dashboard/products', icon: LayoutGrid },
-  { label: 'Input Request', href: '/farmer_dashboard/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer_dashboard/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer_dashboard/market_analysis', icon: BarChart2 },
-  { label: 'Message', href: '/farmer_dashboard/message', icon: Mail },
-  { label: 'Orders', href: '/farmer_dashboard/orders', icon: ShoppingCart },
-  { label: 'Profile', href: '/farmer_dashboard/profile', icon: User },
-  { label: 'Contact', href: '/farmer_dashboard/contact', icon: Phone },
-  { label: 'Settings', href: '/farmer_dashboard/settings', icon: Settings },
+  { label: 'Dashboard', href: '/dashboard/farmer', icon: CheckCircle },
+  { label: 'My Products', href: '/dashboard/farmer/products', icon: LayoutGrid },
+  { label: 'Input Request', href: '/dashboard/farmer/requests', icon: FilePlus },
+  { label: 'AI Tips', href: '/dashboard/farmer/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/dashboard/farmer/market_analysis', icon: BarChart2 },
+  { label: 'Message', href: '/dashboard/farmer/message', icon: Mail },
+  { label: 'Orders', href: '/dashboard/farmer/orders', icon: ShoppingCart },
+  { label: 'Profile', href: '/dashboard/farmer/profile', icon: User },
+  { label: 'Contact', href: '/dashboard/farmer/contact', icon: Phone },
+  { label: 'Settings', href: '/dashboard/farmer/settings', icon: Settings },
   { label: 'Logout', href: '/logout', icon: LogOut },
 ];
 
@@ -145,11 +145,10 @@ const Dashboard = () => {
                 <div key={m.label}>
                   <Link href={m.href} className="block">
                     <div
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${
-                        isActive
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
                           ? 'bg-white text-green-500 shadow-sm'
                           : 'text-white hover:bg-gray-50 hover:text-gray-900'
-                      }`}
+                        }`}
                     >
                       <m.icon className={`w-5 h-5 ${isActive ? 'text-green-500' : 'text-white'}`} />
                       <span>{m.label}</span>
@@ -228,7 +227,7 @@ const Dashboard = () => {
                       color: '#fff',
                       padding: '6px 10px',
                     }}
-                   formatter={(value) => [`${value?.toLocaleString() || '0'}`, 'Price']}
+                    formatter={(value) => [`${value?.toLocaleString() || '0'}`, 'Price']}
                   />
                   <Area
                     type="monotone"

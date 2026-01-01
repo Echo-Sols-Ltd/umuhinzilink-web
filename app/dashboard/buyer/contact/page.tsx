@@ -1,4 +1,4 @@
-// /pages/buyer_dashboard/contact.tsx
+// /pages/dashboard/buyer/contact.tsx
 'use client';
 import Link from 'next/link';
 import {
@@ -27,14 +27,14 @@ const Logo = () => (
 );
 
 const menuItems = [
-  { label: 'Dashboard', href: '/buyer_dashboard', icon: CheckCircle },
-  { label: 'Browse Produce', href: '/buyer_dashboard/browse', icon: LayoutGrid },
-  { label: 'My Orders', href: '/buyer_dashboard/orders', icon: ShoppingCart },
-  { label: 'Requests', href: '/buyer_dashboard/requests', icon: FilePlus },
+  { label: 'Dashboard', href: '/dashboard/buyer', icon: CheckCircle },
+  { label: 'Browse Produce', href: '/dashboard/buyer/browse', icon: LayoutGrid },
+  { label: 'My Orders', href: '/dashboard/buyer/orders', icon: ShoppingCart },
+  { label: 'Requests', href: '/dashboard/buyer/requests', icon: FilePlus },
   { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/buyer_dashboard/profile', icon: User },
-  { label: 'Contact', href: '/buyer_dashboard/contact', icon: Mail },
-  { label: 'Settings', href: '/buyer_dashboard/settings', icon: Settings },
+  { label: 'Profile', href: '/dashboard/buyer/profile', icon: User },
+  { label: 'Contact', href: '/dashboard/buyer/contact', icon: Mail },
+  { label: 'Settings', href: '/dashboard/buyer/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -69,8 +69,8 @@ export default function ContactPage() {
                       onClick={handleLogout}
                       disabled={logoutPending}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${logoutPending
-                          ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                         }`}
                     >
                       {logoutPending ? (
@@ -84,8 +84,8 @@ export default function ContactPage() {
                     <Link href={m.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                            ? 'bg-green-600 text-white shadow-sm'
-                            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                          ? 'bg-green-600 text-white shadow-sm'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                           }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
