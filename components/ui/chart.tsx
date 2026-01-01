@@ -9,6 +9,7 @@ type LegendPayloadItem = {
   name?: string;
   color?: string;
   payload?: Record<string, unknown>;
+
 };
 
 import { cn } from '@/lib/utils';
@@ -88,11 +89,11 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
             ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
-  .map(([key, itemConfig]) => {
-    const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
-  })
-  .join('\n')}
+                .map(([key, itemConfig]) => {
+                  const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
+                  return color ? `  --color-${key}: ${color};` : null;
+                })
+                .join('\n')}
 }
 `
           )
@@ -114,6 +115,7 @@ type TooltipPayloadItem = {
   payload?: Record<string, unknown>;
   color?: string;
   fill?: string;
+  graphicalItemId: string;
 };
 
 type ChartTooltipContentProps = Omit<
@@ -216,7 +218,7 @@ function ChartTooltipContent({
                 formatter(
                   item.value?.toString() || '',
                   item.name || '',
-                  item ,
+                  item as any, // Add type assertion
                   index,
                   payload as readonly TooltipPayloadItem[]
                 )
