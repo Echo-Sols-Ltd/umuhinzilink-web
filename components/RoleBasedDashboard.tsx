@@ -22,13 +22,13 @@ export function RoleBasedDashboard({ children }: RoleBasedDashboardProps) {
       if (currentPath === '/dashboard') {
         switch (user.role) {
           case UserType.FARMER:
-            router.replace('/farmer_dashboard');
+            router.replace('/dashboard/farmer');
             break;
           case UserType.BUYER:
-            router.replace('/buyer_dashboard');
+            router.replace('/dashboard/buyer');
             break;
           case UserType.SUPPLIER:
-            router.replace('/supplier_dashboard');
+            router.replace('/dashboard/supplier');
             break;
           default:
             // Keep on generic dashboard for admin or unknown roles

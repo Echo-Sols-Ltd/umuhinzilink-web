@@ -180,15 +180,15 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (user.role === UserType.BUYER) {
           setBuyer(buyer);
-          router.push('/buyer_dashboard');
+          router.push('/dashboard/buyer');
         }
         if (user.role === UserType.FARMER) {
           setFarmer(farmer);
-          router.push('/farmer_dashboard');
+          router.push('/dashboard/farmer');
         }
         if (user.role === UserType.SUPPLIER) {
           setSupplier(supplier);
-          router.push('/supplier_dashboard');
+          router.push('/dashboard/supplier');
         }
         return;
       }
@@ -229,10 +229,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           await fetchSupplier();
         }
 
-        if (res.data.user.role === UserType.ADMIN) router.replace('/admin_dashboard');
-        else if (res.data.user.role === UserType.FARMER) router.replace('/farmer_dashboard');
-        else if (res.data.user.role === UserType.BUYER) router.replace('/buyer_dashboard');
-        else if (res.data.user.role === UserType.SUPPLIER) router.replace('/supplier_dashboard');
+        if (res.data.user.role === UserType.ADMIN) router.replace('/dashboard/admin');
+        else if (res.data.user.role === UserType.FARMER) router.replace('/dashboard/farmer');
+        else if (res.data.user.role === UserType.BUYER) router.replace('/dashboard/buyer');
+        else if (res.data.user.role === UserType.SUPPLIER) router.replace('/dashboard/supplier');
       }
     } catch {
       toast({
@@ -434,7 +434,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     loadAuthState();
   }, []);
-  
+
   return (
     <AuthContext.Provider
       value={{
