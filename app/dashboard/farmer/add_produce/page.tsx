@@ -62,7 +62,7 @@ export default function AddProduce() {
         description: 'Please sign in again to add produce.',
         variant: 'destructive',
       });
-      router.push('/signin');
+      router.push('/auth/signin');
       return;
     }
 

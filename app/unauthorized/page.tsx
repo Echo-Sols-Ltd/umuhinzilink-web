@@ -13,7 +13,7 @@ export default function Unauthorized() {
     if (user) {
       router.push('/dashboard');
     } else {
-      router.push('/signin');
+      router.push('/auth/signin');
     }
   };
 

@@ -356,7 +356,7 @@ function Dashboard() {
 
     try {
       await logout();
-      router.push('/auth/signin');
+      router.push('/auth/auth/signin');
     } finally {
       setLogoutPending(false);
     }
@@ -486,8 +486,8 @@ function Dashboard() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                            ? 'bg-white text-green-600 shadow-sm'
-                            : 'text-white hover:bg-green-700'
+                          ? 'bg-white text-green-600 shadow-sm'
+                          : 'text-white hover:bg-green-700'
                           }`}
                       >
                         <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
@@ -864,10 +864,10 @@ function Dashboard() {
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${(product.productStatus || '').toLowerCase() === 'in_stock'
-                                  ? 'bg-green-100 text-green-800'
-                                  : (product.productStatus || '').toLowerCase() === 'out_of_stock'
-                                    ? 'bg-red-100 text-red-800'
-                                    : 'bg-yellow-100 text-yellow-800'
+                                ? 'bg-green-100 text-green-800'
+                                : (product.productStatus || '').toLowerCase() === 'out_of_stock'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-yellow-100 text-yellow-800'
                                 }`}
                             >
                               {product.productStatus || 'Unknown'}
@@ -927,10 +927,10 @@ function Dashboard() {
                       </div>
                       <span
                         className={`px-2 py-1 text-xs rounded-full ${(request.status || '').toLowerCase() === 'approved'
-                            ? 'bg-green-100 text-green-700'
-                            : (request.status || '').toLowerCase() === 'rejected'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-yellow-100 text-yellow-700'
+                          ? 'bg-green-100 text-green-700'
+                          : (request.status || '').toLowerCase() === 'rejected'
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-yellow-100 text-yellow-700'
                           }`}
                       >
                         {request.status || 'Pending'}

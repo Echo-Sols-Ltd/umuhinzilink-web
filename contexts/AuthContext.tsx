@@ -192,7 +192,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
-      router.replace('/signin');
+      router.replace('/auth/signin');
     } catch {
       toast({
         title: 'Loading auth state failed',

@@ -100,7 +100,7 @@ export default function FarmerOrdersPage() {
 
     try {
       await logout();
-      router.push('/auth/signin');
+      router.push('/auth/auth/signin');
     } catch (error) {
       console.error('Error during logout:', error);
     } finally {
@@ -151,8 +151,8 @@ export default function FarmerOrdersPage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                          ? 'bg-white text-green-600 shadow-sm'
-                          : 'text-white hover:bg-green-700'
+                        ? 'bg-white text-green-600 shadow-sm'
+                        : 'text-white hover:bg-green-700'
                         }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />

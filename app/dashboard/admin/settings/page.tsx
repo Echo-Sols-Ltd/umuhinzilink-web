@@ -60,7 +60,7 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         // }
         // setCurrentUser(user);
       } catch (error) {
-        // window.location.href = '/signin';
+        // window.location.href = '/auth/signin';
       } finally {
         setLoading(false);
       }

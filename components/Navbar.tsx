@@ -70,7 +70,7 @@ export default function Navbar() {
         </div>
 
         <Link
-          href="/signin"
+          href="/auth/signin"
           className="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700"
         >
           Sign in

@@ -199,11 +199,10 @@ export default function SignIn() {
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
-              className={`text-gray-700 font-medium text-sm border ${
-                touched.email && fieldErrors.email
+              className={`text-gray-700 font-medium text-sm border ${touched.email && fieldErrors.email
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                   : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-              }`}
+                }`}
               required
             />
             {touched.email && fieldErrors.email && (
@@ -228,11 +227,10 @@ export default function SignIn() {
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
-              className={`text-gray-700 font-medium text-sm border pr-10 ${
-                touched.password && fieldErrors.password
+              className={`text-gray-700 font-medium text-sm border pr-10 ${touched.password && fieldErrors.password
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                   : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-              }`}
+                }`}
               required
             />
             <button
@@ -282,7 +280,7 @@ export default function SignIn() {
 
           <p className="text-gray-700 text-sm text-center">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-green-600 font-semibold">
+            <Link href="/auth/signup" className="text-green-600 font-semibold">
               Sign up
             </Link>
           </p>
