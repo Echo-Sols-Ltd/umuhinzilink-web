@@ -389,8 +389,6 @@ function SupplierMessages() {
 
 export default function SupplierMessagesWrapper() {
   return (
-    <SupplierGuard>
       <SupplierMessages />
-    </SupplierGuard>
   );
 }

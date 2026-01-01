@@ -404,8 +404,6 @@ function FarmerRequests() {
 
 export default function FarmerRequestsWrapper() {
   return (
-    <SupplierGuard>
       <FarmerRequests />
-    </SupplierGuard>
   );
 }

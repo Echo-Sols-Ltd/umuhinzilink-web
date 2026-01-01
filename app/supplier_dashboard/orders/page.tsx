@@ -434,8 +434,7 @@ function OrdersPage() {
 
 export default function OrdersPageWrapper() {
   return (
-    <SupplierGuard>
       <OrdersPage />
-    </SupplierGuard>
+
   );
 }

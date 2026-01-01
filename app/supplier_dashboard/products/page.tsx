@@ -435,8 +435,7 @@ function ProductsPage() {
 
 export default function ProductsPageWrapper() {
   return (
-    <SupplierGuard>
       <ProductsPage />
-    </SupplierGuard>
+
   );
 }
