@@ -37,7 +37,6 @@ import {
 } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { GovernmentGuard } from '@/components/auth/AuthGuard';
 import { UserType } from '@/types/enums';
 import { toast } from '@/components/ui/use-toast';
 
@@ -715,8 +714,8 @@ function Dashboard() {
 
 export default function GovernmentDashboard() {
   return (
-    <GovernmentGuard>
+   
       <Dashboard />
-    </GovernmentGuard>
+    
   );
 }

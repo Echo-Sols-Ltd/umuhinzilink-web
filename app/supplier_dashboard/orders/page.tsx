@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SupplierGuard } from '@/components/auth/AuthGuard';
+
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -236,10 +236,9 @@ function OrdersPage() {
                     <Link href={item.href} className="block">
                       <div
                         className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all text-sm font-medium
-                          ${
-                            isActive
-                              ? 'bg-white text-green-600 shadow-sm'
-                              : 'text-white hover:bg-green-700'
+                          ${isActive
+                            ? 'bg-white text-green-600 shadow-sm'
+                            : 'text-white hover:bg-green-700'
                           }`}
                       >
                         <Icon className={`w-4 h-4 ${isActive ? 'text-green-600' : 'text-white'}`} />

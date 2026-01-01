@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SupplierGuard } from '@/components/auth/AuthGuard';
+
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -309,8 +309,8 @@ function SupplierMessages() {
                       >
                         <div
                           className={`px-4 py-2 rounded-lg max-w-xs text-sm shadow-sm ${msg.sender === 'Supplier'
-                              ? 'bg-green-600 text-white rounded-br-none'
-                              : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
+                            ? 'bg-green-600 text-white rounded-br-none'
+                            : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
                             }`}
                         >
                           {msg.text}

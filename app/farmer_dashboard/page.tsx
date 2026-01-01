@@ -38,8 +38,7 @@ import {
   YAxis,
 } from 'recharts';
 import { Input } from '@/components/ui/input';
-import { FarmerGuard } from '@/components/auth/AuthGuard';
-import { toast } from '@/components/ui/use-toast';
+
 
 type MenuItem = {
   label: string;
@@ -954,8 +953,6 @@ function Dashboard() {
 
 export default function FarmerDashboard() {
   return (
-    <FarmerGuard>
       <Dashboard />
-    </FarmerGuard>
   );
 }

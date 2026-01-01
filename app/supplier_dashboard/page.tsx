@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SupplierGuard } from '@/components/auth/AuthGuard';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -462,8 +461,6 @@ function Dashboard() {
 
 export default function SupplierDashboardPage() {
   return (
-    <SupplierGuard>
-      <Dashboard />
-    </SupplierGuard>
+    <Dashboard />
   );
 }

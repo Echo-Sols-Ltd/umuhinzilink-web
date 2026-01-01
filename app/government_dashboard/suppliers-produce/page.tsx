@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { GovernmentLayout } from '../components/GovernmentLayout';
 import { Banner, type BannerData } from '../components/Banner';
 import { Button } from '@/components/ui/button';
-import { GovernmentGuard } from '@/components/auth/AuthGuard';
+ 
 import { toast } from '@/components/ui/use-toast';
 import { Edit } from 'lucide-react';
 
@@ -222,9 +222,9 @@ function SuppliersProducePage() {
 
 export default function GovernmentSuppliersProducePage() {
   return (
-    <GovernmentGuard>
+    
       <SuppliersProducePage />
-    </GovernmentGuard>
+    
   );
 }
 
