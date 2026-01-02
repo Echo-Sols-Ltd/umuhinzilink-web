@@ -1,17 +1,12 @@
 {
-  "name": "umuhinzi_link",
+  "name": "umuhinzilink_web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
-    "type-check": "tsc --noEmit",
-    "test": "echo \"No tests specified\" && exit 0",
-    "audit:security": "npm audit --audit-level=moderate",
-    "ci": "npm run type-check && npm run lint && npm run build"
+    "lint": "next lint"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

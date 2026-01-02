@@ -68,7 +68,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data) {
         localStorage.setItem('farmer', JSON.stringify(res.data));
         if (!res.data) {
-          router.push('/auth/farmerSignup');
+          router.push('/auth/farmer/signup');
           return;
         }
         setFarmer(res.data);
@@ -180,15 +180,15 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (user.role === UserType.BUYER) {
           setBuyer(buyer);
-          router.replace('/dashboard/buyer');
+          router.replace('/buyer/dashboard');
         }
         if (user.role === UserType.FARMER) {
           setFarmer(farmer);
-          router.replace('/dashboard/farmer');
+          router.replace('/farmer/dashboard');
         }
         if (user.role === UserType.SUPPLIER) {
           setSupplier(supplier);
-          router.replace('/dashboard/supplier');
+          router.replace('/supplier/dashboard');
         }
         return;
       }
@@ -229,10 +229,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           await fetchSupplier();
         }
 
-        if (res.data.user.role === UserType.ADMIN) router.replace('/dashboard/admin');
-        else if (res.data.user.role === UserType.FARMER) router.replace('/dashboard/farmer');
-        else if (res.data.user.role === UserType.BUYER) router.replace('/dashboard/buyer');
-        else if (res.data.user.role === UserType.SUPPLIER) router.replace('/dashboard/supplier');
+        if (res.data.user.role === UserType.ADMIN) router.replace('/admin/dashboard');
+        else if (res.data.user.role === UserType.FARMER) router.replace('/farmer/dashboard');
+        else if (res.data.user.role === UserType.BUYER) router.replace('/buyer/dashboard');
+        else if (res.data.user.role === UserType.SUPPLIER) router.replace('/supplier/dashboard');
       }
     } catch {
       toast({
@@ -262,7 +262,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('auth_token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         setUser(res.data.user);
-       loadAuthState()
+        loadAuthState()
       }
     } catch {
       toast({

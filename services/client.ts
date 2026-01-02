@@ -22,7 +22,6 @@ class ApiClient {
       async config => {
         try {
           const token = this.getAuthToken();
-          console.log(token);
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }
@@ -51,7 +50,6 @@ class ApiClient {
             const status = error.response.status;
 
             if (status === HTTP_STATUS.UNAUTHORIZED || status === HTTP_STATUS.FORBIDDEN) {
-              console.warn('401 Unauthorized detected, logging out');
               this.logout();
               throw error;
             }
