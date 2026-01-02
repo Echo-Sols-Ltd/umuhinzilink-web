@@ -1,4 +1,4 @@
-import { FarmerOrder, FarmerProduct, User } from '@/types';
+import { FarmerOrder, FarmerProduct, SupplierProduct, User } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -15,9 +15,9 @@ export const governmentService = {
   },
 
   // Get all products
-  getAllSuppliersProducts: async (): Promise<FarmerProduct[]> => {
+  getAllSuppliersProducts: async (): Promise<SupplierProduct[]> => {
     try {
-      const response = await apiClient.get<FarmerProduct[]>(API_ENDPOINTS.GOVERNMENT.PRODUCTS_SUPPLIERS);
+      const response = await apiClient.get<SupplierProduct[]>(API_ENDPOINTS.GOVERNMENT.PRODUCTS_SUPPLIERS);
       return response.data!;
     } catch (error) {
       console.error('Error fetching products:', error);

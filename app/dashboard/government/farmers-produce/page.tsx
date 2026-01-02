@@ -100,12 +100,10 @@ function FarmersProducePage() {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [productImageIndices, setProductImageIndices] = useState<Record<string, number>>({});
 
-  const { products, orders, refreshProducts, refreshOrders } = useGovernment();
+  const { farmerProducts:products, orders, refreshProducts, refreshOrders } = useGovernment();
 
   const handleLogout = async () => {
     if (logoutPending) return;
-
-
   };
 
   const shortName = useMemo(() => {

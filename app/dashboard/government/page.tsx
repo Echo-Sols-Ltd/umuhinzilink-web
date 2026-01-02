@@ -187,7 +187,7 @@ function Dashboard() {
   const [logoutPending, setLogoutPending] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'farmers' | 'suppliers'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const { products, orders, refreshProducts, refreshOrders } = useGovernment();
+  const { orders, refreshProducts, refreshOrders } = useGovernment();
 
   const handleLogout = async () => {
     if (logoutPending) return;

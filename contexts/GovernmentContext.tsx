@@ -4,12 +4,13 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { governmentService } from '@/services/government';
 import { useAuth } from './AuthContext';
 import { toast } from '@/components/ui/use-toast';
-import { FarmerProduct, User, FarmerOrder } from '@/types';
+import { FarmerProduct,SupplierProduct, User, FarmerOrder } from '@/types';
 
 interface GovernmentContextType {
   users: User[] | null;
-  products: FarmerProduct[] | null;
-  orders: FarmerOrder[] | null;
+  supplierProducts: SupplierProduct[];
+  farmerProducts: FarmerProduct[];
+  orders: FarmerOrder[];
   loading: boolean;
   error: string | null;
   refreshUsers: () => Promise<void>;
@@ -21,7 +22,13 @@ interface GovernmentContextType {
     buyerCount: number;
     supplierCount: number;
   };
-  productStats: {
+  supplierProductStats: {
+    totalProducts: number;
+    inStockCount: number;
+    outOfStockCount: number;
+    lowStockCount: number;
+  };
+  farmerProductStats: {
     totalProducts: number;
     inStockCount: number;
     outOfStockCount: number;
@@ -40,8 +47,9 @@ const GovernmentContext = createContext<GovernmentContextType | null>(null);
 export function GovernmentProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [users, setUsers] = useState<User[] | null>(null);
-  const [products, setProducts] = useState<FarmerProduct[] | null>(null);
-  const [orders, setOrders] = useState<FarmerOrder[] | null>(null);
+  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
+  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
+  const [orders, setOrders] = useState<FarmerOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,14 +61,16 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const [usersRes, productsRes, ordersRes] = await Promise.all([
+      const [usersRes, supplierProductsRes, farmerProductsRes, ordersRes] = await Promise.all([
         governmentService.getAllUsers(),
         governmentService.getAllSuppliersProducts(),
+        governmentService.getAllFarmersProducts(),
         governmentService.getAllFarmersOrders(),
       ]);
 
       setUsers(usersRes || []);
-      setProducts(productsRes || []);
+      setSupplierProducts(supplierProductsRes || []);
+      setFarmerProducts(farmerProductsRes || []);
       setOrders(ordersRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
@@ -95,8 +105,8 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     try {
       const supplierProductsRes = await governmentService.getAllSuppliersProducts();
       const farmerProductsRes = await governmentService.getAllFarmersProducts();
-      setProducts(supplierProductsRes || []);
-      setProducts(farmerProductsRes || []);
+      setSupplierProducts(supplierProductsRes || []);
+      setFarmerProducts(farmerProductsRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
@@ -134,11 +144,18 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     supplierCount: users?.filter(u => u.role === 'SUPPLIER').length || 0,
   };
 
-  const productStats = {
-    totalProducts: products?.length || 0,
-    inStockCount: products?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
-    outOfStockCount: products?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
-    lowStockCount: products?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
+  const supplierProductStats = {
+    totalProducts: supplierProducts?.length || 0,
+    inStockCount: supplierProducts?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
+    outOfStockCount: supplierProducts?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
+    lowStockCount: supplierProducts?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
+  };
+
+  const farmerProductStats = {
+    totalProducts: farmerProducts?.length || 0,
+    inStockCount: farmerProducts?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
+    outOfStockCount: farmerProducts?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
+    lowStockCount: farmerProducts?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
   };
 
   const orderStats = {
@@ -157,7 +174,8 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     <GovernmentContext.Provider
       value={{
         users,
-        products,
+        supplierProducts,
+        farmerProducts,
         orders,
         loading,
         error,
@@ -165,7 +183,8 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
         refreshProducts,
         refreshOrders,
         userStats,
-        productStats,
+        supplierProductStats,
+        farmerProductStats,
         orderStats,
       }}
     >
