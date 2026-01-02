@@ -129,16 +129,16 @@ type FarmerRequest = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/dashboard/farmer', icon: LayoutGrid },
-  { label: 'Products', href: '/dashboard/farmer/products', icon: Package },
-  { label: 'Input Request', href: '/dashboard/farmer/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/dashboard/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/dashboard/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/dashboard/farmer/message', icon: Mail },
-  { label: 'Notifications', href: '/dashboard/farmer/notifications', icon: Bell },
-  { label: 'Profile', href: '/dashboard/farmer/profile', icon: UserIcon },
-  { label: 'Orders', href: '/dashboard/farmer/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/dashboard/farmer/settings', icon: Settings },
+  { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
+  { label: 'Products', href: '/farmer/dashboard/products', icon: Package },
+  { label: 'Input Request', href: '/farmer/dashboard/requests', icon: FilePlus },
+  { label: 'AI Tips', href: '/farmer/dashboard/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/farmer/dashboard/market_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/farmer/dashboard/message', icon: Mail },
+  { label: 'Notifications', href: '/farmer/dashboard/notifications', icon: Bell },
+  { label: 'Profile', href: '/farmer/dashboard/profile', icon: UserIcon },
+  { label: 'Orders', href: '/farmer/dashboard/orders', icon: ShoppingCart },
+  { label: 'Settings', href: '/farmer/dashboard/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -157,7 +157,7 @@ const MONTH_LABELS = [
   'Dec',
 ];
 
-const BackButton = ({ href = '/dashboard/farmer' }: { href?: string }) => (
+const BackButton = ({ href = '/farmer/dashboard' }: { href?: string }) => (
   <Link
     href={href}
     className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 mb-4"
@@ -777,7 +777,7 @@ function Dashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
                 <Link
-                  href="/dashboard/farmer/products"
+                  href="/farmer/dashboard/products"
                   className="text-sm text-green-600 hover:underline"
                 >
                   Manage products
@@ -875,7 +875,7 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <Link
-                              href="/dashboard/farmer/products"
+                              href="/farmer/dashboard/products"
                               className="text-green-600 hover:text-green-900"
                             >
                               Manage
@@ -896,7 +896,7 @@ function Dashboard() {
                   <p className="text-sm text-gray-500">Track your farm input needs</p>
                 </div>
                 <Link
-                  href="/dashboard/farmer/requests"
+                  href="/farmer/dashboard/requests"
                   className="text-sm text-green-600 hover:underline"
                 >
                   View all

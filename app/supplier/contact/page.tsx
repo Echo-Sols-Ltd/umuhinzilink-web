@@ -22,14 +22,14 @@ const Logo = () => (
 );
 
 const menuItems = [
-  { label: 'Dashboard', href: '/dashboard/supplier', icon: CheckCircle },
-  { label: 'My Products', href: '/dashboard/supplier/products', icon: LayoutGrid },
-  { label: 'Requests', href: '/dashboard/supplier/requests', icon: FilePlus },
-  { label: 'Orders', href: '/dashboard/supplier/orders', icon: ShoppingCart },
+  { label: 'Dashboard', href: '/supplier/dashboard', icon: CheckCircle },
+  { label: 'My Products', href: '/supplier/dashboard/products', icon: LayoutGrid },
+  { label: 'Requests', href: '/supplier/dashboard/requests', icon: FilePlus },
+  { label: 'Orders', href: '/supplier/dashboard/orders', icon: ShoppingCart },
   { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/dashboard/supplier/profile', icon: User },
-  { label: 'Contact', href: '/dashboard/supplier/contact', icon: Mail },
-  { label: 'Settings', href: '/dashboard/supplier/settings', icon: Settings },
+  { label: 'Profile', href: '/supplier/dashboard/profile', icon: User },
+  { label: 'Contact', href: '/supplier/dashboard/contact', icon: Mail },
+  { label: 'Settings', href: '/supplier/dashboard/settings', icon: Settings },
   { label: 'Logout', href: '/logout', icon: LogOut },
 ];
 
@@ -54,8 +54,8 @@ export default function SupplierContactPage() {
                   <Link href={m.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                          ? 'bg-green-600 text-white shadow-sm'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-green-600 text-white shadow-sm'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                         }`}
                     >
                       <m.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />

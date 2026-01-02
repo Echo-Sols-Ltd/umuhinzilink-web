@@ -26,14 +26,14 @@ const Logo = () => (
 );
 
 const menuItems = [
-  { label: 'Dashboard', href: '/dashboard/buyer', icon: CheckCircle },
-  { label: 'Browse Produce', href: '/dashboard/buyer/browse', icon: LayoutGrid },
-  { label: 'My Requests', href: '/dashboard/buyer/requests', icon: FilePlus },
-  { label: 'Orders', href: '/dashboard/buyer/orders', icon: ShoppingCart },
+  { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
+  { label: 'Browse Produce', href: '/buyer/dashboard/browse', icon: LayoutGrid },
+  { label: 'My Requests', href: '/buyer/dashboard/requests', icon: FilePlus },
+  { label: 'Orders', href: '/buyer/dashboard/orders', icon: ShoppingCart },
   { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/dashboard/buyer/profile', icon: User },
-  { label: 'Contact', href: '/dashboard/buyer/contact', icon: Mail },
-  { label: 'Settings', href: '/dashboard/buyer/settings', icon: Settings },
+  { label: 'Profile', href: '/buyer/dashboard/profile', icon: User },
+  { label: 'Contact', href: '/buyer/dashboard/contact', icon: Mail },
+  { label: 'Settings', href: '/buyer/dashboard/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 

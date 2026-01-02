@@ -22,14 +22,14 @@ const Logo = () => (
 );
 
 const menuItems = [
-  { label: 'Dashboard', href: '/dashboard/farmer', icon: CheckCircle },
-  { label: 'My Produce', href: '/dashboard/farmer/products', icon: LayoutGrid },
-  { label: 'Requests', href: '/dashboard/farmer/requests', icon: FilePlus },
-  { label: 'Orders', href: '/dashboard/farmer/orders', icon: ShoppingCart },
+  { label: 'Dashboard', href: '/farmer/dashboard', icon: CheckCircle },
+  { label: 'My Produce', href: '/farmer/dashboard/products', icon: LayoutGrid },
+  { label: 'Requests', href: '/farmer/dashboard/requests', icon: FilePlus },
+  { label: 'Orders', href: '/farmer/dashboard/orders', icon: ShoppingCart },
   { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/dashboard/farmer/profile', icon: User },
-  { label: 'Contact', href: '/dashboard/farmer/contact', icon: Mail },
-  { label: 'Settings', href: '/dashboard/farmer/settings', icon: Settings },
+  { label: 'Profile', href: '/farmer/dashboard/profile', icon: User },
+  { label: 'Contact', href: '/farmer/dashboard/contact', icon: Mail },
+  { label: 'Settings', href: '/farmer/dashboard/settings', icon: Settings },
   { label: 'Logout', href: '/logout', icon: LogOut },
 ];
 
@@ -54,8 +54,8 @@ export default function SettingsPage() {
                   <Link href={m.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                          ? 'bg-green-600 text-white shadow-sm'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-green-600 text-white shadow-sm'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                         }`}
                     >
                       <m.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />

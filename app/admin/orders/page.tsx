@@ -35,15 +35,15 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutGrid },
-  { label: 'Users', href: '/dashboard/admin/users', icon: Users },
-  { label: 'Orders', href: '/dashboard/admin/orders', icon: ArrowUpDown },
-  { label: 'Notifications', href: '/dashboard/admin/reports', icon: Bell },
+  { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
+  { label: 'Users', href: '/admin/dashboard/users', icon: Users },
+  { label: 'Orders', href: '/admin/dashboard/orders', icon: ArrowUpDown },
+  { label: 'Notifications', href: '/admin/dashboard/reports', icon: Bell },
 ];
 
 const MENU_ITEMS_BOTTOM: MenuItem[] = [
-  { label: 'Profile', href: '/dashboard/admin/settings', icon: UserIcon },
-  { label: 'Settings', href: '/dashboard/admin/settings', icon: Settings },
+  { label: 'Profile', href: '/admin/dashboard/settings', icon: UserIcon },
+  { label: 'Settings', href: '/admin/dashboard/settings', icon: Settings },
 ];
 
 const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -215,7 +215,7 @@ function OrderManagement() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {orders.length==0?<p>No orders found</p>:orders.map(order => (
+                  {orders.length == 0 ? <p>No orders found</p> : orders.map(order => (
                     <tr key={order.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {order.buyer.role}

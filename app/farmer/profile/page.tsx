@@ -51,16 +51,16 @@ type MenuItem = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/dashboard/farmer', icon: LayoutGrid },
-  { label: 'Products', href: '/dashboard/farmer/products', icon: Package },
-  { label: 'Input Request', href: '/dashboard/farmer/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/dashboard/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/dashboard/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/dashboard/farmer/message', icon: MailIcon },
-  { label: 'Notifications', href: '/dashboard/farmer/notifications', icon: Bell },
-  { label: 'Orders', href: '/dashboard/farmer/orders', icon: ShoppingCart },
-  { label: 'Profile', href: '/dashboard/farmer/profile', icon: User },
-  { label: 'Settings', href: '/dashboard/farmer/settings', icon: Settings },
+  { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
+  { label: 'Products', href: '/farmer/dashboard/products', icon: Package },
+  { label: 'Input Request', href: '/farmer/dashboard/requests', icon: FilePlus },
+  { label: 'AI Tips', href: '/farmer/dashboard/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/farmer/dashboard/market_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/farmer/dashboard/message', icon: MailIcon },
+  { label: 'Notifications', href: '/farmer/dashboard/notifications', icon: Bell },
+  { label: 'Orders', href: '/farmer/dashboard/orders', icon: ShoppingCart },
+  { label: 'Profile', href: '/farmer/dashboard/profile', icon: User },
+  { label: 'Settings', href: '/farmer/dashboard/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -146,8 +146,8 @@ export default function FarmerProfilePage() {
                   <Link href={item.href} className="block">
                     <div
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                          ? 'bg-white text-green-600 shadow-sm'
-                          : 'text-white hover:bg-green-700'
+                        ? 'bg-white text-green-600 shadow-sm'
+                        : 'text-white hover:bg-green-700'
                         }`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />

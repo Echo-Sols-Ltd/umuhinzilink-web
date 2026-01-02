@@ -40,9 +40,9 @@ export const API_ENDPOINTS = {
     ME: '/suppliers/me',
   },
   DASHBOARD: {
-    FARMER_STATS: '/dashboard/farmer',
-    SUPPLIER_STATS: '/dashboard/supplier',
-    BUYER_STATS: '/dashboard/buyer',
+    FARMER_STATS: '/farmer/dashboard',
+    SUPPLIER_STATS: '/supplier/dashboard',
+    BUYER_STATS: '/buyer/dashboard',
   },
   PRODUCT: {
     CREATE_FARMER: '/products/farmer',

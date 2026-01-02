@@ -48,14 +48,14 @@ ChartJS.register(
 );
 
 const menuItems = [
-  { label: 'Dashboard', href: '/dashboard/buyer', icon: CheckCircle },
-  { label: 'My Purchase', href: '/dashboard/buyer/purchases', icon: LayoutGrid },
-  { label: 'Browse Product', href: '/dashboard/buyer/product', icon: FilePlus },
-  { label: 'Saved Items', href: '/dashboard/buyer/saved', icon: Heart },
-  { label: 'Message', href: '/dashboard/buyer/message', icon: Mail },
-  { label: 'Profile', href: '/dashboard/buyer/profile', icon: User },
-  { label: 'Contact', href: '/dashboard/buyer/contact', icon: Phone },
-  { label: 'Settings', href: '/dashboard/buyer/settings', icon: Settings },
+  { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
+  { label: 'My Purchase', href: '/buyer/dashboard/purchases', icon: LayoutGrid },
+  { label: 'Browse Product', href: '/buyer/dashboard/product', icon: FilePlus },
+  { label: 'Saved Items', href: '/buyer/dashboard/saved', icon: Heart },
+  { label: 'Message', href: '/buyer/dashboard/message', icon: Mail },
+  { label: 'Profile', href: '/buyer/dashboard/profile', icon: User },
+  { label: 'Contact', href: '/buyer/dashboard/contact', icon: Phone },
+  { label: 'Settings', href: '/buyer/dashboard/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
