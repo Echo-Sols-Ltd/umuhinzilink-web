@@ -262,7 +262,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('auth_token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         setUser(res.data.user);
-        router.push('/auth/profileCreate');
+       loadAuthState()
       }
     } catch {
       toast({
