@@ -88,6 +88,14 @@ export const API_ENDPOINTS = {
     BUYERS: '/admin/buyers',
     FARMERS: '/admin/farmers',
     SUPPLIERS: '/admin/suppliers',
+
+    USERS_BY_ID: (id: string) => `/admin/users/${id}`,
+    PRODUCTS_BY_ID: (id: string) => `/admin/products/${id}`,
+    ORDERS_BY_ID: (id: string) => `/admin/orders/${id}`,
+    BUYERS_BY_ID: (id: string) => `/admin/buyers/${id}`,
+    FARMERS_BY_ID: (id: string) => `/admin/farmers/${id}`,
+    SUPPLIERS_BY_ID: (id: string) => `/admin/suppliers/${id}`,
+
   },
   GOVERNMENT: {
     USERS: '/governments/users',
