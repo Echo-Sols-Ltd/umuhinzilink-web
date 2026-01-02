@@ -10,23 +10,25 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { UserRequest, UserType } from '@/types';
 
 
 export default function SignUp() {
-  const router = useRouter();
+  const { register } = useAuth()
+  const [agreeToTerms, setAgreeToTerms] = useState(false)
 
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
   ];
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserRequest>({
     names: '',
     email: '',
     phoneNumber: '',
     password: '',
-    agreeToTerms: false,
-    role: 'FARMER', // default
+    role: UserType.FARMER,
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +37,6 @@ export default function SignUp() {
     email: '',
     phoneNumber: '',
     password: '',
-    agreeToTerms: '',
     role: '',
   });
   const [touched, setTouched] = useState({
@@ -138,7 +139,7 @@ export default function SignUp() {
     const emailValid = validateField('email', formData.email);
     const phoneValid = validateField('phoneNumber', formData.phoneNumber);
     const passwordValid = validateField('password', formData.password);
-    const termsValid = validateField('agreeToTerms', formData.agreeToTerms);
+    const termsValid = validateField('agreeToTerms', agreeToTerms);
     const roleValid = validateField('role', formData.role);
 
     setTouched({
@@ -167,14 +168,14 @@ export default function SignUp() {
       setLoading(false);
       return;
     }
-
+    await register(formData)
 
   };
 
   const accountTypes = [
-    { value: 'FARMER', label: 'Farmer' },
-    { value: 'SUPPLIER', label: 'Supplier' },
-    { value: 'BUYER', label: 'Buyer' },
+    { value: UserType.FARMER, label: 'Farmer' },
+    { value: UserType.SUPPLIER, label: 'Supplier' },
+    { value: UserType.BUYER, label: 'Buyer' },
   ];
 
   return (
@@ -234,8 +235,8 @@ export default function SignUp() {
               onBlur={handleBlur}
               disabled={loading}
               className={`text-gray-700 font-medium text-sm border ${touched.names && fieldErrors.names
-                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                 }`}
               required
             />
@@ -261,8 +262,8 @@ export default function SignUp() {
               onBlur={handleBlur}
               disabled={loading}
               className={`text-gray-700 font-medium text-sm border ${touched.email && fieldErrors.email
-                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                 }`}
               required
             />
@@ -288,8 +289,8 @@ export default function SignUp() {
               onBlur={handleBlur}
               disabled={loading}
               className={`text-gray-700 font-medium text-sm border ${touched.phoneNumber && fieldErrors.phoneNumber
-                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                 }`}
               required
             />
@@ -334,8 +335,8 @@ export default function SignUp() {
               onBlur={handleBlur}
               disabled={loading}
               className={`text-gray-700 font-medium text-sm border pr-10 ${touched.password && fieldErrors.password
-                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                 }`}
               required
             />
@@ -358,8 +359,8 @@ export default function SignUp() {
           <div className="flex items-center space-x-2">
             <Switch
               id="agreeToTerms"
-              checked={formData.agreeToTerms}
-              onCheckedChange={checked => setFormData(prev => ({ ...prev, agreeToTerms: checked }))}
+              checked={agreeToTerms}
+              onCheckedChange={checked => setAgreeToTerms(checked)}
               className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-200"
             />
             <Label htmlFor="agreeToTerms" className="text-gray-700 font-medium text-sm">
