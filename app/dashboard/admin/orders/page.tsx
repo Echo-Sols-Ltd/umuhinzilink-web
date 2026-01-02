@@ -16,6 +16,7 @@ import {
   Eye,
   Trash2,
 } from 'lucide-react';
+import { useAdmin } from '@/contexts/AdminContext';
 
 interface Transaction {
   id: string;
@@ -36,7 +37,7 @@ interface MenuItem {
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutGrid },
   { label: 'Users', href: '/dashboard/admin/users', icon: Users },
-  { label: 'Payments', href: '/dashboard/admin/orders', icon: ArrowUpDown },
+  { label: 'Orders', href: '/dashboard/admin/orders', icon: ArrowUpDown },
   { label: 'Notifications', href: '/dashboard/admin/reports', icon: Bell },
 ];
 
@@ -84,93 +85,8 @@ function OrderManagement() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { orders, refreshOrders } = useAdmin();
 
-  useEffect(() => {
-    // Mock data - replace with actual API calls
-    setTransactions([
-      {
-        id: '1',
-        senderType: 'Farmer',
-        senderName: 'Christine Brooks',
-        receiverType: 'Supplier',
-        receiverName: 'Gilbert Johnston',
-        date: '2 Nov 2025',
-        status: 'Completed',
-      },
-      {
-        id: '2',
-        senderType: 'Farmer',
-        senderName: 'Rosie Pearson',
-        receiverType: 'Supplier',
-        receiverName: '28 May 2019',
-        date: '2 Nov 2025',
-        status: 'Processing',
-      },
-      {
-        id: '3',
-        senderType: 'Buyer',
-        senderName: 'Darrell Caldwell',
-        receiverType: 'Farmer',
-        receiverName: '23 Nov 2019',
-        date: '2 Nov 2025',
-        status: 'Failed',
-      },
-      {
-        id: '4',
-        senderType: 'Buyer',
-        senderName: 'Gilbert Johnston',
-        receiverType: 'Farmer',
-        receiverName: '05 Feb 2019',
-        date: '2 Nov 2025',
-        status: 'Completed',
-      },
-      {
-        id: '5',
-        senderType: 'Farmer',
-        senderName: 'Alan Cain',
-        receiverType: 'Supplier',
-        receiverName: '29 Jul 2019',
-        date: '2 Nov 2025',
-        status: 'Processing',
-      },
-      {
-        id: '6',
-        senderType: 'Farmer',
-        senderName: 'Alan Cain',
-        receiverType: 'Supplier',
-        receiverName: '29 Jul 2019',
-        date: '2 Nov 2025',
-        status: 'Processing',
-      },
-      {
-        id: '7',
-        senderType: 'Buyer',
-        senderName: 'Darrell Caldwell',
-        receiverType: 'Farmer',
-        receiverName: '23 Nov 2019',
-        date: '2 Nov 2025',
-        status: 'Failed',
-      },
-      {
-        id: '8',
-        senderType: 'Farmer',
-        senderName: 'Christine Brooks',
-        receiverType: 'Supplier',
-        receiverName: 'Gilbert Johnston',
-        date: '2 Nov 2025',
-        status: 'Completed',
-      },
-      {
-        id: '9',
-        senderType: 'Farmer',
-        senderName: 'Christine Brooks',
-        receiverType: 'Supplier',
-        receiverName: 'Gilbert Johnston',
-        date: '2 Nov 2025',
-        status: 'Completed',
-      },
-    ]);
-  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -211,7 +127,7 @@ function OrderManagement() {
 
         <nav className="flex-1 px-4 py-6 space-y-2">
           {MENU_ITEMS.map(item => {
-            const isActive = item.label === 'Payments';
+            const isActive = item.label === 'Orders';
             const Icon = item.icon;
 
             return (
@@ -299,28 +215,28 @@ function OrderManagement() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredTransactions.map(transaction => (
-                    <tr key={transaction.id} className="hover:bg-gray-50">
+                  {orders.length==0?<p>No orders found</p>:orders.map(order => (
+                    <tr key={order.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {transaction.senderType}
+                        {order.buyer.role}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {transaction.senderName}
+                        {order.buyer.names}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {transaction.receiverType}
+                        {order.product.farmer.user.role}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {transaction.receiverName}
+                        {order.product.farmer.user.names}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {transaction.date}
+                        {order.createdAt}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(transaction.status)}`}
+                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}
                         >
-                          {transaction.status}
+                          {order.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

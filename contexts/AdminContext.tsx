@@ -8,8 +8,8 @@ import { FarmerProduct, User, FarmerOrder } from '@/types';
 
 interface AdminContextType {
   users: User[] | null;
-  products: FarmerProduct[] | null;
-  orders: FarmerOrder[] | null;
+  products: FarmerProduct[];
+  orders: FarmerOrder[];
   loading: boolean;
   error: string | null;
   refreshUsers: () => Promise<void>;
@@ -43,8 +43,8 @@ const AdminContext = createContext<AdminContextType | null>(null);
 export function AdminProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [users, setUsers] = useState<User[] | null>(null);
-  const [products, setProducts] = useState<FarmerProduct[] | null>(null);
-  const [orders, setOrders] = useState<FarmerOrder[] | null>(null);
+  const [products, setProducts] = useState<FarmerProduct[]>([]);
+  const [orders, setOrders] = useState<FarmerOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

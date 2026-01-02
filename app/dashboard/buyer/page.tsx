@@ -90,7 +90,7 @@ export default function BuyerDashboard() {
       {
         title: 'Paid Orders',
         value: String(orders.filter(order => order.isPaid).length),
-        subtitle: 'Completed payments',
+        subtitle: 'Completed Orders',
         icon: Users,
         color: 'bg-blue-500',
         textColor: 'text-white',
