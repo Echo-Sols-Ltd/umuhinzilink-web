@@ -33,14 +33,14 @@ type MenuItem = {
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
   { label: 'Products', href: '/farmer/products', icon: Package },
-  { label: 'Input Request', href: '/farmerrequests', icon: FilePlus },
+  { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
   { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmermarket_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmermessage', icon: Mail },
-  { label: 'Notifications', href: '/farmernotifications', icon: Bell },
-  { label: 'Profile', href: '/farmerprofile', icon: User },
-  { label: 'Orders', href: '/farmerorders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmersettings', icon: Settings },
+  { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/farmer/message', icon: Mail },
+  { label: 'Notifications', href: '/farmer/notifications', icon: Bell },
+  { label: 'Profile', href: '/farmer/profile', icon: User },
+  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
+  { label: 'Settings', href: '/farmer/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 

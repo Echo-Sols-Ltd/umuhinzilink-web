@@ -50,7 +50,7 @@ type MenuItem = {
 
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/government/dashboard', icon: LayoutGrid },
-  { label: 'Farmers Produce', href: '/government/farmers-produce', icon: Tractor },
+  { label: 'Farmers Produce', href: '/government/farmer/s-produce', icon: Tractor },
   { label: 'Suppliers Produce', href: '/government/suppliers-produce', icon: Package },
   { label: 'Market analytics', href: '/government/market-analytics', icon: BarChart2 },
   { label: 'Notifications', href: '/government/notifications', icon: Bell },

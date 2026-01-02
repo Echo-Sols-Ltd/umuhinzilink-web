@@ -24,12 +24,12 @@ const Logo = () => (
 const menuItems = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: CheckCircle },
   { label: 'My Produce', href: '/farmer/products', icon: LayoutGrid },
-  { label: 'Requests', href: '/farmerrequests', icon: FilePlus },
-  { label: 'Orders', href: '/farmerorders', icon: ShoppingCart },
+  { label: 'Requests', href: '/farmer/requests', icon: FilePlus },
+  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
   { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/farmerprofile', icon: User },
+  { label: 'Profile', href: '/farmer/profile', icon: User },
   { label: 'Contact', href: '/farmercontact', icon: Mail },
-  { label: 'Settings', href: '/farmersettings', icon: Settings },
+  { label: 'Settings', href: '/farmer/settings', icon: Settings },
   { label: 'Logout', href: '/logout', icon: LogOut },
 ];
 

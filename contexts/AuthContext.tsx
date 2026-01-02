@@ -68,7 +68,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data) {
         localStorage.setItem('farmer', JSON.stringify(res.data));
         if (!res.data) {
-          router.push('/auth/farmerSignup');
+          router.push('/auth/farmer/signup');
           return;
         }
         setFarmer(res.data);
