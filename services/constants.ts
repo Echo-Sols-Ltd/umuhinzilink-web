@@ -81,6 +81,33 @@ export const API_ENDPOINTS = {
     UPDATE_FARMER_STATUS: (id: string) => `/orders/farmer/${id}/status`,
     UPDATE_SUPPLIER_STATUS: (id: string) => `/orders/supplier/${id}/status`,
   },
+  ADMIN: {
+    USERS: '/admin/users',
+    PRODUCTS: '/admin/products',
+    ORDERS: '/admin/orders',
+    BUYERS: '/admin/buyers',
+    FARMERS: '/admin/farmers',
+    SUPPLIERS: '/admin/suppliers',
+
+    USERS_BY_ID: (id: string) => `/admin/users/${id}`,
+    PRODUCTS_BY_ID: (id: string) => `/admin/products/${id}`,
+    ORDERS_BY_ID: (id: string) => `/admin/orders/${id}`,
+    BUYERS_BY_ID: (id: string) => `/admin/buyers/${id}`,
+    FARMERS_BY_ID: (id: string) => `/admin/farmers/${id}`,
+    SUPPLIERS_BY_ID: (id: string) => `/admin/suppliers/${id}`,
+
+  },
+  GOVERNMENT: {
+    USERS: '/government/users',
+    USERS_BY_EMAIL: (email: string) => `/government/users/${email}`,
+    USERS_SUPPLIERS: '/government/users/suppliers',
+    USERS_FARMERS: '/government/users/farmers',
+    USERS_BUYERS: '/government/users/buyers',
+    PRODUCTS_SUPPLIERS: '/government/products/suppliers',
+    PRODUCTS_FARMERS: '/government/products/farmers',
+    ORDERS_SUPPLIERS: '/government/orders/suppliers',
+    ORDERS_FARMERS: '/government/orders/farmers',
+  },
   FILES: {
     UPLOAD_AVATAR: '/upload/user',
     UPLOAD_MESSAGE: '/upload/message',

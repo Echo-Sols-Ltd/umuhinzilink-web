@@ -39,6 +39,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserType } from '@/types/enums';
 import { toast } from '@/components/ui/use-toast';
+import { useGovernment } from '@/contexts/GovernmentContext';
 
 type MenuItem = {
   label: string;
@@ -186,6 +187,7 @@ function Dashboard() {
   const [logoutPending, setLogoutPending] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'farmers' | 'suppliers'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const { orders, refreshProducts, refreshOrders } = useGovernment();
 
   const handleLogout = async () => {
     if (logoutPending) return;

@@ -46,7 +46,7 @@ interface MenuItem {
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/dashboard/admin', icon: LayoutGrid },
   { label: 'Users', href: '/dashboard/admin/users', icon: Users },
-  { label: 'Payments', href: '/dashboard/admin/orders', icon: ArrowUpDown },
+  { label: 'Orders', href: '/dashboard/admin/orders', icon: ArrowUpDown },
   { label: 'Notifications', href: '/dashboard/admin/reports', icon: Bell },
 ];
 

@@ -1,30 +1,34 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { adminService } from '@/services/admin';
+import { governmentService } from '@/services/government';
 import { useAuth } from './AuthContext';
 import { toast } from '@/components/ui/use-toast';
-import { FarmerProduct, User, FarmerOrder } from '@/types';
+import { FarmerProduct,SupplierProduct, User, FarmerOrder } from '@/types';
 
-interface AdminContextType {
+interface GovernmentContextType {
   users: User[] | null;
-  products: FarmerProduct[];
+  supplierProducts: SupplierProduct[];
+  farmerProducts: FarmerProduct[];
   orders: FarmerOrder[];
   loading: boolean;
   error: string | null;
   refreshUsers: () => Promise<void>;
   refreshProducts: () => Promise<void>;
   refreshOrders: () => Promise<void>;
-  deleteUser: (userId: string) => Promise<void>;
-  deleteProduct: (productId: string) => Promise<void>;
-  deleteOrder: (orderId: string) => Promise<void>;
   userStats: {
     totalUsers: number;
     farmerCount: number;
     buyerCount: number;
     supplierCount: number;
   };
-  productStats: {
+  supplierProductStats: {
+    totalProducts: number;
+    inStockCount: number;
+    outOfStockCount: number;
+    lowStockCount: number;
+  };
+  farmerProductStats: {
     totalProducts: number;
     inStockCount: number;
     outOfStockCount: number;
@@ -38,12 +42,13 @@ interface AdminContextType {
   };
 }
 
-const AdminContext = createContext<AdminContextType | null>(null);
+const GovernmentContext = createContext<GovernmentContextType | null>(null);
 
-export function AdminProvider({ children }: { children: ReactNode }) {
+export function GovernmentProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [users, setUsers] = useState<User[] | null>(null);
-  const [products, setProducts] = useState<FarmerProduct[]>([]);
+  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
+  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
   const [orders, setOrders] = useState<FarmerOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,14 +61,16 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const [usersRes, productsRes, ordersRes] = await Promise.all([
-        adminService.getAllUsers(),
-        adminService.getAllProducts(),
-        adminService.getAllOrders(),
+      const [usersRes, supplierProductsRes, farmerProductsRes, ordersRes] = await Promise.all([
+        governmentService.getAllUsers(),
+        governmentService.getAllSuppliersProducts(),
+        governmentService.getAllFarmersProducts(),
+        governmentService.getAllFarmersOrders(),
       ]);
 
       setUsers(usersRes || []);
-      setProducts(productsRes || []);
+      setSupplierProducts(supplierProductsRes || []);
+      setFarmerProducts(farmerProductsRes || []);
       setOrders(ordersRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
@@ -81,7 +88,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   // Refresh functions
   const refreshUsers = async () => {
     try {
-      const usersRes = await adminService.getAllUsers();
+      const usersRes = await governmentService.getAllUsers();
       setUsers(usersRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh users';
@@ -96,8 +103,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const refreshProducts = async () => {
     try {
-      const productsRes = await adminService.getAllProducts();
-      setProducts(productsRes || []);
+      const supplierProductsRes = await governmentService.getAllSuppliersProducts();
+      const farmerProductsRes = await governmentService.getAllFarmersProducts();
+      setSupplierProducts(supplierProductsRes || []);
+      setFarmerProducts(farmerProductsRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
@@ -111,8 +120,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const refreshOrders = async () => {
     try {
-      const ordersRes = await adminService.getAllOrders();
-      setOrders(ordersRes || []);
+      const farmerOrdersRes = await governmentService.getAllFarmersOrders();
+      const supplierOrdersRes = await governmentService.getAllSuppliersOrders();
+      setOrders(farmerOrdersRes || []);
+      setOrders(supplierOrdersRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';
       setError(message);
@@ -124,63 +135,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Delete functions
-  const deleteUser = async (userId: string) => {
-    try {
-      await adminService.deleteUser(userId);
-      setUsers(users?.filter(u => u.id !== userId) || null);
-      toast({
-        title: 'Success',
-        description: 'User deleted successfully',
-        variant: 'success',
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete user';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
-    }
-  };
-
-  const deleteProduct = async (productId: string) => {
-    try {
-      await adminService.deleteProduct(productId);
-      setProducts(products?.filter(p => p.id !== productId) || null);
-      toast({
-        title: 'Success',
-        description: 'Product deleted successfully',
-        variant: 'success',
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete product';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
-    }
-  };
-
-  const deleteOrder = async (orderId: string) => {
-    try {
-      await adminService.deleteOrder(orderId);
-      setOrders(orders?.filter(o => o.id !== orderId) || null);
-      toast({
-        title: 'Success',
-        description: 'Order deleted successfully',
-        variant: 'success',
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete order';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
-    }
-  };
 
   // Calculate stats
   const userStats = {
@@ -190,11 +144,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     supplierCount: users?.filter(u => u.role === 'SUPPLIER').length || 0,
   };
 
-  const productStats = {
-    totalProducts: products?.length || 0,
-    inStockCount: products?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
-    outOfStockCount: products?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
-    lowStockCount: products?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
+  const supplierProductStats = {
+    totalProducts: supplierProducts?.length || 0,
+    inStockCount: supplierProducts?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
+    outOfStockCount: supplierProducts?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
+    lowStockCount: supplierProducts?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
+  };
+
+  const farmerProductStats = {
+    totalProducts: farmerProducts?.length || 0,
+    inStockCount: farmerProducts?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
+    outOfStockCount: farmerProducts?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
+    lowStockCount: farmerProducts?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
   };
 
   const orderStats = {
@@ -210,33 +171,32 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AdminContext.Provider
+    <GovernmentContext.Provider
       value={{
         users,
-        products,
+        supplierProducts,
+        farmerProducts,
         orders,
         loading,
         error,
         refreshUsers,
         refreshProducts,
         refreshOrders,
-        deleteUser,
-        deleteProduct,
-        deleteOrder,
         userStats,
-        productStats,
+        supplierProductStats,
+        farmerProductStats,
         orderStats,
       }}
     >
       {children}
-    </AdminContext.Provider>
+    </GovernmentContext.Provider>
   );
 }
 
-export function useAdmin() {
-  const context = useContext(AdminContext);
+export function useGovernment() {
+  const context = useContext(GovernmentContext);
   if (!context) {
-    throw new Error('useAdmin must be used within AdminProvider');
+    throw new Error('useGovernment must be used within GovernmentProvider');
   }
   return context;
 }

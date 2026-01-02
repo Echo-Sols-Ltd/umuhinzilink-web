@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 
 import { toast } from '@/components/ui/use-toast';
 import { Edit } from 'lucide-react';
+import { useGovernment } from '@/contexts/GovernmentContext';
 
 // Banner data
 const bannerData: BannerData[] = [
@@ -27,119 +28,9 @@ const bannerData: BannerData[] = [
   },
 ];
 
-// Product data
-const products = [
-  {
-    id: '1',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    price: 320.4,
-    stock: 300,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '2',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    price: 320.4,
-    stock: 349,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '3',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    price: 320.4,
-    stock: 100,
-    image: '/api/placeholder/300/300',
-    status: 'done',
-  },
-  {
-    id: '4',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    price: 320.4,
-    stock: 250,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '5',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    price: 320.4,
-    stock: 180,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '6',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    price: 320.4,
-    stock: 200,
-    image: '/api/placeholder/300/300',
-    status: 'done',
-  },
-  {
-    id: '7',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    price: 320.4,
-    stock: 150,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '8',
-    name: 'NPK Fertilizer',
-    category: 'Fertilizers',
-    price: 320.4,
-    stock: 275,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '9',
-    name: 'Urea Fertilizer',
-    category: 'Fertilizers',
-    price: 280.0,
-    stock: 320,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '10',
-    name: 'DAP Fertilizer',
-    category: 'Fertilizers',
-    price: 350.0,
-    stock: 200,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '11',
-    name: 'Hybrid Seeds',
-    category: 'Seeds',
-    price: 450.0,
-    stock: 150,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '12',
-    name: 'Organic Compost',
-    category: 'Fertilizers',
-    price: 180.0,
-    stock: 400,
-    image: '/api/placeholder/300/300',
-    status: 'done',
-  },
-];
 
 function SuppliersProducePage() {
+  const { supplierProducts: products, refreshProducts } = useGovernment();
   const handleSetPrice = (productId: string) => {
     toast({
       title: 'Set Price',
@@ -159,8 +50,8 @@ function SuppliersProducePage() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map(product => {
-            const isDone = product.status === 'done';
+          {products.length === 0 ? <p>No products found</p> : products.map(product => {
+            const isDone = product.quantity === 0;
 
             return (
               <div
@@ -186,15 +77,15 @@ function SuppliersProducePage() {
                     <p className="text-sm text-gray-500">{product.category}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p className="text-lg font-bold text-green-600">${product.price.toFixed(1)}</p>
-                    <p className="text-sm text-gray-500">Stock: {product.stock}</p>
+                    <p className="text-lg font-bold text-green-600">${product.unitPrice.toFixed(1)}</p>
+                    <p className="text-sm text-gray-500">Stock: {product.quantity}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
                       onClick={() => (isDone ? undefined : handleSetPrice(product.id))}
                       className={`flex-1 ${isDone
-                          ? 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                          : 'bg-green-600 hover:bg-green-700 text-white'
+                        ? 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                        : 'bg-green-600 hover:bg-green-700 text-white'
                         }`}
                       disabled={isDone}
                     >

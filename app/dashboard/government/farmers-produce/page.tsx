@@ -24,6 +24,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
+import { useGovernment } from '@/contexts/GovernmentContext';
 
 type MenuItem = {
   label: string;
@@ -62,129 +63,7 @@ const bannerData = [
   },
 ];
 
-// Product data
-const products = [
-  {
-    id: '1',
-    name: 'Fresh lemon',
-    price: 120.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '2',
-    name: 'Fresh Tomotoes',
-    price: 120.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '3',
-    name: 'Fresh Tomotoes',
-    price: 120.0,
-    rating: 5,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '4',
-    name: 'Fresh Tomotoes',
-    price: 120.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '5',
-    name: 'Fresh Tomotoes',
-    price: 120.0,
-    rating: 3,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '6',
-    name: 'Fresh Bell Peppers',
-    price: 150.0,
-    rating: 5,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '7',
-    name: 'Fresh Corn',
-    price: 100.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '8',
-    name: 'Fresh Potatoes',
-    price: 80.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'done',
-  },
-  {
-    id: '9',
-    name: 'Fresh Cabbage',
-    price: 90.0,
-    rating: 5,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '10',
-    name: 'Fresh Carrots',
-    price: 110.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '11',
-    name: 'Fresh Onions',
-    price: 95.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '12',
-    name: 'Fresh Beans',
-    price: 130.0,
-    rating: 5,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '13',
-    name: 'Fresh Peas',
-    price: 105.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '14',
-    name: 'Fresh Spinach',
-    price: 85.0,
-    rating: 4,
-    image: '/api/placeholder/300/300',
-    status: 'available',
-  },
-  {
-    id: '15',
-    name: 'Fresh Lettuce',
-    price: 75.0,
-    rating: 3,
-    image: '/api/placeholder/300/300',
-    status: 'done',
-  },
-];
+
 
 function getInitials(name: string) {
   return name
@@ -221,10 +100,10 @@ function FarmersProducePage() {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [productImageIndices, setProductImageIndices] = useState<Record<string, number>>({});
 
+  const { farmerProducts:products, orders, refreshProducts, refreshOrders } = useGovernment();
+
   const handleLogout = async () => {
     if (logoutPending) return;
-
-
   };
 
   const shortName = useMemo(() => {
@@ -412,9 +291,13 @@ function FarmersProducePage() {
 
             {/* Products Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {products.map(product => {
+              {!products || products?.length === 0 ? (
+                <div className="flex items-center justify-center h-64">
+                  <p className="text-gray-600 text-lg">No products found</p>
+                </div>
+              ) : products?.map(product => {
                 const imageIndex = productImageIndices[product.id] || 0;
-                const isDone = product.status === 'done';
+                const isDone = product.quantity === 0;
 
                 return (
                   <div
@@ -448,12 +331,12 @@ function FarmersProducePage() {
                     <div className="p-4 space-y-3">
                       <h3 className="font-semibold text-gray-900 text-sm">{product.name}</h3>
                       <div className="flex items-center justify-between">
-                        <p className="text-lg font-bold text-gray-900">${product.price.toFixed(2)}</p>
+                        <p className="text-lg font-bold text-gray-900">${product.unitPrice.toFixed(2)}</p>
                         <div className="flex items-center gap-1">
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-4 h-4 ${i < product.rating
+                              className={`w-4 h-4 ${i < 5
                                 ? 'fill-yellow-400 text-yellow-400'
                                 : 'text-gray-300'
                                 }`}

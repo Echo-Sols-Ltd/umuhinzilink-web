@@ -10,6 +10,7 @@ import { FarmerProvider } from '@/contexts/FarmerContext';
 import { SupplierProvider } from '@/contexts/SupplierContext';
 import { AdminProvider } from '@/contexts/AdminContext';
 import { Toaster } from '@/components/ui/toaster';
+import { GovernmentProvider } from './GovernmentContext';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -25,8 +26,10 @@ export function AppProviders({ children }: AppProvidersProps) {
               <FarmerProvider>
                 <SupplierProvider>
                   <AdminProvider>
-                    {children}
-                    <Toaster />
+                    <GovernmentProvider>
+                      {children}
+                      <Toaster />
+                    </GovernmentProvider>
                   </AdminProvider>
                 </SupplierProvider>
               </FarmerProvider>
