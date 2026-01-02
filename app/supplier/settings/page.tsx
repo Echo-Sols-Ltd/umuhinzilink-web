@@ -23,13 +23,13 @@ const Logo = () => (
 
 const menuItems = [
   { label: 'Dashboard', href: '/supplier/dashboard', icon: CheckCircle },
-  { label: 'My Products', href: '/supplier/dashboard/products', icon: Package },
-  { label: 'Requests', href: '/supplier/dashboard/requests', icon: FilePlus },
-  { label: 'Orders', href: '/supplier/dashboard/orders', icon: ShoppingCart },
+  { label: 'My Products', href: '/supplier/products', icon: Package },
+  { label: 'Requests', href: '/supplier/requests', icon: FilePlus },
+  { label: 'Orders', href: '/supplier/orders', icon: ShoppingCart },
   { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/supplier/dashboard/profile', icon: User },
-  { label: 'Contact', href: '/supplier/dashboard/contact', icon: Mail },
-  { label: 'Settings', href: '/supplier/dashboard/settings', icon: Settings },
+  { label: 'Profile', href: '/supplier/profile', icon: User },
+  { label: 'Contact', href: '/supplier/contact', icon: Mail },
+  { label: 'Settings', href: '/supplier/settings', icon: Settings },
   { label: 'Logout', href: '/logout', icon: LogOut },
 ];
 

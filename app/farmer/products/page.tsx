@@ -32,15 +32,15 @@ type MenuItem = {
 
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/dashboard/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/dashboard/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/dashboard/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/dashboard/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/dashboard/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer/dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer/dashboard/profile', icon: User },
-  { label: 'Orders', href: '/farmer/dashboard/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer/dashboard/settings', icon: Settings },
+  { label: 'Products', href: '/farmer/products', icon: Package },
+  { label: 'Input Request', href: '/farmerrequests', icon: FilePlus },
+  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/farmermarket_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/farmermessage', icon: Mail },
+  { label: 'Notifications', href: '/farmernotifications', icon: Bell },
+  { label: 'Profile', href: '/farmerprofile', icon: User },
+  { label: 'Orders', href: '/farmerorders', icon: ShoppingCart },
+  { label: 'Settings', href: '/farmersettings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -179,7 +179,7 @@ export default function FarmerProductsPage() {
             <p className="text-xs text-gray-500">Welcome back, {displayName.split(' ')[0]}</p>
           </div>
           <Link
-            href="/farmer/dashboard/add_produce"
+            href="/farmeradd_produce"
             className="bg-green-500 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-green-600 transition"
           >
             <Plus className="w-4 h-4" /> Add New Product
@@ -326,7 +326,7 @@ export default function FarmerProductsPage() {
                           {product.productStatus || 'Pending approval'}
                         </span>
                         <Link
-                          href={`/farmer/dashboard/products`}
+                          href={`/farmer/products`}
                           className="text-sm font-medium text-green-600 hover:text-green-700"
                         >
                           Manage

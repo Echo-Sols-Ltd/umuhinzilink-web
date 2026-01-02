@@ -23,15 +23,15 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const menuItems = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/dashboard/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/dashboard/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/dashboard/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/dashboard/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/dashboard/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer/dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer/dashboard/profile', icon: User },
-  { label: 'Orders', href: '/farmer/dashboard/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer/dashboard/settings', icon: Settings },
+  { label: 'Products', href: '/farmer/products', icon: Package },
+  { label: 'Input Request', href: '/farmerrequests', icon: FilePlus },
+  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/farmermarket_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/farmermessage', icon: Mail },
+  { label: 'Notifications', href: '/farmernotifications', icon: Bell },
+  { label: 'Profile', href: '/farmerprofile', icon: User },
+  { label: 'Orders', href: '/farmerorders', icon: ShoppingCart },
+  { label: 'Settings', href: '/farmersettings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 

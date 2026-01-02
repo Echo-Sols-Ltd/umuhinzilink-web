@@ -1,4 +1,4 @@
-// /pages/buyer/dashboard/contact.tsx
+// /pages/buyercontact.tsx
 'use client';
 import Link from 'next/link';
 import {
@@ -28,13 +28,13 @@ const Logo = () => (
 
 const menuItems = [
   { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
-  { label: 'Browse Produce', href: '/buyer/dashboard/browse', icon: LayoutGrid },
-  { label: 'My Orders', href: '/buyer/dashboard/orders', icon: ShoppingCart },
-  { label: 'Requests', href: '/buyer/dashboard/requests', icon: FilePlus },
+  { label: 'Browse Produce', href: '/buyerbrowse', icon: LayoutGrid },
+  { label: 'My Orders', href: '/buyerorders', icon: ShoppingCart },
+  { label: 'Requests', href: '/buyerrequests', icon: FilePlus },
   { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/buyer/dashboard/profile', icon: User },
-  { label: 'Contact', href: '/buyer/dashboard/contact', icon: Mail },
-  { label: 'Settings', href: '/buyer/dashboard/settings', icon: Settings },
+  { label: 'Profile', href: '/buyerprofile', icon: User },
+  { label: 'Contact', href: '/buyercontact', icon: Mail },
+  { label: 'Settings', href: '/buyersettings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 

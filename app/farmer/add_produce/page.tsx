@@ -100,7 +100,7 @@ export default function AddProduce() {
         description: 'Your product has been added to your inventory.',
       });
 
-      router.push('/farmer/dashboard/products');
+      router.push('/farmer/products');
     } catch (error) {
       console.error('Error adding produce:', error);
       const message = error instanceof Error ? error.message : 'An unknown error occurred.';
@@ -125,7 +125,7 @@ export default function AddProduce() {
             </p>
           </div>
           <Link
-            href="/farmer/dashboard/products"
+            href="/farmer/products"
             className="text-sm text-green-600 hover:text-green-700"
           >
             Back to Products
@@ -255,7 +255,7 @@ export default function AddProduce() {
 
             <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
               <Link
-                href="/farmer/dashboard/products"
+                href="/farmer/products"
                 className="text-sm text-gray-600 hover:text-gray-800"
               >
                 Cancel

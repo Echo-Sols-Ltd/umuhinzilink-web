@@ -29,13 +29,13 @@ export type MenuItem = {
 };
 
 export const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/dashboard/government', icon: LayoutGrid },
-  { label: 'Farmers Produce', href: '/dashboard/government/farmers-produce', icon: Tractor },
-  { label: 'Suppliers Produce', href: '/dashboard/government/suppliers-produce', icon: Package },
-  { label: 'Market analytics', href: '/dashboard/government/market-analytics', icon: BarChart2 },
-  { label: 'Notifications', href: '/dashboard/government/notifications', icon: Bell },
-  { label: 'Profile', href: '/dashboard/government/profile', icon: UserIcon },
-  { label: 'Settings', href: '/dashboard/government/settings', icon: Settings },
+  { label: 'Dashboard', href: '/government/dashboard', icon: LayoutGrid },
+  { label: 'Farmers Produce', href: '/government/farmers-produce', icon: Tractor },
+  { label: 'Suppliers Produce', href: '/government/suppliers-produce', icon: Package },
+  { label: 'Market analytics', href: '/government/market-analytics', icon: BarChart2 },
+  { label: 'Notifications', href: '/government/notifications', icon: Bell },
+  { label: 'Profile', href: '/government/profile', icon: UserIcon },
+  { label: 'Settings', href: '/government/settings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 

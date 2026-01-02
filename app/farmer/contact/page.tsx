@@ -23,13 +23,13 @@ const Logo = () => (
 
 const menuItems = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: CheckCircle },
-  { label: 'My Produce', href: '/farmer/dashboard/products', icon: LayoutGrid },
-  { label: 'Requests', href: '/farmer/dashboard/requests', icon: FilePlus },
-  { label: 'Orders', href: '/farmer/dashboard/orders', icon: ShoppingCart },
+  { label: 'My Produce', href: '/farmer/products', icon: LayoutGrid },
+  { label: 'Requests', href: '/farmerrequests', icon: FilePlus },
+  { label: 'Orders', href: '/farmerorders', icon: ShoppingCart },
   { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/farmer/dashboard/profile', icon: User },
-  { label: 'Contact', href: '/farmer/dashboard/contact', icon: Mail },
-  { label: 'Settings', href: '/farmer/dashboard/settings', icon: Settings },
+  { label: 'Profile', href: '/farmerprofile', icon: User },
+  { label: 'Contact', href: '/farmercontact', icon: Mail },
+  { label: 'Settings', href: '/farmersettings', icon: Settings },
   { label: 'Logout', href: '/logout', icon: LogOut },
 ];
 

@@ -40,7 +40,7 @@ function SuppliersProducePage() {
 
   return (
     <GovernmentLayout
-      activePath="/dashboard/government/suppliers-produce"
+      activePath="/government/suppliers-produce"
       headerTitle="Suppliers produce"
       showDateInHeader={false}
     >

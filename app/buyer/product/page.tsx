@@ -25,13 +25,13 @@ import { toast } from '@/components/ui/use-toast';
 
 const menuItems = [
   { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
-  { label: 'My Purchase', href: '/buyer/dashboard/purchases', icon: GridIcon },
-  { label: 'Browse product', href: '/buyer/dashboard/product', icon: FilePlus },
-  { label: 'Saved items', href: '/buyer/dashboard/saved', icon: MessageSquare },
-  { label: 'Message', href: '/buyer/dashboard/message', icon: Mail },
-  { label: 'Profile', href: '/buyer/dashboard/profile', icon: UserIcon },
-  { label: 'Contact', href: '/buyer/dashboard/contact', icon: Phone },
-  { label: 'Settings', href: '/buyer/dashboard/settings', icon: Settings },
+  { label: 'My Purchase', href: '/buyerpurchases', icon: GridIcon },
+  { label: 'Browse product', href: '/buyerproduct', icon: FilePlus },
+  { label: 'Saved items', href: '/buyersaved', icon: MessageSquare },
+  { label: 'Message', href: '/buyermessage', icon: Mail },
+  { label: 'Profile', href: '/buyerprofile', icon: UserIcon },
+  { label: 'Contact', href: '/buyercontact', icon: Phone },
+  { label: 'Settings', href: '/buyersettings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 

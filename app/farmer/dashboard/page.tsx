@@ -130,15 +130,15 @@ type FarmerRequest = {
 
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/dashboard/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/dashboard/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/dashboard/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/dashboard/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/dashboard/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer/dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer/dashboard/profile', icon: UserIcon },
-  { label: 'Orders', href: '/farmer/dashboard/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer/dashboard/settings', icon: Settings },
+  { label: 'Products', href: '/farmer/products', icon: Package },
+  { label: 'Input Request', href: '/farmerrequests', icon: FilePlus },
+  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/farmermarket_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/farmermessage', icon: Mail },
+  { label: 'Notifications', href: '/farmernotifications', icon: Bell },
+  { label: 'Profile', href: '/farmerprofile', icon: UserIcon },
+  { label: 'Orders', href: '/farmerorders', icon: ShoppingCart },
+  { label: 'Settings', href: '/farmersettings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -777,7 +777,7 @@ function Dashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
                 <Link
-                  href="/farmer/dashboard/products"
+                  href="/farmer/products"
                   className="text-sm text-green-600 hover:underline"
                 >
                   Manage products
@@ -875,7 +875,7 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <Link
-                              href="/farmer/dashboard/products"
+                              href="/farmer/products"
                               className="text-green-600 hover:text-green-900"
                             >
                               Manage
@@ -896,7 +896,7 @@ function Dashboard() {
                   <p className="text-sm text-gray-500">Track your farm input needs</p>
                 </div>
                 <Link
-                  href="/farmer/dashboard/requests"
+                  href="/farmerrequests"
                   className="text-sm text-green-600 hover:underline"
                 >
                   View all

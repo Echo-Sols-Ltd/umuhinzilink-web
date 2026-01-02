@@ -45,15 +45,15 @@ type MenuItem = {
 
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/dashboard/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/dashboard/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/dashboard/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/dashboard/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/dashboard/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer/dashboard/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer/dashboard/profile', icon: User },
-  { label: 'Orders', href: '/farmer/dashboard/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer/dashboard/settings', icon: Settings },
+  { label: 'Products', href: '/farmer/products', icon: Package },
+  { label: 'Input Request', href: '/farmerrequests', icon: FilePlus },
+  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
+  { label: 'Market Analytics', href: '/farmermarket_analysis', icon: BarChart2 },
+  { label: 'Messages', href: '/farmermessage', icon: Mail },
+  { label: 'Notifications', href: '/farmernotifications', icon: Bell },
+  { label: 'Profile', href: '/farmerprofile', icon: User },
+  { label: 'Orders', href: '/farmerorders', icon: ShoppingCart },
+  { label: 'Settings', href: '/farmersettings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
@@ -199,7 +199,7 @@ export default function FarmerRequestsPage() {
             </p>
           </div>
           <Link
-            href="/farmer/dashboard/add_produce"
+            href="/farmeradd_produce"
             className="bg-green-500 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-green-600 transition"
           >
             + Add New Product
@@ -330,7 +330,7 @@ export default function FarmerRequestsPage() {
                 <p className="text-sm text-gray-500">Track your latest submissions</p>
               </div>
               <Link
-                href="/farmer/dashboard/requests"
+                href="/farmerrequests"
                 className="text-sm text-green-600 hover:underline"
               >
                 View all

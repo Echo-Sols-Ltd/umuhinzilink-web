@@ -49,13 +49,13 @@ ChartJS.register(
 
 const menuItems = [
   { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
-  { label: 'My Purchase', href: '/buyer/dashboard/purchases', icon: LayoutGrid },
-  { label: 'Browse Product', href: '/buyer/dashboard/product', icon: FilePlus },
-  { label: 'Saved Items', href: '/buyer/dashboard/saved', icon: Heart },
-  { label: 'Message', href: '/buyer/dashboard/message', icon: Mail },
-  { label: 'Profile', href: '/buyer/dashboard/profile', icon: User },
-  { label: 'Contact', href: '/buyer/dashboard/contact', icon: Phone },
-  { label: 'Settings', href: '/buyer/dashboard/settings', icon: Settings },
+  { label: 'My Purchase', href: '/buyerpurchases', icon: LayoutGrid },
+  { label: 'Browse Product', href: '/buyerproduct', icon: FilePlus },
+  { label: 'Saved Items', href: '/buyersaved', icon: Heart },
+  { label: 'Message', href: '/buyermessage', icon: Mail },
+  { label: 'Profile', href: '/buyerprofile', icon: User },
+  { label: 'Contact', href: '/buyercontact', icon: Phone },
+  { label: 'Settings', href: '/buyersettings', icon: Settings },
   { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
 ];
 
