@@ -17,14 +17,14 @@ interface MenuItem {
 
 const MENU_ITEMS: MenuItem[] = [
     { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
-    { label: 'Users', href: '/adminusers', icon: Users },
-    { label: 'Orders', href: '/adminorders', icon: ArrowUpDown },
-    { label: 'Notifications', href: '/adminreports', icon: Bell },
+    { label: 'Users', href: '/admin/users', icon: Users },
+    { label: 'Orders', href: '/admin/orders', icon: ArrowUpDown },
+    { label: 'Notifications', href: '/admin/reports', icon: Bell },
 ];
 
 const MENU_ITEMS_BOTTOM: MenuItem[] = [
-    { label: 'Profile', href: '/adminsettings', icon: UserIcon },
-    { label: 'Settings', href: '/adminsettings', icon: Settings },
+    { label: 'Profile', href: '/admin/settings', icon: UserIcon },
+    { label: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 interface NavbarPros {
