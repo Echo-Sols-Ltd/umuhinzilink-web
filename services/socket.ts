@@ -19,8 +19,9 @@ class SocketService {
         this.stompClient = new Client({
             webSocketFactory: () => {
                 try {
-                    const token = localStorage.getItem("access_token")
+                    const token = localStorage.getItem("auth_token")
                     if (!token) {
+
                         this.logout()
                         throw new Error('Missing access token')
                     }
@@ -95,7 +96,7 @@ class SocketService {
 
             if (response.ok) {
                 const data = await response.json()
-                localStorage.setItem("access_token", data.accessToken)
+                localStorage.setItem("auth_token", data.accessToken)
                 await this.stompClient.deactivate()
                 this.stompClient.activate()
                 this.connectionAttempts = 0
@@ -174,7 +175,7 @@ class SocketService {
 
     public connect() {
         try {
-            const token = localStorage.getItem("access_token")
+            const token = localStorage.getItem("auth_token")
             if (!token) {
                 this.logout()
                 return

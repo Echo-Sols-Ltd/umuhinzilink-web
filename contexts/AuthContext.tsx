@@ -12,7 +12,6 @@ import {
 } from '@/types';
 import { UserType } from '@/types/enums';
 import { authService } from '@/services/auth';
-
 import { farmerService } from '@/services/farmers';
 import { buyerService } from '@/services/buyers';
 import { supplierService } from '@/services/suppliers';
@@ -174,7 +173,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const farmer = getFarmer();
       const supplier = getSupplier();
       const buyer = getBuyer();
-
+      
       if (token && user) {
         setUser(user);
 
@@ -214,6 +213,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           variant: 'error',
         });
       }
+      console.log(res)
       if (res.success && res.data) {
         localStorage.setItem('auth_token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));

@@ -1,21 +1,21 @@
-import React, { createContext, useContext, useEffect } from "react";
-import { socketService } from "@/services/socket";
+import React, { createContext, useContext, useEffect } from "react"
+import { socketService } from "@/services/socket"
 
-const SocketContext = createContext<typeof socketService | null>(null);
+const SocketContext = createContext<typeof socketService | null>(null)
 
-export const useSocket = () => useContext(SocketContext);
+export const useSocket = () => useContext(SocketContext)
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     useEffect(() => {
-        socketService.connect();
+        socketService.connect()
         return () => {
-            socketService.disconnect();
-        }; 
-    }, []);
+            socketService.disconnect()
+        } 
+    }, [])
 
     return (
         <SocketContext.Provider value={socketService}>
             {children}
         </SocketContext.Provider>
-    );
-};
+    )
+}
