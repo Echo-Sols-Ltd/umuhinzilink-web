@@ -1,10 +1,10 @@
 // API Configuration Constants
 
-const SERVER_URL = 'https://api.umuhinzi-backend.echo-solution.com';
-// const SERVER_URL = 'http://localhost:6060'
+const PROD_SERVER = 'https://api.umuhinzi-backend.echo-solution.com';
+const DEV_SERVER = 'http://localhost:6060'
 
 export const API_CONFIG = {
-  BASE_URL: SERVER_URL,
+  BASE_URL: process.env.NODE_ENV === 'development' ? DEV_SERVER : PROD_SERVER,
   API_VERSION: 'v1',
   TIMEOUT: 10000,
 };
@@ -32,8 +32,8 @@ export const API_ENDPOINTS = {
     UPLOAD_AVATAR: '/',
   },
   FARMER: {
-    BY_ID: (id: string) => `/farmer/s/${id}`,
-    ME: '/farmer/s/me',
+    BY_ID: (id: string) => `/farmers/${id}`,
+    ME: '/farmers/me',
   },
   SUPPLIER: {
     BY_ID: (id: string) => `/suppliers/${id}`,
@@ -86,13 +86,13 @@ export const API_ENDPOINTS = {
     PRODUCTS: '/admin/products',
     ORDERS: '/admin/orders',
     BUYERS: '/admin/buyers',
-    FARMERS: '/admin/farmer/s',
+    FARMERS: '/admin/farmers',
     SUPPLIERS: '/admin/suppliers',
     USERS_BY_ID: (id: string) => `/admin/users/${id}`,
     PRODUCTS_BY_ID: (id: string) => `/admin/products/${id}`,
     ORDERS_BY_ID: (id: string) => `/admin/orders/${id}`,
     BUYERS_BY_ID: (id: string) => `/admin/buyers/${id}`,
-    FARMERS_BY_ID: (id: string) => `/admin/farmer/s/${id}`,
+    FARMERS_BY_ID: (id: string) => `/admin/farmers/${id}`,
     SUPPLIERS_BY_ID: (id: string) => `/admin/suppliers/${id}`,
 
   },
@@ -100,12 +100,12 @@ export const API_ENDPOINTS = {
     USERS: '/government/users',
     USERS_BY_EMAIL: (email: string) => `/government/users/${email}`,
     USERS_SUPPLIERS: '/government/users/suppliers',
-    USERS_FARMERS: '/government/users/farmer/s',
+    USERS_FARMERS: '/government/users/farmers',
     USERS_BUYERS: '/government/users/buyers',
     PRODUCTS_SUPPLIERS: '/government/products/suppliers',
-    PRODUCTS_FARMERS: '/government/products/farmer/s',
+    PRODUCTS_FARMERS: '/government/products/farmers',
     ORDERS_SUPPLIERS: '/government/orders/suppliers',
-    ORDERS_FARMERS: '/government/orders/farmer/s',
+    ORDERS_FARMERS: '/government/orders/farmers',
   },
   FILES: {
     UPLOAD_AVATAR: '/upload/user',
@@ -121,4 +121,16 @@ export const HTTP_STATUS = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
+};
+
+
+
+export const SOCKET_EVENTS = {
+  MESSAGE: {
+    SEND_MESSAGE: '/app/chat.sendMessage',
+    REPLY_MESSAGE: '/app/chat.sendMessageReply',
+    REACT_MESSAGE: '/app/chat.sendMessageReaction',
+    EDIT_MESSAGE: '/app/chat.editMessage',
+    DELETE_MESSAGE: '/app/chat.deleteMessage'
+  }
 };
