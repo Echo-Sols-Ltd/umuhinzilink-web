@@ -1,7 +1,7 @@
 // API Configuration Constants
 
-const SERVER_URL = 'https://api.umuhinzi-backend.echo-solution.com';
-// const SERVER_URL = 'http://localhost:6060'
+// const SERVER_URL = 'https://api.umuhinzi-backend.echo-solution.com';
+const SERVER_URL = 'http://localhost:6060'
 
 export const API_CONFIG = {
   BASE_URL: SERVER_URL,
@@ -121,4 +121,16 @@ export const HTTP_STATUS = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
+};
+
+
+
+export const SOCKET_EVENTS = {
+  MESSAGE: {
+    SEND_MESSAGE: '/app/chat.sendMessage',
+    REPLY_MESSAGE: '/app/chat.sendMessageReply',
+    REACT_MESSAGE: '/app/chat.sendMessageReaction',
+    EDIT_MESSAGE:'/app/chat.editMessage',
+    DELETE_MESSAGE:'/app/chat.deleteMessage'
+  }
 };
