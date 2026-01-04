@@ -1,10 +1,10 @@
 // API Configuration Constants
 
-// const SERVER_URL = 'https://api.umuhinzi-backend.echo-solution.com';
-const SERVER_URL = 'http://localhost:6060'
+const PROD_SERVER = 'https://api.umuhinzi-backend.echo-solution.com';
+const DEV_SERVER = 'http://localhost:6060'
 
 export const API_CONFIG = {
-  BASE_URL: SERVER_URL,
+  BASE_URL: process.env.NODE_ENV === 'development' ? DEV_SERVER : PROD_SERVER,
   API_VERSION: 'v1',
   TIMEOUT: 10000,
 };
@@ -130,7 +130,7 @@ export const SOCKET_EVENTS = {
     SEND_MESSAGE: '/app/chat.sendMessage',
     REPLY_MESSAGE: '/app/chat.sendMessageReply',
     REACT_MESSAGE: '/app/chat.sendMessageReaction',
-    EDIT_MESSAGE:'/app/chat.editMessage',
-    DELETE_MESSAGE:'/app/chat.deleteMessage'
+    EDIT_MESSAGE: '/app/chat.editMessage',
+    DELETE_MESSAGE: '/app/chat.deleteMessage'
   }
 };
