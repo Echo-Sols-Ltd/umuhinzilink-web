@@ -191,7 +191,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
-      router.replace('/');
     } catch {
       toast({
         title: 'Loading auth state failed',
