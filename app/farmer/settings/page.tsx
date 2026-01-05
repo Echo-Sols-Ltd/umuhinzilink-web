@@ -13,6 +13,9 @@ import {
   Bell,
   Lock,
 } from 'lucide-react';
+import FarmerSidebar from '@/components/farmer/Navbar';
+import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -34,40 +37,21 @@ const menuItems = [
 ];
 
 export default function SettingsPage() {
+  const { logout } = useAuth();
+  const [logoutPending, setLogoutPending] = useState(false)
+
+  const handleLogout = () => {
+    setLogoutPending(true)
+    logout()
+  }
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
+
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
-          <div className="p-6"></div>
-          <nav className="flex-1 px-4 space-y-2">
-            {menuItems.map((m, index) => {
-              const isActive = m.label === 'Settings';
-              const showDivider = index === 4 || index === 8;
-              return (
-                <div key={m.label}>
-                  <Link href={m.href} className="block">
-                    <div
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                        ? 'bg-green-600 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                    >
-                      <m.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                      <span>{m.label}</span>
-                    </div>
-                  </Link>
-                  {showDivider && <div className="border-t border-gray-200 my-2 mx-4"></div>}
-                </div>
-              );
-            })}
-          </nav>
-        </aside>
+        <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+
 
         {/* Main Content */}
         <main className="flex-1 ml-64 p-8">

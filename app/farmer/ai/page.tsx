@@ -20,6 +20,7 @@ import {
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import FarmerSidebar from '@/components/farmer/Navbar';
 
 const menuItems = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
@@ -91,43 +92,8 @@ export default function AiDashboard() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#00A63E] flex flex-col fixed left-0 top-0 h-screen overflow-y-auto">
-        <Logo />
-        <nav className="flex-1 px-4 py-6 space-y-2">
-          {menuItems.map((item, index) => {
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
-            const showDivider = index === 4 || index === 9;
-            return (
-              <div key={item.label}>
-                {item.isLogout ? (
-                  <div
-                    onClick={handleLogout}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium text-white hover:bg-green-700`}
-                  >
-                    <Icon className="w-5 h-5 text-white" />
-                    <span>{item.label}</span>
-                  </div>
-                ) : (
-                  <Link href={item.href} className="block">
-                    <div
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium
-                        ${isActive
-                          ? 'bg-white text-green-600 shadow-sm rounded-lg'
-                          : 'text-white hover:bg-green-700'
-                        }`}
-                    >
-                      <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
-                      <span>{item.label}</span>
-                    </div>
-                  </Link>
-                )}
-                {showDivider && <div className="border-t border-gray-200 my-2 mx-4"></div>}
-              </div>
-            );
-          })}
-        </nav>
-      </aside>
+      <FarmerSidebar logoutPending handleLogout={handleLogout} />
+
 
       {/* Main Content */}
       <main className="flex-1 ml-64 bg-gray-50">
