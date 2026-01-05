@@ -148,7 +148,7 @@ export default function FarmerRequestsPage() {
             </p>
           </div>
           <Link
-            href="/farmeradd_produce"
+            href="/farmer/add_produce"
             className="bg-green-500 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-green-600 transition"
           >
             + Add New Product

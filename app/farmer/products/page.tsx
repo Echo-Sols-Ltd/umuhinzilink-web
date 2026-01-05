@@ -128,7 +128,7 @@ export default function FarmerProductsPage() {
             <p className="text-xs text-gray-500">Welcome back, {displayName.split(' ')[0]}</p>
           </div>
           <Link
-            href="/farmeradd_produce"
+            href="/farmer/add_produce"
             className="bg-green-500 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-green-600 transition"
           >
             <Plus className="w-4 h-4" /> Add New Product
