@@ -16,7 +16,7 @@ import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, Di
 import { farmSizeOptions, experienceLevelOptions, provinceOptions, districtOptions } from '@/types/enums';
 
 export default function FarmerSignUp() {
-  const { register } = useAuth();
+  const { registerFarmer, user } = useAuth();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,16 +26,8 @@ export default function FarmerSignUp() {
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
   ];
 
-  const [userData, setUserData] = useState<UserRequest>({
-    names: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    role: UserType.FARMER,
-  });
-
   const [farmerData, setFarmerData] = useState<FarmerRequest>({
-    userId: '',
+    userId: user?.id!,
     farmSize: FarmSizeCategory.SMALLHOLDER,
     experienceLevel: ExperienceLevel.LESS_THAN_1Y,
     address: {
@@ -46,11 +38,6 @@ export default function FarmerSignUp() {
   });
 
   const [fieldErrors, setFieldErrors] = useState({
-    names: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    agreeToTerms: '',
     farmSize: '',
     experienceLevel: '',
     province: '',
@@ -59,11 +46,6 @@ export default function FarmerSignUp() {
   });
 
   const [touched, setTouched] = useState({
-    names: false,
-    email: false,
-    phoneNumber: false,
-    password: false,
-    agreeToTerms: false,
     farmSize: false,
     experienceLevel: false,
     province: false,
@@ -73,11 +55,6 @@ export default function FarmerSignUp() {
 
   const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setUserData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-
     // Clear field error when user starts typing
     if (fieldErrors[name as keyof typeof fieldErrors]) {
       setFieldErrors(prev => ({ ...prev, [name]: '' }));
@@ -86,14 +63,14 @@ export default function FarmerSignUp() {
 
   const handleFarmerInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+
     if (name === 'province') {
       setFarmerData(prev => ({
         ...prev,
         address: {
           ...prev.address,
           province: value as Province,
-          district: District.GASABO, // Reset district when province changes
+          district: District.GASABO,
         },
       }));
     } else if (name === 'district') {
@@ -125,7 +102,7 @@ export default function FarmerSignUp() {
   const handleCropChange = (crop: RwandaCrop, isChecked: boolean) => {
     setFarmerData(prev => ({
       ...prev,
-      crops: isChecked 
+      crops: isChecked
         ? [...prev.crops, crop]
         : prev.crops.filter(c => c !== crop),
     }));
@@ -139,7 +116,7 @@ export default function FarmerSignUp() {
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name } = e.target;
     setTouched(prev => ({ ...prev, [name]: true }));
-    validateField(name, userData[name as keyof typeof userData]);
+    validateField(name, farmerData[name as keyof typeof farmerData]);
   };
 
   const validateField = (name: string, value: string | boolean | any) => {
@@ -148,54 +125,7 @@ export default function FarmerSignUp() {
     const stringValue = typeof value === 'string' ? value : '';
 
     switch (name) {
-      case 'names':
-        if (!stringValue.trim()) {
-          error = 'Full name is required';
-        } else if (stringValue.trim().length < 2) {
-          error = 'Name must be at least 2 characters long';
-        }
-        break;
-      case 'email':
-        if (!stringValue.trim()) {
-          error = 'Email is required';
-        } else {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(stringValue.trim())) {
-            error = 'Please enter a valid email address';
-          }
-        }
-        break;
-      case 'phoneNumber':
-        if (!stringValue.trim()) {
-          error = 'Phone number is required';
-        } else {
-          const phoneRegex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/;
-          const phoneValue = stringValue.replace(/[^0-9+]/g, '');
-          if (!phoneRegex.test(phoneValue)) {
-            error = 'Please enter a valid phone number';
-          } else if (phoneValue.length < 10) {
-            error = 'Phone number must be at least 10 digits';
-          }
-        }
-        break;
-      case 'password':
-        if (!stringValue) {
-          error = 'Password is required';
-        } else if (stringValue.length < 8) {
-          error = 'Password must be at least 8 characters long';
-        } else if (!/[A-Z]/.test(stringValue)) {
-          error = 'Password must contain at least one uppercase letter';
-        } else if (!/[0-9]/.test(stringValue)) {
-          error = 'Password must contain at least one number';
-        } else if (!/[!@#$%^&*]/.test(stringValue)) {
-          error = 'Password must contain at least one special character';
-        }
-        break;
-      case 'agreeToTerms':
-        if (value !== true) {
-          error = 'You must agree to the terms and conditions';
-        }
-        break;
+
       case 'farmSize':
         if (!value) {
           error = 'Farm size is required';
@@ -234,11 +164,6 @@ export default function FarmerSignUp() {
   };
 
   const validateForm = () => {
-    const namesValid = validateField('names', userData.names);
-    const emailValid = validateField('email', userData.email);
-    const phoneValid = validateField('phoneNumber', userData.phoneNumber);
-    const passwordValid = validateField('password', userData.password);
-    const termsValid = validateField('agreeToTerms', agreeToTerms);
     const farmSizeValid = validateField('farmSize', farmerData.farmSize);
     const experienceValid = validateField('experienceLevel', farmerData.experienceLevel);
     const provinceValid = validateField('province', farmerData.address.province);
@@ -246,11 +171,6 @@ export default function FarmerSignUp() {
     const cropsValid = validateField('crops', farmerData.crops);
 
     setTouched({
-      names: true,
-      email: true,
-      phoneNumber: true,
-      password: true,
-      agreeToTerms: true,
       farmSize: true,
       experienceLevel: true,
       province: true,
@@ -258,8 +178,7 @@ export default function FarmerSignUp() {
       crops: true,
     });
 
-    return namesValid && emailValid && phoneValid && passwordValid && termsValid && 
-           farmSizeValid && experienceValid && provinceValid && districtValid && cropsValid;
+    return farmSizeValid && experienceValid && provinceValid && districtValid && cropsValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -279,20 +198,17 @@ export default function FarmerSignUp() {
 
     try {
       // First register the user
-      await register(userData);
-      
-      // TODO: After successful user registration, submit farmer data
-      // This would typically be done in the register function or as a separate API call
-      
+      await registerFarmer(farmerData);
+
+
       toast({
         title: 'Success',
         description: 'Farmer account created successfully!',
         variant: 'success',
       });
-      
-      // Redirect to dashboard or login
-      // router.push('/farmer/dashboard');
-      
+
+
+
     } catch (error) {
       toast({
         title: 'Registration Error',
@@ -307,8 +223,7 @@ export default function FarmerSignUp() {
   // Get districts for selected province
   const getDistrictsForProvince = (province: Province) => {
     return districtOptions.filter(district => {
-      // This would need the DISTRICT_PROVINCE_MAP from enums
-      return true; // For now, return all districts
+      return true;
     });
   };
 
@@ -366,125 +281,6 @@ export default function FarmerSignUp() {
         <p className="text-center text-gray-400 text-sm mb-6">Or fill in your details below</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Personal Information Section */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Personal Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="names" className="text-gray-700 font-medium text-sm">
-                  Full Name
-                </Label>
-                <Input
-                  id="names"
-                  name="names"
-                  placeholder="John Doe"
-                  value={userData.names}
-                  onChange={handleUserInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`text-gray-700 font-medium text-sm border ${touched.names && fieldErrors.names
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                />
-                {touched.names && fieldErrors.names && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.names}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="email" className="text-gray-700 font-medium text-sm">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={userData.email}
-                  onChange={handleUserInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`text-gray-700 font-medium text-sm border ${touched.email && fieldErrors.email
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                />
-                {touched.email && fieldErrors.email && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.email}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="phoneNumber" className="text-gray-700 font-medium text-sm">
-                  Phone Number
-                </Label>
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  placeholder="+250 7..."
-                  value={userData.phoneNumber}
-                  onChange={handleUserInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`text-gray-700 font-medium text-sm border ${touched.phoneNumber && fieldErrors.phoneNumber
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                />
-                {touched.phoneNumber && fieldErrors.phoneNumber && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.phoneNumber}
-                  </p>
-                )}
-              </div>
-
-              <div className="relative">
-                <Label htmlFor="password" className="text-gray-700 font-medium text-sm">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={userData.password}
-                  onChange={handleUserInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`text-gray-700 font-medium text-sm border pr-10 ${touched.password && fieldErrors.password
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute right-2 top-9 text-gray-400 hover:text-gray-600"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-                {touched.password && fieldErrors.password && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.password}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
 
           {/* Farm Information Section */}
           <div className="border-b pb-6">
@@ -652,44 +448,13 @@ export default function FarmerSignUp() {
 
           {/* Terms and Submit */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="agreeToTerms"
-                checked={agreeToTerms}
-                onChange={(e) => setAgreeToTerms(e.target.checked)}
-                disabled={loading}
-                className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-              />
-              <Label htmlFor="agreeToTerms" className="text-gray-700 font-medium text-sm">
-                I agree to the terms & conditions
-              </Label>
-            </div>
-            {touched.agreeToTerms && fieldErrors.agreeToTerms && (
-              <p className="text-red-500 text-xs flex items-center gap-1">
-                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                {fieldErrors.agreeToTerms}
-              </p>
-            )}
-
             <Button
               type="submit"
               className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
               disabled={loading}
             >
-              {loading ? 'Creating Account...' : 'Create Farmer Account'}
+              {loading ? 'Creating Account...' : 'Finish Creating account'}
             </Button>
-
-            <p className="text-gray-700 text-sm text-center">
-              Already have an account?{' '}
-              <Link href="/auth/signin" className="text-green-600 font-semibold">
-                Sign in
-              </Link>
-              {' '}or{' '}
-              <Link href="/auth/signup" className="text-green-600 font-semibold">
-                Other account types
-              </Link>
-            </p>
           </div>
         </form>
       </div>

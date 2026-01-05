@@ -91,7 +91,7 @@ function Dashboard() {
   const handleLogout = async () => {
     try {
       await logout();
-      router.push('/auth/auth/signin');
+      router.push('/auth/signin');
     } catch (error) {
       console.error('Logout error:', error);
       toast({
