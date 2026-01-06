@@ -16,6 +16,7 @@ import {
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { FarmerPages } from '@/types';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -24,17 +25,6 @@ const Logo = () => (
   </span>
 );
 
-const menuItems = [
-  { label: 'Dashboard', href: '/farmer/dashboard', icon: CheckCircle },
-  { label: 'My Produce', href: '/farmer/products', icon: LayoutGrid },
-  { label: 'Requests', href: '/farmer/requests', icon: FilePlus },
-  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-  { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/farmer/profile', icon: User },
-  { label: 'Contact', href: '/farmercontact', icon: Mail },
-  { label: 'Settings', href: '/farmer/settings', icon: Settings },
-  { label: 'Logout', href: '/logout', icon: LogOut },
-];
 
 export default function SettingsPage() {
   const { logout } = useAuth();
@@ -50,7 +40,10 @@ export default function SettingsPage() {
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+        <FarmerSidebar
+          activePage={FarmerPages.SETTINGS}
+          logoutPending={logoutPending}
+          handleLogout={handleLogout} />
 
 
         {/* Main Content */}

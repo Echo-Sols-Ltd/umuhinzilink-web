@@ -1,3 +1,4 @@
+import { FarmerPages } from '@/types';
 import {
     LayoutGrid,
     FilePlus,
@@ -24,32 +25,34 @@ import Link from 'next/link';
 
 type MenuItem = {
     label: string;
+    page: FarmerPages;
     href: string;
     icon: React.ComponentType<{ className?: string }>;
     isLogout?: boolean;
 };
 
 const MENU_ITEMS: MenuItem[] = [
-    { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-    { label: 'Products', href: '/farmer/products', icon: Package },
-    { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
-    { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
-    { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-    { label: 'Messages', href: '/farmer/message', icon: Mail },
-    { label: 'Notifications', href: '/farmer/notifications', icon: Bell },
-    { label: 'Profile', href: '/farmer/profile', icon: UserIcon },
-    { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-    { label: 'Settings', href: '/farmer/settings', icon: Settings },
-    { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
+    { label:'Dashboard',page: FarmerPages.DASHBOARD, href: '/farmer/dashboard', icon: LayoutGrid },
+    { label:'Products',page: FarmerPages.PRODUCTS, href: '/farmer/products', icon: Package },
+    { label:'Input Request',page: FarmerPages.INPUT_REQUEST, href: '/farmer/requests', icon: FilePlus },
+    { label:'AI Tips',page: FarmerPages.AI_TIPS, href: '/farmer/ai', icon: MessageSquare },
+    { label:'Market Analytics',page: FarmerPages.MARKET_ANALYTICS, href: '/farmer/market_analysis', icon: BarChart2 },
+    { label:'Messages',page: FarmerPages.MESSAGES, href: '/farmer/message', icon: Mail },
+    { label:'Notifications',page: FarmerPages.NOTIFICATIONS, href: '/farmer/notifications', icon: Bell },
+    { label:'Profile',page: FarmerPages.PROFILE, href: '/farmer/profile', icon: UserIcon },
+    { label:'Orders',page: FarmerPages.ORDERS, href: '/farmer/orders', icon: ShoppingCart },
+    { label:'Settings',page: FarmerPages.SETTINGS, href: '/farmer/settings', icon: Settings },
+    { label:'Logout',page: FarmerPages.LOGOUT, href: '#', icon: LogOut, isLogout: true },
 ];
 
 interface Props {
+    activePage: FarmerPages
     logoutPending: boolean
     handleLogout: () => void
 }
 
 
-export default function FarmerSidebar({ logoutPending, handleLogout }: Props) {
+export default function FarmerSidebar({ activePage,logoutPending, handleLogout }: Props) {
     return (
         <aside
             className="w-64 bg-[#00A63E] border-r flex flex-col fixed left-0 top-0 h-screen overflow-y-auto"
@@ -63,7 +66,7 @@ export default function FarmerSidebar({ logoutPending, handleLogout }: Props) {
             </div>
             <nav className="flex-1 px-4 py-6 space-y-2">
                 {MENU_ITEMS.map((item, index) => {
-                    const isActive = item.label === 'Dashboard';
+                    const isActive = item.page === activePage;
                     const Icon = item.icon;
                     const showDivider = index === 4 || index === 9;
 

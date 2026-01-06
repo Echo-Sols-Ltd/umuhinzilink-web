@@ -1,3 +1,18 @@
+export enum FarmerPages {
+    DASHBOARD,
+    PRODUCTS,
+    INPUT_REQUEST,
+    AI_TIPS,
+    MARKET_ANALYTICS,
+    MESSAGES,
+    NOTIFICATIONS,
+    PROFILE,
+    ORDERS,
+    SETTINGS,
+    LOGOUT,
+}
+
+
 export enum UserType {
   FARMER = 'FARMER',
   BUYER = 'BUYER',
