@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Users,
   Search,
@@ -114,6 +115,9 @@ function UserManagement() {
                 <thead className="bg-gray-50 border-b">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Profile
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Role
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -136,35 +140,52 @@ function UserManagement() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {loading ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
                         <Loader2 className="w-8 h-8 animate-spin mx-auto" />
                       </td>
                     </tr>
                   ) : filteredUsers.length > 0 ? (
-                    filteredUsers.map(user => (
-                      <tr key={user.id} className="hover:bg-gray-50">
+                    filteredUsers.map(usersItem => (
+                      <tr key={usersItem.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                            {usersItem.avatar ? (
+                              <img
+                                src={usersItem.avatar}
+                                alt={`${usersItem.names}'s profile`}
+                                width={40}
+                                height={40}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-green-500 flex items-center justify-center text-white text-sm font-medium">
+                                {usersItem.names.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
+                              </div>
+                            )}
+                          </div>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
-                            {user.role}
+                            {usersItem.role}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {user.names}
+                          {usersItem.names}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {user.email}
+                          {usersItem.email}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {user.phoneNumber}
+                          {usersItem.phoneNumber}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${user.verified
+                            className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${usersItem.verified
                               ? 'bg-green-100 text-green-800'
                               : 'bg-yellow-100 text-yellow-800'
                               }`}
                           >
-                            {user.verified ? 'Verified' : 'Pending'}
+                            {usersItem.verified ? 'Verified' : 'Pending'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -173,7 +194,7 @@ function UserManagement() {
                               <Eye className="w-4 h-4" /> View
                             </button>
                             <button
-                              onClick={() => deleteUser(user.id)}
+                              onClick={() => deleteUser(usersItem.id)}
                               className="text-red-600 hover:text-red-800 flex items-center gap-1"
                             >
                               <Trash2 className="w-4 h-4" /> Delete

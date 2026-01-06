@@ -12,13 +12,13 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
-import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, District, RwandaCrop } from '@/types';
-import { farmSizeOptions, experienceLevelOptions, provinceOptions, districtOptions } from '@/types/enums';
+import { SupplierRequest, SupplierType, Address, Province, District } from '@/types';
+import { supplierTypeOptions, provinceOptions, districtOptions } from '@/types/enums';
 import useUserAction from '@/hooks/useUserAction';
 import { Upload, X } from 'lucide-react';
 
-export default function FarmerSignUp() {
-  const { registerFarmer, user } = useAuth();
+export default function SupplierSignUp() {
+  const { registerSupplier, user } = useAuth();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -31,31 +31,28 @@ export default function FarmerSignUp() {
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
   ];
 
-  const [farmerData, setFarmerData] = useState<FarmerRequest>({
+  const [supplierData, setSupplierData] = useState<SupplierRequest>({
     userId: user?.id!,
-    farmSize: FarmSizeCategory.SMALLHOLDER,
-    experienceLevel: ExperienceLevel.LESS_THAN_1Y,
+    businessName: '',
+    supplierType: SupplierType.WHOLESALER,
     address: {
       province: Province.KIGALI_CITY,
       district: District.GASABO,
     },
-    crops: [],
   });
 
   const [fieldErrors, setFieldErrors] = useState({
-    farmSize: '',
-    experienceLevel: '',
+    businessName: '',
+    supplierType: '',
     province: '',
     district: '',
-    crops: '',
   });
 
   const [touched, setTouched] = useState({
-    farmSize: false,
-    experienceLevel: false,
+    businessName: false,
+    supplierType: false,
     province: false,
     district: false,
-    crops: false,
   });
 
   const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,11 +63,16 @@ export default function FarmerSignUp() {
     }
   };
 
-  const handleFarmerInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleSupplierInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'province') {
-      setFarmerData(prev => ({
+    if (name === 'businessName') {
+      setSupplierData(prev => ({
+        ...prev,
+        businessName: value,
+      }));
+    } else if (name === 'province') {
+      setSupplierData(prev => ({
         ...prev,
         address: {
           ...prev.address,
@@ -79,22 +81,17 @@ export default function FarmerSignUp() {
         },
       }));
     } else if (name === 'district') {
-      setFarmerData(prev => ({
+      setSupplierData(prev => ({
         ...prev,
         address: {
           ...prev.address,
           district: value as District,
         },
       }));
-    } else if (name === 'farmSize') {
-      setFarmerData(prev => ({
+    } else if (name === 'supplierType') {
+      setSupplierData(prev => ({
         ...prev,
-        farmSize: value as FarmSizeCategory,
-      }));
-    } else if (name === 'experienceLevel') {
-      setFarmerData(prev => ({
-        ...prev,
-        experienceLevel: value as ExperienceLevel,
+        supplierType: value as SupplierType,
       }));
     }
 
@@ -104,24 +101,10 @@ export default function FarmerSignUp() {
     }
   };
 
-  const handleCropChange = (crop: RwandaCrop, isChecked: boolean) => {
-    setFarmerData(prev => ({
-      ...prev,
-      crops: isChecked
-        ? [...prev.crops, crop]
-        : prev.crops.filter(c => c !== crop),
-    }));
-
-    // Clear crops error when user selects/deselects
-    if (fieldErrors.crops) {
-      setFieldErrors(prev => ({ ...prev, crops: '' }));
-    }
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name } = e.target;
     setTouched(prev => ({ ...prev, [name]: true }));
-    validateField(name, farmerData[name as keyof typeof farmerData]);
+    validateField(name, supplierData[name as keyof typeof supplierData] || supplierData.address[name as keyof typeof supplierData.address]);
   };
 
   const validateField = (name: string, value: string | boolean | any) => {
@@ -130,15 +113,16 @@ export default function FarmerSignUp() {
     const stringValue = typeof value === 'string' ? value : '';
 
     switch (name) {
-
-      case 'farmSize':
-        if (!value) {
-          error = 'Farm size is required';
+      case 'businessName':
+        if (!value || stringValue.trim() === '') {
+          error = 'Business name is required';
+        } else if (stringValue.length < 2) {
+          error = 'Business name must be at least 2 characters';
         }
         break;
-      case 'experienceLevel':
+      case 'supplierType':
         if (!value) {
-          error = 'Experience level is required';
+          error = 'Supplier type is required';
         }
         break;
       case 'province':
@@ -149,11 +133,6 @@ export default function FarmerSignUp() {
       case 'district':
         if (!value) {
           error = 'District is required';
-        }
-        break;
-      case 'crops':
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          error = 'Please select at least one crop';
         }
         break;
       default:
@@ -169,21 +148,19 @@ export default function FarmerSignUp() {
   };
 
   const validateForm = () => {
-    const farmSizeValid = validateField('farmSize', farmerData.farmSize);
-    const experienceValid = validateField('experienceLevel', farmerData.experienceLevel);
-    const provinceValid = validateField('province', farmerData.address.province);
-    const districtValid = validateField('district', farmerData.address.district);
-    const cropsValid = validateField('crops', farmerData.crops);
+    const businessNameValid = validateField('businessName', supplierData.businessName);
+    const supplierTypeValid = validateField('supplierType', supplierData.supplierType);
+    const provinceValid = validateField('province', supplierData.address.province);
+    const districtValid = validateField('district', supplierData.address.district);
 
     setTouched({
-      farmSize: true,
-      experienceLevel: true,
+      businessName: true,
+      supplierType: true,
       province: true,
       district: true,
-      crops: true,
     });
 
-    return farmSizeValid && experienceValid && provinceValid && districtValid && cropsValid;
+    return businessNameValid && supplierTypeValid && provinceValid && districtValid;
   };
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,19 +217,19 @@ export default function FarmerSignUp() {
         await uploadFile(profileImage);
       }
 
-      // Then register the farmer
-      await registerFarmer(farmerData);
+      // Then register the supplier
+      await registerSupplier(supplierData);
 
       toast({
         title: 'Success',
-        description: 'Farmer account created successfully!',
+        description: 'Supplier account created successfully!',
         variant: 'success',
       });
 
     } catch (error) {
       toast({
         title: 'Registration Error',
-        description: 'Failed to create farmer account. Please try again.',
+        description: 'Failed to create supplier account. Please try again.',
         variant: 'error',
       });
     } finally {
@@ -267,20 +244,6 @@ export default function FarmerSignUp() {
     });
   };
 
-  // Common Rwanda crops for selection
-  const commonCrops: RwandaCrop[] = [
-    RwandaCrop.MAIZE,
-    RwandaCrop.DRY_BEANS,
-    RwandaCrop.IRISH_POTATO,
-    RwandaCrop.CASSAVA,
-    RwandaCrop.TOMATO,
-    RwandaCrop.CABBAGE,
-    RwandaCrop.ONION,
-    RwandaCrop.CARROT,
-    RwandaCrop.COFFEE,
-    RwandaCrop.TEA,
-  ];
-
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
       {/* Hero Section */}
@@ -293,16 +256,16 @@ export default function FarmerSignUp() {
         />
 
         <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-          Farmer Registration
+          Supplier Registration
         </h1>
         <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-          Join our agricultural marketplace and connect with buyers directly
+          Join our agricultural marketplace and connect with farmers and buyers
         </p>
       </div>
 
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative">
         <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
-          Create Your Farmer Account
+          Create Your Supplier Account
         </h1>
 
         <div className="flex gap-4 justify-center mb-6">
@@ -392,68 +355,65 @@ export default function FarmerSignUp() {
             </div>
           </div>
 
-          {/* Farm Information Section */}
+          {/* Business Information Section */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Farm Information</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="farmSize" className="text-gray-700 font-medium text-sm">
-                  Farm Size
+                <Label htmlFor="businessName" className="text-gray-700 font-medium text-sm">
+                  Business Name
                 </Label>
-                <select
-                  id="farmSize"
-                  name="farmSize"
-                  value={farmerData.farmSize}
-                  onChange={handleFarmerInputChange}
+                <Input
+                  id="businessName"
+                  name="businessName"
+                  type="text"
+                  value={supplierData.businessName}
+                  onChange={handleSupplierInputChange}
+                  onBlur={handleBlur}
                   disabled={loading}
-                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.farmSize && fieldErrors.farmSize
+                  placeholder="Enter your business name"
+                  className={`text-gray-700 font-medium text-sm ${touched.businessName && fieldErrors.businessName
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                     }`}
                   required
-                >
-                  <option value="">Select farm size</option>
-                  {farmSizeOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label.replace(/_/g, ' ')}
-                    </option>
-                  ))}
-                </select>
-                {touched.farmSize && fieldErrors.farmSize && (
+                />
+                {touched.businessName && fieldErrors.businessName && (
                   <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                     <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.farmSize}
+                    {fieldErrors.businessName}
                   </p>
                 )}
               </div>
 
               <div>
-                <Label htmlFor="experienceLevel" className="text-gray-700 font-medium text-sm">
-                  Farming Experience
+                <Label htmlFor="supplierType" className="text-gray-700 font-medium text-sm">
+                  Supplier Type
                 </Label>
                 <select
-                  id="experienceLevel"
-                  name="experienceLevel"
-                  value={farmerData.experienceLevel}
-                  onChange={handleFarmerInputChange}
+                  id="supplierType"
+                  name="supplierType"
+                  value={supplierData.supplierType}
+                  onChange={handleSupplierInputChange}
+                  onBlur={handleBlur}
                   disabled={loading}
-                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.experienceLevel && fieldErrors.experienceLevel
+                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.supplierType && fieldErrors.supplierType
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                     }`}
                   required
                 >
-                  <option value="">Select experience level</option>
-                  {experienceLevelOptions.map(option => (
+                  <option value="">Select supplier type</option>
+                  {supplierTypeOptions.map(option => (
                     <option key={option.value} value={option.value}>
                       {option.label.replace(/_/g, ' ')}
                     </option>
                   ))}
                 </select>
-                {touched.experienceLevel && fieldErrors.experienceLevel && (
+                {touched.supplierType && fieldErrors.supplierType && (
                   <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                     <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.experienceLevel}
+                    {fieldErrors.supplierType}
                   </p>
                 )}
               </div>
@@ -462,7 +422,7 @@ export default function FarmerSignUp() {
 
           {/* Location Section */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Farm Location</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Location</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="province" className="text-gray-700 font-medium text-sm">
@@ -471,8 +431,9 @@ export default function FarmerSignUp() {
                 <select
                   id="province"
                   name="province"
-                  value={farmerData.address.province}
-                  onChange={handleFarmerInputChange}
+                  value={supplierData.address.province}
+                  onChange={handleSupplierInputChange}
+                  onBlur={handleBlur}
                   disabled={loading}
                   className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -502,8 +463,9 @@ export default function FarmerSignUp() {
                 <select
                   id="district"
                   name="district"
-                  value={farmerData.address.district}
-                  onChange={handleFarmerInputChange}
+                  value={supplierData.address.district}
+                  onChange={handleSupplierInputChange}
+                  onBlur={handleBlur}
                   disabled={loading}
                   className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -526,34 +488,6 @@ export default function FarmerSignUp() {
                 )}
               </div>
             </div>
-          </div>
-
-          {/* Crops Section */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Crops You Grow</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-              {commonCrops.map(crop => (
-                <div key={crop} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id={crop}
-                    checked={farmerData.crops.includes(crop)}
-                    onChange={(e) => handleCropChange(crop, e.target.checked)}
-                    disabled={loading}
-                    className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-                  />
-                  <Label htmlFor={crop} className="text-sm text-gray-700">
-                    {crop.replace(/_/g, ' ')}
-                  </Label>
-                </div>
-              ))}
-            </div>
-            {touched.crops && fieldErrors.crops && (
-              <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
-                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                {fieldErrors.crops}
-              </p>
-            )}
           </div>
 
           {/* Terms and Submit */}

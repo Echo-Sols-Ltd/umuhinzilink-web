@@ -50,7 +50,7 @@ export function RoleBasedDashboard({ children }: RoleBasedDashboardProps) {
   }
 
   if (!user) {
-    router.push('/auth/login');
+    router.push('/auth/signin');
     return null;
   }
 
