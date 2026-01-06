@@ -49,6 +49,7 @@ function Dashboard() {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const { logout } = useAuth()
+  const [loading, setLoading] = useState(false)
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -57,7 +58,9 @@ function Dashboard() {
   ];
 
   const handleLogout = () => {
+    setLoading(true)
     logout();
+    setLoading(false)
   };
 
   return (
@@ -67,7 +70,7 @@ function Dashboard() {
         <SupplierSidebar
           activePage={SupplierPages.DASHBOARD}
           handleLogout={handleLogout}
-          logoutPending={logoutPending}
+          logoutPending={loading}
         />
 
         {/* Main Content */}

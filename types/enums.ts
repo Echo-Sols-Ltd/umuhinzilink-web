@@ -25,7 +25,6 @@ export enum GovernmentPages {
     DASHBOARD,
     FARMERS_PRODUCE,
     SUPPLIERS_PRODUCE,
-    MARKET_ANALYTICS,
     NOTIFICATIONS,
     PROFILE,
     SETTINGS,

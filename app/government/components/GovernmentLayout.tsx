@@ -21,6 +21,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import GovernmentSidebar from '@/components/governement/Navbar';
+import { GovernmentPages } from '@/types';
 
 export type MenuItem = {
   label: string;
@@ -70,14 +71,14 @@ function formatDate() {
 
 interface GovernmentLayoutProps {
   children: React.ReactNode;
-  activePath?: string;
+  activePage: GovernmentPages;
   headerTitle?: string;
   showDateInHeader?: boolean;
 }
 
 export function GovernmentLayout({
   children,
-  activePath,
+  activePage,
   headerTitle,
   showDateInHeader = false,
 }: GovernmentLayoutProps) {
@@ -121,6 +122,7 @@ export function GovernmentLayout({
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <GovernmentSidebar
+          activePage={activePage}
           handleLogout={handleLogout}
           logoutPending={logoutPending}
         />

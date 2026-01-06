@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   LayoutGrid,
   MessageSquare,
@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import FarmerSidebar from '@/components/farmer/Navbar';
+import { FarmerPages } from '@/types';
 
 const menuItems = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
@@ -84,15 +85,21 @@ export default function AiDashboard() {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth()
+  const [loading,setLoading]=useState(false)
 
   const handleLogout = () => {
+    setLoading(true)
     logout();
+    setLoading(false)
   };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <FarmerSidebar logoutPending handleLogout={handleLogout} />
+      <FarmerSidebar
+      activePage={FarmerPages.AI_TIPS}
+       logoutPending={loading}
+        handleLogout={handleLogout} />
 
 
       {/* Main Content */}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { GovernmentLayout } from '../components/GovernmentLayout';
+import { GovernmentPages } from '@/types';
 import { Banner, type BannerData } from '../components/Banner';
 import { Button } from '@/components/ui/button';
 
@@ -40,7 +41,7 @@ function SuppliersProducePage() {
 
   return (
     <GovernmentLayout
-      activePath="/government/suppliers-produce"
+      activePage={GovernmentPages.SUPPLIERS_PRODUCE}
       headerTitle="Suppliers produce"
       showDateInHeader={false}
     >
