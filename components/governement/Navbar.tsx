@@ -32,7 +32,7 @@ type MenuItem = {
 
 const MENU_ITEMS: MenuItem[] = [
     { label: 'Dashboard', page: GovernmentPages.DASHBOARD, href: '/government/dashboard', icon: LayoutGrid },
-    { label: 'Farmers Produce', page: GovernmentPages.FARMERS_PRODUCE, href: '/government/farmer/s-produce', icon: Tractor },
+    { label: 'Farmers Produce', page: GovernmentPages.FARMERS_PRODUCE, href: '/government/farmers-produce', icon: Tractor },
     { label: 'Suppliers Produce', page: GovernmentPages.SUPPLIERS_PRODUCE, href: '/government/suppliers-produce', icon: Package },
     { label: 'Notifications', page: GovernmentPages.NOTIFICATIONS, href: '/government/notifications', icon: Bell },
     { label: 'Profile', page: GovernmentPages.PROFILE, href: '/government/profile', icon: UserIcon },

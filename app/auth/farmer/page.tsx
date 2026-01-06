@@ -14,12 +14,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
 import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, District, RwandaCrop } from '@/types';
 import { farmSizeOptions, experienceLevelOptions, provinceOptions, districtOptions } from '@/types/enums';
+import useUserAction from '@/hooks/useUserAction';
+import { Upload, X } from 'lucide-react';
 
 export default function FarmerSignUp() {
   const { registerFarmer, user } = useAuth();
+  const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string>('');
 
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
@@ -181,6 +186,39 @@ export default function FarmerSignUp() {
     return farmSizeValid && experienceValid && provinceValid && districtValid && cropsValid;
   };
 
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: 'File too large',
+          description: 'Profile image must be less than 5MB',
+          variant: 'error',
+        });
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: 'Invalid file type',
+          description: 'Please select an image file',
+          variant: 'error',
+        });
+        return;
+      }
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeProfileImage = () => {
+    setProfileImage(null);
+    setProfilePreview('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -197,17 +235,19 @@ export default function FarmerSignUp() {
     }
 
     try {
-      // First register the user
-      await registerFarmer(farmerData);
+      // First upload profile image if selected
+      if (profileImage) {
+        await uploadFile(profileImage);
+      }
 
+      // Then register the farmer
+      await registerFarmer(farmerData);
 
       toast({
         title: 'Success',
         description: 'Farmer account created successfully!',
         variant: 'success',
       });
-
-
 
     } catch (error) {
       toast({
@@ -281,6 +321,76 @@ export default function FarmerSignUp() {
         <p className="text-center text-gray-400 text-sm mb-6">Or fill in your details below</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* Profile Image Section */}
+          <div className="border-b pb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Image</h2>
+            <div className="flex items-center space-x-6">
+              <div className="relative">
+                {profilePreview ? (
+                  <div className="relative">
+                    <Image
+                      src={profilePreview}
+                      alt="Profile preview"
+                      width={120}
+                      height={120}
+                      className="w-30 h-30 rounded-full object-cover border-4 border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeProfileImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-30 h-30 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-gray-400" />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <Label htmlFor="profileImage" className="text-gray-700 font-medium text-sm mb-2 block">
+                  Upload Profile Image
+                </Label>
+                <input
+                  id="profileImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfileImageChange}
+                  disabled={loading || uploadLoading}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  onClick={() => document.getElementById('profileImage')?.click()}
+                  disabled={loading || uploadLoading}
+                  variant="outline"
+                  className="mb-2"
+                >
+                  {uploadLoading && uploadingFiles.some(f => f.file === profileImage) ? 'Uploading...' : 'Choose Image'}
+                </Button>
+                <p className="text-xs text-gray-500">JPG, PNG, GIF up to 5MB</p>
+                {uploadLoading && uploadingFiles.some(f => f.file === profileImage) && (
+                  <div className="mt-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-sm text-gray-600">Uploading profile image...</span>
+                    </div>
+                    {uploadingFiles.find(f => f.file === profileImage) && (
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                        <div
+                          className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadingFiles.find(f => f.file === profileImage)?.progress || 0}%` }}
+                        ></div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* Farm Information Section */}
           <div className="border-b pb-6">
@@ -451,9 +561,9 @@ export default function FarmerSignUp() {
             <Button
               type="submit"
               className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
-              disabled={loading}
+              disabled={loading || uploadLoading}
             >
-              {loading ? 'Creating Account...' : 'Finish Creating account'}
+              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating account'}
             </Button>
           </div>
         </form>

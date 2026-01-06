@@ -6,6 +6,7 @@ import {
     User as UserIcon,
     Settings,
     X,
+    Package,
 } from 'lucide-react';
 import Link from 'next/link';
 import { AdminPages } from '@/types';
@@ -21,6 +22,7 @@ const MENU_ITEMS: MenuItem[] = [
     { label: 'Dashboard', page: AdminPages.DASHBOARD, href: '/admin/dashboard', icon: LayoutGrid },
     { label: 'Users', page: AdminPages.USERS, href: '/admin/users', icon: Users },
     { label: 'Orders', page: AdminPages.ORDERS, href: '/admin/orders', icon: ArrowUpDown },
+    { label: 'Products', page: AdminPages.PRODUCTS, href: '/admin/products', icon: Package },
     { label: 'Notifications', page: AdminPages.REPORTS, href: '/admin/reports', icon: Bell },
 ];
 

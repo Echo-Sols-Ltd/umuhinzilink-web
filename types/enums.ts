@@ -17,6 +17,7 @@ export enum AdminPages {
     USERS,
     ORDERS,
     REPORTS,
+    PRODUCTS,
     PROFILE,
     SETTINGS,
 }
