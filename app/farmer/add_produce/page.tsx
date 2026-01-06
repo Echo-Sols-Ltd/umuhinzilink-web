@@ -3,25 +3,28 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/hooks/use-toast';
-import { useProduct } from '@/contexts/ProductContext';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
+import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory } from '@/types';
+import useProductAction from '@/hooks/useProductAction';
 
 export default function AddProduce() {
   const router = useRouter();
   const { user } = useAuth();
-  const { addFarmerProduct } = useProduct();
-  const [formData, setFormData] = useState({
-    name: '',
-    quantity: '',
-    unitPrice: '',
-    measurementUnit: '',
+  const { createFarmerProduct, loading } = useProductAction();
+  const [formData, setFormData] = useState<FarmerProductRequest>({
+    name: RwandaCrop.AVOCADO,
+    quantity: 0,
+    unitPrice: 0,
+    measurementUnit: MeasurementUnit.KG,
     location: '',
     harvestDate: '',
-    category: '',
+    category: RwandaCropCategory.FRUITS,
     description: '',
     isNegotiable: false,
+    image: '',
+    certification: CertificationType.NONE,
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -71,29 +74,32 @@ export default function AddProduce() {
       return;
     }
 
+
+    if (!imageFile) {
+      toast({ title: 'Missing product photo', description: 'Provide a product photo.' });
+      return;
+    }
+
+
     setSubmitting(true);
 
     try {
       // Create product object for context
-      const productData = {
-        id: Date.now().toString(), // Temporary ID
-        name: formData.name.trim(),
+      const productData: FarmerProductRequest = {
+        name: formData.name.trim() as RwandaCrop,
         description: formData.description || '',
         unitPrice: Number(formData.unitPrice) || 0,
         image: previewUrl || '',
         quantity: Number(formData.quantity) || 0,
         measurementUnit: formData.measurementUnit || 'UNIT',
         category: formData.category || 'OTHER',
-        harvestDate: new Date(formData.harvestDate || Date.now()),
-        location: formData.location.trim(),
+        harvestDate: formData.harvestDate,
+        location: formData.location,
         isNegotiable: formData.isNegotiable,
         certification: 'NONE' as any,
-        productStatus: 'IN_STOCK' as any,
-        farmer: user as any, // Temporary farmer reference
       };
 
-      // Add to context (this will update localStorage)
-      addFarmerProduct(productData as any);
+      await createFarmerProduct(productData,imageFile);
 
       toast({
         title: 'Produce Added',

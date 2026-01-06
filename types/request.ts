@@ -28,7 +28,7 @@ export interface FarmerProductRequest {
   quantity: number;
   measurementUnit: MeasurementUnit;
   category: RwandaCropCategory;
-  harvestDate: Date;
+  harvestDate: string;
   location: string;
   isNegotiable: boolean;
   certification: CertificationType;

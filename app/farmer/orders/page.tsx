@@ -101,7 +101,7 @@ export default function FarmerOrdersPage() {
 
     try {
       await logout();
-      router.push('/auth/auth/signin');
+      router.push('/auth/signin');
     } catch (error) {
       console.error('Error during logout:', error);
     } finally {
@@ -113,8 +113,8 @@ export default function FarmerOrdersPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-        <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
-  
+      <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+
 
       <main className="flex-1 ml-64 bg-gray-50">
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">

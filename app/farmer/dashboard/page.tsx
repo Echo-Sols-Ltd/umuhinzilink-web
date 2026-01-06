@@ -339,7 +339,7 @@ function Dashboard() {
 
     try {
       await logout();
-      router.push('/auth/auth/signin');
+      router.push('/auth/signin');
     } finally {
       setLogoutPending(false);
     }

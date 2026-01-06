@@ -63,11 +63,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           description: res.message || 'Please try again later',
           variant: 'error',
         });
+        router.replace('/auth/farmer');
+        return
       }
       if (res.data) {
         localStorage.setItem('farmer', JSON.stringify(res.data));
         if (!res.data) {
-          router.push('/auth/farmer/signup');
+          router.replace('/auth/farmer');
           return;
         }
         setFarmer(res.data);
@@ -94,7 +96,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data) {
         localStorage.setItem('buyer', JSON.stringify(res.data));
         if (!res.data) {
-          router.push('/auth/buyerSignup');
+          router.replace('/auth/buyer');
           return;
         }
         setBuyer(res.data);
@@ -121,7 +123,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data) {
         localStorage.setItem('supplier', JSON.stringify(res.data));
         if (!res.data) {
-          router.push('/auth/supplierSignup');
+          router.replace('/auth/supplier');
           return;
         }
         setSupplier(res.data);
@@ -146,6 +148,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const getFarmer = () => {
     const stringUser = localStorage.getItem('farmer');
     if (!stringUser) return null;
+
     const user: Farmer = JSON.parse(stringUser);
     return user;
   };
@@ -173,32 +176,43 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const farmer = getFarmer();
       const supplier = getSupplier();
       const buyer = getBuyer();
-      
+
       if (token && user) {
         setUser(user);
 
         if (user.role === UserType.BUYER) {
+          if (!buyer) {
+            router.replace('/auth/buyer')
+            return
+          }
           setBuyer(buyer);
           router.replace('/buyer/dashboard');
         }
         if (user.role === UserType.FARMER) {
+          if (!farmer) {
+            router.replace('/auth/farmer')
+            return
+          }
           setFarmer(farmer);
           router.replace('/farmer/dashboard');
         }
         if (user.role === UserType.SUPPLIER) {
+          if (!supplier) {
+            router.replace('/auth/supplier')
+            return
+          }
           setSupplier(supplier);
           router.replace('/supplier/dashboard');
         }
         return;
       }
-      router.replace('/');
     } catch {
       toast({
         title: 'Loading auth state failed',
         description: 'Please try again later',
         variant: 'error',
       });
-      router.replace('/auth');
+      router.replace('/auth/signin');
     }
   };
 
@@ -343,7 +357,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.success && res.data) {
         localStorage.setItem('farmer', JSON.stringify(res.data));
         setFarmer(res.data);
-        router.replace('/');
+        loadAuthState()
       }
     } catch {
       toast({
