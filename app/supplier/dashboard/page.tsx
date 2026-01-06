@@ -20,6 +20,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
+import SupplierSidebar from '@/components/supplier/Navbar';
+import { SupplierPages } from '@/types';
 
 const Logo = () => (
   <div className="flex items-center gap-2 py-2">
@@ -62,43 +64,11 @@ function Dashboard() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <aside className="w-64 bg-green-600 flex flex-col fixed left-0 h-screen overflow-y-auto">
-          <nav className="flex-1 px-4 py-6 space-y-1">
-            <Logo />
-            {menuItems.map((item, index) => {
-              const isActive = item.label === 'Dashboard';
-              const Icon = item.icon;
-              const showDivider = index === 3 || index === 7;
-              return (
-                <div key={item.label}>
-                  {item.isLogout ? (
-                    <div
-                      onClick={handleLogout}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all text-sm font-medium text-white hover:bg-green-700`}
-                    >
-                      <Icon className="w-4 h-4 text-white" />
-                      <span>{item.label}</span>
-                    </div>
-                  ) : (
-                    <Link href={item.href} className="block">
-                      <div
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all text-sm font-medium
-                          ${isActive
-                            ? 'bg-white text-green-600 shadow-sm'
-                            : 'text-white hover:bg-green-700'
-                          }`}
-                      >
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-green-600' : 'text-white'}`} />
-                        <span>{item.label}</span>
-                      </div>
-                    </Link>
-                  )}
-                  {showDivider && <div className="border-t border-green-500 my-2 mx-3"></div>}
-                </div>
-              );
-            })}
-          </nav>
-        </aside>
+        <SupplierSidebar
+          activePage={SupplierPages.DASHBOARD}
+          handleLogout={handleLogout}
+          logoutPending={logoutPending}
+        />
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto ml-64 relative">

@@ -41,6 +41,7 @@ import { UserType } from '@/types/enums';
 import { toast } from '@/components/ui/use-toast';
 import { useGovernment } from '@/contexts/GovernmentContext';
 import GovernmentSidebar from '@/components/governement/Navbar';
+import { GovernmentPages } from '@/types';
 
 
 
@@ -261,6 +262,7 @@ function Dashboard() {
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <GovernmentSidebar
+          activePage={GovernmentPages.DASHBOARD}
           handleLogout={handleLogout}
           logoutPending={logoutPending}
         />

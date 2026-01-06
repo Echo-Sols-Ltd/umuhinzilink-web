@@ -35,6 +35,8 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useProduct } from '@/contexts/ProductContext';
+import BuyerSidebar from '@/components/buyer/Navbar';
+import { BuyerPages } from '@/types';
 
 ChartJS.register(
   CategoryScale,
@@ -160,54 +162,11 @@ export default function BuyerDashboard() {
       {/* Sidebar + Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-64 bg-green-600 flex flex-col">
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            {menuItems.map((item, index) => {
-              const isActive = item.label === 'Dashboard';
-              const Icon = item.icon;
-              const showDivider = index === 4 || index === 8;
-              return (
-                <div key={item.label}>
-                  {item.isLogout ? (
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-white ${logoutPending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green-700'
-                        }`}
-                    >
-                      {logoutPending ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin text-white" />
-                          <span>Logging out...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Icon className="w-5 h-5 text-white" />
-                          <span>{item.label}</span>
-                        </>
-                      )}
-                    </button>
-                  ) : (
-                    <Link href={item.href} className="block">
-                      <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium
-                          ${isActive
-                            ? 'bg-white text-green-600 shadow-sm'
-                            : 'text-white hover:bg-green-700'
-                          }`}
-                      >
-                        <Icon className={`w-5 h-5 ${isActive ? 'text-green-600' : 'text-white'}`} />
-                        <span>{item.label}</span>
-                      </div>
-                    </Link>
-                  )}
-                  {showDivider && <div className="border-t border-green-500 my-2 mx-4"></div>}
-                </div>
-              );
-            })}
-          </nav>
-        </aside>
+        <BuyerSidebar
+          activePage={BuyerPages.DASHBOARD}
+          handleLogout={handleLogout}
+          logoutPending={logoutPending}
+        />
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-y-auto">

@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useGovernment } from '@/contexts/GovernmentContext';
 import GovernmentSidebar from '@/components/governement/Navbar';
+import { GovernmentPages } from '@/types';
 
 type MenuItem = {
   label: string;
@@ -168,6 +169,7 @@ function FarmersProducePage() {
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <GovernmentSidebar
+          activePage={GovernmentPages.FARMERS_PRODUCE}
           handleLogout={handleLogout}
           logoutPending={logoutPending}
         />

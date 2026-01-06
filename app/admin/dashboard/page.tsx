@@ -23,6 +23,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAdmin } from '@/contexts/AdminContext';
 import { toast } from '@/components/ui/use-toast';
 import AdminNavbar from '@/components/admin/Navbar';
+import { AdminPages } from '@/types';
 
 interface AdminStats {
   totalUsers: number;
@@ -129,6 +130,7 @@ function Dashboard() {
     <div className="min-h-screen bg-white flex">
       {/* Sidebar - Green */}
       <AdminNavbar
+        activePage={AdminPages.DASHBOARD}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
