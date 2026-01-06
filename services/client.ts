@@ -202,36 +202,21 @@ class ApiClient {
     }
   }
 
-  async uploadFile<T>(
+   async uploadFile<T>(
     endpoint: string,
-    fileUri: string,
+    file:File,
     onUploadProgress?: (event: AxiosProgressEvent) => void,
     cancelToken?: CancelToken,
     timeout?: number
   ): Promise<ApiResponse<T>> {
     try {
-      // extract filename from uri
-      const filename = fileUri.split('/').pop() ?? 'upload.jpg';
-
-      // detect file extension
-      const ext = filename.split('.').pop()?.toLowerCase();
-
-      // basic mime detection
-      let type = 'image/jpeg';
-      if (ext === 'png') type = 'image/png';
-      else if (ext === 'jpg' || ext === 'jpeg') type = 'image/jpeg';
-      else if (ext === 'gif') type = 'image/gif';
-
+   
       const formData = new FormData();
-      formData.append('file', {
-        uri: fileUri,
-        type,
-        name: filename,
-      } as any);
+      formData.append("file",file);
 
       const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
         onUploadProgress,
         cancelToken,

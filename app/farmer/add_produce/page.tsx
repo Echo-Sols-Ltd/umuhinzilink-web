@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/hooks/use-toast';
-import { useProduct } from '@/contexts/ProductContext';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
@@ -75,6 +74,13 @@ export default function AddProduce() {
       return;
     }
 
+
+    if (!imageFile) {
+      toast({ title: 'Missing product photo', description: 'Provide a product photo.' });
+      return;
+    }
+
+
     setSubmitting(true);
 
     try {
@@ -93,7 +99,7 @@ export default function AddProduce() {
         certification: 'NONE' as any,
       };
 
-      await createFarmerProduct(productData);
+      await createFarmerProduct(productData,imageFile);
 
       toast({
         title: 'Produce Added',

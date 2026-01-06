@@ -4,6 +4,7 @@ import { productService } from '@/services/products';
 import { FarmerProductRequest, SupplierProductRequest } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { apiClient } from '@/services/client';
 
 export default function useProductAction() {
   const router = useRouter();
@@ -11,10 +12,12 @@ export default function useProductAction() {
     useProduct();
   const [loading, setLoading] = useState(false);
 
-  const createFarmerProduct = async (payload: FarmerProductRequest) => {
+  const createFarmerProduct = async (payload: FarmerProductRequest, image: File) => {
     try {
       setLoading(true);
-
+      const imgRes = await productService.uploadProductPhoto(image)
+      if (!imgRes || !imgRes.data) return
+      payload.image = imgRes.data
       const res = await productService.createFarmerProduct(payload);
 
       if (!res) {

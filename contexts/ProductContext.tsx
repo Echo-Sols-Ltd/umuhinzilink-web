@@ -92,32 +92,33 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   );
   const [editBuyerProduct, setEditBuyerProduct] = useState<FarmerProduct | null>(null);
 
-  // 🔹 Load cached data
-  useEffect(() => {
-    const loadCachedData = () => {
-      try {
-        const farmerProducts = localStorage.getItem(STORAGE_KEYS.FARMER_PRODUCTS);
-        const supplierProducts = localStorage.getItem(STORAGE_KEYS.SUPPLIER_PRODUCTS);
-        const buyerProducts = localStorage.getItem(STORAGE_KEYS.BUYER_PRODUCTS);
-        const farmerBuyerProducts = localStorage.getItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS);
-        const farmerStats = localStorage.getItem(STORAGE_KEYS.FARMER_STATS);
-        const supplierStats = localStorage.getItem(STORAGE_KEYS.SUPPLIER_STATS);
+  // // 🔹 Load cached data
+  // useEffect(() => {
+  //   const loadCachedData = () => {
+  //     try {
+  //       const farmerProducts = localStorage.getItem(STORAGE_KEYS.FARMER_PRODUCTS);
+  //       const supplierProducts = localStorage.getItem(STORAGE_KEYS.SUPPLIER_PRODUCTS);
+  //       const buyerProducts = localStorage.getItem(STORAGE_KEYS.BUYER_PRODUCTS);
+  //       const farmerBuyerProducts = localStorage.getItem(STORAGE_KEYS.FARMER_BUYER_PRODUCTS);
+  //       const farmerStats = localStorage.getItem(STORAGE_KEYS.FARMER_STATS);
+  //       const supplierStats = localStorage.getItem(STORAGE_KEYS.SUPPLIER_STATS);
 
-        if (farmerProducts) setFarmerProducts(JSON.parse(farmerProducts));
-        if (supplierProducts) setSupplierProducts(JSON.parse(supplierProducts));
-        if (buyerProducts) setBuyerProducts(JSON.parse(buyerProducts));
-        if (farmerBuyerProducts) setFarmerBuyerProducts(JSON.parse(farmerBuyerProducts));
-        if (farmerStats) setFarmerStats(JSON.parse(farmerStats));
-        if (supplierStats) setSupplierStats(JSON.parse(supplierStats));
-      } catch (e) {
-        console.warn('Failed to load cached product data', e);
-      }
-    };
-    loadCachedData();
-  }, []);
+  //       if (farmerProducts) setFarmerProducts(JSON.parse(farmerProducts));
+  //       if (supplierProducts) setSupplierProducts(JSON.parse(supplierProducts));
+  //       if (buyerProducts) setBuyerProducts(JSON.parse(buyerProducts));
+  //       if (farmerBuyerProducts) setFarmerBuyerProducts(JSON.parse(farmerBuyerProducts));
+  //       if (farmerStats) setFarmerStats(JSON.parse(farmerStats));
+  //       if (supplierStats) setSupplierStats(JSON.parse(supplierStats));
+  //     } catch (e) {
+  //       console.warn('Failed to load cached product data', e);
+  //     }
+  //   };
+  //   loadCachedData();
+  // }, []);
 
   // 🔹 Manual refresh function - only fetch when explicitly called
   const refreshProducts = async () => {
+    console.log(user)
     if (!user?.id) return;
 
     try {
@@ -181,6 +182,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  useEffect(() => {
+    refreshProducts()
+  }, [user])
+  
   const addFarmerProduct = (data: FarmerProduct) => {
     setFarmerProducts(prev => {
       const updated = prev ? [...prev, data] : [data];

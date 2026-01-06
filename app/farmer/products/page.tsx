@@ -24,26 +24,6 @@ import {
 } from 'lucide-react';
 import FarmerSidebar from '@/components/farmer/Navbar';
 
-type MenuItem = {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  isLogout?: boolean;
-};
-
-const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer/profile', icon: User },
-  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer/settings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
 
 function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
@@ -57,7 +37,6 @@ export default function FarmerProductsPage() {
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
-
   const currentUser = user;
   const products = useMemo(() => farmerProducts || [], [farmerProducts]);
   const error = null;

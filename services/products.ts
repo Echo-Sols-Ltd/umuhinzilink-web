@@ -69,6 +69,10 @@ class ProductService {
   async getSupplierStats(): Promise<ApiResponse<SupplierProductionStat[]>> {
     return await apiClient.get<SupplierProductionStat[]>(API_ENDPOINTS.PRODUCT.SUPPLIER_STATS);
   }
+
+  async uploadProductPhoto(file:File):Promise<ApiResponse<string>>{
+    return await apiClient.uploadFile(API_ENDPOINTS.FILES.UPLOAD_AVATAR,file)
+  }
 }
 
 export const productService = new ProductService();
