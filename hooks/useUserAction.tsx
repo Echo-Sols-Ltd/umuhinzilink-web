@@ -8,10 +8,10 @@ export default function useUserAction() {
   const { updateAvatar } = useAuth();
   const [loading, setLoading] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<
-    { file: string; progress: number; cancel: () => void }[]
+    { file: File; progress: number; cancel: () => void }[]
   >([]);
 
-  const uploadFile = async (file: string) => {
+  const uploadFile = async (file: File) => {
     setLoading(true);
     const source = axios.CancelToken.source();
     setUploadingFiles(prev => [...prev, { file, progress: 0, cancel: source.cancel }]);

@@ -20,6 +20,8 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
+import BuyerSidebar from '@/components/buyer/Navbar';
+import { BuyerPages } from '@/types';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -30,18 +32,6 @@ const Logo = () => (
     <span className="text-black">Link</span>
   </span>
 );
-
-const menuItems = [
-  { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
-  { label: 'My Purchase', href: '/buyerpurchases', icon: GridIcon },
-  { label: 'Browse product', href: '/buyerproduct', icon: FilePlus },
-  { label: 'Saved items', href: '/buyersaved', icon: MessageSquare },
-  { label: 'Message', href: '/buyermessage', icon: Mail },
-  { label: 'Profile', href: '/buyerprofile', icon: UserIcon },
-  { label: 'Contact', href: '/buyercontact', icon: Phone },
-  { label: 'Settings', href: '/buyersettings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
 
 export default function BuyerProfile() {
   const router = useRouter();
@@ -97,54 +87,11 @@ export default function BuyerProfile() {
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto justify-between shadow-sm min-h-full">
-          <div>
-            <nav className="mt-4 space-y-2 px-4">
-              {menuItems.map((m, index) => {
-                const isActive = m.label === 'Profile';
-                const showDivider = index === 3 || index === 8;
-                const Icon = m.icon;
-                return (
-                  <div key={m.label}>
-                    {m.isLogout ? (
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        disabled={logoutPending}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${logoutPending
-                          ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                      >
-                        {logoutPending ? (
-                          <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-                        ) : (
-                          <Icon className="w-5 h-5 text-gray-500" />
-                        )}
-                        <span>{logoutPending ? 'Logging out...' : m.label}</span>
-                      </button>
-                    ) : (
-                      <Link href={m.href} className="block">
-                        <div
-                          className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                            ? 'bg-green-600 text-white shadow-sm'
-                            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                            }`}
-                        >
-                          <Icon
-                            className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`}
-                          />
-                          <span>{m.label}</span>
-                        </div>
-                      </Link>
-                    )}
-                    {showDivider && <div className="border-t border-gray-200 my-2 mx-4"></div>}
-                  </div>
-                );
-              })}
-            </nav>
-          </div>
-        </aside>
+        <BuyerSidebar
+          activePage={BuyerPages.PROFILE}
+          handleLogout={handleLogout}
+          logoutPending={logoutPending}
+        />
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto ml-64">

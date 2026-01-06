@@ -49,17 +49,6 @@ ChartJS.register(
   Filler
 );
 
-const menuItems = [
-  { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
-  { label: 'My Purchase', href: '/buyerpurchases', icon: LayoutGrid },
-  { label: 'Browse Product', href: '/buyerproduct', icon: FilePlus },
-  { label: 'Saved Items', href: '/buyersaved', icon: Heart },
-  { label: 'Message', href: '/buyermessage', icon: Mail },
-  { label: 'Profile', href: '/buyerprofile', icon: User },
-  { label: 'Contact', href: '/buyercontact', icon: Phone },
-  { label: 'Settings', href: '/buyersettings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -154,10 +143,6 @@ export default function BuyerDashboard() {
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
-      {/* Header above everything */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
 
       {/* Sidebar + Main content */}
       <div className="flex flex-1 overflow-hidden">
