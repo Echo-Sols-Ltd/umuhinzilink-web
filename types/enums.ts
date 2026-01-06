@@ -12,6 +12,49 @@ export enum FarmerPages {
     LOGOUT,
 }
 
+export enum AdminPages {
+    DASHBOARD,
+    USERS,
+    ORDERS,
+    REPORTS,
+    PROFILE,
+    SETTINGS,
+}
+
+export enum GovernmentPages {
+    DASHBOARD,
+    FARMERS_PRODUCE,
+    SUPPLIERS_PRODUCE,
+    MARKET_ANALYTICS,
+    NOTIFICATIONS,
+    PROFILE,
+    SETTINGS,
+}
+
+export enum SupplierPages {
+    DASHBOARD,
+    PRODUCTS,
+    REQUESTS,
+    ORDERS,
+    MESSAGE,
+    PROFILE,
+    CONTACT,
+    SETTINGS,
+    LOGOUT,
+}
+
+export enum BuyerPages {
+    DASHBOARD,
+    PURCHASES,
+    PRODUCT,
+    SAVED,
+    MESSAGE,
+    PROFILE,
+    CONTACT,
+    SETTINGS,
+    LOGOUT,
+}
+
 
 export enum UserType {
   FARMER = 'FARMER',

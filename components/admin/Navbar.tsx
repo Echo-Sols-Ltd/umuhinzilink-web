@@ -8,31 +8,34 @@ import {
     X,
 } from 'lucide-react';
 import Link from 'next/link';
+import { AdminPages } from '@/types';
 interface MenuItem {
     label: string;
+    page: AdminPages;
     href: string;
     icon: any;
 }
 
 
 const MENU_ITEMS: MenuItem[] = [
-    { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
-    { label: 'Users', href: '/admin/users', icon: Users },
-    { label: 'Orders', href: '/admin/orders', icon: ArrowUpDown },
-    { label: 'Notifications', href: '/admin/reports', icon: Bell },
+    { label: 'Dashboard', page: AdminPages.DASHBOARD, href: '/admin/dashboard', icon: LayoutGrid },
+    { label: 'Users', page: AdminPages.USERS, href: '/admin/users', icon: Users },
+    { label: 'Orders', page: AdminPages.ORDERS, href: '/admin/orders', icon: ArrowUpDown },
+    { label: 'Notifications', page: AdminPages.REPORTS, href: '/admin/reports', icon: Bell },
 ];
 
 const MENU_ITEMS_BOTTOM: MenuItem[] = [
-    { label: 'Profile', href: '/admin/settings', icon: UserIcon },
-    { label: 'Settings', href: '/admin/settings', icon: Settings },
+    { label: 'Profile', page: AdminPages.PROFILE, href: '/admin/settings', icon: UserIcon },
+    { label: 'Settings', page: AdminPages.SETTINGS, href: '/admin/settings', icon: Settings },
 ];
 
 interface NavbarPros {
+    activePage: AdminPages;
     sidebarOpen: boolean
     setSidebarOpen: (data: boolean) => void
 }
 
-export default function AdminNavbar({ sidebarOpen, setSidebarOpen }: NavbarPros) {
+export default function AdminNavbar({ activePage, sidebarOpen, setSidebarOpen }: NavbarPros) {
     return (
         <div
             className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-green-600 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
@@ -48,7 +51,7 @@ export default function AdminNavbar({ sidebarOpen, setSidebarOpen }: NavbarPros)
 
             <nav className="flex-1 px-4 py-6 space-y-2">
                 {MENU_ITEMS.map(item => {
-                    const isActive = item.label === 'Dashboard';
+                    const isActive = item.page === activePage;
                     const Icon = item.icon;
 
                     return (
