@@ -22,18 +22,9 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
+import BuyerSidebar from '@/components/buyer/Navbar';
+import { BuyerPages } from '@/types';
 
-const menuItems = [
-  { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
-  { label: 'My Purchase', href: '/buyerpurchases', icon: GridIcon },
-  { label: 'Browse product', href: '/buyerproduct', icon: FilePlus },
-  { label: 'Saved items', href: '/buyersaved', icon: MessageSquare },
-  { label: 'Message', href: '/buyermessage', icon: Mail },
-  { label: 'Profile', href: '/buyerprofile', icon: UserIcon },
-  { label: 'Contact', href: '/buyercontact', icon: Phone },
-  { label: 'Settings', href: '/buyersettings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
 
 const productsList = [
   {
@@ -125,64 +116,16 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 w-64 bg-white border-r h-screen flex flex-col">
-        <div className="h-16 flex items-center justify-center border-b font-extrabold text-green-700">
-          Umuhinzi<span className="text-black">Link</span>
-        </div>
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {menuItems.map((item, index) => {
-            const isActive = item.label === 'Browse product';
-            const Icon = item.icon;
-            const showDivider = index === 3 || index === 8;
-            return (
-              <div key={item.label}>
-                {item.isLogout ? (
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    disabled={logoutPending}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${logoutPending
-                      ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                      }`}
-                  >
-                    {logoutPending ? (
-                      <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-                    ) : (
-                      <Icon className="w-5 h-5 text-gray-500" />
-                    )}
-                    <span>{logoutPending ? 'Logging out...' : item.label}</span>
-                  </button>
-                ) : (
-                  <Link href={item.href} className="block">
-                    <div
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium
-                      ${isActive
-                          ? 'bg-green-600 text-white shadow-sm'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                    >
-                      <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                      <span>{item.label}</span>
-                    </div>
-                  </Link>
-                )}
-                {showDivider && <div className="border-t border-gray-200 my-2 mx-4"></div>}
-              </div>
-            );
-          })}
-        </nav>
-      </aside>
+    <div className="flex flex-row h-screen bg-gray-50 overflow-hidden">
+    
+      <BuyerSidebar
+        activePage={BuyerPages.PRODUCT}
+        handleLogout={handleLogout}
+        logoutPending={logoutPending}
+      />
 
       {/* Main content area */}
-      <div className="flex flex-col flex-1 ml-72 m-12">
+      <div className="flex flex-col flex-1 ml-72 m-12 overflow-auto">
         {/* Search + Filter Bar */}
         <div className="border-b px-6 py-4 flex gap-4 items-center flex-wrap">
           <div className="relative flex-1 max-w-sm">

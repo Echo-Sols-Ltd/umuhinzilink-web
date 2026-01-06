@@ -18,6 +18,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
+import BuyerSidebar from '@/components/buyer/Navbar';
+import { BuyerPages } from '@/types';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -26,17 +28,6 @@ const Logo = () => (
   </span>
 );
 
-const menuItems = [
-  { label: 'Dashboard', href: '/buyer/dashboard', icon: CheckCircle },
-  { label: 'Browse Produce', href: '/buyerbrowse', icon: LayoutGrid },
-  { label: 'My Orders', href: '/buyerorders', icon: ShoppingCart },
-  { label: 'Requests', href: '/buyerrequests', icon: FilePlus },
-  { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/buyerprofile', icon: User },
-  { label: 'Contact', href: '/buyercontact', icon: Mail },
-  { label: 'Settings', href: '/buyersettings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
 
 export default function ContactPage() {
   const router = useRouter();
@@ -54,52 +45,12 @@ export default function ContactPage() {
       </header>
 
       <div className="flex flex-1 min-h-0">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
-          <nav className="flex-1 px-4 space-y-2 mt-4">
-            {menuItems.map((m, index) => {
-              const isActive = m.label === 'Contact';
-              const showDivider = index === 4 || index === 8;
-              const Icon = m.icon;
-              return (
-                <div key={m.label}>
-                  {m.isLogout ? (
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      disabled={logoutPending}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${logoutPending
-                        ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                    >
-                      {logoutPending ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-                      ) : (
-                        <Icon className="w-5 h-5 text-gray-500" />
-                      )}
-                      <span>{logoutPending ? 'Logging out...' : m.label}</span>
-                    </button>
-                  ) : (
-                    <Link href={m.href} className="block">
-                      <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                          ? 'bg-green-600 text-white shadow-sm'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                      >
-                        <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                        <span>{m.label}</span>
-                      </div>
-                    </Link>
-                  )}
-                  {showDivider && <div className="border-t border-gray-200 my-2 mx-4"></div>}
-                </div>
-              );
-            })}
-          </nav>
-        </aside>
 
+        <BuyerSidebar
+          activePage={BuyerPages.CONTACT}
+          handleLogout={handleLogout}
+          logoutPending={logoutPending}
+        />
         {/* Main Content */}
         <main className="flex-1 ml-64 p-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Contact Us</h1>

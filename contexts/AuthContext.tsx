@@ -212,7 +212,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         description: 'Please try again later',
         variant: 'error',
       });
-      router.replace('/auth/signin');
     }
   };
 

@@ -20,6 +20,7 @@ import {
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminNavbar from '@/components/admin/Navbar';
+import { AdminPages } from '@/types';
 
 interface MenuItem {
   label: string;
@@ -70,6 +71,7 @@ function UserManagement() {
     <div className="min-h-screen bg-white flex">
       {/* Sidebar - Green */}
       <AdminNavbar
+        activePage={AdminPages.USERS}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />

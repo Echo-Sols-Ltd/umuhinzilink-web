@@ -24,6 +24,7 @@ import {
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import FarmerSidebar from '@/components/farmer/Navbar';
+import { FarmerPages } from '@/types';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -44,26 +45,7 @@ type FarmerProfile = {
   updatedAt?: string;
 };
 
-type MenuItem = {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  isLogout?: boolean;
-};
 
-const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/message', icon: MailIcon },
-  { label: 'Notifications', href: '/farmer/notifications', icon: Bell },
-  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-  { label: 'Profile', href: '/farmer/profile', icon: User },
-  { label: 'Settings', href: '/farmer/settings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
 
 export default function FarmerProfilePage() {
   const router = useRouter();
@@ -108,7 +90,10 @@ export default function FarmerProfilePage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+      <FarmerSidebar
+        activePage={FarmerPages.PROFILE}
+        logoutPending={logoutPending}
+        handleLogout={handleLogout} />
 
 
       <main className="flex-1 ml-64 bg-gray-50">

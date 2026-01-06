@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import AdminNavbar from '@/components/admin/Navbar';
+import { AdminPages } from '@/types';
 
 interface Transaction {
   id: string;
@@ -116,6 +117,7 @@ function OrderManagement() {
       {/* Sidebar - Green */}
 
       <AdminNavbar
+        activePage={AdminPages.ORDERS}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />

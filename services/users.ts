@@ -22,7 +22,7 @@ export class UserService {
   }
 
   async uploadAvatar(
-    file: string,
+    file: File,
     onUploadProgress?: (event: AxiosProgressEvent) => void,
     cancelToken?: CancelToken,
     timeout: number = 60000

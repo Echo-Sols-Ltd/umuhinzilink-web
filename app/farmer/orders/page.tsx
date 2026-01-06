@@ -23,6 +23,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import FarmerSidebar from '@/components/farmer/Navbar';
+import { FarmerPages } from '@/types';
 
 type MenuItem = {
   label: string;
@@ -113,7 +114,10 @@ export default function FarmerOrdersPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+      <FarmerSidebar
+       activePage={FarmerPages.ORDERS}
+       logoutPending={logoutPending} 
+       handleLogout={handleLogout} />
 
 
       <main className="flex-1 ml-64 bg-gray-50">

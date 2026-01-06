@@ -39,6 +39,7 @@ import {
 } from 'recharts';
 import { Input } from '@/components/ui/input';
 import FarmerSidebar from '@/components/farmer/Navbar';
+import { FarmerPages } from '@/types';
 
 
 
@@ -428,7 +429,10 @@ function Dashboard() {
     <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1 min-h-0">
       
-      <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+      <FarmerSidebar 
+       activePage={FarmerPages.DASHBOARD} 
+       logoutPending={logoutPending}
+        handleLogout={handleLogout} />
         <main className="flex-1 overflow-auto ml-64 relative bg-white ">
           <header className="fixed top-0 left-64 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             <div className="flex items-center space-x-4">

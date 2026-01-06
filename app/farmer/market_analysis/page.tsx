@@ -33,6 +33,7 @@ import {
 } from 'recharts';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { useAuth } from '@/contexts/AuthContext';
+import { FarmerPages } from '@/types';
 
 const menuItems = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: CheckCircle },
@@ -137,14 +138,14 @@ const Dashboard = () => {
    }
   return (
     <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
+    
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+        <FarmerSidebar 
+        activePage={FarmerPages.MARKET_ANALYTICS}
+        logoutPending={logoutPending}
+         handleLogout={handleLogout} />
 
 
         {/* Main Content */}

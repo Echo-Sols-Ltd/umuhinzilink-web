@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import FarmerSidebar from '@/components/farmer/Navbar';
+import { FarmerPages } from '@/types';
 
 type FarmerRequest = {
   id: string;
@@ -37,26 +38,6 @@ type FarmerRequest = {
   farmerId?: string;
 };
 
-type MenuItem = {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  isLogout?: boolean;
-};
-
-const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer/profile', icon: User },
-  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer/settings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
 
 const STATUS_LABELS: Record<string, { label: string; badge: string }> = {
   pending: { label: 'Pending', badge: 'bg-yellow-100 text-yellow-700' },
@@ -113,7 +94,7 @@ export default function FarmerRequestsPage() {
 
     try {
       await logout();
-      router.push('/auth/signin');
+      router.replace('/auth/signin');
       toast({
         title: 'Signed out',
         description: 'You have been logged out successfully.',
@@ -136,7 +117,10 @@ export default function FarmerRequestsPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+      <FarmerSidebar
+        activePage={FarmerPages.INPUT_REQUEST}
+        logoutPending={logoutPending}
+        handleLogout={handleLogout} />
 
 
       <main className="flex-1 ml-64 bg-gray-50">

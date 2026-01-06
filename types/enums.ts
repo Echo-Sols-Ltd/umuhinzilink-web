@@ -1,3 +1,60 @@
+export enum FarmerPages {
+    DASHBOARD,
+    PRODUCTS,
+    INPUT_REQUEST,
+    AI_TIPS,
+    MARKET_ANALYTICS,
+    MESSAGES,
+    NOTIFICATIONS,
+    PROFILE,
+    ORDERS,
+    SETTINGS,
+    LOGOUT,
+}
+
+export enum AdminPages {
+    DASHBOARD,
+    USERS,
+    ORDERS,
+    REPORTS,
+    PROFILE,
+    SETTINGS,
+}
+
+export enum GovernmentPages {
+    DASHBOARD,
+    FARMERS_PRODUCE,
+    SUPPLIERS_PRODUCE,
+    NOTIFICATIONS,
+    PROFILE,
+    SETTINGS,
+}
+
+export enum SupplierPages {
+    DASHBOARD,
+    PRODUCTS,
+    REQUESTS,
+    ORDERS,
+    MESSAGE,
+    PROFILE,
+    CONTACT,
+    SETTINGS,
+    LOGOUT,
+}
+
+export enum BuyerPages {
+    DASHBOARD,
+    PURCHASES,
+    PRODUCT,
+    SAVED,
+    MESSAGE,
+    PROFILE,
+    CONTACT,
+    SETTINGS,
+    LOGOUT,
+}
+
+
 export enum UserType {
   FARMER = 'FARMER',
   BUYER = 'BUYER',

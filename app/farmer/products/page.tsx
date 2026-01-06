@@ -23,6 +23,7 @@ import {
   Plus,
 } from 'lucide-react';
 import FarmerSidebar from '@/components/farmer/Navbar';
+import { FarmerPages } from '@/types';
 
 
 function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
@@ -97,7 +98,10 @@ export default function FarmerProductsPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <FarmerSidebar logoutPending={logoutPending} handleLogout={handleLogout} />
+      <FarmerSidebar
+        activePage={FarmerPages.PRODUCTS}
+        logoutPending={logoutPending}
+        handleLogout={handleLogout} />
 
 
       <main className="flex-1 ml-64 bg-gray-50">
