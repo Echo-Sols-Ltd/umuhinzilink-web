@@ -24,6 +24,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import { toast } from '@/components/ui/use-toast';
 import AdminNavbar from '@/components/admin/Navbar';
 import { AdminPages } from '@/types';
+import AdminGuard from '@/contexts/guard/AdminGuard';
 
 interface AdminStats {
   totalUsers: number;
@@ -36,9 +37,6 @@ interface AdminStats {
   activeListings: number;
 }
 
-
-
-
 interface TableUser {
   type: string;
   name: string;
@@ -47,40 +45,6 @@ interface TableUser {
   lastActivity: string;
   status: 'Active' | 'Processing' | 'Inactive';
 }
-
-const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Temporarily bypass authentication for admin dashboard access
-        // const user = await getCurrentUser();
-        // if (user?.role !== 'ADMIN') {
-        //   window.location.href = '/unauthorized';
-        //   return;
-        // }
-        // setCurrentUser(user);
-      } catch (error) {
-        // window.location.href = '/auth/signin';
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-};
 
 function Dashboard() {
   const router = useRouter();

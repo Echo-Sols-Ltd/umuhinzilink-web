@@ -36,6 +36,8 @@ interface AdminContextType {
     completedCount: number;
     cancelledCount: number;
   };
+  startFetchingResources: () => Promise<void>;
+  isValidAdmin: () => boolean;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -204,6 +206,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     cancelledCount: orders?.filter(o => o.status === 'CANCELLED').length || 0,
   };
 
+  const startFetchingResources = async () => {
+    if (!user || user.role !== 'ADMIN') {
+      throw new Error('Unauthorized access');
+    }
+    await fetchAllData(user);
+  };
+
+  const isValidAdmin = () => {
+    if(!user)return false
+    return user.role === 'ADMIN';
+  };
+
   // Fetch data on mount and when user changes
   useEffect(() => {
     if (user) fetchAllData(user);
@@ -226,6 +240,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         userStats,
         productStats,
         orderStats,
+        startFetchingResources,
+        isValidAdmin,
       }}
     >
       {children}
