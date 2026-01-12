@@ -19,6 +19,7 @@ import {
 import { useAdmin } from '@/contexts/AdminContext';
 import AdminNavbar from '@/components/admin/Navbar';
 import { AdminPages } from '@/types';
+import AdminGuard from '@/contexts/guard/AdminGuard';
 
 interface Transaction {
   id: string;
@@ -48,39 +49,6 @@ const MENU_ITEMS_BOTTOM: MenuItem[] = [
   { label: 'Settings', href: '/adminsettings', icon: Settings },
 ];
 
-const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Temporarily bypass authentication for admin dashboard access
-        // const user = await getCurrentUser();
-        // if (user?.role !== 'ADMIN') {
-        //   window.location.href = '/unauthorized';
-        //   return;
-        // }
-        // setCurrentUser(user);
-      } catch (error) {
-        // window.location.href = '/auth/signin';
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-};
 
 function OrderManagement() {
   const router = useRouter();
@@ -218,7 +186,7 @@ function OrderManagement() {
   );
 }
 
-export default function TransactionsPage() {
+export default function OrdersPage() {
   return (
     <AdminGuard>
       <OrderManagement />

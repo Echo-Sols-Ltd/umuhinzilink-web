@@ -17,6 +17,7 @@ import {
   Search,
   Eye,
 } from 'lucide-react';
+import AdminGuard from '@/contexts/guard/AdminGuard';
 
 interface Report {
   id: string;
@@ -29,7 +30,7 @@ interface Report {
   downloadUrl: string;
 }
 
-const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AdminGuardComponent: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

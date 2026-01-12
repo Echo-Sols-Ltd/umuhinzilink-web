@@ -19,9 +19,9 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
-import { useAuth } from '@/contexts/AuthContext';
 import AdminNavbar from '@/components/admin/Navbar';
 import { AdminPages } from '@/types';
+import AdminGuard from '@/contexts/guard/AdminGuard';
 
 interface MenuItem {
   label: string;
@@ -31,29 +31,15 @@ interface MenuItem {
 
 const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
-  { label: 'Users', href: '/adminusers', icon: Users },
-  { label: 'Orders', href: '/adminorders', icon: ArrowUpDown },
-  { label: 'Notifications', href: '/adminreports', icon: Bell },
+  { label: 'Users', href: '/admin/users', icon: Users },
+  { label: 'Orders', href: '/admin/orders', icon: ArrowUpDown },
+  { label: 'Notifications', href: '/admin/reports', icon: Bell },
 ];
 
 const MENU_ITEMS_BOTTOM: MenuItem[] = [
-  { label: 'Profile', href: '/adminsettings', icon: UserIcon },
-  { label: 'Settings', href: '/adminsettings', icon: Settings },
+  { label: 'Profile', href: '/admin/settings', icon: UserIcon },
+  { label: 'Settings', href: '/admin/settings', icon: Settings },
 ];
-
-const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, loading: authLoading } = useAuth();
-
-  if (authLoading || user?.role !== 'ADMIN') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-};
 
 function UserManagement() {
   const { users, loading, deleteUser, refreshUsers } = useAdmin();
