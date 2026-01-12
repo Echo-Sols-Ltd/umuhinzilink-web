@@ -36,9 +36,6 @@ interface AdminStats {
   activeListings: number;
 }
 
-
-
-
 interface TableUser {
   type: string;
   name: string;
@@ -50,26 +47,24 @@ interface TableUser {
 
 const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(true);
+  const { isValidAdmin, startFetchingResources } = useAdmin();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Temporarily bypass authentication for admin dashboard access
-        // const user = await getCurrentUser();
-        // if (user?.role !== 'ADMIN') {
-        //   window.location.href = '/unauthorized';
-        //   return;
-        // }
-        // setCurrentUser(user);
-      } catch (error) {
-        // window.location.href = '/auth/signin';
-      } finally {
+        if (!isValidAdmin()) {
+          window.location.href = '/unauthorized';
+          return;
+        }
+        await startFetchingResources();
         setLoading(false);
+      } catch (error) {
+        console.error('Authorization error:', error);
       }
     };
 
     checkAuth();
-  }, []);
+  }, [isValidAdmin]);
 
   if (loading) {
     return (
