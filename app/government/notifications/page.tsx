@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Bell, CheckCircle, AlertCircle, Info, X, Search, Filter } from 'lucide-react';
 import { GovernmentLayout } from '../components/GovernmentLayout';
 import { GovernmentPages } from '@/types';
+import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
 interface Notification {
   id: string;
@@ -14,7 +15,7 @@ interface Notification {
   read: boolean;
 }
 
-export default function GovernmentNotificationsPage() {
+function GovernmentNotifications() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'read' | 'unread'>('all');
 
@@ -211,6 +212,14 @@ export default function GovernmentNotificationsPage() {
           )}
         </div>
       </div>
-    </GovernmentLayout>
+        </GovernmentLayout>
+  );
+}
+
+export default function GovernmentNotificationsPage() {
+  return (
+    <GovernmentGuard>
+      <GovernmentNotifications />
+    </GovernmentGuard>
   );
 }

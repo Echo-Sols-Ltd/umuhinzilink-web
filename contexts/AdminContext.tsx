@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { toast } from '@/components/ui/use-toast';
@@ -51,7 +51,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch all data
-  const fetchAllData = async (user: User) => {
+  const fetchAllData = useCallback(async (user: User) => {
     if (!user) return;
 
     setLoading(true);
@@ -78,7 +78,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Refresh functions
   const refreshUsers = async () => {
@@ -206,17 +206,17 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     cancelledCount: orders?.filter(o => o.status === 'CANCELLED').length || 0,
   };
 
-  const startFetchingResources = async () => {
+  const startFetchingResources = useCallback(async () => {
     if (!user || user.role !== 'ADMIN') {
       throw new Error('Unauthorized access');
     }
     await fetchAllData(user);
-  };
+  }, [user, fetchAllData]);
 
-  const isValidAdmin = () => {
+  const isValidAdmin = useCallback(() => {
     if(!user)return false
     return user.role === 'ADMIN';
-  };
+  }, [user]);
 
   // Fetch data on mount and when user changes
   useEffect(() => {

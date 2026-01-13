@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 type MenuItem = {
   label: string;
@@ -32,19 +33,6 @@ type MenuItem = {
   isLogout?: boolean;
 };
 
-const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/message', icon: Mail },
-  { label: 'Notifications', href: '/farmer/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer/profile', icon: User },
-  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer/settings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
 
 const ORDER_STATUS_META: Record<string, { label: string; badge: string }> = {
   pending: { label: 'Pending', badge: 'bg-yellow-100 text-yellow-700' },
@@ -70,7 +58,7 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
 }
 
-export default function FarmerOrdersPage() {
+function FarmerOrders() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -115,9 +103,9 @@ export default function FarmerOrdersPage() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <FarmerSidebar
-       activePage={FarmerPages.ORDERS}
-       logoutPending={logoutPending} 
-       handleLogout={handleLogout} />
+        activePage={FarmerPages.ORDERS}
+        logoutPending={logoutPending}
+        handleLogout={handleLogout} />
 
 
       <main className="flex-1 ml-64 bg-gray-50">
@@ -312,4 +300,10 @@ function SummaryCard({ title, value, caption, accent }: SummaryCardProps) {
       <p className={`text-xs ${accent ?? 'text-gray-400'}`}>{caption}</p>
     </div>
   );
+}
+
+export default function FarmerOrderPage() {
+  return (<FarmerGuard>
+    <FarmerOrders />
+  </FarmerGuard>)
 }

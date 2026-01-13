@@ -25,6 +25,7 @@ import {
 import { toast } from '@/components/ui/use-toast';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 type FarmerRequest = {
   id: string;
@@ -37,7 +38,6 @@ type FarmerRequest = {
   updatedAt?: string;
   farmerId?: string;
 };
-
 
 const STATUS_LABELS: Record<string, { label: string; badge: string }> = {
   pending: { label: 'Pending', badge: 'bg-yellow-100 text-yellow-700' },
@@ -61,7 +61,7 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
 }
 
-export default function FarmerRequestsPage() {
+function FarmerRequestsComponent() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -69,7 +69,6 @@ export default function FarmerRequestsPage() {
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  // Use context data
   const currentUser = user;
   const requests = useMemo(() => [] as FarmerRequest[], []);
   const products = useMemo(() => farmerProducts || [], [farmerProducts]);
@@ -121,7 +120,6 @@ export default function FarmerRequestsPage() {
         activePage={FarmerPages.INPUT_REQUEST}
         logoutPending={logoutPending}
         handleLogout={handleLogout} />
-
 
       <main className="flex-1 ml-64 bg-gray-50">
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
@@ -348,6 +346,14 @@ export default function FarmerRequestsPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function FarmerRequestsPage() {
+  return (
+    <FarmerGuard>
+      <FarmerRequestsComponent />
+    </FarmerGuard>
   );
 }
 

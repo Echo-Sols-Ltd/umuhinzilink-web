@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useAdmin } from '@/contexts/AdminContext';
+'use client';
 
-const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+import React, { useState, useEffect } from 'react';
+import { useGovernment } from '@/contexts/GovernmentContext';
+
+const GovernmentGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const { isValidAdmin, startFetchingResources } = useAdmin();
+  const { isValidGovernmentUser, startFetchingResources } = useGovernment();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        if (!isValidAdmin()) {
+        if (!isValidGovernmentUser()) {
           window.location.href = '/unauthorized';
           return;
         }
@@ -16,11 +18,12 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         setLoading(false);
       } catch (error) {
         console.error('Authorization error:', error);
+        window.location.href = '/unauthorized';
       }
     };
 
     checkAuth();
-  }, [isValidAdmin, startFetchingResources]);
+  }, [isValidGovernmentUser, startFetchingResources]);
 
   if (loading) {
     return (
@@ -33,4 +36,4 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
-export default AdminGuard;
+export default GovernmentGuard;

@@ -8,8 +8,9 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory } from '@/types';
 import useProductAction from '@/hooks/useProductAction';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
-export default function AddProduce() {
+function AddProduce() {
   const router = useRouter();
   const { user } = useAuth();
   const { createFarmerProduct, loading } = useProductAction();
@@ -327,5 +328,13 @@ export default function AddProduce() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AddProducePage() {
+  return (
+    <FarmerGuard>
+      <AddProduce />
+    </FarmerGuard>
   );
 }

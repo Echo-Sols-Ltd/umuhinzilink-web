@@ -42,6 +42,7 @@ import { toast } from '@/components/ui/use-toast';
 import { useGovernment } from '@/contexts/GovernmentContext';
 import GovernmentSidebar from '@/components/governement/Navbar';
 import { GovernmentPages } from '@/types';
+import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
 
 
@@ -650,8 +651,8 @@ function Dashboard() {
 
 export default function GovernmentDashboard() {
   return (
-
-    <Dashboard />
-
+    <GovernmentGuard>
+      <Dashboard />
+    </GovernmentGuard>
   );
 }

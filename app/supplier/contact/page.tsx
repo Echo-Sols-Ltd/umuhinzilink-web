@@ -1,4 +1,5 @@
 'use client';
+'use client';
 import Link from 'next/link';
 import {
   Mail,
@@ -13,6 +14,10 @@ import {
   CheckCircle,
   User,
 } from 'lucide-react';
+import { useState } from 'react';
+import SupplierSidebar from '@/components/supplier/Navbar';
+import { SupplierPages } from '@/types';
+import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -21,19 +26,13 @@ const Logo = () => (
   </span>
 );
 
-const menuItems = [
-  { label: 'Dashboard', href: '/supplier/dashboard', icon: CheckCircle },
-  { label: 'My Products', href: '/supplier/products', icon: LayoutGrid },
-  { label: 'Requests', href: '/supplier/requests', icon: FilePlus },
-  { label: 'Orders', href: '/supplier/orders', icon: ShoppingCart },
-  { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/supplier/profile', icon: User },
-  { label: 'Contact', href: '/supplier/contact', icon: Mail },
-  { label: 'Settings', href: '/supplier/settings', icon: Settings },
-  { label: 'Logout', href: '/logout', icon: LogOut },
-];
+function SupplierContactComponent() {
+  const [logoutPending, setLogoutPending] = useState(false);
 
-export default function SupplierContactPage() {
+  const handleLogout = async () => {
+    // Handle logout logic
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
@@ -43,31 +42,11 @@ export default function SupplierContactPage() {
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
-          <div className="p-6"></div>
-          <nav className="flex-1 px-4 space-y-2">
-            {menuItems.map((m, index) => {
-              const isActive = m.label === 'Contact';
-              const showDivider = index === 4 || index === 8;
-              return (
-                <div key={m.label}>
-                  <Link href={m.href} className="block">
-                    <div
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                        ? 'bg-green-600 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                    >
-                      <m.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                      <span>{m.label}</span>
-                    </div>
-                  </Link>
-                  {showDivider && <div className="border-t border-gray-200 my-2 mx-4"></div>}
-                </div>
-              );
-            })}
-          </nav>
-        </aside>
+        <SupplierSidebar
+          activePage={SupplierPages.CONTACT}
+          handleLogout={handleLogout}
+          logoutPending={logoutPending}
+        />
 
         {/* Main Content */}
         <main className="flex-1 ml-64 p-8">
@@ -149,5 +128,13 @@ export default function SupplierContactPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function SupplierContactPage() {
+  return (
+    <SupplierGuard>
+      <SupplierContactComponent />
+    </SupplierGuard>
   );
 }

@@ -1,12 +1,14 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { governmentService } from '@/services/government';
 import { useAuth } from './AuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { FarmerProduct,SupplierProduct, User, FarmerOrder } from '@/types';
 
 interface GovernmentContextType {
+  isValidGovernmentUser: () => boolean;
+  startFetchingResources: () => Promise<void>;
   users: User[] | null;
   supplierProducts: SupplierProduct[];
   farmerProducts: FarmerProduct[];
@@ -54,7 +56,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch all data
-  const fetchAllData = async (user: User) => {
+  const fetchAllData = useCallback(async (user: User) => {
     if (!user) return;
 
     setLoading(true);
@@ -83,7 +85,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Refresh functions
   const refreshUsers = async () => {
@@ -121,9 +123,9 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
   const refreshOrders = async () => {
     try {
       const farmerOrdersRes = await governmentService.getAllFarmersOrders();
-      const supplierOrdersRes = await governmentService.getAllSuppliersOrders();
+      // const supplierOrdersRes = await governmentService.getAllSuppliersOrders(); // This seems to be missing from the service
       setOrders(farmerOrdersRes || []);
-      setOrders(supplierOrdersRes || []);
+      // setOrders(supplierOrdersRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';
       setError(message);
@@ -165,10 +167,17 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     cancelledCount: orders?.filter(o => o.status === 'CANCELLED').length || 0,
   };
 
-  // Fetch data on mount and when user changes
-  useEffect(() => {
-    if (user) fetchAllData(user);
+  const isValidGovernmentUser = useCallback(() => {
+    if (!user) return false;
+    return user.role === 'GOVERNMENT';
   }, [user]);
+
+  const startFetchingResources = useCallback(async () => {
+    if (!isValidGovernmentUser()) {
+      throw new Error('Unauthorized access');
+    }
+    await fetchAllData(user!);
+  }, [isValidGovernmentUser, fetchAllData, user]);
 
   return (
     <GovernmentContext.Provider
@@ -186,6 +195,8 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
         supplierProductStats,
         farmerProductStats,
         orderStats,
+        isValidGovernmentUser,
+        startFetchingResources,
       }}
     >
       {children}

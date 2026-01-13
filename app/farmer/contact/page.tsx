@@ -13,6 +13,7 @@ import {
   CheckCircle,
   User,
 } from 'lucide-react';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -33,7 +34,7 @@ const menuItems = [
   { label: 'Logout', href: '/logout', icon: LogOut },
 ];
 
-export default function ContactPage() {
+function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
@@ -149,5 +150,13 @@ export default function ContactPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function Contact() {
+  return (
+    <FarmerGuard>
+      <ContactPage />
+    </FarmerGuard>
   );
 }

@@ -37,6 +37,7 @@ import { useOrder } from '@/contexts/OrderContext';
 import { useProduct } from '@/contexts/ProductContext';
 import BuyerSidebar from '@/components/buyer/Navbar';
 import { BuyerPages } from '@/types';
+import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 ChartJS.register(
   CategoryScale,
@@ -57,7 +58,7 @@ const Logo = () => (
   </span>
 );
 
-export default function BuyerDashboard() {
+function BuyerDashboardComponent() {
   const { user, logout } = useAuth();
   const { buyerOrders, loading: ordersLoading, error: ordersError } = useOrder();
   const { buyerProducts, loading: productsLoading, error: productsError } = useProduct();
@@ -444,5 +445,13 @@ export default function BuyerDashboard() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function BuyerDashboard() {
+  return (
+    <BuyerGuard>
+      <BuyerDashboardComponent />
+    </BuyerGuard>
   );
 }

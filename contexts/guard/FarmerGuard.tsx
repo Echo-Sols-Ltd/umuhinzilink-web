@@ -1,26 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { useAdmin } from '@/contexts/AdminContext';
+'use client';
 
-const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+import React, { useState, useEffect } from 'react';
+import { useFarmer } from '@/contexts/FarmerContext';
+
+const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const { isValidAdmin, startFetchingResources } = useAdmin();
+  const { isValidFarmer, startFetchingFarmerResources } = useFarmer();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        if (!isValidAdmin()) {
+        if (!isValidFarmer()) {
           window.location.href = '/unauthorized';
           return;
         }
-        await startFetchingResources();
+        await startFetchingFarmerResources();
         setLoading(false);
       } catch (error) {
         console.error('Authorization error:', error);
+        window.location.href = '/unauthorized';
       }
     };
 
     checkAuth();
-  }, [isValidAdmin, startFetchingResources]);
+  }, [isValidFarmer, startFetchingFarmerResources]);
 
   if (loading) {
     return (
@@ -33,4 +36,4 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
-export default AdminGuard;
+export default FarmerGuard;

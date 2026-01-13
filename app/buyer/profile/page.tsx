@@ -22,6 +22,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
 import BuyerSidebar from '@/components/buyer/Navbar';
 import { BuyerPages } from '@/types';
+import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -33,7 +34,7 @@ const Logo = () => (
   </span>
 );
 
-export default function BuyerProfile() {
+function BuyerProfileComponent() {
   const router = useRouter();
   const [profile, setProfile] = useState({
     firstName: '',
@@ -234,5 +235,13 @@ function Field({
         </div>
       )}
     </div>
+  );
+}
+
+export default function BuyerProfile() {
+  return (
+    <BuyerGuard>
+      <BuyerProfileComponent />
+    </BuyerGuard>
   );
 }

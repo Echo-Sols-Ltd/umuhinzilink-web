@@ -22,8 +22,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
+import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
-export default function GovernmentSettingsPage() {
+function GovernmentSettings() {
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -358,6 +359,14 @@ export default function GovernmentSettingsPage() {
           </div>
         </div>
       </div>
-    </GovernmentLayout>
+        </GovernmentLayout>
+  );
+}
+
+export default function GovernmentSettingsPage() {
+  return (
+    <GovernmentGuard>
+      <GovernmentSettings />
+    </GovernmentGuard>
   );
 }

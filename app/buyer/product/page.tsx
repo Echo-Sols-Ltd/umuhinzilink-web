@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
 import BuyerSidebar from '@/components/buyer/Navbar';
 import { BuyerPages } from '@/types';
+import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 
 const productsList = [
@@ -96,7 +97,7 @@ const Logo = () => (
   </span>
 );
 
-export default function ProductsPage() {
+function ProductsPageComponent() {
   const [search, setSearch] = useState('');
   const [cropFilter, setCropFilter] = useState('All Crops');
   const [locationFilter, setLocationFilter] = useState('All Locations');
@@ -235,5 +236,13 @@ export default function ProductsPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <BuyerGuard>
+      <ProductsPageComponent />
+    </BuyerGuard>
   );
 }
