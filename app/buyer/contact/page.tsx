@@ -1,19 +1,10 @@
 // /pages/buyercontact.tsx
 'use client';
-import Link from 'next/link';
-import {
+
+import Link from 'next/link';import {
   Mail,
   Phone,
   MapPin,
-  LayoutGrid,
-  FilePlus,
-  ShoppingCart,
-  MessageSquare,
-  Settings,
-  LogOut,
-  CheckCircle,
-  User,
-  Loader2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

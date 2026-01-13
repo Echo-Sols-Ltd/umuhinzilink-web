@@ -296,3 +296,9 @@ function SummaryCard({ title, value, caption, accent }: SummaryCardProps) {
     </div>
   );
 }
+
+export default function FarmerProductsPage() {
+  return (<FarmerGuard>
+    <FarmerProducts />
+  </FarmerGuard>);
+}

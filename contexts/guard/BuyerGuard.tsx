@@ -20,7 +20,7 @@ export default function BuyerGuard(props: {
                 setIsVerified(true);
             }
         }
-    }, [user, loading, router]);
+    }, [user, loading]);
 
     if (!isVerified) {
         return null;

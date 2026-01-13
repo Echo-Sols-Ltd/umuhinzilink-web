@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { UserType, User } from '@/types';
 import { toast } from '@/components/ui/use-toast';
@@ -25,7 +25,7 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAllData = async (user: User) => {
+  const fetchAllData = useCallback(async (user: User) => {
     if (!user) return;
 
     setLoading(true);
@@ -46,19 +46,19 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const isValidFarmer = () => {
+  const isValidFarmer = useCallback(() => {
     if (!user) return false;
     return user.role === UserType.FARMER;
-  };
+  }, [user]);
 
-  const startFetchingFarmerResources = async () => {
+  const startFetchingFarmerResources = useCallback(async () => {
     if (!isValidFarmer()) {
       throw new Error('Unauthorized access');
     }
     await fetchAllData(user!);
-  };
+  }, [isValidFarmer, fetchAllData, user]);
 
   return (
     <FarmerContext.Provider value={{ loading, error, isValidFarmer, startFetchingFarmerResources }}>

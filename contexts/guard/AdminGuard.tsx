@@ -20,7 +20,7 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
 
     checkAuth();
-  }, [isValidAdmin]);
+  }, [isValidAdmin, startFetchingResources]);
 
   if (loading) {
     return (
