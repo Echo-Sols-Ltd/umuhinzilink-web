@@ -26,31 +26,28 @@ const Logo = () => (
   </span>
 );
 
-
-function Settings() {
+function SettingsComponent() {
   const { logout } = useAuth();
-  const [logoutPending, setLogoutPending] = useState(false)
+  const [logoutPending, setLogoutPending] = useState(false);
 
   const handleLogout = () => {
-    setLogoutPending(true)
-    logout()
-  }
+    setLogoutPending(true);
+    logout();
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-1 min-h-0">
-        {/* Sidebar */}
         <FarmerSidebar
           activePage={FarmerPages.SETTINGS}
           logoutPending={logoutPending}
-          handleLogout={handleLogout} />
+          handleLogout={handleLogout}
+        />
 
-
-        {/* Main Content */}
         <main className="flex-1 ml-64 p-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Settings</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Profile Settings */}
             <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <User className="text-green-600 w-5 h-5" />
@@ -107,7 +104,6 @@ function Settings() {
               </button>
             </div>
 
-            {/* Change Password */}
             <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Lock className="text-green-600 w-5 h-5" />
@@ -146,10 +142,9 @@ function Settings() {
             </div>
           </div>
 
-          {/* Notifications */}
           <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
             <div className="flex items-center gap-2 mb-4">
-              <SettingsIcon className="text-green-600 w-5 h-5" />
+              <Bell className="text-green-600 w-5 h-5" />
               <h2 className="text-lg font-semibold text-gray-800">Notifications</h2>
             </div>
 
@@ -177,7 +172,7 @@ function Settings() {
 export default function SettingsPage() {
   return (
     <FarmerGuard>
-      <Settings />
+      <SettingsComponent />
     </FarmerGuard>
   );
 }

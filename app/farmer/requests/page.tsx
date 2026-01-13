@@ -25,6 +25,7 @@ import {
 import { toast } from '@/components/ui/use-toast';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 type FarmerRequest = {
   id: string;
@@ -60,7 +61,7 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
 }
 
-function FarmerRequests() {
+function FarmerRequestsComponent() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -348,20 +349,20 @@ function FarmerRequests() {
   );
 }
 
+export default function FarmerRequestsPage() {
+  return (
+    <FarmerGuard>
+      <FarmerRequestsComponent />
+    </FarmerGuard>
+  );
+}
+
 type SummaryCardProps = {
   title: string;
   value: string;
   caption: string;
   accent?: string;
 };
-
-export default function FarmerRequestsPage() {
-  return (
-    <FarmerGuard>
-      <FarmerRequests />
-    </FarmerGuard>
-  );
-}
 
 function SummaryCard({ title, value, caption, accent }: SummaryCardProps) {
   return (

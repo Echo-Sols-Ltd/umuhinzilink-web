@@ -45,7 +45,7 @@ type FarmerProfile = {
   updatedAt?: string;
 };
 
-function FarmerProfilePage() {
+function FarmerProfileComponent() {
   const router = useRouter();
   const pathname = usePathname();
   const { user: currentUser, logout } = useAuth();
@@ -70,7 +70,7 @@ function FarmerProfilePage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [currentUser]);
 
   const handleLogout = async () => {
     if (logoutPending) return;
@@ -183,6 +183,14 @@ function FarmerProfilePage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function FarmerProfilePage() {
+  return (
+    <FarmerGuard>
+      <FarmerProfileComponent />
+    </FarmerGuard>
   );
 }
 

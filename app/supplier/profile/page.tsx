@@ -1,4 +1,5 @@
 'use client';
+'use client';
 import React, { useState, useEffect } from 'react';
 import {
   User,
@@ -18,6 +19,9 @@ import {
   Store,
 } from 'lucide-react';
 import Link from 'next/link';
+import SupplierSidebar from '@/components/supplier/Navbar';
+import { SupplierPages } from '@/types';
+import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -29,19 +33,7 @@ const Logo = () => (
   </span>
 );
 
-const menuItems = [
-  { label: 'Dashboard', href: '/supplier/dashboard', icon: CheckCircle },
-  { label: 'My Inputs', href: '/supplier/products', icon: LayoutGrid },
-  { label: 'Farmer Request', href: '/supplier/requests', icon: FilePlus },
-  { label: 'Orders', href: '/supplier/orders', icon: ShoppingCart },
-  { label: 'Message', href: '/supplier/message', icon: Mail },
-  { label: 'Profile', href: '/supplier/profile', icon: User },
-  { label: 'Contact', href: '/supplier/contact', icon: Phone },
-  { label: 'Settings', href: '/supplier/settings', icon: Settings },
-  { label: 'Logout', href: '/logout', icon: LogOut },
-];
-
-export default function SupplierProfile() {
+function SupplierProfileComponent() {
   const [profile, setProfile] = useState({
     firstName: '',
     lastName: '',
@@ -54,6 +46,7 @@ export default function SupplierProfile() {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [logoutPending, setLogoutPending] = useState(false);
 
   useEffect(() => {
     const savedProfile = localStorage.getItem('supplierProfile');
@@ -84,6 +77,10 @@ export default function SupplierProfile() {
     alert('Supplier profile updated successfully!');
   };
 
+  const handleLogout = async () => {
+    // Handle logout logic
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
@@ -92,35 +89,11 @@ export default function SupplierProfile() {
       </header>
 
       <div className="flex flex-1 min-h-0">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto justify-between shadow-sm min-h-full">
-          <div>
-            <nav className="mt-4 space-y-2 px-4">
-              {menuItems.map((m, index) => {
-                const isActive = m.label === 'Profile';
-                const showDivider = index === 3 || index === 8;
-                return (
-                  <div key={m.label}>
-                    <Link href={m.href} className="block">
-                      <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                          ? 'bg-green-600 text-white shadow-sm'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                      >
-                        <m.icon
-                          className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`}
-                        />
-                        <span>{m.label}</span>
-                      </div>
-                    </Link>
-                    {showDivider && <div className="border-t border-gray-200 my-2 mx-4"></div>}
-                  </div>
-                );
-              })}
-            </nav>
-          </div>
-        </aside>
+        <SupplierSidebar
+          activePage={SupplierPages.PROFILE}
+          handleLogout={handleLogout}
+          logoutPending={logoutPending}
+        />
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto ml-64">
@@ -281,5 +254,13 @@ function Field({
         </div>
       )}
     </div>
+  );
+}
+
+export default function SupplierProfile() {
+  return (
+    <SupplierGuard>
+      <SupplierProfileComponent />
+    </SupplierGuard>
   );
 }

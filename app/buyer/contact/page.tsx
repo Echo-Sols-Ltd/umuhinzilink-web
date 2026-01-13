@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import BuyerSidebar from '@/components/buyer/Navbar';
 import { BuyerPages } from '@/types';
+import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -28,8 +29,7 @@ const Logo = () => (
   </span>
 );
 
-
-export default function ContactPage() {
+function ContactComponent() {
   const router = useRouter();
   const [logoutPending, setLogoutPending] = useState(false);
 
@@ -131,5 +131,13 @@ export default function ContactPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <BuyerGuard>
+      <ContactComponent />
+    </BuyerGuard>
   );
 }

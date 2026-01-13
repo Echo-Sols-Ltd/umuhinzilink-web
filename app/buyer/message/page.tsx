@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Send } from 'lucide-react';
+import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 const mockContacts = [
   { id: 1, name: 'Harvest Hill Farm', role: 'Farmer' },
@@ -28,7 +29,7 @@ interface Contact {
   role: string;
 }
 
-export default function BuyerMessages() {
+function BuyerMessagesComponent() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeChat, setActiveChat] = useState<Conversation | null>(null);
   const [message, setMessage] = useState('');
@@ -218,5 +219,13 @@ export default function BuyerMessages() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function BuyerMessages() {
+  return (
+    <BuyerGuard>
+      <BuyerMessagesComponent />
+    </BuyerGuard>
   );
 }

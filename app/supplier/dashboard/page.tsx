@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import SupplierSidebar from '@/components/supplier/Navbar';
 import { SupplierPages } from '@/types';
+import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 const Logo = () => (
   <div className="flex items-center gap-2 py-2">
@@ -32,19 +33,7 @@ const Logo = () => (
   </div>
 );
 
-const menuItems = [
-  { label: 'Dashboard', href: '/supplier/dashboard', icon: CheckCircle },
-  { label: 'My Inputs', href: '/supplier/products', icon: LayoutGrid },
-  { label: 'Farmer Request', href: '/supplier/requests', icon: FilePlus },
-  { label: 'Orders', href: '/supplier/orders', icon: ShoppingCart },
-  { label: 'Message', href: '/supplier/message', icon: Mail },
-  { label: 'Profile', href: '/supplier/profile', icon: User },
-  { label: 'Contact', href: '/supplier/contact', icon: Phone },
-  { label: 'Settings', href: '/supplier/settings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
-
-function Dashboard() {
+function DashboardComponent() {
   const router = useRouter();
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
@@ -434,6 +423,8 @@ function Dashboard() {
 
 export default function SupplierDashboardPage() {
   return (
-    <Dashboard />
+    <SupplierGuard>
+      <DashboardComponent />
+    </SupplierGuard>
   );
 }
