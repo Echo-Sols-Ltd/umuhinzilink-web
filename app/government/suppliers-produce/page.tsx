@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { Edit } from 'lucide-react';
 import { useGovernment } from '@/contexts/GovernmentContext';
+import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
 // Banner data
 const bannerData: BannerData[] = [
@@ -113,9 +114,9 @@ function SuppliersProducePage() {
 
 export default function GovernmentSuppliersProducePage() {
   return (
-
-    <SuppliersProducePage />
-
+    <GovernmentGuard>
+      <SuppliersProducePage />
+    </GovernmentGuard>
   );
 }
 

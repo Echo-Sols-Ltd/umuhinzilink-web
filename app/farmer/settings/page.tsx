@@ -6,7 +6,7 @@ import {
   FilePlus,
   ShoppingCart,
   MessageSquare,
-  Settings,
+  Settings as SettingsIcon,
   LogOut,
   CheckCircle,
   User,
@@ -17,6 +17,7 @@ import FarmerSidebar from '@/components/farmer/Navbar';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -26,7 +27,7 @@ const Logo = () => (
 );
 
 
-export default function SettingsPage() {
+function Settings() {
   const { logout } = useAuth();
   const [logoutPending, setLogoutPending] = useState(false)
 
@@ -36,8 +37,6 @@ export default function SettingsPage() {
   }
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-
-
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <FarmerSidebar
@@ -150,7 +149,7 @@ export default function SettingsPage() {
           {/* Notifications */}
           <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
             <div className="flex items-center gap-2 mb-4">
-              <Bell className="text-green-600 w-5 h-5" />
+              <SettingsIcon className="text-green-600 w-5 h-5" />
               <h2 className="text-lg font-semibold text-gray-800">Notifications</h2>
             </div>
 
@@ -172,5 +171,13 @@ export default function SettingsPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <FarmerGuard>
+      <Settings />
+    </FarmerGuard>
   );
 }

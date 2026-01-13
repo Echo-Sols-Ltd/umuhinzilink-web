@@ -24,13 +24,14 @@ import {
 } from 'lucide-react';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 
 function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
 }
 
-export default function FarmerProductsPage() {
+function FarmerProducts() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();

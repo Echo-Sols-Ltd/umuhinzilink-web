@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Search, Send } from 'lucide-react';
 import { BiLeftArrow } from 'react-icons/bi';
 import { useRouter } from 'next/navigation';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 interface Contact {
   id: number;
@@ -30,7 +31,7 @@ const mockContacts: Contact[] = [
   { id: 4, name: 'Farm Tools & More', role: 'Supplier' },
 ];
 
-export default function FarmerMessages() {
+function FarmerMessages() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeChat, setActiveChat] = useState<Conversation | null>(null);
   const [message, setMessage] = useState('');
@@ -231,5 +232,13 @@ export default function FarmerMessages() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function FarmerMessagesPage() {
+  return (
+    <FarmerGuard>
+      <FarmerMessages />
+    </FarmerGuard>
   );
 }

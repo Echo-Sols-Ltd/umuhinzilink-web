@@ -38,7 +38,6 @@ type FarmerRequest = {
   farmerId?: string;
 };
 
-
 const STATUS_LABELS: Record<string, { label: string; badge: string }> = {
   pending: { label: 'Pending', badge: 'bg-yellow-100 text-yellow-700' },
   approved: { label: 'Approved', badge: 'bg-green-100 text-green-700' },
@@ -61,7 +60,7 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
 }
 
-export default function FarmerRequestsPage() {
+function FarmerRequests() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -69,7 +68,6 @@ export default function FarmerRequestsPage() {
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  // Use context data
   const currentUser = user;
   const requests = useMemo(() => [] as FarmerRequest[], []);
   const products = useMemo(() => farmerProducts || [], [farmerProducts]);
@@ -121,7 +119,6 @@ export default function FarmerRequestsPage() {
         activePage={FarmerPages.INPUT_REQUEST}
         logoutPending={logoutPending}
         handleLogout={handleLogout} />
-
 
       <main className="flex-1 ml-64 bg-gray-50">
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
@@ -357,6 +354,14 @@ type SummaryCardProps = {
   caption: string;
   accent?: string;
 };
+
+export default function FarmerRequestsPage() {
+  return (
+    <FarmerGuard>
+      <FarmerRequests />
+    </FarmerGuard>
+  );
+}
 
 function SummaryCard({ title, value, caption, accent }: SummaryCardProps) {
   return (

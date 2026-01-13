@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
+import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
-export default function GovernmentProfilePage() {
+function GovernmentProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   
@@ -254,6 +255,14 @@ export default function GovernmentProfilePage() {
           </div>
         </div>
       </div>
-    </GovernmentLayout>
+        </GovernmentLayout>
+  );
+}
+
+export default function GovernmentProfilePage() {
+  return (
+    <GovernmentGuard>
+      <GovernmentProfile />
+    </GovernmentGuard>
   );
 }

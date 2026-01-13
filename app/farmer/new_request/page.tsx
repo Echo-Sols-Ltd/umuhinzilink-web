@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
-export default function NewRequest() {
+function NewRequest() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     item: '',
@@ -101,6 +102,15 @@ export default function NewRequest() {
         </form>
       </div>
     </div>
+  );
+}
+
+
+export default function NewRequestPage() {
+  return (
+    <FarmerGuard>
+      <NewRequest />
+    </FarmerGuard>
   );
 }
 

@@ -40,6 +40,7 @@ import {
 import { Input } from '@/components/ui/input';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 
 
@@ -880,6 +881,8 @@ function Dashboard() {
 
 export default function FarmerDashboard() {
   return (
-    <Dashboard />
+    <FarmerGuard>
+      <Dashboard />
+    </FarmerGuard>
   );
 }

@@ -16,7 +16,6 @@ import {
   Settings,
   LogOut,
   Leaf,
-  Mail as MailIcon,
   Bell,
   Package,
   Loader2,
@@ -25,6 +24,7 @@ import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -45,9 +45,7 @@ type FarmerProfile = {
   updatedAt?: string;
 };
 
-
-
-export default function FarmerProfilePage() {
+function FarmerProfilePage() {
   const router = useRouter();
   const pathname = usePathname();
   const { user: currentUser, logout } = useAuth();
@@ -55,7 +53,6 @@ export default function FarmerProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [logoutPending, setLogoutPending] = useState(false);
-
 
   useEffect(() => {
     if (!currentUser) {
@@ -66,9 +63,7 @@ export default function FarmerProfilePage() {
 
     let cancelled = false;
 
-    const fetchProfile = async () => {
-
-    };
+    const fetchProfile = async () => {};
 
     fetchProfile();
 
@@ -81,7 +76,6 @@ export default function FarmerProfilePage() {
     if (logoutPending) return;
     setLogoutPending(true);
     logout();
-
   };
 
   const displayName = profile?.names || currentUser?.names || 'Farmer';
@@ -93,8 +87,8 @@ export default function FarmerProfilePage() {
       <FarmerSidebar
         activePage={FarmerPages.PROFILE}
         logoutPending={logoutPending}
-        handleLogout={handleLogout} />
-
+        handleLogout={handleLogout}
+      />
 
       <main className="flex-1 ml-64 bg-gray-50">
         <header className="bg-white border-b h-16 flex items-center px-8 shadow-sm justify-between">

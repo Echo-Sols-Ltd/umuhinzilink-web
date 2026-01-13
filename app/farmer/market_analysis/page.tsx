@@ -34,6 +34,7 @@ import {
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { useAuth } from '@/contexts/AuthContext';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const menuItems = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: CheckCircle },
@@ -128,7 +129,7 @@ const Logo = () => (
   </span>
 );
 
-const Dashboard = () => {
+function MarketAnalysis() {
   const { logout } = useAuth();
   const [logoutPending, setLogoutPending] = useState(false)
 
@@ -341,4 +342,10 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default function MarketAnalysisPage() {
+  return (
+    <FarmerGuard>
+      <MarketAnalysis />
+    </FarmerGuard>
+  );
+}

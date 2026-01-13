@@ -61,6 +61,7 @@ export enum UserType {
   BUYER = 'BUYER',
   SUPPLIER = 'SUPPLIER',
   ADMIN = 'ADMIN',
+  GOVERNMENT = 'GOVERNMENT',
 }
 
 export interface Address {

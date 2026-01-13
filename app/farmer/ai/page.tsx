@@ -22,6 +22,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
+import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const menuItems = [
   { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
@@ -81,7 +82,7 @@ const Logo = () => (
   </div>
 );
 
-export default function AiDashboard() {
+function AiDashboard() {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth()
@@ -230,5 +231,13 @@ export default function AiDashboard() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function AiDashboardPage() {
+  return (
+    <FarmerGuard>
+      <AiDashboard />
+    </FarmerGuard>
   );
 }

@@ -7,6 +7,8 @@ import { toast } from '@/components/ui/use-toast';
 import { FarmerProduct,SupplierProduct, User, FarmerOrder } from '@/types';
 
 interface GovernmentContextType {
+  isValidGovernmentUser: () => boolean;
+  startFetchingResources: () => Promise<void>;
   users: User[] | null;
   supplierProducts: SupplierProduct[];
   farmerProducts: FarmerProduct[];
@@ -165,10 +167,17 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     cancelledCount: orders?.filter(o => o.status === 'CANCELLED').length || 0,
   };
 
-  // Fetch data on mount and when user changes
-  useEffect(() => {
-    if (user) fetchAllData(user);
-  }, [user]);
+    const isValidGovernmentUser = () => {
+    if (!user) return false;
+    return user.role === 'GOVERNMENT';
+  };
+
+  const startFetchingResources = async () => {
+    if (!isValidGovernmentUser()) {
+      throw new Error('Unauthorized access');
+    }
+    await fetchAllData(user!);
+  };
 
   return (
     <GovernmentContext.Provider
@@ -186,6 +195,8 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
         supplierProductStats,
         farmerProductStats,
         orderStats,
+        isValidGovernmentUser,
+        startFetchingResources,
       }}
     >
       {children}
