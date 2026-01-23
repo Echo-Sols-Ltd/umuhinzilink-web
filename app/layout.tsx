@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'; // Add Viewport import
 import { Poppins } from 'next/font/google';
 import { AppProviders } from '@/contexts/AppProviders';
+import ModalToastContainer from '@/components/ui/modal-toast-container';
 import './globals.css';
 
 const poppins = Poppins({
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="bg-white text-black">
         <AppProviders>
           <main>{children}</main>
+          <ModalToastContainer />
         </AppProviders>
       </body>
     </html>

@@ -53,12 +53,12 @@ class ProductService {
   }
 
   async getBuyerProducts(): Promise<ApiResponse<PaginatedResponse<FarmerProduct[]>>> {
-    return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(API_ENDPOINTS.PRODUCT.BUYER_ALL);
+    return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(API_ENDPOINTS.PRODUCT.FARMER_ALL_PUBLIC);
   }
 
   async getFarmerBuyerProducts(): Promise<ApiResponse<PaginatedResponse<SupplierProduct[]>>> {
     return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(
-      API_ENDPOINTS.PRODUCT.FARMER_BUYER_ALL
+      API_ENDPOINTS.PRODUCT.SUPPLIER_ALL_PUBLIC
     );
   }
 

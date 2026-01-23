@@ -4,7 +4,7 @@ const PROD_SERVER = 'https://api.umuhinzi-backend.echo-solution.com';
 const DEV_SERVER = 'http://localhost:6060'
 
 export const API_CONFIG = {
-  BASE_URL: process.env.NODE_ENV === 'development' ? DEV_SERVER : PROD_SERVER,
+  BASE_URL: process.env.NODE_ENV === 'production' ? DEV_SERVER : PROD_SERVER,
   API_VERSION: 'v1',
   TIMEOUT: 10000,
 };
@@ -18,18 +18,18 @@ export const API_ENDPOINTS = {
     REGISTER_BUYER: '/auth/register/buyer',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
-    VERIFY_USER: '/auth/check-user',
-    FORGOT_PASSWORD: '/auth/forgot-password',
+    VERIFY_USER: '/auth/check-token',
+    FORGOT_PASSWORD: '/auth/request-password-reset',
     RESET_PASSWORD: '/auth/reset-password',
     CHECK_OTP: '/auth/verify-otp',
-    CHECK_RESET_CODE: '/auth/check-reset-code',
+    CHECK_RESET_CODE: '/auth/verify-reset-code',
     ASK_OTP_CODE: '/auth/ask-otp-code',
   },
   USER: {
     ALL: '/users',
     BY_ID: (id: string) => `/users/${id}`,
     ME: '/users/me',
-    UPLOAD_AVATAR: '/',
+    UPLOAD_AVATAR: '/upload/user',
   },
   FARMER: {
     BY_ID: (id: string) => `/farmers/${id}`,
@@ -40,9 +40,9 @@ export const API_ENDPOINTS = {
     ME: '/suppliers/me',
   },
   DASHBOARD: {
-    FARMER_STATS: '/farmer/dashboard',
-    SUPPLIER_STATS: '/supplier/dashboard',
-    BUYER_STATS: '/buyer/dashboard',
+    FARMER_STATS: '/dashboard/farmer',
+    SUPPLIER_STATS: '/dashboard/supplier',
+    BUYER_STATS: '/dashboard/buyer',
   },
   PRODUCT: {
     CREATE_FARMER: '/products/farmer',
@@ -55,10 +55,12 @@ export const API_ENDPOINTS = {
     DELETE_FARMER: (id: string) => `/products/farmer/${id}`,
     FARMER_STATS: '/products/farmer/stats',
     SUPPLIER_STATS: '/products/supplier/stats',
-    FARMER_BUYER_ALL: '/products/supplier/all',
+    SUPPLIER_ALL_PUBLIC: '/products/supplier/all',
     SUPPLIER_ALL: '/products/supplier',
     FARMER_ALL: '/products/farmer',
-    BUYER_ALL: '/products/farmer/all',
+    FARMER_ALL_PUBLIC: '/products/farmer/all',
+    SUPPLIER_SEARCH: '/products/supplier/search',
+    FARMER_SEARCH: '/products/farmer/search',
   },
   BUYER: {
     BY_ID: (id: string) => `/buyers/${id}`,
@@ -110,6 +112,26 @@ export const API_ENDPOINTS = {
   FILES: {
     UPLOAD_AVATAR: '/upload/user',
     UPLOAD_MESSAGE: '/upload/message',
+    UPLOAD_GENERIC: '/upload',
+  },
+  WALLET: {
+    BALANCE: '/wallet/balance',
+    DEPOSIT: '/wallet/deposit',
+    PAY_ORDER: '/wallet/pay-order',
+    TRANSACTIONS: '/wallet/transactions',
+    TRANSACTION_BY_ID: (id: string) => `/wallet/transaction/${id}`,
+    ADMIN_CREATE_WALLET: (userId: string) => `/wallet/admin/create-wallet/${userId}`,
+  },
+  PAYMENT: {
+    PROCESS: '/payments/process',
+    STATUS: (transactionId: string) => `/payments/status/${transactionId}`,
+    ORDER_PAYMENT: (orderId: string) => `/payments/order/${orderId}`,
+    MY_TRANSACTIONS: '/payments/my-transactions',
+    ADMIN_ALL_TRANSACTIONS: '/payments/admin/all-transactions',
+  },
+  MESSAGES: {
+    CONVERSATION: (senderId: string, receiverId: string) => `/messages/all/${senderId}/${receiverId}`,
+    BY_ID: (conversationId: string) => `/messages/${conversationId}`,
   },
 };
 

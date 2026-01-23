@@ -33,7 +33,7 @@ export interface FarmerOrder {
 
 export interface SupplierOrder {
   id: string;
-  supplier: User;
+  buyer: User;
   product: SupplierProduct;
   quantity: number;
   totalPrice: number;
@@ -41,6 +41,7 @@ export interface SupplierOrder {
   status: OrderStatus;
   delivery?: Delivery;
   paymentMethod: PaymentMethod;
+  deliveryDate?: string;
   createdAt: string;
   updatedAt: string;
 }

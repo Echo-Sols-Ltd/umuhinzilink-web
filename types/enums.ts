@@ -48,6 +48,7 @@ export enum BuyerPages {
     PURCHASES,
     PRODUCT,
     SAVED,
+    WALLET,
     MESSAGE,
     PROFILE,
     CONTACT,
@@ -284,6 +285,7 @@ export enum OrderStatus {
 export enum PaymentMethod {
   MOBILE_MONEY = 'MOBILE_MONEY',
   BANK_TRANSFER = 'BANK_TRANSFER',
+  WALLET = 'WALLET',
   CASH = 'CASH',
 }
 
@@ -312,6 +314,7 @@ export const orderStatusOptions = [
 export const paymentMethodOptions = [
   { label: 'MOBILE_MONEY', value: PaymentMethod.MOBILE_MONEY },
   { label: 'BANK_TRANSFER', value: PaymentMethod.BANK_TRANSFER },
+  { label: 'WALLET', value: PaymentMethod.WALLET },
   { label: 'CASH', value: PaymentMethod.CASH },
 ];
 

@@ -9,6 +9,8 @@ import { BuyerProvider } from '@/contexts/BuyerContext';
 import { FarmerProvider } from '@/contexts/FarmerContext';
 import { SupplierProvider } from '@/contexts/SupplierContext';
 import { AdminProvider } from '@/contexts/AdminContext';
+import { WalletProvider } from '@/contexts/WalletContext';
+import { MessageProvider } from '@/contexts/MessageContext';
 import { Toaster } from '@/components/ui/toaster';
 import { GovernmentProvider } from './GovernmentContext';
 import { SocketProvider } from './SocketContext';
@@ -24,7 +26,9 @@ export function AppProviders({ children }: AppProvidersProps) {
         <UserProvider>
           <ProductProvider>
             <OrderProvider>
-              <BuyerProvider>
+              <WalletProvider>
+                <MessageProvider>
+                  <BuyerProvider>
                 <FarmerProvider>
                   <SupplierProvider>
                     <AdminProvider>
@@ -35,7 +39,9 @@ export function AppProviders({ children }: AppProvidersProps) {
                     </AdminProvider>
                   </SupplierProvider>
                 </FarmerProvider>
-              </BuyerProvider>
+                  </BuyerProvider>
+                </MessageProvider>
+              </WalletProvider>
             </OrderProvider>
           </ProductProvider>
         </UserProvider>

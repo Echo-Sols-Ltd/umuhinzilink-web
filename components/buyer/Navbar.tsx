@@ -9,6 +9,7 @@ import {
   LogOut,
   FilePlus,
   Loader2,
+  Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
 import { BuyerPages } from '@/types';
@@ -26,6 +27,7 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'My Purchase', page: BuyerPages.PURCHASES, href: '/buyer/purchases', icon: ShoppingCart },
   { label: 'Browse Product', page: BuyerPages.PRODUCT, href: '/buyer/product', icon: FilePlus },
   { label: 'Saved Items', page: BuyerPages.SAVED, href: '/buyer/saved', icon: Heart },
+  { label: 'My Wallet', page: BuyerPages.WALLET, href: '/buyer/wallet', icon: Wallet },
   { label: 'Message', page: BuyerPages.MESSAGE, href: '/buyer/message', icon: Mail },
   { label: 'Profile', page: BuyerPages.PROFILE, href: '/buyer/profile', icon: User },
   { label: 'Contact', page: BuyerPages.CONTACT, href: '/buyer/contact', icon: Phone },
@@ -53,7 +55,7 @@ export default function BuyerSidebar({ activePage, handleLogout, logoutPending }
         {MENU_ITEMS.map((item, index) => {
           const isActive = item.page === activePage;
           const Icon = item.icon;
-          const showDivider = index === 4 || index === 8;
+          const showDivider = index === 5 || index === 9;
           return (
             <div key={item.label}>
               {item.isLogout ? (

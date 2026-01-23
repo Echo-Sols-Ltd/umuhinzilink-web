@@ -24,6 +24,7 @@ import {
   GridIcon,
   FilePlus,
   Loader2,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -31,6 +32,9 @@ import { toast } from '@/components/ui/use-toast';
 import BuyerSidebar from '@/components/buyer/Navbar';
 import { BuyerPages } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
+import { useOrder } from '@/contexts/OrderContext';
+import OrderStatusTracker from '@/components/orders/OrderStatusTracker';
+import { useMemo } from 'react';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -41,6 +45,39 @@ const Logo = () => (
 function MyPurchasesComponent() {
   const router = useRouter();
   const [logoutPending, setLogoutPending] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const { buyerOrders, loading: ordersLoading } = useOrder();
+
+  // Filter and process orders
+  const filteredOrders = useMemo(() => {
+    if (!buyerOrders) return [];
+    
+    return buyerOrders.filter(order => {
+      const matchesSearch = searchTerm === '' || 
+        order.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.id.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = filterStatus === 'all' || 
+        order.status.toLowerCase() === filterStatus.toLowerCase();
+      
+      return matchesSearch && matchesStatus;
+    });
+  }, [buyerOrders, searchTerm, filterStatus]);
+
+  // Calculate stats
+  const stats = useMemo(() => {
+    if (!buyerOrders) return { total: 0, completed: 0, inProgress: 0, totalSpent: 0 };
+    
+    const total = buyerOrders.length;
+    const completed = buyerOrders.filter(o => o.status === 'COMPLETED').length;
+    const inProgress = buyerOrders.filter(o => o.status === 'ACTIVE' || o.status === 'PENDING').length;
+    const totalSpent = buyerOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+    
+    return { total, completed, inProgress, totalSpent };
+  }, [buyerOrders]);
 
   const handleLogout = async () => {
 
@@ -74,7 +111,7 @@ function MyPurchasesComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm">Total Purchases</p>
-                  <h2 className="text-2xl font-bold text-gray-900">24</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">{stats.total}</h2>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                   <ShoppingBag className="w-6 h-6 text-blue-600" />
@@ -85,7 +122,7 @@ function MyPurchasesComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm">Completed Orders</p>
-                  <h2 className="text-2xl font-bold text-gray-900">18</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">{stats.completed}</h2>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                   <CheckCircle className="w-6 h-6 text-green-600" />
@@ -96,7 +133,7 @@ function MyPurchasesComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm">In Progress</p>
-                  <h2 className="text-2xl font-bold text-gray-900">6</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">{stats.inProgress}</h2>
                 </div>
                 <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
                   <Clock className="w-6 h-6 text-yellow-600" />
@@ -107,7 +144,7 @@ function MyPurchasesComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm">Total Spent</p>
-                  <h2 className="text-2xl font-bold text-gray-900">$2,840</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">${stats.totalSpent.toFixed(2)}</h2>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                   <DollarSign className="w-6 h-6 text-purple-600" />
@@ -119,13 +156,44 @@ function MyPurchasesComponent() {
           {/* Filters */}
           <div className="flex justify-between items-center mb-6 gap-4">
             <div className="flex gap-2">
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+              <button 
+                onClick={() => setFilterStatus('all')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  filterStatus === 'all' 
+                    ? 'bg-green-600 text-white' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
                 All
               </button>
-              <button className="text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors">
+              <button 
+                onClick={() => setFilterStatus('pending')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  filterStatus === 'pending' 
+                    ? 'bg-green-600 text-white' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Pending
+              </button>
+              <button 
+                onClick={() => setFilterStatus('active')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  filterStatus === 'active' 
+                    ? 'bg-green-600 text-white' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
                 In Progress
               </button>
-              <button className="text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors">
+              <button 
+                onClick={() => setFilterStatus('completed')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  filterStatus === 'completed' 
+                    ? 'bg-green-600 text-white' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
                 Completed
               </button>
             </div>
@@ -135,6 +203,8 @@ function MyPurchasesComponent() {
                 <input
                   type="text"
                   placeholder="Search orders..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="bg-white border border-gray-300 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
                 />
               </div>
@@ -182,138 +252,93 @@ function MyPurchasesComponent() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-4 px-4 font-medium text-gray-900">#ORD-001</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                          <Apple className="w-4 h-4 text-red-600" />
+                  {ordersLoading && (
+                    <tr>
+                      <td colSpan={8} className="py-12 text-center">
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
                         </div>
-                        <span className="text-gray-900">Fresh Tomatoes</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-900">John Mukama</td>
-                    <td className="py-4 px-4 text-gray-900">50 kg</td>
-                    <td className="py-4 px-4 text-gray-900">$125</td>
-                    <td className="py-4 px-4 text-gray-900">Dec 15, 2024</td>
-                    <td className="py-4 px-4">
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                        Completed
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1">
-                        <button className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-full transition-colors">
-                          <RefreshCw className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                          <MessageCircle className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-4 px-4 font-medium text-gray-900">#ORD-002</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                          <Wheat className="w-4 h-4 text-yellow-600" />
-                        </div>
-                        <span className="text-gray-900">Maize</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-900">Mary Uwimana</td>
-                    <td className="py-4 px-4 text-gray-900">100 kg</td>
-                    <td className="py-4 px-4 text-gray-900">$180</td>
-                    <td className="py-4 px-4 text-gray-900">Dec 18, 2024</td>
-                    <td className="py-4 px-4">
-                      <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-                        In Progress
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1">
-                        <button className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-full transition-colors">
-                          <RefreshCw className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                          <MessageCircle className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-4 px-4 font-medium text-gray-900">#ORD-003</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                          <Bean className="w-4 h-4 text-green-600" />
-                        </div>
-                        <span className="text-gray-900">Green Beans</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-900">Peter Niyonzima</td>
-                    <td className="py-4 px-4 text-gray-900">25 kg</td>
-                    <td className="py-4 px-4 text-gray-900">$75</td>
-                    <td className="py-4 px-4 text-gray-900">Dec 20, 2024</td>
-                    <td className="py-4 px-4">
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-                        Completed
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1">
-                        <button className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-full transition-colors">
-                          <RefreshCw className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                          <MessageCircle className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 px-4 font-medium text-gray-900">#ORD-004</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                          <Carrot className="w-4 h-4 text-orange-600" />
-                        </div>
-                        <span className="text-gray-900">Carrots</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-900">Grace Nyirahabimana</td>
-                    <td className="py-4 px-4 text-gray-900">30 kg</td>
-                    <td className="py-4 px-4 text-gray-900">$90</td>
-                    <td className="py-4 px-4 text-gray-900">Dec 22, 2024</td>
-                    <td className="py-4 px-4">
-                      <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-                        In Progress
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1">
-                        <button className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-full transition-colors">
-                          <RefreshCw className="w-4 h-4" />
-                        </button>
-                        <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                          <MessageCircle className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                      </td>
+                    </tr>
+                  )}
+                  
+                  {!ordersLoading && filteredOrders.length === 0 && (
+                    <tr>
+                      <td colSpan={8} className="py-12 text-center text-gray-500">
+                        {searchTerm || filterStatus !== 'all' 
+                          ? 'No orders found matching your criteria.' 
+                          : 'You have no orders yet.'}
+                      </td>
+                    </tr>
+                  )}
+                  
+                  {!ordersLoading && filteredOrders.map((order, index) => {
+                    const farmerName = order.product?.farmer?.user?.names || 'Unknown Farmer';
+                    const productName = order.product?.name || 'Unknown Product';
+                    const quantity = `${order.quantity || 0} ${order.product?.measurementUnit || 'units'}`;
+                    const price = `$${(order.totalPrice || 0).toFixed(2)}`;
+                    const date = new Date(order.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    });
+                    
+                    const getStatusColor = (status: string) => {
+                      switch (status.toLowerCase()) {
+                        case 'completed':
+                          return 'bg-green-100 text-green-700';
+                        case 'active':
+                          return 'bg-blue-100 text-blue-700';
+                        case 'pending':
+                          return 'bg-yellow-100 text-yellow-700';
+                        case 'cancelled':
+                          return 'bg-red-100 text-red-700';
+                        default:
+                          return 'bg-gray-100 text-gray-700';
+                      }
+                    };
+                    
+                    return (
+                      <tr key={order.id} className={index < filteredOrders.length - 1 ? 'border-b border-gray-100' : ''}>
+                        <td className="py-4 px-4 font-medium text-gray-900">#{order.id.slice(-6)}</td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                              <span className="text-green-600 text-xs font-semibold">
+                                {productName.charAt(0)}
+                              </span>
+                            </div>
+                            <span className="text-gray-900">{productName}</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-gray-900">{farmerName}</td>
+                        <td className="py-4 px-4 text-gray-900">{quantity}</td>
+                        <td className="py-4 px-4 text-gray-900">{price}</td>
+                        <td className="py-4 px-4 text-gray-900">{date}</td>
+                        <td className="py-4 px-4">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                            {order.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-1">
+                            <button 
+                              onClick={() => setSelectedOrder(order)}
+                              className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button className="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-full transition-colors">
+                              <RefreshCw className="w-4 h-4" />
+                            </button>
+                            <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
+                              <MessageCircle className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -321,7 +346,9 @@ function MyPurchasesComponent() {
 
           {/* Pagination */}
           <div className="flex justify-between items-center mt-6">
-            <p className="text-sm text-gray-600">Showing 1 to 4 of 24 results</p>
+            <p className="text-sm text-gray-600">
+              Showing {filteredOrders.length > 0 ? '1' : '0'} to {filteredOrders.length} of {filteredOrders.length} results
+            </p>
             <div className="flex items-center gap-2">
               <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
                 &lt;
@@ -342,6 +369,57 @@ function MyPurchasesComponent() {
           </div>
         </main>
       </div>
+
+      {/* Order Status Tracker Modal */}
+      {selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Order #{selectedOrder.id.slice(-6)} - Status Tracking
+                </h2>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              {/* Order Details */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Product:</span>
+                    <span className="ml-2 font-medium">{selectedOrder.product?.name}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Farmer:</span>
+                    <span className="ml-2 font-medium">{selectedOrder.product?.farmer?.user?.names}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Quantity:</span>
+                    <span className="ml-2 font-medium">{selectedOrder.quantity} {selectedOrder.product?.measurementUnit}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Total:</span>
+                    <span className="ml-2 font-medium">${selectedOrder.totalPrice?.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <OrderStatusTracker
+                orderStatus={selectedOrder.status}
+                deliveryStatus={selectedOrder.delivery?.status}
+                createdAt={selectedOrder.createdAt}
+                updatedAt={selectedOrder.updatedAt}
+                deliveryDate={selectedOrder.delivery?.estimatedDelivery}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

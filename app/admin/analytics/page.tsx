@@ -123,32 +123,32 @@ function RevenueAnalytics() {
   const statCards = [
     {
       title: 'Total Revenue',
-      value: `$${analytics.revenue.current.toLocaleString()}`,
-      change: `${analytics.revenue.growth > 0 ? '+' : ''}${analytics.revenue.growth}%`,
+      value: `$${(analytics.revenue.current || 0).toLocaleString()}`,
+      change: `${analytics.revenue.growth > 0 ? '+' : ''}${analytics.revenue.growth || 0}%`,
       changeType: analytics.revenue.growth > 0 ? 'positive' : 'negative',
       icon: DollarSign,
       color: 'bg-green-500',
     },
     {
       title: 'Total Orders',
-      value: analytics.orders.current.toLocaleString(),
-      change: `${analytics.orders.growth > 0 ? '+' : ''}${analytics.orders.growth}%`,
+      value: (analytics.orders.current || 0).toLocaleString(),
+      change: `${analytics.orders.growth > 0 ? '+' : ''}${analytics.orders.growth || 0}%`,
       changeType: analytics.orders.growth > 0 ? 'positive' : 'negative',
       icon: ShoppingCart,
       color: 'bg-blue-500',
     },
     {
       title: 'Active Users',
-      value: analytics.users.current.toLocaleString(),
-      change: `${analytics.users.growth > 0 ? '+' : ''}${analytics.users.growth}%`,
+      value: (analytics.users.current || 0).toLocaleString(),
+      change: `${analytics.users.growth > 0 ? '+' : ''}${analytics.users.growth || 0}%`,
       changeType: analytics.users.growth > 0 ? 'positive' : 'negative',
       icon: Users,
       color: 'bg-purple-500',
     },
     {
       title: 'Products Listed',
-      value: analytics.products.current.toLocaleString(),
-      change: `${analytics.products.growth > 0 ? '+' : ''}${analytics.products.growth}%`,
+      value: (analytics.products.current || 0).toLocaleString(),
+      change: `${analytics.products.growth > 0 ? '+' : ''}${analytics.products.growth || 0}%`,
       changeType: analytics.products.growth > 0 ? 'positive' : 'negative',
       icon: Package,
       color: 'bg-yellow-500',
@@ -273,8 +273,8 @@ function RevenueAnalytics() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">${product.revenue.toLocaleString()}</p>
-                    <p className="text-sm text-gray-500">{product.orders} orders</p>
+                    <p className="font-medium text-gray-900">${(product.revenue || 0).toLocaleString()}</p>
+                    <p className="text-sm text-gray-500">{product.orders || 0} orders</p>
                   </div>
                 </div>
               ))}
@@ -300,8 +300,8 @@ function RevenueAnalytics() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">${farmer.revenue.toLocaleString()}</p>
-                    <p className="text-sm text-gray-500">{farmer.orders} orders</p>
+                    <p className="font-medium text-gray-900">${(farmer.revenue || 0).toLocaleString()}</p>
+                    <p className="text-sm text-gray-500">{farmer.orders || 0} orders</p>
                   </div>
                 </div>
               ))}
@@ -340,13 +340,13 @@ function RevenueAnalytics() {
                       {month.month}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${month.revenue.toLocaleString()}
+                      ${(month.revenue || 0).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {month.orders.toLocaleString()}
+                      {(month.orders || 0).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {month.users.toLocaleString()}
+                      {(month.users || 0).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       ${(month.revenue / month.orders).toFixed(2)}

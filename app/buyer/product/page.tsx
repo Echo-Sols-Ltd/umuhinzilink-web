@@ -18,6 +18,7 @@ import {
   Settings,
   LogOut,
   Loader2,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -25,70 +26,9 @@ import { toast } from '@/components/ui/use-toast';
 import BuyerSidebar from '@/components/buyer/Navbar';
 import { BuyerPages } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
+import { useProduct } from '@/contexts/ProductContext';
+import ProductOrderInterface from '@/components/orders/ProductOrderInterface';
 
-
-const productsList = [
-  {
-    name: 'Fresh Tomatoes',
-    price: '$2.50/kg',
-    available: '500 kg',
-    farmer: 'Mary Uwimana',
-    location: 'Kigali',
-    rating: 4.8,
-    image: '/tomatoes.png',
-    farmerImage: 'https://randomuser.me/api/portraits/women/44.jpg',
-  },
-  {
-    name: 'Organic Lettuce',
-    price: '$1.80/kg',
-    available: '200 kg',
-    farmer: 'Jean Baptiste',
-    location: 'Musanze',
-    rating: 4.6,
-    image: '/lettuce.png',
-    farmerImage: 'https://randomuser.me/api/portraits/men/45.jpg',
-  },
-  {
-    name: 'Yellow Maize',
-    price: '$0.85/kg',
-    available: '2000 kg',
-    farmer: 'Pierre Nkurunziza',
-    location: 'Huye',
-    rating: 4.9,
-    image: '/maize.png',
-    farmerImage: 'https://randomuser.me/api/portraits/men/46.jpg',
-  },
-  {
-    name: 'Fresh Carrots',
-    price: '$1.20/kg',
-    available: '300 kg',
-    farmer: 'Agnes Mukamana',
-    location: 'Kigali',
-    rating: 4.7,
-    image: '/carrots.png',
-    farmerImage: 'https://randomuser.me/api/portraits/women/47.jpg',
-  },
-  {
-    name: 'Red Apples',
-    price: '$3.50/kg',
-    available: '150 kg',
-    farmer: 'Grace Uwase',
-    location: 'Musanze',
-    rating: 4.8,
-    image: '/apples.png',
-    farmerImage: 'https://randomuser.me/api/portraits/women/48.jpg',
-  },
-  {
-    name: 'Green Beans',
-    price: '$2.20/kg',
-    available: '180 kg',
-    farmer: 'Samuel Habimana',
-    location: 'Nyagatare',
-    rating: 4.5,
-    image: '/green-beans.png',
-    farmerImage: 'https://randomuser.me/api/portraits/men/49.jpg',
-  },
-];
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -102,13 +42,18 @@ function ProductsPageComponent() {
   const [cropFilter, setCropFilter] = useState('All Crops');
   const [locationFilter, setLocationFilter] = useState('All Locations');
   const [logoutPending, setLogoutPending] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const { buyerProducts, loading: productsLoading } = useProduct();
   const router = useRouter();
+
+  // Use real products from context instead of static data
+  const productsList = buyerProducts || [];
 
   const filteredProducts = productsList.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    const matchesCrop = cropFilter === 'All Crops' || p.name.includes(cropFilter);
+    const matchesCrop = cropFilter === 'All Crops' || p.category?.includes(cropFilter) || p.name.includes(cropFilter);
     const matchesLocation =
-      locationFilter === 'All Locations' || p.location.includes(locationFilter);
+      locationFilter === 'All Locations' || p.location?.includes(locationFilter);
     return matchesSearch && matchesCrop && matchesLocation;
   });
 
@@ -186,55 +131,117 @@ function ProductsPageComponent() {
             </div>
           </div>
 
+          {/* Loading State */}
+          {productsLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+            </div>
+          )}
+
           {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredProducts.map(p => (
-              <div key={p.name} className="bg-white rounded-lg shadow-sm border overflow-hidden">
-                <img src={p.image} alt={p.name} className="h-40 w-full object-cover" />
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-700">{p.name}</h3>
-                  <p className="text-green-600 font-bold">{p.price}</p>
-                  <p className="text-sm text-gray-500">Available: {p.available}</p>
-
-                  {/* Farmer Info */}
-                  <div className="flex items-center text-sm text-gray-500 mt-2">
-                    <img
-                      src={p.farmerImage}
-                      alt={p.farmer}
-                      className="w-8 h-8 rounded-full object-cover mr-2"
-                    />
-                    <span>{p.farmer}</span>
-                  </div>
-
-                  <div className="flex items-center text-sm text-gray-500 mt-1">
-                    <MapPin className="w-4 h-4 mr-1" /> {p.location}
-                    <div className="flex items-center gap-1 text-yellow-500 mt-1 ml-56">
-                      <Star className="w-4 h-4" /> {p.rating}
-                    </div>
-                  </div>
-
-                  <div className="mt-3 flex flex-col gap-2">
-                    {/* Buy Now */}
-                    <button className="bg-green-600 text-white px-3 py-1 cursor-pointer rounded text-sm w-full">
-                      Buy Now
-                    </button>
-
-                    {/* Contact + Heart side-by-side */}
-                    <div className="flex gap-2">
-                      <button className="border border-gray-300 px-3 cursor-pointer py-1 rounded text-sm flex-grow text-gray-600">
-                        Contact
-                      </button>
-                      <button className="border border-gray-300 p-2 cursor-pointer rounded text-sm flex items-center justify-center text-gray-600">
-                        <Heart className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
+          {!productsLoading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredProducts.length === 0 ? (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-gray-500">No products found matching your criteria.</p>
                 </div>
-              </div>
-            ))}
-          </div>
+              ) : (
+                filteredProducts.map(product => {
+                  const farmerName = product.farmer?.user?.names || 'Unknown Farmer';
+                  const price = `$${product.unitPrice?.toFixed(2) || '0.00'}/${product.measurementUnit || 'unit'}`;
+                  const available = `${product.quantity || 0} ${product.measurementUnit || 'units'} available`;
+                  
+                  return (
+                    <div key={product.id} className="bg-white rounded-lg shadow-sm border overflow-hidden">
+                      <img 
+                        src={product.image || '/placeholder.png'} 
+                        alt={product.name} 
+                        className="h-40 w-full object-cover" 
+                      />
+                      <div className="p-4">
+                        <h3 className="font-semibold text-gray-700">{product.name}</h3>
+                        <p className="text-green-600 font-bold">{price}</p>
+                        <p className="text-sm text-gray-500">{available}</p>
+
+                        {/* Farmer Info */}
+                        <div className="flex items-center text-sm text-gray-500 mt-2">
+                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                            <span className="text-green-600 font-semibold text-xs">
+                              {farmerName.charAt(0)}
+                            </span>
+                          </div>
+                          <span>{farmerName}</span>
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm text-gray-500 mt-1">
+                          <div className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" /> {product.location || 'Unknown'}
+                          </div>
+                          <div className="flex items-center gap-1 text-yellow-500">
+                            <Star className="w-4 h-4" /> 4.5
+                          </div>
+                        </div>
+
+                        <div className="mt-3 flex flex-col gap-2">
+                          {/* Buy Now */}
+                          <button 
+                            onClick={() => setSelectedProduct(product)}
+                            className="bg-green-600 text-white px-3 py-1 cursor-pointer rounded text-sm w-full hover:bg-green-700"
+                          >
+                            Buy Now
+                          </button>
+
+                          {/* Contact + Heart side-by-side */}
+                          <div className="flex gap-2">
+                            <button className="border border-gray-300 px-3 cursor-pointer py-1 rounded text-sm flex-grow text-gray-600 hover:bg-gray-50">
+                              Contact
+                            </button>
+                            <button className="border border-gray-300 p-2 cursor-pointer rounded text-sm flex items-center justify-center text-gray-600 hover:bg-gray-50">
+                              <Heart className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
         </main>
       </div>
+
+      {/* Product Order Interface Modal */}
+      {selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto m-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">Product Details</h2>
+                <button
+                  onClick={() => setSelectedProduct(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <ProductOrderInterface
+                product={selectedProduct}
+                productType="farmer"
+                onSaveProduct={(productId) => {
+                  // Handle save product logic
+                  console.log('Save product:', productId);
+                }}
+                onShareProduct={(product) => {
+                  // Handle share product logic
+                  console.log('Share product:', product);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
