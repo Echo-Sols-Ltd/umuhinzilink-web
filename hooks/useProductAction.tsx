@@ -1,4 +1,4 @@
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast-new';
 import { useProduct } from '@/contexts/ProductContext';
 import { productService } from '@/services/products';
 import { FarmerProductRequest, SupplierProductRequest } from '@/types';
@@ -8,6 +8,7 @@ import { apiClient } from '@/services/client';
 
 export default function useProductAction() {
   const router = useRouter();
+  const { toast } = useToast();
   const { addFarmerProduct, addSupplierProduct, updateFarmerProduct, updateSupplierProduct } =
     useProduct();
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Create product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -33,7 +34,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Create product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -43,7 +44,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Create product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -53,12 +54,13 @@ export default function useProductAction() {
       toast({
         title: 'Product created',
         description: 'Product created successfully',
+        variant: 'success',
       });
     } catch {
       toast({
         title: 'Failed to Create product',
         description: 'Try again later',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setLoading(false);
@@ -75,7 +77,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Create product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -84,7 +86,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Create product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -94,7 +96,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Create product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -105,12 +107,13 @@ export default function useProductAction() {
       toast({
         title: 'Product created',
         description: 'Product created successfully',
+        variant: 'success',
       });
     } catch {
       toast({
         title: 'Failed to Create product',
         description: 'Try again later',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setLoading(false);
@@ -127,7 +130,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Edit product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -136,7 +139,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Edit product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -146,7 +149,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Edit product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -156,13 +159,14 @@ export default function useProductAction() {
       toast({
         title: 'Product edited',
         description: 'The product was updated successfully',
+        variant: 'success',
       });
       router.back();
     } catch {
       toast({
         title: 'Failed to Edit product',
         description: 'Try again later',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setLoading(false);
@@ -179,7 +183,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Edit product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -188,7 +192,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Edit product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -198,7 +202,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to Edit product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -208,12 +212,14 @@ export default function useProductAction() {
 
       toast({
         title: 'Product edited',
+        description: 'Product updated successfully',
+        variant: 'success',
       });
     } catch {
       toast({
         title: 'Failed to Edit product',
         description: 'Try again later',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setLoading(false);
@@ -230,7 +236,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to delete product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -239,7 +245,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to delete product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -248,7 +254,7 @@ export default function useProductAction() {
       toast({
         title: 'Failed to delete product',
         description: 'Try again later',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setLoading(false);
@@ -265,7 +271,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to delete product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -274,7 +280,7 @@ export default function useProductAction() {
         toast({
           title: 'Failed to delete product',
           description: 'Try again later',
-          variant: 'destructive',
+          variant: 'error',
         });
         return;
       }
@@ -284,7 +290,7 @@ export default function useProductAction() {
       toast({
         title: 'Failed to delete product',
         description: 'Try again later',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setLoading(false);
