@@ -14,6 +14,43 @@ export const adminService = {
     }
   },
 
+  // Get user by ID
+  getUserById: async (userId: string): Promise<User> => {
+    try {
+      const response = await apiClient.get<User>(API_ENDPOINTS.ADMIN.USERS_BY_ID(userId));
+      return response.data!;
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      throw error;
+    }
+  },
+
+  // Suspend/Activate user
+  toggleUserStatus: async (userId: string, suspend: boolean) => {
+    try {
+      const response = await apiClient.put(`${API_ENDPOINTS.ADMIN.USERS_BY_ID(userId)}/status`, {
+        suspended: suspend
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      throw error;
+    }
+  },
+
+  // Update user role
+  updateUserRole: async (userId: string, role: string) => {
+    try {
+      const response = await apiClient.put(`${API_ENDPOINTS.ADMIN.USERS_BY_ID(userId)}/role`, {
+        role
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      throw error;
+    }
+  },
+
   // Get all products
   getAllProducts: async (): Promise<FarmerProduct[]> => {
     try {
@@ -25,6 +62,20 @@ export const adminService = {
     }
   },
 
+  // Approve/Reject product
+  moderateProduct: async (productId: string, action: 'approve' | 'reject', reason?: string) => {
+    try {
+      const response = await apiClient.put(`${API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId)}/moderate`, {
+        action,
+        reason
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error moderating product:', error);
+      throw error;
+    }
+  },
+
   // Get all orders
   getAllOrders: async (): Promise<FarmerOrder[]> => {
     try {
@@ -32,6 +83,20 @@ export const adminService = {
       return response.data!;
     } catch (error) {
       console.error('Error fetching orders:', error);
+      throw error;
+    }
+  },
+
+  // Resolve order dispute
+  resolveDispute: async (orderId: string, resolution: string, refundAmount?: number) => {
+    try {
+      const response = await apiClient.put(`${API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId)}/dispute`, {
+        resolution,
+        refundAmount
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error resolving dispute:', error);
       throw error;
     }
   },
@@ -65,6 +130,39 @@ export const adminService = {
       return response.data;
     } catch (error) {
       console.error('Error deleting order:', error);
+      throw error;
+    }
+  },
+
+  // Get system analytics
+  getSystemAnalytics: async () => {
+    try {
+      const response = await apiClient.get('/admin/analytics');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+      throw error;
+    }
+  },
+
+  // Get transaction monitoring data
+  getTransactionMonitoring: async () => {
+    try {
+      const response = await apiClient.get('/admin/transactions');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      throw error;
+    }
+  },
+
+  // Update system configuration
+  updateSystemConfig: async (config: Record<string, any>) => {
+    try {
+      const response = await apiClient.put('/admin/config', config);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating system config:', error);
       throw error;
     }
   },
