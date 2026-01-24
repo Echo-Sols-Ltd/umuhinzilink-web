@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/typography';
 import { Moon, Sun, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -23,9 +24,11 @@ export function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2 text-xl font-bold text-green-600">
+            <Link href="/" className="flex items-center gap-2">
               <img src="/favicon.png" alt="UmuhinziLink Logo" className="h-8 w-8" />
-              UmuhinziLink
+              <Text variant="large" weight="bold" color="primary" as="span">
+                UmuhinziLink
+              </Text>
             </Link>
           </div>
 
@@ -33,33 +36,43 @@ export function Header() {
           <nav className="hidden md:flex items-center space-x-8">
             <button
               onClick={() => scrollToSection('home')}
-              className="text-sm font-medium text-foreground hover:text-green-600 transition-colors"
+              className="transition-colors hover:text-green-600"
             >
-              Home
+              <Text variant="label" color="default" as="span">
+                Home
+              </Text>
             </button>
             <button
               onClick={() => scrollToSection('features')}
-              className="text-sm font-medium text-foreground hover:text-green-600 transition-colors"
+              className="transition-colors hover:text-green-600"
             >
-              Features
+              <Text variant="label" color="default" as="span">
+                Features
+              </Text>
             </button>
             <button
               onClick={() => scrollToSection('agribusiness')}
-              className="text-sm font-medium text-foreground hover:text-green-600 transition-colors"
+              className="transition-colors hover:text-green-600"
             >
-              Agribusiness
+              <Text variant="label" color="default" as="span">
+                Agribusiness
+              </Text>
             </button>
             <button
               onClick={() => scrollToSection('lenders')}
-              className="text-sm font-medium text-foreground hover:text-green-600 transition-colors"
+              className="transition-colors hover:text-green-600"
             >
-              Lenders
+              <Text variant="label" color="default" as="span">
+                Lenders
+              </Text>
             </button>
             <button
               onClick={() => scrollToSection('contact')}
-              className="text-sm font-medium text-foreground hover:text-green-600 transition-colors"
+              className="transition-colors hover:text-green-600"
             >
-              Contact Us
+              <Text variant="label" color="default" as="span">
+                Contact Us
+              </Text>
             </button>
           </nav>
 
@@ -75,7 +88,7 @@ export function Header() {
             </Button>
 
             <Link href="/auth/signin">
-              <Button className="hidden md:inline-flex bg-green-600 hover:bg-green-700 text-white">
+              <Button className="hidden md:inline-flex">
                 Get Started
               </Button>
             </Link>
@@ -98,37 +111,47 @@ export function Header() {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-border/40">
               <button
                 onClick={() => scrollToSection('home')}
-                className="block px-3 py-2 text-base font-medium text-foreground hover:text-green-600 transition-colors"
+                className="block px-3 py-2 transition-colors hover:text-green-600"
               >
-                Home
+                <Text variant="body" color="default" as="span">
+                  Home
+                </Text>
               </button>
               <button
                 onClick={() => scrollToSection('features')}
-                className="block px-3 py-2 text-base font-medium text-foreground hover:text-green-600 transition-colors"
+                className="block px-3 py-2 transition-colors hover:text-green-600"
               >
-                Features
+                <Text variant="body" color="default" as="span">
+                  Features
+                </Text>
               </button>
               <button
                 onClick={() => scrollToSection('agribusiness')}
-                className="block px-3 py-2 text-base font-medium text-foreground hover:text-green-600 transition-colors"
+                className="block px-3 py-2 transition-colors hover:text-green-600"
               >
-                Agribusiness
+                <Text variant="body" color="default" as="span">
+                  Agribusiness
+                </Text>
               </button>
               <button
                 onClick={() => scrollToSection('lenders')}
-                className="block px-3 py-2 text-base font-medium text-foreground hover:text-green-600 transition-colors"
+                className="block px-3 py-2 transition-colors hover:text-green-600"
               >
-                Lenders
+                <Text variant="body" color="default" as="span">
+                  Lenders
+                </Text>
               </button>
               <button
                 onClick={() => scrollToSection('contact')}
-                className="block px-3 py-2 text-base font-medium text-foreground hover:text-green-600 transition-colors"
+                className="block px-3 py-2 transition-colors hover:text-green-600"
               >
-                Contact Us
+                <Text variant="body" color="default" as="span">
+                  Contact Us
+                </Text>
               </button>
               <div className="px-3 py-2">
                 <Link href="/auth/signin">
-                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                  <Button className="w-full">
                     Get Started
                   </Button>
                 </Link>

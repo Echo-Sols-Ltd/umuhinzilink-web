@@ -1,0 +1,537 @@
+/* ===== ENHANCED TYPOGRAPHY SYSTEM ===== */
+
+/* Typography Base Styles */
+.typography-base {
+  font-family: var(--font-primary);
+  line-height: var(--leading-normal);
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ===== HEADING STYLES ===== */
+
+/* Display Heading - Hero sections */
+.typography-display {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: var(--font-extrabold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: hsl(var(--foreground));
+}
+
+/* H1 - Page titles */
+.typography-h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: hsl(var(--foreground));
+}
+
+/* H2 - Section headings */
+.typography-h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: hsl(var(--foreground));
+}
+
+/* H3 - Subsection headings */
+.typography-h3 {
+  font-size: clamp(1.25rem, 2.5vw, 1.875rem);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: hsl(var(--foreground));
+}
+
+/* H4 - Component headings */
+.typography-h4 {
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: hsl(var(--foreground));
+}
+
+/* H5 - Card headings */
+.typography-h5 {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-snug);
+  color: hsl(var(--foreground));
+}
+
+/* H6 - Small headings */
+.typography-h6 {
+  font-size: clamp(0.875rem, 1.25vw, 1.125rem);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+  color: hsl(var(--foreground));
+}
+
+/* ===== BODY TEXT STYLES ===== */
+
+/* Lead text - Introductory paragraphs */
+.typography-lead {
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-relaxed);
+  color: hsl(var(--muted-foreground));
+}
+
+/* Body text - Default paragraph text */
+.typography-body {
+  font-size: 1rem;
+  font-weight: var(--font-normal);
+  line-height: var(--leading-relaxed);
+  color: hsl(var(--foreground));
+}
+
+/* Body large - Emphasized paragraphs */
+.typography-body-lg {
+  font-size: 1.125rem;
+  font-weight: var(--font-normal);
+  line-height: var(--leading-relaxed);
+  color: hsl(var(--foreground));
+}
+
+/* Body small - Secondary text */
+.typography-body-sm {
+  font-size: 0.875rem;
+  font-weight: var(--font-normal);
+  line-height: var(--leading-normal);
+  color: hsl(var(--foreground));
+}
+
+/* Caption - Image captions, footnotes */
+.typography-caption {
+  font-size: 0.75rem;
+  font-weight: var(--font-normal);
+  line-height: var(--leading-normal);
+  color: hsl(var(--muted-foreground));
+}
+
+/* Label - Form labels, UI labels */
+.typography-label {
+  font-size: 0.875rem;
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+  color: hsl(var(--foreground));
+}
+
+/* Overline - Category labels, section markers */
+.typography-overline {
+  font-size: 0.75rem;
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Code - Inline code */
+.typography-code {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: var(--font-normal);
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--radius-sm);
+}
+
+/* ===== SEMANTIC TEXT STYLES ===== */
+
+/* Success text */
+.typography-success {
+  color: var(--success);
+}
+
+/* Warning text */
+.typography-warning {
+  color: var(--warning);
+}
+
+/* Error text */
+.typography-error {
+  color: var(--error);
+}
+
+/* Info text */
+.typography-info {
+  color: var(--info);
+}
+
+/* Primary text */
+.typography-primary {
+  color: var(--primary-green);
+}
+
+/* Muted text */
+.typography-muted {
+  color: hsl(var(--muted-foreground));
+}
+
+/* ===== GRADIENT TEXT STYLES ===== */
+
+.typography-gradient-primary {
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.typography-gradient-success {
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.typography-gradient-info {
+  background: linear-gradient(135deg, var(--info) 0%, var(--info-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.typography-gradient-rainbow {
+  background: linear-gradient(135deg, 
+    var(--primary-green) 0%, 
+    var(--info) 25%, 
+    var(--warning) 50%, 
+    var(--error) 75%, 
+    var(--primary-green) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ===== TEXT ALIGNMENT UTILITIES ===== */
+
+.typography-left {
+  text-align: left;
+}
+
+.typography-center {
+  text-align: center;
+}
+
+.typography-right {
+  text-align: right;
+}
+
+.typography-justify {
+  text-align: justify;
+}
+
+/* ===== FONT WEIGHT UTILITIES ===== */
+
+.typography-light {
+  font-weight: var(--font-light);
+}
+
+.typography-normal {
+  font-weight: var(--font-normal);
+}
+
+.typography-medium {
+  font-weight: var(--font-medium);
+}
+
+.typography-semibold {
+  font-weight: var(--font-semibold);
+}
+
+.typography-bold {
+  font-weight: var(--font-bold);
+}
+
+.typography-extrabold {
+  font-weight: var(--font-extrabold);
+}
+
+/* ===== LINE HEIGHT UTILITIES ===== */
+
+.typography-leading-tight {
+  line-height: var(--leading-tight);
+}
+
+.typography-leading-snug {
+  line-height: var(--leading-snug);
+}
+
+.typography-leading-normal {
+  line-height: var(--leading-normal);
+}
+
+.typography-leading-relaxed {
+  line-height: var(--leading-relaxed);
+}
+
+.typography-leading-loose {
+  line-height: var(--leading-loose);
+}
+
+/* ===== LETTER SPACING UTILITIES ===== */
+
+.typography-tracking-tighter {
+  letter-spacing: -0.05em;
+}
+
+.typography-tracking-tight {
+  letter-spacing: -0.025em;
+}
+
+.typography-tracking-normal {
+  letter-spacing: 0em;
+}
+
+.typography-tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.typography-tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+.typography-tracking-widest {
+  letter-spacing: 0.1em;
+}
+
+/* ===== TEXT TRANSFORM UTILITIES ===== */
+
+.typography-uppercase {
+  text-transform: uppercase;
+}
+
+.typography-lowercase {
+  text-transform: lowercase;
+}
+
+.typography-capitalize {
+  text-transform: capitalize;
+}
+
+.typography-normal-case {
+  text-transform: none;
+}
+
+/* ===== TEXT DECORATION UTILITIES ===== */
+
+.typography-underline {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 0.125em;
+}
+
+.typography-line-through {
+  text-decoration: line-through;
+}
+
+.typography-no-underline {
+  text-decoration: none;
+}
+
+/* ===== TRUNCATION UTILITIES ===== */
+
+.typography-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.typography-truncate-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.typography-truncate-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.typography-truncate-4 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .typography-muted {
+    color: hsl(var(--foreground));
+  }
+  
+  .typography-gradient-primary,
+  .typography-gradient-success,
+  .typography-gradient-info,
+  .typography-gradient-rainbow {
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
+    color: hsl(var(--foreground));
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .typography-gradient-primary,
+  .typography-gradient-success,
+  .typography-gradient-info,
+  .typography-gradient-rainbow {
+    animation: none;
+  }
+}
+
+/* ===== RESPONSIVE TYPOGRAPHY ===== */
+
+/* Mobile-first responsive typography */
+@media (max-width: 640px) {
+  .typography-display {
+    font-size: 2.5rem;
+    line-height: 1.1;
+  }
+  
+  .typography-h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  
+  .typography-h2 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  
+  .typography-lead {
+    font-size: 1.125rem;
+  }
+  
+  .typography-body {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .typography-display {
+    font-size: 3.5rem;
+  }
+  
+  .typography-h1 {
+    font-size: 2.5rem;
+  }
+  
+  .typography-h2 {
+    font-size: 2rem;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1025px) {
+  .typography-display {
+    font-size: 4.5rem;
+  }
+  
+  .typography-h1 {
+    font-size: 3rem;
+  }
+  
+  .typography-h2 {
+    font-size: 2.25rem;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+
+@media print {
+  .typography-display,
+  .typography-h1,
+  .typography-h2,
+  .typography-h3,
+  .typography-h4,
+  .typography-h5,
+  .typography-h6 {
+    color: black !important;
+    page-break-after: avoid;
+  }
+  
+  .typography-body,
+  .typography-body-lg,
+  .typography-body-sm,
+  .typography-lead {
+    color: black !important;
+  }
+  
+  .typography-gradient-primary,
+  .typography-gradient-success,
+  .typography-gradient-info,
+  .typography-gradient-rainbow {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: black !important;
+    background-clip: unset !important;
+    color: black !important;
+  }
+}
+
+/* ===== DARK MODE ADJUSTMENTS ===== */
+
+.dark .typography-code {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+/* ===== FOCUS STYLES FOR ACCESSIBILITY ===== */
+
+.typography-focusable:focus {
+  outline: 2px solid var(--primary-green);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ===== SELECTION STYLES ===== */
+
+.typography-base ::selection,
+.typography-display::selection,
+.typography-h1::selection,
+.typography-h2::selection,
+.typography-h3::selection,
+.typography-h4::selection,
+.typography-h5::selection,
+.typography-h6::selection,
+.typography-body::selection,
+.typography-lead::selection {
+  background-color: var(--primary-green-200);
+  color: var(--primary-green-900);
+}
+
+.dark .typography-base ::selection,
+.dark .typography-display::selection,
+.dark .typography-h1::selection,
+.dark .typography-h2::selection,
+.dark .typography-h3::selection,
+.dark .typography-h4::selection,
+.dark .typography-h5::selection,
+.dark .typography-h6::selection,
+.dark .typography-body::selection,
+.dark .typography-lead::selection {
+  background-color: var(--primary-green-800);
+  color: var(--primary-green-100);
+}

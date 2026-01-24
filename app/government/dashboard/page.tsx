@@ -54,6 +54,12 @@ import GovernmentSidebar from '@/components/governement/Navbar';
 import { GovernmentPages } from '@/types';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 import { LoadingOverlay, CardSkeleton, EmptyState } from '@/components/ui/loading-states';
+import { 
+  DashboardEmptyState,
+  OrdersEmptyState,
+  ProductListEmptyState,
+  AnalyticsEmptyState 
+} from '@/components/ui/enhanced-empty-states';
 import { ErrorDisplay, useErrorHandler } from '@/components/ui/error-handler';
 
 // Colors for charts
@@ -497,10 +503,10 @@ function Dashboard() {
                   </Button>
                 </div>
                 {recentOrders.length === 0 ? (
-                  <EmptyState
-                    title="No recent orders"
-                    description="Orders will appear here when they are placed"
-                    icon={<ShoppingCart className="w-12 h-12" />}
+                  <OrdersEmptyState
+                    userRole="buyer"
+                    size="sm"
+                    showBackground={false}
                   />
                 ) : (
                   <div className="space-y-3">
@@ -678,10 +684,10 @@ function Dashboard() {
                     {filteredProducts.length === 0 ? (
                       <tr>
                         <td colSpan={8} className="px-4 py-8">
-                          <EmptyState
-                            title="No products found"
-                            description="Products will appear here when they are added to the marketplace"
-                            icon={<Package className="w-12 h-12" />}
+                          <ProductListEmptyState
+                            userRole="farmer"
+                            size="sm"
+                            showBackground={false}
                           />
                         </td>
                       </tr>

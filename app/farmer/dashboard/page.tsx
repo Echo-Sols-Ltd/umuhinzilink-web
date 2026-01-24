@@ -33,6 +33,11 @@ import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
+import { 
+  ProductListEmptyState, 
+  DashboardEmptyState,
+  OrdersEmptyState 
+} from '@/components/ui/enhanced-empty-states';
 
 
 
@@ -531,8 +536,13 @@ function Dashboard() {
                       </tr>
                     ) : recentProducts.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
-                          You haven&apos;t added any products yet.
+                        <td colSpan={7} className="px-4 py-8">
+                          <ProductListEmptyState
+                            userRole="farmer"
+                            onAddProduct={() => window.location.href = '/farmer/products'}
+                            size="sm"
+                            showBackground={false}
+                          />
                         </td>
                       </tr>
                     ) : (
@@ -614,9 +624,14 @@ function Dashboard() {
                 ) : requestsError ? (
                   <p className="text-sm text-red-500">{requestsError}</p>
                 ) : requests.length === 0 ? (
-                  <p className="text-sm text-gray-500">
-                    No input requests yet. Create one to request seeds, fertilizer or equipment.
-                  </p>
+                  <div className="py-4">
+                    <OrdersEmptyState
+                      userRole="farmer"
+                      onBrowseProducts={() => window.location.href = '/farmer/requests'}
+                      size="sm"
+                      showBackground={false}
+                    />
+                  </div>
                 ) : (
                   requests.slice(0, 5).map(request => (
                     <div key={request.id} className="flex items-center justify-between">

@@ -1,6 +1,7 @@
 'use client';
 
 import { Brain, Signal, ShoppingBag, CreditCard, Languages, ClipboardList } from 'lucide-react';
+import { Heading, Text, List, ListItem, TypographySection } from '@/components/ui/typography';
 
 export default function PlatformFeatures() {
   const features = [
@@ -67,24 +68,40 @@ export default function PlatformFeatures() {
   return (
     <section className="py-12 bg-green-50">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-bold text-gray-900">Platform Features</h2>
-        <p className="text-center text-gray-600 mt-2">Comprehensive tools for modern agriculture</p>
+        <TypographySection spacing="normal" className="text-center mb-10">
+          <Heading variant="h2" className="mb-2">
+            Platform Features
+          </Heading>
+          <Text variant="body" color="muted">
+            Comprehensive tools for modern agriculture
+          </Text>
+        </TypographySection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, idx) => (
-            <div key={idx} className={`bg-white rounded-lg shadow-sm p-6`}>
-              <div className="flex items-center space-x-3">
-                <div className={`${feature.iconBg} rounded-full p-3`}>{feature.icon}</div>
-                <h3 className="text-lg font-semibold text-gray-900">{feature.title}</h3>
+            <div key={idx} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className={`${feature.iconBg} rounded-full p-3 flex-shrink-0`}>
+                  {feature.icon}
+                </div>
+                <Heading variant="h5" className="flex-1">
+                  {feature.title}
+                </Heading>
               </div>
-              <p className="text-gray-700 text-sm mt-3">{feature.description}</p>
-              <ul className="mt-3 space-y-1">
+              
+              <Text variant="body-sm" color="secondary" className="mb-4">
+                {feature.description}
+              </Text>
+              
+              <List variant="none" spacing="tight">
                 {feature.points.map((point, i) => (
-                  <li key={i} className="text-gray-600 text-sm">
-                    • {point}
-                  </li>
+                  <ListItem key={i}>
+                    <Text variant="body-sm" color="muted">
+                      • {point}
+                    </Text>
+                  </ListItem>
                 ))}
-              </ul>
+              </List>
             </div>
           ))}
         </div>

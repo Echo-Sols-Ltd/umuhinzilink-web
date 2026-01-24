@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from 'next'; // Add Viewport import
 import { Poppins } from 'next/font/google';
 import { AppProviders } from '@/contexts/AppProviders';
 import ModalToastContainer from '@/components/ui/modal-toast-container';
+import { NotificationProvider } from '@/components/ui/enhanced-notification-system';
+import { NotificationStackProvider } from '@/components/ui/notification-stack';
+import { ErrorHandlerProvider } from '@/components/ui/enhanced-error-handler';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { GlobalNetworkIndicator } from '@/components/ui/network-indicator';
 import { SkipLink } from '@/components/ui/accessibility';
@@ -36,11 +39,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <OfflineIndicator />
         <ErrorBoundary>
           <AppProviders>
-            <GlobalNetworkIndicator />
-            <main id="main-content" tabIndex={-1}>
-              {children}
-            </main>
-            <ModalToastContainer />
+            <NotificationProvider>
+              <NotificationStackProvider maxVisible={5} position="top-right">
+                <ErrorHandlerProvider>
+                  <GlobalNetworkIndicator />
+                  <main id="main-content" tabIndex={-1}>
+                    {children}
+                  </main>
+                  <ModalToastContainer />
+                </ErrorHandlerProvider>
+              </NotificationStackProvider>
+            </NotificationProvider>
           </AppProviders>
         </ErrorBoundary>
       </body>

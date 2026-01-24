@@ -29,6 +29,11 @@ import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import OrderManagementDashboard from '@/components/orders/OrderManagementDashboard';
 import useOrderAction from '@/hooks/useOrderAction';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
+import { 
+  ProductListEmptyState, 
+  OrdersEmptyState,
+  SearchEmptyState 
+} from '@/components/ui/enhanced-empty-states';
 
 
 const Logo = () => (
@@ -115,8 +120,12 @@ function BuyerDashboardComponent() {
                 </div>
               )}
               {!productsLoading && !productsError && recommendedProducts.length === 0 && (
-                <div className="col-span-full text-center text-gray-500 py-6">
-                  No produce available at the moment.
+                <div className="col-span-full py-8">
+                  <ProductListEmptyState
+                    userRole="buyer"
+                    onAddProduct={() => window.location.href = '/buyer/products'}
+                    size="sm"
+                  />
                 </div>
               )}
               {!productsLoading &&
@@ -209,8 +218,13 @@ function BuyerDashboardComponent() {
                   )}
                   {!ordersLoading && !ordersError && orders.length === 0 && (
                     <tr>
-                      <td colSpan={9} className="py-6 text-center text-gray-500">
-                        You have no orders yet.
+                      <td colSpan={9} className="py-8">
+                        <OrdersEmptyState
+                          userRole="buyer"
+                          onBrowseProducts={() => window.location.href = '/buyer/products'}
+                          size="sm"
+                          showBackground={false}
+                        />
                       </td>
                     </tr>
                   )}

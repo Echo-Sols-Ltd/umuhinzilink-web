@@ -200,18 +200,18 @@ export function EmptyState({
   return (
     <div className={`text-center py-12 ${className}`}>
       {icon && (
-        <div className="w-16 h-16 text-gray-300 mx-auto mb-4">
+        <div className="w-16 h-16 text-gray-300 mx-auto mb-4 flex items-center justify-center">
           {icon}
         </div>
       )}
       <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
       {description && (
-        <p className="text-gray-500 mb-6 max-w-sm mx-auto">{description}</p>
+        <p className="text-gray-500 mb-6 max-w-sm mx-auto leading-relaxed">{description}</p>
       )}
       {action && (
         <button
           onClick={action.onClick}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
         >
           {action.label}
         </button>

@@ -1,5 +1,7 @@
 'use client';
 
+import { Heading, Text, List, ListItem, TypographySection } from '@/components/ui/typography';
+
 const LucideIcons = {
   Phone: (
     <svg
@@ -158,23 +160,31 @@ export default function WhoWeServe() {
   return (
     <section className="py-12 bg-white">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-bold text-gray-900">Who We Serve</h2>
-        <p className="text-center text-gray-600 mt-2">
-          Three interconnected communities driving agricultural growth
-        </p>
+        <TypographySection spacing="normal" className="text-center mb-8">
+          <Heading variant="h2" className="mb-2">
+            Who We Serve
+          </Heading>
+          <Text variant="body" color="muted">
+            Three interconnected communities driving agricultural growth
+          </Text>
+        </TypographySection>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {data.map(group => (
-            <div key={group.title} className={`${group.color} rounded-lg shadow-sm p-6`}>
-              <h3 className="text-lg font-semibold text-gray-900">{group.title}</h3>
-              <ul className="mt-4 space-y-3">
+            <div key={group.title} className={`${group.color} rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow`}>
+              <Heading variant="h4" className="mb-4">
+                {group.title}
+              </Heading>
+              
+              <List variant="none" spacing="normal">
                 {group.items.map((item, idx) => (
-                  <li key={idx} className="flex items-start space-x-3">
-                    <span className={`${group.iconColor}`}>{item.icon}</span>
-                    <span className="text-gray-700 text-sm">{item.text}</span>
-                  </li>
+                  <ListItem key={idx} icon={<span className={group.iconColor}>{item.icon}</span>}>
+                    <Text variant="body-sm" color="secondary">
+                      {item.text}
+                    </Text>
+                  </ListItem>
                 ))}
-              </ul>
+              </List>
             </div>
           ))}
         </div>
