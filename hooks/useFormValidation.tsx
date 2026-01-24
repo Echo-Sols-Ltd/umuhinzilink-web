@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-import { validateForm, ValidationResult, FormField } from '@/lib/validation';
+import { validateForm, ValidationResult, type FormField } from '@/lib/validation';
 
 interface UseFormValidationOptions {
   validateOnChange?: boolean;

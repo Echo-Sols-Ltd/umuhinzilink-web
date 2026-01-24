@@ -197,9 +197,9 @@ function Dashboard() {
   const recentOrders = useMemo(() => {
     return orders?.slice(0, 5).map(order => ({
       id: order.id,
-      product: order.productName || 'Unknown Product',
-      buyer: order.buyerName || 'Unknown Buyer',
-      amount: order.totalAmount || 0,
+      product: order.product?.name || 'Unknown Product',
+      buyer: order.buyer?.names || 'Unknown Buyer',
+      amount: order.totalPrice || 0,
       status: order.status,
       createdAt: order.createdAt,
     })) || [];
@@ -226,8 +226,8 @@ function Dashboard() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       products = products.filter(p =>
-        p.productName?.toLowerCase().includes(query) ||
-        p.category?.toLowerCase().includes(query)
+        p.name?.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query)
       );
     }
 
@@ -486,13 +486,6 @@ function Dashboard() {
               </div>
             </div>
 
-export default function GovernmentDashboard() {
-  return (
-    <GovernmentGuard>
-      <Dashboard />
-    </GovernmentGuard>
-  );
-}
             {/* Recent Orders and Product Status */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Recent Orders */}
@@ -696,7 +689,7 @@ export default function GovernmentDashboard() {
                       filteredProducts.slice(0, 10).map((product, index) => (
                         <tr key={`${product.type}-${product.id || index}`} className="border-b border-gray-200 hover:bg-gray-50">
                           <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {product.productName || 'Unknown Product'}
+                            {product.name || 'Unknown Product'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                             {product.category || 'Uncategorized'}
@@ -720,7 +713,7 @@ export default function GovernmentDashboard() {
                             </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product.pricePerUnit ? `${formatNumber(product.pricePerUnit)} RWF` : 'N/A'}
+                            {product.unitPrice ? `${formatNumber(product.unitPrice)} RWF` : 'N/A'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                             {product.quantity ? `${product.quantity} ${product.measurementUnit || 'units'}` : 'N/A'}
@@ -729,7 +722,8 @@ export default function GovernmentDashboard() {
                             {product.location || 'Unknown'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product.createdAt ? new Date(product.createdAt).toLocaleDateString() : 'N/A'}
+                            {(product as any).createdAt || (product as any).updatedAt ? 
+                              new Date((product as any).createdAt || (product as any).updatedAt).toLocaleDateString() : 'N/A'}
                           </td>
                         </tr>
                       ))

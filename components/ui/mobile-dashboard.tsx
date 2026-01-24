@@ -97,4 +97,109 @@ export function MobileDashboard({
         <MobileOptimizedCard 
           title="Recent Products"
           actions={
-            <TouchOptimizedB
+            <TouchOptimizedButton
+              onClick={onViewProducts}
+              variant="outline"
+              size="sm"
+            >
+              View All
+            </TouchOptimizedButton>
+          }
+        >
+          <div className="space-y-3">
+            {recentProducts.slice(0, 3).map((product, index) => (
+              <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <Package className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {product.name || 'Product Name'}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {product.quantity || 0} {product.measurementUnit || 'units'}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900">
+                    {product.unitPrice || 0} RWF
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {product.productStatus || 'Available'}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </MobileOptimizedCard>
+      )}
+
+      {/* Recent Orders */}
+      {recentOrders.length > 0 && (
+        <MobileOptimizedCard 
+          title="Recent Orders"
+          actions={
+            <TouchOptimizedButton
+              onClick={onViewOrders}
+              variant="outline"
+              size="sm"
+            >
+              View All
+            </TouchOptimizedButton>
+          }
+        >
+          <div className="space-y-3">
+            {recentOrders.slice(0, 3).map((order, index) => (
+              <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <ShoppingCart className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    Order #{order.id || 'N/A'}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {order.quantity || 0} items
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900">
+                    {order.totalPrice || 0} RWF
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {order.status || 'Pending'}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </MobileOptimizedCard>
+      )}
+    </div>
+  );
+}
+
+interface MobileStatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+  color: string;
+}
+
+function MobileStatCard({ title, value, icon, color }: MobileStatCardProps) {
+  return (
+    <MobileOptimizedCard title="" className="p-0">
+      <div className="p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-600">{title}</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+          </div>
+          <div className={`p-3 rounded-lg ${color}`}>
+            {icon}
+          </div>
+        </div>
+      </div>
+    </MobileOptimizedCard>
+  );
+}

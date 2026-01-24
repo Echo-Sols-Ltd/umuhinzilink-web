@@ -187,7 +187,7 @@ export function AccessibleFormField({
         'aria-describedby': [helpId, errorId].filter(Boolean).join(' ') || undefined,
         'aria-invalid': error ? 'true' : undefined,
         required,
-      })}
+      } as any)}
       
       {help && (
         <p id={helpId} className="text-sm text-gray-600">
