@@ -2,18 +2,26 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast-new';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory } from '@/types';
 import useProductAction from '@/hooks/useProductAction';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 function AddProduce() {
   const router = useRouter();
   const { user } = useAuth();
-  const { createFarmerProduct, loading } = useProductAction();
+  const { createFarmerProduct } = useProductAction();
+  const { toast } = useToast();
   const [formData, setFormData] = useState<FarmerProductRequest>({
     name: RwandaCrop.AVOCADO,
     quantity: 0,
@@ -36,6 +44,14 @@ function AddProduce() {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle select changes
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData({
+      ...formData,
+      [name]: value,
     });
   };
 
@@ -64,20 +80,27 @@ function AddProduce() {
       toast({
         title: 'Authentication Required',
         description: 'Please sign in again to add produce.',
-        variant: 'destructive',
+        variant: 'error',
       });
       router.push('/auth/signin');
       return;
     }
 
     if (!formData.name.trim()) {
-      toast({ title: 'Missing name', description: 'Provide a product name.' });
+      toast({ 
+        title: 'Missing name', 
+        description: 'Provide a product name.',
+        variant: 'error'
+      });
       return;
     }
 
-
     if (!imageFile) {
-      toast({ title: 'Missing product photo', description: 'Provide a product photo.' });
+      toast({ 
+        title: 'Missing product photo', 
+        description: 'Provide a product photo.',
+        variant: 'error'
+      });
       return;
     }
 
@@ -92,12 +115,12 @@ function AddProduce() {
         unitPrice: Number(formData.unitPrice) || 0,
         image: previewUrl || '',
         quantity: Number(formData.quantity) || 0,
-        measurementUnit: formData.measurementUnit || 'UNIT',
-        category: formData.category || 'OTHER',
-        harvestDate: formData.harvestDate,
+        measurementUnit: formData.measurementUnit as MeasurementUnit,
+        category: formData.category as RwandaCropCategory,
+        harvestDate: formData.harvestDate ? new Date(formData.harvestDate).toISOString() : '',
         location: formData.location,
         isNegotiable: formData.isNegotiable,
-        certification: 'NONE' as any,
+        certification: formData.certification as CertificationType,
       };
 
       await createFarmerProduct(productData,imageFile);
@@ -105,6 +128,7 @@ function AddProduce() {
       toast({
         title: 'Produce Added',
         description: 'Your product has been added to your inventory.',
+        variant: 'success',
       });
 
       router.push('/farmer/products');
@@ -114,7 +138,7 @@ function AddProduce() {
       toast({
         title: 'Unable to add produce',
         description: message,
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setSubmitting(false);
@@ -147,26 +171,33 @@ function AddProduce() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Product Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="e.g. Premium Maize"
-                  required
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                />
+                <Select value={formData.name} onValueChange={(value) => handleSelectChange('name', value)}>
+                  <SelectTrigger className="mt-1 w-full">
+                    <SelectValue placeholder="Select a crop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(RwandaCrop).map((crop) => (
+                      <SelectItem key={crop} value={crop}>
+                        {crop.replace(/_/g, ' ')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Category</label>
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  placeholder="e.g. CEREALS"
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                />
+                <Select value={formData.category} onValueChange={(value) => handleSelectChange('category', value)}>
+                  <SelectTrigger className="mt-1 w-full">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(RwandaCropCategory).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category.replace(/_/g, ' ')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Quantity</label>
@@ -183,14 +214,18 @@ function AddProduce() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Measurement Unit</label>
-                <input
-                  type="text"
-                  name="measurementUnit"
-                  value={formData.measurementUnit}
-                  onChange={handleChange}
-                  placeholder="e.g. KG"
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                />
+                <Select value={formData.measurementUnit} onValueChange={(value) => handleSelectChange('measurementUnit', value)}>
+                  <SelectTrigger className="mt-1 w-full">
+                    <SelectValue placeholder="Select a unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(MeasurementUnit).map((unit) => (
+                      <SelectItem key={unit} value={unit}>
+                        {unit}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Unit Price (RWF)</label>
@@ -226,6 +261,21 @@ function AddProduce() {
                   onChange={handleChange}
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Certification</label>
+                <Select value={formData.certification} onValueChange={(value) => handleSelectChange('certification', value)}>
+                  <SelectTrigger className="mt-1 w-full">
+                    <SelectValue placeholder="Select certification" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(CertificationType).map((cert) => (
+                      <SelectItem key={cert} value={cert}>
+                        {cert.replace(/_/g, ' ')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input

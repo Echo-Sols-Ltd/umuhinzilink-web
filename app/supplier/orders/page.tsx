@@ -21,134 +21,38 @@ import { useRouter } from 'next/navigation';
 
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSupplier } from '@/contexts/SupplierContext';
+import { useSupplierAction } from '@/hooks/useSupplierAction';
 import SupplierSidebar from '@/components/supplier/Navbar';
 import { SupplierPages } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
-
 
 function OrdersPageComponent() {
   const router = useRouter();
   const [openActionDropdown, setOpenActionDropdown] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();
+  const { orders, loading, error, refreshOrders } = useSupplier();
+  const supplierActions = useSupplierAction();
 
   const handleLogout = () => {
     logout();
   };
 
-  // Orders data
-  const ordersData = [
-    {
-      id: '#001',
-      customer: 'John Doe',
-      address: '123 Main St, Kigali',
-      date: 'Jan 15, 2024',
-      product: 'NPK Fertilizer (50kg)',
-      amount: '$125.00',
-      status: 'Delivered',
-      statusColor: 'green',
-    },
-    {
-      id: '#002',
-      customer: 'Jane Smith',
-      address: '456 Oak Ave, Kigali',
-      date: 'Jan 14, 2024',
-      product: 'Corn Seeds (25kg)',
-      amount: '$87.50',
-      status: 'Pending',
-      statusColor: 'yellow',
-    },
-    {
-      id: '#003',
-      customer: 'Michael Brown',
-      address: '789 Pine Rd, Kigali',
-      date: 'Jan 13, 2024',
-      product: 'Organic Pesticide (10L)',
-      amount: '$65.00',
-      status: 'Processing',
-      statusColor: 'blue',
-    },
-    {
-      id: '#004',
-      customer: 'Sarah Wilson',
-      address: '321 Elm St, Kigali',
-      date: 'Jan 12, 2024',
-      product: 'Wheat Seeds (75kg)',
-      amount: '$195.00',
-      status: 'Delivered',
-      statusColor: 'green',
-    },
-    {
-      id: '#005',
-      customer: 'David Johnson',
-      address: '654 Maple Dr, Kigali',
-      date: 'Jan 11, 2024',
-      product: 'Tomato Seeds (5kg)',
-      amount: '$42.50',
-      status: 'Pending',
-      statusColor: 'yellow',
-    },
-    {
-      id: '#006',
-      customer: 'Emily Davis',
-      address: '987 Cedar Ln, Kigali',
-      date: 'Jan 10, 2024',
-      product: 'Organic Fertilizer (100kg)',
-      amount: '$280.00',
-      status: 'Delivered',
-      statusColor: 'green',
-    },
-    {
-      id: '#007',
-      customer: 'Robert Taylor',
-      address: '147 Birch St, Kigali',
-      date: 'Jan 09, 2024',
-      product: 'Rice Seeds (30kg)',
-      amount: '$96.00',
-      status: 'Processing',
-      statusColor: 'blue',
-    },
-    {
-      id: '#008',
-      customer: 'Lisa Anderson',
-      address: '258 Spruce Ave, Kigali',
-      date: 'Jan 08, 2024',
-      product: 'Fungicide (15L)',
-      amount: '$78.00',
-      status: 'Pending',
-      statusColor: 'yellow',
-    },
-    {
-      id: '#009',
-      customer: 'Mark Thompson',
-      address: '369 Willow Rd, Kigali',
-      date: 'Jan 07, 2024',
-      product: 'Herbicide (20L)',
-      amount: '$156.00',
-      status: 'Delivered',
-      statusColor: 'green',
-    },
-    {
-      id: '#010',
-      customer: 'Anna Martinez',
-      address: '741 Poplar St, Kigali',
-      date: 'Jan 06, 2024',
-      product: 'Bean Seeds (40kg)',
-      amount: '$112.00',
-      status: 'Processing',
-      statusColor: 'blue',
-    },
-  ];
-
   // Helper function to get status styling
-  const getStatusStyle = (statusColor: string) => {
-    switch (statusColor) {
-      case 'green':
+  const getStatusStyle = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'completed':
+      case 'delivered':
         return 'bg-green-100 text-green-800';
-      case 'yellow':
+      case 'pending':
+      case 'pending_payment':
         return 'bg-yellow-100 text-yellow-800';
-      case 'blue':
+      case 'processing':
+      case 'paid':
         return 'bg-blue-100 text-blue-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -161,18 +65,29 @@ function OrdersPageComponent() {
     // Add your view logic here
   };
 
-  const handleEditOrder = (orderId: string) => {
-    console.log('Editing order:', orderId);
+  const handleAcceptOrder = async (orderId: string) => {
     setOpenActionDropdown(null);
-    // Add your edit logic here
+    const result = await supplierActions.acceptOrder(orderId);
+    if (result) {
+      refreshOrders();
+    }
   };
 
-  const handleDeleteOrder = (orderId: string) => {
-    console.log('Deleting order:', orderId);
+  const handleRejectOrder = async (orderId: string) => {
     setOpenActionDropdown(null);
-    // Add your delete logic here
-    if (confirm('Are you sure you want to delete this order?')) {
-      // Perform delete action
+    if (confirm('Are you sure you want to reject this order?')) {
+      const result = await supplierActions.rejectOrder(orderId);
+      if (result) {
+        refreshOrders();
+      }
+    }
+  };
+
+  const handleUpdateStatus = async (orderId: string, status: string) => {
+    setOpenActionDropdown(null);
+    const result = await supplierActions.updateOrderStatus(orderId, status);
+    if (result) {
+      refreshOrders();
     }
   };
 
@@ -200,7 +115,7 @@ function OrdersPageComponent() {
         <SupplierSidebar
           activePage={SupplierPages.ORDERS}
           handleLogout={handleLogout}
-          logoutPending={false} // You may want to connect this to a state
+          logoutPending={false}
         />
 
         {/* Main Content */}
@@ -211,7 +126,7 @@ function OrdersPageComponent() {
             <div className="w-1/2 relative">
               <Input
                 type="text"
-                placeholder="Search..."
+                placeholder="Search orders..."
                 className="pl-4 pr-10 h-10 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-3xl"
               />
               <Search
@@ -223,8 +138,11 @@ function OrdersPageComponent() {
             {/* Right Section */}
             <div className="flex items-center gap-6">
               {/* Export Button */}
-              <button className="bg-orange-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors cursor-pointer">
-                Export
+              <button 
+                onClick={refreshOrders}
+                className="bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
+              >
+                Refresh
               </button>
             </div>
           </header>
@@ -233,8 +151,25 @@ function OrdersPageComponent() {
           <div className="mt-16">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-xl font-semibold text-gray-900">Order</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Orders</h1>
+              <div className="text-sm text-gray-600">
+                Total Orders: {orders.length}
+              </div>
             </div>
+
+            {/* Loading State */}
+            {loading && (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <p>Error loading orders: {error}</p>
+              </div>
+            )}
 
             {/* Search and Filters */}
             <div className="flex justify-between items-center mb-4 gap-4">
@@ -259,122 +194,157 @@ function OrdersPageComponent() {
               </div>
             </div>
 
-            {/* Order */}
-            <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50">
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ID</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        CUSTOMER
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        ADDRESS
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        DATE
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        Products
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        Amount
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        STATUS
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        ACTION
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ordersData.map((order, index) => (
-                      <tr
-                        key={order.id}
-                        className={index < ordersData.length - 1 ? 'border-b border-gray-100' : ''}
-                      >
-                        <td className="py-3 px-4 font-medium text-gray-900 text-sm">{order.id}</td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">{order.customer}</td>
-                        <td className="py-3 px-4 text-gray-500 text-sm">{order.address}</td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">{order.date}</td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">{order.product}</td>
-                        <td className="py-3 px-4 text-gray-900 text-sm font-medium">
-                          {order.amount}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span
-                            className={`${getStatusStyle(order.statusColor)} px-2 py-1 rounded-full text-xs font-medium`}
-                          >
-                            {order.status}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 relative">
-                          <div className="flex justify-center" ref={dropdownRef}>
-                            <button
-                              onClick={() => toggleActionDropdown(order.id)}
-                              className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                            >
-                              <MoreVertical size={16} />
-                            </button>
-
-                            {/* Action Dropdown */}
-                            {openActionDropdown === order.id && (
-                              <div className="absolute right-0 top-8 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                                <button
-                                  onClick={() => handleViewOrder(order.id)}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
-                                >
-                                  <Eye size={14} />
-                                  View Details
-                                </button>
-                                <button
-                                  onClick={() => handleEditOrder(order.id)}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
-                                >
-                                  <Edit size={14} />
-                                  Edit Order
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteOrder(order.id)}
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
-                                >
-                                  <Trash2 size={14} />
-                                  Delete Order
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </td>
+            {/* Orders Table */}
+            {!loading && (
+              <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200 bg-gray-50">
+                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ID</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                          CUSTOMER
+                        </th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                          PRODUCT
+                        </th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                          DATE
+                        </th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                          QUANTITY
+                        </th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                          AMOUNT
+                        </th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                          STATUS
+                        </th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                          ACTION
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {orders.length === 0 ? (
+                        <tr>
+                          <td colSpan={8} className="py-12 px-4 text-center text-gray-500">
+                            <div className="flex flex-col items-center">
+                              <ShoppingCart className="w-12 h-12 text-gray-300 mb-4" />
+                              <p className="text-lg font-medium">No orders found</p>
+                              <p className="text-sm">Orders from customers will appear here</p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        orders.map((order, index) => (
+                          <tr
+                            key={order.id}
+                            className={index < orders.length - 1 ? 'border-b border-gray-100' : ''}
+                          >
+                            <td className="py-3 px-4 font-medium text-gray-900 text-sm">
+                              #{order.id.slice(-6)}
+                            </td>
+                            <td className="py-3 px-4 text-gray-900 text-sm">
+                              {order.buyer?.names || 'Unknown Customer'}
+                            </td>
+                            <td className="py-3 px-4 text-gray-900 text-sm">
+                              {order.product?.name || 'Unknown Product'}
+                            </td>
+                            <td className="py-3 px-4 text-gray-900 text-sm">
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </td>
+                            <td className="py-3 px-4 text-gray-900 text-sm">
+                              {order.quantity}
+                            </td>
+                            <td className="py-3 px-4 text-gray-900 text-sm font-medium">
+                              ${order.totalPrice.toFixed(2)}
+                            </td>
+                            <td className="py-3 px-4">
+                              <span
+                                className={`${getStatusStyle(order.status)} px-2 py-1 rounded-full text-xs font-medium`}
+                              >
+                                {order.status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 relative">
+                              <div className="flex justify-center" ref={dropdownRef}>
+                                <button
+                                  onClick={() => toggleActionDropdown(order.id)}
+                                  className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                                >
+                                  <MoreVertical size={16} />
+                                </button>
+
+                                {/* Action Dropdown */}
+                                {openActionDropdown === order.id && (
+                                  <div className="absolute right-0 top-8 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                                    <button
+                                      onClick={() => handleViewOrder(order.id)}
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                                    >
+                                      <Eye size={14} />
+                                      View Details
+                                    </button>
+                                    {order.status === 'PENDING' && (
+                                      <>
+                                        <button
+                                          onClick={() => handleAcceptOrder(order.id)}
+                                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-green-600 hover:bg-green-50 transition-colors text-left"
+                                        >
+                                          <CheckCircle size={14} />
+                                          Accept Order
+                                        </button>
+                                        <button
+                                          onClick={() => handleRejectOrder(order.id)}
+                                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                                        >
+                                          <Trash2 size={14} />
+                                          Reject Order
+                                        </button>
+                                      </>
+                                    )}
+                                    {(order.status === 'ACTIVE' || order.status === 'COMPLETED') && (
+                                      <button
+                                        onClick={() => handleUpdateStatus(order.id, 'COMPLETED')}
+                                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors text-left"
+                                      >
+                                        <CheckCircle size={14} />
+                                        Mark Complete
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Pagination */}
-            <div className="flex justify-between cursor-pointer items-center mt-6">
-              <p className="text-sm text-gray-600">Showing 1 to 10 of 249 results</p>
-              <div className="flex items-center gap-2">
-                <button className="p-2 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
-                  &lt;
-                </button>
-                <button className="bg-green-600 text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">
-                  1
-                </button>
-                <button className="px-3 py-2 text-gray-600 hover:text-gray-900 cursor-pointer transition-colors text-sm">
-                  2
-                </button>
-                <button className="px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors  cursor-pointer text-sm">
-                  3
-                </button>
-                <button className="p-2 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
-                  &gt;
-                </button>
+            {orders.length > 0 && (
+              <div className="flex justify-between cursor-pointer items-center mt-6">
+                <p className="text-sm text-gray-600">
+                  Showing {orders.length} orders
+                </p>
+                <div className="flex items-center gap-2">
+                  <button className="p-2 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+                    &lt;
+                  </button>
+                  <button className="bg-green-600 text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">
+                    1
+                  </button>
+                  <button className="p-2 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+                    &gt;
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </main>
       </div>

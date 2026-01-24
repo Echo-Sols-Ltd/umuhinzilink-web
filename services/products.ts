@@ -53,12 +53,12 @@ class ProductService {
   }
 
   async getBuyerProducts(): Promise<ApiResponse<PaginatedResponse<FarmerProduct[]>>> {
-    return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(API_ENDPOINTS.PRODUCT.BUYER_ALL);
+    return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(API_ENDPOINTS.PRODUCT.FARMER_ALL_PUBLIC);
   }
 
   async getFarmerBuyerProducts(): Promise<ApiResponse<PaginatedResponse<SupplierProduct[]>>> {
     return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(
-      API_ENDPOINTS.PRODUCT.FARMER_BUYER_ALL
+      API_ENDPOINTS.PRODUCT.SUPPLIER_ALL_PUBLIC
     );
   }
 
@@ -68,6 +68,48 @@ class ProductService {
 
   async getSupplierStats(): Promise<ApiResponse<SupplierProductionStat[]>> {
     return await apiClient.get<SupplierProductionStat[]>(API_ENDPOINTS.PRODUCT.SUPPLIER_STATS);
+  }
+
+  async searchFarmerProducts(params: {
+    name?: string;
+    keyword?: string;
+    category?: string;
+    location?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    page?: number;
+    size?: number;
+  }): Promise<ApiResponse<PaginatedResponse<FarmerProduct[]>>> {
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        queryParams.append(key, value.toString());
+      }
+    });
+
+    return await apiClient.get(`${API_ENDPOINTS.PRODUCT.FARMER_SEARCH}?${queryParams.toString()}`);
+  }
+
+  async searchSupplierProducts(params: {
+    name?: string;
+    keyword?: string;
+    category?: string;
+    location?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    page?: number;
+    size?: number;
+  }): Promise<ApiResponse<PaginatedResponse<SupplierProduct[]>>> {
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        queryParams.append(key, value.toString());
+      }
+    });
+
+    return await apiClient.get(`${API_ENDPOINTS.PRODUCT.SUPPLIER_SEARCH}?${queryParams.toString()}`);
   }
 
   async uploadProductPhoto(file:File):Promise<ApiResponse<string>>{

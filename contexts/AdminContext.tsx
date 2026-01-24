@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast-new';
 import { FarmerProduct, User, FarmerOrder } from '@/types';
 
 interface AdminContextType {
@@ -44,6 +44,7 @@ const AdminContext = createContext<AdminContextType | null>(null);
 
 export function AdminProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [users, setUsers] = useState<User[] | null>(null);
   const [products, setProducts] = useState<FarmerProduct[]>([]);
   const [orders, setOrders] = useState<FarmerOrder[]>([]);

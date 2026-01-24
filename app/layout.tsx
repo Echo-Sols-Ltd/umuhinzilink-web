@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from 'next'; // Add Viewport import
 import { Poppins } from 'next/font/google';
 import { AppProviders } from '@/contexts/AppProviders';
+import ModalToastContainer from '@/components/ui/modal-toast-container';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { GlobalNetworkIndicator } from '@/components/ui/network-indicator';
+import { SkipLink } from '@/components/ui/accessibility';
+import { OfflineIndicator } from '@/components/ui/progressive-loading';
 import './globals.css';
 
 const poppins = Poppins({
@@ -18,15 +23,26 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#10b981',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${poppins.variable} antialiased`}>
       <body className="bg-white text-black">
-        <AppProviders>
-          <main>{children}</main>
-        </AppProviders>
+        <SkipLink href="#main-content">Skip to main content</SkipLink>
+        <OfflineIndicator />
+        <ErrorBoundary>
+          <AppProviders>
+            <GlobalNetworkIndicator />
+            <main id="main-content" tabIndex={-1}>
+              {children}
+            </main>
+            <ModalToastContainer />
+          </AppProviders>
+        </ErrorBoundary>
       </body>
     </html>
   );

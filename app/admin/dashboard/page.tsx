@@ -21,7 +21,7 @@ import {
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAdmin } from '@/contexts/AdminContext';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/components/ui/use-toast-new';
 import AdminNavbar from '@/components/admin/Navbar';
 import { AdminPages } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
@@ -59,10 +59,8 @@ function Dashboard() {
       router.push('/auth/signin');
     } catch (error) {
       console.error('Logout error:', error);
-      toast({
+      toast.error('Failed to logout', {
         title: 'Error',
-        description: 'Failed to logout',
-        variant: 'error',
       });
     }
   };
@@ -125,9 +123,9 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-2">Active Users</p>
-                  <p className="text-4xl font-bold">{userStats.totalUsers.toLocaleString()}</p>
+                  <p className="text-4xl font-bold">{(userStats?.totalUsers || 0).toLocaleString()}</p>
                   <p className="text-xs opacity-75 mt-1">
-                    Farmers: {userStats.farmerCount} | Buyers: {userStats.buyerCount}
+                    Farmers: {userStats?.farmerCount || 0} | Buyers: {userStats?.buyerCount || 0}
                   </p>
                 </div>
                 <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
@@ -195,7 +193,7 @@ function Dashboard() {
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <p className="text-2xl font-bold text-gray-900">
-                      {totalValue.toLocaleString()}
+                      {(totalValue || 0).toLocaleString()}
                     </p>
                     <p className="text-sm text-gray-500">All Now</p>
                   </div>
@@ -209,7 +207,7 @@ function Dashboard() {
                       ></div>
                       <div>
                         <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                        <p className="text-xs text-gray-500">{item.value.toLocaleString()}+</p>
+                        <p className="text-xs text-gray-500">{(item.value || 0).toLocaleString()}+</p>
                       </div>
                     </div>
                   ))}

@@ -1,6 +1,8 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosProgressEvent, CancelToken } from 'axios';
 import { API_CONFIG, HTTP_STATUS } from './constants';
 import { ApiResponse } from '@/types';
+import { withRetry, retryConfigs, RetryOptions } from '@/lib/retry';
+import { withTimeout, timeoutConfigs, TimeoutError } from '@/lib/timeout';
 
 class ApiClient {
   private axiosInstance: AxiosInstance;
@@ -157,62 +159,127 @@ class ApiClient {
     } catch {}
   }
 
-  async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.axiosInstance.get<ApiResponse<T>>(endpoint, { params });
+  async get<T>(endpoint: string, params?: Record<string, unknown>, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+    const operation = async () => {
+      const response = await this.axiosInstance.get<ApiResponse<T>>(endpoint, { 
+        params,
+        timeout: options?.timeout || timeoutConfigs.standard
+      });
       return response.data;
+    };
+
+    if (options?.retry) {
+      return withRetry(operation, options.retry);
+    }
+
+    try {
+      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
     } catch (error) {
+      if (error instanceof TimeoutError) {
+        throw new Error(`Request timed out after ${error.timeout}ms`);
+      }
       throw error;
     }
   }
 
-  async post<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, data);
+  async post<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+    const operation = async () => {
+      const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, data, {
+        timeout: options?.timeout || timeoutConfigs.standard
+      });
       return response.data;
+    };
+
+    if (options?.retry) {
+      return withRetry(operation, options.retry);
+    }
+
+    try {
+      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
     } catch (error) {
+      if (error instanceof TimeoutError) {
+        throw new Error(`Request timed out after ${error.timeout}ms`);
+      }
       throw error;
     }
   }
 
-  async put<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.axiosInstance.put<ApiResponse<T>>(endpoint, data);
+  async put<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+    const operation = async () => {
+      const response = await this.axiosInstance.put<ApiResponse<T>>(endpoint, data, {
+        timeout: options?.timeout || timeoutConfigs.standard
+      });
       return response.data;
+    };
+
+    if (options?.retry) {
+      return withRetry(operation, options.retry);
+    }
+
+    try {
+      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
     } catch (error) {
+      if (error instanceof TimeoutError) {
+        throw new Error(`Request timed out after ${error.timeout}ms`);
+      }
       throw error;
     }
   }
 
-  async patch<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.axiosInstance.patch<ApiResponse<T>>(endpoint, data);
+  async patch<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+    const operation = async () => {
+      const response = await this.axiosInstance.patch<ApiResponse<T>>(endpoint, data, {
+        timeout: options?.timeout || timeoutConfigs.standard
+      });
       return response.data;
+    };
+
+    if (options?.retry) {
+      return withRetry(operation, options.retry);
+    }
+
+    try {
+      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
     } catch (error) {
+      if (error instanceof TimeoutError) {
+        throw new Error(`Request timed out after ${error.timeout}ms`);
+      }
       throw error;
     }
   }
 
-  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.axiosInstance.delete<ApiResponse<T>>(endpoint);
+  async delete<T>(endpoint: string, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+    const operation = async () => {
+      const response = await this.axiosInstance.delete<ApiResponse<T>>(endpoint, {
+        timeout: options?.timeout || timeoutConfigs.standard
+      });
       return response.data;
+    };
+
+    if (options?.retry) {
+      return withRetry(operation, options.retry);
+    }
+
+    try {
+      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
     } catch (error) {
+      if (error instanceof TimeoutError) {
+        throw new Error(`Request timed out after ${error.timeout}ms`);
+      }
       throw error;
     }
   }
 
    async uploadFile<T>(
     endpoint: string,
-    file:File,
+    file: File,
     onUploadProgress?: (event: AxiosProgressEvent) => void,
     cancelToken?: CancelToken,
     timeout?: number
   ): Promise<ApiResponse<T>> {
-    try {
-   
+    const operation = async () => {
       const formData = new FormData();
-      formData.append("file",file);
+      formData.append("file", file);
 
       const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, formData, {
         headers: {
@@ -220,13 +287,37 @@ class ApiClient {
         },
         onUploadProgress,
         cancelToken,
-        timeout: timeout ?? API_CONFIG.TIMEOUT,
+        timeout: timeout ?? timeoutConfigs.long,
       });
 
       return response.data;
-    } catch (error) {
-      throw error;
-    }
+    };
+
+    // Use file upload retry configuration for uploads
+    return withRetry(operation, retryConfigs.fileUpload);
+  }
+
+  // Convenience methods with pre-configured retry and timeout settings
+  async getWithRetry<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
+    return this.get(endpoint, params, { retry: retryConfigs.networkRequest });
+  }
+
+  async postWithRetry<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
+    return this.post(endpoint, data, { retry: retryConfigs.networkRequest });
+  }
+
+  async getCritical<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
+    return this.get(endpoint, params, { 
+      timeout: timeoutConfigs.critical,
+      retry: retryConfigs.critical 
+    });
+  }
+
+  async postCritical<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
+    return this.post(endpoint, data, { 
+      timeout: timeoutConfigs.critical,
+      retry: retryConfigs.critical 
+    });
   }
 }
 

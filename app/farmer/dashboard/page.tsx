@@ -28,19 +28,11 @@ import {
   DollarSign,
   Loader2,
 } from 'lucide-react';
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
 import { Input } from '@/components/ui/input';
 import FarmerSidebar from '@/components/farmer/Navbar';
 import { FarmerPages } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 
 
 
@@ -479,231 +471,13 @@ function Dashboard() {
               {profileError && <p className="text-sm text-red-500 mt-2">{profileError}</p>}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              {statsCards.map(card => (
-                <div
-                  key={card.id}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4"
-                >
-                  <div
-                    className={`w-12 h-12 ${card.iconBg} rounded-xl flex items-center justify-center`}
-                  >
-                    {card.icon}
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">{card.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-                    <p className={`text-xs font-medium ${card.accent}`}>{card.subline}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                    <Package className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <span className="text-green-500 text-sm font-medium">
-                    {products.length ? `${formatNumber(products.length)} listings` : '—'}
-                  </span>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                  {formatNumber(activeProductsCount)}
-                </h3>
-                <p className="text-sm text-gray-500">Active product listings</p>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <UsersIcon className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <span className="text-green-500 text-sm font-medium">
-                    {uniqueBuyersCount ? '+ customers' : '—'}
-                  </span>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                  {formatNumber(uniqueBuyersCount)}
-                </h3>
-                <p className="text-sm text-gray-500">Unique buyers engaged</p>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Revenue</h3>
-                  <span className="text-xs text-gray-500">{orders.length ? 'All time' : '—'}</span>
-                </div>
-                <div className="relative w-24 h-24 mx-auto mb-4">
-                  <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" stroke="#e5e7eb" strokeWidth="8" fill="none" />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="#10b981"
-                      strokeWidth="8"
-                      fill="none"
-                      strokeDasharray={`${2.51 * Math.min(100, paidOrdersCount ? 60 + paidOrdersCount * 5 : 20)} ${2.51 * 100}`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-bold text-gray-900">
-                      {orders.length ? `${Math.min(100, paidOrdersCount * 10)}%` : '--'}
-                    </span>
-                  </div>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">
-                    RWF {formatNumber(totalRevenue)}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {paidOrdersCount ? `${paidOrdersCount} paid orders` : 'No paid orders yet'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-teal-500 to-green-600 rounded-2xl p-6 text-white shadow-md">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium">Today&apos;s Weather</h3>
-                  <CloudSun className="w-8 h-8 opacity-90" />
-                </div>
-                <div className="mb-6">
-                  <p className="text-4xl font-bold mb-1">24°C</p>
-                  <p className="text-sm opacity-90 mb-1">Partly Cloudy</p>
-                  <p className="text-xs opacity-80">Kigali, Rwanda</p>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                  <div>
-                    <p className="opacity-80">Wed</p>
-                    <p className="font-semibold">26°C</p>
-                  </div>
-                  <div>
-                    <p className="opacity-80">Thu</p>
-                    <p className="font-semibold">23°C</p>
-                  </div>
-                  <div>
-                    <p className="opacity-80">Fri</p>
-                    <p className="font-semibold">25°C</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm col-span-2">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">AI Farming Tips</h3>
-                <div className="space-y-3">
-                  <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
-                    <p className="font-medium text-gray-900 mb-1">🌱 Planting Season</p>
-                    <p className="text-sm text-gray-600">
-                      It&apos;s the perfect time to plant seeds. Prepare early for the best harvest
-                      results.
-                    </p>
-                  </div>
-                  <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
-                    <p className="font-medium text-gray-900 mb-1">🌧️ Weather Alert</p>
-                    <p className="text-sm text-gray-600">
-                      Rain expected in the next 3 days. Prepare protection for your crops.
-                    </p>
-                  </div>
-                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
-                    <p className="font-medium text-gray-900 mb-1">💰 Market Price</p>
-                    <p className="text-sm text-gray-600">
-                      Tomato prices increased by 15% this month. Great time to sell if you have
-                      stock.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900">Market Revenue Trend</h2>
-                  <div className="flex items-center space-x-2 text-sm text-gray-500">
-                    <span>Year to date</span>
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <p className="text-3xl font-bold text-gray-900">
-                    RWF {formatNumber(totalRevenue)}
-                  </p>
-                </div>
-                <div style={{ width: '100%', height: 220 }}>
-                  <ResponsiveContainer>
-                    <AreaChart
-                      data={revenueByMonth}
-                      margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
-                    >
-                      <defs>
-                        <linearGradient id="revenueColor" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0.05} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                      <XAxis
-                        dataKey="name"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 12, fill: '#6b7280' }}
-                      />
-                      <YAxis
-                        tickFormatter={value => `RWF ${formatNumber(value as number)}`}
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 12, fill: '#6b7280' }}
-                      />
-                      <Tooltip
-                        formatter={value => [`RWF ${formatNumber(value as number)}`, 'Revenue']}
-                        contentStyle={{
-                          backgroundColor: '#fff',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                        }}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#10b981"
-                        strokeWidth={2}
-                        fill="url(#revenueColor)"
-                        name="Revenue"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Current regions to work with
-                </h3>
-                <div className="space-y-4">
-                  {regionStats.length ? (
-                    regionStats.map(region => (
-                      <div key={region.name} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-3 h-3 bg-green-500 rounded-full" />
-                          <span className="text-sm text-gray-700">{region.name}</span>
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">{region.count}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-500">
-                      No regional activity yet. Orders will appear here once you start selling.
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
+            {/* Enhanced Analytics Dashboard */}
+            <EnhancedDashboard
+              userRole="farmer"
+              orders={orders}
+              products={products}
+              className="mb-6"
+            />
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex justify-between items-center mb-4">

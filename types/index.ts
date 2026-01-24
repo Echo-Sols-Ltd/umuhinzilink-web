@@ -6,4 +6,5 @@ export * from './product';
 export * from './order';
 export * from './request';
 export * from './enums';
-export * from './message'
+export * from './message';
+export * from './wallet';
