@@ -36,13 +36,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={`${poppins.variable} antialiased`}>
       <body className="bg-white text-black">
         <SkipLink href="#main-content">Skip to main content</SkipLink>
-        <OfflineIndicator />
+         <OfflineIndicator />
         <ErrorBoundary>
           <AppProviders>
             <NotificationProvider>
               <NotificationStackProvider maxVisible={5} position="top-right">
                 <ErrorHandlerProvider>
-                  <GlobalNetworkIndicator />
+                  {/* <GlobalNetworkIndicator /> */}
                   <main id="main-content" tabIndex={-1}>
                     {children}
                   </main>

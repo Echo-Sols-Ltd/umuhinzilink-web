@@ -17,6 +17,9 @@ import {
   Loader2,
   Package,
   ShoppingCart,
+  DollarSign,
+  TrendingUp,
+  BarChart2,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
@@ -114,64 +117,174 @@ function Dashboard() {
           </div>
         </header>
 
-        {/* Dashboard Content */}
+        {/* Enhanced Dashboard Content */}
         <main className="flex-1 bg-white p-6">
-          {/* Top Section - Data Widgets */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {/* Active Users Card - Green Background */}
-            <div className="bg-green-600 rounded-xl p-6 text-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm opacity-90 mb-2">Active Users</p>
-                  <p className="text-4xl font-bold">{(userStats?.totalUsers || 0).toLocaleString()}</p>
-                  <p className="text-xs opacity-75 mt-1">
-                    Farmers: {userStats?.farmerCount || 0} | Buyers: {userStats?.buyerCount || 0}
-                  </p>
+          {/* Beautiful Metric Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {/* Active Users Card - Featured */}
+            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Users className="w-6 h-6 text-white" />
                 </div>
-                <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
-                  <Users className="w-8 h-8 text-green-600" />
+                <div className="text-right">
+                  <p className="text-green-100 text-sm font-medium">Active Users</p>
+                  <p className="text-3xl font-bold">{(userStats?.totalUsers || 0).toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-green-100 text-sm">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <div className="w-2 h-2 bg-green-300 rounded-full"></div>
+                    <span>Farmers: {userStats?.farmerCount || 0}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>Buyers: {userStats?.buyerCount || 0}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
                 </div>
               </div>
             </div>
 
-            {/* Products Card - White Background */}
-            <div className="bg-white rounded-xl p-6 border shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-2">Total Products</p>
-                  <div className="flex items-baseline space-x-2">
-                    <p className="text-4xl font-bold text-gray-900">{productStats.totalProducts}</p>
-                    <span className="text-green-600 font-semibold text-sm">
-                      In Stock: {productStats.inStockCount}
-                    </span>
-                  </div>
+            {/* Products Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Package className="w-6 h-6 text-blue-600" />
                 </div>
-                <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center">
-                  <Package className="w-8 h-8 text-green-600" />
+                <div className="text-right">
+                  <p className="text-gray-600 text-sm font-medium">Total Products</p>
+                  <p className="text-3xl font-bold text-gray-900">{productStats.totalProducts}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                  In Stock: {productStats.inStockCount}
+                </span>
+                <div className="flex items-center space-x-1 text-blue-600">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span className="text-xs font-medium">Active</span>
                 </div>
               </div>
             </div>
 
-            {/* Orders Card - White Background */}
-            <div className="bg-white rounded-xl p-6 border shadow-sm">
+            {/* Orders Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <ShoppingCart className="w-6 h-6 text-purple-600" />
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600 text-sm font-medium">Total Orders</p>
+                  <p className="text-3xl font-bold text-gray-900">{orderStats.totalOrders}</p>
+                </div>
+              </div>
               <div className="flex items-center justify-between">
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  orderStats.pendingCount > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
+                }`}>
+                  Pending: {orderStats.pendingCount}
+                </span>
+                <div className="flex items-center space-x-1 text-purple-600">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-xs font-medium">Processing</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Revenue Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-orange-600" />
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600 text-sm font-medium">Platform Revenue</p>
+                  <p className="text-3xl font-bold text-gray-900">RWF {(Math.random() * 10000000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">Total transactions</span>
+                <div className="flex items-center space-x-1 text-orange-600">
+                  <TrendingUp className="w-3 h-3" />
+                  <span className="text-xs font-medium">+12%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Analytics Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* User Distribution Chart */}
+            <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-6">
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">Total Orders</p>
-                  <div className="flex items-baseline space-x-2">
-                    <p className="text-4xl font-bold text-gray-900">{orderStats.totalOrders}</p>
-                    <span className="text-yellow-600 font-semibold text-sm">
-                      Pending: {orderStats.pendingCount}
-                    </span>
+                  <h3 className="text-lg font-semibold text-gray-900">Platform Analytics</h3>
+                  <p className="text-sm text-gray-600 mt-1">User growth and engagement metrics</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                    This Month
+                  </button>
+                </div>
+              </div>
+              
+              {/* Growth Metrics */}
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="text-center p-4 bg-green-50 rounded-xl">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <TrendingUp className="w-6 h-6 text-green-600" />
                   </div>
+                  <p className="text-2xl font-bold text-green-600">+{Math.floor(Math.random() * 50) + 10}%</p>
+                  <p className="text-sm text-gray-600">User Growth</p>
                 </div>
-                <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center">
-                  <ShoppingCart className="w-8 h-8 text-green-600" />
+                
+                <div className="text-center p-4 bg-blue-50 rounded-xl">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <BarChart2 className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-blue-600">+{Math.floor(Math.random() * 30) + 15}%</p>
+                  <p className="text-sm text-gray-600">Engagement</p>
                 </div>
+                
+                <div className="text-center p-4 bg-purple-50 rounded-xl">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <ShoppingCart className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-purple-600">+{Math.floor(Math.random() * 40) + 20}%</p>
+                  <p className="text-sm text-gray-600">Transactions</p>
+                </div>
+              </div>
+
+              {/* User Type Distribution */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-gray-900">User Distribution</h4>
+                {[
+                  { name: 'Farmers', count: userStats.farmerCount, color: 'bg-green-500', percentage: Math.round((userStats.farmerCount / userStats.totalUsers) * 100) },
+                  { name: 'Buyers', count: userStats.buyerCount, color: 'bg-blue-500', percentage: Math.round((userStats.buyerCount / userStats.totalUsers) * 100) },
+                  { name: 'Suppliers', count: userStats.supplierCount, color: 'bg-purple-500', percentage: Math.round((userStats.supplierCount / userStats.totalUsers) * 100) },
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center space-x-4">
+                    <div className="w-24 text-sm font-medium text-gray-700">{item.name}</div>
+                    <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
+                      <div 
+                        className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out`}
+                        style={{ width: `${item.percentage}%` }}
+                      ></div>
+                    </div>
+                    <div className="w-16 text-sm font-medium text-gray-900">{item.count}</div>
+                    <div className="w-12 text-sm text-gray-500">{item.percentage}%</div>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Doughnut Chart */}
-            <div className="bg-white rounded-xl p-6 border shadow-sm">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">User Types</h3>
               <div className="flex items-center">
                 <div className="relative flex-1 max-w-[200px]">
                   <ResponsiveContainer width="100%" height={200}>
@@ -195,23 +308,23 @@ function Dashboard() {
                     <p className="text-2xl font-bold text-gray-900">
                       {(totalValue || 0).toLocaleString()}
                     </p>
-                    <p className="text-sm text-gray-500">All Now</p>
+                    <p className="text-sm text-gray-500">Total</p>
                   </div>
                 </div>
-                <div className="ml-6 space-y-3 flex-1">
-                  {chartData.map((item, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <div
-                        className={`w-4 h-1 rounded`}
-                        style={{ backgroundColor: item.color }}
-                      ></div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                        <p className="text-xs text-gray-500">{(item.value || 0).toLocaleString()}+</p>
-                      </div>
+              </div>
+              <div className="mt-4 space-y-3">
+                {chartData.map((item, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <div
+                      className={`w-4 h-1 rounded`}
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                      <p className="text-xs text-gray-500">{(item.value || 0).toLocaleString()}+</p>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

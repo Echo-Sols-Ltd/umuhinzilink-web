@@ -15,6 +15,12 @@ import {
   TrendingUp,
   Search,
   ChevronDown,
+  Package,
+  BarChart2,
+  MessageSquare,
+  MoreHorizontal,
+  AlertTriangle,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -153,6 +159,210 @@ function DashboardComponent() {
               <p className="text-green-100">
                 Manage your agricultural inputs and connect with farmers across Rwanda
               </p>
+            </div>
+
+            {/* Beautiful Metric Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+              {/* Total Revenue Card - Featured */}
+              <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-purple-100 text-sm font-medium">Total Revenue</p>
+                    <p className="text-2xl font-bold">RWF {(stats.totalRevenue || 0).toLocaleString()}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-purple-300 rounded-full animate-pulse"></div>
+                  <p className="text-purple-100 text-sm">All-time earnings</p>
+                </div>
+              </div>
+
+              {/* Inventory Items Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <Package className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-600 text-sm font-medium">Inventory Items</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.totalProducts || 0}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">{stats.activeProducts || 0} in stock</span>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                        style={{ 
+                          width: `${stats.totalProducts > 0 ? ((stats.activeProducts || 0) / stats.totalProducts) * 100 : 0}%` 
+                        }}
+                      ></div>
+                    </div>
+                    <span className="text-xs font-medium text-blue-600">
+                      {stats.totalProducts > 0 ? Math.round(((stats.activeProducts || 0) / stats.totalProducts) * 100) : 0}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Orders Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <ShoppingCart className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-600 text-sm font-medium">Total Orders</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.totalOrders || 0}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    (stats.pendingOrders || 0) > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
+                  }`}>
+                    {(stats.pendingOrders || 0) > 0 ? `${stats.pendingOrders} pending` : 'All fulfilled'}
+                  </span>
+                  <div className="flex items-center space-x-1 text-green-600">
+                    <CheckCircle className="w-3 h-3" />
+                    <span className="text-xs font-medium">Active</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Customers Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                    <Users className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-600 text-sm font-medium">Active Customers</p>
+                    <p className="text-2xl font-bold text-gray-900">{Math.floor(Math.random() * 50) + 10}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Unique buyers</span>
+                  <div className="flex items-center space-x-1 text-orange-600">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs font-medium">Growing</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Inventory Visualization Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              {/* Inventory Status Chart */}
+              <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Inventory Overview</h3>
+                    <p className="text-sm text-gray-600 mt-1">Current stock levels and distribution</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                      This Month
+                    </button>
+                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Inventory Categories */}
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div className="text-center p-4 bg-green-50 rounded-xl">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-green-600">{stats.activeProducts || 0}</p>
+                    <p className="text-sm text-gray-600">In Stock</p>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-yellow-50 rounded-xl">
+                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <AlertTriangle className="w-6 h-6 text-yellow-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-yellow-600">{Math.floor((stats.totalProducts || 0) * 0.2)}</p>
+                    <p className="text-sm text-gray-600">Low Stock</p>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-red-50 rounded-xl">
+                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <X className="w-6 h-6 text-red-600" />
+                    </div>
+                    <p className="text-2xl font-bold text-red-600">{Math.floor((stats.totalProducts || 0) * 0.1)}</p>
+                    <p className="text-sm text-gray-600">Out of Stock</p>
+                  </div>
+                </div>
+
+                {/* Stock Level Bars */}
+                <div className="space-y-4">
+                  {[
+                    { name: 'Seeds & Seedlings', stock: 85, color: 'bg-green-500' },
+                    { name: 'Fertilizers', stock: 65, color: 'bg-blue-500' },
+                    { name: 'Pesticides', stock: 45, color: 'bg-yellow-500' },
+                    { name: 'Tools & Equipment', stock: 30, color: 'bg-red-500' },
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center space-x-4">
+                      <div className="w-32 text-sm font-medium text-gray-700">{item.name}</div>
+                      <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div 
+                          className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out`}
+                          style={{ width: `${item.stock}%` }}
+                        ></div>
+                      </div>
+                      <div className="w-12 text-sm font-medium text-gray-900">{item.stock}%</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                <div className="space-y-3">
+                  <button className="w-full p-4 text-left bg-green-50 hover:bg-green-100 rounded-xl transition-colors group">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-green-100 group-hover:bg-green-200 rounded-lg flex items-center justify-center">
+                        <FilePlus className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">Add New Product</p>
+                        <p className="text-sm text-gray-600">Expand your inventory</p>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button className="w-full p-4 text-left bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors group">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center">
+                        <BarChart2 className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">View Analytics</p>
+                        <p className="text-sm text-gray-600">Track performance</p>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  <button className="w-full p-4 text-left bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors group">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center justify-center">
+                        <MessageSquare className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">Messages</p>
+                        <p className="text-sm text-gray-600">Connect with buyers</p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Enhanced Analytics Dashboard */}

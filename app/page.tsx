@@ -12,21 +12,21 @@ export default function Home() {
   return (
     <main className="bg-white">
       <Navbar />
-      <section id="home" className="section-fade-up section-delay-1">
+      <section id="home">
         <Hero />
       </section>
-      <section id="features" className="section-fade-up section-delay-2">
+      <section id="features">
         <AboutUmuhinzinLink />
         <WhoWeServe />
         <PlatformFeatures />
       </section>
-      <section id="agribusiness" className="section-fade-up section-delay-3">
+      <section id="agribusiness">
         <HowItWorks />
       </section>
-      <section id="lenders" className="section-fade-up section-delay-4">
+      <section id="lenders">
         <ImpactStories />
       </section>
-      <section id="contact" className="section-fade-up section-delay-5">
+      <section id="contact">
         <CallToAction />
         <Footer />
       </section>

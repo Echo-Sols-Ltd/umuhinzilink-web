@@ -476,6 +476,99 @@ function Dashboard() {
               {profileError && <p className="text-sm text-red-500 mt-2">{profileError}</p>}
             </div>
 
+            {/* Beautiful Metric Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+              {/* Total Revenue Card - Featured */}
+              <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-green-100 text-sm font-medium">Total Revenue</p>
+                    <p className="text-2xl font-bold">RWF {formatNumber(totalRevenue)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+                  <p className="text-green-100 text-sm">
+                    {paidOrdersCount ? `${paidOrdersCount} paid orders` : 'Awaiting first payment'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Total Orders Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <ShoppingCart className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-600 text-sm font-medium">Total Orders</p>
+                    <p className="text-2xl font-bold text-gray-900">{formatNumber(totalOrders)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    pendingOrdersCount > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
+                  }`}>
+                    {pendingOrdersCount > 0 ? `${pendingOrdersCount} pending` : 'All fulfilled'}
+                  </span>
+                  <div className="flex items-center space-x-1 text-green-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-xs font-medium">Active</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Products Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <Package className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-600 text-sm font-medium">Active Products</p>
+                    <p className="text-2xl font-bold text-gray-900">{formatNumber(activeProductsCount)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">{products.length} total listings</span>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-purple-500 rounded-full transition-all duration-500"
+                        style={{ width: `${products.length > 0 ? (activeProductsCount / products.length) * 100 : 0}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-xs font-medium text-purple-600">
+                      {products.length > 0 ? Math.round((activeProductsCount / products.length) * 100) : 0}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Customers Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <UsersIcon className="w-6 h-6 text-teal-600" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-600 text-sm font-medium">Customers</p>
+                    <p className="text-2xl font-bold text-gray-900">{formatNumber(uniqueBuyersCount)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Unique buyers</span>
+                  <div className="flex items-center space-x-1 text-teal-600">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs font-medium">Growing</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Enhanced Analytics Dashboard */}
             <EnhancedDashboard
               userRole="farmer"

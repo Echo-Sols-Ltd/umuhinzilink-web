@@ -17,6 +17,10 @@ import {
   LayoutGrid,
   Loader2,
   X,
+  DollarSign,
+  Package,
+  Filter,
+  Leaf,
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from '@/components/ui/use-toast-new';
@@ -92,6 +96,92 @@ function BuyerDashboardComponent() {
               Manage your agricultural purchases and connect with farmers across Rwanda
             </p>
           </div>
+          {/* Beautiful Metric Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            {/* Total Spent Card - Featured */}
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-right">
+                  <p className="text-blue-100 text-sm font-medium">Total Spent</p>
+                  <p className="text-2xl font-bold">
+                    RWF {orders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-blue-300 rounded-full animate-pulse"></div>
+                <p className="text-blue-100 text-sm">All purchases</p>
+              </div>
+            </div>
+
+            {/* Total Orders Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                  <ShoppingCart className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600 text-sm font-medium">Total Orders</p>
+                  <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">
+                  {orders.filter(o => o.status?.toLowerCase() === 'completed').length} completed
+                </span>
+                <div className="flex items-center space-x-1 text-green-600">
+                  <CheckCircle className="w-3 h-3" />
+                  <span className="text-xs font-medium">Active</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Available Products Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <Package className="w-6 h-6 text-purple-600" />
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600 text-sm font-medium">Available Products</p>
+                  <p className="text-2xl font-bold text-gray-900">{recommendedProducts.length}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">Fresh produce</span>
+                <div className="flex items-center space-x-1 text-purple-600">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium">Updated</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Suppliers Card */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                  <Users className="w-6 h-6 text-orange-600" />
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600 text-sm font-medium">Connected Suppliers</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {new Set(recommendedProducts.map(p => p.farmer?.user?.id).filter(Boolean)).size}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">Active sellers</span>
+                <div className="flex items-center space-x-1 text-orange-600">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-xs font-medium">Network</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Enhanced Analytics Dashboard */}
           <EnhancedDashboard
             userRole="buyer"
@@ -100,78 +190,128 @@ function BuyerDashboardComponent() {
             className="mb-6"
           />
 
-          {/* Recommended Produce */}
+          {/* Modern Product Discovery Section */}
           <div className="mb-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="font-semibold text-gray-600">Recommended Produce</h2>
-              <a href="#" className="text-green-600 text-sm">
-                View All
-              </a>
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Discover Fresh Produce</h2>
+                <p className="text-sm text-gray-600 mt-1">Connect directly with local farmers and suppliers</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <Filter className="w-4 h-4 mr-2 inline" />
+                  Filter
+                </button>
+                <Link href="/buyer/products" className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
+                  View All Products
+                </Link>
+              </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {productsLoading && (
-                <div className="col-span-full text-center text-gray-500 py-6">
-                  Loading produce...
-                </div>
+                Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
+                    <div className="h-48 bg-gray-200"></div>
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      <div className="h-6 bg-gray-200 rounded w-full"></div>
+                    </div>
+                  </div>
+                ))
               )}
+              
               {!productsLoading && productsError && (
-                <div className="col-span-full text-center text-gray-600 bg-gray-100 border border-gray-200 rounded-lg py-6">
-                  {productsError}
+                <div className="col-span-full text-center py-12">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <X className="w-8 h-8 text-red-600" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Unable to Load Products</h3>
+                  <p className="text-gray-600 mb-4">{productsError}</p>
+                  <button className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
+                    Try Again
+                  </button>
                 </div>
               )}
+              
               {!productsLoading && !productsError && recommendedProducts.length === 0 && (
-                <div className="col-span-full py-8">
+                <div className="col-span-full py-12">
                   <ProductListEmptyState
                     userRole="buyer"
                     onAddProduct={() => window.location.href = '/buyer/products'}
-                    size="sm"
+                    size="md"
                   />
                 </div>
               )}
-              {!productsLoading &&
-                !productsError &&
-                recommendedProducts.map(product => {
-                  const priceText = `${Number(product.unitPrice || 0).toLocaleString()} RWF/${product.measurementUnit || ''
-                    }`;
-                  const farmerName = product.farmer?.user?.names || 'Unknown farmer';
-                  const quantityText =
-                    product.quantity !== undefined
-                      ? `${product.quantity?.toLocaleString?.() || product.quantity} ${product.measurementUnit || ''
-                      } available`
-                      : '';
+              
+              {!productsLoading && !productsError && recommendedProducts.map(product => {
+                const priceText = `${Number(product.unitPrice || 0).toLocaleString()} RWF/${product.measurementUnit || 'unit'}`;
+                const farmerName = product.farmer?.user?.names || 'Unknown farmer';
+                const quantityText = product.quantity !== undefined
+                  ? `${product.quantity?.toLocaleString?.() || product.quantity} ${product.measurementUnit || ''} available`
+                  : '';
 
-                  return (
-                    <div
-                      key={product.id}
-                      className="bg-white rounded-lg shadow-sm border overflow-hidden"
-                    >
-                      <div className="h-32 w-full bg-gray-100 flex items-center justify-center">
-                        {product.image ? (
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-gray-400 text-xs">No image</span>
-                        )}
+                return (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group"
+                  >
+                    <div className="relative h-48 bg-gradient-to-br from-green-50 to-green-100 overflow-hidden">
+                      {product.image ? (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center">
+                          <div className="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center">
+                            <Leaf className="w-8 h-8 text-green-600" />
+                          </div>
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3">
+                        <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors">
+                          <Heart className="w-4 h-4 text-gray-600 hover:text-red-500" />
+                        </button>
                       </div>
-                      <div className="p-3">
-                        <h3 className="font-semibold text-gray-900 text-sm line-clamp-1">
+                      {product.productStatus === 'IN_STOCK' && (
+                        <div className="absolute top-3 left-3">
+                          <span className="px-2 py-1 bg-green-500 text-white text-xs font-medium rounded-full">
+                            Fresh
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="p-4">
+                      <div className="mb-3">
+                        <h3 className="font-semibold text-gray-900 text-sm line-clamp-1 mb-1">
                           {product.name}
                         </h3>
-                        <p className="text-xs text-gray-500 mb-1 line-clamp-1">by {farmerName}</p>
-                        <div className="mt-2">
-                          <p className="text-green-600 font-bold text-sm">{priceText}</p>
-                          {quantityText && <p className="text-xs text-gray-500">{quantityText}</p>}
-                        </div>
-                        <button className="mt-3 w-full bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-700">
-                          Contact
+                        <p className="text-xs text-gray-500 line-clamp-1">by {farmerName}</p>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="text-green-600 font-bold text-lg">{priceText}</p>
+                        {quantityText && (
+                          <p className="text-xs text-gray-500 mt-1">{quantityText}</p>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <button className="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                          Contact Seller
+                        </button>
+                        <button className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
+                          <Star className="w-4 h-4 text-gray-600" />
                         </button>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

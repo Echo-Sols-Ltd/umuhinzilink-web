@@ -1,167 +1,77 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, User, MapPin, Briefcase, Upload, X, Loader2, UserCheck, Building } from 'lucide-react';
 import { BiLogoFacebookCircle, BiLogoGoogle } from 'react-icons/bi';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
+import { EnhancedFormField, EnhancedForm, FormSuccessAnimation } from '@/components/ui/enhanced-form';
+import { useEnhancedFormValidation } from '@/hooks/useEnhancedFormValidation';
+import { commonRules } from '@/lib/validation';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
 import { SupplierRequest, SupplierType, Address, Province, District } from '@/types';
 import { supplierTypeOptions, provinceOptions, districtOptions } from '@/types/enums';
 import useUserAction from '@/hooks/useUserAction';
-import { Upload, X } from 'lucide-react';
+
+// Enhanced form fields configuration
+const supplierFormFields = {
+  businessName: {
+    value: '',
+    rules: { required: true, minLength: 2 },
+    label: 'Business Name'
+  },
+  supplierType: {
+    value: SupplierType.WHOLESALER,
+    rules: { required: true },
+    label: 'Supplier Type'
+  },
+  province: {
+    value: Province.KIGALI_CITY,
+    rules: { required: true },
+    label: 'Province'
+  },
+  district: {
+    value: District.GASABO,
+    rules: { required: true },
+    label: 'District'
+  }
+};
 
 export default function SupplierSignUp() {
   const { registerSupplier, user } = useAuth();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string>('');
+
+  // Use enhanced form validation
+  const {
+    getFieldProps,
+    handleSubmit,
+    reset,
+    isValid,
+    values,
+    errors,
+    submissionState
+  } = useEnhancedFormValidation(supplierFormFields, {
+    validateOnChange: true,
+    validateOnBlur: true,
+    showSuccessStates: true,
+    enableRealTimeValidation: true,
+    debounceMs: 300
+  });
 
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
   ];
-
-  const [supplierData, setSupplierData] = useState<SupplierRequest>({
-    userId: user?.id!,
-    businessName: '',
-    supplierType: SupplierType.WHOLESALER,
-    address: {
-      province: Province.KIGALI_CITY,
-      district: District.GASABO,
-    },
-  });
-
-  const [fieldErrors, setFieldErrors] = useState({
-    businessName: '',
-    supplierType: '',
-    province: '',
-    district: '',
-  });
-
-  const [touched, setTouched] = useState({
-    businessName: false,
-    supplierType: false,
-    province: false,
-    district: false,
-  });
-
-  const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    // Clear field error when user starts typing
-    if (fieldErrors[name as keyof typeof fieldErrors]) {
-      setFieldErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const handleSupplierInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    if (name === 'businessName') {
-      setSupplierData(prev => ({
-        ...prev,
-        businessName: value,
-      }));
-    } else if (name === 'province') {
-      setSupplierData(prev => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          province: value as Province,
-          district: District.GASABO,
-        },
-      }));
-    } else if (name === 'district') {
-      setSupplierData(prev => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          district: value as District,
-        },
-      }));
-    } else if (name === 'supplierType') {
-      setSupplierData(prev => ({
-        ...prev,
-        supplierType: value as SupplierType,
-      }));
-    }
-
-    // Clear field error when user starts typing
-    if (fieldErrors[name as keyof typeof fieldErrors]) {
-      setFieldErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name } = e.target;
-    setTouched(prev => ({ ...prev, [name]: true }));
-    validateField(name, supplierData[name as keyof typeof supplierData] || supplierData.address[name as keyof typeof supplierData.address]);
-  };
-
-  const validateField = (name: string, value: string | boolean | any) => {
-    let error = '';
-
-    const stringValue = typeof value === 'string' ? value : '';
-
-    switch (name) {
-      case 'businessName':
-        if (!value || stringValue.trim() === '') {
-          error = 'Business name is required';
-        } else if (stringValue.length < 2) {
-          error = 'Business name must be at least 2 characters';
-        }
-        break;
-      case 'supplierType':
-        if (!value) {
-          error = 'Supplier type is required';
-        }
-        break;
-      case 'province':
-        if (!value) {
-          error = 'Province is required';
-        }
-        break;
-      case 'district':
-        if (!value) {
-          error = 'District is required';
-        }
-        break;
-      default:
-        break;
-    }
-
-    setFieldErrors(prev => ({
-      ...prev,
-      [name]: error,
-    }));
-
-    return error === '';
-  };
-
-  const validateForm = () => {
-    const businessNameValid = validateField('businessName', supplierData.businessName);
-    const supplierTypeValid = validateField('supplierType', supplierData.supplierType);
-    const provinceValid = validateField('province', supplierData.address.province);
-    const districtValid = validateField('district', supplierData.address.district);
-
-    setTouched({
-      businessName: true,
-      supplierType: true,
-      province: true,
-      district: true,
-    });
-
-    return businessNameValid && supplierTypeValid && provinceValid && districtValid;
-  };
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -170,7 +80,7 @@ export default function SupplierSignUp() {
         toast({
           title: 'File too large',
           description: 'Profile image must be less than 5MB',
-          variant: 'error',
+          variant: 'destructive' as any,
         });
         return;
       }
@@ -178,7 +88,7 @@ export default function SupplierSignUp() {
         toast({
           title: 'Invalid file type',
           description: 'Please select an image file',
-          variant: 'error',
+          variant: 'destructive' as any,
         });
         return;
       }
@@ -196,46 +106,53 @@ export default function SupplierSignUp() {
     setProfilePreview('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // Validate form data
-    if (!validateForm()) {
-      toast({
-        title: 'Validation Error',
-        description: 'Please fix the errors below and try again.',
-        variant: 'error',
-      });
-      setLoading(false);
-      return;
-    }
-
+  const handleFormSubmit = async (formValues: Record<string, any>) => {
     try {
       // First upload profile image if selected
       if (profileImage) {
         await uploadFile(profileImage);
       }
 
-      // Then register the supplier
+      // Prepare supplier data
+      const supplierData: SupplierRequest = {
+        userId: user?.id!,
+        businessName: formValues.businessName,
+        supplierType: formValues.supplierType,
+        address: {
+          province: formValues.province,
+          district: formValues.district,
+        },
+      };
+
+      // Register the supplier
       await registerSupplier(supplierData);
 
-      toast({
-        title: 'Success',
-        description: 'Supplier account created successfully!',
-        variant: 'success',
-      });
-
+      setShowSuccess(true);
+      
+      // Reset form after success
+      setTimeout(() => {
+        setShowSuccess(false);
+        reset();
+        setProfileImage(null);
+        setProfilePreview('');
+      }, 3000);
     } catch (error) {
+      console.error('Registration failed:', error);
       toast({
-        title: 'Registration Error',
-        description: 'Failed to create supplier account. Please try again.',
-        variant: 'error',
+        title: 'Registration Failed',
+        description: 'Please try again later.',
+        variant: 'destructive' as any,
       });
-    } finally {
-      setLoading(false);
     }
   };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit(handleFormSubmit);
+  };
+
+  const formIsValid = isValid;
+  const isLoading = submissionState.isSubmitting || uploadLoading;
 
   // Get districts for selected province
   const getDistrictsForProvince = (province: Province) => {
@@ -245,9 +162,14 @@ export default function SupplierSignUp() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
+    <div className="w-full min-h-screen bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-tertiary)] flex flex-col items-center">
       {/* Hero Section */}
-      <div className="relative w-full h-72 sm:h-96 flex flex-col justify-center items-center text-center">
+      <motion.div 
+        className="relative w-full h-72 sm:h-96 flex flex-col justify-center items-center text-center"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <Image
           src="/Image.png"
           alt="background"
@@ -255,253 +177,296 @@ export default function SupplierSignUp() {
           className="absolute right-0 top-0 object-cover w-full h-full"
         />
 
-        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
+        <motion.h1 
+          className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
           Supplier Registration
-        </h1>
-        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
+        </motion.h1>
+        <motion.p 
+          className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
           Join our agricultural marketplace and connect with farmers and buyers
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative">
-        <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
+      <motion.div 
+        className="w-full max-w-4xl bg-white dark:bg-gray-800 shadow-2xl rounded-2xl -mt-20 p-6 sm:p-8 z-20 relative"
+        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: 0.3, duration: 0.6, type: "spring", stiffness: 100 }}
+      >
+        <motion.h1 
+          className="text-center text-gray-800 dark:text-white font-extrabold text-xl sm:text-2xl mb-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
           Create Your Supplier Account
-        </h1>
+        </motion.h1>
 
-        <div className="flex gap-4 justify-center mb-6">
+        <motion.div 
+          className="flex gap-4 justify-center mb-6"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
           {socialLinks.map((linkItem, idx) => (
-            <Link
+            <motion.div
               key={idx}
-              href={linkItem.link}
-              target="_blank"
-              className="p-3 text-gray-700 transition border border-gray-100 rounded-md hover:bg-gray-100"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {linkItem.icon}
-            </Link>
+              <Link
+                href={linkItem.link}
+                target="_blank"
+                className="p-3 text-gray-700 dark:text-gray-300 transition-all border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md"
+              >
+                {linkItem.icon}
+              </Link>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <p className="text-center text-gray-400 text-sm mb-6">Or fill in your details below</p>
+        <motion.p 
+          className="text-center text-gray-400 text-sm mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+        >
+          Or fill in your details below
+        </motion.p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Enhanced Form */}
+        <EnhancedForm onSubmit={onSubmit} loading={isLoading}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, staggerChildren: 0.1 }}
+            className="space-y-8"
+          >
+            {/* Profile Image Section */}
+            <motion.div 
+              className="border-b border-gray-200 dark:border-gray-600 pb-6"
+              variants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }}
+            >
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Profile Image
+              </h2>
+              <div className="flex items-center space-x-6">
+                <div className="relative">
+                  {profilePreview ? (
+                    <div className="relative">
+                      <Image
+                        src={profilePreview}
+                        alt="Profile preview"
+                        width={120}
+                        height={120}
+                        className="w-30 h-30 rounded-full object-cover border-4 border-gray-200 dark:border-gray-600"
+                      />
+                      <motion.button
+                        type="button"
+                        onClick={removeProfileImage}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <X className="w-4 h-4" />
+                      </motion.button>
+                    </div>
+                  ) : (
+                    <div className="w-30 h-30 rounded-full bg-gray-200 dark:bg-gray-700 border-4 border-gray-200 dark:border-gray-600 flex items-center justify-center">
+                      <Upload className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="profileImage" className="text-gray-700 dark:text-gray-300 font-medium text-sm mb-2 block">
+                    Upload Profile Image
+                  </Label>
+                  <input
+                    id="profileImage"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfileImageChange}
+                    disabled={isLoading}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => document.getElementById('profileImage')?.click()}
+                    disabled={isLoading}
+                    variant="outline"
+                    className="mb-2"
+                  >
+                    {uploadLoading && uploadingFiles.some(f => f.file === profileImage) ? 'Uploading...' : 'Choose Image'}
+                  </Button>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">JPG, PNG, GIF up to 5MB</p>
+                  {uploadLoading && uploadingFiles.some(f => f.file === profileImage) && (
+                    <div className="mt-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-[var(--primary-green)] rounded-full animate-pulse"></div>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Uploading profile image...</span>
+                      </div>
+                      {uploadingFiles.find(f => f.file === profileImage) && (
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1">
+                          <div
+                            className="bg-[var(--primary-green)] h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${uploadingFiles.find(f => f.file === profileImage)?.progress || 0}%` }}
+                          ></div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
 
-          {/* Profile Image Section */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Image</h2>
-            <div className="flex items-center space-x-6">
-              <div className="relative">
-                {profilePreview ? (
-                  <div className="relative">
-                    <Image
-                      src={profilePreview}
-                      alt="Profile preview"
-                      width={120}
-                      height={120}
-                      className="w-30 h-30 rounded-full object-cover border-4 border-gray-200"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeProfileImage}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+            {/* Business Information Section */}
+            <motion.div 
+              className="border-b border-gray-200 dark:border-gray-600 pb-6"
+              variants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }}
+            >
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                Business Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <EnhancedFormField
+                    {...getFieldProps('businessName')}
+                    label="Business Name"
+                    type="text"
+                    icon={<Briefcase className="h-4 w-4" />}
+                    placeholder="Enter your business name"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-gray-700 dark:text-gray-300 font-medium text-sm mb-2 block">
+                    Supplier Type
+                  </Label>
+                  <select
+                    {...getFieldProps('supplierType')}
+                    className="w-full text-gray-700 dark:text-gray-300 font-medium text-sm border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-3 bg-white dark:bg-gray-800 focus:border-[var(--primary-green)] focus:ring-4 focus:ring-[var(--primary-green)]/10 transition-all"
+                    disabled={isLoading}
+                  >
+                    <option value="">Select supplier type</option>
+                    {supplierTypeOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label.replace(/_/g, ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.supplierType && (
+                    <p className="text-[var(--error)] text-xs mt-1 flex items-center gap-1">
+                      <span className="w-1 h-1 bg-[var(--error)] rounded-full"></span>
+                      {errors.supplierType}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Location Section */}
+            <motion.div 
+              className="border-b border-gray-200 dark:border-gray-600 pb-6"
+              variants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }}
+            >
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                Business Location
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label className="text-gray-700 dark:text-gray-300 font-medium text-sm mb-2 block">
+                    Province
+                  </Label>
+                  <select
+                    {...getFieldProps('province')}
+                    className="w-full text-gray-700 dark:text-gray-300 font-medium text-sm border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-3 bg-white dark:bg-gray-800 focus:border-[var(--primary-green)] focus:ring-4 focus:ring-[var(--primary-green)]/10 transition-all"
+                    disabled={isLoading}
+                  >
+                    <option value="">Select province</option>
+                    {provinceOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label.replace(/_/g, ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.province && (
+                    <p className="text-[var(--error)] text-xs mt-1 flex items-center gap-1">
+                      <span className="w-1 h-1 bg-[var(--error)] rounded-full"></span>
+                      {errors.province}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label className="text-gray-700 dark:text-gray-300 font-medium text-sm mb-2 block">
+                    District
+                  </Label>
+                  <select
+                    {...getFieldProps('district')}
+                    className="w-full text-gray-700 dark:text-gray-300 font-medium text-sm border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-3 bg-white dark:bg-gray-800 focus:border-[var(--primary-green)] focus:ring-4 focus:ring-[var(--primary-green)]/10 transition-all"
+                    disabled={isLoading}
+                  >
+                    <option value="">Select district</option>
+                    {districtOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.district && (
+                    <p className="text-[var(--error)] text-xs mt-1 flex items-center gap-1">
+                      <span className="w-1 h-1 bg-[var(--error)] rounded-full"></span>
+                      {errors.district}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Submit Button */}
+            <motion.div
+              variants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }}
+            >
+              <Button
+                type="submit"
+                className="w-full bg-[var(--primary-green)] hover:bg-[var(--primary-green-dark)] text-white font-medium text-sm py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-[var(--primary-green)]/25"
+                disabled={!formIsValid || isLoading}
+                loading={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Creating Account...
                   </div>
                 ) : (
-                  <div className="w-30 h-30 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
-                    <Upload className="w-8 h-8 text-gray-400" />
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="h-4 w-4" />
+                    Finish Creating Account
                   </div>
                 )}
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="profileImage" className="text-gray-700 font-medium text-sm mb-2 block">
-                  Upload Profile Image
-                </Label>
-                <input
-                  id="profileImage"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfileImageChange}
-                  disabled={loading || uploadLoading}
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  onClick={() => document.getElementById('profileImage')?.click()}
-                  disabled={loading || uploadLoading}
-                  variant="outline"
-                  className="mb-2"
-                >
-                  {uploadLoading && uploadingFiles.some(f => f.file === profileImage) ? 'Uploading...' : 'Choose Image'}
-                </Button>
-                <p className="text-xs text-gray-500">JPG, PNG, GIF up to 5MB</p>
-                {uploadLoading && uploadingFiles.some(f => f.file === profileImage) && (
-                  <div className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-gray-600">Uploading profile image...</span>
-                    </div>
-                    {uploadingFiles.find(f => f.file === profileImage) && (
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                        <div
-                          className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${uploadingFiles.find(f => f.file === profileImage)?.progress || 0}%` }}
-                        ></div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </EnhancedForm>
+      </motion.div>
 
-          {/* Business Information Section */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="businessName" className="text-gray-700 font-medium text-sm">
-                  Business Name
-                </Label>
-                <Input
-                  id="businessName"
-                  name="businessName"
-                  type="text"
-                  value={supplierData.businessName}
-                  onChange={handleSupplierInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  placeholder="Enter your business name"
-                  className={`text-gray-700 font-medium text-sm ${touched.businessName && fieldErrors.businessName
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                />
-                {touched.businessName && fieldErrors.businessName && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.businessName}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="supplierType" className="text-gray-700 font-medium text-sm">
-                  Supplier Type
-                </Label>
-                <select
-                  id="supplierType"
-                  name="supplierType"
-                  value={supplierData.supplierType}
-                  onChange={handleSupplierInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.supplierType && fieldErrors.supplierType
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                >
-                  <option value="">Select supplier type</option>
-                  {supplierTypeOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label.replace(/_/g, ' ')}
-                    </option>
-                  ))}
-                </select>
-                {touched.supplierType && fieldErrors.supplierType && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.supplierType}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Location Section */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Location</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="province" className="text-gray-700 font-medium text-sm">
-                  Province
-                </Label>
-                <select
-                  id="province"
-                  name="province"
-                  value={supplierData.address.province}
-                  onChange={handleSupplierInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                >
-                  <option value="">Select province</option>
-                  {provinceOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label.replace(/_/g, ' ')}
-                    </option>
-                  ))}
-                </select>
-                {touched.province && fieldErrors.province && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.province}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="district" className="text-gray-700 font-medium text-sm">
-                  District
-                </Label>
-                <select
-                  id="district"
-                  name="district"
-                  value={supplierData.address.district}
-                  onChange={handleSupplierInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                >
-                  <option value="">Select district</option>
-                  {districtOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                {touched.district && fieldErrors.district && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.district}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Terms and Submit */}
-          <div className="space-y-4">
-            <Button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
-              disabled={loading || uploadLoading}
-            >
-              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating account'}
-            </Button>
-          </div>
-        </form>
-      </div>
+      {/* Success Animation */}
+      <FormSuccessAnimation
+        show={showSuccess}
+        message="Welcome to UmuhinziLink! Your supplier account has been created successfully."
+        onComplete={() => setShowSuccess(false)}
+      />
     </div>
   );
 }

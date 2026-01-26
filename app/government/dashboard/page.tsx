@@ -26,6 +26,7 @@ import {
   Calendar,
   MapPin,
   Filter,
+  MoreHorizontal,
   Download,
   RefreshCw,
 } from 'lucide-react';
@@ -320,86 +321,154 @@ function Dashboard() {
               />
             )}
 
-            {/* Top Row - Key Metrics */}
+            {/* Beautiful Metric Cards */}
             <LoadingOverlay isLoading={loading} message="Loading dashboard data...">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Total Users Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Users className="w-6 h-6 text-blue-600" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                {/* Total Users Card - Featured */}
+                <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-blue-100 text-sm font-medium">Total Users</p>
+                      <p className="text-3xl font-bold">{formatNumber(userStats.totalUsers)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Total Users</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(userStats.totalUsers)}</p>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-300 rounded-full animate-pulse"></div>
+                    <p className="text-blue-100 text-sm">Platform participants</p>
                   </div>
                 </div>
 
                 {/* Farmers Produce Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <Tractor className="w-6 h-6 text-green-600" />
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                      <Tractor className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gray-600 text-sm font-medium">Farmers Produce</p>
+                      <p className="text-3xl font-bold text-gray-900">{formatNumber(farmerProductStats.totalProducts)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Farmers Produce</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(farmerProductStats.totalProducts)}</p>
-                    <p className="text-xs font-medium text-green-500">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
                       {farmerProductStats.inStockCount} in stock
-                    </p>
+                    </span>
+                    <div className="flex items-center space-x-1 text-green-600">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-xs font-medium">Active</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Suppliers Produce Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <Package className="w-6 h-6 text-purple-600" />
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                      <Package className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gray-600 text-sm font-medium">Suppliers Produce</p>
+                      <p className="text-3xl font-bold text-gray-900">{formatNumber(supplierProductStats.totalProducts)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Suppliers Produce</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(supplierProductStats.totalProducts)}</p>
-                    <p className="text-xs font-medium text-green-500">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
                       {supplierProductStats.inStockCount} in stock
-                    </p>
+                    </span>
+                    <div className="flex items-center space-x-1 text-purple-600">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span className="text-xs font-medium">Available</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Orders Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                    <ShoppingCart className="w-6 h-6 text-orange-600" />
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                      <ShoppingCart className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gray-600 text-sm font-medium">Total Orders</p>
+                      <p className="text-3xl font-bold text-gray-900">{formatNumber(orderStats.totalOrders)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Total Orders</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(orderStats.totalOrders)}</p>
-                    <p className="text-xs font-medium text-green-500">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
                       {orderStats.completedCount} completed
-                    </p>
+                    </span>
+                    <div className="flex items-center space-x-1 text-orange-600">
+                      <TrendingUp className="w-3 h-3" />
+                      <span className="text-xs font-medium">Growing</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </LoadingOverlay>
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Market Activity Trends */}
-              <div className="col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            {/* Enhanced Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              {/* Market Activity Trends - Enhanced */}
+              <div className="col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900">Market Activity Trends</h2>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">Market Activity Trends</h2>
+                    <p className="text-sm text-gray-600 mt-1">Agricultural marketplace performance over time</p>
+                  </div>
                   <div className="flex items-center space-x-2">
                     <select
                       value={dateRange}
                       onChange={(e) => setDateRange(e.target.value as any)}
-                      className="text-sm border border-gray-200 rounded px-2 py-1"
+                      className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     >
                       <option value="7d">Last 7 days</option>
                       <option value="30d">Last 30 days</option>
                       <option value="90d">Last 90 days</option>
                       <option value="1y">Last year</option>
                     </select>
+                    <Button variant="outline" size="sm">
+                      <Download className="w-4 h-4 mr-2" />
+                      Export
+                    </Button>
                   </div>
                 </div>
-                <div style={{ width: '100%', height: 300 }}>
+                
+                {/* Chart Legend */}
+                <div className="flex items-center space-x-6 mb-4">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="text-sm text-gray-600">Farmers</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span className="text-sm text-gray-600">Suppliers</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                    <span className="text-sm text-gray-600">Orders</span>
+                  </div>
+                </div>
+                
+                <div style={{ width: '100%', height: 320 }}>
                   <ResponsiveContainer>
                     <AreaChart data={marketTrendsData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="farmersGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={COLORS[0]} stopOpacity={0.8} />
+                          <stop offset="95%" stopColor={COLORS[0]} stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="suppliersGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={COLORS[1]} stopOpacity={0.8} />
+                          <stop offset="95%" stopColor={COLORS[1]} stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="ordersGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={COLORS[2]} stopOpacity={0.8} />
+                          <stop offset="95%" stopColor={COLORS[2]} stopOpacity={0.1} />
+                        </linearGradient>
+                      </defs>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
                       <XAxis
                         dataKey="name"
@@ -416,8 +485,8 @@ function Dashboard() {
                         contentStyle={{
                           backgroundColor: '#fff',
                           border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                          borderRadius: '12px',
+                          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
                         }}
                       />
                       <Area
@@ -425,8 +494,8 @@ function Dashboard() {
                         dataKey="farmers"
                         stackId="1"
                         stroke={COLORS[0]}
-                        fill={COLORS[0]}
-                        fillOpacity={0.6}
+                        fill="url(#farmersGradient)"
+                        strokeWidth={2}
                         name="Farmers"
                       />
                       <Area
@@ -434,8 +503,8 @@ function Dashboard() {
                         dataKey="suppliers"
                         stackId="1"
                         stroke={COLORS[1]}
-                        fill={COLORS[1]}
-                        fillOpacity={0.6}
+                        fill="url(#suppliersGradient)"
+                        strokeWidth={2}
                         name="Suppliers"
                       />
                       <Area
@@ -443,8 +512,8 @@ function Dashboard() {
                         dataKey="orders"
                         stackId="1"
                         stroke={COLORS[2]}
-                        fill={COLORS[2]}
-                        fillOpacity={0.6}
+                        fill="url(#ordersGradient)"
+                        strokeWidth={2}
                         name="Orders"
                       />
                     </AreaChart>
@@ -452,18 +521,27 @@ function Dashboard() {
                 </div>
               </div>
 
-              {/* User Distribution */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">User Distribution</h3>
-                <div style={{ width: '100%', height: 200 }}>
+              {/* User Distribution - Enhanced */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">User Distribution</h3>
+                    <p className="text-sm text-gray-600 mt-1">Platform user breakdown</p>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div style={{ width: '100%', height: 220 }}>
                   <ResponsiveContainer>
                     <PieChart>
                       <Pie
                         data={userDistributionData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={40}
-                        outerRadius={80}
+                        innerRadius={50}
+                        outerRadius={90}
                         paddingAngle={5}
                         dataKey="value"
                       >
@@ -471,21 +549,34 @@ function Dashboard() {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#fff',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="mt-4 space-y-2">
+                
+                <div className="mt-4 space-y-3">
                   {userDistributionData.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
+                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center space-x-3">
                         <div
-                          className="w-3 h-3 rounded-full"
+                          className="w-4 h-4 rounded-full"
                           style={{ backgroundColor: item.color }}
                         />
-                        <span className="text-sm text-gray-600">{item.name}</span>
+                        <span className="text-sm font-medium text-gray-900">{item.name}</span>
                       </div>
-                      <span className="text-sm font-medium text-gray-900">{item.value}</span>
+                      <div className="text-right">
+                        <span className="text-sm font-bold text-gray-900">{item.value}</span>
+                        <p className="text-xs text-gray-500">
+                          {userStats.totalUsers > 0 ? Math.round((item.value / userStats.totalUsers) * 100) : 0}%
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
