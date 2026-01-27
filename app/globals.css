@@ -1,43 +1,177 @@
 @import 'tailwindcss';
 @import '../styles/typography.css';
+@import '../styles/agricultural-design-system.css';
+@import '../styles/mobile-first-responsive.css';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* ===== ENHANCED DESIGN SYSTEM ===== */
+  /* ===== AGRICULTURAL DESIGN SYSTEM ===== */
   
-  /* Primary Brand Colors (Maintain Existing Green) */
-  --primary-green: #00A63E;
-  --primary-green-light: #10B981;
-  --primary-green-dark: #059669;
-  --primary-green-50: #ECFDF5;
-  --primary-green-100: #D1FAE5;
-  --primary-green-200: #A7F3D0;
-  --primary-green-300: #6EE7B7;
-  --primary-green-400: #34D399;
-  --primary-green-500: #10B981;
-  --primary-green-600: #00A63E;
-  --primary-green-700: #047857;
-  --primary-green-800: #065F46;
-  --primary-green-900: #064E3B;
+  /* Agricultural Primary Colors - Earth-tone Greens */
+  --agricultural-primary: #2D5016;
+  --agricultural-primary-light: #4A7C59;
+  --agricultural-primary-lighter: #7FB069;
+  --agricultural-primary-lightest: #B8E6B8;
+  
+  /* Agricultural Green Scale (50-900) */
+  --agricultural-green-50: #F0F9F0;
+  --agricultural-green-100: #D4F1D4;
+  --agricultural-green-200: #B8E6B8;
+  --agricultural-green-300: #9CDB9C;
+  --agricultural-green-400: #7FB069;
+  --agricultural-green-500: #4A7C59;
+  --agricultural-green-600: #2D5016;
+  --agricultural-green-700: #1F3A0F;
+  --agricultural-green-800: #152A0A;
+  --agricultural-green-900: #0A1A05;
+  
+  /* Primary Brand Colors (Updated to Agricultural Theme) */
+  --primary-green: #2D5016;
+  --primary-green-light: #4A7C59;
+  --primary-green-dark: #1F3A0F;
+  --primary-green-50: #F0F9F0;
+  --primary-green-100: #D4F1D4;
+  --primary-green-200: #B8E6B8;
+  --primary-green-300: #9CDB9C;
+  --primary-green-400: #7FB069;
+  --primary-green-500: #4A7C59;
+  --primary-green-600: #2D5016;
+  --primary-green-700: #1F3A0F;
+  --primary-green-800: #152A0A;
+  --primary-green-900: #0A1A05;
+  
+  /* Earth Tone Complementary Colors */
+  --earth-brown: #8B4513;
+  --earth-brown-light: #CD853F;
+  --earth-brown-50: #FDF8F3;
+  --earth-brown-100: #F9E8D3;
+  --earth-brown-200: #F4D7B3;
+  --earth-brown-300: #EFC693;
+  --earth-brown-400: #E5A653;
+  --earth-brown-500: #CD853F;
+  --earth-brown-600: #8B4513;
+  --earth-brown-700: #6B340F;
+  --earth-brown-800: #4B240A;
+  --earth-brown-900: #2B1405;
+  
+  --earth-ochre: #CC7722;
+  --earth-ochre-light: #E6A055;
+  --earth-ochre-50: #FDF7F0;
+  --earth-ochre-100: #F9E8D1;
+  --earth-ochre-200: #F4D9B2;
+  --earth-ochre-300: #EFCA93;
+  --earth-ochre-400: #E6A055;
+  --earth-ochre-500: #CC7722;
+  --earth-ochre-600: #B8661E;
+  --earth-ochre-700: #8B4D16;
+  --earth-ochre-800: #5E340F;
+  --earth-ochre-900: #311A08;
+  
+  --earth-clay: #B87333;
+  --earth-clay-light: #D4965C;
+  --earth-clay-50: #FBF7F3;
+  --earth-clay-100: #F4E6D6;
+  --earth-clay-200: #EDD5B9;
+  --earth-clay-300: #E6C49C;
+  --earth-clay-400: #D4965C;
+  --earth-clay-500: #B87333;
+  --earth-clay-600: #A6652E;
+  --earth-clay-700: #7D4C22;
+  --earth-clay-800: #543317;
+  --earth-clay-900: #2A190B;
+  
+  /* Fresh Accent Colors */
+  --harvest-gold: #FFD700;
+  --harvest-gold-light: #FFED4E;
+  --harvest-gold-50: #FFFEF0;
+  --harvest-gold-100: #FFFACC;
+  --harvest-gold-200: #FFF599;
+  --harvest-gold-300: #FFED4E;
+  --harvest-gold-400: #FFE135;
+  --harvest-gold-500: #FFD700;
+  --harvest-gold-600: #E6C200;
+  --harvest-gold-700: #B39600;
+  --harvest-gold-800: #806B00;
+  --harvest-gold-900: #4D4000;
+  
+  --sunrise-orange: #FF8C42;
+  --sunrise-orange-light: #FFB380;
+  --sunrise-orange-50: #FFF7F0;
+  --sunrise-orange-100: #FFE6CC;
+  --sunrise-orange-200: #FFD599;
+  --sunrise-orange-300: #FFC466;
+  --sunrise-orange-400: #FFB380;
+  --sunrise-orange-500: #FF8C42;
+  --sunrise-orange-600: #E67A3B;
+  --sunrise-orange-700: #B35C2C;
+  --sunrise-orange-800: #803E1E;
+  --sunrise-orange-900: #4D200F;
+  
+  --sky-blue: #87CEEB;
+  --sky-blue-light: #B3E0F2;
+  --sky-blue-50: #F0F9FF;
+  --sky-blue-100: #E0F2FE;
+  --sky-blue-200: #BAE6FD;
+  --sky-blue-300: #7DD3FC;
+  --sky-blue-400: #38BDF8;
+  --sky-blue-500: #87CEEB;
+  --sky-blue-600: #0EA5E9;
+  --sky-blue-700: #0284C7;
+  --sky-blue-800: #0369A1;
+  --sky-blue-900: #0C4A6E;
+  
+  --soil-rich: #654321;
+  --soil-rich-light: #8B6F47;
+  --soil-rich-50: #F7F4F0;
+  --soil-rich-100: #EDE4D6;
+  --soil-rich-200: #E3D4BC;
+  --soil-rich-300: #D9C4A2;
+  --soil-rich-400: #C5A474;
+  --soil-rich-500: #8B6F47;
+  --soil-rich-600: #654321;
+  --soil-rich-700: #4E3319;
+  --soil-rich-800: #372311;
+  --soil-rich-900: #201308;
 
-  /* Semantic Color System */
-  --success: #10B981;
-  --success-light: #34D399;
-  --success-dark: #047857;
-  --success-bg: #ECFDF5;
-  --warning: #F59E0B;
-  --warning-light: #FBBF24;
-  --warning-dark: #D97706;
-  --warning-bg: #FFFBEB;
-  --error: #EF4444;
+  /* Semantic Agricultural Colors */
+  --growth-success: #4A7C59;
+  --growth-success-light: #7FB069;
+  --growth-success-dark: #2D5016;
+  --growth-success-bg: #F0F9F0;
+  
+  --caution-yellow: #FFD700;
+  --caution-yellow-light: #FFED4E;
+  --caution-yellow-dark: #E6C200;
+  --caution-yellow-bg: #FFFEF0;
+  
+  --alert-red: #DC143C;
+  --alert-red-light: #F87171;
+  --alert-red-dark: #B91C1C;
+  --alert-red-bg: #FEF2F2;
+  
+  --info-blue: #87CEEB;
+  --info-blue-light: #B3E0F2;
+  --info-blue-dark: #0284C7;
+  --info-blue-bg: #F0F9FF;
+  
+  /* Updated Semantic Color System */
+  --success: #4A7C59;
+  --success-light: #7FB069;
+  --success-dark: #2D5016;
+  --success-bg: #F0F9F0;
+  --warning: #FFD700;
+  --warning-light: #FFED4E;
+  --warning-dark: #E6C200;
+  --warning-bg: #FFFEF0;
+  --error: #DC143C;
   --error-light: #F87171;
-  --error-dark: #DC2626;
+  --error-dark: #B91C1C;
   --error-bg: #FEF2F2;
-  --info: #3B82F6;
-  --info-light: #60A5FA;
-  --info-dark: #2563EB;
-  --info-bg: #EFF6FF;
+  --info: #87CEEB;
+  --info-light: #B3E0F2;
+  --info-dark: #0284C7;
+  --info-bg: #F0F9FF;
 
   /* Enhanced Neutral Palette */
   --gray-50: #F9FAFB;
@@ -51,26 +185,46 @@
   --gray-800: #1F2937;
   --gray-900: #111827;
 
-  /* Background Variations */
+  /* Agricultural Background Variations */
   --bg-primary: #FFFFFF;
   --bg-secondary: #F9FAFB;
   --bg-tertiary: #F3F4F6;
-  --bg-success: #ECFDF5;
-  --bg-warning: #FFFBEB;
+  --bg-success: #F0F9F0;
+  --bg-warning: #FFFEF0;
   --bg-error: #FEF2F2;
-  --bg-info: #EFF6FF;
-  --bg-gradient-primary: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
-  --bg-gradient-success: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%);
-  --bg-gradient-warning: linear-gradient(135deg, var(--warning) 0%, var(--warning-light) 100%);
-  --bg-gradient-error: linear-gradient(135deg, var(--error) 0%, var(--error-light) 100%);
-  --bg-gradient-info: linear-gradient(135deg, var(--info) 0%, var(--info-light) 100%);
+  --bg-info: #F0F9FF;
+  --bg-gradient-primary: linear-gradient(135deg, var(--agricultural-primary) 0%, var(--agricultural-primary-light) 100%);
+  --bg-gradient-success: linear-gradient(135deg, var(--growth-success) 0%, var(--growth-success-light) 100%);
+  --bg-gradient-warning: linear-gradient(135deg, var(--caution-yellow) 0%, var(--caution-yellow-light) 100%);
+  --bg-gradient-error: linear-gradient(135deg, var(--alert-red) 0%, var(--alert-red-light) 100%);
+  --bg-gradient-info: linear-gradient(135deg, var(--info-blue) 0%, var(--info-blue-light) 100%);
   --bg-gradient-subtle: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+  --bg-gradient-earth: linear-gradient(135deg, var(--earth-brown) 0%, var(--earth-ochre) 50%, var(--earth-clay) 100%);
+  --bg-gradient-harvest: linear-gradient(135deg, var(--harvest-gold) 0%, var(--sunrise-orange) 100%);
+  --bg-gradient-natural: linear-gradient(135deg, var(--agricultural-green-200) 0%, var(--sky-blue-200) 100%);
 
-  /* Typography System */
-  --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  /* Enhanced Typography System with Agricultural Focus */
+  --font-primary: 'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Poppins', 'Georgia', serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
 
-  /* Font Scale */
+  /* Responsive Agricultural Typography Scale with Clamp Functions */
+  --text-display: clamp(2.5rem, 5vw, 4rem);     /* Hero headings - 40px to 64px */
+  --text-h1: clamp(2rem, 4vw, 3rem);            /* Page titles - 32px to 48px */
+  --text-h2: clamp(1.5rem, 3vw, 2.25rem);       /* Section headings - 24px to 36px */
+  --text-h3: clamp(1.25rem, 2.5vw, 1.875rem);   /* Subsection headings - 20px to 30px */
+  --text-h4: clamp(1.125rem, 2vw, 1.5rem);      /* Component headings - 18px to 24px */
+  --text-h5: clamp(1rem, 1.5vw, 1.25rem);       /* Card headings - 16px to 20px */
+  --text-h6: clamp(0.875rem, 1.25vw, 1.125rem); /* Small headings - 14px to 18px */
+  
+  /* Body Text Responsive Scale */
+  --text-body: clamp(1rem, 1.2vw, 1.125rem);    /* Default body - 16px to 18px */
+  --text-body-lg: clamp(1.125rem, 1.4vw, 1.25rem); /* Large body - 18px to 20px */
+  --text-body-sm: clamp(0.875rem, 1vw, 1rem);   /* Small body - 14px to 16px */
+  --text-caption: clamp(0.75rem, 0.9vw, 0.875rem); /* Captions - 12px to 14px */
+  --text-label: clamp(0.75rem, 0.9vw, 0.875rem);   /* Labels - 12px to 14px */
+  
+  /* Legacy Font Scale (for backward compatibility) */
   --text-xs: 0.75rem;    /* 12px */
   --text-sm: 0.875rem;   /* 14px */
   --text-base: 1rem;     /* 16px */
@@ -82,6 +236,15 @@
   --text-5xl: 3rem;      /* 48px */
   --text-6xl: 3.75rem;   /* 60px */
 
+  /* Agricultural-Specific Text Styles */
+  --text-price: clamp(1.25rem, 2vw, 1.5rem);    /* Price display - 20px to 24px */
+  --text-price-large: clamp(1.5rem, 2.5vw, 2rem); /* Large price - 24px to 32px */
+  --text-quantity: clamp(1rem, 1.2vw, 1.125rem); /* Quantity display - 16px to 18px */
+  --text-measurement: clamp(0.875rem, 1vw, 1rem); /* Measurements - 14px to 16px */
+  --text-farmer-name: clamp(1.125rem, 1.4vw, 1.25rem); /* Farmer names - 18px to 20px */
+  --text-location: clamp(0.875rem, 1vw, 1rem);   /* Location text - 14px to 16px */
+  --text-status: clamp(0.75rem, 0.9vw, 0.875rem); /* Status indicators - 12px to 14px */
+
   /* Font Weights */
   --font-light: 300;
   --font-normal: 400;
@@ -90,14 +253,42 @@
   --font-bold: 700;
   --font-extrabold: 800;
 
-  /* Line Heights */
-  --leading-tight: 1.25;
-  --leading-snug: 1.375;
-  --leading-normal: 1.5;
-  --leading-relaxed: 1.625;
-  --leading-loose: 2;
+  /* Enhanced Line Heights for Agricultural Context */
+  --leading-tight: 1.25;      /* For headings */
+  --leading-snug: 1.375;      /* For subheadings */
+  --leading-normal: 1.5;      /* For body text */
+  --leading-relaxed: 1.625;   /* For comfortable reading */
+  --leading-loose: 2;         /* For emphasis */
+  
+  /* High Contrast Line Heights for Outdoor Usage */
+  --leading-outdoor-tight: 1.3;    /* Enhanced for bright conditions */
+  --leading-outdoor-normal: 1.6;   /* Better readability in sunlight */
+  --leading-outdoor-relaxed: 1.75; /* Maximum readability */
+  
+  /* Character Spacing for Enhanced Readability */
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+  --tracking-agricultural: 0.015em; /* Optimized for agricultural content */
 
-  /* Spacing Scale */
+  /* Organic Spacing System (4px Base Grid) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  
+  /* Agricultural-Specific Spacing */
+  --card-padding: 20px;
+  --section-gap: 40px;
+  --mobile-margin: 16px;
+  
+  /* Enhanced Spacing Scale */
   --space-1: 0.25rem;   /* 4px */
   --space-2: 0.5rem;    /* 8px */
   --space-3: 0.75rem;   /* 12px */
@@ -116,17 +307,22 @@
   --space-24: 6rem;     /* 96px */
   --space-32: 8rem;     /* 128px */
 
-  /* Border Radius System */
+  /* Organic Border Radius System */
   --radius-none: 0;
   --radius-sm: 0.25rem;  /* 4px */
   --radius-md: 0.375rem; /* 6px */
   --radius-lg: 0.5rem;   /* 8px */
-  --radius-xl: 0.75rem;  /* 12px */
+  --radius-xl: 0.75rem;  /* 12px - Organic rounded corners */
   --radius-2xl: 1rem;    /* 16px */
   --radius-3xl: 1.5rem;  /* 24px */
   --radius-full: 9999px;
+  
+  /* Agricultural-Specific Radius */
+  --radius-organic: 0.75rem; /* 12px - Primary organic radius */
+  --radius-card: 0.75rem;    /* 12px - Card radius */
+  --radius-button: 0.5rem;   /* 8px - Button radius */
 
-  /* Enhanced Shadow System */
+  /* Enhanced Shadow System with Agricultural Tints */
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -136,10 +332,22 @@
   --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
   --shadow-none: 0 0 #0000;
 
-  /* Colored Shadows for Brand Elements */
-  --shadow-green-sm: 0 1px 3px 0 rgb(0 166 62 / 0.1), 0 1px 2px -1px rgb(0 166 62 / 0.1);
-  --shadow-green-md: 0 4px 6px -1px rgb(0 166 62 / 0.1), 0 2px 4px -2px rgb(0 166 62 / 0.1);
-  --shadow-green-lg: 0 10px 15px -3px rgb(0 166 62 / 0.1), 0 4px 6px -4px rgb(0 166 62 / 0.1);
+  /* Natural Shadows with Agricultural Green Tints */
+  --shadow-green-xs: 0 1px 2px 0 rgb(45 80 22 / 0.05);
+  --shadow-green-sm: 0 1px 3px 0 rgb(45 80 22 / 0.1), 0 1px 2px -1px rgb(45 80 22 / 0.1);
+  --shadow-green-md: 0 4px 6px -1px rgb(45 80 22 / 0.1), 0 2px 4px -2px rgb(45 80 22 / 0.1);
+  --shadow-green-lg: 0 10px 15px -3px rgb(45 80 22 / 0.1), 0 4px 6px -4px rgb(45 80 22 / 0.1);
+  --shadow-green-xl: 0 20px 25px -5px rgb(45 80 22 / 0.1), 0 8px 10px -6px rgb(45 80 22 / 0.1);
+  
+  /* Earth Tone Shadows */
+  --shadow-earth-sm: 0 1px 3px 0 rgb(139 69 19 / 0.1), 0 1px 2px -1px rgb(139 69 19 / 0.1);
+  --shadow-earth-md: 0 4px 6px -1px rgb(139 69 19 / 0.1), 0 2px 4px -2px rgb(139 69 19 / 0.1);
+  --shadow-earth-lg: 0 10px 15px -3px rgb(139 69 19 / 0.1), 0 4px 6px -4px rgb(139 69 19 / 0.1);
+  
+  /* Warm Accent Shadows */
+  --shadow-warm-sm: 0 1px 3px 0 rgb(255 215 0 / 0.1), 0 1px 2px -1px rgb(255 215 0 / 0.1);
+  --shadow-warm-md: 0 4px 6px -1px rgb(255 215 0 / 0.1), 0 2px 4px -2px rgb(255 215 0 / 0.1);
+  --shadow-warm-lg: 0 10px 15px -3px rgb(255 215 0 / 0.1), 0 4px 6px -4px rgb(255 215 0 / 0.1);
 
   /* Animation System */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -214,20 +422,23 @@
 }
 
 .dark {
-  /* Enhanced Dark Mode Colors */
+  /* Enhanced Dark Mode Colors with Agricultural Theme */
   --bg-primary: #0F172A;
   --bg-secondary: #1E293B;
   --bg-tertiary: #334155;
-  --bg-success: #064E3B;
-  --bg-warning: #451A03;
+  --bg-success: #0A1A05;
+  --bg-warning: #4D4000;
   --bg-error: #450A0A;
-  --bg-info: #1E3A8A;
-  --bg-gradient-primary: linear-gradient(135deg, var(--primary-green-dark) 0%, var(--primary-green) 100%);
-  --bg-gradient-success: linear-gradient(135deg, var(--success-dark) 0%, var(--success) 100%);
-  --bg-gradient-warning: linear-gradient(135deg, var(--warning-dark) 0%, var(--warning) 100%);
-  --bg-gradient-error: linear-gradient(135deg, var(--error-dark) 0%, var(--error) 100%);
-  --bg-gradient-info: linear-gradient(135deg, var(--info-dark) 0%, var(--info) 100%);
+  --bg-info: #0C4A6E;
+  --bg-gradient-primary: linear-gradient(135deg, var(--agricultural-green-700) 0%, var(--agricultural-green-600) 100%);
+  --bg-gradient-success: linear-gradient(135deg, var(--growth-success-dark) 0%, var(--growth-success) 100%);
+  --bg-gradient-warning: linear-gradient(135deg, var(--caution-yellow-dark) 0%, var(--caution-yellow) 100%);
+  --bg-gradient-error: linear-gradient(135deg, var(--alert-red-dark) 0%, var(--alert-red) 100%);
+  --bg-gradient-info: linear-gradient(135deg, var(--info-blue-dark) 0%, var(--info-blue) 100%);
   --bg-gradient-subtle: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-700) 100%);
+  --bg-gradient-earth: linear-gradient(135deg, var(--earth-brown-800) 0%, var(--earth-ochre-800) 50%, var(--earth-clay-800) 100%);
+  --bg-gradient-harvest: linear-gradient(135deg, var(--harvest-gold-800) 0%, var(--sunrise-orange-800) 100%);
+  --bg-gradient-natural: linear-gradient(135deg, var(--agricultural-green-800) 0%, var(--sky-blue-800) 100%);
 
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -248,14 +459,14 @@
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
   --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --chart-1: var(--agricultural-green-400);
+  --chart-2: var(--info-blue-400);
+  --chart-3: var(--harvest-gold-400);
+  --chart-4: var(--earth-ochre-400);
+  --chart-5: var(--sunrise-orange-400);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: var(--agricultural-green-400);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);

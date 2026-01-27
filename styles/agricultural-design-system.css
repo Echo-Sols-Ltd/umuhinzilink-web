@@ -1,0 +1,433 @@
+/* ===== AGRICULTURAL DESIGN SYSTEM ===== */
+
+/* 
+ * UmuhinziLink Agricultural Color Palette
+ * Designed for farming communities with earth-tone greens, 
+ * complementary earth tones, and fresh accent colors
+ */
+
+:root {
+  /* ===== AGRICULTURAL PRIMARY COLORS ===== */
+  
+  /* Deep Forest Green - Primary agricultural color representing growth and sustainability */
+  --agricultural-primary: #2D5016;
+  --agricultural-primary-light: #4A7C59;    /* Sage Green */
+  --agricultural-primary-lighter: #7FB069;  /* Fresh Leaf Green */
+  --agricultural-primary-lightest: #B8E6B8; /* Mint Green */
+  
+  /* Agricultural Green Scale (50-900) - Complete shade variations */
+  --agricultural-green-50: #F0F9F0;   /* Lightest green tint */
+  --agricultural-green-100: #D4F1D4;  /* Very light green */
+  --agricultural-green-200: #B8E6B8;  /* Light green */
+  --agricultural-green-300: #9CDB9C;  /* Medium light green */
+  --agricultural-green-400: #7FB069;  /* Medium green */
+  --agricultural-green-500: #4A7C59;  /* Base green */
+  --agricultural-green-600: #2D5016;  /* Primary green (darker) */
+  --agricultural-green-700: #1F3A0F;  /* Dark green */
+  --agricultural-green-800: #152A0A;  /* Very dark green */
+  --agricultural-green-900: #0A1A05;  /* Darkest green */
+  
+  /* ===== EARTH TONE COMPLEMENTARY COLORS ===== */
+  
+  /* Saddle Brown - Rich earth tone representing soil and stability */
+  --earth-brown: #8B4513;
+  --earth-brown-light: #CD853F;
+  --earth-brown-50: #FDF8F3;
+  --earth-brown-100: #F9E8D3;
+  --earth-brown-200: #F4D7B3;
+  --earth-brown-300: #EFC693;
+  --earth-brown-400: #E5A653;
+  --earth-brown-500: #CD853F;
+  --earth-brown-600: #8B4513;
+  --earth-brown-700: #6B340F;
+  --earth-brown-800: #4B240A;
+  --earth-brown-900: #2B1405;
+  
+  /* Ochre - Warm earth tone representing clay and minerals */
+  --earth-ochre: #CC7722;
+  --earth-ochre-light: #E6A055;
+  --earth-ochre-50: #FDF7F0;
+  --earth-ochre-100: #F9E8D1;
+  --earth-ochre-200: #F4D9B2;
+  --earth-ochre-300: #EFCA93;
+  --earth-ochre-400: #E6A055;
+  --earth-ochre-500: #CC7722;
+  --earth-ochre-600: #B8661E;
+  --earth-ochre-700: #8B4D16;
+  --earth-ochre-800: #5E340F;
+  --earth-ochre-900: #311A08;
+  
+  /* Clay Brown - Natural earth tone representing fertile soil */
+  --earth-clay: #B87333;
+  --earth-clay-light: #D4965C;
+  --earth-clay-50: #FBF7F3;
+  --earth-clay-100: #F4E6D6;
+  --earth-clay-200: #EDD5B9;
+  --earth-clay-300: #E6C49C;
+  --earth-clay-400: #D4965C;
+  --earth-clay-500: #B87333;
+  --earth-clay-600: #A6652E;
+  --earth-clay-700: #7D4C22;
+  --earth-clay-800: #543317;
+  --earth-clay-900: #2A190B;
+  
+  /* ===== FRESH ACCENT COLORS ===== */
+  
+  /* Harvest Gold - Vibrant yellow representing prosperity and harvest */
+  --harvest-gold: #FFD700;
+  --harvest-gold-light: #FFED4E;
+  --harvest-gold-50: #FFFEF0;
+  --harvest-gold-100: #FFFACC;
+  --harvest-gold-200: #FFF599;
+  --harvest-gold-300: #FFED4E;
+  --harvest-gold-400: #FFE135;
+  --harvest-gold-500: #FFD700;
+  --harvest-gold-600: #E6C200;
+  --harvest-gold-700: #B39600;
+  --harvest-gold-800: #806B00;
+  --harvest-gold-900: #4D4000;
+  
+  /* Sunrise Orange - Warm orange representing energy and vitality */
+  --sunrise-orange: #FF8C42;
+  --sunrise-orange-light: #FFB380;
+  --sunrise-orange-50: #FFF7F0;
+  --sunrise-orange-100: #FFE6CC;
+  --sunrise-orange-200: #FFD599;
+  --sunrise-orange-300: #FFC466;
+  --sunrise-orange-400: #FFB380;
+  --sunrise-orange-500: #FF8C42;
+  --sunrise-orange-600: #E67A3B;
+  --sunrise-orange-700: #B35C2C;
+  --sunrise-orange-800: #803E1E;
+  --sunrise-orange-900: #4D200F;
+  
+  /* Sky Blue - Fresh blue representing water and sky */
+  --sky-blue: #87CEEB;
+  --sky-blue-light: #B3E0F2;
+  --sky-blue-50: #F0F9FF;
+  --sky-blue-100: #E0F2FE;
+  --sky-blue-200: #BAE6FD;
+  --sky-blue-300: #7DD3FC;
+  --sky-blue-400: #38BDF8;
+  --sky-blue-500: #87CEEB;
+  --sky-blue-600: #0EA5E9;
+  --sky-blue-700: #0284C7;
+  --sky-blue-800: #0369A1;
+  --sky-blue-900: #0C4A6E;
+  
+  /* Soil Rich - Deep brown representing rich, fertile soil */
+  --soil-rich: #654321;
+  --soil-rich-light: #8B6F47;
+  --soil-rich-50: #F7F4F0;
+  --soil-rich-100: #EDE4D6;
+  --soil-rich-200: #E3D4BC;
+  --soil-rich-300: #D9C4A2;
+  --soil-rich-400: #C5A474;
+  --soil-rich-500: #8B6F47;
+  --soil-rich-600: #654321;
+  --soil-rich-700: #4E3319;
+  --soil-rich-800: #372311;
+  --soil-rich-900: #201308;
+  
+  /* ===== SEMANTIC AGRICULTURAL COLORS ===== */
+  
+  /* Growth Success - Using agricultural green for success states */
+  --growth-success: #4A7C59;
+  --growth-success-light: #7FB069;
+  --growth-success-dark: #2D5016;
+  --growth-success-bg: #F0F9F0;
+  
+  /* Caution Yellow - Using harvest gold for warning states */
+  --caution-yellow: #FFD700;
+  --caution-yellow-light: #FFED4E;
+  --caution-yellow-dark: #E6C200;
+  --caution-yellow-bg: #FFFEF0;
+  
+  /* Alert Red - Harmonious red for error states */
+  --alert-red: #DC143C;
+  --alert-red-light: #F87171;
+  --alert-red-dark: #B91C1C;
+  --alert-red-bg: #FEF2F2;
+  
+  /* Info Blue - Using sky blue for information states */
+  --info-blue: #87CEEB;
+  --info-blue-light: #B3E0F2;
+  --info-blue-dark: #0284C7;
+  --info-blue-bg: #F0F9FF;
+  
+  /* ===== AGRICULTURAL BACKGROUND GRADIENTS ===== */
+  
+  /* Primary agricultural gradient */
+  --bg-gradient-agricultural: linear-gradient(135deg, var(--agricultural-primary) 0%, var(--agricultural-primary-light) 100%);
+  
+  /* Earth tone gradient */
+  --bg-gradient-earth: linear-gradient(135deg, var(--earth-brown) 0%, var(--earth-ochre) 50%, var(--earth-clay) 100%);
+  
+  /* Harvest gradient */
+  --bg-gradient-harvest: linear-gradient(135deg, var(--harvest-gold) 0%, var(--sunrise-orange) 100%);
+  
+  /* Natural landscape gradient */
+  --bg-gradient-natural: linear-gradient(135deg, var(--agricultural-green-200) 0%, var(--sky-blue-200) 100%);
+  
+  /* Soil gradient */
+  --bg-gradient-soil: linear-gradient(135deg, var(--soil-rich) 0%, var(--earth-brown) 100%);
+  
+  /* ===== AGRICULTURAL SHADOWS ===== */
+  
+  /* Natural shadows with green tints */
+  --shadow-agricultural-xs: 0 1px 2px 0 rgb(45 80 22 / 0.05);
+  --shadow-agricultural-sm: 0 1px 3px 0 rgb(45 80 22 / 0.1), 0 1px 2px -1px rgb(45 80 22 / 0.1);
+  --shadow-agricultural-md: 0 4px 6px -1px rgb(45 80 22 / 0.1), 0 2px 4px -2px rgb(45 80 22 / 0.1);
+  --shadow-agricultural-lg: 0 10px 15px -3px rgb(45 80 22 / 0.1), 0 4px 6px -4px rgb(45 80 22 / 0.1);
+  --shadow-agricultural-xl: 0 20px 25px -5px rgb(45 80 22 / 0.1), 0 8px 10px -6px rgb(45 80 22 / 0.1);
+  
+  /* Earth tone shadows */
+  --shadow-earth-sm: 0 1px 3px 0 rgb(139 69 19 / 0.1), 0 1px 2px -1px rgb(139 69 19 / 0.1);
+  --shadow-earth-md: 0 4px 6px -1px rgb(139 69 19 / 0.1), 0 2px 4px -2px rgb(139 69 19 / 0.1);
+  --shadow-earth-lg: 0 10px 15px -3px rgb(139 69 19 / 0.1), 0 4px 6px -4px rgb(139 69 19 / 0.1);
+  
+  /* Warm accent shadows */
+  --shadow-warm-sm: 0 1px 3px 0 rgb(255 215 0 / 0.1), 0 1px 2px -1px rgb(255 215 0 / 0.1);
+  --shadow-warm-md: 0 4px 6px -1px rgb(255 215 0 / 0.1), 0 2px 4px -2px rgb(255 215 0 / 0.1);
+  --shadow-warm-lg: 0 10px 15px -3px rgb(255 215 0 / 0.1), 0 4px 6px -4px rgb(255 215 0 / 0.1);
+  
+  /* ===== ORGANIC SPACING SYSTEM ===== */
+  
+  /* 4px base grid system for consistent spacing */
+  --space-organic-xs: 4px;
+  --space-organic-sm: 8px;
+  --space-organic-md: 16px;
+  --space-organic-lg: 24px;
+  --space-organic-xl: 32px;
+  --space-organic-2xl: 48px;
+  --space-organic-3xl: 64px;
+  
+  /* Agricultural-specific spacing for components */
+  --card-padding-agricultural: 20px;    /* Comfortable touch padding */
+  --section-gap-agricultural: 40px;     /* Clear content separation */
+  --mobile-margin-agricultural: 16px;   /* Optimal mobile margins */
+  
+  /* ===== ORGANIC BORDER RADIUS ===== */
+  
+  /* Organic rounded corners for natural feel */
+  --radius-organic-sm: 6px;
+  --radius-organic-md: 8px;
+  --radius-organic-lg: 12px;   /* Primary organic radius */
+  --radius-organic-xl: 16px;
+  --radius-organic-2xl: 20px;
+  
+  /* Component-specific radius */
+  --radius-card-agricultural: 12px;     /* Farm product cards */
+  --radius-button-agricultural: 8px;    /* Agricultural buttons */
+  --radius-input-agricultural: 6px;     /* Form inputs */
+}
+
+/* ===== DARK MODE AGRICULTURAL COLORS ===== */
+
+.dark {
+  /* Adjusted agricultural colors for dark mode */
+  --agricultural-primary: #4A7C59;
+  --agricultural-primary-light: #7FB069;
+  --agricultural-primary-lighter: #9CDB9C;
+  --agricultural-primary-lightest: #B8E6B8;
+  
+  /* Dark mode earth tones */
+  --earth-brown: #CD853F;
+  --earth-brown-light: #E5A653;
+  --earth-ochre: #E6A055;
+  --earth-ochre-light: #EFCA93;
+  --earth-clay: #D4965C;
+  --earth-clay-light: #E6C49C;
+  
+  /* Dark mode accent colors */
+  --harvest-gold: #FFED4E;
+  --harvest-gold-light: #FFF599;
+  --sunrise-orange: #FFB380;
+  --sunrise-orange-light: #FFC466;
+  --sky-blue: #B3E0F2;
+  --sky-blue-light: #BAE6FD;
+  --soil-rich: #8B6F47;
+  --soil-rich-light: #C5A474;
+  
+  /* Dark mode semantic colors */
+  --growth-success: #7FB069;
+  --growth-success-light: #9CDB9C;
+  --caution-yellow: #FFED4E;
+  --caution-yellow-light: #FFF599;
+  --info-blue: #B3E0F2;
+  --info-blue-light: #BAE6FD;
+  
+  /* Dark mode backgrounds */
+  --bg-gradient-agricultural: linear-gradient(135deg, var(--agricultural-green-700) 0%, var(--agricultural-green-600) 100%);
+  --bg-gradient-earth: linear-gradient(135deg, var(--earth-brown-800) 0%, var(--earth-ochre-800) 50%, var(--earth-clay-800) 100%);
+  --bg-gradient-harvest: linear-gradient(135deg, var(--harvest-gold-800) 0%, var(--sunrise-orange-800) 100%);
+  --bg-gradient-natural: linear-gradient(135deg, var(--agricultural-green-800) 0%, var(--sky-blue-800) 100%);
+  --bg-gradient-soil: linear-gradient(135deg, var(--soil-rich-800) 0%, var(--earth-brown-800) 100%);
+}
+
+/* ===== AGRICULTURAL UTILITY CLASSES ===== */
+
+/* Color utilities */
+.text-agricultural-primary { color: var(--agricultural-primary); }
+.text-agricultural-light { color: var(--agricultural-primary-light); }
+.text-earth-brown { color: var(--earth-brown); }
+.text-earth-ochre { color: var(--earth-ochre); }
+.text-earth-clay { color: var(--earth-clay); }
+.text-harvest-gold { color: var(--harvest-gold); }
+.text-sunrise-orange { color: var(--sunrise-orange); }
+.text-sky-blue { color: var(--sky-blue); }
+.text-soil-rich { color: var(--soil-rich); }
+
+/* Background utilities */
+.bg-agricultural-primary { background-color: var(--agricultural-primary); }
+.bg-agricultural-light { background-color: var(--agricultural-primary-light); }
+.bg-earth-brown { background-color: var(--earth-brown); }
+.bg-earth-ochre { background-color: var(--earth-ochre); }
+.bg-earth-clay { background-color: var(--earth-clay); }
+.bg-harvest-gold { background-color: var(--harvest-gold); }
+.bg-sunrise-orange { background-color: var(--sunrise-orange); }
+.bg-sky-blue { background-color: var(--sky-blue); }
+.bg-soil-rich { background-color: var(--soil-rich); }
+
+/* Gradient backgrounds */
+.bg-gradient-agricultural { background: var(--bg-gradient-agricultural); }
+.bg-gradient-earth { background: var(--bg-gradient-earth); }
+.bg-gradient-harvest { background: var(--bg-gradient-harvest); }
+.bg-gradient-natural { background: var(--bg-gradient-natural); }
+.bg-gradient-soil { background: var(--bg-gradient-soil); }
+
+/* Shadow utilities */
+.shadow-agricultural-sm { box-shadow: var(--shadow-agricultural-sm); }
+.shadow-agricultural-md { box-shadow: var(--shadow-agricultural-md); }
+.shadow-agricultural-lg { box-shadow: var(--shadow-agricultural-lg); }
+.shadow-earth-sm { box-shadow: var(--shadow-earth-sm); }
+.shadow-earth-md { box-shadow: var(--shadow-earth-md); }
+.shadow-earth-lg { box-shadow: var(--shadow-earth-lg); }
+.shadow-warm-sm { box-shadow: var(--shadow-warm-sm); }
+.shadow-warm-md { box-shadow: var(--shadow-warm-md); }
+.shadow-warm-lg { box-shadow: var(--shadow-warm-lg); }
+
+/* Organic spacing utilities */
+.p-agricultural { padding: var(--card-padding-agricultural); }
+.gap-agricultural { gap: var(--section-gap-agricultural); }
+.m-agricultural { margin: var(--mobile-margin-agricultural); }
+
+/* Organic border radius utilities */
+.rounded-organic { border-radius: var(--radius-organic-lg); }
+.rounded-organic-sm { border-radius: var(--radius-organic-sm); }
+.rounded-organic-md { border-radius: var(--radius-organic-md); }
+.rounded-organic-lg { border-radius: var(--radius-organic-lg); }
+.rounded-organic-xl { border-radius: var(--radius-organic-xl); }
+.rounded-organic-2xl { border-radius: var(--radius-organic-2xl); }
+.rounded-card-agricultural { border-radius: var(--radius-card-agricultural); }
+.rounded-button-agricultural { border-radius: var(--radius-button-agricultural); }
+.rounded-input-agricultural { border-radius: var(--radius-input-agricultural); }
+
+/* ===== AGRICULTURAL COMPONENT STYLES ===== */
+
+/* Farm product card styling */
+.agricultural-card {
+  background: white;
+  border-radius: var(--radius-card-agricultural);
+  box-shadow: var(--shadow-agricultural-sm);
+  padding: var(--card-padding-agricultural);
+  transition: all 0.3s ease;
+}
+
+.agricultural-card:hover {
+  box-shadow: var(--shadow-agricultural-md);
+  transform: translateY(-2px);
+}
+
+.dark .agricultural-card {
+  background: var(--gray-800);
+  box-shadow: var(--shadow-agricultural-sm);
+}
+
+/* Agricultural button styling */
+.agricultural-button {
+  background: var(--agricultural-primary);
+  color: white;
+  border-radius: var(--radius-button-agricultural);
+  padding: 12px 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.agricultural-button:hover {
+  background: var(--agricultural-primary-light);
+  box-shadow: var(--shadow-agricultural-sm);
+  transform: translateY(-1px);
+}
+
+.agricultural-button:active {
+  transform: translateY(0);
+}
+
+/* Agricultural input styling */
+.agricultural-input {
+  border: 2px solid var(--agricultural-green-200);
+  border-radius: var(--radius-input-agricultural);
+  padding: 12px 16px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.agricultural-input:focus {
+  outline: none;
+  border-color: var(--agricultural-primary);
+  box-shadow: 0 0 0 3px rgb(45 80 22 / 0.1);
+}
+
+.dark .agricultural-input {
+  background: var(--gray-800);
+  border-color: var(--agricultural-green-700);
+  color: white;
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --agricultural-primary: #1F3A0F;
+    --agricultural-primary-light: #2D5016;
+    --earth-brown: #6B340F;
+    --earth-ochre: #8B4D16;
+    --earth-clay: #7D4C22;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .agricultural-card,
+  .agricultural-button,
+  .agricultural-input {
+    transition: none;
+  }
+  
+  .agricultural-card:hover,
+  .agricultural-button:hover {
+    transform: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .agricultural-card {
+    box-shadow: none;
+    border: 1px solid var(--agricultural-green-300);
+  }
+  
+  .bg-gradient-agricultural,
+  .bg-gradient-earth,
+  .bg-gradient-harvest,
+  .bg-gradient-natural,
+  .bg-gradient-soil {
+    background: white !important;
+    color: black !important;
+  }
+}

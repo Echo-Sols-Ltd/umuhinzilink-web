@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typography Test</title>
+    <style>
+        /* Test the CSS variables */
+        :root {
+            --font-primary: 'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
+            --text-display: clamp(2.5rem, 5vw, 4rem);
+            --text-h1: clamp(2rem, 4vw, 3rem);
+            --text-price: clamp(1.25rem, 2vw, 1.5rem);
+            --agricultural-primary: #2D5016;
+            --tracking-agricultural: 0.015em;
+            --leading-outdoor-normal: 1.6;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            margin: 2rem;
+            line-height: 1.6;
+        }
+        
+        .display-text {
+            font-size: var(--text-display);
+            font-weight: 800;
+            color: var(--agricultural-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .h1-text {
+            font-size: var(--text-h1);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .price-text {
+            font-size: var(--text-price);
+            font-weight: 700;
+            color: var(--agricultural-primary);
+            letter-spacing: -0.025em;
+        }
+        
+        .outdoor-text {
+            line-height: var(--leading-outdoor-normal);
+            letter-spacing: var(--tracking-agricultural);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="display-text">Enhanced Agricultural Typography</div>
+    <div class="h1-text">Responsive Heading Scale</div>
+    <div class="price-text">RWF 25,000</div>
+    <p class="outdoor-text">
+        This text is optimized for outdoor agricultural usage with enhanced readability,
+        proper letter spacing, and line height for better visibility in bright conditions.
+    </p>
+    
+    <h2>Resize Test</h2>
+    <p>Resize your browser window to see the responsive typography in action.</p>
+</body>
+</html>
