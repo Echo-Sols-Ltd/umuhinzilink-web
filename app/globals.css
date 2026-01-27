@@ -949,3 +949,452 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ===== BANDWIDTH OPTIMIZATION STYLES ===== */
+
+/* Network Status Indicators */
+.network-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-toast);
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.network-indicator.offline {
+  background-color: var(--alert-red);
+  color: white;
+}
+
+.network-indicator.slow {
+  background-color: var(--caution-yellow);
+  color: var(--gray-900);
+}
+
+/* Bandwidth-Aware Styles */
+.slow-connection .animate-pulse {
+  animation: none !important;
+}
+
+.slow-connection * {
+  animation-duration: 0.1s !important;
+  transition-duration: 0.1s !important;
+}
+
+.slow-connection .shimmer {
+  animation: none !important;
+  background: var(--gray-200) !important;
+}
+
+/* Progressive Enhancement */
+.enhanced-only {
+  display: none;
+}
+
+.js .enhanced-only {
+  display: block;
+}
+
+/* Bandwidth-Aware Utilities */
+.slow-connection-hide {
+  display: block;
+}
+
+.slow-connection .slow-connection-hide {
+  display: none;
+}
+
+.slow-connection-show {
+  display: none;
+}
+
+.slow-connection .slow-connection-show {
+  display: block;
+}
+
+/* Connection Speed Indicator */
+.connection-speed {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.connection-speed.fast {
+  background-color: var(--growth-success-bg);
+  color: var(--growth-success);
+}
+
+.connection-speed.medium {
+  background-color: var(--caution-yellow-bg);
+  color: var(--caution-yellow-dark);
+}
+
+.connection-speed.slow {
+  background-color: var(--alert-red-bg);
+  color: var(--alert-red);
+}
+
+/* Service Worker Update Notification */
+.sw-update-notification {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  background-color: var(--agricultural-primary);
+  color: white;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-toast);
+}
+
+@media (min-width: 768px) {
+  .sw-update-notification {
+    left: auto;
+    right: 1rem;
+    max-width: 24rem;
+  }
+}
+
+/* Offline Indicator Styles */
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--alert-red);
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  z-index: var(--z-toast);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Enhanced Skeleton Loading with Bandwidth Awareness */
+.skeleton-bandwidth-aware {
+  background: var(--gray-200);
+  border-radius: var(--radius-md);
+}
+
+.slow-connection .skeleton-bandwidth-aware {
+  background: var(--gray-100);
+  animation: none;
+}
+
+/* Memory-Efficient Transforms */
+.transform-gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Critical CSS for Above-the-Fold Content */
+.critical-css {
+  font-family: var(--font-primary);
+  color: var(--foreground);
+  background-color: var(--background);
+  line-height: 1.6;
+}
+
+/* Touch Optimization for Rural Mobile Usage */
+.touch-optimized {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* High Contrast for Outdoor Readability */
+.high-contrast {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+.high-contrast-border {
+  border: 2px solid #000000 !important;
+}
+
+/* Print Styles for Offline Use */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: #000;
+    background: #fff;
+  }
+
+  .card-agricultural {
+    border: 1px solid #000;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+}
+
+/* Performance Optimized Loading States */
+.loading-optimized {
+  background: linear-gradient(90deg, 
+    var(--gray-200) 25%, 
+    var(--gray-100) 50%, 
+    var(--gray-200) 75%
+  );
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.slow-connection .loading-optimized {
+  background: var(--gray-200);
+  animation: none;
+}
+
+/* Adaptive Image Containers */
+.image-adaptive {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.image-adaptive img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.image-adaptive:hover img {
+  transform: scale(1.05);
+}
+
+.slow-connection .image-adaptive:hover img {
+  transform: none;
+}
+
+/* Bandwidth-Aware Animation Classes */
+.animate-bandwidth-aware {
+  animation-duration: var(--transition-normal);
+}
+
+.slow-connection .animate-bandwidth-aware {
+  animation-duration: 0.1s;
+}
+
+/* Progressive Loading Indicators */
+.progressive-loader {
+  position: relative;
+  overflow: hidden;
+}
+
+.progressive-loader::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer-wave 1.5s infinite;
+}
+
+.slow-connection .progressive-loader::after {
+  display: none;
+}
+
+/* Data Table Optimizations */
+.table-bandwidth-optimized {
+  width: 100%;
+  background-color: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.table-bandwidth-optimized th {
+  background-color: var(--gray-50);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  border-bottom: 1px solid var(--border);
+}
+
+.table-bandwidth-optimized td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--gray-900);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.table-bandwidth-optimized tr:hover {
+  background-color: var(--gray-50);
+}
+
+.slow-connection .table-bandwidth-optimized tr:hover {
+  background-color: transparent;
+}
+
+/* Feature Loading States */
+.feature-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.feature-loading-icon {
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+.feature-loading-text {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin-bottom: 0.25rem;
+}
+
+.feature-loading-subtext {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+/* Optimized Chart Containers */
+.chart-container-optimized {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.chart-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+}
+
+.chart-fallback-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+.chart-fallback-text {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin-bottom: 0.25rem;
+}
+
+.chart-fallback-subtext {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+/* Gallery Optimizations */
+.gallery-adaptive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--gray-100);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.gallery-more-text {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+}
+
+.gallery-more-subtext {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-top: 0.25rem;
+}
+
+/* Mobile-First Optimizations */
+@media (max-width: 768px) {
+  .mobile-optimized {
+    padding: var(--mobile-margin);
+  }
+
+  .mobile-stack {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mobile-hide {
+    display: none;
+  }
+
+  .mobile-full-width {
+    width: 100%;
+  }
+
+  /* Reduce animations on mobile for better performance */
+  .mobile-reduce-motion * {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* Very slow connection optimizations */
+.very-slow-connection .animate-pulse,
+.very-slow-connection .shimmer,
+.very-slow-connection .loading-optimized {
+  animation: none !important;
+  background: var(--gray-200) !important;
+}
+
+.very-slow-connection .hover-lift:hover,
+.very-slow-connection .hover-scale:hover {
+  transform: none !important;
+}
+
+.very-slow-connection .transition-all,
+.very-slow-connection .transition-colors,
+.very-slow-connection .transition-transform {
+  transition: none !important;
+}

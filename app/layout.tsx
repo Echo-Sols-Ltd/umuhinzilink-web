@@ -8,6 +8,7 @@ import { ErrorHandlerProvider } from '@/components/ui/enhanced-error-handler';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { SkipLink } from '@/components/ui/accessibility';
 import { OfflineIndicator } from '@/components/ui/progressive-loading';
+import { BundleOptimizations } from '@/components/ui/bundle-optimization-script';
 import './globals.css';
 
 // Enhanced Poppins font configuration with proper loading strategies
@@ -77,6 +78,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <link rel="dns-prefetch" href="//api.umuhinzi-backend.echo-solution.com" />
+        
+        {/* Preconnect for critical external resources */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://api.umuhinzi-backend.echo-solution.com" />
         
         {/* Mobile-first meta tags */}
         <meta name="mobile-web-app-capable" content="yes" />
@@ -84,6 +91,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
+        
+        {/* PWA manifest */}
+        <link rel="manifest" href="/manifest.json" />
         
         {/* Prevent zoom on input focus (iOS) */}
         <style dangerouslySetInnerHTML={{
@@ -100,10 +110,28 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 font-size: 16px !important;
               }
             }
+            
+            /* Critical CSS for immediate rendering */
+            .critical-css {
+              font-family: ${poppins.style.fontFamily};
+              color: #1a1a1a;
+              background-color: #ffffff;
+              line-height: 1.6;
+            }
+            
+            /* Loading state for better perceived performance */
+            .initial-loading {
+              opacity: 0;
+              animation: fadeIn 0.3s ease-in-out forwards;
+            }
+            
+            @keyframes fadeIn {
+              to { opacity: 1; }
+            }
           `
         }} />
       </head>
-      <body className={`bg-white text-black font-primary antialiased touch-optimized ${poppins.variable}`}>
+      <body className={`bg-white text-black font-primary antialiased touch-optimized initial-loading ${poppins.variable}`}>
         <SkipLink href="#main-content">Skip to main content</SkipLink>
         <OfflineIndicator />
         <ErrorBoundary>
@@ -120,6 +148,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </NotificationProvider>
           </AppProviders>
         </ErrorBoundary>
+        <BundleOptimizations />
       </body>
     </html>
   );
