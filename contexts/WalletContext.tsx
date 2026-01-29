@@ -27,7 +27,6 @@ export type WalletContextValue = {
   payOrder: (orderId: string, description?: string) => Promise<WalletTransactionDTO | null>;
   processPayment: (request: PaymentRequest) => Promise<PaymentResponseDTO | null>;
   
-  // Utility functions
   refreshWalletData: () => Promise<void>;
   getPaymentStatus: (transactionId: string) => Promise<PaymentResponseDTO | null>;
 };
