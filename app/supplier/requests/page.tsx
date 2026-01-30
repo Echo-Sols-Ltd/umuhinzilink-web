@@ -196,15 +196,14 @@ function FarmerRequestsComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex flex-1 min-h-0">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
         <Sidebar
           userType={UserType.SUPPLIER}
-          activeItem='Requests'
+          activeItem='Farmer Request'
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64 relative">
+        <main className="flex-1 p-6 overflow-auto h-full">
           {/* Header */}
           <header className="fixed top-0 left-64 z-30 right-0 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             {/* Search Section */}
@@ -346,7 +345,6 @@ function FarmerRequestsComponent() {
           </div>
         </main>
       </div>
-    </div>
   );
 }
 

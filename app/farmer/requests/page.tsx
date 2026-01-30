@@ -115,7 +115,7 @@ function FarmerRequestsComponent() {
   const displayName = currentUser?.names || 'Farmer';
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Input Request' />

@@ -36,14 +36,13 @@ function SettingsComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex flex-1 min-h-0">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
         <Sidebar
           userType={UserType.FARMER}
           activeItem='Settings'
         />
 
-        <main className="flex-1 ml-64 p-8">
+        <main className="flex-1 p-8 h-full overflow-auto">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Settings</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -163,7 +162,6 @@ function SettingsComponent() {
             </div>
           </div>
         </main>
-      </div>
     </div>
   );
 }
