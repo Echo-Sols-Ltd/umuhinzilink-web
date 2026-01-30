@@ -20,8 +20,8 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 const inputClass =
@@ -88,10 +88,9 @@ function BuyerProfileComponent() {
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <BuyerSidebar
-          activePage={BuyerPages.PROFILE}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Profile'
         />
 
         {/* Main Content */}

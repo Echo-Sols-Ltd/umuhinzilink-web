@@ -23,8 +23,8 @@ import {
   LogOut,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import FarmerSidebar from '@/components/farmer/Navbar';
-import { FarmerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 type FarmerRequest = {
@@ -116,10 +116,9 @@ function FarmerRequestsComponent() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <FarmerSidebar
-        activePage={FarmerPages.INPUT_REQUEST}
-        logoutPending={logoutPending}
-        handleLogout={handleLogout} />
+      <Sidebar
+        userType={UserType.FARMER}
+        activeItem='Input Request' />
 
       <main className="flex-1 ml-64 bg-gray-50">
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">

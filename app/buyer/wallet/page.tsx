@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Wallet } from 'lucide-react';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import { useWallet } from '@/contexts/WalletContext';
@@ -32,10 +32,9 @@ function WalletPageComponent() {
       </header>
 
       <div className="flex flex-1 min-h-0">
-        <BuyerSidebar
-          activePage={BuyerPages.WALLET}
-          handleLogout={handleLogout}
-          logoutPending={false}
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Wallet'
         />
 
         {/* Main Content */}

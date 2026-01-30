@@ -25,7 +25,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
-import AdminNavbar from '@/components/admin/Navbar';
+import Sidebar from '@/components/shared/Sidebar';
 import { AdminPages, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { useToast } from '@/components/ui/use-toast-new';
@@ -156,10 +156,9 @@ function UserManagement() {
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar - Green */}
-      <AdminNavbar
-        activePage={AdminPages.USERS}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+      <Sidebar
+        userType={UserType.ADMIN}
+        activeItem='Users'
       />
 
       {/* Main Content */}
@@ -332,8 +331,8 @@ function UserManagement() {
                               onClick={() => handleSuspendUser(usersItem.id, !(usersItem as any).suspended)}
                               disabled={actionLoading === usersItem.id}
                               className={`p-1 rounded ${(usersItem as any).suspended
-                                  ? 'text-green-600 hover:text-green-800'
-                                  : 'text-orange-600 hover:text-orange-800'
+                                ? 'text-green-600 hover:text-green-800'
+                                : 'text-orange-600 hover:text-orange-800'
                                 }`}
                               title={(usersItem as any).suspended ? 'Activate User' : 'Suspend User'}
                             >
@@ -412,9 +411,9 @@ function UserManagement() {
                     <p className="text-sm text-gray-500">{selectedUser.email}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${selectedUser.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' :
-                          selectedUser.role === 'FARMER' ? 'bg-green-100 text-green-800' :
-                            selectedUser.role === 'BUYER' ? 'bg-blue-100 text-blue-800' :
-                              'bg-orange-100 text-orange-800'
+                        selectedUser.role === 'FARMER' ? 'bg-green-100 text-green-800' :
+                          selectedUser.role === 'BUYER' ? 'bg-blue-100 text-blue-800' :
+                            'bg-orange-100 text-orange-800'
                         }`}>
                         {selectedUser.role}
                       </span>
@@ -466,8 +465,8 @@ function UserManagement() {
                       setShowUserModal(false);
                     }}
                     className={`px-4 py-2 text-sm font-medium rounded-md ${(selectedUser as any).suspended
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-orange-600 text-white hover:bg-orange-700'
+                      ? 'bg-green-600 text-white hover:bg-green-700'
+                      : 'bg-orange-600 text-white hover:bg-orange-700'
                       }`}
                   >
                     {(selectedUser as any).suspended ? 'Activate User' : 'Suspend User'}

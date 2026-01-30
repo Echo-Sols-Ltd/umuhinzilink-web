@@ -20,8 +20,8 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
-import GovernmentSidebar from '@/components/governement/Navbar';
-import { GovernmentPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { GovernmentPages, UserType } from '@/types';
 
 export type MenuItem = {
   label: string;
@@ -121,10 +121,14 @@ export function GovernmentLayout({
     <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <GovernmentSidebar
-          activePage={activePage}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.GOVERNMENT}
+          activeItem={activePage === GovernmentPages.DASHBOARD ? 'Dashboard' :
+            activePage === GovernmentPages.FARMERS_PRODUCE ? 'Farmers Produce' :
+              activePage === GovernmentPages.SUPPLIERS_PRODUCE ? 'Suppliers Produce' :
+                activePage === GovernmentPages.NOTIFICATIONS ? 'Notifications' :
+                  activePage === GovernmentPages.PROFILE ? 'Profile' :
+                    activePage === GovernmentPages.SETTINGS ? 'Settings' : 'Dashboard'}
         />
 
         {/* Main Content */}

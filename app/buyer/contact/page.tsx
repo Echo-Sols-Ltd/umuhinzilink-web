@@ -1,7 +1,7 @@
 // /pages/buyercontact.tsx
 'use client';
 
-import Link from 'next/link';import {
+import Link from 'next/link'; import {
   Mail,
   Phone,
   MapPin,
@@ -9,8 +9,8 @@ import Link from 'next/link';import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 const Logo = () => (
@@ -37,10 +37,9 @@ function ContactComponent() {
 
       <div className="flex flex-1 min-h-0">
 
-        <BuyerSidebar
-          activePage={BuyerPages.CONTACT}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Contact'
         />
         {/* Main Content */}
         <main className="flex-1 ml-64 p-8">

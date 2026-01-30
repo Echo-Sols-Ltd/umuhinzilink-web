@@ -17,8 +17,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast-new';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages, RwandaCrop, RwandaCropCategory } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { ProductOrderInterface } from '@/components/orders/ProductOrderInterface';
@@ -173,7 +173,7 @@ function ProductsPageComponent() {
 
   const hasSearchParams = search || cropFilter || categoryFilter || locationFilter || minPrice || maxPrice;
 
-  const sidebar = <BuyerSidebar activePage={BuyerPages.PRODUCT} handleLogout={() => { }} logoutPending={false} />;
+  const sidebar = <Sidebar userType={UserType.BUYER} activeItem='Product' />;
 
   const header = (
     <div className="p-4 border-b border-gray-200">

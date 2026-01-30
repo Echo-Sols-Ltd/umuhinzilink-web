@@ -25,8 +25,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useGovernment } from '@/contexts/GovernmentContext';
-import GovernmentSidebar from '@/components/governement/Navbar';
-import { GovernmentPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { GovernmentPages, UserType } from '@/types';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
 type MenuItem = {
@@ -169,10 +169,9 @@ function FarmersProducePage() {
     <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <GovernmentSidebar
-          activePage={GovernmentPages.FARMERS_PRODUCE}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.GOVERNMENT}
+          activeItem='Farmers Produce'
         />
         {/* Main Content */}
         <main className="flex-1 overflow-auto ml-64 relative bg-white">

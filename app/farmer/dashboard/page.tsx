@@ -29,8 +29,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import FarmerSidebar from '@/components/farmer/Navbar';
-import { FarmerPages, UserType } from '@/types';
+import { UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 import Sidebar from '@/components/shared/Sidebar';

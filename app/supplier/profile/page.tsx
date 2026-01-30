@@ -19,8 +19,8 @@ import {
   Store,
 } from 'lucide-react';
 import Link from 'next/link';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 const inputClass =
@@ -89,10 +89,9 @@ function SupplierProfileComponent() {
       </header>
 
       <div className="flex flex-1 min-h-0">
-        <SupplierSidebar
-          activePage={SupplierPages.PROFILE}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Profile'
         />
 
         {/* Main Content */}

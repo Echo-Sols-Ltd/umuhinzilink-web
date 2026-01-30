@@ -18,8 +18,8 @@ import { useRouter } from 'next/navigation';
 
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 const requestData = [
@@ -198,10 +198,9 @@ function FarmerRequestsComponent() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-1 min-h-0">
-        <SupplierSidebar
-          activePage={SupplierPages.REQUESTS}
-          handleLogout={handleLogout}
-          logoutPending={false} // You may want to connect this to a state
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Requests'
         />
 
         {/* Main Content */}

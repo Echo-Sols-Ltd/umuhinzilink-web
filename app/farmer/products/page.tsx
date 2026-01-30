@@ -22,8 +22,8 @@ import {
   LogOut,
   Plus,
 } from 'lucide-react';
-import FarmerSidebar from '@/components/farmer/Navbar';
-import { FarmerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 
@@ -99,10 +99,9 @@ function FarmerProducts() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <FarmerSidebar
-        activePage={FarmerPages.PRODUCTS}
-        logoutPending={logoutPending}
-        handleLogout={handleLogout} />
+      <Sidebar
+        userType={UserType.FARMER}
+        activeItem='Products' />
 
 
       <main className="flex-1 ml-64 bg-gray-50">

@@ -23,8 +23,8 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSupplier } from '@/contexts/SupplierContext';
 import { useSupplierAction } from '@/hooks/useSupplierAction';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 function OrdersPageComponent() {
@@ -112,10 +112,9 @@ function OrdersPageComponent() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-1 min-h-0">
-        <SupplierSidebar
-          activePage={SupplierPages.ORDERS}
-          handleLogout={handleLogout}
-          logoutPending={false}
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Orders'
         />
 
         {/* Main Content */}
@@ -138,7 +137,7 @@ function OrdersPageComponent() {
             {/* Right Section */}
             <div className="flex items-center gap-6">
               {/* Export Button */}
-              <button 
+              <button
                 onClick={refreshOrders}
                 className="bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
               >

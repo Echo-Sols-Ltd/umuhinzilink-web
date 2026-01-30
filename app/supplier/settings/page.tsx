@@ -14,8 +14,8 @@ import {
   Package,
 } from 'lucide-react';
 import { useState } from 'react';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 
@@ -28,10 +28,9 @@ function SupplierSettingsPageComponent() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-1 min-h-0">
-        <SupplierSidebar
-          activePage={SupplierPages.SETTINGS}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Settings'
         />
 
         {/* Main Content */}

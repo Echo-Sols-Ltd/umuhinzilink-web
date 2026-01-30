@@ -22,8 +22,8 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import FarmerSidebar from '@/components/farmer/Navbar';
-import { FarmerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const inputClass =
@@ -63,7 +63,7 @@ function FarmerProfileComponent() {
 
     let cancelled = false;
 
-    const fetchProfile = async () => {};
+    const fetchProfile = async () => { };
 
     fetchProfile();
 
@@ -84,10 +84,9 @@ function FarmerProfileComponent() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <FarmerSidebar
-        activePage={FarmerPages.PROFILE}
-        logoutPending={logoutPending}
-        handleLogout={handleLogout}
+      <Sidebar
+        userType={UserType.FARMER}
+        activeItem='Profile'
       />
 
       <main className="flex-1 ml-64 bg-gray-50">

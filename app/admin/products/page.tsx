@@ -26,8 +26,8 @@ import {
   X,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
-import AdminNavbar from '@/components/admin/Navbar';
-import { AdminPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { AdminPages, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { useToast } from '@/components/ui/use-toast-new';
 import { adminService } from '@/services/admin';
@@ -136,10 +136,9 @@ function ProductManagement() {
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar */}
-      <AdminNavbar
-        activePage={AdminPages.PRODUCTS}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+      <Sidebar
+        userType={UserType.ADMIN}
+        activeItem='Products'
       />
 
       {/* Main Content */}

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import ConversationSidebar from '@/components/messaging/ConversationSidebar';
 import ChatInterface from '@/components/messaging/ChatInterface';
 
@@ -27,17 +27,16 @@ function BuyerMessagesComponent() {
       </header>
 
       <div className="flex flex-1 min-h-0">
-        <BuyerSidebar
-          activePage={BuyerPages.MESSAGE}
-          handleLogout={handleLogout}
-          logoutPending={false}
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Message'
         />
 
         {/* Main Content */}
         <main className="flex-1 flex min-h-0 ml-64">
           {/* Conversations Sidebar */}
           <ConversationSidebar className="w-80" />
-          
+
           {/* Chat Interface */}
           <ChatInterface className="flex-1" />
         </main>

@@ -18,8 +18,8 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 
@@ -112,10 +112,9 @@ function SavedItemsComponent() {
 
       <div className="flex flex-1">
         {/* Sidebar */}
-        <BuyerSidebar
-          activePage={BuyerPages.SAVED}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Saved'
         />
 
         {/* Main Content */}

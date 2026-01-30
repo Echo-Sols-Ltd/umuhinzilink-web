@@ -15,8 +15,8 @@ import {
   User,
 } from 'lucide-react';
 import { useState } from 'react';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 const Logo = () => (
@@ -42,10 +42,9 @@ function SupplierContactComponent() {
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <SupplierSidebar
-          activePage={SupplierPages.CONTACT}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Contact'
         />
 
         {/* Main Content */}

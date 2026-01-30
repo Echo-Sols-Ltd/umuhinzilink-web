@@ -13,10 +13,10 @@ import {
   Bell,
   Lock,
 } from 'lucide-react';
-import FarmerSidebar from '@/components/farmer/Navbar';
+import Sidebar from '@/components/shared/Sidebar';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { FarmerPages } from '@/types';
+import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const Logo = () => (
@@ -38,10 +38,9 @@ function SettingsComponent() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-1 min-h-0">
-        <FarmerSidebar
-          activePage={FarmerPages.SETTINGS}
-          logoutPending={logoutPending}
-          handleLogout={handleLogout}
+        <Sidebar
+          userType={UserType.FARMER}
+          activeItem='Settings'
         />
 
         <main className="flex-1 ml-64 p-8">
