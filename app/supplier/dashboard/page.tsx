@@ -21,8 +21,8 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSupplier } from '@/contexts/SupplierContext';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 
@@ -73,10 +73,9 @@ function DashboardComponent() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <SupplierSidebar
-          activePage={SupplierPages.DASHBOARD}
-          handleLogout={handleLogout}
-          logoutPending={logoutLoading}
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Dashboard'
         />
 
         {/* Main Content */}

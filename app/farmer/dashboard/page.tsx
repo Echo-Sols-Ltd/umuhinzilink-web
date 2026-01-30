@@ -30,9 +30,10 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import FarmerSidebar from '@/components/farmer/Navbar';
-import { FarmerPages } from '@/types';
+import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
+import Sidebar from '@/components/shared/Sidebar';
 
 
 
@@ -421,11 +422,10 @@ function Dashboard() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1 min-h-0">
-      
-      <FarmerSidebar 
-       activePage={FarmerPages.DASHBOARD} 
-       logoutPending={logoutPending}
-        handleLogout={handleLogout} />
+
+        <Sidebar
+          userType={UserType.FARMER}
+          activeItem='Dashboard' />
         <main className="flex-1 overflow-auto ml-64 relative bg-white ">
           <header className="fixed top-0 left-64 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             <div className="flex items-center space-x-4">

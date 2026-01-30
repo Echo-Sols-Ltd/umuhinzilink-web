@@ -22,8 +22,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAdmin } from '@/contexts/AdminContext';
 import { toast } from '@/components/ui/use-toast-new';
-import AdminNavbar from '@/components/admin/Navbar';
-import { AdminPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { AdminPages, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 
 interface AdminStats {
@@ -90,11 +90,10 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white flex">
-      {/* Sidebar - Green */}
-      <AdminNavbar
-        activePage={AdminPages.DASHBOARD}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+      {/* Sidebar */}
+      <Sidebar
+        userType={UserType.ADMIN}
+        activeItem='Dashboard'
       />
 
       {/* Main Content */}

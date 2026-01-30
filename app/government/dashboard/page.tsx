@@ -50,7 +50,7 @@ import { Button } from '@/components/ui/button';
 import { UserType } from '@/types/enums';
 import { toast } from '@/components/ui/use-toast';
 import { useGovernment } from '@/contexts/GovernmentContext';
-import GovernmentSidebar from '@/components/governement/Navbar';
+import Sidebar from '@/components/shared/Sidebar';
 import { GovernmentPages } from '@/types';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 import { LoadingOverlay, CardSkeleton, EmptyState } from '@/components/ui/loading-states';
@@ -255,12 +255,11 @@ function Dashboard() {
     <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
-        <GovernmentSidebar
-          activePage={GovernmentPages.DASHBOARD}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.GOVERNMENT}
+          activeItem='Dashboard'
         />
-        
+
         {/* Main Content */}
         <main className="flex-1 overflow-auto ml-64 relative bg-white">
           <header className="fixed top-0 left-64 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
@@ -506,11 +505,10 @@ function Dashboard() {
                   <div className="space-y-3">
                     {recentOrders.map(order => (
                       <div key={order.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div className={`w-2 h-2 rounded-full ${
-                          order.status === 'COMPLETED' ? 'bg-green-500' :
-                          order.status === 'PENDING' ? 'bg-yellow-500' :
-                          'bg-red-500'
-                        }`} />
+                        <div className={`w-2 h-2 rounded-full ${order.status === 'COMPLETED' ? 'bg-green-500' :
+                            order.status === 'PENDING' ? 'bg-yellow-500' :
+                              'bg-red-500'
+                          }`} />
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
                             {order.product}
@@ -519,11 +517,10 @@ function Dashboard() {
                             {order.buyer} • {formatNumber(order.amount)} RWF
                           </p>
                         </div>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          order.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                          order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
+                        <span className={`px-2 py-1 text-xs rounded-full ${order.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                            order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-red-100 text-red-800'
+                          }`}>
                           {order.status.toLowerCase()}
                         </span>
                       </div>
@@ -695,20 +692,18 @@ function Dashboard() {
                             {product.category || 'Uncategorized'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              product.type === 'farmer' 
-                                ? 'bg-green-100 text-green-800' 
+                            <span className={`px-2 py-1 text-xs rounded-full ${product.type === 'farmer'
+                                ? 'bg-green-100 text-green-800'
                                 : 'bg-blue-100 text-blue-800'
-                            }`}>
+                              }`}>
                               {product.type === 'farmer' ? 'Farmer' : 'Supplier'}
                             </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              product.productStatus === 'IN_STOCK' ? 'bg-green-100 text-green-800' :
-                              product.productStatus === 'LOW_STOCK' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-red-100 text-red-800'
-                            }`}>
+                            <span className={`px-2 py-1 text-xs rounded-full ${product.productStatus === 'IN_STOCK' ? 'bg-green-100 text-green-800' :
+                                product.productStatus === 'LOW_STOCK' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-red-100 text-red-800'
+                              }`}>
                               {product.productStatus?.replace('_', ' ').toLowerCase() || 'unknown'}
                             </span>
                           </td>
@@ -722,7 +717,7 @@ function Dashboard() {
                             {product.location || 'Unknown'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {(product as any).createdAt || (product as any).updatedAt ? 
+                            {(product as any).createdAt || (product as any).updatedAt ?
                               new Date((product as any).createdAt || (product as any).updatedAt).toLocaleDateString() : 'N/A'}
                           </td>
                         </tr>
@@ -731,7 +726,7 @@ function Dashboard() {
                   </tbody>
                 </table>
               </div>
-              
+
               {filteredProducts.length > 10 && (
                 <div className="mt-4 text-center">
                   <Button variant="outline">

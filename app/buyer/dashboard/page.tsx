@@ -23,8 +23,8 @@ import { toast } from '@/components/ui/use-toast-new';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useProduct } from '@/contexts/ProductContext';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import OrderManagementDashboard from '@/components/orders/OrderManagementDashboard';
 import useOrderAction from '@/hooks/useOrderAction';
@@ -72,10 +72,9 @@ function BuyerDashboardComponent() {
       {/* Sidebar + Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <BuyerSidebar
-          activePage={BuyerPages.DASHBOARD}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Dashboard'
         />
 
         {/* Main Content */}
@@ -297,7 +296,7 @@ function BuyerDashboardComponent() {
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              
+
               <OrderManagementDashboard
                 orders={orders}
                 userRole="buyer"
