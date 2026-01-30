@@ -23,8 +23,8 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSupplier } from '@/contexts/SupplierContext';
 import { useSupplierAction } from '@/hooks/useSupplierAction';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 function OrdersPageComponent() {
@@ -110,16 +110,14 @@ function OrdersPageComponent() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex flex-1 min-h-0">
-        <SupplierSidebar
-          activePage={SupplierPages.ORDERS}
-          handleLogout={handleLogout}
-          logoutPending={false}
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Orders'
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64 relative">
+        <main className="flex-1 p-6 overflow-auto h-full">
           {/* Header */}
           <header className="fixed top-0 left-64 z-30 right-0 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             {/* Search Section */}
@@ -138,7 +136,7 @@ function OrdersPageComponent() {
             {/* Right Section */}
             <div className="flex items-center gap-6">
               {/* Export Button */}
-              <button 
+              <button
                 onClick={refreshOrders}
                 className="bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
               >
@@ -348,7 +346,6 @@ function OrdersPageComponent() {
           </div>
         </main>
       </div>
-    </div>
   );
 }
 

@@ -15,8 +15,8 @@ import {
   User,
 } from 'lucide-react';
 import { useState } from 'react';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 const Logo = () => (
@@ -34,22 +34,15 @@ function SupplierContactComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
-      <div className="flex flex-1 min-h-0">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
         {/* Sidebar */}
-        <SupplierSidebar
-          activePage={SupplierPages.CONTACT}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Contact'
         />
 
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-8">
+        <main className="flex-1 p-8 h-full">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Contact Us</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -126,7 +119,6 @@ function SupplierContactComponent() {
             </form>
           </div>
         </main>
-      </div>
     </div>
   );
 }

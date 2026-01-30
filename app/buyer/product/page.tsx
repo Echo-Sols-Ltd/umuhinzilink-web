@@ -17,8 +17,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast-new';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages, RwandaCrop, RwandaCropCategory } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { ProductOrderInterface } from '@/components/orders/ProductOrderInterface';
@@ -39,8 +39,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 function ProductsPageComponent() {
   const [search, setSearch] = useState('');
-  const [cropFilter, setCropFilter] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const [cropFilter, setCropFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -72,12 +72,12 @@ function ProductsPageComponent() {
     }
 
     // Crop filter
-    if (cropFilter) {
+    if (cropFilter && cropFilter !== 'all') {
       filtered = filtered.filter(product => product.name === cropFilter);
     }
 
     // Category filter
-    if (categoryFilter) {
+    if (categoryFilter && categoryFilter !== 'all') {
       filtered = filtered.filter(product => product.category === categoryFilter);
     }
 
@@ -149,7 +149,7 @@ function ProductsPageComponent() {
 
   const handleSaveSearch = () => {
     if (!search.trim()) return;
-    
+
     if (!savedSearches.includes(search)) {
       setSavedSearches(prev => [...prev, search]);
       toast({
@@ -162,8 +162,8 @@ function ProductsPageComponent() {
 
   const clearFilters = () => {
     setSearch('');
-    setCropFilter('');
-    setCategoryFilter('');
+    setCropFilter('all');
+    setCategoryFilter('all');
     setLocationFilter('');
     setMinPrice('');
     setMaxPrice('');
@@ -173,7 +173,7 @@ function ProductsPageComponent() {
 
   const hasSearchParams = search || cropFilter || categoryFilter || locationFilter || minPrice || maxPrice;
 
-  const sidebar = <BuyerSidebar activePage={BuyerPages.PRODUCT} handleLogout={() => {}} logoutPending={false} />;
+  const sidebar = <Sidebar userType={UserType.BUYER} activeItem='Browse Product' />;
 
   const header = (
     <div className="p-4 border-b border-gray-200">
@@ -185,9 +185,9 @@ function ProductsPageComponent() {
     <ResponsiveLayout sidebar={sidebar} header={header}>
       <div className="space-y-6">
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="bg-white rounded-lg">
           {/* Search Bar */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -197,7 +197,7 @@ function ProductsPageComponent() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  className="pl-10"
+                  className="pl-10 py-4"
                 />
               </div>
               <div className="flex gap-2">
@@ -211,9 +211,8 @@ function ProductsPageComponent() {
                 <TouchOptimizedButton
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
-                  className={`${
-                    showFilters ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-gray-300 text-gray-600'
-                  }`}
+                  className={`${showFilters ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-gray-300 text-gray-600'
+                    }`}
                 >
                   <Filter className="w-4 h-4 mr-2" />
                   Filters
@@ -234,7 +233,7 @@ function ProductsPageComponent() {
                       <SelectValue placeholder="All Crops" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Crops</SelectItem>
+                      <SelectItem value="all">All Crops</SelectItem>
                       {Object.values(RwandaCrop).map((crop) => (
                         <SelectItem key={crop} value={crop}>
                           {crop}
@@ -252,7 +251,7 @@ function ProductsPageComponent() {
                       <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Categories</SelectItem>
+                      <SelectItem value="all">All Categories</SelectItem>
                       {Object.values(RwandaCropCategory).map((category) => (
                         <SelectItem key={category} value={category}>
                           {category}
@@ -351,9 +350,8 @@ function ProductsPageComponent() {
                 onClick={() => setViewMode('grid')}
                 variant="ghost"
                 size="sm"
-                className={`rounded-r-none ${
-                  viewMode === 'grid' ? 'bg-green-50 text-green-600' : 'hover:text-green-600'
-                }`}
+                className={`rounded-r-none ${viewMode === 'grid' ? 'bg-green-50 text-green-600' : 'hover:text-green-600'
+                  }`}
               >
                 <LayoutGrid className="w-4 h-4" />
               </TouchOptimizedButton>
@@ -361,9 +359,8 @@ function ProductsPageComponent() {
                 onClick={() => setViewMode('list')}
                 variant="ghost"
                 size="sm"
-                className={`rounded-l-none border-l ${
-                  viewMode === 'list' ? 'bg-green-50 text-green-600' : 'hover:text-green-600'
-                }`}
+                className={`rounded-l-none border-l ${viewMode === 'list' ? 'bg-green-50 text-green-600' : 'hover:text-green-600'
+                  }`}
               >
                 <List className="w-4 h-4" />
               </TouchOptimizedButton>
@@ -421,11 +418,11 @@ function ProductsPageComponent() {
                   <ChevronLeft className="w-4 h-4" />
                   Previous
                 </TouchOptimizedButton>
-                
+
                 <span className="text-sm text-gray-600">
                   Page {currentPage} of {totalPages}
                 </span>
-                
+
                 <TouchOptimizedButton
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
@@ -456,10 +453,12 @@ function ProductsPageComponent() {
 
       {/* Product Order Interface Modal */}
       {selectedProduct && (
-        <ProductOrderInterface
-          product={selectedProduct}
-          productType={selectedProduct.type || 'farmer'}
-        />
+        <div className='fixed top-0 left-0 w-full h-full z-50 p-40 bg-black/85 align-center justify-center items-center overflow-auto'>
+          <ProductOrderInterface
+            product={selectedProduct}
+            productType={selectedProduct.type || 'farmer'}
+          />
+        </div>
       )}
     </ResponsiveLayout>
   );

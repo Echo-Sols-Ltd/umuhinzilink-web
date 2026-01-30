@@ -189,10 +189,10 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
           <div className="text-right">
             <button
               onClick={() => setShowDepositModal(true)}
-              className="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              className="bg-green-500/80 hover:bg-opacity-30 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              <span>Add Money</span>
+              <span > Add Money</span>
             </button>
           </div>
         </div>
@@ -250,7 +250,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white p-4 rounded-lg border">
+      <div className="bg-white">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
           <div className="relative flex-1">

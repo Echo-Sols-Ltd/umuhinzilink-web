@@ -26,8 +26,8 @@ import {
   X,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
-import AdminNavbar from '@/components/admin/Navbar';
-import { AdminPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { AdminPages, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { useToast } from '@/components/ui/use-toast-new';
 import { adminService } from '@/services/admin';
@@ -44,8 +44,8 @@ function ProductManagement() {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showProductModal, setShowProductModal] = useState(false);
   const [showModerationModal, setShowModerationModal] = useState(false);
@@ -53,14 +53,14 @@ function ProductManagement() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const filteredProducts = products?.filter(product => {
-    const matchesSearch = 
+    const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.farmer?.user?.names.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = !categoryFilter || product.category === categoryFilter;
-    const matchesStatus = !statusFilter || product.productStatus === statusFilter;
-    
+
+    const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
+    const matchesStatus = statusFilter === 'all' || product.productStatus === statusFilter;
+
     return matchesSearch && matchesCategory && matchesStatus;
   }) || [];
 
@@ -91,7 +91,7 @@ function ProductManagement() {
     if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
       return;
     }
-    
+
     setActionLoading(productId);
     try {
       await deleteProduct(productId);
@@ -136,10 +136,9 @@ function ProductManagement() {
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar */}
-      <AdminNavbar
-        activePage={AdminPages.PRODUCTS}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+      <Sidebar
+        userType={UserType.ADMIN}
+        activeItem='Products'
       />
 
       {/* Main Content */}
@@ -149,7 +148,7 @@ function ProductManagement() {
           <div className="flex items-center space-x-4 flex-1">
             <h1 className="text-xl font-semibold text-gray-900">Product Management</h1>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -161,13 +160,13 @@ function ProductManagement() {
                 className="pl-9 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 w-64"
               />
             </div>
-            
+
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="CEREALS">Cereals</SelectItem>
                 <SelectItem value="VEGETABLES">Vegetables</SelectItem>
                 <SelectItem value="FRUITS">Fruits</SelectItem>
@@ -180,7 +179,7 @@ function ProductManagement() {
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="IN_STOCK">In Stock</SelectItem>
                 <SelectItem value="OUT_OF_STOCK">Out of Stock</SelectItem>
                 <SelectItem value="LOW_STOCK">Low Stock</SelectItem>
@@ -327,7 +326,7 @@ function ProductManagement() {
                         {product.createdAt ? new Date(product.createdAt).toLocaleDateString() : 'Unknown'}
                       </span>
                       <div className="flex items-center space-x-2">
-                        <button 
+                        <button
                           onClick={() => handleViewProduct(product)}
                           className="text-blue-600 hover:text-blue-800 p-1 rounded"
                           title="View Details"
@@ -379,8 +378,8 @@ function ProductManagement() {
 
       {/* Product Details Modal */}
       {showProductModal && selectedProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85">
+          <div className="bg-gray-100 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">Product Details</h2>
@@ -391,7 +390,7 @@ function ProductManagement() {
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              
+
               <div className="space-y-6">
                 {/* Product Image */}
                 <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -479,7 +478,7 @@ function ProductManagement() {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <p className="text-sm text-gray-600 mb-4">
                 Product: <strong>{selectedProduct.name}</strong>
               </p>

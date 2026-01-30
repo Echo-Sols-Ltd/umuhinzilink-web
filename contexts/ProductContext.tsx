@@ -118,7 +118,6 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   // 🔹 Manual refresh function - only fetch when explicitly called
   const refreshProducts = async () => {
-    console.log(user)
     if (!user?.id) return;
 
     try {
@@ -140,6 +139,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       }
 
       if (supplierRes.success) {
+        console.log(supplierRes.data)
         setSupplierProducts(supplierRes.data ?? []);
         localStorage.setItem(
           STORAGE_KEYS.SUPPLIER_PRODUCTS,

@@ -14,6 +14,8 @@ import {
   User,
 } from 'lucide-react';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import Sidebar from '@/components/shared/Sidebar';
+import { UserType } from '@/types';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -43,32 +45,10 @@ function ContactPage() {
       </header>
 
       <div className="flex flex-1 min-h-0">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto">
-          <div className="p-6"></div>
-          <nav className="flex-1 px-4 space-y-2">
-            {menuItems.map((m, index) => {
-              const isActive = m.label === 'Contact';
-              const showDivider = index === 4 || index === 8;
-              return (
-                <div key={m.label}>
-                  <Link href={m.href} className="block">
-                    <div
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all text-sm font-medium ${isActive
-                        ? 'bg-green-600 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                    >
-                      <m.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                      <span>{m.label}</span>
-                    </div>
-                  </Link>
-                  {showDivider && <div className="border-t border-gray-200 my-2 mx-4"></div>}
-                </div>
-              );
-            })}
-          </nav>
-        </aside>
+        <Sidebar
+          userType={UserType.FARMER}
+          activeItem='Contact'
+        />
 
         {/* Main Content */}
         <main className="flex-1 ml-64 p-8">

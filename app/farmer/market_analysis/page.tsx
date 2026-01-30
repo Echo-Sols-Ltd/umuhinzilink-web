@@ -31,9 +31,9 @@ import {
   CartesianGrid,
   Tooltip,
 } from 'recharts';
-import FarmerSidebar from '@/components/farmer/Navbar';
+import Sidebar from '@/components/shared/Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
-import { FarmerPages } from '@/types';
+import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const menuItems = [
@@ -133,24 +133,24 @@ function MarketAnalysis() {
   const { logout } = useAuth();
   const [logoutPending, setLogoutPending] = useState(false)
 
-   const handleLogout=()=>{
+  const handleLogout = () => {
     setLogoutPending(true)
     logout()
-   }
+  }
   return (
     <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-white">
-    
 
-      <div className="flex flex-1 min-h-0">
+
+      <div className="flex flex-1 h-screen overflow-hidden">
         {/* Sidebar */}
-        <FarmerSidebar 
-        activePage={FarmerPages.MARKET_ANALYTICS}
-        logoutPending={logoutPending}
-         handleLogout={handleLogout} />
+        <Sidebar
+          userType={UserType.FARMER}
+          activeItem='Market Analytics'
+        />
 
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64 space-y-6 bg-gray-50">
+        <main className="flex-1 h-full p-6 overflow-auto space-y-6 bg-gray-50">
           {/* Filters */}
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center gap-2">

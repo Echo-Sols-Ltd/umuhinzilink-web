@@ -29,10 +29,10 @@ import {
   Loader2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import FarmerSidebar from '@/components/farmer/Navbar';
-import { FarmerPages } from '@/types';
+import { UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
+import Sidebar from '@/components/shared/Sidebar';
 
 
 
@@ -407,7 +407,7 @@ function Dashboard() {
       <div className="flex items-center justify-center min-h-screen bg-white">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-green-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading dashboard...</p>
+          <p className="text-gray-800">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -419,15 +419,13 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <div className="flex flex-1 min-h-0">
-      
-      <FarmerSidebar 
-       activePage={FarmerPages.DASHBOARD} 
-       logoutPending={logoutPending}
-        handleLogout={handleLogout} />
-        <main className="flex-1 overflow-auto ml-64 relative bg-white ">
-          <header className="fixed top-0 left-64 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+    <div className="flex h-screen bg-white overflow-hidden">
+        <Sidebar
+          userType={UserType.FARMER}
+          activeItem='Dashboard' />
+
+        <main className="flex-1 overflow-auto relative bg-white ">
+          <header className="fixed top-0 left-40 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -648,7 +646,6 @@ function Dashboard() {
             </div>
           </div>
         </main>
-      </div>
     </div>
   );
 }

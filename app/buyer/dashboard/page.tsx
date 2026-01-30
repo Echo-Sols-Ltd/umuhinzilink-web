@@ -23,8 +23,8 @@ import { toast } from '@/components/ui/use-toast-new';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useProduct } from '@/contexts/ProductContext';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import OrderManagementDashboard from '@/components/orders/OrderManagementDashboard';
 import useOrderAction from '@/hooks/useOrderAction';
@@ -72,16 +72,15 @@ function BuyerDashboardComponent() {
       {/* Sidebar + Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <BuyerSidebar
-          activePage={BuyerPages.DASHBOARD}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Dashboard'
         />
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-y-auto">
           {/* Green Welcome Bar */}
-          <div className="bg-green-600 rounded-2xl mt-0 text-white px-6 py-8 shadow-sm mb-4">
+          <div className="bg-green-600 rounded-lg mt-0 text-white px-6 py-8 shadow-sm mb-4">
             <h1 className="text-lg font-semibold mb-2">Welcome back, {buyerName}!</h1>
             <p className="text-sm opacity-90">
               Manage your agricultural purchases and connect with farmers across Rwanda
@@ -134,9 +133,9 @@ function BuyerDashboardComponent() {
                   return (
                     <div
                       key={product.id}
-                      className="bg-white rounded-lg shadow-sm border overflow-hidden"
+                      className="bg-white rounded-lg shadow-sm border w-full"
                     >
-                      <div className="h-32 w-full bg-gray-100 flex items-center justify-center">
+                      <div className="h-48 w-full bg-gray-100 flex items-center justify-center">
                         {product.image ? (
                           <img
                             src={product.image}
@@ -157,7 +156,7 @@ function BuyerDashboardComponent() {
                           {quantityText && <p className="text-xs text-gray-500">{quantityText}</p>}
                         </div>
                         <button className="mt-3 w-full bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-700">
-                          Contact
+                          Buy Now
                         </button>
                       </div>
                     </div>
@@ -297,7 +296,7 @@ function BuyerDashboardComponent() {
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              
+
               <OrderManagementDashboard
                 orders={orders}
                 userRole="buyer"

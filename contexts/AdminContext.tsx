@@ -84,6 +84,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   // Refresh functions
   const refreshUsers = async () => {
     try {
+
       const usersRes = await adminService.getAllUsers();
       setUsers(usersRes || []);
     } catch (err) {
@@ -215,7 +216,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, [user, fetchAllData]);
 
   const isValidAdmin = useCallback(() => {
-    if(!user)return false
+    
+    if (!user) return false
     return user.role === 'ADMIN';
   }, [user]);
 

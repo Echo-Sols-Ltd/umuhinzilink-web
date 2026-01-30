@@ -20,6 +20,8 @@ import {
   ShieldCheck,
   Settings,
 } from 'lucide-react';
+import Sidebar from '@/components/shared/Sidebar';
+import { UserType } from '@/types';
 
 interface SecurityLog {
   id: string;
@@ -39,7 +41,7 @@ interface SecuritySetting {
   category: 'authentication' | 'access' | 'monitoring' | 'data';
 }
 
-  
+
 function SecurityPage() {
   const router = useRouter();
   const [securityLogs, setSecurityLogs] = useState<SecurityLog[]>([]);
@@ -175,219 +177,225 @@ function SecurityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/admin/dashboard"
-                className="flex items-center text-gray-600 hover:text-gray-900"
-              >
-                <ChevronLeft className="w-5 h-5 mr-1" />
-                Back to Dashboard
-              </Link>
-              <h1 className="text-xl font-semibold text-gray-900">Security Center</h1>
+    <div className="h-screen bg-white flex overflow-hidden">
+      <Sidebar
+        userType={UserType.ADMIN}
+        activeItem='Security'
+      />
+      <div className="flex-1 flex flex-col overflow-auto pb-20">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/admin/dashboard"
+                  className="flex items-center text-gray-600 hover:text-gray-900"
+                >
+                  <ChevronLeft className="w-5 h-5 mr-1" />
+                  Back to Dashboard
+                </Link>
+                <h1 className="text-xl font-semibold text-gray-900">Security Center</h1>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="p-6">
-        {/* Security Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
+        <main className="p-6">
+          {/* Security Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                  <Activity className="w-6 h-6 text-white" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-500">Total Events</p>
+                  <p className="text-2xl font-bold text-gray-900">{securityMetrics.totalLogs}</p>
+                </div>
               </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-500">Total Events</p>
-                <p className="text-2xl font-bold text-gray-900">{securityMetrics.totalLogs}</p>
+            </div>
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center">
+                  <Ban className="w-6 h-6 text-white" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-500">Failed Attempts</p>
+                  <p className="text-2xl font-bold text-gray-900">{securityMetrics.failedAttempts}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-white" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-500">Warnings</p>
+                  <p className="text-2xl font-bold text-gray-900">{securityMetrics.warnings}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                  <ShieldCheck className="w-6 h-6 text-white" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-500">Active Protections</p>
+                  <p className="text-2xl font-bold text-gray-900">{securityMetrics.activeSettings}</p>
+                </div>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center">
-                <Ban className="w-6 h-6 text-white" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-500">Failed Attempts</p>
-                <p className="text-2xl font-bold text-gray-900">{securityMetrics.failedAttempts}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-white" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-500">Warnings</p>
-                <p className="text-2xl font-bold text-gray-900">{securityMetrics.warnings}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-white" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-500">Active Protections</p>
-                <p className="text-2xl font-bold text-gray-900">{securityMetrics.activeSettings}</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Security Settings */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Security Settings */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Security Settings</h2>
-              <div className="space-y-4">
-                {securitySettings.map(setting => (
-                  <div
-                    key={setting.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{setting.name}</h3>
-                      <p className="text-sm text-gray-500 mt-1">{setting.description}</p>
-                      <span className="inline-block mt-2 text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 capitalize">
-                        {setting.category}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => toggleSetting(setting.id)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${setting.enabled ? 'bg-green-600' : 'bg-gray-200'
-                        }`}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Security Settings */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Security Settings</h2>
+                <div className="space-y-4">
+                  {securitySettings.map(setting => (
+                    <div
+                      key={setting.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
                     >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${setting.enabled ? 'translate-x-6' : 'translate-x-1'
-                          }`}
-                      />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Security Logs */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Security Events</h2>
-              <div className="space-y-3">
-                {securityLogs.map(log => (
-                  <div
-                    key={log.id}
-                    className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50"
-                  >
-                    <div className="mt-1">{getStatusIcon(log.status)}</div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-gray-900">{log.action}</p>
-                        <span
-                          className={`text-xs px-2 py-1 rounded-full ${getStatusColor(log.status)}`}
-                        >
-                          {log.status}
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900">{setting.name}</h3>
+                        <p className="text-sm text-gray-500 mt-1">{setting.description}</p>
+                        <span className="inline-block mt-2 text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 capitalize">
+                          {setting.category}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">{log.details}</p>
-                      <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-                        <span>User: {log.user}</span>
-                        <span>IP: {log.ip}</span>
-                        <span>{log.timestamp}</span>
+                      <button
+                        onClick={() => toggleSetting(setting.id)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${setting.enabled ? 'bg-green-600' : 'bg-gray-200'
+                          }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${setting.enabled ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                        />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Security Logs */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Security Events</h2>
+                <div className="space-y-3">
+                  {securityLogs.map(log => (
+                    <div
+                      key={log.id}
+                      className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50"
+                    >
+                      <div className="mt-1">{getStatusIcon(log.status)}</div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <p className="font-medium text-gray-900">{log.action}</p>
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full ${getStatusColor(log.status)}`}
+                          >
+                            {log.status}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">{log.details}</p>
+                        <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                          <span>User: {log.user}</span>
+                          <span>IP: {log.ip}</span>
+                          <span>{log.timestamp}</span>
+                        </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Password Policy */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Password Policy</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Minimum Length</span>
+                    <span className="text-sm font-medium text-gray-900">8 characters</span>
                   </div>
-                ))}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Require Uppercase</span>
+                    <span className="text-sm font-medium text-green-600">✓ Enabled</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Require Numbers</span>
+                    <span className="text-sm font-medium text-green-600">✓ Enabled</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Require Symbols</span>
+                    <span className="text-sm font-medium text-green-600">✓ Enabled</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Expiry Period</span>
+                    <span className="text-sm font-medium text-gray-900">90 days</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Sessions */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Sessions</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">Current Session</p>
+                      <p className="text-sm text-gray-500">192.168.1.100</p>
+                      <p className="text-xs text-gray-400">Started 2 hours ago</p>
+                    </div>
+                    <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                      Active
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">Mobile App</p>
+                      <p className="text-sm text-gray-500">192.168.1.105</p>
+                      <p className="text-xs text-gray-400">Started 1 day ago</p>
+                    </div>
+                    <button className="text-red-600 hover:text-red-800 text-sm">Terminate</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Security Recommendations */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Tips</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-2">
+                    <ShieldCheck className="w-4 h-4 text-green-600 mt-0.5" />
+                    <p className="text-sm text-gray-600">Enable 2FA for all admin accounts</p>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <ShieldCheck className="w-4 h-4 text-green-600 mt-0.5" />
+                    <p className="text-sm text-gray-600">Regularly review security logs</p>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <ShieldCheck className="w-4 h-4 text-green-600 mt-0.5" />
+                    <p className="text-sm text-gray-600">Keep software updated</p>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <ShieldCheck className="w-4 h-4 text-green-600 mt-0.5" />
+                    <p className="text-sm text-gray-600">Use strong, unique passwords</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Password Policy */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Password Policy</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Minimum Length</span>
-                  <span className="text-sm font-medium text-gray-900">8 characters</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Require Uppercase</span>
-                  <span className="text-sm font-medium text-green-600">✓ Enabled</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Require Numbers</span>
-                  <span className="text-sm font-medium text-green-600">✓ Enabled</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Require Symbols</span>
-                  <span className="text-sm font-medium text-green-600">✓ Enabled</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Expiry Period</span>
-                  <span className="text-sm font-medium text-gray-900">90 days</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Active Sessions */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Sessions</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">Current Session</p>
-                    <p className="text-sm text-gray-500">192.168.1.100</p>
-                    <p className="text-xs text-gray-400">Started 2 hours ago</p>
-                  </div>
-                  <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                    Active
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">Mobile App</p>
-                    <p className="text-sm text-gray-500">192.168.1.105</p>
-                    <p className="text-xs text-gray-400">Started 1 day ago</p>
-                  </div>
-                  <button className="text-red-600 hover:text-red-800 text-sm">Terminate</button>
-                </div>
-              </div>
-            </div>
-
-            {/* Security Recommendations */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Tips</h3>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-green-600 mt-0.5" />
-                  <p className="text-sm text-gray-600">Enable 2FA for all admin accounts</p>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-green-600 mt-0.5" />
-                  <p className="text-sm text-gray-600">Regularly review security logs</p>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-green-600 mt-0.5" />
-                  <p className="text-sm text-gray-600">Keep software updated</p>
-                </div>
-                <div className="flex items-start space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-green-600 mt-0.5" />
-                  <p className="text-sm text-gray-600">Use strong, unique passwords</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

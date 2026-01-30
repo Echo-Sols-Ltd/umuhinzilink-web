@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Wallet } from 'lucide-react';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import { useWallet } from '@/contexts/WalletContext';
@@ -25,21 +25,14 @@ function WalletPageComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
-      <div className="flex flex-1 min-h-0">
-        <BuyerSidebar
-          activePage={BuyerPages.WALLET}
-          handleLogout={handleLogout}
-          logoutPending={false}
+    <div className="flex h-screen bg-gray-50">
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='My Wallet'
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64">
+        <main className="flex-1 p-6 overflow-auto">
           {/* Header */}
           <div className="mb-6">
             <div className="flex items-center space-x-3">
@@ -57,9 +50,9 @@ function WalletPageComponent() {
             transactions={transactions}
             loading={loading}
             onDeposit={handleDeposit}
+            className='overflow-auto h-full'
           />
         </main>
-      </div>
     </div>
   );
 }

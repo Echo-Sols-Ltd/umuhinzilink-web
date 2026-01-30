@@ -8,6 +8,19 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'http',
+        hostname: '10.12.75.180',
+      },
+    ],
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;

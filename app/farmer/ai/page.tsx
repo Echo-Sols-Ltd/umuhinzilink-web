@@ -20,8 +20,8 @@ import {
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import FarmerSidebar from '@/components/farmer/Navbar';
-import { FarmerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 const menuItems = [
@@ -86,7 +86,7 @@ function AiDashboard() {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth()
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleLogout = () => {
     setLoading(true)
@@ -97,14 +97,13 @@ function AiDashboard() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <FarmerSidebar
-      activePage={FarmerPages.AI_TIPS}
-       logoutPending={loading}
-        handleLogout={handleLogout} />
+      <Sidebar
+        userType={UserType.FARMER}
+        activeItem='AI Tips' />
 
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 bg-gray-50">
+      <main className="flex-1  bg-gray-50">
         {/* Header */}
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
           <h1 className="text-xl font-semibold text-gray-900">AI Tips</h1>

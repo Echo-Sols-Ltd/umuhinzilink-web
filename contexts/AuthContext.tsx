@@ -170,7 +170,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadAuthState = async () => {
     try {
       // localStorage.removeItem('auth_token')
-
+      setLoading(true)
       const token = localStorage.getItem('auth_token');
       const user = getUser();
       const farmer = getFarmer();
@@ -204,8 +204,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           setSupplier(supplier);
           router.replace('/supplier/dashboard');
         }
+        setLoading(false)
         return;
       }
+      setLoading(false)
     } catch {
       toast({
         title: 'Loading auth state failed',

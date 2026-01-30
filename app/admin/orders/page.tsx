@@ -17,8 +17,8 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
-import AdminNavbar from '@/components/admin/Navbar';
-import { AdminPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { AdminPages, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 
 interface Transaction {
@@ -81,17 +81,16 @@ function OrderManagement() {
   });
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Sidebar - Green */}
+    <div className="h-screen bg-white flex overflow-hidden">
+      {/* Sidebar */}
 
-      <AdminNavbar
-        activePage={AdminPages.ORDERS}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+      <Sidebar
+        userType={UserType.ADMIN}
+        activeItem='Orders'
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-auto">
         {/* Header - White with Search */}
         <header className="bg-white border-b h-16 flex items-center px-6">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
@@ -159,7 +158,7 @@ function OrderManagement() {
                         {order.product.farmer.user.names}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {order.createdAt}
+                        {new Date(order.createdAt).toDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span

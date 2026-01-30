@@ -4,6 +4,8 @@ import { Plus, Search, Send } from 'lucide-react';
 import { BiLeftArrow } from 'react-icons/bi';
 import { useRouter } from 'next/navigation';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import Sidebar from '@/components/shared/Sidebar';
+import { UserType } from '@/types';
 
 interface Contact {
   id: number;
@@ -52,19 +54,19 @@ function FarmerMessages() {
     const updated = conversations.map(conv =>
       conv.id === activeChat.id
         ? {
-            ...conv,
-            messages: [
-              ...conv.messages,
-              {
-                sender: 'Farmer',
-                text: message,
-                timestamp: new Date().toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                }),
-              },
-            ],
-          }
+          ...conv,
+          messages: [
+            ...conv.messages,
+            {
+              sender: 'Farmer',
+              text: message,
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+            },
+          ],
+        }
         : conv
     );
     setConversations(updated);
@@ -93,6 +95,10 @@ function FarmerMessages() {
 
   return (
     <div className="flex h-screen bg-gray-100 text-gray-800">
+      <Sidebar
+        userType={UserType.FARMER}
+        activeItem='Messages'
+      />
       {/* Sidebar */}
       <div className="w-1/3 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 flex items-center justify-between border-b border-gray-200 bg-green-600 text-white">
@@ -128,9 +134,8 @@ function FarmerMessages() {
           {conversations.map(conv => (
             <div
               key={conv.id}
-              className={`p-4 cursor-pointer hover:bg-gray-50 border-b border-gray-200 ${
-                activeChat?.id === conv.id ? 'bg-green-50' : ''
-              }`}
+              className={`p-4 cursor-pointer hover:bg-gray-50 border-b border-gray-200 ${activeChat?.id === conv.id ? 'bg-green-50' : ''
+                }`}
               onClick={() => setActiveChat(conv)}
             >
               <div className="font-medium">{conv.name}</div>
@@ -158,11 +163,10 @@ function FarmerMessages() {
                   className={`flex ${msg.sender === 'Farmer' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`px-4 py-2 rounded-lg max-w-xs text-sm shadow-sm ${
-                      msg.sender === 'Farmer'
-                        ? 'bg-green-600 text-white rounded-br-none'
-                        : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
-                    }`}
+                    className={`px-4 py-2 rounded-lg max-w-xs text-sm shadow-sm ${msg.sender === 'Farmer'
+                      ? 'bg-green-600 text-white rounded-br-none'
+                      : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
+                      }`}
                   >
                     {msg.text}
                     <div className="text-[10px] mt-1 opacity-70">{msg.timestamp}</div>

@@ -20,8 +20,8 @@ import { useRouter } from 'next/navigation';
 
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 
 interface Contact {
@@ -123,16 +123,14 @@ function SupplierMessagesComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex flex-1 min-h-0">
-        <SupplierSidebar
-          activePage={SupplierPages.MESSAGE}
-          handleLogout={handleLogout}
-          logoutPending={false} // You may want to connect this to a state
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='Message'
         />
 
         {/* Main Content Area */}
-        <div className="flex-1 ml-64 flex flex-col">
+        <div className="flex-1 flex flex-col h-full">
           {/* Header */}
           <header className="fixed top-0 left-64 z-30 right-0 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             {/* Search Section */}
@@ -200,7 +198,7 @@ function SupplierMessagesComponent() {
           {/* Messages Content */}
           <div className="flex h-screen bg-gray-100 text-gray-800 mt-16">
             {/* Messages Sidebar */}
-            <div className="w-1/3 bg-white border-r border-gray-200 flex flex-col">
+            <div className="bg-white border-r border-gray-200 flex-1 flex-col">
               <div className="p-4 flex items-center justify-between border-b border-gray-200 bg-green-600 text-white">
                 <h2 className="text-lg font-semibold">Messages</h2>
                 <button
@@ -333,7 +331,6 @@ function SupplierMessagesComponent() {
           </div>
         )}
       </div>
-    </div>
   );
 }
 

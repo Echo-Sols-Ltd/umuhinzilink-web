@@ -2,8 +2,8 @@
 
 import React from 'react';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import ConversationSidebar from '@/components/messaging/ConversationSidebar';
 import ChatInterface from '@/components/messaging/ChatInterface';
 
@@ -21,23 +21,17 @@ function BuyerMessagesComponent() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
       <div className="flex flex-1 min-h-0">
-        <BuyerSidebar
-          activePage={BuyerPages.MESSAGE}
-          handleLogout={handleLogout}
-          logoutPending={false}
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Message'
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex min-h-0 ml-64">
+        <main className="flex-1 flex">
           {/* Conversations Sidebar */}
-          <ConversationSidebar className="w-80" />
-          
+          <ConversationSidebar className="flex-1" />
+
           {/* Chat Interface */}
           <ChatInterface className="flex-1" />
         </main>

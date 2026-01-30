@@ -1,7 +1,7 @@
 // /pages/buyercontact.tsx
 'use client';
 
-import Link from 'next/link';import {
+import Link from 'next/link'; import {
   Mail,
   Phone,
   MapPin,
@@ -9,8 +9,8 @@ import Link from 'next/link';import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 
 const Logo = () => (
@@ -29,21 +29,13 @@ function ContactComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
-      <div className="flex flex-1 min-h-0">
-
-        <BuyerSidebar
-          activePage={BuyerPages.CONTACT}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='Contact'
         />
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-8">
+        <main className="flex-1 p-8 overflow-auto h-full">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Contact Us</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -120,7 +112,6 @@ function ContactComponent() {
             </form>
           </div>
         </main>
-      </div>
     </div>
   );
 }

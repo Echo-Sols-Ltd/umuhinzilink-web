@@ -26,8 +26,8 @@ import FileUpload from '@/components/ui/file-upload';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSupplier } from '@/contexts/SupplierContext';
 import { useSupplierAction } from '@/hooks/useSupplierAction';
-import SupplierSidebar from '@/components/supplier/Navbar';
-import { SupplierPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import { ProductCategory, ProductType, MeasurementUnit, CertificationType } from '@/types/enums';
 
@@ -74,7 +74,7 @@ function ProductsPageComponent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const productData = {
       name: formData.name,
       category: formData.category,
@@ -95,7 +95,7 @@ function ProductsPageComponent() {
       } else {
         await supplierActions.createProduct(productData);
       }
-      
+
       resetForm();
       setShowForm(false);
       refreshProducts();
@@ -148,16 +148,14 @@ function ProductsPageComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex flex-1 min-h-0">
-        <SupplierSidebar
-          activePage={SupplierPages.PRODUCTS}
-          handleLogout={handleLogout}
-          logoutPending={false}
+    <div className="flex h-screen bg-gray-50 overflow-hidden ">
+        <Sidebar
+          userType={UserType.SUPPLIER}
+          activeItem='My Inputs'
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64 relative">
+        <main className="flex-1 p-6 overflow-auto  relative">
           {/* Header */}
           <header className="fixed top-0 left-64 z-30 right-0 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             {/* Search Section */}
@@ -194,11 +192,11 @@ function ProductsPageComponent() {
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <p className="text-sm opacity-90 mb-1">
-                    {new Date().toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
+                    {new Date().toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
                     })}
                   </p>
                   <h1 className="text-2xl font-bold mb-2">Manage your agricultural inputs</h1>
@@ -294,7 +292,6 @@ function ProductsPageComponent() {
             )}
           </div>
         </main>
-      </div>
 
       {/* Modal for Form */}
       {showForm && (

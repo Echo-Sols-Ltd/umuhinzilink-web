@@ -25,7 +25,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
-import AdminNavbar from '@/components/admin/Navbar';
+import Sidebar from '@/components/shared/Sidebar';
 import { AdminPages, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { useToast } from '@/components/ui/use-toast-new';
@@ -61,24 +61,24 @@ function UserManagement() {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [roleFilter, setRoleFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const filteredUsers =
     users?.filter(user => {
-      const matchesSearch = 
+      const matchesSearch =
         user.names.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.role.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesRole = !roleFilter || user.role === roleFilter;
-      const matchesStatus = !statusFilter || 
+
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+      const matchesStatus = statusFilter === 'all' ||
         (statusFilter === 'verified' && user.verified) ||
         (statusFilter === 'pending' && !user.verified);
-      
+
       return matchesSearch && matchesRole && matchesStatus;
     }) || [];
 
@@ -128,7 +128,7 @@ function UserManagement() {
     if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
-    
+
     setActionLoading(userId);
     try {
       await deleteUser(userId);
@@ -154,16 +154,15 @@ function UserManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Sidebar - Green */}
-      <AdminNavbar
-        activePage={AdminPages.USERS}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+    <div className="h-screen bg-white flex overflow-hidden">
+      {/* Sidebar */}
+      <Sidebar
+        userType={UserType.ADMIN}
+        activeItem='Users'
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-auto">
         {/* Header - White with Search and Filters */}
         <header className="bg-white border-b h-16 flex items-center px-6">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
@@ -179,14 +178,14 @@ function UserManagement() {
               className="w-full pl-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
-          
+
           <div className="flex gap-2">
             <Select value={roleFilter} onValueChange={setRoleFilter}>
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="All Roles" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Roles</SelectItem>
+                <SelectItem value="all">All Roles</SelectItem>
                 <SelectItem value="FARMER">Farmer</SelectItem>
                 <SelectItem value="BUYER">Buyer</SelectItem>
                 <SelectItem value="SUPPLIER">Supplier</SelectItem>
@@ -199,7 +198,7 @@ function UserManagement() {
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="verified">Verified</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
               </SelectContent>
@@ -320,22 +319,21 @@ function UserManagement() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex items-center space-x-2">
-                            <button 
+                            <button
                               onClick={() => handleViewUser(usersItem.id)}
                               className="text-blue-600 hover:text-blue-800 p-1 rounded"
                               title="View Details"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
-                            
+
                             <button
                               onClick={() => handleSuspendUser(usersItem.id, !(usersItem as any).suspended)}
                               disabled={actionLoading === usersItem.id}
-                              className={`p-1 rounded ${
-                                (usersItem as any).suspended 
-                                  ? 'text-green-600 hover:text-green-800' 
-                                  : 'text-orange-600 hover:text-orange-800'
-                              }`}
+                              className={`p-1 rounded ${(usersItem as any).suspended
+                                ? 'text-green-600 hover:text-green-800'
+                                : 'text-orange-600 hover:text-orange-800'
+                                }`}
                               title={(usersItem as any).suspended ? 'Activate User' : 'Suspend User'}
                             >
                               {actionLoading === usersItem.id ? (
@@ -346,7 +344,7 @@ function UserManagement() {
                                 <Ban className="w-4 h-4" />
                               )}
                             </button>
-                            
+
                             <button
                               onClick={() => handleDeleteUser(usersItem.id)}
                               disabled={actionLoading === usersItem.id}
@@ -391,7 +389,7 @@ function UserManagement() {
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              
+
               <div className="space-y-6">
                 {/* Profile Section */}
                 <div className="flex items-center space-x-4">
@@ -412,17 +410,15 @@ function UserManagement() {
                     <h3 className="text-lg font-semibold text-gray-900">{selectedUser.names}</h3>
                     <p className="text-sm text-gray-500">{selectedUser.email}</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        selectedUser.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' :
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${selectedUser.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' :
                         selectedUser.role === 'FARMER' ? 'bg-green-100 text-green-800' :
-                        selectedUser.role === 'BUYER' ? 'bg-blue-100 text-blue-800' :
-                        'bg-orange-100 text-orange-800'
-                      }`}>
+                          selectedUser.role === 'BUYER' ? 'bg-blue-100 text-blue-800' :
+                            'bg-orange-100 text-orange-800'
+                        }`}>
                         {selectedUser.role}
                       </span>
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        selectedUser.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                      }`}>
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${selectedUser.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
                         {selectedUser.verified ? 'Verified' : 'Pending'}
                       </span>
                     </div>
@@ -468,11 +464,10 @@ function UserManagement() {
                       handleSuspendUser(selectedUser.id, !(selectedUser as any).suspended);
                       setShowUserModal(false);
                     }}
-                    className={`px-4 py-2 text-sm font-medium rounded-md ${
-                      (selectedUser as any).suspended
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-orange-600 text-white hover:bg-orange-700'
-                    }`}
+                    className={`px-4 py-2 text-sm font-medium rounded-md ${(selectedUser as any).suspended
+                      ? 'bg-green-600 text-white hover:bg-green-700'
+                      : 'bg-orange-600 text-white hover:bg-orange-700'
+                      }`}
                   >
                     {(selectedUser as any).suspended ? 'Activate User' : 'Suspend User'}
                   </button>

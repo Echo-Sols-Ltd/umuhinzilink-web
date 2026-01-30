@@ -28,18 +28,8 @@ export function AppProviders({ children }: AppProvidersProps) {
             <OrderProvider>
               <WalletProvider>
                 <MessageProvider>
-                  <BuyerProvider>
-                <FarmerProvider>
-                  <SupplierProvider>
-                    <AdminProvider>
-                      <GovernmentProvider>
-                        {children}
-                        <Toaster />
-                      </GovernmentProvider>
-                    </AdminProvider>
-                  </SupplierProvider>
-                </FarmerProvider>
-                  </BuyerProvider>
+                  {children}
+                  <Toaster />
                 </MessageProvider>
               </WalletProvider>
             </OrderProvider>

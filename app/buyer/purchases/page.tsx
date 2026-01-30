@@ -29,8 +29,8 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
-import BuyerSidebar from '@/components/buyer/Navbar';
-import { BuyerPages } from '@/types';
+import Sidebar from '@/components/shared/Sidebar';
+import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useOrder } from '@/contexts/OrderContext';
 import OrderStatusTracker from '@/components/orders/OrderStatusTracker';
@@ -48,21 +48,21 @@ function MyPurchasesComponent() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const { buyerOrders, loading: ordersLoading } = useOrder();
 
   // Filter and process orders
   const filteredOrders = useMemo(() => {
     if (!buyerOrders) return [];
-    
+
     return buyerOrders.filter(order => {
-      const matchesSearch = searchTerm === '' || 
+      const matchesSearch = searchTerm === '' ||
         order.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.id.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesStatus = filterStatus === 'all' || 
+
+      const matchesStatus = filterStatus === 'all' ||
         order.status.toLowerCase() === filterStatus.toLowerCase();
-      
+
       return matchesSearch && matchesStatus;
     });
   }, [buyerOrders, searchTerm, filterStatus]);
@@ -70,12 +70,12 @@ function MyPurchasesComponent() {
   // Calculate stats
   const stats = useMemo(() => {
     if (!buyerOrders) return { total: 0, completed: 0, inProgress: 0, totalSpent: 0 };
-    
+
     const total = buyerOrders.length;
     const completed = buyerOrders.filter(o => o.status === 'COMPLETED').length;
     const inProgress = buyerOrders.filter(o => o.status === 'ACTIVE' || o.status === 'PENDING').length;
     const totalSpent = buyerOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
-    
+
     return { total, completed, inProgress, totalSpent };
   }, [buyerOrders]);
 
@@ -84,21 +84,14 @@ function MyPurchasesComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
-      <div className="flex flex-1 min-h-0">
-        <BuyerSidebar
-          activePage={BuyerPages.PURCHASES}
-          handleLogout={handleLogout}
-          logoutPending={logoutPending}
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <Sidebar
+          userType={UserType.BUYER}
+          activeItem='My Purchase'
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64">
+        <main className="h-screen flex-1 p-6 overflow-auto">
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">My Purchases</h1>
@@ -156,43 +149,39 @@ function MyPurchasesComponent() {
           {/* Filters */}
           <div className="flex justify-between items-center mb-6 gap-4">
             <div className="flex gap-2">
-              <button 
+              <button
                 onClick={() => setFilterStatus('all')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filterStatus === 'all' 
-                    ? 'bg-green-600 text-white' 
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'all'
+                    ? 'bg-green-600 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 All
               </button>
-              <button 
+              <button
                 onClick={() => setFilterStatus('pending')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filterStatus === 'pending' 
-                    ? 'bg-green-600 text-white' 
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'pending'
+                    ? 'bg-green-600 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 Pending
               </button>
-              <button 
+              <button
                 onClick={() => setFilterStatus('active')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filterStatus === 'active' 
-                    ? 'bg-green-600 text-white' 
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'active'
+                    ? 'bg-green-600 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 In Progress
               </button>
-              <button 
+              <button
                 onClick={() => setFilterStatus('completed')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filterStatus === 'completed' 
-                    ? 'bg-green-600 text-white' 
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'completed'
+                    ? 'bg-green-600 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 Completed
               </button>
@@ -212,14 +201,7 @@ function MyPurchasesComponent() {
                 All Crops
                 <ChevronDown className="w-4 h-4" />
               </button>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="mm/dd/yyyy"
-                  className="bg-white border border-gray-300 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-40"
-                />
-              </div>
+              
             </div>
           </div>
 
@@ -261,17 +243,17 @@ function MyPurchasesComponent() {
                       </td>
                     </tr>
                   )}
-                  
+
                   {!ordersLoading && filteredOrders.length === 0 && (
                     <tr>
                       <td colSpan={8} className="py-12 text-center text-gray-500">
-                        {searchTerm || filterStatus !== 'all' 
-                          ? 'No orders found matching your criteria.' 
+                        {searchTerm || filterStatus !== 'all'
+                          ? 'No orders found matching your criteria.'
                           : 'You have no orders yet.'}
                       </td>
                     </tr>
                   )}
-                  
+
                   {!ordersLoading && filteredOrders.map((order, index) => {
                     const farmerName = order.product?.farmer?.user?.names || 'Unknown Farmer';
                     const productName = order.product?.name || 'Unknown Product';
@@ -282,7 +264,7 @@ function MyPurchasesComponent() {
                       month: 'short',
                       day: 'numeric',
                     });
-                    
+
                     const getStatusColor = (status: string) => {
                       switch (status.toLowerCase()) {
                         case 'completed':
@@ -297,7 +279,7 @@ function MyPurchasesComponent() {
                           return 'bg-gray-100 text-gray-700';
                       }
                     };
-                    
+
                     return (
                       <tr key={order.id} className={index < filteredOrders.length - 1 ? 'border-b border-gray-100' : ''}>
                         <td className="py-4 px-4 font-medium text-gray-900">#{order.id.slice(-6)}</td>
@@ -322,7 +304,7 @@ function MyPurchasesComponent() {
                         </td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-1">
-                            <button 
+                            <button
                               onClick={() => setSelectedOrder(order)}
                               className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
                             >
@@ -368,7 +350,6 @@ function MyPurchasesComponent() {
             </div>
           </div>
         </main>
-      </div>
 
       {/* Order Status Tracker Modal */}
       {selectedOrder && (
@@ -386,7 +367,7 @@ function MyPurchasesComponent() {
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              
+
               {/* Order Details */}
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -408,7 +389,7 @@ function MyPurchasesComponent() {
                   </div>
                 </div>
               </div>
-              
+
               <OrderStatusTracker
                 orderStatus={selectedOrder.status}
                 deliveryStatus={selectedOrder.delivery?.status}
