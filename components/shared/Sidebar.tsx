@@ -31,7 +31,8 @@ import {
     Clock,
     TrendingUp,
     Phone,
-    LayoutDashboard
+    LayoutDashboard,
+    Shield
 } from 'lucide-react';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -276,14 +277,19 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         href: '/admin/products',
                     },
                     {
-                        icon: <Bell className="w-5 h-5" />,
-                        label: 'Notifications',
+                        icon: <BarChart2 className="w-5 h-5" />,
+                        label: 'Analytics',
+                        href: '/admin/analytics',
+                    },
+                    {
+                        icon: <AlertCircle className="w-5 h-5" />,
+                        label: 'Reports',
                         href: '/admin/reports',
                     },
                     {
-                        icon: <User className="w-5 h-5" />,
-                        label: 'Profile',
-                        href: '/admin/settings',
+                        icon: <Shield className="w-5 h-5" />,
+                        label: 'Security',
+                        href: '/admin/security',
                     },
                     {
                         icon: <Settings className="w-5 h-5" />,
