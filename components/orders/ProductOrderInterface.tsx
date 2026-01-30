@@ -69,13 +69,13 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
       <div className={cn('bg-white rounded-lg shadow-lg overflow-hidden', className)}>
         {/* Image Gallery */}
         <div className="relative">
-          <div className="aspect-square bg-gray-100">
+          <div className="bg-gray-100 bg-black h-[400px] w-[500px]">
             <Image
               src={images[selectedImageIndex]}
               alt={product.name}
-              fill
+             fill
+
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
           

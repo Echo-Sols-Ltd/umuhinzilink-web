@@ -80,13 +80,7 @@ function BuyerProfileComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
-      <div className="flex flex-1 min-h-0">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
         {/* Sidebar */}
         <Sidebar
           userType={UserType.BUYER}
@@ -94,8 +88,8 @@ function BuyerProfileComponent() {
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64">
-          <div className="max-w-4xl bg-white rounded-lg shadow-sm border p-8">
+        <main className="flex-1 p-6 overflow-auto h-full">
+          <div className="max-w-full bg-white rounded-lg shadow-sm border p-8">
             {/* Profile Header */}
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-4">
@@ -193,7 +187,6 @@ function BuyerProfileComponent() {
             </div>
           </div>
         </main>
-      </div>
     </div>
   );
 }

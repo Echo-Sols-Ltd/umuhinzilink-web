@@ -173,7 +173,7 @@ function ProductsPageComponent() {
 
   const hasSearchParams = search || cropFilter || categoryFilter || locationFilter || minPrice || maxPrice;
 
-  const sidebar = <Sidebar userType={UserType.BUYER} activeItem='Product' />;
+  const sidebar = <Sidebar userType={UserType.BUYER} activeItem='Browse Product' />;
 
   const header = (
     <div className="p-4 border-b border-gray-200">
@@ -185,9 +185,9 @@ function ProductsPageComponent() {
     <ResponsiveLayout sidebar={sidebar} header={header}>
       <div className="space-y-6">
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="bg-white rounded-lg">
           {/* Search Bar */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -197,7 +197,7 @@ function ProductsPageComponent() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  className="pl-10"
+                  className="pl-10 py-4"
                 />
               </div>
               <div className="flex gap-2">
@@ -453,10 +453,12 @@ function ProductsPageComponent() {
 
       {/* Product Order Interface Modal */}
       {selectedProduct && (
-        <ProductOrderInterface
-          product={selectedProduct}
-          productType={selectedProduct.type || 'farmer'}
-        />
+        <div className='fixed top-0 left-0 w-full h-full z-50 p-40 bg-black/85 align-center justify-center items-center overflow-auto'>
+          <ProductOrderInterface
+            product={selectedProduct}
+            productType={selectedProduct.type || 'farmer'}
+          />
+        </div>
       )}
     </ResponsiveLayout>
   );

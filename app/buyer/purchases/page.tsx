@@ -84,20 +84,14 @@ function MyPurchasesComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
-      <div className="flex flex-1 min-h-0">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
         <Sidebar
           userType={UserType.BUYER}
-          activeItem='Purchases'
+          activeItem='My Purchase'
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64">
+        <main className="h-screen flex-1 p-6 overflow-auto">
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">My Purchases</h1>
@@ -207,14 +201,7 @@ function MyPurchasesComponent() {
                 All Crops
                 <ChevronDown className="w-4 h-4" />
               </button>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="mm/dd/yyyy"
-                  className="bg-white border border-gray-300 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-40"
-                />
-              </div>
+              
             </div>
           </div>
 
@@ -363,7 +350,6 @@ function MyPurchasesComponent() {
             </div>
           </div>
         </main>
-      </div>
 
       {/* Order Status Tracker Modal */}
       {selectedOrder && (

@@ -21,11 +21,6 @@ function BuyerMessagesComponent() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
       <div className="flex flex-1 min-h-0">
         <Sidebar
           userType={UserType.BUYER}
@@ -33,9 +28,9 @@ function BuyerMessagesComponent() {
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex min-h-0 ml-64">
+        <main className="flex-1 flex">
           {/* Conversations Sidebar */}
-          <ConversationSidebar className="w-80" />
+          <ConversationSidebar className="flex-1" />
 
           {/* Chat Interface */}
           <ChatInterface className="flex-1" />
