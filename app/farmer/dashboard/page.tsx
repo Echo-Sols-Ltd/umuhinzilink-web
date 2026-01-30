@@ -339,67 +339,6 @@ function Dashboard() {
     }
   };
 
-  const statsCards = useMemo(
-    () => [
-      {
-        id: 'total-revenue',
-        title: 'Total Revenue',
-        value: `RWF ${formatNumber(totalRevenue)}`,
-        subline: paidOrdersCount ? `${paidOrdersCount} paid orders` : 'Awaiting first payment',
-        icon: <TrendingUp className="w-6 h-6 text-green-600" />,
-        iconBg: 'bg-green-100',
-        accent: paidOrdersCount ? 'text-green-600' : 'text-gray-400',
-      },
-      {
-        id: 'total-orders',
-        title: 'Total Orders',
-        value: formatNumber(totalOrders),
-        subline: pendingOrdersCount ? `${pendingOrdersCount} pending` : 'All orders fulfilled',
-        icon: <ShoppingCart className="w-6 h-6 text-blue-600" />,
-        iconBg: 'bg-blue-100',
-        accent: pendingOrdersCount ? 'text-yellow-600' : 'text-green-600',
-      },
-      {
-        id: 'active-products',
-        title: 'Active Products',
-        value: formatNumber(activeProductsCount),
-        subline: `${products.length} total listings`,
-        icon: <Package className="w-6 h-6 text-purple-600" />,
-        iconBg: 'bg-purple-100',
-        accent: 'text-purple-600',
-      },
-      {
-        id: 'pending-orders',
-        title: 'Pending Orders',
-        value: formatNumber(pendingOrdersCount),
-        subline: `${completedOrdersCount} fulfilled`,
-        icon: <Clock className="w-6 h-6 text-yellow-600" />,
-        iconBg: 'bg-yellow-100',
-        accent: pendingOrdersCount ? 'text-yellow-600' : 'text-green-600',
-      },
-      {
-        id: 'input-requests',
-        title: 'Input Requests',
-        value: formatNumber(requests.length),
-        subline: requests.length
-          ? `${requests.filter(req => (req.status || '').toLowerCase() === 'pending').length} pending`
-          : 'No requests yet',
-        icon: <FilePlus className="w-6 h-6 text-teal-600" />,
-        iconBg: 'bg-teal-100',
-        accent: requests.length ? 'text-teal-600' : 'text-gray-400',
-      },
-    ],
-    [
-      totalRevenue,
-      paidOrdersCount,
-      totalOrders,
-      pendingOrdersCount,
-      activeProductsCount,
-      products.length,
-      completedOrdersCount,
-      requests,
-    ]
-  );
 
   // Show loading state while checking authentication
   if (authLoading) {
@@ -425,7 +364,7 @@ function Dashboard() {
           activeItem='Dashboard' />
 
         <main className="flex-1 overflow-auto relative bg-white ">
-          <header className="fixed top-0 left-40 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+          <header className=" top-0 left-0 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -457,7 +396,7 @@ function Dashboard() {
             </div>
           </header>
 
-          <div className="p-6 mt-16 space-y-6 ">
+          <div className="p-6 space-y-6 ">
             <div>
               <p className="text-sm text-gray-500 mb-1">{todayLabel}</p>
               <h1 className="text-2xl font-bold text-gray-900 mb-1">

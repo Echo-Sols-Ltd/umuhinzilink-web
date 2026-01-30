@@ -11,7 +11,6 @@ export default function useOrderAction() {
     addFarmerBuyerOrder,
     editFarmerOrder,
     editSupplierOrder,
-    editFarmerBuyerOrder,
   } = useOrder();
 
   const createFarmerOrder = async (payload: OrderRequest) => {

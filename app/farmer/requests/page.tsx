@@ -5,26 +5,10 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
-import {
-  LayoutGrid,
-  FilePlus,
-  MessageSquare,
-  BarChart2,
-  ShoppingCart,
-  User,
-  Settings,
-  Mail,
-  Bell,
-  Package,
-  Leaf,
-  ChevronDown,
-  X,
-  Loader2,
-  LogOut,
-} from 'lucide-react';
+import { ChevronDown, X, Loader2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
-import { FarmerPages, UserType } from '@/types';
+import { UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
 type FarmerRequest = {
@@ -65,13 +49,13 @@ function FarmerRequestsComponent() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { supplierProducts, loading: productsLoading, error: productsError } = useProduct();
+  const { farmerBuyerProducts, loading: productsLoading, error: productsError } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const currentUser = user;
   const requests = useMemo(() => [] as FarmerRequest[], []);
-  const products = useMemo(() => supplierProducts || [], [supplierProducts]);
+  const products = useMemo(() => farmerBuyerProducts || [], [farmerBuyerProducts]);
   const requestsLoading = false;
 
   const filteredRequests = useMemo(() => {
