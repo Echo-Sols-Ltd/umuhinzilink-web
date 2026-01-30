@@ -46,8 +46,6 @@ type FarmerProfile = {
 };
 
 function FarmerProfileComponent() {
-  const router = useRouter();
-  const pathname = usePathname();
   const { user: currentUser, logout } = useAuth();
   const [profile, setProfile] = useState<FarmerProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,16 +58,8 @@ function FarmerProfileComponent() {
       setError('You need to sign in to view your profile.');
       return;
     }
-
-    let cancelled = false;
-
-    const fetchProfile = async () => { };
-
-    fetchProfile();
-
-    return () => {
-      cancelled = true;
-    };
+    setProfile(currentUser);
+    setLoading(false);
   }, [currentUser]);
 
   const handleLogout = async () => {
@@ -83,13 +73,13 @@ function FarmerProfileComponent() {
   const lastName = restNames.join(' ');
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Profile'
       />
 
-      <main className="flex-1 ml-64 bg-gray-50">
+      <main className="flex-1 h-full bg-gray-50 overflow-auto">
         <header className="bg-white border-b h-16 flex items-center px-8 shadow-sm justify-between">
           <h1 className="text-xl font-semibold text-gray-900">Profile</h1>
           <p className="text-xs text-gray-500">Manage your farmer details</p>

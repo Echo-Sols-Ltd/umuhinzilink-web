@@ -154,15 +154,15 @@ function UserManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Sidebar - Green */}
+    <div className="h-screen bg-white flex overflow-hidden">
+      {/* Sidebar */}
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Users'
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-auto">
         {/* Header - White with Search and Filters */}
         <header className="bg-white border-b h-16 flex items-center px-6">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">

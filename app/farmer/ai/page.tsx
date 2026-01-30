@@ -103,7 +103,7 @@ function AiDashboard() {
 
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 bg-gray-50">
+      <main className="flex-1  bg-gray-50">
         {/* Header */}
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
           <h1 className="text-xl font-semibold text-gray-900">AI Tips</h1>

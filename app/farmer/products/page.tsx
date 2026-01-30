@@ -98,13 +98,12 @@ function FarmerProducts() {
   const displayName = currentUser?.names || 'Farmer';
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Products' />
 
-
-      <main className="flex-1 ml-64 bg-gray-50">
+      <main className="flex-1 bg-gray-50 overflow-y-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">My Products</h1>

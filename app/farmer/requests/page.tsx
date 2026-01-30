@@ -65,13 +65,13 @@ function FarmerRequestsComponent() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
+  const { supplierProducts, loading: productsLoading, error: productsError } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const currentUser = user;
   const requests = useMemo(() => [] as FarmerRequest[], []);
-  const products = useMemo(() => farmerProducts || [], [farmerProducts]);
+  const products = useMemo(() => supplierProducts || [], [supplierProducts]);
   const requestsLoading = false;
 
   const filteredRequests = useMemo(() => {
@@ -115,12 +115,12 @@ function FarmerRequestsComponent() {
   const displayName = currentUser?.names || 'Farmer';
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Input Request' />
 
-      <main className="flex-1 ml-64 bg-gray-50">
+      <main className="flex-1 bg-gray-50 overflow-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Input Requests</h1>

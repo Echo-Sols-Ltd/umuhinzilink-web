@@ -2,19 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { useFarmer } from '@/contexts/FarmerContext';
+import { useAuth } from '../AuthContext';
+import { UserType } from '@/types';
 
 const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const { isValidFarmer, startFetchingFarmerResources } = useFarmer();
+  const { user, loading: authLoading } = useAuth()
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        if (!isValidFarmer()) {
+        if (authLoading) return;
+        if (!user || user.role !== UserType.FARMER) {
           window.location.href = '/unauthorized';
           return;
         }
-        await startFetchingFarmerResources();
         setLoading(false);
       } catch (error) {
         console.error('Authorization error:', error);
@@ -23,7 +25,7 @@ const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
 
     checkAuth();
-  }, [isValidFarmer, startFetchingFarmerResources]);
+  }, [user, authLoading]);
 
   if (loading) {
     return (

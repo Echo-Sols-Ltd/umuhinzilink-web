@@ -89,7 +89,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="h-screen bg-white flex overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.ADMIN}
@@ -97,7 +97,7 @@ function Dashboard() {
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-auto pb-20">
         {/* Header - White with Search */}
         <header className="bg-white border-b h-16 flex items-center px-6">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
@@ -114,7 +114,7 @@ function Dashboard() {
         </header>
 
         {/* Dashboard Content */}
-        <main className="flex-1 bg-white p-6">
+        <main className="flex-1 bg-white p-6 space-y-10">
           {/* Top Section - Data Widgets */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Active Users Card - Green Background */}
@@ -169,48 +169,49 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Doughnut Chart */}
-            <div className="bg-white rounded-xl p-6 border shadow-sm">
-              <div className="flex items-center">
-                <div className="relative flex-1 max-w-[200px]">
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie
-                        data={chartData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {chartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <p className="text-2xl font-bold text-gray-900">
-                      {(totalValue || 0).toLocaleString()}
-                    </p>
-                    <p className="text-sm text-gray-500">All Now</p>
-                  </div>
+
+          </div>
+          {/* Doughnut Chart */}
+          <div className="bg-white rounded-xl p-6 border shadow-sm w-full">
+            <div className="flex items-center w-full">
+              <div className="relative flex-1 max-w-full">
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <p className="text-2xl font-bold text-gray-900">
+                    {(totalValue || 0).toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-500">All Now</p>
                 </div>
-                <div className="ml-6 space-y-3 flex-1">
-                  {chartData.map((item, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <div
-                        className={`w-4 h-1 rounded`}
-                        style={{ backgroundColor: item.color }}
-                      ></div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                        <p className="text-xs text-gray-500">{(item.value || 0).toLocaleString()}+</p>
-                      </div>
+              </div>
+              <div className="ml-6 space-y-3 flex-1">
+                {chartData.map((item, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <div
+                      className={`w-4 h-1 rounded`}
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                      <p className="text-xs text-gray-500">{(item.value || 0).toLocaleString()}+</p>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -278,9 +279,6 @@ function Dashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex items-center space-x-4">
-                            <button className="text-green-600 hover:text-green-800 flex items-center gap-1">
-                              <Eye className="w-4 h-4" /> View
-                            </button>
                             <button
                               onClick={() => deleteUser(user.id)}
                               className="text-red-600 hover:text-red-800 flex items-center gap-1"

@@ -141,7 +141,7 @@ function MarketAnalysis() {
     <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-white">
 
 
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 h-screen overflow-hidden">
         {/* Sidebar */}
         <Sidebar
           userType={UserType.FARMER}
@@ -150,7 +150,7 @@ function MarketAnalysis() {
 
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto ml-64 space-y-6 bg-gray-50">
+        <main className="flex-1 h-full p-6 overflow-auto space-y-6 bg-gray-50">
           {/* Filters */}
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center gap-2">

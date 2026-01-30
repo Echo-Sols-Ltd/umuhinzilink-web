@@ -101,13 +101,13 @@ function FarmerOrders() {
   const displayName = currentUser?.names || 'Farmer';
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Orders' />
 
 
-      <main className="flex-1 ml-64 bg-gray-50">
+      <main className="flex-1 h-full bg-gray-50 overflow-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Orders</h1>
@@ -238,7 +238,7 @@ function FarmerOrders() {
                       return (
                         <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="py-4 px-4 text-sm font-medium text-gray-900">
-                            #{order.id}
+                            #{order.id.slice(0, 2)}
                           </td>
                           <td className="py-4 px-4 text-sm text-gray-900">
                             {order.buyer?.names || order.buyer?.email || 'Unknown buyer'}
