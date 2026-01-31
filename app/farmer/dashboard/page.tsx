@@ -29,10 +29,12 @@ import {
   Loader2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { UserType } from '@/types';
+import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 import Sidebar from '@/components/shared/Sidebar';
+import useOrderAction from '@/hooks/useOrderAction';
+import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 
 
 
@@ -79,32 +81,7 @@ type FarmerProduct = {
   };
 };
 
-type FarmerOrder = {
-  id: string;
-  buyer?: {
-    id?: string;
-    names?: string;
-    email?: string;
-    phoneNumber?: string;
-    address?: {
-      district?: string;
-      province?: string;
-    } | null;
-  };
-  product?: FarmerProduct;
-  quantity?: number;
-  totalPrice?: number;
-  isPaid?: boolean;
-  status?: string;
-  paymentMethod?: string;
-  delivery?: {
-    status?: string;
-    estimatedDelivery?: string;
-    deliveryAddress?: string;
-  };
-  createdAt?: string;
-  updatedAt?: string;
-};
+
 
 type FarmerRequest = {
   id: string;
@@ -185,7 +162,8 @@ function Dashboard() {
   const router = useRouter();
   const { user, farmer, loading: authLoading, logout } = useAuth();
   const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
-  const { farmerOrders, loading: ordersLoading } = useOrder();
+  const { farmerOrders, farmerBuyerOrders, loading: ordersLoading, fetchFarmerBuyerOrders } = useOrder();
+  const { acceptFarmerOrder, cancelFarmerOrder, updateFarmerOrderStatus, loading: actionLoading } = useOrderAction();
   const [logoutPending, setLogoutPending] = useState(false);
 
   // Use context data - all hooks must be called before any early returns
@@ -195,10 +173,32 @@ function Dashboard() {
   const rawOrders = useMemo(() => farmerOrders || [], [farmerOrders]);
   const rawRequests = useMemo(() => [] as FarmerRequest[], []);
 
+  const handleAcceptOrder = async (orderId: string) => {
+    await acceptFarmerOrder(orderId);
+  };
+  const handleUpdateStatus = async (orderId: string, status: DeliveryStatus) => {
+    await updateFarmerOrderStatus(orderId, status);
+  };
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (window.confirm('Are you sure you want to cancel this order?')) {
+      await cancelFarmerOrder(orderId);
+      if (selectedOrder?.id === orderId) {
+        setIsDetailsModalOpen(false);
+      }
+    }
+  };
+
+  const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+  const handleViewDetails = (order: any) => {
+    setSelectedOrder(order);
+    setIsDetailsModalOpen(true);
+  };
+
   const profileLoading = authLoading;
   const profileError = null;
-  const requestsLoading = false;
-  const requestsError = null;
 
   const farmerId = profile?.id || currentUser?.id || null;
 
@@ -218,13 +218,13 @@ function Dashboard() {
     });
   }, [rawProducts, farmerId]);
 
-  const requests = useMemo(() => {
-    if (!farmerId) return rawRequests;
-    return rawRequests.filter(request => {
-      const requestFarmerId = (request as unknown as { farmerId?: string })?.farmerId;
-      return requestFarmerId ? requestFarmerId === farmerId : true;
-    });
-  }, [rawRequests, farmerId]);
+  const requests = useMemo(() => farmerBuyerOrders || [], [farmerBuyerOrders]);
+  const requestsLoading = ordersLoading;
+  const requestsError = null;
+
+  useEffect(() => {
+    fetchFarmerBuyerOrders();
+  }, []);
 
   const totalRevenue = useMemo(
     () =>
@@ -339,67 +339,6 @@ function Dashboard() {
     }
   };
 
-  const statsCards = useMemo(
-    () => [
-      {
-        id: 'total-revenue',
-        title: 'Total Revenue',
-        value: `RWF ${formatNumber(totalRevenue)}`,
-        subline: paidOrdersCount ? `${paidOrdersCount} paid orders` : 'Awaiting first payment',
-        icon: <TrendingUp className="w-6 h-6 text-green-600" />,
-        iconBg: 'bg-green-100',
-        accent: paidOrdersCount ? 'text-green-600' : 'text-gray-400',
-      },
-      {
-        id: 'total-orders',
-        title: 'Total Orders',
-        value: formatNumber(totalOrders),
-        subline: pendingOrdersCount ? `${pendingOrdersCount} pending` : 'All orders fulfilled',
-        icon: <ShoppingCart className="w-6 h-6 text-blue-600" />,
-        iconBg: 'bg-blue-100',
-        accent: pendingOrdersCount ? 'text-yellow-600' : 'text-green-600',
-      },
-      {
-        id: 'active-products',
-        title: 'Active Products',
-        value: formatNumber(activeProductsCount),
-        subline: `${products.length} total listings`,
-        icon: <Package className="w-6 h-6 text-purple-600" />,
-        iconBg: 'bg-purple-100',
-        accent: 'text-purple-600',
-      },
-      {
-        id: 'pending-orders',
-        title: 'Pending Orders',
-        value: formatNumber(pendingOrdersCount),
-        subline: `${completedOrdersCount} fulfilled`,
-        icon: <Clock className="w-6 h-6 text-yellow-600" />,
-        iconBg: 'bg-yellow-100',
-        accent: pendingOrdersCount ? 'text-yellow-600' : 'text-green-600',
-      },
-      {
-        id: 'input-requests',
-        title: 'Input Requests',
-        value: formatNumber(requests.length),
-        subline: requests.length
-          ? `${requests.filter(req => (req.status || '').toLowerCase() === 'pending').length} pending`
-          : 'No requests yet',
-        icon: <FilePlus className="w-6 h-6 text-teal-600" />,
-        iconBg: 'bg-teal-100',
-        accent: requests.length ? 'text-teal-600' : 'text-gray-400',
-      },
-    ],
-    [
-      totalRevenue,
-      paidOrdersCount,
-      totalOrders,
-      pendingOrdersCount,
-      activeProductsCount,
-      products.length,
-      completedOrdersCount,
-      requests,
-    ]
-  );
 
   // Show loading state while checking authentication
   if (authLoading) {
@@ -420,232 +359,330 @@ function Dashboard() {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
-        <Sidebar
-          userType={UserType.FARMER}
-          activeItem='Dashboard' />
+      <Sidebar
+        userType={UserType.FARMER}
+        activeItem='Dashboard' />
 
-        <main className="flex-1 overflow-auto relative bg-white ">
-          <header className="fixed top-0 left-40 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  type="text"
-                  className="pl-10 pr-4 py-2 w-80 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500"
-                  placeholder="Search here ..."
-                />
-              </div>
+      <main className="flex-1 overflow-auto relative bg-white ">
+        <header className=" top-0 left-0 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                type="text"
+                className="pl-10 pr-4 py-2 w-80 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                placeholder="Search here ..."
+              />
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <span role="img" aria-label="Rwanda flag">
-                  🇷🇼
-                </span>
-                <span>English</span>
-                <ChevronDown className="w-4 h-4" />
-              </div>
-              <Bell className="w-5 h-5 text-gray-600" />
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">{initials || 'F'}</span>
-                </div>
-                <span className="text-sm font-medium text-gray-700">
-                  {profileLoading ? 'Loading...' : shortName}
-                </span>
-                <ChevronDown className="w-4 h-4 text-gray-600" />
-              </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <span role="img" aria-label="Rwanda flag">
+                🇷🇼
+              </span>
+              <span>English</span>
+              <ChevronDown className="w-4 h-4" />
             </div>
-          </header>
-
-          <div className="p-6 mt-16 space-y-6 ">
-            <div>
-              <p className="text-sm text-gray-500 mb-1">{todayLabel}</p>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                Good {new Date().getHours() < 12 ? 'Morning' : 'Day'} 👋, {shortName}
-              </h1>
-              <p className="text-gray-600">
-                Here&apos;s what&apos;s happening with your farm today{profileLoading ? '...' : '.'}
-              </p>
-              {profileError && <p className="text-sm text-red-500 mt-2">{profileError}</p>}
-            </div>
-
-            {/* Enhanced Analytics Dashboard */}
-            <EnhancedDashboard
-              userRole="farmer"
-              orders={orders}
-              products={products}
-              className="mb-6"
-            />
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
-                <Link
-                  href="/farmer/products"
-                  className="text-sm text-green-600 hover:underline"
-                >
-                  Manage products
-                </Link>
+            <Bell className="w-5 h-5 text-gray-600" />
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-medium">{initials || 'F'}</span>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left text-gray-500">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <span className="text-sm font-medium text-gray-700">
+                {profileLoading ? 'Loading...' : shortName}
+              </span>
+              <ChevronDown className="w-4 h-4 text-gray-600" />
+            </div>
+          </div>
+        </header>
+
+        <div className="p-6 space-y-6 ">
+          <div>
+            <p className="text-sm text-gray-500 mb-1">{todayLabel}</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              Good {new Date().getHours() < 12 ? 'Morning' : 'Day'} 👋, {shortName}
+            </h1>
+            <p className="text-gray-600">
+              Here&apos;s what&apos;s happening with your farm today{profileLoading ? '...' : '.'}
+            </p>
+            {profileError && <p className="text-sm text-red-500 mt-2">{profileError}</p>}
+          </div>
+
+          {/* Enhanced Analytics Dashboard */}
+          <EnhancedDashboard
+            userRole="farmer"
+            orders={orders}
+            products={products}
+            className="mb-6"
+          />
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
+              <Link
+                href="/farmer/products"
+                className="text-sm text-green-600 hover:underline"
+              >
+                Manage products
+              </Link>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-gray-500">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">
+                      Product
+                    </th>
+                    <th scope="col" className="px-4 py-3 hidden sm:table-cell">
+                      Updated
+                    </th>
+                    <th scope="col" className="px-4 py-3 hidden md:table-cell">
+                      Quantity
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      Price
+                    </th>
+                    <th scope="col" className="px-4 py-3 hidden lg:table-cell">
+                      Location
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      Status
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-right">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productsLoading ? (
                     <tr>
-                      <th scope="col" className="px-6 py-3">
-                        Product
-                      </th>
-                      <th scope="col" className="px-4 py-3 hidden sm:table-cell">
-                        Updated
-                      </th>
-                      <th scope="col" className="px-4 py-3 hidden md:table-cell">
-                        Quantity
-                      </th>
-                      <th scope="col" className="px-4 py-3">
-                        Price
-                      </th>
-                      <th scope="col" className="px-4 py-3 hidden lg:table-cell">
-                        Location
-                      </th>
-                      <th scope="col" className="px-4 py-3">
-                        Status
-                      </th>
-                      <th scope="col" className="px-4 py-3 text-right">
-                        Action
-                      </th>
+                      <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
+                        Loading products...
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {productsLoading ? (
-                      <tr>
-                        <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
-                          Loading products...
+                  ) : productsError ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-6 text-center text-red-500">
+                        {productsError}
+                      </td>
+                    </tr>
+                  ) : recentProducts.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
+                        You haven&apos;t added any products yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    recentProducts.map(product => (
+                      <tr key={product.id} className="border-b border-gray-200">
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {product.name || 'Unnamed product'}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {product.category || 'Uncategorized'}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                          {formatDate(product.updatedAt || product.createdAt)}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                          {product.quantity != null
+                            ? `${formatNumber(product.quantity)} ${product.measurementUnit || ''}`
+                            : '—'}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {product.unitPrice != null
+                            ? `RWF ${formatNumber(product.unitPrice)}`
+                            : '—'}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                          {product.location ||
+                            product.farmer?.user?.names ||
+                            profile?.address?.district ||
+                            '—'}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${(product.productStatus || '').toLowerCase() === 'in_stock'
+                              ? 'bg-green-100 text-green-800'
+                              : (product.productStatus || '').toLowerCase() === 'out_of_stock'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                              }`}
+                          >
+                            {product.productStatus || 'Unknown'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <Link
+                            href="/farmer/products"
+                            className="text-green-600 hover:text-green-900"
+                          >
+                            Manage
+                          </Link>
                         </td>
                       </tr>
-                    ) : productsError ? (
-                      <tr>
-                        <td colSpan={7} className="px-4 py-6 text-center text-red-500">
-                          {productsError}
-                        </td>
-                      </tr>
-                    ) : recentProducts.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
-                          You haven&apos;t added any products yet.
-                        </td>
-                      </tr>
-                    ) : (
-                      recentProducts.map(product => (
-                        <tr key={product.id} className="border-b border-gray-200">
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+              <Link
+                href="/farmer/orders"
+                className="text-sm text-green-600 hover:underline"
+              >
+                View all orders
+              </Link>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-gray-500">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">Order ID</th>
+                    <th scope="col" className="px-4 py-3">Buyer</th>
+                    <th scope="col" className="px-4 py-3">Product</th>
+                    <th scope="col" className="px-4 py-3">Amount</th>
+                    <th scope="col" className="px-4 py-3">Status</th>
+                    <th scope="col" className="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ordersLoading ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-gray-500">
+                        Loading orders...
+                      </td>
+                    </tr>
+                  ) : orders.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-gray-500">
+                        No orders received yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    orders.slice(0, 5).map(order => {
+                      const statusKey = (order.status || 'PENDING').toUpperCase();
+                      const isPending = statusKey === 'PENDING';
+
+                      return (
+                        <tr key={order.id} className="border-b border-gray-200">
+                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            #{order.id.slice(0, 4)}
+                          </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
-                            <div>
-                              <p className="font-medium text-gray-900">
-                                {product.name || 'Unnamed product'}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {product.category || 'Uncategorized'}
-                              </p>
-                            </div>
+                            {order.buyer?.names || 'Unknown Buyer'}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
-                            {formatDate(product.updatedAt || product.createdAt)}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
-                            {product.quantity != null
-                              ? `${formatNumber(product.quantity)} ${product.measurementUnit || ''}`
-                              : '—'}
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {order.product?.name || '—'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {product.unitPrice != null
-                              ? `RWF ${formatNumber(product.unitPrice)}`
-                              : '—'}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                            {product.location ||
-                              product.farmer?.user?.names ||
-                              profile?.address?.district ||
-                              '—'}
+                            RWF {formatNumber(order.totalPrice || 0)}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <span
-                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${(product.productStatus || '').toLowerCase() === 'in_stock'
-                                ? 'bg-green-100 text-green-800'
-                                : (product.productStatus || '').toLowerCase() === 'out_of_stock'
-                                  ? 'bg-red-100 text-red-800'
-                                  : 'bg-yellow-100 text-yellow-800'
-                                }`}
-                            >
-                              {product.productStatus || 'Unknown'}
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusKey === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                              statusKey === 'ACTIVE' ? 'bg-blue-100 text-blue-700' :
+                                statusKey === 'COMPLETED' ? 'bg-green-100 text-green-700' :
+                                  'bg-gray-100 text-gray-700'
+                              }`}>
+                              {order.status}
                             </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <Link
-                              href="/farmer/products"
-                              className="text-green-600 hover:text-green-900"
-                            >
-                              Manage
-                            </Link>
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleAcceptOrder(order.id)}
+                                disabled={actionLoading}
+                                className="text-green-600 hover:text-green-900 font-bold"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleViewDetails(order)}
+                                className="text-blue-600 hover:text-blue-900"
+                              >
+                                Details
+                              </button>
+                            </div>
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Input requests</h3>
-                  <p className="text-sm text-gray-500">Track your farm input needs</p>
-                </div>
-                <Link
-                  href="/farmer/requests"
-                  className="text-sm text-green-600 hover:underline"
-                >
-                  View all
-                </Link>
-              </div>
-              <div className="mt-4 space-y-3">
-                {requestsLoading ? (
-                  <p className="text-sm text-gray-500">Loading requests...</p>
-                ) : requestsError ? (
-                  <p className="text-sm text-red-500">{requestsError}</p>
-                ) : requests.length === 0 ? (
-                  <p className="text-sm text-gray-500">
-                    No input requests yet. Create one to request seeds, fertilizer or equipment.
-                  </p>
-                ) : (
-                  requests.slice(0, 5).map(request => (
-                    <div key={request.id} className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {request.item || 'Requested item'}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {request.quantity != null
-                            ? `${request.quantity} units`
-                            : 'No quantity specified'}{' '}
-                          • {formatDate(request.requestDate || request.createdAt)}
-                        </p>
-                      </div>
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full ${(request.status || '').toLowerCase() === 'approved'
-                          ? 'bg-green-100 text-green-700'
-                          : (request.status || '').toLowerCase() === 'rejected'
-                            ? 'bg-red-100 text-red-700'
-                            : 'bg-yellow-100 text-yellow-700'
-                          }`}
-                      >
-                        {request.status || 'Pending'}
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
-        </main>
+
+          <OrderDetailsModal
+            order={selectedOrder as any}
+            isOpen={isDetailsModalOpen}
+            onClose={() => setIsDetailsModalOpen(false)}
+            onAccept={handleAcceptOrder}
+            onCancel={handleCancelOrder}
+            onUpdateStatus={handleUpdateStatus}
+            loading={actionLoading}
+          />
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Input Orders</h3>
+                <p className="text-sm text-gray-500">Track your purchases from suppliers</p>
+              </div>
+              <Link
+                href="/farmer/requests"
+                className="text-sm text-green-600 hover:underline"
+              >
+                View all
+              </Link>
+            </div>
+            <div className="mt-4 space-y-3">
+              {requestsLoading ? (
+                <p className="text-sm text-gray-500">Loading requests...</p>
+              ) : requestsError ? (
+                <p className="text-sm text-red-500">{requestsError}</p>
+              ) : requests.length === 0 ? (
+                <p className="text-sm text-gray-500">
+                  No input orders yet. Buy seeds or equipment from the marketplace.
+                </p>
+              ) : (
+                requests.slice(0, 5).map(request => (
+                  <div key={request.id} className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {request.product?.name || 'Input Item'}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {request.quantity}{' '}
+                        {request.product?.measurementUnit || 'units'} •{' '}
+                        {formatDate(request.createdAt)}
+                      </p>
+                    </div>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${(request.status || '').toLowerCase() === 'approved'
+                        ? 'bg-green-100 text-green-700'
+                        : (request.status || '').toLowerCase() === 'rejected'
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                        }`}
+                    >
+                      {request.status || 'Pending'}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

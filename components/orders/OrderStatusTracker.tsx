@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle, Clock, Truck, Package, XCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, Clock, Truck, Package, XCircle, AlertCircle, DollarSign } from 'lucide-react';
 import { OrderStatus, DeliveryStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -48,8 +48,19 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       ];
     }
 
+    const isBeyondPayment = ![OrderStatus.PENDING, OrderStatus.PENDING_PAYMENT].includes(orderStatus);
+    const isPaymentActive = orderStatus === OrderStatus.PENDING_PAYMENT;
+
     const activeSteps = [
       ...baseSteps,
+      {
+        id: 'payment',
+        label: 'Payment Pending',
+        description: 'Waiting for payment via wallet',
+        icon: DollarSign,
+        status: isBeyondPayment ? 'completed' : isPaymentActive ? 'active' : 'pending' as const,
+        timestamp: isBeyondPayment ? updatedAt : undefined,
+      },
       {
         id: 'confirmed',
         label: 'Order Confirmed',
@@ -68,8 +79,8 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
           label: 'Processing',
           description: 'Your order is being prepared',
           icon: Package,
-          status: [DeliveryStatus.SCHEDULED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' : 
-                 deliveryStatus === DeliveryStatus.PENDING ? 'active' : 'pending' as const,
+          status: [DeliveryStatus.SCHEDULED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' :
+            deliveryStatus === DeliveryStatus.PENDING ? 'active' : 'pending' as const,
           timestamp: deliveryStatus !== DeliveryStatus.PENDING ? updatedAt : undefined,
         },
         {
@@ -78,7 +89,7 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
           description: 'Your order is on the way',
           icon: Truck,
           status: [DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' :
-                 deliveryStatus === DeliveryStatus.SCHEDULED ? 'active' : 'pending' as const,
+            deliveryStatus === DeliveryStatus.SCHEDULED ? 'active' : 'pending' as const,
           timestamp: [DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? updatedAt : undefined,
         },
         {
@@ -87,7 +98,7 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
           description: 'Your order has been delivered',
           icon: CheckCircle,
           status: deliveryStatus === DeliveryStatus.DELIVERED ? 'completed' :
-                 deliveryStatus === DeliveryStatus.FAILED ? 'error' : 'pending' as const,
+            deliveryStatus === DeliveryStatus.FAILED ? 'error' : 'pending' as const,
           timestamp: deliveryStatus === DeliveryStatus.DELIVERED ? (deliveryDate || updatedAt) : undefined,
         },
       ];
@@ -181,8 +192,8 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
                       <p className={cn(
                         'text-sm font-medium',
                         step.status === 'completed' ? 'text-gray-900' :
-                        step.status === 'active' ? 'text-blue-900' :
-                        step.status === 'error' ? 'text-red-900' : 'text-gray-500'
+                          step.status === 'active' ? 'text-blue-900' :
+                            step.status === 'error' ? 'text-red-900' : 'text-gray-500'
                       )}>
                         {step.label}
                       </p>
@@ -209,8 +220,8 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
           <div className={cn(
             'w-3 h-3 rounded-full',
             orderStatus === OrderStatus.COMPLETED ? 'bg-green-500' :
-            orderStatus === OrderStatus.ACTIVE ? 'bg-blue-500' :
-            orderStatus === OrderStatus.CANCELLED ? 'bg-red-500' : 'bg-yellow-500'
+              orderStatus === OrderStatus.ACTIVE ? 'bg-blue-500' :
+                orderStatus === OrderStatus.CANCELLED ? 'bg-red-500' : 'bg-yellow-500'
           )} />
           <span className="text-sm font-medium text-gray-900">
             Current Status: {orderStatus.replace('_', ' ')}

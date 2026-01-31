@@ -1,59 +1,60 @@
 export enum FarmerPages {
-    DASHBOARD,
-    PRODUCTS,
-    INPUT_REQUEST,
-    AI_TIPS,
-    MARKET_ANALYTICS,
-    MESSAGES,
-    NOTIFICATIONS,
-    PROFILE,
-    ORDERS,
-    SETTINGS,
-    LOGOUT,
+  DASHBOARD,
+  PRODUCTS,
+  INPUT_REQUEST,
+  AI_TIPS,
+  MARKET_ANALYTICS,
+  MESSAGES,
+  NOTIFICATIONS,
+  PROFILE,
+  ORDERS,
+  WALLET,
+  SETTINGS,
+  LOGOUT,
 }
 
 export enum AdminPages {
-    DASHBOARD,
-    USERS,
-    ORDERS,
-    REPORTS,
-    PRODUCTS,
-    PROFILE,
-    SETTINGS,
+  DASHBOARD,
+  USERS,
+  ORDERS,
+  REPORTS,
+  PRODUCTS,
+  PROFILE,
+  SETTINGS,
 }
 
 export enum GovernmentPages {
-    DASHBOARD,
-    FARMERS_PRODUCE,
-    SUPPLIERS_PRODUCE,
-    NOTIFICATIONS,
-    PROFILE,
-    SETTINGS,
+  DASHBOARD,
+  FARMERS_PRODUCE,
+  SUPPLIERS_PRODUCE,
+  NOTIFICATIONS,
+  PROFILE,
+  SETTINGS,
 }
 
 export enum SupplierPages {
-    DASHBOARD,
-    PRODUCTS,
-    REQUESTS,
-    ORDERS,
-    MESSAGE,
-    PROFILE,
-    CONTACT,
-    SETTINGS,
-    LOGOUT,
+  DASHBOARD,
+  PRODUCTS,
+  REQUESTS,
+  ORDERS,
+  MESSAGE,
+  PROFILE,
+  CONTACT,
+  SETTINGS,
+  LOGOUT,
 }
 
 export enum BuyerPages {
-    DASHBOARD,
-    PURCHASES,
-    PRODUCT,
-    SAVED,
-    WALLET,
-    MESSAGE,
-    PROFILE,
-    CONTACT,
-    SETTINGS,
-    LOGOUT,
+  DASHBOARD,
+  PURCHASES,
+  PRODUCT,
+  SAVED,
+  WALLET,
+  MESSAGE,
+  PROFILE,
+  CONTACT,
+  SETTINGS,
+  LOGOUT,
 }
 
 
@@ -277,9 +278,11 @@ export const districtOptions = [
 
 export enum OrderStatus {
   PENDING = 'PENDING',
+  PENDING_PAYMENT = 'PENDING_PAYMENT',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
   ACTIVE = 'ACTIVE',
+  PAID = 'PAID',
 }
 
 export enum PaymentMethod {

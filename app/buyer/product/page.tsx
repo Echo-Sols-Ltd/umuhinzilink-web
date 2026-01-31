@@ -36,6 +36,7 @@ import { Card } from '@/components/ui/card';
 import { ResponsiveLayout, MobileTable, TouchOptimizedButton } from '@/components/ui/responsive-layout';
 import { ProgressiveImage } from '@/components/ui/progressive-loading';
 import { useIsMobile } from '@/hooks/use-mobile';
+import OrderCreationModal from '@/components/orders/OrderCreationModal';
 
 function ProductsPageComponent() {
   const [search, setSearch] = useState('');
@@ -54,6 +55,7 @@ function ProductsPageComponent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const { buyerProducts, loading: productsLoading } = useProduct();
+  const [isPurchasing, setIsPurchasing] = useState(false)
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -170,6 +172,9 @@ function ProductsPageComponent() {
     setSortBy('newest');
     setCurrentPage(1);
   };
+
+
+
 
   const hasSearchParams = search || cropFilter || categoryFilter || locationFilter || minPrice || maxPrice;
 
@@ -391,6 +396,10 @@ function ProductsPageComponent() {
                     key={product.id}
                     product={product}
                     onSelect={() => setSelectedProduct(product)}
+                    onPurchase={() => {
+                      setSelectedProduct(product);
+                      setIsPurchasing(true);
+                    }}
                   />
                 ))}
               </div>
@@ -401,6 +410,10 @@ function ProductsPageComponent() {
                     key={product.id}
                     product={product}
                     onSelect={() => setSelectedProduct(product)}
+                    onPurchase={() => {
+                      setSelectedProduct(product);
+                      setIsPurchasing(true);
+                    }}
                   />
                 ))}
               </div>
@@ -452,14 +465,32 @@ function ProductsPageComponent() {
       </div>
 
       {/* Product Order Interface Modal */}
-      {selectedProduct && (
+      {selectedProduct && !isPurchasing && (
         <div className='fixed top-0 left-0 w-full h-full z-50 p-40 bg-black/85 align-center justify-center items-center overflow-auto'>
           <ProductOrderInterface
             product={selectedProduct}
             productType={selectedProduct.type || 'farmer'}
+            setIsPurchasing={setIsPurchasing}
           />
         </div>
       )}
+
+      {isPurchasing && (
+        <div>
+          {/* Order Creation Modal */}
+          <OrderCreationModal
+            isOpen={isPurchasing}
+            onClose={() => {
+              setIsPurchasing(false)
+              setSelectedProduct(null)
+            }}
+            product={selectedProduct}
+            productType={selectedProduct?.type || 'farmer'}
+          />
+        </div>
+      )
+
+      }
     </ResponsiveLayout>
   );
 }
@@ -468,9 +499,10 @@ function ProductsPageComponent() {
 interface ProductCardProps {
   product: any;
   onSelect: () => void;
+  onPurchase: () => void;
 }
 
-function ProductCard({ product, onSelect }: ProductCardProps) {
+function ProductCard({ product, onSelect, onPurchase }: ProductCardProps) {
   const [isSaved, setIsSaved] = useState(false);
 
   return (
@@ -504,7 +536,7 @@ function ProductCard({ product, onSelect }: ProductCardProps) {
               {product.name}
             </h3>
             <span className="text-lg font-bold text-green-600">
-              {product.unitPrice} RWF
+              {Number(product.unitPrice).toLocaleString()} RWF
             </span>
           </div>
 
@@ -520,11 +552,16 @@ function ProductCard({ product, onSelect }: ProductCardProps) {
             <span>{product.quantity} {product.measurementUnit}</span>
           </div>
 
-          <div className="flex items-center justify-between mt-3">
-            <div className="flex items-center">
-              <div className="w-6 h-6 bg-green-100 rounded-full mr-2" />
-              <span className="text-sm text-gray-600">{product.farmer?.names}</span>
-            </div>
+          <div className="flex items-center justify-between mt-3 gap-2">
+            <TouchOptimizedButton
+              onClick={() => {
+                onPurchase();
+              }}
+              size="sm"
+              className="flex-1"
+            >
+              Buy Now
+            </TouchOptimizedButton>
             <div className="flex items-center">
               <Star className="w-4 h-4 text-yellow-400 fill-current" />
               <span className="text-sm text-gray-600 ml-1">4.5</span>
@@ -540,9 +577,10 @@ function ProductCard({ product, onSelect }: ProductCardProps) {
 interface ProductListItemProps {
   product: any;
   onSelect: () => void;
+  onPurchase: () => void;
 }
 
-function ProductListItem({ product, onSelect }: ProductListItemProps) {
+function ProductListItem({ product, onSelect, onPurchase }: ProductListItemProps) {
   const [isSaved, setIsSaved] = useState(false);
 
   return (
@@ -564,7 +602,7 @@ function ProductListItem({ product, onSelect }: ProductListItemProps) {
               </h3>
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold text-green-600">
-                  {product.unitPrice} RWF
+                  {Number(product.unitPrice).toLocaleString()} RWF
                 </span>
                 <TouchOptimizedButton
                   onClick={() => setIsSaved(!isSaved)}
@@ -602,8 +640,18 @@ function ProductListItem({ product, onSelect }: ProductListItemProps) {
                   <span className="ml-1">4.5</span>
                 </div>
                 <TouchOptimizedButton
+                  onClick={() => {
+                    onPurchase();
+                  }}
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  Buy Now
+                </TouchOptimizedButton>
+                <TouchOptimizedButton
                   onClick={onSelect}
                   size="sm"
+                  variant="outline"
                 >
                   View Details
                 </TouchOptimizedButton>

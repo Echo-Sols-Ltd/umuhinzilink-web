@@ -23,8 +23,10 @@ import {
   LogOut,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { FarmerPages, UserType } from '@/types';
+import { FarmerPages, UserType, OrderStatus, FarmerOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import useOrderAction from '@/hooks/useOrderAction';
+import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 
 type MenuItem = {
   label: string;
@@ -35,12 +37,14 @@ type MenuItem = {
 
 
 const ORDER_STATUS_META: Record<string, { label: string; badge: string }> = {
-  pending: { label: 'Pending', badge: 'bg-yellow-100 text-yellow-700' },
-  processing: { label: 'Processing', badge: 'bg-purple-100 text-purple-700' },
-  shipped: { label: 'Shipped', badge: 'bg-blue-100 text-blue-700' },
-  delivered: { label: 'Delivered', badge: 'bg-green-100 text-green-700' },
-  completed: { label: 'Completed', badge: 'bg-green-100 text-green-700' },
-  cancelled: { label: 'Cancelled', badge: 'bg-red-100 text-red-700' },
+  PENDING: { label: 'Pending', badge: 'bg-yellow-100 text-yellow-700' },
+  PENDING_PAYMENT: { label: 'Pending Payment', badge: 'bg-orange-100 text-orange-700' },
+  ACTIVE: { label: 'In Progress', badge: 'bg-blue-100 text-blue-700' },
+  PROCESSING: { label: 'Processing', badge: 'bg-purple-100 text-purple-700' },
+  SHIPPED: { label: 'Shipped', badge: 'bg-blue-100 text-blue-700' },
+  DELIVERED: { label: 'Delivered', badge: 'bg-green-100 text-green-700' },
+  COMPLETED: { label: 'Completed', badge: 'bg-green-100 text-green-700' },
+  CANCELLED: { label: 'Cancelled', badge: 'bg-red-100 text-red-700' },
 };
 
 function formatDate(value?: string) {
@@ -63,8 +67,11 @@ function FarmerOrders() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { farmerOrders, loading } = useOrder();
+  const { acceptFarmerOrder, cancelFarmerOrder, updateFarmerOrderStatus, loading: actionLoading } = useOrderAction();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   // Use context data instead of manual state
   const currentUser = user;
@@ -73,7 +80,7 @@ function FarmerOrders() {
 
   const filteredOrders = useMemo(() => {
     if (statusFilter === 'all') return orders;
-    return orders.filter(order => (order.status || '').toLowerCase() === statusFilter);
+    return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
   }, [orders, statusFilter]);
 
   const metrics = useMemo(() => {
@@ -96,6 +103,31 @@ function FarmerOrders() {
     } finally {
       setLogoutPending(false);
     }
+  };
+
+  const handleAcceptOrder = async (orderId: string) => {
+    await acceptFarmerOrder(orderId);
+    if (selectedOrder?.id === orderId) {
+      setIsDetailsModalOpen(false);
+    }
+  };
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (window.confirm('Are you sure you want to cancel this order?')) {
+      await cancelFarmerOrder(orderId);
+      if (selectedOrder?.id === orderId) {
+        setIsDetailsModalOpen(false);
+      }
+    }
+  };
+
+  const handleUpdateStatus = async (orderId: string, status: DeliveryStatus) => {
+    await updateFarmerOrderStatus(orderId, status);
+  };
+
+  const handleViewDetails = (order: FarmerOrder) => {
+    setSelectedOrder(order);
+    setIsDetailsModalOpen(true);
   };
 
   const displayName = currentUser?.names || 'Farmer';
@@ -154,12 +186,11 @@ function FarmerOrders() {
                   className="pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
                 >
                   <option value="all">All</option>
-                  <option value="pending">Pending</option>
-                  <option value="processing">Processing</option>
-                  <option value="shipped">Shipped</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="PENDING_PAYMENT">Pending Payment</option>
+                  <option value="ACTIVE">In Progress</option>
+                  <option value="COMPLETED">Completed</option>
+                  <option value="CANCELLED">Cancelled</option>
                 </select>
               </label>
               {statusFilter !== 'all' && (
@@ -224,8 +255,8 @@ function FarmerOrders() {
                     </tr>
                   ) : (
                     filteredOrders.map(order => {
-                      const statusKey = (order.status || 'pending').toLowerCase();
-                      const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.pending;
+                      const statusKey = (order.status || 'PENDING').toUpperCase();
+                      const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.PENDING;
                       const buyerAddress = order.buyer?.address
                         ? `${order.buyer.address.district || ''}${order.buyer.address.province ? `, ${order.buyer.address.province}` : ''}`.trim()
                         : '—';
@@ -266,9 +297,21 @@ function FarmerOrders() {
                             </span>
                           </td>
                           <td className="py-4 px-4">
-                            <button className="text-green-600 hover:text-green-800 text-sm font-medium">
-                              View details
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleAcceptOrder(order.id)}
+                                disabled={actionLoading}
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-xs font-medium transition disabled:opacity-50"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleViewDetails(order)}
+                                className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                              >
+                                View Details
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -280,6 +323,16 @@ function FarmerOrders() {
           </section>
         </div>
       </main>
+
+      <OrderDetailsModal
+        order={selectedOrder}
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        onAccept={handleAcceptOrder}
+        onCancel={handleCancelOrder}
+        onUpdateStatus={handleUpdateStatus}
+        loading={actionLoading}
+      />
     </div>
   );
 }

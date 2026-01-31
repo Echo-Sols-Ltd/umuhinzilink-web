@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
-import { UserType } from '@/types';
+import { User, UserType } from '@/types';
+import { useProduct } from './ProductContext';
+import { useOrder } from './OrderContext';
+import { toast } from '@/hooks/use-toast';
 
-interface BuyerCardItem {
-  [key: string]: any;
+
+interface BuyerContextType {
+
 }
-interface BuyerContextType {}
 
 const BuyerContext = createContext<BuyerContextType | null>(null);
 
@@ -18,9 +21,34 @@ function useBuyer(): BuyerContextType {
 }
 
 function BuyerProvider({ children }: { children: React.ReactNode }) {
-  const [marketCard, setMarketCard] = useState<BuyerCardItem[]>();
-  const [orderCard, setOrderCard] = useState<BuyerCardItem[]>();
   const { user } = useAuth();
+  const { fetchBuyerProducts } = useProduct()
+  const { fetchBuyerOrders } = useOrder()
+
+  const fetchAllData = async (user: User) => {
+    if (!user) return
+
+
+    try {
+      await fetchBuyerProducts()
+      await fetchBuyerOrders()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch farmer data'
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'destructive',
+      })
+    } finally {
+     
+    }
+  }
+
+  useEffect(()=>{
+    if(user?.role === 'BUYER'){
+      fetchAllData(user)
+    }
+  },[user])
 
   return <BuyerContext.Provider value={{}}>{children}</BuyerContext.Provider>;
 }

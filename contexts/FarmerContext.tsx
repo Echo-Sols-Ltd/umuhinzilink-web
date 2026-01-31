@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react'
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react'
 import { useAuth } from './AuthContext'
-import { UserType, User } from '@/types'
+import { User } from '@/types'
 import { toast } from '@/components/ui/use-toast'
+import { useOrder } from './OrderContext'
+import { useProduct } from './ProductContext'
 
 interface FarmerContextType {
   loading: boolean
@@ -22,6 +24,8 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { fetchFarmerOrders, fetchFarmerBuyerOrders } = useOrder()
+  const { fetchFarmerProducts, fetchFarmerBuyerProducts, fetchFarmerStats } = useProduct()
 
   const fetchAllData = useCallback(async (user: User) => {
     if (!user) return
@@ -30,8 +34,11 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
     setError(null)
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 500))
-      console.log('Fetching farmer data...')
+      await fetchFarmerOrders()
+      await fetchFarmerBuyerOrders()
+      await fetchFarmerProducts()
+      await fetchFarmerBuyerProducts()
+      await fetchFarmerStats()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch farmer data'
       setError(message)
@@ -45,6 +52,11 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  useEffect(() => {
+    if (user?.role === 'FARMER') {
+      fetchAllData(user)
+    }
+  }, [user])
 
 
   return (

@@ -51,7 +51,7 @@ export default function Hero() {
               src="/hero.png"
               alt="Farmer using digital technology in the field"
               fill
-              className="object-contain"
+              className="object-cover"
               priority
             />
           </div>

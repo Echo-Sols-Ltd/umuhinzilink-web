@@ -14,6 +14,7 @@ export interface ProductOrderInterfaceProps {
   onShareProduct?: (product: FarmerProduct | SupplierProduct) => void;
   isSaved?: boolean;
   className?: string;
+  setIsPurchasing: (isPurchasing: boolean) => void;
 }
 
 export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
@@ -23,6 +24,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
   onShareProduct,
   isSaved = false,
   className,
+  setIsPurchasing,
 }) => {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -53,7 +55,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
 
   const getCertificationBadge = (certification: string) => {
     if (certification === 'NONE') return null;
-    
+
     return (
       <div className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
         <Award className="w-3 h-3" />
@@ -73,12 +75,12 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
             <Image
               src={images[selectedImageIndex]}
               alt={product.name}
-             fill
+              fill
 
               className="object-cover"
             />
           </div>
-          
+
           {/* Image Navigation */}
           {images.length > 1 && (
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
@@ -134,7 +136,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <span className="text-3xl font-bold text-green-600">
-                  ${product.unitPrice.toFixed(2)}
+                  {product.unitPrice.toLocaleString()} RWF
                 </span>
                 <span className="text-gray-500">per {product.measurementUnit}</span>
               </div>
@@ -160,7 +162,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
                 <span className="text-sm text-gray-600">Location:</span>
                 <span className="text-sm font-medium text-gray-900">{product.location}</span>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
                 <span className="text-sm text-gray-600">Harvest Date:</span>
@@ -176,7 +178,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
                 <span className="text-sm text-gray-600">Category:</span>
                 <span className="text-sm font-medium text-gray-900">{product.category}</span>
               </div>
-              
+
               {getCertificationBadge(product.certification) && (
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-600">Certification:</span>
@@ -212,7 +214,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
           {/* Order Button */}
           <div className="flex space-x-4">
             <button
-              onClick={() => setShowOrderModal(true)}
+              onClick={() => setIsPurchasing(true)}
               disabled={isOutOfStock}
               className={cn(
                 'flex-1 flex items-center justify-center space-x-2 py-3 px-6 rounded-lg font-medium transition-colors',
@@ -224,7 +226,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
               <ShoppingCart className="w-5 h-5" />
               <span>{isOutOfStock ? 'Out of Stock' : 'Order Now'}</span>
             </button>
-            
+
             <button
               onClick={() => onSaveProduct?.(product.id)}
               className={cn(
@@ -252,13 +254,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
         </div>
       </div>
 
-      {/* Order Creation Modal */}
-      <OrderCreationModal
-        isOpen={showOrderModal}
-        onClose={() => setShowOrderModal(false)}
-        product={product}
-        productType={productType}
-      />
+
     </>
   );
 };

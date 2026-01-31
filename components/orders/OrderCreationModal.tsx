@@ -24,7 +24,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.MOBILE_MONEY);
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   const { createFarmerOrder, createSupplierOrder, loading } = useOrderAction();
 
   // Reset form when modal opens/closes
@@ -61,7 +61,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     const orderData = {
@@ -87,7 +87,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   const handleQuantityChange = (value: string) => {
     const num = parseInt(value) || 0;
     setQuantity(Math.max(0, Math.min(num, maxQuantity)));
-    
+
     // Clear quantity error when user starts typing
     if (errors.quantity) {
       setErrors(prev => ({ ...prev, quantity: '' }));
@@ -132,7 +132,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
               <div className="flex items-center justify-between mt-2">
                 <div className="flex items-center space-x-4">
                   <span className="text-lg font-bold text-green-600">
-                    ${product.unitPrice.toFixed(2)}
+                    {product.unitPrice.toLocaleString()} RWF
                   </span>
                   <span className="text-sm text-gray-500">per {product.measurementUnit}</span>
                 </div>
@@ -269,7 +269,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Unit Price:</span>
-                <span className="font-medium">${product.unitPrice.toFixed(2)}</span>
+                <span className="font-medium">{product.unitPrice.toLocaleString()} RWF</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Quantity:</span>
@@ -278,7 +278,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
               <div className="border-t pt-2 flex justify-between">
                 <span className="font-semibold text-gray-900">Total:</span>
                 <span className="font-bold text-lg text-green-600">
-                  ${totalPrice.toFixed(2)}
+                  {totalPrice.toLocaleString()} RWF
                 </span>
               </div>
             </div>

@@ -24,7 +24,12 @@ type ProductContextValue = {
   updateFarmerProduct: (id: string, data: FarmerProduct) => void;
   updateBuyerProduct: (id: string, data: FarmerProduct) => void;
   updateSupplierProduct: (id: string, data: SupplierProduct) => void;
-  refreshProducts: () => Promise<void>;
+  fetchFarmerProducts: () => Promise<void>;
+  fetchSupplierProducts: () => Promise<void>;
+  fetchBuyerProducts: () => Promise<void>;
+  fetchFarmerBuyerProducts: () => Promise<void>;
+  fetchFarmerStats: () => Promise<void>;
+  fetchSupplierStats: () => Promise<void>;
   loading: boolean;
   error: string | null;
   farmerProducts: FarmerProduct[] | null;
@@ -116,76 +121,107 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   //   loadCachedData();
   // }, []);
 
-  // 🔹 Manual refresh function - only fetch when explicitly called
-  const refreshProducts = async () => {
+  const fetchFarmerProducts = async () => {
     if (!user?.id) return;
-
     try {
       setLoading(true);
-      setError(null);
-      const [farmerRes, supplierRes, buyerRes, farmerBuyerRes, farmerStatsRes, supplierStatsRes] =
-        await Promise.all([
-          productService.getProductsByFarmer(),
-          productService.getProductsBySupplier(),
-          productService.getBuyerProducts(),
-          productService.getFarmerBuyerProducts(),
-          productService.getFarmerStats(),
-          productService.getSupplierStats(),
-        ]);
-
-      if (farmerRes.success) {
-        setFarmerProducts(farmerRes.data ?? []);
-        localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(farmerRes.data ?? []));
-      }
-
-      if (supplierRes.success) {
-        console.log(supplierRes.data)
-        setSupplierProducts(supplierRes.data ?? []);
-        localStorage.setItem(
-          STORAGE_KEYS.SUPPLIER_PRODUCTS,
-          JSON.stringify(supplierRes.data ?? [])
-        );
-      }
-
-      if (buyerRes.success) {
-        setBuyerProducts(buyerRes.data?.content ?? []);
-        localStorage.setItem(
-          STORAGE_KEYS.BUYER_PRODUCTS,
-          JSON.stringify(buyerRes.data?.content ?? [])
-        );
-      }
-
-      if (farmerBuyerRes.success) {
-        setFarmerBuyerProducts(farmerBuyerRes.data?.content ?? []);
-        localStorage.setItem(
-          STORAGE_KEYS.FARMER_BUYER_PRODUCTS,
-          JSON.stringify(farmerBuyerRes.data?.content ?? [])
-        );
-      }
-
-      if (farmerStatsRes.success) {
-        setFarmerStats(farmerStatsRes.data ?? []);
-        localStorage.setItem(STORAGE_KEYS.FARMER_STATS, JSON.stringify(farmerStatsRes.data ?? []));
-      }
-
-      if (supplierStatsRes.success) {
-        setSupplierStats(supplierStatsRes.data ?? []);
-        localStorage.setItem(
-          STORAGE_KEYS.SUPPLIER_STATS,
-          JSON.stringify(supplierStatsRes.data ?? [])
-        );
+      const res = await productService.getProductsByFarmer();
+      if (res.success) {
+        setFarmerProducts(res.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(res.data ?? []));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch products');
+      setError(err instanceof Error ? err.message : 'Failed to fetch farmer products');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    refreshProducts()
-  }, [user])
-  
+  const fetchSupplierProducts = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const res = await productService.getProductsBySupplier();
+      if (res.success) {
+        setSupplierProducts(res.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(res.data ?? []));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch supplier products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBuyerProducts = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const res = await productService.getBuyerProducts();
+      if (res.success) {
+        setBuyerProducts(res.data?.content ?? []);
+        localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(res.data?.content ?? []));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch buyer products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchFarmerBuyerProducts = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const res = await productService.getFarmerBuyerProducts();
+      if (res.success) {
+        setFarmerBuyerProducts(res.data?.content ?? []);
+        localStorage.setItem(
+          STORAGE_KEYS.FARMER_BUYER_PRODUCTS,
+          JSON.stringify(res.data?.content ?? [])
+        );
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch farmer buyer products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchFarmerStats = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const res = await productService.getFarmerStats();
+      if (res.success) {
+        setFarmerStats(res.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.FARMER_STATS, JSON.stringify(res.data ?? []));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch farmer stats');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSupplierStats = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const res = await productService.getSupplierStats();
+      if (res.success) {
+        setSupplierStats(res.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.SUPPLIER_STATS, JSON.stringify(res.data ?? []));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch supplier stats');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
   const addFarmerProduct = (data: FarmerProduct) => {
     setFarmerProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
@@ -285,7 +321,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     updateFarmerProduct,
     updateBuyerProduct,
     updateSupplierProduct,
-    refreshProducts,
+    fetchFarmerProducts,
+    fetchSupplierProducts,
+    fetchBuyerProducts,
+    fetchFarmerBuyerProducts,
+    fetchFarmerStats,
+    fetchSupplierStats,
     loading,
     error,
     farmerProducts,

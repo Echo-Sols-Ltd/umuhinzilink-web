@@ -22,11 +22,20 @@ export interface WalletPaymentRequest {
 
 export interface WalletTransactionDTO {
   id: string;
-  walletId: string;
+  transactionId?: string;
+  walletId?: string;
+  userId?: string;
+  userEmail?: string;
   amount: number;
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'PAYMENT';
+  balanceBefore?: number;
+  balanceAfter?: number;
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'PAYMENT' | 'TRANSFER_IN' | 'TRANSFER_OUT';
   status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
   description: string;
+  orderId?: string;
+  recipientId?: string;
+  recipientEmail?: string;
+  reference?: string;
   createdAt: string;
 }
 

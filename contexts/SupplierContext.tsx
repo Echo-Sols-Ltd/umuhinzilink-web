@@ -1,19 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
-import { SupplierProduct, SupplierOrder, Supplier } from '@/types';
+import { Supplier, User } from '@/types';
 import { useSupplierAction } from '@/hooks/useSupplierAction';
 import { supplierService } from '@/services/suppliers';
+import { useProduct } from './ProductContext';
+import { useOrder } from './OrderContext';
+import { toast } from '@/hooks/use-toast';
 
 interface SupplierContextType {
   supplier: Supplier | null;
-  products: SupplierProduct[];
-  orders: SupplierOrder[];
   dashboardStats: any;
   loading: boolean;
   error: string | null;
   refreshSupplier: () => Promise<void>;
-  refreshProducts: () => Promise<void>;
-  refreshOrders: () => Promise<void>;
   refreshDashboard: () => Promise<void>;
 }
 
@@ -29,19 +28,19 @@ function useSupplier(): SupplierContextType {
 
 function SupplierProvider({ children }: { children: React.ReactNode }) {
   const [supplier, setSupplier] = useState<Supplier | null>(null);
-  const [products, setProducts] = useState<SupplierProduct[]>([]);
-  const [orders, setOrders] = useState<SupplierOrder[]>([]);
   const [dashboardStats, setDashboardStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const { user } = useAuth();
   const supplierActions = useSupplierAction();
+  const { fetchSupplierProducts, fetchSupplierStats } = useProduct()
+  const { fetchSupplierOrders } = useOrder()
 
   // Fetch supplier profile
   const refreshSupplier = async () => {
     if (!user || user.role !== 'SUPPLIER') return;
-    
+
     setLoading(true);
     setError(null);
     try {
@@ -58,40 +57,12 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Fetch supplier products
-  const refreshProducts = async () => {
-    if (!user || user.role !== 'SUPPLIER') return;
-    
-    setLoading(true);
-    try {
-      const productsData = await supplierActions.getMyProducts();
-      setProducts(productsData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch products');
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  // Fetch supplier orders
-  const refreshOrders = async () => {
-    if (!user || user.role !== 'SUPPLIER') return;
-    
-    setLoading(true);
-    try {
-      const ordersData = await supplierActions.getMyOrders();
-      setOrders(ordersData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch orders');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Fetch dashboard stats
   const refreshDashboard = async () => {
     if (!user || user.role !== 'SUPPLIER') return;
-    
+
     setLoading(true);
     try {
       const stats = await supplierActions.getDashboardStats();
@@ -103,32 +74,42 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const fetchAllData = async (user: User) => {
+    if (!user) return
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      await fetchSupplierProducts()
+      await fetchSupplierStats()
+      await fetchSupplierOrders()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch farmer data'
+      setError(message)
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Initialize data when user changes
   useEffect(() => {
     if (user && user.role === 'SUPPLIER') {
-      refreshSupplier();
-      refreshProducts();
-      refreshOrders();
-      refreshDashboard();
-    } else {
-      // Clear data if user is not a supplier
-      setSupplier(null);
-      setProducts([]);
-      setOrders([]);
-      setDashboardStats(null);
+      fetchAllData(user)
     }
   }, [user]);
 
   const value: SupplierContextType = {
     supplier,
-    products,
-    orders,
     dashboardStats,
     loading,
     error,
     refreshSupplier,
-    refreshProducts,
-    refreshOrders,
     refreshDashboard,
   };
 

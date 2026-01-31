@@ -142,7 +142,7 @@ class ApiClient {
       this.logoutListeners.forEach(callback => {
         try {
           callback();
-        } catch {}
+        } catch { }
       });
     }
   }
@@ -150,18 +150,18 @@ class ApiClient {
   public onLogout(callback: () => void) {
     try {
       this.logoutListeners.push(callback);
-    } catch {}
+    } catch { }
   }
 
   public removeLogoutListener(callback: () => void) {
     try {
       this.logoutListeners = this.logoutListeners.filter(cb => cb !== callback);
-    } catch {}
+    } catch { }
   }
 
   async get<T>(endpoint: string, params?: Record<string, unknown>, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
     const operation = async () => {
-      const response = await this.axiosInstance.get<ApiResponse<T>>(endpoint, { 
+      const response = await this.axiosInstance.get<ApiResponse<T>>(endpoint, {
         params,
         timeout: options?.timeout || timeoutConfigs.standard
       });
@@ -270,7 +270,7 @@ class ApiClient {
     }
   }
 
-   async uploadFile<T>(
+  async uploadFile<T>(
     endpoint: string,
     file: File,
     onUploadProgress?: (event: AxiosProgressEvent) => void,
@@ -307,16 +307,16 @@ class ApiClient {
   }
 
   async getCritical<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
-    return this.get(endpoint, params, { 
+    return this.get(endpoint, params, {
       timeout: timeoutConfigs.critical,
-      retry: retryConfigs.critical 
+      retry: retryConfigs.critical
     });
   }
 
   async postCritical<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
-    return this.post(endpoint, data, { 
+    return this.post(endpoint, data, {
       timeout: timeoutConfigs.critical,
-      retry: retryConfigs.critical 
+      retry: retryConfigs.critical
     });
   }
 }

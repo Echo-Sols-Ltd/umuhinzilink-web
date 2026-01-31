@@ -158,6 +158,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         href: '/farmer/orders',
                     },
                     {
+                        icon: <Wallet className="w-5 h-5" />,
+                        label: 'My Wallet',
+                        href: '/farmer/wallet',
+                    },
+                    {
                         icon: <Settings className="w-5 h-5" />,
                         label: 'Settings',
                         href: '/farmer/settings',
@@ -247,6 +252,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         icon: <Phone className="w-5 h-5" />,
                         label: 'Contact',
                         href: '/supplier/contact',
+                    },
+                    {
+                        icon: <Wallet className="w-5 h-5" />,
+                        label: 'My Wallet',
+                        href: '/supplier/wallet',
                     },
                     {
                         icon: <Settings className="w-5 h-5" />,

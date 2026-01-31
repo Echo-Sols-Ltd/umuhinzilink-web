@@ -22,11 +22,11 @@ export type WalletContextValue = {
   fetchWallet: () => Promise<WalletDTO | null>;
   fetchTransactions: () => Promise<WalletTransactionDTO[] | null>;
   fetchPaymentHistory: () => Promise<PaymentResponseDTO[] | null>;
-  
+
   deposit: (amount: number, description?: string) => Promise<WalletTransactionDTO | null>;
   payOrder: (orderId: string, description?: string) => Promise<WalletTransactionDTO | null>;
   processPayment: (request: PaymentRequest) => Promise<PaymentResponseDTO | null>;
-  
+
   refreshWalletData: () => Promise<void>;
   getPaymentStatus: (transactionId: string) => Promise<PaymentResponseDTO | null>;
 };
@@ -65,18 +65,18 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await walletService.getBalance();
       if (!res.success) {
         setError(res.message || 'Failed to fetch wallet data');
         return null;
       }
-      
+
       setWallet(res.data ?? null);
       if (res.data) {
         localStorage.setItem(STORAGE_KEYS.WALLET, JSON.stringify(res.data));
       }
-      
+
       return res.data ?? null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch wallet data';
@@ -92,17 +92,22 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await walletService.getTransactions({ page: 0, size: 50, sortBy: 'createdAt', sortDir: 'desc' });
       if (!res.success) {
         setError(res.message || 'Failed to fetch transactions');
         return null;
       }
-      
-      const transactionList = res.data?.content || [];
+
+      const transactionData = res.data;
+      console.log("those are transactions ",transactionData)
+      const transactionList = Array.isArray(transactionData)
+        ? transactionData
+        : (transactionData as any)?.content || [];
+
       setTransactions(transactionList);
       localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactionList));
-      
+
       return transactionList;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch transactions';
@@ -118,17 +123,22 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await paymentService.getMyTransactions({ page: 0, size: 50, sortBy: 'createdAt', sortDir: 'desc' });
       if (!res.success) {
         setError(res.message || 'Failed to fetch payment history');
         return null;
       }
-      
-      const paymentList = res.data?.content || [];
+
+
+      const paymentData = res.data;
+      const paymentList = Array.isArray(paymentData)
+        ? paymentData
+        : (paymentData as any)?.content || [];
+
       setPaymentHistory(paymentList);
       localStorage.setItem(STORAGE_KEYS.PAYMENT_HISTORY, JSON.stringify(paymentList));
-      
+
       return paymentList;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch payment history';
@@ -144,7 +154,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await walletService.deposit({ amount, description });
       if (!res.success) {
         const errorMessage = res.message || 'Failed to deposit money';
@@ -156,29 +166,29 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         });
         return null;
       }
-      
+
       const transaction = res.data;
       if (transaction) {
         // Add to transactions list
         setTransactions(prev => [transaction, ...prev]);
-        
+
         // Update wallet balance if transaction is completed
         if (transaction.status === 'COMPLETED' && wallet) {
           const updatedWallet = { ...wallet, balance: wallet.balance + amount };
           setWallet(updatedWallet);
           localStorage.setItem(STORAGE_KEYS.WALLET, JSON.stringify(updatedWallet));
         }
-        
+
         // Update cached transactions
         const updatedTransactions = [transaction, ...transactions];
         localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(updatedTransactions));
-        
+
         toast({
           title: 'Deposit Initiated',
           description: 'Your deposit request has been submitted successfully.',
         });
       }
-      
+
       return transaction ?? null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to deposit money';
@@ -199,7 +209,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await walletService.payOrder({ orderId, description });
       if (!res.success) {
         const errorMessage = res.message || 'Failed to process payment';
@@ -211,29 +221,29 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         });
         return null;
       }
-      
+
       const transaction = res.data;
       if (transaction) {
         // Add to transactions list
         setTransactions(prev => [transaction, ...prev]);
-        
+
         // Update wallet balance if transaction is completed
         if (transaction.status === 'COMPLETED' && wallet) {
           const updatedWallet = { ...wallet, balance: wallet.balance - transaction.amount };
           setWallet(updatedWallet);
           localStorage.setItem(STORAGE_KEYS.WALLET, JSON.stringify(updatedWallet));
         }
-        
+
         // Update cached transactions
         const updatedTransactions = [transaction, ...transactions];
         localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(updatedTransactions));
-        
+
         toast({
           title: 'Payment Successful',
           description: 'Your order has been paid successfully.',
         });
       }
-      
+
       return transaction ?? null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to process payment';
@@ -254,7 +264,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await paymentService.processPayment(request);
       if (!res.success) {
         const errorMessage = res.message || 'Failed to process payment';
@@ -266,16 +276,16 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         });
         return null;
       }
-      
+
       const payment = res.data;
       if (payment) {
         // Add to payment history
         setPaymentHistory(prev => [payment, ...prev]);
-        
+
         // Update cached payment history
         const updatedHistory = [payment, ...paymentHistory];
         localStorage.setItem(STORAGE_KEYS.PAYMENT_HISTORY, JSON.stringify(updatedHistory));
-        
+
         if (payment.status === 'COMPLETED') {
           toast({
             title: 'Payment Successful',
@@ -288,7 +298,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
           });
         }
       }
-      
+
       return payment ?? null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to process payment';
@@ -311,15 +321,15 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       if (!res.success) {
         return null;
       }
-      
+
       const payment = res.data;
       if (payment) {
         // Update payment in history
-        setPaymentHistory(prev => 
+        setPaymentHistory(prev =>
           prev.map(p => p.transactionId === transactionId ? payment : p)
         );
       }
-      
+
       return payment ?? null;
     } catch (err) {
       console.error('Failed to get payment status:', err);

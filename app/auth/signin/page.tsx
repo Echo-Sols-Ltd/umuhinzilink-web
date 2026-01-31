@@ -143,7 +143,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
+    <div className="w-full h-screen bg-gray-50 flex flex-col items-center overflow-auto pb-20">
       {/* Hero Section */}
       <div className="relative w-full h-72 sm:h-96 flex flex-col justify-center items-center text-center">
         {/* Background Image */}
