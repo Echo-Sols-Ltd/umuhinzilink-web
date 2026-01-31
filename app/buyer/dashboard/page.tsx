@@ -29,6 +29,8 @@ import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import OrderManagementDashboard from '@/components/orders/OrderManagementDashboard';
 import useOrderAction from '@/hooks/useOrderAction';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
+import OrderCreationModal from '@/components/orders/OrderCreationModal';
+import { FarmerProduct } from '@/types';
 
 
 const Logo = () => (
@@ -45,6 +47,8 @@ function BuyerDashboardComponent() {
   const { acceptFarmerOrder, cancelFarmerOrder, updateFarmerOrderStatus } = useOrderAction();
   const [logoutPending, setLogoutPending] = useState(false);
   const [showOrderManagement, setShowOrderManagement] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<FarmerProduct | null>(null);
+  const [isPurchasing, setIsPurchasing] = useState(false);
 
   // Use context data
   const buyerName = user?.names?.split(' ')[0] || user?.names || 'Buyer';
@@ -155,7 +159,13 @@ function BuyerDashboardComponent() {
                           <p className="text-green-600 font-bold text-sm">{priceText}</p>
                           {quantityText && <p className="text-xs text-gray-500">{quantityText}</p>}
                         </div>
-                        <button className="mt-3 w-full bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-700">
+                        <button
+                          onClick={() => {
+                            setSelectedProduct(product as FarmerProduct);
+                            setIsPurchasing(true);
+                          }}
+                          className="mt-3 w-full bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-700 transition-colors"
+                        >
                           Buy Now
                         </button>
                       </div>
@@ -308,6 +318,18 @@ function BuyerDashboardComponent() {
             </div>
           </div>
         </div>
+      )}
+      {/* Order Creation Modal */}
+      {selectedProduct && isPurchasing && (
+        <OrderCreationModal
+          isOpen={isPurchasing}
+          onClose={() => {
+            setIsPurchasing(false);
+            setSelectedProduct(null);
+          }}
+          product={selectedProduct}
+          productType="farmer"
+        />
       )}
     </div>
   );

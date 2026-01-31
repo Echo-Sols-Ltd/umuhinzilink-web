@@ -41,6 +41,8 @@ export type OrderContextValue = {
 
   fetchBuyerOrders: () => Promise<FarmerOrder[] | null>;
   fetchFarmerOrders: () => Promise<FarmerOrder[] | null>;
+  fetchSupplierOrders: () => Promise<SupplierOrder[] | null>;
+  fetchFarmerBuyerOrders: () => Promise<SupplierOrder[] | null>;
 
   // Derived order states
   pendingBuyerOrders: FarmerOrder[];
@@ -85,26 +87,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [currentBuyerOrder, setCurrentBuyerOrder] = useState<FarmerOrder | null>(null);
   const [currentProduct, setCurrentProduct] = useState<FarmerProduct | null>(null);
 
-  // 🔹 Load cached orders on mount
-  useEffect(() => {
-    const loadCachedOrders = () => {
-      try {
-        const cachedBuyer = localStorage.getItem(STORAGE_KEYS.BUYER);
-        const cachedFarmer = localStorage.getItem(STORAGE_KEYS.FARMER);
-        const cachedSupplier = localStorage.getItem(STORAGE_KEYS.SUPPLIER);
-        const cachedFarmerBuyer = localStorage.getItem(STORAGE_KEYS.FARMER_BUYER);
-
-        if (cachedBuyer) setBuyerOrders(JSON.parse(cachedBuyer));
-        if (cachedFarmer) setFarmerOrders(JSON.parse(cachedFarmer));
-        if (cachedSupplier) setSupplierOrders(JSON.parse(cachedSupplier));
-        if (cachedFarmerBuyer) setFarmerBuyerOrders(JSON.parse(cachedFarmerBuyer));
-      } catch (e) {
-        console.warn('Failed to load cached orders', e);
-      }
-    };
-
-    loadCachedOrders();
-  }, []);
 
   // 🔹 Fetch Buyer Orders
   const fetchBuyerOrders = async (): Promise<FarmerOrder[] | null> => {
@@ -224,15 +206,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(data);
   };
 
-  // 🔹 Auto-fetch when user logs in
-  useEffect(() => {
-    if (!user?.id) return;
-    fetchFarmerOrders();
-    fetchBuyerOrders();
-    fetchFarmerBuyerOrders();
-    fetchSupplierOrders();
-  }, [user?.id]);
-
+ 
   // 🔹 Derived Orders
   const pendingBuyerOrders = useMemo(
     () => buyerOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
@@ -325,6 +299,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     editFarmerBuyerOrder,
     fetchBuyerOrders,
     fetchFarmerOrders,
+    fetchSupplierOrders,
+    fetchFarmerBuyerOrders,
     pendingBuyerOrders,
     completedBuyerOrders,
     cancelledBuyerOrders,
