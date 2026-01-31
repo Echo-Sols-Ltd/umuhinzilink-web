@@ -26,6 +26,7 @@ interface OrderDetailsModalProps {
     onAccept?: (id: string) => Promise<void>;
     onCancel?: (id: string) => Promise<void>;
     onUpdateStatus?: (id: string, status: DeliveryStatus) => Promise<void>;
+    onPay?: (order: any) => Promise<void>;
     loading?: boolean;
 }
 
@@ -36,12 +37,13 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     onAccept,
     onCancel,
     onUpdateStatus,
+    onPay,
     loading = false,
 }) => {
     if (!isOpen || !order) return null;
 
     const status = (order.status as string)?.toUpperCase();
-    const isActionable = true; // Show actions for all orders as requested
+    const isActionable = true;
     const buyer = order.buyer;
     const product = order.product;
 
@@ -64,9 +66,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-xl font-bold text-gray-900">Order Details</h2>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-                                    status === 'ACTIVE' || status === 'PENDING_PAYMENT' ? 'bg-blue-100 text-blue-700' :
-                                        status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
-                                            'bg-gray-100 text-gray-700'
+                                status === 'ACTIVE' || status === 'PENDING_PAYMENT' ? 'bg-blue-100 text-blue-700' :
+                                    status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
+                                        'bg-gray-100 text-gray-700'
                                 }`}>
                                 {order.status}
                             </span>
@@ -205,6 +207,16 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
                 {/* Footer Actions */}
                 <div className="p-6 border-t bg-gray-50 flex items-center justify-end gap-3">
+                    {onPay && !order.isPaid && status !== 'CANCELLED' && (
+                        <button
+                            onClick={() => onPay(order)}
+                            disabled={loading}
+                            className="px-6 py-2 text-sm font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 shadow-md shadow-orange-200 transition-all flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {loading ? <Clock className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+                            Pay Now
+                        </button>
+                    )}
                     <button
                         onClick={onClose}
                         className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 shadow-sm transition-all"

@@ -162,7 +162,7 @@ function Dashboard() {
   const router = useRouter();
   const { user, farmer, loading: authLoading, logout } = useAuth();
   const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
-  const { farmerOrders, loading: ordersLoading } = useOrder();
+  const { farmerOrders, farmerBuyerOrders, loading: ordersLoading, fetchFarmerBuyerOrders } = useOrder();
   const { acceptFarmerOrder, cancelFarmerOrder, updateFarmerOrderStatus, loading: actionLoading } = useOrderAction();
   const [logoutPending, setLogoutPending] = useState(false);
 
@@ -199,8 +199,6 @@ function Dashboard() {
 
   const profileLoading = authLoading;
   const profileError = null;
-  const requestsLoading = false;
-  const requestsError = null;
 
   const farmerId = profile?.id || currentUser?.id || null;
 
@@ -220,13 +218,13 @@ function Dashboard() {
     });
   }, [rawProducts, farmerId]);
 
-  const requests = useMemo(() => {
-    if (!farmerId) return rawRequests;
-    return rawRequests.filter(request => {
-      const requestFarmerId = (request as unknown as { farmerId?: string })?.farmerId;
-      return requestFarmerId ? requestFarmerId === farmerId : true;
-    });
-  }, [rawRequests, farmerId]);
+  const requests = useMemo(() => farmerBuyerOrders || [], [farmerBuyerOrders]);
+  const requestsLoading = ordersLoading;
+  const requestsError = null;
+
+  useEffect(() => {
+    fetchFarmerBuyerOrders();
+  }, []);
 
   const totalRevenue = useMemo(
     () =>
@@ -636,8 +634,8 @@ function Dashboard() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Input requests</h3>
-                <p className="text-sm text-gray-500">Track your farm input needs</p>
+                <h3 className="text-lg font-semibold text-gray-900">Input Orders</h3>
+                <p className="text-sm text-gray-500">Track your purchases from suppliers</p>
               </div>
               <Link
                 href="/farmer/requests"
@@ -653,20 +651,19 @@ function Dashboard() {
                 <p className="text-sm text-red-500">{requestsError}</p>
               ) : requests.length === 0 ? (
                 <p className="text-sm text-gray-500">
-                  No input requests yet. Create one to request seeds, fertilizer or equipment.
+                  No input orders yet. Buy seeds or equipment from the marketplace.
                 </p>
               ) : (
                 requests.slice(0, 5).map(request => (
                   <div key={request.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        {request.item || 'Requested item'}
+                        {request.product?.name || 'Input Item'}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {request.quantity != null
-                          ? `${request.quantity} units`
-                          : 'No quantity specified'}{' '}
-                        • {formatDate(request.requestDate || request.createdAt)}
+                        {request.quantity}{' '}
+                        {request.product?.measurementUnit || 'units'} •{' '}
+                        {formatDate(request.createdAt)}
                       </p>
                     </div>
                     <span

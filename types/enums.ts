@@ -282,6 +282,7 @@ export enum OrderStatus {
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
   ACTIVE = 'ACTIVE',
+  PAID = 'PAID',
 }
 
 export enum PaymentMethod {

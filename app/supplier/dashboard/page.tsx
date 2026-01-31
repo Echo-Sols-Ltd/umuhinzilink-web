@@ -36,12 +36,10 @@ const Logo = () => (
 );
 
 function DashboardComponent() {
-  const router = useRouter();
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
-  const { logout, user } = useAuth();
-  const { supplier, dashboardStats, loading, error } = useSupplier();
-  const [logoutLoading, setLogoutLoading] = useState(false);
+  const { user } = useAuth();
+  const { supplier, dashboardStats } = useSupplier();
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -49,11 +47,6 @@ function DashboardComponent() {
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
   ];
 
-  const handleLogout = () => {
-    setLogoutLoading(true);
-    logout();
-    setLogoutLoading(false);
-  };
 
   // Default values when data is loading or unavailable
   const stats = dashboardStats || {

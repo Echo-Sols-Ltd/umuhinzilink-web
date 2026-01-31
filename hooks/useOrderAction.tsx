@@ -1,7 +1,9 @@
-import { DeliveryStatus, OrderRequest } from '@/types';
+import { DeliveryStatus, OrderRequest, PaymentMethod } from '@/types';
 import { useState } from 'react';
 import { orderService } from '@/services/orders';
+import { paymentService } from '@/services/payments';
 import { useOrder } from '@/contexts/OrderContext';
+import { useWallet } from '@/contexts/WalletContext';
 import { toast } from '@/components/ui/use-toast';
 
 export default function useOrderAction() {
@@ -11,7 +13,10 @@ export default function useOrderAction() {
     addFarmerBuyerOrder,
     editFarmerOrder,
     editSupplierOrder,
+    editFarmerBuyerOrder,
+    fetchFarmerBuyerOrders,
   } = useOrder();
+  const { payOrder: payWithWallet } = useWallet();
 
   const createFarmerOrder = async (payload: OrderRequest) => {
     try {
@@ -37,9 +42,11 @@ export default function useOrderAction() {
       addFarmerOrder(newOrder);
       toast({
         title: 'Order created successfully',
-        description: 'Order created successfully',
+        description: 'Initiating payment...',
       });
-      // router.push('/payment/initiate')
+
+      // Process payment automatically
+      await processOrderPayment(newOrder.id, payload.paymentMethod);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
       toast({
@@ -78,9 +85,11 @@ export default function useOrderAction() {
       addFarmerBuyerOrder(newOrder);
       toast({
         title: 'Order created successfully',
-        description: 'Order created successfully',
+        description: 'Initiating payment...',
       });
-      // router.push('/payment/initiate')
+
+      // Process payment automatically
+      await processOrderPayment(newOrder.id, payload.paymentMethod);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
       toast({
@@ -338,6 +347,55 @@ export default function useOrderAction() {
       setLoading(false);
     }
   };
+  const processOrderPayment = async (orderId: string, paymentMethod: any) => {
+    try {
+      setLoading(true);
+
+      if (true) {
+        toast({
+          title: 'Wallet Payment',
+          description: 'Processing payment from your wallet...',
+        });
+
+        const res = await payWithWallet(orderId, 'Order Payment');
+        if (res && res.status === 'COMPLETED') {
+          // Updated orders in context should reflect the new state
+          fetchFarmerBuyerOrders();
+          return res;
+        }
+        return null;
+      }
+
+      const res = await paymentService.processPayment({
+        orderId,
+        paymentMethod,
+      });
+
+      if (res.success) {
+        toast({
+          title: 'Payment successful',
+          description: 'Your payment has been processed successfully.',
+        });
+        fetchFarmerBuyerOrders();
+        return res.data;
+      } else {
+        toast({
+          title: 'Payment failed',
+          description: res.message || 'We could not process your payment.',
+        });
+        return null;
+      }
+    } catch (err) {
+      toast({
+        title: 'Payment error',
+        description: 'An error occurred while processing your payment.',
+        variant: 'error',
+      });
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return {
     createSupplierOrder,
@@ -348,6 +406,7 @@ export default function useOrderAction() {
     cancelSupplierOrder,
     updateFarmerOrderStatus,
     updateSupplierOrderStatus,
+    processOrderPayment,
     loading,
   };
 }
