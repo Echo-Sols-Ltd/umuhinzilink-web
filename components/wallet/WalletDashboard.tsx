@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { 
-  Wallet, 
-  CreditCard, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
-  Plus, 
+import {
+  Wallet,
+  CreditCard,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Plus,
   History,
   Filter,
   Download,
@@ -55,12 +55,22 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
   const filteredAndSortedTransactions = useMemo(() => {
     let filtered = transactions.filter(transaction => {
       // Search filter
-      const searchMatch = searchTerm === '' || 
+      const searchMatch = searchTerm === '' ||
         transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         transaction.id.toLowerCase().includes(searchTerm.toLowerCase());
 
       // Type filter
-      const typeMatch = filterType === 'all' || transaction.type.toLowerCase() === filterType.toLowerCase();
+      let typeMatch = filterType === 'all';
+      if (!typeMatch) {
+        const type = transaction.type.toLowerCase();
+        if (filterType === 'deposit') {
+          typeMatch = type === 'deposit' || type === 'transfer_in';
+        } else if (filterType === 'payment') {
+          typeMatch = type === 'payment' || type === 'transfer_out';
+        } else if (filterType === 'withdrawal') {
+          typeMatch = type === 'withdrawal';
+        }
+      }
 
       return searchMatch && typeMatch;
     });
@@ -87,13 +97,13 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
   // Transaction statistics
   const stats = useMemo(() => {
     const totalDeposits = transactions
-      .filter(t => t.type === 'DEPOSIT' && t.status === 'COMPLETED')
+      .filter(t => (t.type === 'DEPOSIT' || t.type === 'TRANSFER_IN') && t.status === 'COMPLETED')
       .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const totalPayments = transactions
-      .filter(t => t.type === 'PAYMENT' && t.status === 'COMPLETED')
+      .filter(t => (t.type === 'PAYMENT' || t.type === 'TRANSFER_OUT') && t.status === 'COMPLETED')
       .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const totalWithdrawals = transactions
       .filter(t => t.type === 'WITHDRAWAL' && t.status === 'COMPLETED')
       .reduce((sum, t) => sum + t.amount, 0);
@@ -106,11 +116,13 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
   const getTransactionIcon = (type: string, status: string) => {
     if (status === 'PENDING') return <Clock className="w-4 h-4 text-yellow-500" />;
     if (status === 'FAILED' || status === 'CANCELLED') return <XCircle className="w-4 h-4 text-red-500" />;
-    
+
     switch (type) {
       case 'DEPOSIT':
+      case 'TRANSFER_IN':
         return <ArrowDownLeft className="w-4 h-4 text-green-500" />;
       case 'PAYMENT':
+      case 'TRANSFER_OUT':
         return <ArrowUpRight className="w-4 h-4 text-blue-500" />;
       case 'WITHDRAWAL':
         return <ArrowUpRight className="w-4 h-4 text-red-500" />;
@@ -328,8 +340,8 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
             <History className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions found</h3>
             <p className="text-gray-500">
-              {searchTerm || filterType !== 'all' 
-                ? 'Try adjusting your search or filters' 
+              {searchTerm || filterType !== 'all'
+                ? 'Try adjusting your search or filters'
                 : 'Your transaction history will appear here'}
             </p>
           </div>
@@ -352,9 +364,9 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
                   <div className="text-right">
                     <p className={cn(
                       'text-sm font-semibold',
-                      transaction.type === 'DEPOSIT' ? 'text-green-600' : 'text-red-600'
+                      (transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_IN') ? 'text-green-600' : 'text-red-600'
                     )}>
-                      {transaction.type === 'DEPOSIT' ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
+                      {(transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_IN') ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
                     </p>
                     <span className={cn(
                       'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
