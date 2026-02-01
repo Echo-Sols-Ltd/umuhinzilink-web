@@ -123,6 +123,11 @@ export const API_ENDPOINTS = {
     TRANSACTIONS: '/wallet/transactions',
     TRANSACTION_BY_ID: (id: string) => `/wallet/transaction/${id}`,
     ADMIN_CREATE_WALLET: (userId: string) => `/wallet/admin/create-wallet/${userId}`,
+    // Admin endpoints
+    ADMIN_ALL_WALLETS: '/admin/wallets',
+    ADMIN_ALL_TRANSACTIONS: '/admin/transactions',
+    ADMIN_WALLET_BY_USER: (userId: string) => `/admin/wallets/user/${userId}`,
+    ADMIN_TRANSACTIONS_BY_USER: (userId: string) => `/admin/transactions/user/${userId}`,
   },
   PAYMENT: {
     PROCESS: '/payments/process',

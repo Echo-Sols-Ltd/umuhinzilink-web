@@ -82,6 +82,86 @@ export class WalletService {
   async createWalletForUser(userId: string): Promise<ApiResponse<WalletDTO>> {
     return await apiClient.post<WalletDTO>(API_ENDPOINTS.WALLET.ADMIN_CREATE_WALLET(userId));
   }
+
+  // Admin: Get all wallets (paginated)
+  async getAllWallets(params?: {
+    page?: number;
+    size?: number;
+    sortBy?: string;
+    sortDir?: string;
+  }): Promise<ApiResponse<{
+    content: WalletDTO[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
+  }>> {
+    const queryParams = new URLSearchParams();
+    if (params?.page !== undefined) queryParams.append('page', params.page.toString());
+    if (params?.size !== undefined) queryParams.append('size', params.size.toString());
+    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
+
+    const url = `${API_ENDPOINTS.WALLET.ADMIN_ALL_WALLETS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    return await apiClient.get(url);
+  }
+
+  // Admin: Get all transactions (paginated)
+  async getAllTransactions(params?: {
+    page?: number;
+    size?: number;
+    sortBy?: string;
+    sortDir?: string;
+  }): Promise<ApiResponse<{
+    content: WalletTransactionDTO[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
+  }>> {
+    const queryParams = new URLSearchParams();
+    if (params?.page !== undefined) queryParams.append('page', params.page.toString());
+    if (params?.size !== undefined) queryParams.append('size', params.size.toString());
+    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
+
+    const url = `${API_ENDPOINTS.WALLET.ADMIN_ALL_TRANSACTIONS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    return await apiClient.get(url);
+  }
+
+  // Admin: Get wallet by user ID
+  async getWalletByUserId(userId: string): Promise<ApiResponse<WalletDTO>> {
+    return await apiClient.get<WalletDTO>(API_ENDPOINTS.WALLET.ADMIN_WALLET_BY_USER(userId));
+  }
+
+  // Admin: Get transactions by user ID (paginated)
+  async getTransactionsByUserId(userId: string, params?: {
+    page?: number;
+    size?: number;
+    sortBy?: string;
+    sortDir?: string;
+  }): Promise<ApiResponse<{
+    content: WalletTransactionDTO[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
+  }>> {
+    const queryParams = new URLSearchParams();
+    if (params?.page !== undefined) queryParams.append('page', params.page.toString());
+    if (params?.size !== undefined) queryParams.append('size', params.size.toString());
+    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
+
+    const url = `${API_ENDPOINTS.WALLET.ADMIN_TRANSACTIONS_BY_USER(userId)}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    return await apiClient.get(url);
+  }
 }
 
 export const walletService = new WalletService();
