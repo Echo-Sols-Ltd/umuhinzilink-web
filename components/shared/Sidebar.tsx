@@ -274,6 +274,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         href: '/admin/dashboard',
                     },
                     {
+                        icon: <Wallet className="w-5 h-5" />,
+                        label: 'Wallets',
+                        href: '/admin/wallets',
+                    },
+                    {
                         icon: <Users className="w-5 h-5" />,
                         label: 'Users',
                         href: '/admin/users',

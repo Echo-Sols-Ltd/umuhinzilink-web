@@ -37,9 +37,9 @@ export default function AdminWalletsPage() {
             });
 
             if (response.success && response.data) {
-                setWallets(response.data.content);
-                setTotalPages(response.data.totalPages);
-                setTotalElements(response.data.totalElements);
+                setWallets(response.data || []);
+                setTotalPages(1);
+                setTotalElements(10);
             } else {
                 toast({
                     title: 'Error',
@@ -69,9 +69,8 @@ export default function AdminWalletsPage() {
                 sortBy: 'createdAt',
                 sortDir: 'desc',
             });
-
             if (response.success && response.data) {
-                setUserTransactions(response.data.content);
+                setUserTransactions(response.data);
             }
         } catch (error) {
             console.error('Error fetching transactions:', error);
@@ -99,8 +98,8 @@ export default function AdminWalletsPage() {
             wallet.id?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const getStatusBadge = (isActive: boolean) => {
-        return isActive ? (
+    const getStatusBadge = (active: boolean) => {
+        return active ? (
             <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Active</span>
         ) : (
             <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">Inactive</span>
@@ -209,7 +208,7 @@ export default function AdminWalletsPage() {
                                                     {wallet.balance.toLocaleString()} {wallet.currency}
                                                 </td>
                                                 <td className="py-4 px-4 text-sm text-gray-600">{wallet.currency}</td>
-                                                <td className="py-4 px-4">{getStatusBadge(wallet.isActive)}</td>
+                                                <td className="py-4 px-4">{getStatusBadge(wallet.active)}</td>
                                                 <td className="py-4 px-4 text-sm text-gray-600">
                                                     {new Date(wallet.createdAt).toLocaleDateString()}
                                                 </td>
@@ -313,7 +312,7 @@ export default function AdminWalletsPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500">Status</p>
-                                    {getStatusBadge(selectedWallet.isActive)}
+                                    {getStatusBadge(selectedWallet.active)}
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500">Created</p>

@@ -48,8 +48,8 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       ];
     }
 
-    const isBeyondPayment = ![OrderStatus.PENDING, OrderStatus.PENDING_PAYMENT].includes(orderStatus);
-    const isPaymentActive = orderStatus === OrderStatus.PENDING_PAYMENT;
+    const isBeyondPayment = ![OrderStatus.PENDING].includes(orderStatus);
+    const isPaymentActive = orderStatus === OrderStatus.PENDING
 
     const activeSteps = [
       ...baseSteps,
