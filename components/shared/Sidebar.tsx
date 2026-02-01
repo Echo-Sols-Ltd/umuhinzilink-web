@@ -32,7 +32,9 @@ import {
     TrendingUp,
     Phone,
     LayoutDashboard,
-    Shield
+    Shield,
+    Truck,
+    Sprout
 } from 'lucide-react';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -277,14 +279,24 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         href: '/admin/users',
                     },
                     {
-                        icon: <ArrowUpDown className="w-5 h-5" />,
-                        label: 'Orders',
-                        href: '/admin/orders',
+                        icon: <Tractor className="w-5 h-5" />,
+                        label: 'Farmer Orders',
+                        href: '/admin/orders/farmer',
+                    },
+                    {
+                        icon: <Truck className="w-5 h-5" />,
+                        label: 'Supplier Orders',
+                        href: '/admin/orders/supplier',
+                    },
+                    {
+                        icon: <Sprout className="w-5 h-5" />,
+                        label: 'Farmer Products',
+                        href: '/admin/products/farmer',
                     },
                     {
                         icon: <Package className="w-5 h-5" />,
-                        label: 'Products',
-                        href: '/admin/products',
+                        label: 'Supplier Products',
+                        href: '/admin/products/supplier',
                     },
                     {
                         icon: <BarChart2 className="w-5 h-5" />,

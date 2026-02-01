@@ -166,4 +166,26 @@ export const adminService = {
       throw error;
     }
   },
+
+  // Get all supplier products
+  getAllSupplierProducts: async (): Promise<any[]> => {
+    try {
+      const response = await apiClient.get<any[]>(API_ENDPOINTS.PRODUCT.SUPPLIER_ALL);
+      return response.data!;
+    } catch (error) {
+      console.error('Error fetching supplier products:', error);
+      throw error;
+    }
+  },
+
+  // Get all supplier orders
+  getAllSupplierOrders: async (): Promise<any[]> => {
+    try {
+      const response = await apiClient.get<any[]>(API_ENDPOINTS.ORDER.SUPPLIER_ALL);
+      return response.data!;
+    } catch (error) {
+      console.error('Error fetching supplier orders:', error);
+      throw error;
+    }
+  },
 };

@@ -1,89 +1,27 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
 import Link from 'next/link';
 import {
-  Search,
-  LayoutGrid,
-  Users,
-  ArrowUpDown,
-  Bell,
-  User as UserIcon,
-  Settings,
+  ArrowRight,
+  Tractor,
+  Truck,
+  ShoppingCart,
   Menu,
-  X,
-  Eye,
-  Trash2,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { AdminPages, UserType } from '@/types';
+import { UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
-
-interface Transaction {
-  id: string;
-  senderType: string;
-  senderName: string;
-  receiverType: string;
-  receiverName: string;
-  date: string;
-  status: 'Completed' | 'Processing' | 'Failed';
-}
-
-interface MenuItem {
-  label: string;
-  href: string;
-  icon: any;
-}
-
-const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
-  { label: 'Users', href: '/adminusers', icon: Users },
-  { label: 'Orders', href: '/adminorders', icon: ArrowUpDown },
-  { label: 'Notifications', href: '/adminreports', icon: Bell },
-];
-
-const MENU_ITEMS_BOTTOM: MenuItem[] = [
-  { label: 'Profile', href: '/adminsettings', icon: UserIcon },
-  { label: 'Settings', href: '/adminsettings', icon: Settings },
-];
-
+import { useState } from 'react';
 
 function OrderManagement() {
-  const router = useRouter();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const { farmerOrders, supplierOrders } = useAdmin();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { orders, refreshOrders } = useAdmin();
-
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Completed':
-        return 'bg-green-100 text-green-800';
-      case 'Processing':
-        return 'bg-purple-100 text-purple-800';
-      case 'Failed':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch =
-      transaction.senderName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.receiverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.senderType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.receiverType.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
 
   return (
     <div className="h-screen bg-white flex overflow-hidden">
       {/* Sidebar */}
-
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Orders'
@@ -91,92 +29,53 @@ function OrderManagement() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-auto">
-        {/* Header - White with Search */}
         <header className="bg-white border-b h-16 flex items-center px-6">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
             <Menu className="w-6 h-6" />
           </button>
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search here..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
+          <h1 className="text-xl font-bold text-gray-800">Order Management</h1>
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 bg-white p-6">
-          {/* Transactions Table */}
-          <div className="bg-white rounded-xl border shadow-sm">
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">Transactions</h2>
+        <main className="flex-1 bg-gray-50 p-8">
+          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+            {/* Farmer Orders Card */}
+            <div className="bg-white rounded-xl shadow-sm border p-8 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center">
+                  <Tractor className="w-8 h-8 text-green-600" />
+                </div>
+                <span className="text-3xl font-bold text-gray-900">{farmerOrders.length}</span>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Farmer Orders</h2>
+              <p className="text-gray-500 mb-6">
+                View and manage orders placed for farm produce.
+              </p>
+              <Link
+                href="/admin/orders/farmer"
+                className="inline-flex items-center text-green-600 font-semibold hover:text-green-700"
+              >
+                View Orders <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Sender
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Receiver
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      STATUS
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ACTION
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {orders.length == 0 ? <p>No orders found</p> : orders.map(order => (
-                    <tr key={order.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {order.buyer.role}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {order.buyer.names}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {order.product.farmer.user.role}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {order.product.farmer.user.names}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(order.createdAt).toDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}
-                        >
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center space-x-4">
-                          <button className="text-green-600 hover:text-green-800">View</button>
-                          <button className="text-red-600 hover:text-red-800">Delete</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+            {/* Supplier Orders Card */}
+            <div className="bg-white rounded-xl shadow-sm border p-8 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
+                  <Truck className="w-8 h-8 text-blue-600" />
+                </div>
+                <span className="text-3xl font-bold text-gray-900">{supplierOrders.length}</span>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Supplier Orders</h2>
+              <p className="text-gray-500 mb-6">
+                View and manage orders placed for agricultural inputs and supplies.
+              </p>
+              <Link
+                href="/admin/orders/supplier"
+                className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700"
+              >
+                View Orders <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
             </div>
           </div>
         </main>
