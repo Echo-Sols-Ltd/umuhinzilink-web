@@ -93,8 +93,8 @@ function FarmerRequestsComponent() {
 
   const handlePayOrder = async (order: SupplierOrder) => {
     await processOrderPayment(order.id, order.paymentMethod);
-    
-    await fetchFarmerBuyerOrders(); 
+
+    await fetchFarmerBuyerOrders();
   };
 
   const displayName = user?.names || 'Farmer';
@@ -255,12 +255,12 @@ function FarmerRequestsComponent() {
 
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50/50">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr className="text-left">
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Product & Supplier</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-right">Action</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">PRODUCT & SUPPLIER</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">AMOUNT</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">STATUS</th>
+                    <th className="text-right py-3 px-4 font-medium text-gray-600 text-sm">ACTION</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -309,7 +309,7 @@ function FarmerRequestsComponent() {
                               >
                                 {statusMeta.label}
                               </span>
-                              {order.isPaid? (
+                              {order.isPaid ? (
                                 <span className="text-[9px] font-bold text-blue-600 flex items-center gap-0.5">
                                   <CheckCircle className="w-2.5 h-2.5" /> PAID
                                 </span>

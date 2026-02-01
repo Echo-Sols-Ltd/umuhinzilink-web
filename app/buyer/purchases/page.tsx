@@ -207,14 +207,14 @@ function MyPurchasesComponent() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Order ID</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Product</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Farmer</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Quantity</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Price</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Date</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Actions</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ORDER ID</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">PRODUCT</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">FARMER</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">QUANTITY</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">PRICE</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">DATE</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">STATUS</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ACTIONS</th>
                 </tr>
               </thead>
               <tbody>

@@ -76,27 +76,27 @@ function SupplierOrderManagement() {
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-50 border-b">
+                                <thead className="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Sender (Buyer)
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                                            SENDER (BUYER)
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Name
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                                            NAME
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Receiver (Supplier)
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                                            RECEIVER (SUPPLIER)
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Name
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                                            NAME
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Date
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                                            DATE
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
                                             STATUS
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
                                             ACTION
                                         </th>
                                     </tr>
