@@ -179,28 +179,10 @@ export default function SignUp() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
-      {/* Hero Section */}
-      <div className="relative w-full h-72 sm:h-96 flex flex-col justify-center items-center text-center">
-        {/* Background Image */}
-        <Image
-          src="/Image.png"
-          alt="background"
-          fill
-          className="absolute right-0 top-0 object-cover w-full h-full"
-        />
+    <div className="w-full h-screen bg-gray-50 flex items-center">
+    
 
-
-        {/* Welcome Text */}
-        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-          Welcome!
-        </h1>
-        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-          Use these awesome forms to login or create a new <br /> account in your project for free
-        </p>
-      </div>
-
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative">
+      <div className="w-full bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative">
         <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
           Register with
         </h1>
@@ -383,6 +365,26 @@ export default function SignUp() {
             </Link>
           </p>
         </form>
+      </div>
+
+        {/* Hero Section */}
+      <div className="relative w-full  h-full flex flex-col justify-center items-center text-center">
+        {/* Background Image */}
+        <Image
+          src="/Image.png"
+          alt="background"
+          fill
+          className="absolute right-0 top-0 object-cover w-full h-full"
+        />
+
+
+        {/* Welcome Text */}
+        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
+          Welcome!
+        </h1>
+        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
+          Use these awesome forms to login or create a new <br /> account in your project for free
+        </p>
       </div>
     </div>
   );

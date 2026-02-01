@@ -321,22 +321,22 @@ function RevenueAnalytics() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Monthly Performance</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Month
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      MONTH
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Revenue
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      REVENUE
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Orders
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      ORDERS
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      New Users
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      NEW USERS
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Avg Order Value
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      AVG ORDER VALUE
                     </th>
                   </tr>
                 </thead>

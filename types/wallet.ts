@@ -60,3 +60,21 @@ export interface PaymentResponseDTO {
   paidAt?: string;
   phoneNumber?: string;
 }
+
+// Pagination types for admin endpoints
+export interface PagedResponse<T> {
+  content: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+}
+
+export interface PaginationParams {
+  page?: number;
+  size?: number;
+  sortBy?: string;
+  sortDir?: 'asc' | 'desc';
+}

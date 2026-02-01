@@ -55,7 +55,7 @@ function OrdersPageComponent() {
   }, [orders]);
 
   const handleViewDetails = (order: SupplierOrder) => {
-    console.log("this is the order causing problems",order)
+    console.log("this is the order causing problems", order)
     setSelectedOrder(order);
     setIsDetailsModalOpen(true);
   };
@@ -130,38 +130,32 @@ function OrdersPageComponent() {
           </div>
 
           {/* Orders Table Section */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-50 flex items-center justify-between">
-              <h2 className="font-bold text-gray-900 flex items-center gap-2">
-                Recent Orders
-                {loading && <Loader2 className="w-4 h-4 animate-spin text-green-600" />}
-              </h2>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-gray-50 border-none rounded-lg px-4 py-2 text-sm font-semibold text-gray-700 outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="all">All Orders</option>
-                <option value="pending">Pending</option>
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-
+          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-gray-50/50">
-                  <tr>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Order Details</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Customer</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Product</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200 bg-gray-50">
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      ORDER DETAILS
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      CUSTOMER
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      PRODUCT
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      AMOUNT
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      STATUS
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      ACTIONS
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody>
                   {loading && orders.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
@@ -173,7 +167,7 @@ function OrdersPageComponent() {
                     </tr>
                   ) : filteredOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-12 px-4 text-center text-gray-500">
+                      <td colSpan={6} className="py-12 px-4 text-center text-gray-500">
                         <div className="flex flex-col items-center gap-3 opacity-50">
                           <ShoppingCart className="w-12 h-12 text-gray-300" />
                           <p className="text-lg font-bold">No orders found</p>
@@ -183,51 +177,51 @@ function OrdersPageComponent() {
                     </tr>
                   ) : (
                     filteredOrders.map((order) => (
-                      <tr key={order.id} className="hover:bg-gray-50/50 transition-colors group">
-                        <td className="px-6 py-4">
+                      <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="py-3 px-4 text-gray-900 text-sm">
                           <div className="flex flex-col">
-                            <span className="text-sm font-bold text-gray-900">#{order.id.slice(0, 8)}</span>
-                            <span className="text-[10px] text-gray-500 font-medium">{new Date(order.createdAt).toLocaleDateString()}</span>
+                            <span className="font-medium">#{order.id.slice(0, 8)}</span>
+                            <span className="text-gray-500 text-xs">{new Date(order.createdAt).toLocaleDateString()}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center text-green-600">
-                              <User className="w-4 h-4" />
+                        <td className="py-3 px-4 text-gray-900 text-sm">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 bg-green-50 rounded-full flex items-center justify-center text-green-600">
+                              <User className="w-3 h-3" />
                             </div>
-                            <span className="text-sm font-semibold text-gray-700">{order.buyer?.names || 'Farmer'}</span>
+                            <span>{order.buyer?.names || 'Farmer'}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="py-3 px-4 text-gray-900 text-sm">
                           <div className="flex flex-col">
-                            <span className="text-sm font-bold text-gray-900">{order.product?.name || 'Input'}</span>
-                            <span className="text-[10px] text-gray-500">{order.quantity} {order.product?.measurementUnit}</span>
+                            <span>{order.product?.name || 'Input'}</span>
+                            <span className="text-gray-500 text-xs">{order.quantity} {order.product?.measurementUnit}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm font-black text-green-600">RWF {order.totalPrice.toLocaleString()}</span>
+                        <td className="py-3 px-4 text-green-600 font-medium text-sm">
+                          RWF {order.totalPrice.toLocaleString()}
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`${getStatusBadge(order.status)} px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter`}>
+                        <td className="py-3 px-4">
+                          <span className={`${getStatusBadge(order.status)} px-2 py-1 rounded-full text-xs font-medium`}>
                             {order.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
+                        <td className="py-3 px-4">
+                          <div className="flex gap-2">
                             {order.status === 'PENDING' && (
                               <button
                                 onClick={() => handleAcceptOrder(order.id)}
                                 disabled={actionLoading}
-                                className="bg-green-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-green-700 transition-all disabled:opacity-50"
+                                className="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-medium hover:bg-green-200 transition-colors cursor-pointer disabled:opacity-50"
                               >
                                 Approve
                               </button>
                             )}
                             <button
                               onClick={() => handleViewDetails(order)}
-                              className="text-gray-400 hover:text-green-600 p-1.5 rounded-lg hover:bg-green-50 transition-all"
+                              className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs font-medium hover:bg-blue-200 transition-colors cursor-pointer"
                             >
-                              <ArrowRight className="w-4 h-4" />
+                              View
                             </button>
                           </div>
                         </td>

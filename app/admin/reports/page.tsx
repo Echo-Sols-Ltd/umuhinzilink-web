@@ -249,25 +249,25 @@ function ReportsPageComponent() {
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Report
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      REPORT
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Type
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      TYPE
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Format
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      FORMAT
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      File Size
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      FILE SIZE
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Generated
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      GENERATED
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      ACTIONS
                     </th>
                   </tr>
                 </thead>

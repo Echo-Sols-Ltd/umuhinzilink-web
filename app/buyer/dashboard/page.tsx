@@ -189,16 +189,16 @@ function BuyerDashboardComponent() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="py-3 text-left text-gray-500 font-medium">ID</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">FARMER</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">LOCATION</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">ORDERED</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">PRODUCT</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">QTY</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">TOTAL</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">STATUS</th>
-                    <th className="py-3 text-left text-gray-500 font-medium">DELIVERY</th>
+                  <tr className="border-b border-gray-200 bg-gray-50">
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ID</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">FARMER</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">LOCATION</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ORDERED</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">PRODUCT</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">QTY</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">TOTAL</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">STATUS</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">DELIVERY</th>
                   </tr>
                 </thead>
                 <tbody>

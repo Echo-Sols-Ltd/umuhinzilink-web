@@ -52,9 +52,9 @@ export const adminService = {
   },
 
   // Get all products
-  getAllProducts: async (): Promise<FarmerProduct[]> => {
+  getAllFarmerProducts: async (): Promise<FarmerProduct[]> => {
     try {
-      const response = await apiClient.get<FarmerProduct[]>(API_ENDPOINTS.ADMIN.PRODUCTS);
+      const response = await apiClient.get<FarmerProduct[]>(API_ENDPOINTS.ADMIN.FARMER_PRODUCTS);
       return response.data!;
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -77,9 +77,9 @@ export const adminService = {
   },
 
   // Get all orders
-  getAllOrders: async (): Promise<FarmerOrder[]> => {
+  getAllFarmerOrders: async (): Promise<FarmerOrder[]> => {
     try {
-      const response = await apiClient.get<FarmerOrder[]>(API_ENDPOINTS.ADMIN.ORDERS);
+      const response = await apiClient.get<FarmerOrder[]>(API_ENDPOINTS.ADMIN.FARMER_ORDERS);
       return response.data!;
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -163,6 +163,28 @@ export const adminService = {
       return response.data;
     } catch (error) {
       console.error('Error updating system config:', error);
+      throw error;
+    }
+  },
+
+  // Get all supplier products
+  getAllSupplierProducts: async (): Promise<any[]> => {
+    try {
+      const response = await apiClient.get<any[]>(API_ENDPOINTS.ADMIN.SUPPLIER_PRODUCTS);
+      return response.data!;
+    } catch (error) {
+      console.error('Error fetching supplier products:', error);
+      throw error;
+    }
+  },
+
+  // Get all supplier orders
+  getAllSupplierOrders: async (): Promise<any[]> => {
+    try {
+      const response = await apiClient.get<any[]>(API_ENDPOINTS.ADMIN.SUPPLIER_ORDERS);
+      return response.data!;
+    } catch (error) {
+      console.error('Error fetching supplier orders:', error);
       throw error;
     }
   },

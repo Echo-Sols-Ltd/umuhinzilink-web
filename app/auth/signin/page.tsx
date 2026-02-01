@@ -143,27 +143,10 @@ export default function SignIn() {
   };
 
   return (
-    <div className="w-full h-screen bg-gray-50 flex flex-col items-center overflow-auto pb-20">
-      {/* Hero Section */}
-      <div className="relative w-full h-72 sm:h-96 flex flex-col justify-center items-center text-center">
-        {/* Background Image */}
-        <Image
-          src="/Image.png"
-          alt="background"
-          fill
-          className="absolute right-0 top-0 object-cover w-full h-full"
-        />
+    <div className="w-full h-screen flex bg-gray-50  overflow-hidden ">
+   
 
-        {/* Welcome Text */}
-        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-          Welcome Back!
-        </h1>
-        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-          Sign in to access your account and continue your journey <br /> with UmuhinziLink
-        </p>
-      </div>
-
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative">
+      <div className="w-full bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative items-center">
         <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
           Sign in with
         </h1>
@@ -285,6 +268,25 @@ export default function SignIn() {
             </Link>
           </p>
         </form>
+      </div>
+
+         {/* Hero Section */}
+      <div className="relative w-full flex flex-col justify-center items-center text-center overflow-hidden">
+        {/* Background Image */}
+        <Image
+          src="/Image.png"
+          alt="background"
+          fill
+          className="absolute right-0 top-0 object-cover w-full h-full"
+        />
+
+        {/* Welcome Text */}
+        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
+          Welcome Back!
+        </h1>
+        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
+          Sign in to access your account and continue your journey <br /> with UmuhinziLink
+        </p>
       </div>
     </div>
   );

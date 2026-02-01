@@ -430,26 +430,26 @@ function Dashboard() {
               <table className="w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3">
-                      Product
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                      PRODUCT
                     </th>
-                    <th scope="col" className="px-4 py-3 hidden sm:table-cell">
-                      Updated
+                    <th scope="col" className="px-4 py-3 hidden sm:table-cell text-left text-sm font-medium text-gray-600">
+                      UPDATED
                     </th>
-                    <th scope="col" className="px-4 py-3 hidden md:table-cell">
-                      Quantity
+                    <th scope="col" className="px-4 py-3 hidden md:table-cell text-left text-sm font-medium text-gray-600">
+                      QUANTITY
                     </th>
-                    <th scope="col" className="px-4 py-3">
-                      Price
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                      PRICE
                     </th>
-                    <th scope="col" className="px-4 py-3 hidden lg:table-cell">
-                      Location
+                    <th scope="col" className="px-4 py-3 hidden lg:table-cell text-left text-sm font-medium text-gray-600">
+                      LOCATION
                     </th>
-                    <th scope="col" className="px-4 py-3">
-                      Status
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                      STATUS
                     </th>
-                    <th scope="col" className="px-4 py-3 text-right">
-                      Action
+                    <th scope="col" className="px-4 py-3 text-right text-sm font-medium text-gray-600">
+                      ACTION
                     </th>
                   </tr>
                 </thead>
@@ -546,12 +546,12 @@ function Dashboard() {
               <table className="w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-4 py-3">Order ID</th>
-                    <th scope="col" className="px-4 py-3">Buyer</th>
-                    <th scope="col" className="px-4 py-3">Product</th>
-                    <th scope="col" className="px-4 py-3">Amount</th>
-                    <th scope="col" className="px-4 py-3">Status</th>
-                    <th scope="col" className="px-4 py-3 text-right">Actions</th>
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">ORDER ID</th>
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">BUYER</th>
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">PRODUCT</th>
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">AMOUNT</th>
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">STATUS</th>
+                    <th scope="col" className="px-4 py-3 text-right text-sm font-medium text-gray-600">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>

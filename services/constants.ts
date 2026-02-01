@@ -1,7 +1,7 @@
 // API Configuration Constants
 
 const PROD_SERVER = 'https://api.umuhinzi-backend.echo-solution.com';
-const DEV_SERVER = 'http://localhost:6060'
+const DEV_SERVER = 'http://10.12.75.153:6060'
 
 export const API_CONFIG = {
   BASE_URL: process.env.NODE_ENV === 'development' ? DEV_SERVER : PROD_SERVER,
@@ -85,8 +85,10 @@ export const API_ENDPOINTS = {
   },
   ADMIN: {
     USERS: '/admin/users',
-    PRODUCTS: '/admin/products',
-    ORDERS: '/admin/orders',
+    FARMER_PRODUCTS: '/admin/farmer/products',
+    SUPPLIER_PRODUCTS: '/admin/supplier/products',
+    FARMER_ORDERS: '/admin/farmer/orders',
+    SUPPLIER_ORDERS: '/admin/supplier/orders',
     BUYERS: '/admin/buyers',
     FARMERS: '/admin/farmers',
     SUPPLIERS: '/admin/suppliers',
@@ -121,6 +123,11 @@ export const API_ENDPOINTS = {
     TRANSACTIONS: '/wallet/transactions',
     TRANSACTION_BY_ID: (id: string) => `/wallet/transaction/${id}`,
     ADMIN_CREATE_WALLET: (userId: string) => `/wallet/admin/create-wallet/${userId}`,
+    // Admin endpoints
+    ADMIN_ALL_WALLETS: '/admin/wallets',
+    ADMIN_ALL_TRANSACTIONS: '/admin/transactions',
+    ADMIN_WALLET_BY_USER: (userId: string) => `/admin/wallets/user/${userId}`,
+    ADMIN_TRANSACTIONS_BY_USER: (userId: string) => `/admin/transactions/user/${userId}`,
   },
   PAYMENT: {
     PROCESS: '/payments/process',

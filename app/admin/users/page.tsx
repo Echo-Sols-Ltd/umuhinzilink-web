@@ -222,28 +222,28 @@ function UserManagement() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Profile
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      PROFILE
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      ROLE
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      NAME
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      EMAIL
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Phone
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      PHONE
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      STATUS
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      ACTIONS
                     </th>
                   </tr>
                 </thead>

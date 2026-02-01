@@ -210,27 +210,31 @@ function FarmerOrders() {
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      Order ID
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Buyer</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      Address
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Date</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      Product
+                      ORDER ID
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      Quantity
+                      BUYER
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      Amount
+                      ADDRESS
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      Status
+                      DATE
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      Action
+                      PRODUCT
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      QUANTITY
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      AMOUNT
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      STATUS
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                      ACTION
                     </th>
                   </tr>
                 </thead>

@@ -4,12 +4,16 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/components/ui/use-toast-new';
-import { FarmerProduct, User, FarmerOrder } from '@/types';
+import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder } from '@/types';
 
 interface AdminContextType {
   users: User[] | null;
-  products: FarmerProduct[];
-  orders: FarmerOrder[];
+  farmerProducts: FarmerProduct[];
+  supplierProducts: SupplierProduct[];
+  farmerOrders: FarmerOrder[];
+  supplierOrders: SupplierOrder[];
+  products: (FarmerProduct | SupplierProduct)[]; // Aggregate for dashboard/generic views
+  orders: (FarmerOrder | SupplierOrder)[]; // Aggregate for dashboard/generic views
   loading: boolean;
   error: string | null;
   refreshUsers: () => Promise<void>;
@@ -46,8 +50,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [users, setUsers] = useState<User[] | null>(null);
-  const [products, setProducts] = useState<FarmerProduct[]>([]);
-  const [orders, setOrders] = useState<FarmerOrder[]>([]);
+  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
+  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
+  const [farmerOrders, setFarmerOrders] = useState<FarmerOrder[]>([]);
+  const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[]>([]);
+  // Derived state for backward compatibility or aggregation
+  const products = [...farmerProducts, ...supplierProducts];
+  const orders = [...farmerOrders, ...supplierOrders];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,15 +68,19 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const [usersRes, productsRes, ordersRes] = await Promise.all([
+      const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes] = await Promise.all([
         adminService.getAllUsers(),
-        adminService.getAllProducts(),
-        adminService.getAllOrders(),
+        adminService.getAllFarmerProducts(),
+        adminService.getAllSupplierProducts(),
+        adminService.getAllFarmerOrders(),
+        adminService.getAllSupplierOrders(),
       ]);
 
       setUsers(usersRes || []);
-      setProducts(productsRes || []);
-      setOrders(ordersRes || []);
+      setFarmerProducts(farmerProductsRes || []);
+      setSupplierProducts(supplierProductsRes || []);
+      setFarmerOrders(farmerOrdersRes || []);
+      setSupplierOrders(supplierOrdersRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
       setError(message);
@@ -100,8 +113,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const refreshProducts = async () => {
     try {
-      const productsRes = await adminService.getAllProducts();
-      setProducts(productsRes || []);
+      const [farmerRes, supplierRes] = await Promise.all([
+        adminService.getAllFarmerProducts(),
+        adminService.getAllSupplierProducts()
+      ]);
+      setFarmerProducts(farmerRes || []);
+      setSupplierProducts(supplierRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
@@ -115,8 +132,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const refreshOrders = async () => {
     try {
-      const ordersRes = await adminService.getAllOrders();
-      setOrders(ordersRes || []);
+      const [farmerRes, supplierRes] = await Promise.all([
+        adminService.getAllFarmerOrders(),
+        adminService.getAllSupplierOrders()
+      ]);
+      setFarmerOrders(farmerRes || []);
+      setSupplierOrders(supplierRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';
       setError(message);
@@ -151,7 +172,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const deleteProduct = async (productId: string) => {
     try {
       await adminService.deleteProduct(productId);
-      setProducts(products?.filter(p => p.id !== productId) || null);
+      setFarmerProducts(farmerProducts.filter(p => p.id !== productId));
+      setSupplierProducts(supplierProducts.filter(p => p.id !== productId));
       toast({
         title: 'Success',
         description: 'Product deleted successfully',
@@ -170,7 +192,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const deleteOrder = async (orderId: string) => {
     try {
       await adminService.deleteOrder(orderId);
-      setOrders(orders?.filter(o => o.id !== orderId) || null);
+      setFarmerOrders(farmerOrders.filter(o => o.id !== orderId));
+      setSupplierOrders(supplierOrders.filter(o => o.id !== orderId));
       toast({
         title: 'Success',
         description: 'Order deleted successfully',
@@ -195,17 +218,17 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const productStats = {
-    totalProducts: products?.length || 0,
-    inStockCount: products?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
-    outOfStockCount: products?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
-    lowStockCount: products?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
+    totalProducts: products.length,
+    inStockCount: products.filter(p => p.productStatus === 'IN_STOCK').length,
+    outOfStockCount: products.filter(p => p.productStatus === 'OUT_OF_STOCK').length,
+    lowStockCount: products.filter(p => p.productStatus === 'LOW_STOCK').length,
   };
 
   const orderStats = {
-    totalOrders: orders?.length || 0,
-    pendingCount: orders?.filter(o => o.status === 'PENDING').length || 0,
-    completedCount: orders?.filter(o => o.status === 'COMPLETED').length || 0,
-    cancelledCount: orders?.filter(o => o.status === 'CANCELLED').length || 0,
+    totalOrders: orders.length,
+    pendingCount: orders.filter(o => o.status === 'PENDING').length,
+    completedCount: orders.filter(o => o.status === 'COMPLETED').length,
+    cancelledCount: orders.filter(o => o.status === 'CANCELLED').length,
   };
 
   const startFetchingResources = useCallback(async () => {
@@ -216,7 +239,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, [user, fetchAllData]);
 
   const isValidAdmin = useCallback(() => {
-    
+
     if (!user) return false
     return user.role === 'ADMIN';
   }, [user]);
@@ -230,6 +253,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     <AdminContext.Provider
       value={{
         users,
+        farmerProducts,
+        supplierProducts,
+        farmerOrders,
+        supplierOrders,
         products,
         orders,
         loading,

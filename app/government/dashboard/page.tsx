@@ -506,8 +506,8 @@ function Dashboard() {
                     {recentOrders.map(order => (
                       <div key={order.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <div className={`w-2 h-2 rounded-full ${order.status === 'COMPLETED' ? 'bg-green-500' :
-                            order.status === 'PENDING' ? 'bg-yellow-500' :
-                              'bg-red-500'
+                          order.status === 'PENDING' ? 'bg-yellow-500' :
+                            'bg-red-500'
                           }`} />
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
@@ -518,8 +518,8 @@ function Dashboard() {
                           </p>
                         </div>
                         <span className={`px-2 py-1 text-xs rounded-full ${order.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                            order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-red-100 text-red-800'
+                          order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
                           }`}>
                           {order.status.toLowerCase()}
                         </span>
@@ -659,16 +659,16 @@ function Dashboard() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left text-gray-500">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                  <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th scope="col" className="px-4 py-3">Product Name</th>
-                      <th scope="col" className="px-4 py-3">Category</th>
-                      <th scope="col" className="px-4 py-3">Type</th>
-                      <th scope="col" className="px-4 py-3">Status</th>
-                      <th scope="col" className="px-4 py-3">Price</th>
-                      <th scope="col" className="px-4 py-3">Quantity</th>
-                      <th scope="col" className="px-4 py-3">Location</th>
-                      <th scope="col" className="px-4 py-3">Date Added</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">PRODUCT NAME</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">CATEGORY</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">TYPE</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">STATUS</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">PRICE</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">QUANTITY</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">LOCATION</th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">DATE ADDED</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -693,16 +693,16 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span className={`px-2 py-1 text-xs rounded-full ${product.type === 'farmer'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-blue-100 text-blue-800'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-blue-100 text-blue-800'
                               }`}>
                               {product.type === 'farmer' ? 'Farmer' : 'Supplier'}
                             </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span className={`px-2 py-1 text-xs rounded-full ${product.productStatus === 'IN_STOCK' ? 'bg-green-100 text-green-800' :
-                                product.productStatus === 'LOW_STOCK' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-red-100 text-red-800'
+                              product.productStatus === 'LOW_STOCK' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
                               }`}>
                               {product.productStatus?.replace('_', ' ').toLowerCase() || 'unknown'}
                             </span>

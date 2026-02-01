@@ -278,11 +278,9 @@ export const districtOptions = [
 
 export enum OrderStatus {
   PENDING = 'PENDING',
-  PENDING_PAYMENT = 'PENDING_PAYMENT',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
   ACTIVE = 'ACTIVE',
-  PAID = 'PAID',
 }
 
 export enum PaymentMethod {
