@@ -70,9 +70,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     try {
       const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes] = await Promise.all([
         adminService.getAllUsers(),
-        adminService.getAllProducts(),
+        adminService.getAllFarmerProducts(),
         adminService.getAllSupplierProducts(),
-        adminService.getAllOrders(),
+        adminService.getAllFarmerOrders(),
         adminService.getAllSupplierOrders(),
       ]);
 
@@ -114,7 +114,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const refreshProducts = async () => {
     try {
       const [farmerRes, supplierRes] = await Promise.all([
-        adminService.getAllProducts(),
+        adminService.getAllFarmerProducts(),
         adminService.getAllSupplierProducts()
       ]);
       setFarmerProducts(farmerRes || []);
@@ -133,7 +133,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const refreshOrders = async () => {
     try {
       const [farmerRes, supplierRes] = await Promise.all([
-        adminService.getAllOrders(),
+        adminService.getAllFarmerOrders(),
         adminService.getAllSupplierOrders()
       ]);
       setFarmerOrders(farmerRes || []);
