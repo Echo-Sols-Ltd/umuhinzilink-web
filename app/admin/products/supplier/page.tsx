@@ -190,117 +190,118 @@ function SupplierProductManagement() {
                     </div>
                 </header>
 
-                {/* Products Grid */}
+                {/* Products Table */}
                 <main className="flex-1 overflow-auto p-6">
-                    {loading ? (
-                        <div className="flex items-center justify-center py-12">
-                            <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+                    <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">IMAGE</th>
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">PRODUCT NAME</th>
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">CATEGORY</th>
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">SUPPLIER</th>
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">PRICE</th>
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">QUANTITY</th>
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">STATUS</th>
+                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan={8} className="px-6 py-12 text-center">
+                                                <Loader2 className="w-8 h-8 animate-spin text-green-600 mx-auto" />
+                                            </td>
+                                        </tr>
+                                    ) : filteredProducts.length > 0 ? (
+                                        filteredProducts.map(product => (
+                                            <tr
+                                                key={product.id}
+                                                onClick={() => handleViewProduct(product)}
+                                                className="hover:bg-gray-50 cursor-pointer transition-colors"
+                                            >
+                                                <td className="py-4 px-4">
+                                                    <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center overflow-hidden">
+                                                        {product.image ? (
+                                                            <img
+                                                                src={product.image}
+                                                                alt={product.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <Image className="w-6 h-6 text-gray-400" />
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-4">
+                                                    <div className="font-medium text-gray-900">{product.name}</div>
+                                                    <div className="text-xs text-gray-500 line-clamp-1">{product.description}</div>
+                                                </td>
+                                                <td className="py-4 px-4 text-sm text-gray-900">{product.category}</td>
+                                                <td className="py-4 px-4 text-sm text-gray-900">
+                                                    {product.supplier?.businessName || product.supplier?.user?.names || 'Unknown'}
+                                                </td>
+                                                <td className="py-4 px-4 text-sm text-gray-900">
+                                                    RWF {product.unitPrice?.toLocaleString()}/{product.measurementUnit}
+                                                </td>
+                                                <td className="py-4 px-4 text-sm text-gray-900">
+                                                    {product.quantity?.toLocaleString()} {product.measurementUnit}
+                                                </td>
+                                                <td className="py-4 px-4">
+                                                    <div className="flex items-center gap-1">
+                                                        {getStatusIcon(product.productStatus)}
+                                                        <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(product.productStatus)}`}>
+                                                            {product.productStatus?.replace('_', ' ')}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-4">
+                                                    <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
+                                                        <button
+                                                            onClick={() => {
+                                                                setSelectedProduct(product);
+                                                                setShowModerationModal(true);
+                                                            }}
+                                                            className="text-green-600 hover:text-green-800 p-1 rounded"
+                                                            title="Moderate Product"
+                                                        >
+                                                            <ThumbsUp className="w-4 h-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteProduct(product.id)}
+                                                            disabled={actionLoading === product.id}
+                                                            className="text-red-600 hover:text-red-800 p-1 rounded"
+                                                            title="Delete Product"
+                                                        >
+                                                            {actionLoading === product.id ? (
+                                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                            ) : (
+                                                                <Trash2 className="w-4 h-4" />
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={8} className="px-6 py-12 text-center">
+                                                <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                                                <p className="text-gray-500 text-lg mb-2">No products found</p>
+                                                <p className="text-gray-400 text-sm">
+                                                    {searchTerm || categoryFilter || statusFilter
+                                                        ? 'Try adjusting your search criteria'
+                                                        : 'No products are currently available'
+                                                    }
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
-                    ) : filteredProducts.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {filteredProducts.map(product => (
-                                <div
-                                    key={product.id}
-                                    className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"
-                                >
-                                    {/* Product Image */}
-                                    <div className="h-48 bg-gray-200 flex items-center justify-center">
-                                        {product.image ? (
-                                            <img
-                                                src={product.image}
-                                                alt={product.name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <Image className="w-12 h-12 text-gray-400" />
-                                        )}
-                                    </div>
-
-                                    {/* Product Info */}
-                                    <div className="p-4">
-                                        <div className="flex items-start justify-between mb-2">
-                                            <h3 className="font-semibold text-gray-900 text-sm">{product.name}</h3>
-                                            <div className="flex items-center space-x-1">
-                                                {getStatusIcon(product.productStatus)}
-                                                <span
-                                                    className={`text-xs px-2 py-1 rounded-full ${getStatusColor(product.productStatus)}`}
-                                                >
-                                                    {product.productStatus?.replace('_', ' ')}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <p className="text-gray-600 text-xs mb-3 line-clamp-2">{product.description}</p>
-
-                                        <div className="space-y-2 text-xs">
-                                            <div className="flex justify-between">
-                                                <span className="text-gray-500">Price:</span>
-                                                <span className="font-medium">
-                                                    RWF {product.unitPrice}/{product.measurementUnit}
-                                                </span>
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-gray-500">Category:</span>
-                                                <span className="font-medium">{product.category}</span>
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-gray-500">Supplier:</span>
-                                                <span className="font-medium">{product.supplier?.businessName || product.supplier?.user?.names || 'Unknown'}</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-4 pt-3 border-t flex items-center justify-between">
-                                            <span className="text-xs text-gray-500">
-                                                {product.harvestDate ? new Date(product.harvestDate).toLocaleDateString() : 'Unknown'}
-                                            </span>
-                                            <div className="flex items-center space-x-2">
-                                                <button
-                                                    onClick={() => handleViewProduct(product)}
-                                                    className="text-blue-600 hover:text-blue-800 p-1 rounded"
-                                                    title="View Details"
-                                                >
-                                                    <Eye className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedProduct(product);
-                                                        setShowModerationModal(true);
-                                                    }}
-                                                    className="text-green-600 hover:text-green-800 p-1 rounded"
-                                                    title="Moderate Product"
-                                                >
-                                                    <ThumbsUp className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteProduct(product.id)}
-                                                    disabled={actionLoading === product.id}
-                                                    className="text-red-600 hover:text-red-800 p-1 rounded"
-                                                    title="Delete Product"
-                                                >
-                                                    {actionLoading === product.id ? (
-                                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                                    ) : (
-                                                        <Trash2 className="w-4 h-4" />
-                                                    )}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-12">
-                            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                            <p className="text-gray-500 text-lg mb-2">No products found</p>
-                            <p className="text-gray-400 text-sm">
-                                {searchTerm || categoryFilter || statusFilter
-                                    ? 'Try adjusting your search criteria'
-                                    : 'No products are currently available'
-                                }
-                            </p>
-                        </div>
-                    )}
+                    </div>
                 </main>
             </div>
 
