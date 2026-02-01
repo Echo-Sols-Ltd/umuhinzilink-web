@@ -309,7 +309,7 @@ function FarmerRequestsComponent() {
                               >
                                 {statusMeta.label}
                               </span>
-                              {order.status === OrderStatus.PAID || order.status === OrderStatus.COMPLETED || order.status === OrderStatus.ACTIVE ? (
+                              {order.isPaid? (
                                 <span className="text-[9px] font-bold text-blue-600 flex items-center gap-0.5">
                                   <CheckCircle className="w-2.5 h-2.5" /> PAID
                                 </span>
@@ -320,7 +320,7 @@ function FarmerRequestsComponent() {
                           </td>
                           <td className="px-6 py-4 text-right">
                             <div className="flex items-center justify-end gap-2">
-                              {order.status === OrderStatus.PENDING || order.status === OrderStatus.PENDING_PAYMENT && (
+                              {order.status === OrderStatus.PENDING && (
                                 <button
                                   onClick={() => handlePayOrder(order)}
                                   disabled={payingId === order.id}

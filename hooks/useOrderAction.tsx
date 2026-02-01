@@ -45,8 +45,6 @@ export default function useOrderAction() {
         description: 'Initiating payment...',
       });
 
-      // Process payment automatically
-      await processOrderPayment(newOrder.id, payload.paymentMethod);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
       toast({
@@ -88,8 +86,6 @@ export default function useOrderAction() {
         description: 'Initiating payment...',
       });
 
-      // Process payment automatically
-      await processOrderPayment(newOrder.id, payload.paymentMethod);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
       toast({

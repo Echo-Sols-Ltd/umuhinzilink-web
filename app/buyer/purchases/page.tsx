@@ -54,7 +54,7 @@ function MyPurchasesComponent() {
 
     const total = buyerOrders.length;
     const completed = buyerOrders.filter(o => o.status === 'COMPLETED').length;
-    const inProgress = buyerOrders.filter(o => o.status === 'ACTIVE' || o.status === 'PENDING' || o.status === 'PENDING_PAYMENT').length;
+    const inProgress = buyerOrders.filter(o => o.status === 'ACTIVE' || o.status === 'PENDING').length;
     const totalSpent = buyerOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
 
     return { total, completed, inProgress, totalSpent };
@@ -273,7 +273,7 @@ function MyPurchasesComponent() {
                       </td>
                       <td className="py-4 px-4 text-nowrap">
                         <div className="flex items-center gap-1">
-                          {order.status === OrderStatus.PENDING_PAYMENT && (
+                          {!order.isPaid && (
                             <button
                               onClick={() => handlePayOrder(order.id)}
                               disabled={paymentLoading === order.id}

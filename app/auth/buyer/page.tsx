@@ -228,25 +228,10 @@ export default function BuyerSignUp() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
-      {/* Hero Section */}
-      <div className="relative w-full h-72 sm:h-96 flex flex-col justify-center items-center text-center">
-        <Image
-          src="/Image.png"
-          alt="background"
-          fill
-          className="absolute right-0 top-0 object-cover w-full h-full"
-        />
+    <div className="w-full h-screen bg-gray-50 flex  items-center">
+     
 
-        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-          Buyer Registration
-        </h1>
-        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-          Join our agricultural marketplace and connect with farmers directly
-        </p>
-      </div>
-
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative">
+      <div className="w-full overflow-scroll h-full bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative">
         <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
           Create Your Buyer Account
         </h1>
@@ -457,6 +442,23 @@ export default function BuyerSignUp() {
             </Button>
           </div>
         </form>
+      </div>
+
+       {/* Hero Section */}
+      <div className="relative w-full h-full flex flex-col justify-center items-center text-center">
+        <Image
+          src="/Image.png"
+          alt="background"
+          fill
+          className="absolute right-0 top-0 object-cover w-full h-full"
+        />
+
+        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
+          Buyer Registration
+        </h1>
+        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
+          Join our agricultural marketplace and connect with farmers directly
+        </p>
       </div>
     </div>
   );
