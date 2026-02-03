@@ -13,13 +13,13 @@ export default function SupplierGuard(props: {
     const [isVerified, setIsVerified] = useState(false);
 
     useEffect(() => {
-        if (!loading) {
-            if (!user || user.role !== UserType.SUPPLIER) {
-                router.push('/unauthorized');
-            } else {
-                setIsVerified(true);
-            }
+        if (loading || !user) return
+        if (user.role !== UserType.SUPPLIER) {
+            router.push('/unauthorized');
+        } else {
+            setIsVerified(true);
         }
+
     }, [user, loading]);
 
     if (!isVerified) {

@@ -89,15 +89,7 @@ export class WalletService {
     size?: number;
     sortBy?: string;
     sortDir?: string;
-  }): Promise<ApiResponse<{
-    content: WalletDTO[];
-    pageNumber: number;
-    pageSize: number;
-    totalElements: number;
-    totalPages: number;
-    first: boolean;
-    last: boolean;
-  }>> {
+  }): Promise<ApiResponse< WalletDTO[]>  > {
     const queryParams = new URLSearchParams();
     if (params?.page !== undefined) queryParams.append('page', params.page.toString());
     if (params?.size !== undefined) queryParams.append('size', params.size.toString());
@@ -144,15 +136,7 @@ export class WalletService {
     size?: number;
     sortBy?: string;
     sortDir?: string;
-  }): Promise<ApiResponse<{
-    content: WalletTransactionDTO[];
-    pageNumber: number;
-    pageSize: number;
-    totalElements: number;
-    totalPages: number;
-    first: boolean;
-    last: boolean;
-  }>> {
+  }): Promise<ApiResponse< WalletTransactionDTO[]>> {
     const queryParams = new URLSearchParams();
     if (params?.page !== undefined) queryParams.append('page', params.page.toString());
     if (params?.size !== undefined) queryParams.append('size', params.size.toString());

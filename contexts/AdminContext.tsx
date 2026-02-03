@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/components/ui/use-toast-new';
-import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder } from '@/types';
+import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO } from '@/types';
 
 interface AdminContextType {
   users: User[] | null;
@@ -12,6 +12,7 @@ interface AdminContextType {
   supplierProducts: SupplierProduct[];
   farmerOrders: FarmerOrder[];
   supplierOrders: SupplierOrder[];
+  systemTransactions: WalletTransactionDTO[]
   products: (FarmerProduct | SupplierProduct)[]; // Aggregate for dashboard/generic views
   orders: (FarmerOrder | SupplierOrder)[]; // Aggregate for dashboard/generic views
   loading: boolean;
@@ -41,7 +42,6 @@ interface AdminContextType {
     cancelledCount: number;
   };
   startFetchingResources: () => Promise<void>;
-  isValidAdmin: () => boolean;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -54,6 +54,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
   const [farmerOrders, setFarmerOrders] = useState<FarmerOrder[]>([]);
   const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[]>([]);
+  const [systemTransactions, setSystemTransactions] = useState<WalletTransactionDTO[]>([])
   // Derived state for backward compatibility or aggregation
   const products = [...farmerProducts, ...supplierProducts];
   const orders = [...farmerOrders, ...supplierOrders];
@@ -68,14 +69,16 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes] = await Promise.all([
+      const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes, systemTransactions] = await Promise.all([
         adminService.getAllUsers(),
         adminService.getAllFarmerProducts(),
         adminService.getAllSupplierProducts(),
         adminService.getAllFarmerOrders(),
         adminService.getAllSupplierOrders(),
+        adminService.getTransactionMonitoring(),
       ]);
 
+      setSystemTransactions(systemTransactions || [])
       setUsers(usersRes || []);
       setFarmerProducts(farmerProductsRes || []);
       setSupplierProducts(supplierProductsRes || []);
@@ -238,11 +241,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     await fetchAllData(user);
   }, [user, fetchAllData]);
 
-  const isValidAdmin = useCallback(() => {
 
-    if (!user) return false
-    return user.role === 'ADMIN';
-  }, [user]);
 
   // Fetch data on mount and when user changes
   useEffect(() => {
@@ -252,6 +251,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
+        systemTransactions,
         users,
         farmerProducts,
         supplierProducts,
@@ -271,7 +271,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         productStats,
         orderStats,
         startFetchingResources,
-        isValidAdmin,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import { FarmerOrder, FarmerProduct, User } from '@/types';
+import { FarmerOrder, FarmerProduct, User, WalletTransactionDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -148,7 +148,7 @@ export const adminService = {
   // Get transaction monitoring data
   getTransactionMonitoring: async () => {
     try {
-      const response = await apiClient.get('/admin/transactions');
+      const response = await apiClient.get<WalletTransactionDTO[]>('/admin/transactions');
       return response.data;
     } catch (error) {
       console.error('Error fetching transactions:', error);

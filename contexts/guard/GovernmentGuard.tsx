@@ -2,20 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useGovernment } from '@/contexts/GovernmentContext';
+import { useAuth } from '../AuthContext';
 
 const GovernmentGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-  const { isValidGovernmentUser, startFetchingResources } = useGovernment();
-
+  const { startFetchingResources } = useGovernment();
+  const { user, loading } = useAuth()
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        if (!isValidGovernmentUser()) {
+        if (loading || !user) return
+        if (user.role !== 'ADMIN') {
           window.location.href = '/unauthorized';
           return;
         }
         await startFetchingResources();
-        setLoading(false);
       } catch (error) {
         console.error('Authorization error:', error);
         window.location.href = '/unauthorized';
@@ -23,7 +23,7 @@ const GovernmentGuard: React.FC<{ children: React.ReactNode }> = ({ children }) 
     };
 
     checkAuth();
-  }, [isValidGovernmentUser, startFetchingResources]);
+  }, [loading, user, startFetchingResources]);
 
   if (loading) {
     return (

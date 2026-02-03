@@ -1,44 +1,34 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Upload, X } from 'lucide-react';
 import { BiLogoFacebookCircle, BiLogoGoogle } from 'react-icons/bi';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRequest, UserType } from '@/types';
-import { BuyerRequest, BuyerType, Address, Province, District } from '@/types';
+import { BuyerRequest, BuyerType, Province, District } from '@/types';
 import { buyerTypeOptions, provinceOptions, districtOptions } from '@/types/enums';
 import useUserAction from '@/hooks/useUserAction';
-import { Upload, X } from 'lucide-react';
 
 export default function BuyerSignUp() {
   const { registerBuyer, user } = useAuth();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [profilePreview, setProfilePreview] = useState<string>('');
-
-  const socialLinks = [
-    { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
-    { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
-  ];
 
   const [buyerData, setBuyerData] = useState<BuyerRequest>({
     userId: user?.id!,
     buyerType: BuyerType.INDIVIDUAL,
-    address: {
-      province: Province.KIGALI_CITY,
-      district: District.GASABO,
-    },
+    address: { province: Province.KIGALI_CITY, district: District.GASABO },
   });
+
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string>('');
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [fieldErrors, setFieldErrors] = useState({
     buyerType: '',
@@ -52,42 +42,21 @@ export default function BuyerSignUp() {
     district: false,
   });
 
-  const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    // Clear field error when user starts typing
-    if (fieldErrors[name as keyof typeof fieldErrors]) {
-      setFieldErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
+  const socialLinks = [
+    { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
+    { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
+  ];
 
-  const handleBuyerInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
     if (name === 'province') {
-      setBuyerData(prev => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          province: value as Province,
-          district: District.GASABO,
-        },
-      }));
+      setBuyerData(prev => ({ ...prev, address: { ...prev.address, province: value as Province, district: District.GASABO } }));
     } else if (name === 'district') {
-      setBuyerData(prev => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          district: value as District,
-        },
-      }));
+      setBuyerData(prev => ({ ...prev, address: { ...prev.address, district: value as District } }));
     } else if (name === 'buyerType') {
-      setBuyerData(prev => ({
-        ...prev,
-        buyerType: value as BuyerType,
-      }));
+      setBuyerData(prev => ({ ...prev, buyerType: value as BuyerType }));
     }
 
-    // Clear field error when user starts typing
     if (fieldErrors[name as keyof typeof fieldErrors]) {
       setFieldErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -96,39 +65,26 @@ export default function BuyerSignUp() {
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name } = e.target;
     setTouched(prev => ({ ...prev, [name]: true }));
-    validateField(name, buyerData[name as keyof typeof buyerData] || buyerData.address[name as keyof typeof buyerData.address]);
+    validateField(name, buyerData[name as keyof BuyerRequest] || buyerData.address[name as keyof typeof buyerData.address]);
   };
 
-  const validateField = (name: string, value: string | boolean | any) => {
+  const validateField = (name: string, value: any) => {
     let error = '';
-
-    const stringValue = typeof value === 'string' ? value : '';
-
-    switch (name) {
-      case 'buyerType':
-        if (!value) {
+    if (!value) {
+      switch (name) {
+        case 'buyerType':
           error = 'Buyer type is required';
-        }
-        break;
-      case 'province':
-        if (!value) {
+          break;
+        case 'province':
           error = 'Province is required';
-        }
-        break;
-      case 'district':
-        if (!value) {
+          break;
+        case 'district':
           error = 'District is required';
-        }
-        break;
-      default:
-        break;
+          break;
+      }
     }
 
-    setFieldErrors(prev => ({
-      ...prev,
-      [name]: error,
-    }));
-
+    setFieldErrors(prev => ({ ...prev, [name]: error }));
     return error === '';
   };
 
@@ -137,41 +93,21 @@ export default function BuyerSignUp() {
     const provinceValid = validateField('province', buyerData.address.province);
     const districtValid = validateField('district', buyerData.address.district);
 
-    setTouched({
-      buyerType: true,
-      province: true,
-      district: true,
-    });
+    setTouched({ buyerType: true, province: true, district: true });
 
     return buyerTypeValid && provinceValid && districtValid;
   };
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: 'File too large',
-          description: 'Profile image must be less than 5MB',
-          variant: 'error',
-        });
-        return;
-      }
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: 'Invalid file type',
-          description: 'Please select an image file',
-          variant: 'error',
-        });
-        return;
-      }
-      setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    if (!file.type.startsWith('image/')) return toast({ title: 'Invalid file type', description: 'Please select an image file', variant: 'error' });
+    if (file.size > 5 * 1024 * 1024) return toast({ title: 'File too large', description: 'Profile image must be less than 5MB', variant: 'error' });
+
+    setProfileImage(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setProfilePreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
   const removeProfileImage = () => {
@@ -182,70 +118,31 @@ export default function BuyerSignUp() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    // Validate form data
     if (!validateForm()) {
-      toast({
-        title: 'Validation Error',
-        description: 'Please fix the errors below and try again.',
-        variant: 'error',
-      });
+      toast({ title: 'Validation Error', description: 'Please fix the errors below and try again.', variant: 'error' });
       setLoading(false);
       return;
     }
 
     try {
-      // First upload profile image if selected
-      if (profileImage) {
-        await uploadFile(profileImage);
-      }
-
-      // Then register the buyer
+      if (profileImage) await uploadFile(profileImage);
       await registerBuyer(buyerData);
-
-      toast({
-        title: 'Success',
-        description: 'Buyer account created successfully!',
-        variant: 'success',
-      });
-
-    } catch (error) {
-      toast({
-        title: 'Registration Error',
-        description: 'Failed to create buyer account. Please try again.',
-        variant: 'error',
-      });
+      toast({ title: 'Success', description: 'Buyer account created successfully!', variant: 'success' });
+    } catch {
+      toast({ title: 'Registration Error', description: 'Failed to create buyer account. Please try again.', variant: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
-  // Get districts for selected province
-  const getDistrictsForProvince = (province: Province) => {
-    return districtOptions.filter(district => {
-      return true;
-    });
-  };
-
   return (
-    <div className="w-full h-screen bg-gray-50 flex  items-center">
-     
-
-      <div className="w-full overflow-scroll h-full bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative">
-        <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
-          Create Your Buyer Account
-        </h1>
+    <div className="w-full h-screen bg-gray-50 flex items-center">
+      <div className="w-full overflow-scroll h-full bg-white rounded-xl  p-6 sm:p-8 z-20 relative py-20">
+        <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">Create Your Buyer Account</h1>
 
         <div className="flex gap-4 justify-center mb-6">
           {socialLinks.map((linkItem, idx) => (
-            <Link
-              key={idx}
-              href={linkItem.link}
-              target="_blank"
-              className="p-3 text-gray-700 transition border border-gray-100 rounded-md hover:bg-gray-100"
-            >
-              {linkItem.icon}
-            </Link>
+            <Link key={idx} href={linkItem.link} target="_blank" className="p-3 text-gray-700 transition border border-gray-100 rounded-md hover:bg-gray-100">{linkItem.icon}</Link>
           ))}
         </div>
 
@@ -253,25 +150,15 @@ export default function BuyerSignUp() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Profile Image Section */}
+          {/* Profile Image */}
           <div className="border-b pb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Image</h2>
             <div className="flex items-center space-x-6">
               <div className="relative">
                 {profilePreview ? (
                   <div className="relative">
-                    <Image
-                      src={profilePreview}
-                      alt="Profile preview"
-                      width={120}
-                      height={120}
-                      className="w-30 h-30 rounded-full object-cover border-4 border-gray-200"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeProfileImage}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                    >
+                    <Image src={profilePreview} alt="Profile preview" width={120} height={120} className="w-30 h-30 rounded-full object-cover border-4 border-gray-200" />
+                    <button type="button" onClick={removeProfileImage} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
@@ -281,184 +168,60 @@ export default function BuyerSignUp() {
                   </div>
                 )}
               </div>
-              <div className="flex-1">
-                <Label htmlFor="profileImage" className="text-gray-700 font-medium text-sm mb-2 block">
-                  Upload Profile Image
-                </Label>
-                <input
-                  id="profileImage"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfileImageChange}
-                  disabled={loading || uploadLoading}
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  onClick={() => document.getElementById('profileImage')?.click()}
-                  disabled={loading || uploadLoading}
-                  variant="outline"
-                  className="mb-2"
-                >
-                  {uploadLoading && uploadingFiles.some(f => f.file === profileImage) ? 'Uploading...' : 'Choose Image'}
-                </Button>
-                <p className="text-xs text-gray-500">JPG, PNG, GIF up to 5MB</p>
-                {uploadLoading && uploadingFiles.some(f => f.file === profileImage) && (
-                  <div className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-gray-600">Uploading profile image...</span>
-                    </div>
-                    {uploadingFiles.find(f => f.file === profileImage) && (
-                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                        <div
-                          className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${uploadingFiles.find(f => f.file === profileImage)?.progress || 0}%` }}
-                        ></div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              <Button type="button" onClick={() => document.getElementById('profileImage')?.click()} disabled={loading || uploadLoading} variant="outline">Choose Image</Button>
+              <input id="profileImage" type="file" accept="image/*" onChange={handleProfileImageChange} className="hidden" disabled={loading || uploadLoading} />
             </div>
           </div>
 
-          {/* Buyer Information Section */}
+          {/* Buyer Info */}
           <div className="border-b pb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Buyer Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="buyerType" className="text-gray-700 font-medium text-sm">
-                  Buyer Type
-                </Label>
-                <select
-                  id="buyerType"
-                  name="buyerType"
-                  value={buyerData.buyerType}
-                  onChange={handleBuyerInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.buyerType && fieldErrors.buyerType
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                >
+                <Label htmlFor="buyerType" className="text-gray-700 font-medium text-sm">Buyer Type</Label>
+                <select id="buyerType" name="buyerType" value={buyerData.buyerType} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.buyerType && fieldErrors.buyerType ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-green-500 focus:ring-green-500'}`} required>
                   <option value="">Select buyer type</option>
-                  {buyerTypeOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label.replace(/_/g, ' ')}
-                    </option>
-                  ))}
+                  {buyerTypeOptions.map(option => <option key={option.value} value={option.value}>{option.label.replace(/_/g, ' ')}</option>)}
                 </select>
-                {touched.buyerType && fieldErrors.buyerType && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.buyerType}
-                  </p>
-                )}
               </div>
             </div>
           </div>
 
-          {/* Location Section */}
+          {/* Location */}
           <div className="border-b pb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Location</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="province" className="text-gray-700 font-medium text-sm">
-                  Province
-                </Label>
-                <select
-                  id="province"
-                  name="province"
-                  value={buyerData.address.province}
-                  onChange={handleBuyerInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                >
+                <Label htmlFor="province" className="text-gray-700 font-medium text-sm">Province</Label>
+                <select id="province" name="province" value={buyerData.address.province} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-green-500 focus:ring-green-500'}`} required>
                   <option value="">Select province</option>
-                  {provinceOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label.replace(/_/g, ' ')}
-                    </option>
-                  ))}
+                  {provinceOptions.map(option => <option key={option.value} value={option.value}>{option.label.replace(/_/g, ' ')}</option>)}
                 </select>
-                {touched.province && fieldErrors.province && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.province}
-                  </p>
-                )}
               </div>
-
               <div>
-                <Label htmlFor="district" className="text-gray-700 font-medium text-sm">
-                  District
-                </Label>
-                <select
-                  id="district"
-                  name="district"
-                  value={buyerData.address.district}
-                  onChange={handleBuyerInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                    }`}
-                  required
-                >
+                <Label htmlFor="district" className="text-gray-700 font-medium text-sm">District</Label>
+                <select id="district" name="district" value={buyerData.address.district} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-green-500 focus:ring-green-500'}`} required>
                   <option value="">Select district</option>
-                  {districtOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
+                  {districtOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
                 </select>
-                {touched.district && fieldErrors.district && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                    {fieldErrors.district}
-                  </p>
-                )}
               </div>
             </div>
           </div>
 
-          {/* Terms and Submit */}
+          {/* Submit */}
           <div className="space-y-4">
-            <Button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
-              disabled={loading || uploadLoading}
-            >
-              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating account'}
+            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm" disabled={loading || uploadLoading}>
+              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
             </Button>
           </div>
         </form>
       </div>
 
-       {/* Hero Section */}
+      {/* Hero Section */}
       <div className="relative w-full h-full flex flex-col justify-center items-center text-center">
-        <Image
-          src="/Image.png"
-          alt="background"
-          fill
-          className="absolute right-0 top-0 object-cover w-full h-full"
-        />
-
-        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-          Buyer Registration
-        </h1>
-        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-          Join our agricultural marketplace and connect with farmers directly
-        </p>
+        <Image src="/Image.png" alt="background" fill className="absolute right-0 top-0 object-cover w-full h-full" />
+        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">Buyer Registration</h1>
+        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">Join our agricultural marketplace and connect with farmers directly</p>
       </div>
     </div>
   );

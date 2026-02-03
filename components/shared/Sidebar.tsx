@@ -274,6 +274,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         href: '/admin/dashboard',
                     },
                     {
+                        icon: <Wallet className="w-5 h-5" />,
+                        label: 'Wallets',
+                        href: '/admin/wallets',
+                    },
+                    {
                         icon: <Users className="w-5 h-5" />,
                         label: 'Users',
                         href: '/admin/users',
@@ -452,7 +457,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
 
             {/* Sidebar */}
             <div className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64  bg-gray-900 text-white flex flex-col h-screen overflow-y-scroll
+        fixed lg:static inset-y-0 left-0 z-50 w-64  bg-green-950 text-white flex flex-col h-screen overflow-y-scroll
         transform transition-transform duration-300 ease-in-out lg:transform-none
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
@@ -485,8 +490,8 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                 <button
                                     onClick={() => handleNavigation(item)}
                                     className={`w-full flex items-center gap-3 px-3 lg:px-4 py-2 lg:py-3 rounded-lg text-left transition-colors text-sm lg:text-base ${currentActive === item.label
-                                        ? 'bg-green-600 text-white'
-                                        : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                        ? 'bg-green-700 text-white'
+                                        : 'text-gray-300 hover:text-white hover:bg-green-800'
                                         }`}
                                 >
                                     {item.icon}
@@ -498,7 +503,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 </nav>
 
                 {/* Progress Circle - Hidden on mobile */}
-                <div className="hidden lg:block p-6 border-t border-gray-800">
+                {/* <div className="hidden lg:block p-6 border-t border-gray-800">
                     <div className="relative">
                         <button className="absolute top-2 right-2 text-gray-400 hover:text-white">
                             <X className="w-4 h-4" />
@@ -542,7 +547,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Dev Toggle & New User Guide */}
                 {currentUserType === UserType.FARMER && (
