@@ -1,18 +1,6 @@
-import { ApiResponse } from '@/types';
+import { ApiResponse, WalletDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
-
-export interface WalletDTO {
-  id: string;
-  userId: string;
-  userEmail: string;
-  userName: string;
-  balance: number;
-  currency: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export interface WalletDepositRequest {
   amount: number;

@@ -176,13 +176,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const farmer = getFarmer();
       const supplier = getSupplier();
       const buyer = getBuyer();
-
       if (token && user) {
         setUser(user);
 
         if (user.role === UserType.BUYER) {
           if (!buyer) {
             router.replace('/auth/buyer')
+            setLoading(false)
             return
           }
           setBuyer(buyer);
@@ -190,6 +190,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         if (user.role === UserType.FARMER) {
           if (!farmer) {
             router.replace('/auth/farmer')
+            setLoading(false)
             return
           }
           setFarmer(farmer);
@@ -197,6 +198,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         if (user.role === UserType.SUPPLIER) {
           if (!supplier) {
             router.replace('/auth/supplier')
+            setLoading(false)
             return
           }
           setSupplier(supplier);
