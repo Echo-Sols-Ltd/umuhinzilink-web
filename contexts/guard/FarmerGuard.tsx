@@ -6,18 +6,17 @@ import { useAuth } from '../AuthContext';
 import { UserType } from '@/types';
 
 const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading } = useAuth()
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        if (authLoading) return;
-        if (!user || user.role !== UserType.FARMER) {
+        if (loading || !user) return
+
+        if (user.role !== UserType.FARMER) {
           window.location.href = '/unauthorized';
           return;
         }
-        setLoading(false);
       } catch (error) {
         console.error('Authorization error:', error);
         window.location.href = '/unauthorized';
@@ -25,7 +24,7 @@ const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
 
     checkAuth();
-  }, [user, authLoading]);
+  }, [user, loading]);
 
   if (loading) {
     return (

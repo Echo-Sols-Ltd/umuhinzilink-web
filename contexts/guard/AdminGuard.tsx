@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useAuth } from '../AuthContext';
 
 const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-  const { isValidAdmin, startFetchingResources } = useAdmin();
+  const { startFetchingResources } = useAdmin();
+
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        if (!isValidAdmin()) {
+        if (loading||!user) return
+        if (user.role !== 'ADMIN') {
           window.location.href = '/unauthorized';
           return;
         }
         await startFetchingResources();
-        setLoading(false);
       } catch (error) {
         console.error('Authorization error:', error);
       }
     };
 
     checkAuth();
-  }, [isValidAdmin, startFetchingResources]);
+  }, [loading, startFetchingResources, user]);
 
   if (loading) {
     return (

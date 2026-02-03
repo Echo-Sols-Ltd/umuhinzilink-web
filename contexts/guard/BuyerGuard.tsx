@@ -13,13 +13,14 @@ export default function BuyerGuard(props: {
     const [isVerified, setIsVerified] = useState(false);
 
     useEffect(() => {
-        if (!loading) {
-            if (!user || user.role !== UserType.BUYER) {
-                router.push('/unauthorized');
-            } else {
-                setIsVerified(true);
-            }
+        if (loading || !user) return
+
+        if (user.role !== UserType.BUYER) {
+            router.push('/unauthorized');
+        } else {
+            setIsVerified(true);
         }
+
     }, [user, loading]);
 
     if (!isVerified) {

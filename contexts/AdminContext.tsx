@@ -12,7 +12,7 @@ interface AdminContextType {
   supplierProducts: SupplierProduct[];
   farmerOrders: FarmerOrder[];
   supplierOrders: SupplierOrder[];
-  systemTransactions:WalletTransactionDTO[]
+  systemTransactions: WalletTransactionDTO[]
   products: (FarmerProduct | SupplierProduct)[]; // Aggregate for dashboard/generic views
   orders: (FarmerOrder | SupplierOrder)[]; // Aggregate for dashboard/generic views
   loading: boolean;
@@ -42,7 +42,6 @@ interface AdminContextType {
     cancelledCount: number;
   };
   startFetchingResources: () => Promise<void>;
-  isValidAdmin: () => boolean;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -242,11 +241,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     await fetchAllData(user);
   }, [user, fetchAllData]);
 
-  const isValidAdmin = useCallback(() => {
 
-    if (!user) return false
-    return user.role === 'ADMIN';
-  }, [user]);
 
   // Fetch data on mount and when user changes
   useEffect(() => {
@@ -276,7 +271,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         productStats,
         orderStats,
         startFetchingResources,
-        isValidAdmin,
       }}
     >
       {children}
