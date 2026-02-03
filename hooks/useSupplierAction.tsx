@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { supplierService, SupplierProductRequest } from '@/services/suppliers';
 import { SupplierProduct, SupplierOrder, ApiResponse } from '@/types';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 export const useSupplierAction = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const { toast } = useToast()
   // Product Management Actions
   const createProduct = async (productData: SupplierProductRequest): Promise<SupplierProduct | null> => {
     setLoading(true);
@@ -17,6 +17,7 @@ export const useSupplierAction = () => {
         toast({
           title: "Success",
           description: "Product created successfully",
+          variant: 'success'
         });
         return response.data;
       } else {
@@ -28,7 +29,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return null;
     } finally {
@@ -52,7 +53,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return [];
     } finally {
@@ -81,7 +82,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return null;
     } finally {
@@ -114,7 +115,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return null;
     } finally {
@@ -131,6 +132,7 @@ export const useSupplierAction = () => {
         toast({
           title: "Success",
           description: "Product updated successfully",
+          variant: 'success'
         });
         return response.data;
       } else {
@@ -142,7 +144,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return null;
     } finally {
@@ -159,6 +161,7 @@ export const useSupplierAction = () => {
         toast({
           title: "Success",
           description: "Product deleted successfully",
+          variant: 'success'
         });
         return true;
       } else {
@@ -170,7 +173,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return false;
     } finally {
@@ -195,7 +198,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return [];
     } finally {
@@ -212,6 +215,7 @@ export const useSupplierAction = () => {
         toast({
           title: "Success",
           description: "Order accepted successfully",
+          variant: 'success'
         });
         return response.data;
       } else {
@@ -223,7 +227,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return null;
     } finally {
@@ -240,6 +244,7 @@ export const useSupplierAction = () => {
         toast({
           title: "Success",
           description: "Order rejected successfully",
+          variant: 'success'
         });
         return response.data;
       } else {
@@ -251,7 +256,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return null;
     } finally {
@@ -268,6 +273,7 @@ export const useSupplierAction = () => {
         toast({
           title: "Success",
           description: "Order status updated successfully",
+          variant: 'success'
         });
         return response.data;
       } else {
@@ -279,7 +285,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return null;
     } finally {
@@ -304,7 +310,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return null;
     } finally {
@@ -328,7 +334,7 @@ export const useSupplierAction = () => {
       toast({
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: 'error',
       });
       return [];
     } finally {
