@@ -89,7 +89,7 @@ export class WalletService {
     size?: number;
     sortBy?: string;
     sortDir?: string;
-  }): Promise<ApiResponse< WalletDTO[]>  > {
+  }): Promise<ApiResponse<WalletDTO[]>> {
     const queryParams = new URLSearchParams();
     if (params?.page !== undefined) queryParams.append('page', params.page.toString());
     if (params?.size !== undefined) queryParams.append('size', params.size.toString());
@@ -97,7 +97,7 @@ export class WalletService {
     if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
 
     const url = `${API_ENDPOINTS.WALLET.ADMIN_ALL_WALLETS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await apiClient.get(url);
+    return await apiClient.get<WalletDTO[]>(url);
   }
 
   // Admin: Get all transactions (paginated)
@@ -136,7 +136,7 @@ export class WalletService {
     size?: number;
     sortBy?: string;
     sortDir?: string;
-  }): Promise<ApiResponse< WalletTransactionDTO[]>> {
+  }): Promise<ApiResponse<WalletTransactionDTO[]>> {
     const queryParams = new URLSearchParams();
     if (params?.page !== undefined) queryParams.append('page', params.page.toString());
     if (params?.size !== undefined) queryParams.append('size', params.size.toString());
