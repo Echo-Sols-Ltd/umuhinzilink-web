@@ -21,7 +21,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
-import { useToast } from '@/components/ui/use-toast-new';
+import { useToast } from '@/components/ui/use-toast';
 import { adminService } from '@/services/admin';
 import {
     Select,

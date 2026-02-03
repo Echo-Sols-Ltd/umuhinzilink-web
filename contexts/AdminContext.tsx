@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
-import { useToast } from '@/components/ui/use-toast-new';
+import { useToast } from '@/components/ui/use-toast';
 import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO } from '@/types';
 
 interface AdminContextType {

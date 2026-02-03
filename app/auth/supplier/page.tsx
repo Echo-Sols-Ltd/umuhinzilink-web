@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
 import { SupplierRequest, SupplierType, Address, Province, District } from '@/types';
@@ -25,7 +25,7 @@ export default function SupplierSignUp() {
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string>('');
-
+const {toast}=useToast()
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },

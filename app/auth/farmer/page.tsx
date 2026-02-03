@@ -7,9 +7,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
 import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, District, RwandaCrop } from '@/types';
@@ -25,6 +24,7 @@ export default function FarmerSignUp() {
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string>('');
+  const { toast } = useToast()
 
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
@@ -269,7 +269,7 @@ export default function FarmerSignUp() {
 
   // Common Rwanda crops for selection
 
-   const farmSizeOptions = ['SMALLHOLDER', 'MEDIUM', 'LARGE'];
+  const farmSizeOptions = ['SMALLHOLDER', 'MEDIUM', 'LARGE'];
   const experienceLevelOptions = ['LESS_THAN_1Y', '1_TO_3Y', 'MORE_THAN_3Y'];
   const provinceOptions = ['KIGALI_CITY', 'EAST', 'WEST', 'NORTH', 'SOUTH'];
   const districtOptions = ['GASABO', 'KANOMBE', 'NYARUGENGE', 'KICUKIRO'];
@@ -278,9 +278,9 @@ export default function FarmerSignUp() {
 
   return (
     <div className="w-full h-screen bg-gray-50 flex  items-center">
-  
 
-   <div className="w-full h-full bg-white shadow-lg rounded-xl p-6 sm:p-8 overflow-scroll z-20 relative">
+
+      <div className="w-full h-full bg-white shadow-lg rounded-xl p-6 sm:p-8 overflow-scroll z-20 relative">
         <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
           Create Your Farmer Account
         </h1>
@@ -381,7 +381,7 @@ export default function FarmerSignUp() {
         </form>
       </div>
 
-          {/* Hero Section */}
+      {/* Hero Section */}
       <div className="relative w-full h-full flex flex-col justify-center items-center text-center">
         <Image
           src="/Image.png"

@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { BuyerRequest, BuyerType, Province, District } from '@/types';
 import { buyerTypeOptions, provinceOptions, districtOptions } from '@/types/enums';
@@ -17,7 +17,7 @@ import useUserAction from '@/hooks/useUserAction';
 export default function BuyerSignUp() {
   const { registerBuyer, user } = useAuth();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
-
+  const { toast } = useToast()
   const [buyerData, setBuyerData] = useState<BuyerRequest>({
     userId: user?.id!,
     buyerType: BuyerType.INDIVIDUAL,

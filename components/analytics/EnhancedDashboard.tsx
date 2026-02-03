@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select';
 import { InteractiveChart, ChartDataPoint } from './InteractiveChart';
 import { analyticsService, DashboardMetrics, AnalyticsFilters } from '@/services/analytics';
-import { toast } from '@/components/ui/use-toast-new';
+import { toast } from '@/components/ui/use-toast';
 
 export interface EnhancedDashboardProps {
   userRole: 'farmer' | 'buyer' | 'supplier' | 'admin' | 'government';
@@ -100,7 +100,7 @@ export function EnhancedDashboard({
     } catch (err) {
       console.error('Failed to fetch dashboard metrics:', err);
       setError('Failed to load dashboard data');
-      
+
       // Always provide fallback metrics to prevent crashes
       const fallbackMetrics = processFallbackMetrics();
       setMetrics(fallbackMetrics);
@@ -113,7 +113,7 @@ export function EnhancedDashboard({
   const processFallbackMetrics = (): DashboardMetrics => {
     const safeOrders = orders || [];
     const safeProducts = products || [];
-    
+
     const calculatedMetrics = analyticsService.calculateMetrics(safeOrders, safeProducts);
     const revenueData = analyticsService.processRevenueData(safeOrders, filters.period || '30d');
     const productPerformance = analyticsService.processProductPerformance(safeProducts, safeOrders);
@@ -125,7 +125,7 @@ export function EnhancedDashboard({
       totalProducts: safeProducts.length || 0,
       activeProducts: safeProducts.filter(p => p?.productStatus?.toLowerCase() === 'in_stock').length || 0,
       pendingOrders: safeOrders.filter(o => o?.status?.toLowerCase() === 'pending').length || 0,
-      completedOrders: safeOrders.filter(o => 
+      completedOrders: safeOrders.filter(o =>
         ['completed', 'delivered'].includes(o?.status?.toLowerCase() || '')
       ).length || 0,
       uniqueCustomers: new Set(safeOrders.map(o => o?.buyer?.id || o?.buyer?.email).filter(Boolean)).size || 0,
@@ -133,7 +133,7 @@ export function EnhancedDashboard({
       monthlyRevenue: (revenueData || []).map(d => ({
         month: d?.name || 'Unknown',
         revenue: d?.value || 0,
-        orders: safeOrders.filter(o => 
+        orders: safeOrders.filter(o =>
           o?.createdAt && new Date(o.createdAt).toLocaleDateString() === d?.name
         ).length || 0,
       })),

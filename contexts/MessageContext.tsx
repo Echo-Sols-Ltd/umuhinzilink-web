@@ -4,7 +4,7 @@ import { User } from '@/types/user';
 import { messageService } from '@/services/messages';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 export interface Conversation {
   id: string;
@@ -21,7 +21,7 @@ export interface MessageContextValue {
   loading: boolean;
   error: string | null;
   onlineUsers: Set<number>;
-  
+
   // Actions
   setActiveConversation: (conversation: Conversation | null) => void;
   sendMessage: (content: string, type?: MessageType, fileName?: string, replyToId?: number) => Promise<void>;
@@ -30,7 +30,7 @@ export interface MessageContextValue {
   loadConversation: (userId: string) => Promise<void>;
   markAsRead: (conversationId: string) => void;
   startNewConversation: (user: User) => void;
-  
+
   // Typing indicators
   isTyping: boolean;
   setIsTyping: (typing: boolean) => void;
@@ -42,7 +42,7 @@ const MessageContext = createContext<MessageContextValue | undefined>(undefined)
 export function MessageProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const socket = useSocket();
-  
+  const { toast } = useToast()
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
   const [loading, setLoading] = useState(false);
@@ -55,18 +55,18 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const handleIncomingMessage = useCallback((message: Message) => {
     setConversations(prev => {
       const updated = [...prev];
-      const conversationIndex = updated.findIndex(conv => 
+      const conversationIndex = updated.findIndex(conv =>
         conv.participant.id === message.sender.id.toString() || conv.participant.id === message.receiver.id.toString()
       );
-      
+
       if (conversationIndex >= 0) {
         // Update existing conversation
         updated[conversationIndex] = {
           ...updated[conversationIndex],
           messages: [...updated[conversationIndex].messages, message],
           lastMessage: message,
-          unreadCount: message.sender.id.toString() !== user?.id 
-            ? updated[conversationIndex].unreadCount + 1 
+          unreadCount: message.sender.id.toString() !== user?.id
+            ? updated[conversationIndex].unreadCount + 1
             : updated[conversationIndex].unreadCount
         };
       } else {
@@ -81,16 +81,16 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
           isLoading: false
         });
       }
-      
+
       return updated;
     });
 
     // Update active conversation if it matches
     if (activeConversation) {
-      const isActiveConversation = 
-        activeConversation.participant.id === message.sender.id.toString() || 
+      const isActiveConversation =
+        activeConversation.participant.id === message.sender.id.toString() ||
         activeConversation.participant.id === message.receiver.id.toString();
-      
+
       if (isActiveConversation) {
         setActiveConversation(prev => prev ? {
           ...prev,
@@ -103,10 +103,10 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
   // Handle message editing
   const handleMessageEdited = useCallback((editedMessage: Message) => {
-    setConversations(prev => 
+    setConversations(prev =>
       prev.map(conv => ({
         ...conv,
-        messages: conv.messages.map(msg => 
+        messages: conv.messages.map(msg =>
           msg.id === editedMessage.id ? editedMessage : msg
         ),
         lastMessage: conv.lastMessage?.id === editedMessage.id ? editedMessage : conv.lastMessage
@@ -116,7 +116,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     if (activeConversation) {
       setActiveConversation(prev => prev ? {
         ...prev,
-        messages: prev.messages.map(msg => 
+        messages: prev.messages.map(msg =>
           msg.id === editedMessage.id ? editedMessage : msg
         )
       } : null);
@@ -125,12 +125,12 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
   // Handle message deletion
   const handleMessageDeleted = useCallback((messageId: number) => {
-    setConversations(prev => 
+    setConversations(prev =>
       prev.map(conv => ({
         ...conv,
         messages: conv.messages.filter(msg => msg.id !== messageId),
-        lastMessage: conv.lastMessage?.id === messageId 
-          ? conv.messages[conv.messages.length - 2] || undefined 
+        lastMessage: conv.lastMessage?.id === messageId
+          ? conv.messages[conv.messages.length - 2] || undefined
           : conv.lastMessage
       }))
     );
@@ -168,16 +168,16 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   // Load conversation messages
   const loadConversation = async (userId: string) => {
     if (!user?.id) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await messageService.getConversation(user.id, userId);
-      
+
       if (response.success && response.data) {
         const chatMessages = response.data;
-        
+
         // Convert ChatMessage[] to Message[] (mock conversion for now)
         const messages: Message[] = chatMessages.map(chatMsg => ({
           id: parseInt(chatMsg.id),
@@ -216,25 +216,25 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
           type: chatMsg.messageType as MessageType,
           edited: false
         }));
-        
-        const participant = messages.length > 0 
+
+        const participant = messages.length > 0
           ? (messages[0].sender.id === userId ? messages[0].sender : messages[0].receiver)
           : {
-              id: userId,
-              names: `User ${userId}`,
-              email: `user${userId}@example.com`,
-              role: 'FARMER' as any,
-              phoneNumber: '',
-              avatar: '',
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              lastLogin: '',
-              verified: true,
-              address: { province: 'KIGALI_CITY' as any, district: 'GASABO' as any },
-              password: '',
-              language: 'ENGLISH' as any
-            };
-        
+            id: userId,
+            names: `User ${userId}`,
+            email: `user${userId}@example.com`,
+            role: 'FARMER' as any,
+            phoneNumber: '',
+            avatar: '',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            lastLogin: '',
+            verified: true,
+            address: { province: 'KIGALI_CITY' as any, district: 'GASABO' as any },
+            password: '',
+            language: 'ENGLISH' as any
+          };
+
         if (participant) {
           const conversation: Conversation = {
             id: `${Math.min(parseInt(user.id), parseInt(userId))}-${Math.max(parseInt(user.id), parseInt(userId))}`,
@@ -244,9 +244,9 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
             messages,
             isLoading: false
           };
-          
+
           setActiveConversation(conversation);
-          
+
           // Update conversations list
           setConversations(prev => {
             const existing = prev.find(c => c.participant.id === userId);
@@ -275,13 +275,13 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
   // Send message
   const sendMessage = async (
-    content: string, 
-    type: MessageType = MessageType.TEXT, 
-    fileName?: string, 
+    content: string,
+    type: MessageType = MessageType.TEXT,
+    fileName?: string,
     replyToId?: number
   ) => {
     if (!user?.id || !activeConversation || !socket) return;
-    
+
     try {
       const messageRequest: SendMessageRequest = {
         content,
@@ -291,7 +291,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         fileName,
         replyToId
       };
-      
+
       socket.sendMessage(messageRequest);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
@@ -306,13 +306,13 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   // Edit message
   const editMessage = async (messageId: number, newContent: string) => {
     if (!socket) return;
-    
+
     try {
       const editRequest: EditMessageRequest = {
         id: messageId,
         newMessage: newContent
       };
-      
+
       socket.messageEdition(editRequest);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to edit message';
@@ -327,7 +327,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   // Delete message
   const deleteMessage = async (messageId: number) => {
     if (!socket) return;
-    
+
     try {
       socket.messageDeletion(messageId);
     } catch (err) {
@@ -342,8 +342,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
   // Mark conversation as read
   const markAsRead = (conversationId: string) => {
-    setConversations(prev => 
-      prev.map(conv => 
+    setConversations(prev =>
+      prev.map(conv =>
         conv.id === conversationId ? { ...conv, unreadCount: 0 } : conv
       )
     );
@@ -352,10 +352,10 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   // Start new conversation
   const startNewConversation = (participant: User) => {
     if (!user?.id) return;
-    
+
     const conversationId = `${Math.min(parseInt(user.id), parseInt(participant.id))}-${Math.max(parseInt(user.id), parseInt(participant.id))}`;
     const existingConversation = conversations.find(c => c.id === conversationId);
-    
+
     if (existingConversation) {
       setActiveConversation(existingConversation);
     } else {
@@ -366,7 +366,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         messages: [],
         isLoading: false
       };
-      
+
       setConversations(prev => [...prev, newConversation]);
       setActiveConversation(newConversation);
     }

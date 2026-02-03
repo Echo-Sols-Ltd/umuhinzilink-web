@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react'
 import { useAuth } from './AuthContext'
 import { User } from '@/types'
-import { toast } from '@/components/ui/use-toast'
+import { useToast } from '@/components/ui/use-toast'
 import { useOrder } from './OrderContext'
 import { useProduct } from './ProductContext'
 
@@ -26,7 +26,7 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const { fetchFarmerOrders, fetchFarmerBuyerOrders } = useOrder()
   const { fetchFarmerProducts, fetchFarmerBuyerProducts, fetchFarmerStats } = useProduct()
-
+  const {toast } = useToast()
   const fetchAllData = useCallback(async (user: User) => {
     if (!user) return
 

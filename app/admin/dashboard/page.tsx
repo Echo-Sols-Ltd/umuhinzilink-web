@@ -21,7 +21,7 @@ import {
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAdmin } from '@/contexts/AdminContext';
-import { toast } from '@/components/ui/use-toast-new';
+import { toast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
 import { AdminPages, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';

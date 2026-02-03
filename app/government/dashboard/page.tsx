@@ -48,7 +48,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserType } from '@/types/enums';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { useGovernment } from '@/contexts/GovernmentContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { GovernmentPages } from '@/types';
@@ -78,7 +78,7 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
   const { error, handleError, clearError, retry } = useErrorHandler();
-
+  const { toast } = useToast()
   const {
     users,
     supplierProducts,

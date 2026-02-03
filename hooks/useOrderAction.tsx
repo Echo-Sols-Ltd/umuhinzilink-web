@@ -4,10 +4,11 @@ import { orderService } from '@/services/orders';
 import { paymentService } from '@/services/payments';
 import { useOrder } from '@/contexts/OrderContext';
 import { useWallet } from '@/contexts/WalletContext';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast'
 
 export default function useOrderAction() {
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast()
   const {
     addFarmerOrder,
     addFarmerBuyerOrder,
@@ -43,6 +44,7 @@ export default function useOrderAction() {
       toast({
         title: 'Order created successfully',
         description: 'Initiating payment...',
+        variant:'success'
       });
 
     } catch (err: unknown) {
@@ -84,6 +86,7 @@ export default function useOrderAction() {
       toast({
         title: 'Order created successfully',
         description: 'Initiating payment...',
+        variant:'success'
       });
 
     } catch (err: unknown) {
@@ -125,6 +128,7 @@ export default function useOrderAction() {
       toast({
         title: 'Order accepted successfully',
         description: 'Order accepted successfully',
+        variant:'success'
       });
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to accept order';
@@ -166,6 +170,7 @@ export default function useOrderAction() {
       toast({
         title: 'Order accepted successfully',
         description: 'Order accepted successfully',
+        variant:'success'
       });
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to accept order';
@@ -207,6 +212,7 @@ export default function useOrderAction() {
       toast({
         title: 'Order cancelled successfully',
         description: 'Order cancelled successfully',
+        variant:'success'
       });
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to cancel order';
@@ -248,6 +254,7 @@ export default function useOrderAction() {
       toast({
         title: 'Order cancelled successfully',
         description: 'Order cancelled successfully',
+        variant:'success'
       });
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to cancel order';
@@ -289,6 +296,7 @@ export default function useOrderAction() {
       toast({
         title: 'Order status updated successfully',
         description: 'Order status updated successfully',
+        variant:'success'
       });
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update order status';
@@ -330,6 +338,7 @@ export default function useOrderAction() {
       toast({
         title: 'Order status updated successfully',
         description: 'Order status updated successfully',
+        variant:'success'
       });
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update order status';
@@ -351,6 +360,7 @@ export default function useOrderAction() {
         toast({
           title: 'Wallet Payment',
           description: 'Processing payment from your wallet...',
+          variant:'loading'
         });
 
         const res = await payWithWallet(orderId, 'Order Payment');
@@ -371,6 +381,7 @@ export default function useOrderAction() {
         toast({
           title: 'Payment successful',
           description: 'Your payment has been processed successfully.',
+          variant:'success'
         });
         fetchFarmerBuyerOrders();
         return res.data;
@@ -378,6 +389,7 @@ export default function useOrderAction() {
         toast({
           title: 'Payment failed',
           description: res.message || 'We could not process your payment.',
+          variant:'error'
         });
         return null;
       }

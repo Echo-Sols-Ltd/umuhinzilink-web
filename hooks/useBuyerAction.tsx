@@ -1,9 +1,10 @@
-import { toast } from '@/components/ui/use-toast';
+import { useToast} from '@/components/ui/use-toast';
 import { buyerService } from '@/services/buyers';
 import { useState } from 'react';
 
 export default function useBuyerAction() {
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast()
 
   const bookmarkProduct = async (id: string) => {
     setLoading(true);
@@ -19,6 +20,7 @@ export default function useBuyerAction() {
       toast({
         title: 'Product bookmarked',
         description: 'Product has been bookmarked successfully',
+        variant:'success'
       });
     } catch {
       toast({

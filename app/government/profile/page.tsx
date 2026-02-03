@@ -7,12 +7,13 @@ import { GovernmentPages } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
 function GovernmentProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast()
   
   // Mock user data - replace with actual user data from auth context
   const [profileData, setProfileData] = useState({
@@ -33,7 +34,7 @@ function GovernmentProfile() {
     try {
       // TODO: Implement profile update API call
       // await userService.updateProfile(editData);
-      
+
       setProfileData({ ...editData });
       setIsEditing(false);
       toast({
@@ -255,7 +256,7 @@ function GovernmentProfile() {
           </div>
         </div>
       </div>
-        </GovernmentLayout>
+    </GovernmentLayout>
   );
 }
 

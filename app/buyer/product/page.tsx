@@ -16,7 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast-new';
+import { useToast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';

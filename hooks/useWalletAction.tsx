@@ -1,23 +1,24 @@
 import { useState } from 'react';
 import { useWallet } from '@/contexts/WalletContext';
 import { PaymentRequest } from '@/types/wallet';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function useWalletAction() {
   const [loading, setLoading] = useState(false);
-  const { 
-    deposit, 
-    payOrder, 
-    processPayment, 
+  const { toast } = useToast()
+  const {
+    deposit,
+    payOrder,
+    processPayment,
     getPaymentStatus,
-    refreshWalletData 
+    refreshWalletData
   } = useWallet();
 
   const handleDeposit = async (amount: number, description?: string) => {
     try {
       setLoading(true);
       const result = await deposit(amount, description);
-      
+
       if (result) {
         // Refresh wallet data to get updated balance
         await refreshWalletData();
@@ -41,7 +42,7 @@ export default function useWalletAction() {
     try {
       setLoading(true);
       const result = await payOrder(orderId, description);
-      
+
       if (result) {
         // Refresh wallet data to get updated balance
         await refreshWalletData();
@@ -65,7 +66,7 @@ export default function useWalletAction() {
     try {
       setLoading(true);
       const result = await processPayment(request);
-      
+
       if (result) {
         // Refresh wallet data in case it affects wallet balance
         await refreshWalletData();

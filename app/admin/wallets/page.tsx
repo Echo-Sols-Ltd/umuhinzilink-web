@@ -6,7 +6,7 @@ import { UserType } from '@/types/enums';
 import { walletService } from '@/services/wallet';
 import { WalletDTO, WalletTransactionDTO } from '@/types/wallet';
 import { Wallet, Search, Loader2, ChevronLeft, ChevronRight, Eye, X } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import {useToast} from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
 import { useAdmin } from '@/contexts/AdminContext';
 
@@ -22,7 +22,7 @@ export default function AdminWalletsPage() {
     const [userTransactions, setUserTransactions] = useState<WalletTransactionDTO[]>([]);
     const [loadingTransactions, setLoadingTransactions] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const { } = useAdmin()
+    const { toast} = useToast()
 
     // Fetch all wallets
     const fetchWallets = async () => {

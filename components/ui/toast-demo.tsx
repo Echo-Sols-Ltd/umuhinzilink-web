@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from './button';
-import { toast } from './use-toast-new';
+import { toast } from './use-toast';
 
 export const ToastDemo: React.FC = () => {
   const handleSuccessToast = () => {
@@ -77,32 +77,32 @@ export const ToastDemo: React.FC = () => {
   return (
     <div className="p-6 space-y-4">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Modal Toast Demo</h2>
-      
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <Button onClick={handleSuccessToast} variant="default" className="bg-green-600 hover:bg-green-700">
           Success Toast
         </Button>
-        
+
         <Button onClick={handleErrorToast} variant="destructive">
           Error Toast
         </Button>
-        
+
         <Button onClick={handleWarningToast} className="bg-yellow-600 hover:bg-yellow-700">
           Warning Toast
         </Button>
-        
+
         <Button onClick={handleInfoToast} className="bg-blue-600 hover:bg-blue-700">
           Info Toast
         </Button>
-        
+
         <Button onClick={handleLoadingToast} variant="outline">
           Loading Toast
         </Button>
-        
+
         <Button onClick={handleActionToast} className="bg-purple-600 hover:bg-purple-700">
           Action Toast
         </Button>
-        
+
         <Button onClick={handleLongMessageToast} variant="outline" className="col-span-2">
           Long Message Toast
         </Button>

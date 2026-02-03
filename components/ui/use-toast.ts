@@ -1,102 +1,131 @@
 'use client';
 
-import { toast as hotToast, ToastOptions as HotToastOptions } from 'react-hot-toast';
+import React, { useState, useCallback } from 'react';
 
-// Extended options to support title and variant
-interface ToastOptions extends HotToastOptions {
+export interface ToastData {
+  id: string;
   title?: string;
-  variant?: 'default' | 'success' | 'error' | 'warning';
-  description?: string;
+  description: string;
+  variant: 'default' | 'success' | 'error' | 'warning' | 'loading';
+  duration?: number;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  onClose?: () => void;
 }
 
-type ToastFunction = (message: string | ToastOptions, options?: ToastOptions) => string;
+// Global toast state
+let globalToasts: ToastData[] = [];
+let globalListeners: Array<(toasts: ToastData[]) => void> = [];
 
-interface ToastWithMethods extends ToastFunction {
-  success: ToastFunction;
-  error: ToastFunction;
-  loading: ToastFunction;
-  dismiss: (toastId?: string) => void;
-  remove: (toastId?: string) => void;
-  promise: typeof hotToast.promise;
-}
-
-const createToastOptions = (options: ToastOptions = {}): ToastOptions => ({
-  duration: 4000,
-  position: 'top-right',
-  ...options,
-});
-
-const toast = ((message: string | ToastOptions, options: ToastOptions = {}) => {
-  if (typeof message === 'object') {
-    options = message;
-    message = options.description || '';
-  }
-
-  const toastOptions = createToastOptions(options);
-
-  if (options.variant === 'success') {
-    return hotToast.success(message, toastOptions);
-  } else if (options.variant === 'error') {
-    return hotToast.error(message, toastOptions);
-  } else if (options.variant === 'warning') {
-    return hotToast(message, { ...toastOptions, icon: '⚠️' });
-  } else {
-    return hotToast(message, toastOptions);
-  }
-}) as ToastWithMethods;
-
-toast.success = (message: string | ToastOptions, options: ToastOptions = {}) => {
-  if (typeof message === 'object') {
-    options = { ...message, variant: 'success' };
-    message = options.description || '';
-  }
-  return hotToast.success(message, createToastOptions({ ...options, variant: 'success' }));
+const notifyListeners = () => {
+  globalListeners.forEach(listener => listener([...globalToasts]));
 };
 
-toast.error = (message: string | ToastOptions, options: ToastOptions = {}) => {
-  if (typeof message === 'object') {
-    options = { ...message, variant: 'error' };
-    message = options.description || '';
+const addGlobalToast = (toastData: Omit<ToastData, 'id'>) => {
+  const id = Math.random().toString(36).substr(2, 9);
+  const newToast: ToastData = {
+    id,
+    duration: 5000,
+    ...toastData,
+  };
+
+  globalToasts = [...globalToasts, newToast];
+  notifyListeners();
+
+  // Auto-remove toast after duration (except loading toasts)
+  if (newToast.duration && newToast.duration > 0 && newToast.variant !== 'loading') {
+    setTimeout(() => {
+      removeGlobalToast(id);
+    }, newToast.duration);
   }
-  return hotToast.error(message, createToastOptions({ ...options, variant: 'error' }));
+
+  return id;
 };
 
-toast.loading = (message: string | ToastOptions, options: ToastOptions = {}) => {
-  if (typeof message === 'object') {
-    options = message;
-    message = options.description || '';
-  }
-  return hotToast.loading(message, createToastOptions(options));
+const removeGlobalToast = (id: string) => {
+  globalToasts = globalToasts.filter(toast => toast.id !== id);
+  notifyListeners();
 };
 
-toast.dismiss = hotToast.dismiss;
-toast.remove = hotToast.remove;
-toast.promise = hotToast.promise;
+const clearAllGlobalToasts = () => {
+  globalToasts = [];
+  notifyListeners();
+};
 
-// For backward compatibility
-export const useToast = () => ({
-  toast: (message: string | ToastOptions, options: ToastOptions = {}) => {
-    if (typeof message === 'object') {
-      options = message;
-      message = options.description || '';
-    }
+// Hook for managing toasts
+export const useToast = () => {
+  const [toasts, setToasts] = useState<ToastData[]>(globalToasts);
 
-    const { type = 'default', ...rest } = options as {
-      type?: 'default' | 'success' | 'error' | 'loading';
-    } & Omit<ToastOptions, 'type'>;
+  // Subscribe to global toast changes
+  const subscribe = useCallback((listener: (toasts: ToastData[]) => void) => {
+    globalListeners.push(listener);
+    return () => {
+      globalListeners = globalListeners.filter(l => l !== listener);
+    };
+  }, []);
 
-    switch (type) {
-      case 'success':
-        return toast.success(message, { ...rest, variant: 'success' });
-      case 'error':
-        return toast.error(message, { ...rest, variant: 'error' });
-      case 'loading':
-        return toast.loading(message, rest);
-      default:
-        return toast(message, rest);
-    }
-  },
-  dismiss: toast.dismiss,
-});
+  // Subscribe to changes when component mounts
+  React.useEffect(() => {
+    const unsubscribe = subscribe(setToasts);
+    return unsubscribe;
+  }, [subscribe]);
 
-export { toast };
+  const toast = useCallback((data: Omit<ToastData, 'id'>) => {
+    return addGlobalToast(data);
+  }, []);
+
+  const dismiss = useCallback((id: string) => {
+    removeGlobalToast(id);
+  }, []);
+
+  const dismissAll = useCallback(() => {
+    clearAllGlobalToasts();
+  }, []);
+
+  return {
+    toasts,
+    toast,
+    dismiss,
+    dismissAll,
+    // Convenience methods
+    success: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      toast({ ...options, description, variant: 'success' }), [toast]),
+    
+    error: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      toast({ ...options, description, variant: 'error' }), [toast]),
+    
+    warning: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      toast({ ...options, description, variant: 'warning' }), [toast]),
+    
+    info: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      toast({ ...options, description, variant: 'default' }), [toast]),
+    
+    loading: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      toast({ ...options, description, variant: 'loading', duration: 0 }), [toast]),
+  };
+};
+
+// Standalone toast functions that can be used without hooks
+export const toast = {
+  success: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) =>
+    addGlobalToast({ ...options, description, variant: 'success' }),
+  
+  error: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) =>
+    addGlobalToast({ ...options, description, variant: 'error' }),
+  
+  warning: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) =>
+    addGlobalToast({ ...options, description, variant: 'warning' }),
+  
+  info: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) =>
+    addGlobalToast({ ...options, description, variant: 'default' }),
+  
+  loading: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) =>
+    addGlobalToast({ ...options, description, variant: 'loading', duration: 0 }),
+  
+  custom: (data: Omit<ToastData, 'id'>) => addGlobalToast(data),
+  
+  dismiss: removeGlobalToast,
+  dismissAll: clearAllGlobalToasts,
+};

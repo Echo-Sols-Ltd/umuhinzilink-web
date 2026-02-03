@@ -1,4 +1,4 @@
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import axios, { isAxiosError, isCancel } from 'axios';
 import { userService } from '@/services/users';
 import { useState } from 'react';
@@ -7,6 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function useUserAction() {
   const { updateAvatar } = useAuth();
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast()
+
   const [uploadingFiles, setUploadingFiles] = useState<
     { file: File; progress: number; cancel: () => void }[]
   >([]);
@@ -34,6 +36,7 @@ export default function useUserAction() {
         toast({
           title: 'Upload successful',
           description: `File ${file} uploaded successfully`,
+          variant: 'success'
         });
       }
       setLoading(false);
@@ -43,6 +46,7 @@ export default function useUserAction() {
         toast({
           title: 'Upload cancelled',
           description: `Upload for ${file} was cancelled`,
+          variant: 'error'
         });
       } else if (isAxiosError(error)) {
         toast({

@@ -457,7 +457,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
 
             {/* Sidebar */}
             <div className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64  bg-green-950 text-white flex flex-col h-screen overflow-y-scroll
+        fixed lg:static inset-y-0 left-0 z-50 w-64  bg-green-950 pb-20 text-white flex flex-col h-screen overflow-y-scroll
         transform transition-transform duration-300 ease-in-out lg:transform-none
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>

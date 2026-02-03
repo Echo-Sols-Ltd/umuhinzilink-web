@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  Settings, 
-  Bell, 
-  Shield, 
-  Globe, 
-  Moon, 
-  Sun, 
-  Lock, 
-  Eye, 
+import {
+  Settings,
+  Bell,
+  Shield,
+  Globe,
+  Moon,
+  Sun,
+  Lock,
+  Eye,
   EyeOff,
   Smartphone,
   Mail,
@@ -21,7 +21,7 @@ import { GovernmentPages } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
 function GovernmentSettings() {
@@ -29,7 +29,7 @@ function GovernmentSettings() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const { toast } = useToast()
   // Settings state
   const [settings, setSettings] = useState({
     // Notification Settings
@@ -37,16 +37,16 @@ function GovernmentSettings() {
     pushNotifications: true,
     smsAlerts: false,
     weeklyReports: true,
-    
+
     // Security Settings
     twoFactorAuth: false,
     sessionTimeout: '30',
-    
+
     // Display Settings
     darkMode: false,
     language: 'en',
     timezone: 'Africa/Kigali',
-    
+
     // Password Change
     currentPassword: '',
     newPassword: '',
@@ -58,7 +58,7 @@ function GovernmentSettings() {
     try {
       // TODO: Implement settings update API call
       // await settingsService.updateSettings(settings);
-      
+
       toast({
         title: 'Settings Updated',
         description: `${section} settings have been successfully updated.`,
@@ -89,14 +89,14 @@ function GovernmentSettings() {
     try {
       // TODO: Implement password change API call
       // await authService.changePassword(settings.currentPassword, settings.newPassword);
-      
+
       setSettings({
         ...settings,
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
       });
-      
+
       toast({
         title: 'Password Changed',
         description: 'Your password has been successfully changed.',
@@ -130,7 +130,7 @@ function GovernmentSettings() {
                 <Bell className="w-5 h-5 text-green-600 mr-3" />
                 <h2 className="text-lg font-semibold text-gray-900">Notification Preferences</h2>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -139,14 +139,12 @@ function GovernmentSettings() {
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, emailNotifications: !settings.emailNotifications })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      settings.emailNotifications ? 'bg-green-600' : 'bg-gray-200'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.emailNotifications ? 'bg-green-600' : 'bg-gray-200'
+                      }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        settings.emailNotifications ? 'translate-x-6' : 'translate-x-1'
-                      }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.emailNotifications ? 'translate-x-6' : 'translate-x-1'
+                        }`}
                     />
                   </button>
                 </div>
@@ -158,14 +156,12 @@ function GovernmentSettings() {
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, pushNotifications: !settings.pushNotifications })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      settings.pushNotifications ? 'bg-green-600' : 'bg-gray-200'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.pushNotifications ? 'bg-green-600' : 'bg-gray-200'
+                      }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        settings.pushNotifications ? 'translate-x-6' : 'translate-x-1'
-                      }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.pushNotifications ? 'translate-x-6' : 'translate-x-1'
+                        }`}
                     />
                   </button>
                 </div>
@@ -177,14 +173,12 @@ function GovernmentSettings() {
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, smsAlerts: !settings.smsAlerts })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      settings.smsAlerts ? 'bg-green-600' : 'bg-gray-200'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.smsAlerts ? 'bg-green-600' : 'bg-gray-200'
+                      }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        settings.smsAlerts ? 'translate-x-6' : 'translate-x-1'
-                      }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.smsAlerts ? 'translate-x-6' : 'translate-x-1'
+                        }`}
                     />
                   </button>
                 </div>
@@ -196,14 +190,12 @@ function GovernmentSettings() {
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, weeklyReports: !settings.weeklyReports })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      settings.weeklyReports ? 'bg-green-600' : 'bg-gray-200'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.weeklyReports ? 'bg-green-600' : 'bg-gray-200'
+                      }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        settings.weeklyReports ? 'translate-x-6' : 'translate-x-1'
-                      }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.weeklyReports ? 'translate-x-6' : 'translate-x-1'
+                        }`}
                     />
                   </button>
                 </div>
@@ -229,7 +221,7 @@ function GovernmentSettings() {
                 <Shield className="w-5 h-5 text-green-600 mr-3" />
                 <h2 className="text-lg font-semibold text-gray-900">Security Settings</h2>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -238,14 +230,12 @@ function GovernmentSettings() {
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, twoFactorAuth: !settings.twoFactorAuth })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      settings.twoFactorAuth ? 'bg-green-600' : 'bg-gray-200'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.twoFactorAuth ? 'bg-green-600' : 'bg-gray-200'
+                      }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        settings.twoFactorAuth ? 'translate-x-6' : 'translate-x-1'
-                      }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.twoFactorAuth ? 'translate-x-6' : 'translate-x-1'
+                        }`}
                     />
                   </button>
                 </div>
@@ -285,7 +275,7 @@ function GovernmentSettings() {
                 <Lock className="w-5 h-5 text-green-600 mr-3" />
                 <h2 className="text-lg font-semibold text-gray-900">Change Password</h2>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <Label className="text-gray-900">Current Password</Label>
@@ -359,7 +349,7 @@ function GovernmentSettings() {
           </div>
         </div>
       </div>
-        </GovernmentLayout>
+    </GovernmentLayout>
   );
 }
 

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignIn() {
@@ -23,11 +23,12 @@ export default function SignIn() {
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({ email: false, password: false });
   const { login, loading } = useAuth();
+  const { toast } = useToast()
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('logout')) {
-      toast({ title: 'Signed Out', description: 'You have been logged out successfully.' });
+      toast({ title: 'Signed Out', description: 'You have been logged out successfully.' ,variant:'success'});
     }
     if (urlParams.get('registered')) {
       toast({
@@ -134,11 +135,10 @@ export default function SignIn() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`mt-1 ${
-                  touched.email && fieldErrors.email
+                className={`mt-1 ${touched.email && fieldErrors.email
                     ? 'border-red-500 focus:ring-red-500'
                     : 'focus:ring-green-500'
-                }`}
+                  }`}
               />
               {touched.email && fieldErrors.email && (
                 <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
@@ -155,11 +155,10 @@ export default function SignIn() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`mt-1 pr-10 ${
-                  touched.password && fieldErrors.password
+                className={`mt-1 pr-10 ${touched.password && fieldErrors.password
                     ? 'border-red-500 focus:ring-red-500'
                     : 'focus:ring-green-500'
-                }`}
+                  }`}
               />
               <button
                 type="button"

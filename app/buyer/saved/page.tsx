@@ -15,9 +15,7 @@ import {
   LayoutGrid as GridIcon,
   Loader2,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
@@ -104,21 +102,15 @@ function SavedItemsComponent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Global Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
-        <Logo />
-      </header>
-
-      <div className="flex flex-1">
+    <div className="flex  h-screen overflow bg-gray-50">
         {/* Sidebar */}
         <Sidebar
           userType={UserType.BUYER}
-          activeItem='Saved'
+          activeItem='Saved Items'
         />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full overflow-auto">
           {/* Sort Bar */}
           <div className="bg-white border-b px-6 py-4 flex justify-end items-center">
             <label className="text-sm text-gray-500 mr-2">Sort by:</label>
@@ -175,7 +167,6 @@ function SavedItemsComponent() {
           </main>
         </div>
       </div>
-    </div>
   );
 }
 

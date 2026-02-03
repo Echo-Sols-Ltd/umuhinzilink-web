@@ -8,13 +8,14 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
 
 export default function SignUp() {
   const { register } = useAuth();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const {toast}=useToast()
   const [formData, setFormData] = useState<UserRequest>({
     names: '',
     email: '',
