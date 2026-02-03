@@ -186,7 +186,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             return
           }
           setBuyer(buyer);
-          router.replace('/buyer/dashboard');
         }
         if (user.role === UserType.FARMER) {
           if (!farmer) {
@@ -194,7 +193,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             return
           }
           setFarmer(farmer);
-          router.replace('/farmer/dashboard');
         }
         if (user.role === UserType.SUPPLIER) {
           if (!supplier) {
@@ -202,7 +200,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             return
           }
           setSupplier(supplier);
-          router.replace('/supplier/dashboard');
         }
         setLoading(false)
         return;

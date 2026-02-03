@@ -11,7 +11,7 @@ export default function Unauthorized() {
 
   const handleGoToDashboard = () => {
     if (user) {
-      router.push('/dashboard');
+      router.push('/');
     } else {
       router.push('/auth/signin');
     }

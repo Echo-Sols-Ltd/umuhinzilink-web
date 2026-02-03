@@ -13,8 +13,8 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignIn() {
   const socialLinks = [
-    { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
-    { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
+    { icon: <BiLogoFacebookCircle size={22} />, link: 'https://facebook.com' },
+    { icon: <BiLogoGoogle size={22} />, link: 'https://google.com' },
   ];
 
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -24,20 +24,12 @@ export default function SignIn() {
   const [touched, setTouched] = useState({ email: false, password: false });
   const { login, loading } = useAuth();
 
-  // Handle URL parameters and redirect if already authenticated
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const isLogout = urlParams.get('logout');
-    const registered = urlParams.get('registered');
-
-    if (isLogout) {
-      toast({
-        title: 'Signed Out',
-        description: 'You have been logged out successfully.',
-      });
+    if (urlParams.get('logout')) {
+      toast({ title: 'Signed Out', description: 'You have been logged out successfully.' });
     }
-
-    if (registered) {
+    if (urlParams.get('registered')) {
       toast({
         title: 'Account Created',
         description: 'Registration successful. Please sign in to continue.',
@@ -46,11 +38,9 @@ export default function SignIn() {
     }
   }, []);
 
-  // Load saved credentials if remember me was enabled
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
     const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
-
     if (savedEmail && savedRememberMe) {
       setFormData(prev => ({ ...prev, email: savedEmail }));
       setRememberMe(true);
@@ -60,8 +50,6 @@ export default function SignIn() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-
-    // Clear field error when user starts typing
     if (fieldErrors[name as keyof typeof fieldErrors]) {
       setFieldErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -75,216 +63,156 @@ export default function SignIn() {
 
   const validateField = (name: string, value: string) => {
     let error = '';
-
-    switch (name) {
-      case 'email':
-        if (!value.trim()) {
-          error = 'Email is required';
-        } else {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(value)) {
-            error = 'Please enter a valid email address';
-          }
-        }
-        break;
-      case 'password':
-        if (!value.trim()) {
-          error = 'Password is required';
-        } else if (value.length < 6) {
-          error = 'Password must be at least 6 characters long';
-        }
-        break;
+    if (name === 'email') {
+      if (!value.trim()) error = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = 'Invalid email address';
     }
-
+    if (name === 'password') {
+      if (!value.trim()) error = 'Password is required';
+      else if (value.length < 6) error = 'Minimum 6 characters';
+    }
     setFieldErrors(prev => ({ ...prev, [name]: error }));
     return error === '';
   };
 
   const validateForm = () => {
-    const emailValid = validateField('email', formData.email);
-    const passwordValid = validateField('password', formData.password);
+    const ok = validateField('email', formData.email) && validateField('password', formData.password);
     setTouched({ email: true, password: true });
-    return emailValid && passwordValid;
-  };
-
-  const handleRememberMe = (email: string) => {
-    if (rememberMe) {
-      localStorage.setItem('rememberedEmail', email);
-      localStorage.setItem('rememberMe', 'true');
-    } else {
-      localStorage.removeItem('rememberedEmail');
-      localStorage.removeItem('rememberMe');
-    }
+    return ok;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate form data
     if (!validateForm()) {
-      toast({
-        title: 'Error',
-        description: 'Please fill in all required fields',
-        variant: 'error',
-      });
+      toast({ title: 'Error', description: 'Fix the errors below', variant: 'error' });
       return;
     }
-
-    // Handle remember me
     if (rememberMe) {
-      handleRememberMe(formData.email.trim());
+      localStorage.setItem('rememberedEmail', formData.email.trim());
+      localStorage.setItem('rememberMe', 'true');
     }
-
-    // Call login from auth context - it handles all backend errors and toasts
-    await login({
-      email: formData.email.trim(),
-      password: formData.password,
-    });
+    await login({ email: formData.email.trim(), password: formData.password });
   };
 
   return (
-    <div className="w-full h-screen flex bg-gray-50  overflow-hidden ">
-   
-
-      <div className="w-full bg-white shadow-lg rounded-xl -mt-20 p-6 sm:p-8 z-20 relative items-center">
-        <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
-          Sign in with
-        </h1>
-
-        <div className="flex gap-4 justify-center mb-4">
-          {socialLinks.map((linkItem, idx) => (
-            <Link
-              key={idx}
-              href={linkItem.link}
-              target="_blank"
-              className="p-3 text-gray-700 transition border border-gray-100 rounded-md hover:bg-gray-100"
-            >
-              {linkItem.icon}
-            </Link>
-          ))}
-        </div>
-
-        <p className="text-center text-gray-400 text-sm mb-6">Or continue with your credentials</p>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
-          <div>
-            <Label htmlFor="email" className="text-gray-700 font-medium text-sm">
-              Email
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              disabled={loading}
-              className={`text-gray-700 font-medium text-sm border ${touched.email && fieldErrors.email
-                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                }`}
-              required
-            />
-            {touched.email && fieldErrors.email && (
-              <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                {fieldErrors.email}
-              </p>
-            )}
+    <div className="w-full h-screen flex flex-col sm:flex-row bg-gray-50 overflow-hidden">
+      {/* LEFT – Form Section */}
+      <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white">
+        <div className="w-full max-w-md flex flex-col justify-center">
+          <div className="mb-6 text-center">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Welcome Back</h1>
+            <p className="text-gray-500 text-sm sm:text-base mt-1">Sign in to your account</p>
           </div>
 
-          {/* Password */}
-          <div className="relative">
-            <Label htmlFor="password" className="text-gray-700 font-medium text-sm">
-              Password
-            </Label>
-            <Input
-              id="password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              disabled={loading}
-              className={`text-gray-700 font-medium text-sm border pr-10 ${touched.password && fieldErrors.password
-                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                }`}
-              required
-            />
-            <button
-              type="button"
-              className="absolute right-2 top-9 text-gray-400 hover:text-gray-600"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-            {touched.password && fieldErrors.password && (
-              <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                {fieldErrors.password}
-              </p>
-            )}
+          <div className="flex justify-center gap-3 mb-6">
+            {socialLinks.map((item, i) => (
+              <Link
+                key={i}
+                href={item.link}
+                target="_blank"
+                className="w-11 h-11 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-green-50 hover:text-green-600 transition"
+              >
+                {item.icon}
+              </Link>
+            ))}
           </div>
 
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="remember"
-                checked={rememberMe}
-                onCheckedChange={setRememberMe}
-                className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-200"
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400">OR</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label className="text-sm">Email</Label>
+              <Input
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                disabled={loading}
+                className={`mt-1 ${
+                  touched.email && fieldErrors.email
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'focus:ring-green-500'
+                }`}
               />
-              <Label htmlFor="remember" className="text-gray-700 font-medium text-sm">
-                Remember Me
-              </Label>
+              {touched.email && fieldErrors.email && (
+                <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+              )}
             </div>
-            <Link
-              href="/forgot-password"
-              className="text-green-600 hover:text-green-700 text-sm font-medium"
+
+            <div className="relative">
+              <Label className="text-sm">Password</Label>
+              <Input
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                disabled={loading}
+                className={`mt-1 pr-10 ${
+                  touched.password && fieldErrors.password
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'focus:ring-green-500'
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+              {touched.password && fieldErrors.password && (
+                <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Switch checked={rememberMe} onCheckedChange={setRememberMe} />
+                <span className="text-sm text-gray-600">Remember me</span>
+              </div>
+              <Link href="/forgot-password" className="text-sm text-green-600 hover:underline">
+                Forgot?
+              </Link>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 hover:bg-green-700"
             >
-              Forgot Password?
-            </Link>
-          </div>
+              {loading ? 'Signing in…' : 'Sign In'}
+            </Button>
 
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </Button>
-
-          <p className="text-gray-700 text-sm text-center">
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-green-600 font-semibold">
-              Sign up
-            </Link>
-          </p>
-        </form>
+            <p className="text-sm text-center text-gray-600">
+              No account?{' '}
+              <Link href="/auth/signup" className="text-green-600 font-semibold">
+                Sign up
+              </Link>
+            </p>
+          </form>
+        </div>
       </div>
 
-         {/* Hero Section */}
-      <div className="relative w-full flex flex-col justify-center items-center text-center overflow-hidden">
-        {/* Background Image */}
+      {/* RIGHT – Hero Section */}
+      <div className="w-full sm:w-1/2 relative flex flex-col justify-center items-center text-center overflow-hidden h-64 sm:h-auto">
         <Image
           src="/Image.png"
           alt="background"
           fill
-          className="absolute right-0 top-0 object-cover w-full h-full"
+          className="absolute object-cover"
         />
-
-        {/* Welcome Text */}
-        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
+        <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">
           Welcome Back!
         </h1>
-        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
+        <p className="text-white z-10 mt-2 text-sm sm:text-base px-6 sm:px-0">
           Sign in to access your account and continue your journey <br /> with UmuhinziLink
         </p>
       </div>

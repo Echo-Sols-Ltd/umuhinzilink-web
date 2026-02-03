@@ -1,35 +1,55 @@
-import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import AboutUmuhinzinLink from '@/components/AboutUmunhzinLink';
-import WhoWeServe from '@/components/WhoWeServe';
-import PlatformFeatures from '@/components/PlatformFeatures';
-import HowItWorks from '@/components/HowItWorks';
-import ImpactStories from '@/components/ImpactStories';
-import CallToAction from '@/components/CallToAction';
-import Footer from '@/components/Footer';
+'use client';
 
-export default function Home() {
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { UserType } from '@/types';
+
+export default function DashboardPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  React.useEffect(() => {
+    if (!loading && user) {
+      // Redirect to role-specific dashboard
+      switch (user.role) {
+        case UserType.FARMER:
+          router.push('/farmer/dashboard');
+          break;
+        case UserType.BUYER:
+          router.push('/buyer/dashboard');
+          break;
+        case UserType.SUPPLIER:
+          router.push('/supplier/dashboard');
+          break;
+        case UserType.ADMIN:
+          router.push('/admin/dashboard');
+          break;
+        default:
+          router.push('/dashboard');
+      }
+    } else if (!loading && !user) {
+      router.push('/dashboard');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-800">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <main className="bg-white">
-      <Navbar />
-      <section id="home" className="section-fade-up section-delay-1">
-        <Hero />
-      </section>
-      <section id="features" className="section-fade-up section-delay-2">
-        <AboutUmuhinzinLink />
-        <WhoWeServe />
-        <PlatformFeatures />
-      </section>
-      <section id="agribusiness" className="section-fade-up section-delay-3">
-        <HowItWorks />
-      </section>
-      <section id="lenders" className="section-fade-up section-delay-4">
-        <ImpactStories />
-      </section>
-      <section id="contact" className="section-fade-up section-delay-5">
-        <CallToAction />
-        <Footer />
-      </section>
-    </main>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Redirecting to your dashboard...</p>
+      </div>
+    </div>
   );
 }
