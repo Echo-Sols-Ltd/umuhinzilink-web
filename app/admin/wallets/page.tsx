@@ -6,9 +6,8 @@ import { UserType } from '@/types/enums';
 import { walletService } from '@/services/wallet';
 import { WalletDTO, WalletTransactionDTO } from '@/types/wallet';
 import { Wallet, Search, Loader2, ChevronLeft, ChevronRight, Eye, X } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import {useToast} from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
-import { useWallet } from '@/contexts/WalletContext';
 import { useAdmin } from '@/contexts/AdminContext';
 
 export default function AdminWalletsPage() {
@@ -23,7 +22,7 @@ export default function AdminWalletsPage() {
     const [userTransactions, setUserTransactions] = useState<WalletTransactionDTO[]>([]);
     const [loadingTransactions, setLoadingTransactions] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const {} = useAdmin()
+    const { toast} = useToast()
 
     // Fetch all wallets
     const fetchWallets = async () => {
@@ -37,6 +36,7 @@ export default function AdminWalletsPage() {
             });
 
             if (response.success && response.data) {
+
                 setWallets(response.data || []);
                 setTotalPages(1);
                 setTotalElements(10);
@@ -275,7 +275,7 @@ export default function AdminWalletsPage() {
 
             {/* Wallet Details Modal */}
             {showDetailsModal && selectedWallet && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
                         {/* Modal Header */}
                         <div className="flex items-center justify-between px-6 py-4 border-b">

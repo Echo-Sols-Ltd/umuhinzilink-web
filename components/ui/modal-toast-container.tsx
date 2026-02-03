@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useToast, ToastData } from './use-toast-new';
+import { useToast, ToastData } from './use-toast';
 
 const getVariantStyles = (variant: ToastData['variant']) => {
   switch (variant) {
@@ -97,7 +97,7 @@ const ModalToastItem: React.FC<ModalToastItemProps> = ({ toast, onRemove }) => {
         'fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ease-out',
         isVisible && !isExiting ? 'opacity-100' : 'opacity-0'
       )}
-      style={{ 
+      style={{
         backgroundColor: isVisible && !isExiting ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0)',
         backdropFilter: isVisible && !isExiting ? 'blur(4px)' : 'blur(0px)',
       }}

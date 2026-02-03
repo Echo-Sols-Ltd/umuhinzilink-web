@@ -23,26 +23,28 @@ export default function Home() {
     }
   })
   return (
-    <main className="bg-white">
-      <Navbar />
-      <section id="home" className="section-fade-up section-delay-1">
-        <Hero />
-      </section>
-      <section id="features" className="section-fade-up section-delay-2">
-        <AboutUmuhinzinLink />
-        <WhoWeServe />
-        <PlatformFeatures />
-      </section>
-      <section id="agribusiness" className="section-fade-up section-delay-3">
-        <HowItWorks />
-      </section>
-      <section id="lenders" className="section-fade-up section-delay-4">
-        <ImpactStories />
-      </section>
-      <section id="contact" className="section-fade-up section-delay-5">
-        <CallToAction />
-        <Footer />
-      </section>
-    </main>
+    <div className='bg-white overflow-hidden h-screen'>
+      <main className="bg-white overflow-auto h-full">
+        <Navbar />
+        <section id="home" className="section-fade-up section-delay-1">
+          <Hero />
+        </section>
+        <section id="features" className="section-fade-up section-delay-2">
+          <AboutUmuhinzinLink />
+          <WhoWeServe />
+          <PlatformFeatures />
+        </section>
+        <section id="agribusiness" className="section-fade-up section-delay-3">
+          <HowItWorks />
+        </section>
+        <section id="lenders" className="section-fade-up section-delay-4">
+          <ImpactStories />
+        </section>
+        <section id="contact" className="section-fade-up section-delay-5">
+          <CallToAction />
+          <Footer />
+        </section>
+      </main>
+    </div>
   );
 }

@@ -11,6 +11,10 @@ export default function DashboardPage() {
 
   React.useEffect(() => {
     if (!loading && user) {
+      if (!user.verified) {
+        // router.push('/auth/verify-otp');
+        return
+      }
       // Redirect to role-specific dashboard
       switch (user.role) {
         case UserType.FARMER:
@@ -31,7 +35,7 @@ export default function DashboardPage() {
     } else if (!loading && !user) {
       router.push('/dashboard');
     }
-  }, [user, loading, router]);
+  }, [user, loading]);
 
   if (loading) {
     return (

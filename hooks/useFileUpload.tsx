@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { uploadService, UploadProgress } from '@/services/upload';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 export interface UseFileUploadOptions {
   uploadType?: 'profile' | 'message' | 'generic';
@@ -26,6 +26,7 @@ export interface FileUploadState {
 }
 
 export const useFileUpload = (options: UseFileUploadOptions = {}) => {
+  const { toast } = useToast()
   const {
     uploadType = 'generic',
     maxSize = 5 * 1024 * 1024, // 5MB
@@ -89,14 +90,14 @@ export const useFileUpload = (options: UseFileUploadOptions = {}) => {
       toast({
         title: "File Error",
         description: errorMessage,
-        variant: "destructive",
+        variant: "error",
       });
       return false;
     }
 
     // Process file
     let processedFile = file;
-    
+
     // Resize image if needed
     if (resizeImage && file.type.startsWith('image/')) {
       try {
@@ -154,13 +155,14 @@ export const useFileUpload = (options: UseFileUploadOptions = {}) => {
           success: true,
           uploadedUrl: response.data || null,
         }));
-        
+
         onSuccess?.(response.data);
         toast({
           title: "Upload Successful",
           description: "File uploaded successfully!",
+          variant:'success'
         });
-        
+
         return response.data;
       } else {
         throw new Error(response.message || 'Upload failed');
@@ -172,14 +174,14 @@ export const useFileUpload = (options: UseFileUploadOptions = {}) => {
         uploading: false,
         error: errorMessage,
       }));
-      
+
       onError?.(errorMessage);
       toast({
         title: "Upload Failed",
         description: errorMessage,
-        variant: "destructive",
+        variant: "error",
       });
-      
+
       return null;
     }
   }, [state.file, uploadType, onSuccess, onError]);
@@ -187,7 +189,7 @@ export const useFileUpload = (options: UseFileUploadOptions = {}) => {
   const uploadFile = useCallback(async (file: File): Promise<string | null> => {
     const selected = await selectFile(file);
     if (!selected) return null;
-    
+
     return await upload();
   }, [selectFile, upload]);
 

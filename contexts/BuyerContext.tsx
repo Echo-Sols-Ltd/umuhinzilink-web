@@ -3,7 +3,7 @@ import { useAuth } from './AuthContext';
 import { User, UserType } from '@/types';
 import { useProduct } from './ProductContext';
 import { useOrder } from './OrderContext';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 
 interface BuyerContextType {
@@ -21,6 +21,7 @@ function useBuyer(): BuyerContextType {
 }
 
 function BuyerProvider({ children }: { children: React.ReactNode }) {
+  const { toast } = useToast()
   const { user } = useAuth();
   const { fetchBuyerProducts } = useProduct()
   const { fetchBuyerOrders } = useOrder()
@@ -37,18 +38,18 @@ function BuyerProvider({ children }: { children: React.ReactNode }) {
       toast({
         title: 'Error',
         description: message,
-        variant: 'destructive',
+        variant: 'error',
       })
     } finally {
-     
+
     }
   }
 
-  useEffect(()=>{
-    if(user?.role === 'BUYER'){
+  useEffect(() => {
+    if (user?.role === 'BUYER') {
       fetchAllData(user)
     }
-  },[user])
+  }, [user])
 
   return <BuyerContext.Provider value={{}}>{children}</BuyerContext.Provider>;
 }

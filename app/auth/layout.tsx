@@ -9,7 +9,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     const router = useRouter()
 
     useEffect(() => {
-        if (user) router.replace('/')
+        if (user) {
+            if (!user.verified) {
+                return
+            }
+            router.replace('/')
+        }
     }, [user])
 
     return (

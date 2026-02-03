@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast-new';
+import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
@@ -150,7 +150,7 @@ function AddProduce() {
     <div className='flex h-screen bg-gray-50 overflow-hidden'>
       <Sidebar
         userType={UserType.FARMER}
-activeItem='Products'
+        activeItem='Products'
       />
       <div className="min-h-screen bg-gray-50">
 

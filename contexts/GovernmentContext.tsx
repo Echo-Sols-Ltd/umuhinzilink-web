@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { governmentService } from '@/services/government';
 import { useAuth } from './AuthContext';
-import { toast } from '@/components/ui/use-toast';
-import { FarmerProduct,SupplierProduct, User, FarmerOrder } from '@/types';
+import { useToast } from '@/components/ui/use-toast';
+import { FarmerProduct, SupplierProduct, User, FarmerOrder } from '@/types';
 
 interface GovernmentContextType {
   isValidGovernmentUser: () => boolean;
@@ -54,7 +54,8 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<FarmerOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const { toast } = useToast()
+  
   // Fetch all data
   const fetchAllData = useCallback(async (user: User) => {
     if (!user) return;

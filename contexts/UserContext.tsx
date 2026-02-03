@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, UserType } from '@/types';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { userService } from '@/services/users';
 import { useAuth } from './AuthContext';
 
@@ -21,7 +21,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-
+  const { toast } = useToast()
   useEffect(() => {
     async function fetchUsers() {
       if (!user) return;
@@ -32,7 +32,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
           toast({
             title: 'Server error',
             description: 'Users cannot be fetched',
-            variant: 'destructive',
+            variant: 'error',
           });
           return;
         }
@@ -43,7 +43,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
         toast({
           title: 'Server error',
           description: 'Users cannot be fetched',
-          variant: 'destructive',
+          variant: 'error',
         });
       }
     }

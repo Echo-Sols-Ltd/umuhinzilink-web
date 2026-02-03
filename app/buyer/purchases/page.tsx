@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, OrderStatus } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
@@ -28,7 +28,7 @@ function MyPurchasesComponent() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
-
+  const { toast } = useToast()
   const { buyerOrders, loading: ordersLoading, fetchBuyerOrders } = useOrder();
   const { handleWalletPayment } = useWalletAction();
 

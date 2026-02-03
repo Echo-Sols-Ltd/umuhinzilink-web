@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'http',
-        hostname: '10.12.75.180',
+        hostname: '10.12.75.153',
       },
     ],
     unoptimized: true,

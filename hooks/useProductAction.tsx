@@ -1,4 +1,4 @@
-import { useToast } from '@/components/ui/use-toast-new';
+import { useToast } from '@/components/ui/use-toast';
 import { useProduct } from '@/contexts/ProductContext';
 import { productService } from '@/services/products';
 import { FarmerProductRequest, SupplierProductRequest } from '@/types';

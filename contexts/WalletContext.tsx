@@ -3,7 +3,7 @@ import { walletService } from '@/services/wallet';
 import { paymentService } from '@/services/payments';
 import { WalletDTO, WalletTransactionDTO, PaymentRequest, PaymentResponseDTO } from '@/types/wallet';
 import { useAuth } from './AuthContext';
-import { toast } from '@/components/ui/use-toast';
+import { useToast} from '@/components/ui/use-toast';
 
 const STORAGE_KEYS = {
   WALLET: 'walletData',
@@ -40,7 +40,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [wallet, setWallet] = useState<WalletDTO | null>(null);
   const [transactions, setTransactions] = useState<WalletTransactionDTO[]>([]);
   const [paymentHistory, setPaymentHistory] = useState<PaymentResponseDTO[]>([]);
-
+  const { toast } = useToast()
   // Load cached data on mount
   useEffect(() => {
     const loadCachedData = () => {
@@ -100,7 +100,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       }
 
       const transactionData = res.data;
-      console.log("those are transactions ",transactionData)
+      console.log("those are transactions ", transactionData)
       const transactionList = Array.isArray(transactionData)
         ? transactionData
         : (transactionData as any)?.content || [];
@@ -186,6 +186,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         toast({
           title: 'Deposit Initiated',
           description: 'Your deposit request has been submitted successfully.',
+          variant: 'success',
         });
       }
 
@@ -241,6 +242,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         toast({
           title: 'Payment Successful',
           description: 'Your order has been paid successfully.',
+          variant: 'success',
         });
       }
 
@@ -290,11 +292,13 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
           toast({
             title: 'Payment Successful',
             description: 'Your payment has been processed successfully.',
+            variant: 'success',
           });
         } else if (payment.status === 'PENDING' || payment.status === 'PROCESSING') {
           toast({
             title: 'Payment Processing',
             description: 'Your payment is being processed. You will receive a confirmation shortly.',
+            variant: 'warning',
           });
         }
       }

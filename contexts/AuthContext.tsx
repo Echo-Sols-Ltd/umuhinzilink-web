@@ -16,7 +16,7 @@ import { farmerService } from '@/services/farmers';
 import { buyerService } from '@/services/buyers';
 import { supplierService } from '@/services/suppliers';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
@@ -53,7 +53,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [farmer, setFarmer] = useState<Farmer | null>(null);
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [buyer, setBuyer] = useState<Buyer | null>(null);
-
+  const { toast } = useToast()
+  
   const fetchFarmer = async () => {
     try {
       const res = await farmerService.getMe();
@@ -176,13 +177,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const farmer = getFarmer();
       const supplier = getSupplier();
       const buyer = getBuyer();
-
       if (token && user) {
         setUser(user);
 
         if (user.role === UserType.BUYER) {
           if (!buyer) {
             router.replace('/auth/buyer')
+            setLoading(false)
             return
           }
           setBuyer(buyer);
@@ -190,6 +191,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         if (user.role === UserType.FARMER) {
           if (!farmer) {
             router.replace('/auth/farmer')
+            setLoading(false)
             return
           }
           setFarmer(farmer);
@@ -197,6 +199,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         if (user.role === UserType.SUPPLIER) {
           if (!supplier) {
             router.replace('/auth/supplier')
+            setLoading(false)
             return
           }
           setSupplier(supplier);

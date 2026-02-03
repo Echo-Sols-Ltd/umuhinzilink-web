@@ -5,7 +5,7 @@ import { useSupplierAction } from '@/hooks/useSupplierAction';
 import { supplierService } from '@/services/suppliers';
 import { useProduct } from './ProductContext';
 import { useOrder } from './OrderContext';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface SupplierContextType {
   supplier: Supplier | null;
@@ -31,7 +31,7 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
   const [dashboardStats, setDashboardStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const { toast } = useToast()
   const { user } = useAuth();
   const supplierActions = useSupplierAction();
   const { fetchSupplierProducts, fetchSupplierStats } = useProduct()
@@ -90,7 +90,7 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
       toast({
         title: 'Error',
         description: message,
-        variant: 'destructive',
+        variant: 'error',
       })
     } finally {
       setLoading(false)
