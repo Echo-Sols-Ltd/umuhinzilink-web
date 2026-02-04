@@ -27,4 +27,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/echo-sols-ltd/umuhinzilink-web:latest
+          tags: ghcr.io/echo-sols-ltd/umuhinzilink-web:latestc

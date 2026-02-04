@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { AdminPages, UserType } from '@/types';
+import { AdminPages, User, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { useToast } from '@/components/ui/use-toast';
 import { adminService } from '@/services/admin';
@@ -139,9 +139,8 @@ function UserManagement() {
     }
   };
 
-  const handleViewUser = async (userId: string) => {
+  const handleViewUser = async (user: User) => {
     try {
-      const user = await adminService.getUserById(userId);
       setSelectedUser(user);
       setShowUserModal(true);
     } catch (error) {
@@ -320,7 +319,7 @@ function UserManagement() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex items-center space-x-2">
                             <button
-                              onClick={() => handleViewUser(usersItem.id)}
+                              onClick={() => handleViewUser(usersItem)}
                               className="text-blue-600 hover:text-blue-800 p-1 rounded"
                               title="View Details"
                             >
@@ -377,7 +376,7 @@ function UserManagement() {
 
       {/* User Details Modal */}
       {showUserModal && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
