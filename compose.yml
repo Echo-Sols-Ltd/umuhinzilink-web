@@ -6,12 +6,26 @@ services:
     ports:
       - "7023:3000"
     environment:
-      - NODE_EcNV=production
+      - NODE_ENV=production
     volumes:
       - ./:/app
       - /app/node_modules
     networks:
       - umuhinzilink-net
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # restart: unless-stopped
 
 networks:
   umuhinzilink-net:
