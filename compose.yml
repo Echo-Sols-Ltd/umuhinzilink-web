@@ -1,8 +1,6 @@
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/echo-sols-ltd/umuhinzilink-web:latest
     ports:
       - "7023:3000"
     environment:
