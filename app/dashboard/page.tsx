@@ -18,10 +18,10 @@ export default function Home() {
   const { user } = useAuth()
 
   useEffect(() => {
-    if (user) {
+    if (user && user.verified) {
       router.replace('/')
     }
-  })
+  }, [])
   return (
     <div className='bg-white overflow-hidden h-screen'>
       <main className="bg-white overflow-auto h-full">
