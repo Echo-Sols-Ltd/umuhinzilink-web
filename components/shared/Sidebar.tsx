@@ -284,24 +284,14 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         href: '/admin/users',
                     },
                     {
-                        icon: <Tractor className="w-5 h-5" />,
-                        label: 'Farmer Orders',
-                        href: '/admin/orders/farmer',
-                    },
-                    {
                         icon: <Truck className="w-5 h-5" />,
-                        label: 'Supplier Orders',
-                        href: '/admin/orders/supplier',
+                        label: 'Orders',
+                        href: '/admin/orders',
                     },
                     {
                         icon: <Sprout className="w-5 h-5" />,
-                        label: 'Farmer Products',
-                        href: '/admin/products/farmer',
-                    },
-                    {
-                        icon: <Package className="w-5 h-5" />,
-                        label: 'Supplier Products',
-                        href: '/admin/products/supplier',
+                        label: 'Products',
+                        href: '/admin/products',
                     },
                     {
                         icon: <BarChart2 className="w-5 h-5" />,
