@@ -9,6 +9,10 @@ COPY package.json package-lock.json ./
 # Install ALL dependencies 
 RUN npm ci
 
+# Convert next.config.ts to next.config.js
+RUN npx tsc next.config.ts --outDir . --module commonjs --target es5 --allowJs false && \
+      mv next.config.js next.config.build.js || true
+
 # Copy source
 COPY . .
 
