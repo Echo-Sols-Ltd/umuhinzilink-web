@@ -1,12 +1,12 @@
-import { FarmerOrder, FarmerProduct, User, WalletTransactionDTO } from '@/types';
+import { FarmerOrder, FarmerProduct, PaginatedResponse, SupplierOrder, SupplierProduct, User, WalletTransactionDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
 export const adminService = {
   // Get all users
-  getAllUsers: async (): Promise<User[]> => {
+  getAllUsers: async (): Promise<PaginatedResponse<User[]>> => {
     try {
-      const response = await apiClient.get<User[]>(API_ENDPOINTS.ADMIN.USERS);
+      const response = await apiClient.get<PaginatedResponse<User[]>>(API_ENDPOINTS.ADMIN.USERS);
       return response.data!;
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -52,9 +52,9 @@ export const adminService = {
   },
 
   // Get all products
-  getAllFarmerProducts: async (): Promise<FarmerProduct[]> => {
+  getAllFarmerProducts: async (): Promise<PaginatedResponse<FarmerProduct[]>> => {
     try {
-      const response = await apiClient.get<FarmerProduct[]>(API_ENDPOINTS.ADMIN.FARMER_PRODUCTS);
+      const response = await apiClient.get<PaginatedResponse<FarmerProduct[]>>(API_ENDPOINTS.ADMIN.FARMER_PRODUCTS);
       return response.data!;
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -77,9 +77,9 @@ export const adminService = {
   },
 
   // Get all orders
-  getAllFarmerOrders: async (): Promise<FarmerOrder[]> => {
+  getAllFarmerOrders: async (): Promise<PaginatedResponse<FarmerOrder[]>> => {
     try {
-      const response = await apiClient.get<FarmerOrder[]>(API_ENDPOINTS.ADMIN.FARMER_ORDERS);
+      const response = await apiClient.get<PaginatedResponse<FarmerOrder[]>>(API_ENDPOINTS.ADMIN.FARMER_ORDERS);
       return response.data!;
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -168,9 +168,9 @@ export const adminService = {
   },
 
   // Get all supplier products
-  getAllSupplierProducts: async (): Promise<any[]> => {
+  getAllSupplierProducts: async (): Promise<PaginatedResponse<SupplierProduct[]>> => {
     try {
-      const response = await apiClient.get<any[]>(API_ENDPOINTS.ADMIN.SUPPLIER_PRODUCTS);
+      const response = await apiClient.get<PaginatedResponse<SupplierProduct[]>>(API_ENDPOINTS.ADMIN.SUPPLIER_PRODUCTS);
       return response.data!;
     } catch (error) {
       console.error('Error fetching supplier products:', error);
@@ -179,9 +179,9 @@ export const adminService = {
   },
 
   // Get all supplier orders
-  getAllSupplierOrders: async (): Promise<any[]> => {
+  getAllSupplierOrders: async (): Promise<PaginatedResponse<SupplierOrder[]>> => {
     try {
-      const response = await apiClient.get<any[]>(API_ENDPOINTS.ADMIN.SUPPLIER_ORDERS);
+      const response = await apiClient.get<PaginatedResponse<SupplierOrder[]>>(API_ENDPOINTS.ADMIN.SUPPLIER_ORDERS);
       return response.data!;
     } catch (error) {
       console.error('Error fetching supplier orders:', error);
