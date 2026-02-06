@@ -181,7 +181,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(user);
 
         if (user.role === UserType.BUYER) {
-          if (!buyer) {
+          if (!buyer||!user.verified) {
             router.replace('/auth/buyer')
             setLoading(false)
             return
@@ -189,7 +189,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           setBuyer(buyer);
         }
         if (user.role === UserType.FARMER) {
-          if (!farmer) {
+          if (!farmer||!user.verified) {
             router.replace('/auth/farmer')
             setLoading(false)
             return
@@ -197,7 +197,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           setFarmer(farmer);
         }
         if (user.role === UserType.SUPPLIER) {
-          if (!supplier) {
+          if (!supplier||!user.verified) {
             router.replace('/auth/supplier')
             setLoading(false)
             return
