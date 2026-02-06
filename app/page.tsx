@@ -10,11 +10,7 @@ export default function DashboardPage() {
   const { user, loading } = useAuth();
 
   React.useEffect(() => {
-    if (!loading && user) {
-      if (!user.verified) {
-        // router.push('/auth/verify-otp');
-        return
-      }
+    if (!loading && user && user.verified) {
       // Redirect to role-specific dashboard
       switch (user.role) {
         case UserType.FARMER:
