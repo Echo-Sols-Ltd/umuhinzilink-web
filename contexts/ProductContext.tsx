@@ -126,6 +126,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       const res = await productService.getProductsByFarmer();
+      console.log('farmer response', res.data)
       if (res.success) {
         setFarmerProducts(res.data ?? []);
         localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(res.data ?? []));
@@ -159,8 +160,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       const res = await productService.getBuyerProducts();
       if (res.success) {
-        setBuyerProducts(res.data?.content ?? []);
-        localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(res.data?.content ?? []));
+        setBuyerProducts(res.data ?? []);
+        localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(res.data ?? []));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch buyer products');
@@ -175,10 +176,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       const res = await productService.getFarmerBuyerProducts();
       if (res.success) {
-        setFarmerBuyerProducts(res.data?.content ?? []);
+        setFarmerBuyerProducts(res.data ?? []);
         localStorage.setItem(
           STORAGE_KEYS.FARMER_BUYER_PRODUCTS,
-          JSON.stringify(res.data?.content ?? [])
+          JSON.stringify(res.data ?? [])
         );
       }
     } catch (err) {

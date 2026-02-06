@@ -1,10 +1,10 @@
-import { FarmerOrder, FarmerProduct, PaginatedResponse, SupplierOrder, SupplierProduct, User, WalletTransactionDTO } from '@/types';
+import { ApiResponse, FarmerOrder, FarmerProduct, PaginatedResponse, SupplierOrder, SupplierProduct, User, WalletTransactionDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
 export const adminService = {
   // Get all users
-  getAllUsers: async (): Promise<PaginatedResponse<User[]>> => {
+  getAllUsers: async (): Promise<User[]> => {
     try {
       const response = await apiClient.get<PaginatedResponse<User[]>>(API_ENDPOINTS.ADMIN.USERS);
       return response.data!;
@@ -17,7 +17,7 @@ export const adminService = {
   // Get user by ID
   getUserById: async (userId: string): Promise<User> => {
     try {
-      const response = await apiClient.get<User>(API_ENDPOINTS.ADMIN.USERS_BY_ID(userId));
+      const response = await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.ADMIN.USERS_BY_ID(userId));
       return response.data!;
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -28,7 +28,7 @@ export const adminService = {
   // Suspend/Activate user
   toggleUserStatus: async (userId: string, suspend: boolean) => {
     try {
-      const response = await apiClient.put(`${API_ENDPOINTS.ADMIN.USERS_BY_ID(userId)}/status`, {
+      const response = await apiClient.put<ApiResponse<User>>(`${API_ENDPOINTS.ADMIN.USERS_BY_ID(userId)}/status`, {
         suspended: suspend
       });
       return response.data;
@@ -41,7 +41,7 @@ export const adminService = {
   // Update user role
   updateUserRole: async (userId: string, role: string) => {
     try {
-      const response = await apiClient.put(`${API_ENDPOINTS.ADMIN.USERS_BY_ID(userId)}/role`, {
+      const response = await apiClient.put<ApiResponse<User>>(`${API_ENDPOINTS.ADMIN.USERS_BY_ID(userId)}/role`, {
         role
       });
       return response.data;
@@ -52,7 +52,7 @@ export const adminService = {
   },
 
   // Get all products
-  getAllFarmerProducts: async (): Promise<PaginatedResponse<FarmerProduct[]>> => {
+  getAllFarmerProducts: async (): Promise<FarmerProduct[]> => {
     try {
       const response = await apiClient.get<PaginatedResponse<FarmerProduct[]>>(API_ENDPOINTS.ADMIN.FARMER_PRODUCTS);
       return response.data!;
@@ -65,7 +65,7 @@ export const adminService = {
   // Approve/Reject product
   moderateProduct: async (productId: string, action: 'approve' | 'reject', reason?: string) => {
     try {
-      const response = await apiClient.put(`${API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId)}/moderate`, {
+      const response = await apiClient.put<ApiResponse<FarmerProduct>>(`${API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId)}/moderate`, {
         action,
         reason
       });
@@ -77,7 +77,7 @@ export const adminService = {
   },
 
   // Get all orders
-  getAllFarmerOrders: async (): Promise<PaginatedResponse<FarmerOrder[]>> => {
+  getAllFarmerOrders: async (): Promise<FarmerOrder[]> => {
     try {
       const response = await apiClient.get<PaginatedResponse<FarmerOrder[]>>(API_ENDPOINTS.ADMIN.FARMER_ORDERS);
       return response.data!;
@@ -90,7 +90,7 @@ export const adminService = {
   // Resolve order dispute
   resolveDispute: async (orderId: string, resolution: string, refundAmount?: number) => {
     try {
-      const response = await apiClient.put(`${API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId)}/dispute`, {
+      const response = await apiClient.put<ApiResponse<FarmerOrder>>(`${API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId)}/dispute`, {
         resolution,
         refundAmount
       });
@@ -104,7 +104,7 @@ export const adminService = {
   // Delete user
   deleteUser: async (userId: string) => {
     try {
-      const response = await apiClient.delete(API_ENDPOINTS.ADMIN.USERS_BY_ID(userId));
+      const response = await apiClient.delete<ApiResponse<User>>(API_ENDPOINTS.ADMIN.USERS_BY_ID(userId));
       return response.data;
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -115,7 +115,7 @@ export const adminService = {
   // Delete product
   deleteProduct: async (productId: string) => {
     try {
-      const response = await apiClient.delete(API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId));
+      const response = await apiClient.delete<ApiResponse<FarmerProduct>>(API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId));
       return response.data;
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -126,7 +126,7 @@ export const adminService = {
   // Delete order
   deleteOrder: async (orderId: string) => {
     try {
-      const response = await apiClient.delete(API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId));
+      const response = await apiClient.delete<ApiResponse<FarmerOrder>>(API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId));
       return response.data;
     } catch (error) {
       console.error('Error deleting order:', error);
@@ -137,7 +137,7 @@ export const adminService = {
   // Get system analytics
   getSystemAnalytics: async () => {
     try {
-      const response = await apiClient.get('/admin/analytics');
+      const response = await apiClient.get<ApiResponse<any>>('/admin/analytics');
       return response.data;
     } catch (error) {
       console.error('Error fetching analytics:', error);
@@ -146,10 +146,10 @@ export const adminService = {
   },
 
   // Get transaction monitoring data
-  getTransactionMonitoring: async () => {
+  getTransactionMonitoring: async (): Promise<WalletTransactionDTO[]> => {
     try {
-      const response = await apiClient.get<WalletTransactionDTO[]>('/admin/transactions');
-      return response.data;
+      const response = await apiClient.get<PaginatedResponse<WalletTransactionDTO[]>>('/admin/transactions');
+      return response.data!;
     } catch (error) {
       console.error('Error fetching transactions:', error);
       throw error;
@@ -159,7 +159,7 @@ export const adminService = {
   // Update system configuration
   updateSystemConfig: async (config: Record<string, any>) => {
     try {
-      const response = await apiClient.put('/admin/config', config);
+      const response = await apiClient.put<ApiResponse<any>>('/admin/config', config);
       return response.data;
     } catch (error) {
       console.error('Error updating system config:', error);
@@ -168,7 +168,7 @@ export const adminService = {
   },
 
   // Get all supplier products
-  getAllSupplierProducts: async (): Promise<PaginatedResponse<SupplierProduct[]>> => {
+  getAllSupplierProducts: async (): Promise<SupplierProduct[]> => {
     try {
       const response = await apiClient.get<PaginatedResponse<SupplierProduct[]>>(API_ENDPOINTS.ADMIN.SUPPLIER_PRODUCTS);
       return response.data!;
@@ -179,7 +179,7 @@ export const adminService = {
   },
 
   // Get all supplier orders
-  getAllSupplierOrders: async (): Promise<PaginatedResponse<SupplierOrder[]>> => {
+  getAllSupplierOrders: async (): Promise<SupplierOrder[]> => {
     try {
       const response = await apiClient.get<PaginatedResponse<SupplierOrder[]>>(API_ENDPOINTS.ADMIN.SUPPLIER_ORDERS);
       return response.data!;

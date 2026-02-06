@@ -206,7 +206,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(data);
   };
 
- 
+
   // 🔹 Derived Orders
   const pendingBuyerOrders = useMemo(
     () => buyerOrders?.filter(o => o.status === OrderStatus.PENDING) || [],

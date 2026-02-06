@@ -6,7 +6,7 @@ const DEV_SERVER = 'http://localhost:6060'
 export const API_CONFIG = {
   BASE_URL: process.env.NODE_ENV === 'development' ? DEV_SERVER : PROD_SERVER,
   API_VERSION: 'v1',
-  TIMEOUT: 10000,
+  TIMEOUT: 20000,
 };
 
 export const API_ENDPOINTS = {

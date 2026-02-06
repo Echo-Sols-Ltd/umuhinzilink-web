@@ -77,13 +77,14 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         adminService.getAllSupplierOrders(),
         adminService.getTransactionMonitoring(),
       ]);
+      console.log(usersRes)
 
       setSystemTransactions(systemTransactions || [])
-      setUsers(usersRes.content|| []);
-      setFarmerProducts(farmerProductsRes.content|| []);
-      setSupplierProducts(supplierProductsRes.content || []);
-      setFarmerOrders(farmerOrdersRes.content || []);
-      setSupplierOrders(supplierOrdersRes.content || []);
+      setUsers(usersRes|| []);
+      setFarmerProducts(farmerProductsRes|| []);
+      setSupplierProducts(supplierProductsRes || []);
+      setFarmerOrders(farmerOrdersRes || []);
+      setSupplierOrders(supplierOrdersRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
       setError(message);
@@ -102,7 +103,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     try {
 
       const usersRes = await adminService.getAllUsers();
-      setUsers(usersRes.content || []);
+      setUsers(usersRes|| []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh users';
       setError(message);
@@ -120,8 +121,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         adminService.getAllFarmerProducts(),
         adminService.getAllSupplierProducts()
       ]);
-      setFarmerProducts(farmerRes.content || []);
-      setSupplierProducts(supplierRes.content || []);
+      setFarmerProducts(farmerRes|| []);
+      setSupplierProducts(supplierRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
@@ -139,8 +140,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         adminService.getAllFarmerOrders(),
         adminService.getAllSupplierOrders()
       ]);
-      setFarmerOrders(farmerRes.content || []);
-      setSupplierOrders(supplierRes.content || []);
+      setFarmerOrders(farmerRes || []);
+      setSupplierOrders(supplierRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';
       setError(message);

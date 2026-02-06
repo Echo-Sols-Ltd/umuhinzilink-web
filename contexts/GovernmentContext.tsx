@@ -55,7 +55,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast()
-  
+
   // Fetch all data
   const fetchAllData = useCallback(async (user: User) => {
     if (!user) return;
@@ -71,10 +71,10 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
         governmentService.getAllFarmersOrders(),
       ]);
 
-      setUsers(usersRes || []);
-      setSupplierProducts(supplierProductsRes || []);
-      setFarmerProducts(farmerProductsRes || []);
-      setOrders(ordersRes || []);
+      setUsers(usersRes.data || []);
+      setSupplierProducts(supplierProductsRes.data || []);
+      setFarmerProducts(farmerProductsRes.data || []);
+      setOrders(ordersRes.data || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
       setError(message);
@@ -92,7 +92,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
   const refreshUsers = async () => {
     try {
       const usersRes = await governmentService.getAllUsers();
-      setUsers(usersRes || []);
+      setUsers(usersRes.data || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh users';
       setError(message);
@@ -108,8 +108,8 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     try {
       const supplierProductsRes = await governmentService.getAllSuppliersProducts();
       const farmerProductsRes = await governmentService.getAllFarmersProducts();
-      setSupplierProducts(supplierProductsRes || []);
-      setFarmerProducts(farmerProductsRes || []);
+      setSupplierProducts(supplierProductsRes.data || []);
+      setFarmerProducts(farmerProductsRes.data || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
@@ -125,7 +125,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     try {
       const farmerOrdersRes = await governmentService.getAllFarmersOrders();
       // const supplierOrdersRes = await governmentService.getAllSuppliersOrders(); // This seems to be missing from the service
-      setOrders(farmerOrdersRes || []);
+      setOrders(farmerOrdersRes.data || []);
       // setOrders(supplierOrdersRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';

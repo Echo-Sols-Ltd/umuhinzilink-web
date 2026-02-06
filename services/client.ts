@@ -159,9 +159,9 @@ class ApiClient {
     } catch { }
   }
 
-  async get<T>(endpoint: string, params?: Record<string, unknown>, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+  async get<T>(endpoint: string, params?: Record<string, unknown>, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
-      const response = await this.axiosInstance.get<ApiResponse<T>>(endpoint, {
+      const response = await this.axiosInstance.get<T>(endpoint, {
         params,
         timeout: options?.timeout || timeoutConfigs.standard
       });
@@ -182,9 +182,9 @@ class ApiClient {
     }
   }
 
-  async post<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
-      const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, data, {
+      const response = await this.axiosInstance.post<T>(endpoint, data, {
         timeout: options?.timeout || timeoutConfigs.standard
       });
       return response.data;
@@ -204,9 +204,9 @@ class ApiClient {
     }
   }
 
-  async put<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
-      const response = await this.axiosInstance.put<ApiResponse<T>>(endpoint, data, {
+      const response = await this.axiosInstance.put<T>(endpoint, data, {
         timeout: options?.timeout || timeoutConfigs.standard
       });
       return response.data;
@@ -226,9 +226,9 @@ class ApiClient {
     }
   }
 
-  async patch<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
-      const response = await this.axiosInstance.patch<ApiResponse<T>>(endpoint, data, {
+      const response = await this.axiosInstance.patch<T>(endpoint, data, {
         timeout: options?.timeout || timeoutConfigs.standard
       });
       return response.data;
@@ -248,9 +248,9 @@ class ApiClient {
     }
   }
 
-  async delete<T>(endpoint: string, options?: { timeout?: number; retry?: RetryOptions }): Promise<ApiResponse<T>> {
+  async delete<T>(endpoint: string, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
-      const response = await this.axiosInstance.delete<ApiResponse<T>>(endpoint, {
+      const response = await this.axiosInstance.delete<T>(endpoint, {
         timeout: options?.timeout || timeoutConfigs.standard
       });
       return response.data;
@@ -276,12 +276,12 @@ class ApiClient {
     onUploadProgress?: (event: AxiosProgressEvent) => void,
     cancelToken?: CancelToken,
     timeout?: number
-  ): Promise<ApiResponse<T>> {
+  ): Promise<T> {
     const operation = async () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await this.axiosInstance.post<ApiResponse<T>>(endpoint, formData, {
+      const response = await this.axiosInstance.post<T>(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
