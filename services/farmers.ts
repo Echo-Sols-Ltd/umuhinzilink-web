@@ -8,11 +8,11 @@ export class FarmerService {
    * - unreadMessages: Message[]
    */
   async getUserById(id: string): Promise<ApiResponse<Farmer>> {
-    return await apiClient.get<Farmer>(API_ENDPOINTS.FARMER.BY_ID(id));
+    return await apiClient.get<ApiResponse<Farmer>>(API_ENDPOINTS.FARMER.BY_ID(id));
   }
 
   async getMe(): Promise<ApiResponse<Farmer>> {
-    return await apiClient.get<Farmer>(API_ENDPOINTS.FARMER.ME);
+    return await apiClient.get<ApiResponse<Farmer>>(API_ENDPOINTS.FARMER.ME);
   }
 }
 

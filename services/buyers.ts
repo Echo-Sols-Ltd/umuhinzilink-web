@@ -8,15 +8,15 @@ export class BuyerService {
    * - unreadMessages: Message[]
    */
   async getUserById(id: string): Promise<ApiResponse<Buyer>> {
-    return await apiClient.get<Buyer>(API_ENDPOINTS.BUYER.BY_ID(id));
+    return await apiClient.get<ApiResponse<Buyer>>(API_ENDPOINTS.BUYER.BY_ID(id));
   }
 
   async getMe(): Promise<ApiResponse<Buyer>> {
-    return await apiClient.get<Buyer>(API_ENDPOINTS.BUYER.ME);
+    return await apiClient.get<ApiResponse<Buyer>>(API_ENDPOINTS.BUYER.ME);
   }
 
   async saveProduct(id: string): Promise<ApiResponse<Buyer>> {
-    return await apiClient.post<Buyer>(API_ENDPOINTS.BUYER.SAVE_PRODUCT(id));
+    return await apiClient.post<ApiResponse<Buyer>>(API_ENDPOINTS.BUYER.SAVE_PRODUCT(id));
   }
 }
 

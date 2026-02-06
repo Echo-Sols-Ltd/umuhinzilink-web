@@ -1,3 +1,4 @@
+import { ApiResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -65,7 +66,7 @@ class AnalyticsService {
     }
 
     const url = `${endpoint}${params.toString() ? `?${params.toString()}` : ''}`;
-    const response = await apiClient.get(url);
+    const response = await apiClient.get<ApiResponse<T>>(url);
     
     this.cache.set(cacheKey, {
       data: response.data,
