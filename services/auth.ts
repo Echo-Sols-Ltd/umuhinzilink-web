@@ -22,7 +22,7 @@ export class AuthService {
    * Log in a user and store tokens.
    */
   async login(credentials: LoginRequest): Promise<ApiResponse<AuthResponse>> {
-    const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.LOGIN, credentials);
     return response;
   }
 
@@ -30,22 +30,22 @@ export class AuthService {
    * Sign up a new user and store tokens.
    */
   async register(userData: UserRequest): Promise<ApiResponse<AuthResponse>> {
-    const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.AUTH.REGISTER, userData);
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.REGISTER, userData);
     return response;
   }
 
   async registerFarmer(userData: FarmerRequest): Promise<ApiResponse<Farmer>> {
-    const response = await apiClient.post<Farmer>(API_ENDPOINTS.AUTH.REGISTER_FARMER, userData);
+    const response = await apiClient.post<ApiResponse<Farmer>>(API_ENDPOINTS.AUTH.REGISTER_FARMER, userData);
     return response;
   }
 
   async registerSupplier(userData: SupplierRequest): Promise<ApiResponse<Supplier>> {
-    const response = await apiClient.post<Supplier>(API_ENDPOINTS.AUTH.REGISTER_SUPPLIER, userData);
+    const response = await apiClient.post<ApiResponse<Supplier>>(API_ENDPOINTS.AUTH.REGISTER_SUPPLIER, userData);
     return response;
   }
 
   async registerBuyer(userData: BuyerRequest): Promise<ApiResponse<Buyer>> {
-    const response = await apiClient.post<Buyer>(API_ENDPOINTS.AUTH.REGISTER_BUYER, userData);
+    const response = await apiClient.post<ApiResponse<Buyer>>(API_ENDPOINTS.AUTH.REGISTER_BUYER, userData);
     return response;
   }
 
@@ -53,7 +53,7 @@ export class AuthService {
    * Verify logged in user
    */
   async checkToken(): Promise<ApiResponse<User>> {
-    return await apiClient.get<User>(API_ENDPOINTS.AUTH.VERIFY_USER);
+    return await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.AUTH.VERIFY_USER);
   }
 
   /**
@@ -61,7 +61,7 @@ export class AuthService {
    */
   async logout(): Promise<ApiResponse<void>> {
     try {
-      const response = await apiClient.post<void>(API_ENDPOINTS.AUTH.LOGOUT);
+      const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.LOGOUT);
       localStorage.clear();
       return response;
     } catch (error) {
@@ -71,12 +71,12 @@ export class AuthService {
   }
 
   async verifyOtp(data: string): Promise<ApiResponse<User>> {
-    const response = await apiClient.post<User>(API_ENDPOINTS.AUTH.CHECK_OTP, data);
+    const response = await apiClient.post<ApiResponse<User>>(API_ENDPOINTS.AUTH.CHECK_OTP, data);
     return response;
   }
 
   async askOtpCode(): Promise<ApiResponse<User>> {
-    const response = await apiClient.get<User>(API_ENDPOINTS.AUTH.ASK_OTP_CODE);
+    const response = await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.AUTH.ASK_OTP_CODE);
     return response;
   }
 }

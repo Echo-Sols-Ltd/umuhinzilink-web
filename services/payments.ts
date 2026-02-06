@@ -27,17 +27,17 @@ export interface PaymentResponseDTO {
 export class PaymentService {
   // Process payment for order
   async processPayment(request: PaymentRequest): Promise<ApiResponse<PaymentResponseDTO>> {
-    return await apiClient.post<PaymentResponseDTO>(API_ENDPOINTS.PAYMENT.PROCESS, request);
+    return await apiClient.post<ApiResponse<PaymentResponseDTO>>(API_ENDPOINTS.PAYMENT.PROCESS, request);
   }
 
   // Check payment status
   async getPaymentStatus(transactionId: string): Promise<ApiResponse<PaymentResponseDTO>> {
-    return await apiClient.get<PaymentResponseDTO>(API_ENDPOINTS.PAYMENT.STATUS(transactionId));
+    return await apiClient.get<ApiResponse<PaymentResponseDTO>>(API_ENDPOINTS.PAYMENT.STATUS(transactionId));
   }
 
   // Get payment details for order
   async getOrderPayment(orderId: string): Promise<ApiResponse<PaymentResponseDTO>> {
-    return await apiClient.get<PaymentResponseDTO>(API_ENDPOINTS.PAYMENT.ORDER_PAYMENT(orderId));
+    return await apiClient.get<ApiResponse<PaymentResponseDTO>>(API_ENDPOINTS.PAYMENT.ORDER_PAYMENT(orderId));
   }
 
   // Get user's transaction history
@@ -60,7 +60,7 @@ export class PaymentService {
     if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
 
     const url = `${API_ENDPOINTS.PAYMENT.MY_TRANSACTIONS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await apiClient.get(url);
+    return await apiClient.get<ApiResponse<{ content: PaymentResponseDTO[]; totalElements: number; totalPages: number; size: number; number: number }>>(url);
   }
 
   // Admin: Get all transactions
@@ -83,7 +83,7 @@ export class PaymentService {
     if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
 
     const url = `${API_ENDPOINTS.PAYMENT.ADMIN_ALL_TRANSACTIONS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await apiClient.get(url);
+    return await apiClient.get<ApiResponse<{ content: PaymentResponseDTO[]; totalElements: number; totalPages: number; size: number; number: number }>>(url);
   }
 }
 

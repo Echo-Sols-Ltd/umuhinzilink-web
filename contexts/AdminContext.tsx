@@ -77,10 +77,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         adminService.getAllSupplierOrders(),
         adminService.getTransactionMonitoring(),
       ]);
+      console.log(usersRes)
 
       setSystemTransactions(systemTransactions || [])
-      setUsers(usersRes || []);
-      setFarmerProducts(farmerProductsRes || []);
+      setUsers(usersRes|| []);
+      setFarmerProducts(farmerProductsRes|| []);
       setSupplierProducts(supplierProductsRes || []);
       setFarmerOrders(farmerOrdersRes || []);
       setSupplierOrders(supplierOrdersRes || []);
@@ -102,7 +103,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     try {
 
       const usersRes = await adminService.getAllUsers();
-      setUsers(usersRes || []);
+      setUsers(usersRes|| []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh users';
       setError(message);
@@ -120,7 +121,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         adminService.getAllFarmerProducts(),
         adminService.getAllSupplierProducts()
       ]);
-      setFarmerProducts(farmerRes || []);
+      setFarmerProducts(farmerRes|| []);
       setSupplierProducts(supplierRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';

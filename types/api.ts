@@ -5,16 +5,12 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message: string;
-  error?: string;
-  errors?: Record<string, string[]>;
-  status: number;
 }
 
 /**
  * API response for paginated data.
  */
 export interface PaginatedResponse<T> extends ApiResponse<T> {
-  content: T;
   empty: boolean;
   first: boolean;
   last: boolean;

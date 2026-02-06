@@ -22,7 +22,7 @@ export class UploadService {
     onProgress?: (progress: UploadProgress) => void
   ): Promise<ApiResponse<string>> {
     try {
-      const response = await apiClient.uploadFile<string>(
+      const response = await apiClient.uploadFile<ApiResponse<string>>(
         API_ENDPOINTS.FILES.UPLOAD_AVATAR,
         file,
         (progressEvent) => {
@@ -48,7 +48,7 @@ export class UploadService {
     onProgress?: (progress: UploadProgress) => void
   ): Promise<ApiResponse<string>> {
     try {
-      const response = await apiClient.uploadFile<string>(
+      const response = await apiClient.uploadFile<ApiResponse<string>>(
         API_ENDPOINTS.FILES.UPLOAD_MESSAGE,
         file,
         (progressEvent) => {
@@ -74,7 +74,7 @@ export class UploadService {
     onProgress?: (progress: UploadProgress) => void
   ): Promise<ApiResponse<string>> {
     try {
-      const response = await apiClient.uploadFile<string>(
+      const response = await apiClient.uploadFile<ApiResponse<string>>(
         API_ENDPOINTS.FILES.UPLOAD_GENERIC,
         file,
         (progressEvent) => {

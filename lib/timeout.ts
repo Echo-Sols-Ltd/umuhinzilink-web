@@ -49,6 +49,9 @@ export const timeoutConfigs = {
 
   // Critical operations (authentication, payment)
   critical: 15000, // 15 seconds
+
+  // payments
+  payment: 30000, // 30 seconds
 };
 
 // Utility for creating abortable operations
