@@ -253,8 +253,8 @@ function Dashboard() {
                         Loading users...
                       </td>
                     </tr>
-                  ) : users && users.length > 0 ? (
-                    users.slice(0, 10).map(user => (
+                  ) : users?.data && users.data?.length > 0 ? (
+                    users.data.slice(0, 10).map(user => (
                       <tr key={user.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
