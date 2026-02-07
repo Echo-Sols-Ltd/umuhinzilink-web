@@ -204,32 +204,9 @@ function FarmerRequestsComponent() {
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto h-full">
-          {/* Header */}
-          <header className="fixed top-0 left-64 z-30 right-0 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
-            {/* Search Section */}
-            <div className="w-1/2 relative">
-              <Input
-                type="text"
-                placeholder="Search..."
-                className="pl-4 pr-10 h-10 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-3xl"
-              />
-              <Search
-                size={18}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              />
-            </div>
-
-            {/* Right Section */}
-            <div className="flex items-center gap-6">
-              {/* Add Product Button */}
-              <button className="bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition-colors cursor-pointer">
-                + Add New Product
-              </button>
-            </div>
-          </header>
-
+       
           {/* Content with top margin for fixed header */}
-          <div className="mt-16">
+          <div className="mt-4">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-xl font-semibold text-gray-900">Farmer Request</h1>

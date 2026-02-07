@@ -97,29 +97,7 @@ function OrdersPageComponent() {
       />
 
       <main className="flex-1 h-full overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Incoming Orders</h1>
-            <p className="text-xs text-gray-500">Manage orders from farmers</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search orders..."
-                className="pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 outline-none transition-all"
-              />
-            </div>
-            <button
-              onClick={() => fetchSupplierOrders()}
-              className="bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-green-700 transition-all shadow-md shadow-green-100"
-            >
-              Refresh
-            </button>
-          </div>
-        </header>
-
+    
         <div className="p-8 space-y-8">
           {/* Stats Summary */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -250,13 +228,13 @@ function OrdersPageComponent() {
 
 function StatCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-      <div className={`${color} text-white p-3 rounded-xl`}>
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+      <div className={`${color} text-white p-3 rounded-lg`}>
         {icon}
       </div>
-      <div>
-        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{title}</p>
-        <p className="text-2xl font-black text-gray-900">{value.toLocaleString()}</p>
+      <div className='flex flex-col items-center'>
+        <p className="text-sm font-semibold text-gray-400 ">{title}</p>
+        <p className="text-2xl font-semibold text-gray-900">{value.toLocaleString()}</p>
       </div>
     </div>
   );
