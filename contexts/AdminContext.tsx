@@ -4,10 +4,10 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/components/ui/use-toast';
-import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO } from '@/types';
+import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO, PaginatedResponse } from '@/types';
 
 interface AdminContextType {
-  users: User[] | null;
+  users: PaginatedResponse<User[]> | null;
   farmerProducts: FarmerProduct[];
   supplierProducts: SupplierProduct[];
   farmerOrders: FarmerOrder[];
@@ -49,7 +49,7 @@ const AdminContext = createContext<AdminContextType | null>(null);
 export function AdminProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [users, setUsers] = useState<User[] | null>(null);
+  const [users, setUsers] = useState<PaginatedResponse<User[]> | null>(null);
   const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
   const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
   const [farmerOrders, setFarmerOrders] = useState<FarmerOrder[]>([]);
@@ -70,7 +70,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
     try {
       const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes, systemTransactions] = await Promise.all([
-        adminService.getAllUsers(),
+        adminService.getAllUsers(0, 4),
         adminService.getAllFarmerProducts(),
         adminService.getAllSupplierProducts(),
         adminService.getAllFarmerOrders(),
@@ -80,8 +80,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       console.log(usersRes)
 
       setSystemTransactions(systemTransactions || [])
-      setUsers(usersRes|| []);
-      setFarmerProducts(farmerProductsRes|| []);
+      setUsers(usersRes);
+      setFarmerProducts(farmerProductsRes || []);
       setSupplierProducts(supplierProductsRes || []);
       setFarmerOrders(farmerOrdersRes || []);
       setSupplierOrders(supplierOrdersRes || []);
@@ -102,8 +102,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const refreshUsers = async () => {
     try {
 
-      const usersRes = await adminService.getAllUsers();
-      setUsers(usersRes|| []);
+      const usersRes = await adminService.getAllUsers(0, 4);
+      setUsers(usersRes || null);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh users';
       setError(message);
@@ -121,7 +121,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         adminService.getAllFarmerProducts(),
         adminService.getAllSupplierProducts()
       ]);
-      setFarmerProducts(farmerRes|| []);
+      setFarmerProducts(farmerRes || []);
       setSupplierProducts(supplierRes || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
@@ -157,7 +157,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const deleteUser = async (userId: string) => {
     try {
       await adminService.deleteUser(userId);
-      setUsers(users?.filter(u => u.id !== userId) || null);
+      setUsers(users && users.data ? { ...users, data: users.data.filter(u => u.id !== userId) } : null);
       toast({
         title: 'Success',
         description: 'User deleted successfully',
@@ -213,12 +213,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Calculate stats
   const userStats = {
-    totalUsers: users?.length || 0,
-    farmerCount: users?.filter(u => u.role === 'FARMER').length || 0,
-    buyerCount: users?.filter(u => u.role === 'BUYER').length || 0,
-    supplierCount: users?.filter(u => u.role === 'SUPPLIER').length || 0,
+    totalUsers: users?.data?.length || 0,
+    farmerCount: users?.data?.filter(u => u.role === 'FARMER').length || 0,
+    buyerCount: users?.data?.filter(u => u.role === 'BUYER').length || 0,
+    supplierCount: users?.data?.filter(u => u.role === 'SUPPLIER').length || 0,
   };
 
   const productStats = {

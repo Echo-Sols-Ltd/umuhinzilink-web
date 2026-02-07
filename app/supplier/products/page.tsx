@@ -155,37 +155,10 @@ function ProductsPageComponent() {
 
       {/* Main Content */}
       <main className="flex-1 p-6 overflow-auto  relative">
-        {/* Header */}
-        <header className="fixed top-0 left-64 z-30 right-0 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
-          {/* Search Section */}
-          <div className="w-1/2 relative">
-            <Input
-              type="text"
-              placeholder="Search products..."
-              className="pl-4 pr-10 h-10 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-3xl"
-            />
-            <Search
-              size={18}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            />
-          </div>
-
-          {/* Right Section */}
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => {
-                resetForm();
-                setShowForm(true);
-              }}
-              className="bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
-            >
-              + Add New Product
-            </button>
-          </div>
-        </header>
+     
 
         {/* Content with top margin for fixed header */}
-        <div className="mt-16">
+        <div className="mt-4">
           {/* Promotional Banner */}
           <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6 rounded-lg mb-6 relative overflow-hidden">
             <div className="flex items-center justify-between">

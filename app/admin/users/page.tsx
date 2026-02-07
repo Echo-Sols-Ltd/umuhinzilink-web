@@ -23,6 +23,8 @@ import {
   Shield,
   AlertTriangle,
   Filter,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
@@ -57,7 +59,7 @@ const MENU_ITEMS_BOTTOM: MenuItem[] = [
 ];
 
 function UserManagement() {
-  const { users, loading, deleteUser, refreshUsers } = useAdmin();
+  const { deleteUser } = useAdmin();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -66,6 +68,39 @@ function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  // Pagination state
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(4);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
+
+  // Fetch users with pagination
+  const fetchUsers = async (page = currentPage) => {
+    setLoading(true);
+    try {
+      const response = await adminService.getAllUsers(page, pageSize);
+      setUsers(response.data || []);
+      setTotalPages(response.totalPages);
+      setTotalUsers(response.totalElements);
+      setCurrentPage(page);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch users',
+        variant: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch users on mount and when page changes
+  React.useEffect(() => {
+    fetchUsers(currentPage);
+  }, [currentPage]);
 
   const filteredUsers =
     users?.filter(user => {
@@ -86,7 +121,7 @@ function UserManagement() {
     setActionLoading(userId);
     try {
       await adminService.toggleUserStatus(userId, suspend);
-      await refreshUsers();
+      await fetchUsers(currentPage);
       toast({
         title: 'Success',
         description: `User ${suspend ? 'suspended' : 'activated'} successfully`,
@@ -107,7 +142,7 @@ function UserManagement() {
     setActionLoading(userId);
     try {
       await adminService.updateUserRole(userId, newRole);
-      await refreshUsers();
+      await fetchUsers(currentPage);
       toast({
         title: 'Success',
         description: 'User role updated successfully',
@@ -211,13 +246,18 @@ function UserManagement() {
           <div className="bg-white rounded-xl border shadow-sm">
             <div className="p-6 border-b flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">Users</h2>
-              <button
-                onClick={refreshUsers}
-                className="p-2 text-green-600 hover:bg-green-50 rounded-full"
-                disabled={loading}
-              >
-                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">
+                  {totalUsers} total users
+                </span>
+                <button
+                  onClick={() => fetchUsers(currentPage)}
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-full"
+                  disabled={loading}
+                >
+                  <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -370,6 +410,69 @@ function UserManagement() {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 0 && (
+              <div className="p-4 border-t flex items-center justify-between">
+                <div className="text-sm text-gray-600">
+                  Page {currentPage + 1} of {totalPages}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                    disabled={currentPage === 0 || loading}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Previous
+                  </button>
+
+                  {/* Page numbers */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i).map(pageNum => {
+                      // Show first page, last page, current page, and pages around current
+                      const showPage =
+                        pageNum === 0 ||
+                        pageNum === totalPages - 1 ||
+                        Math.abs(pageNum - currentPage) <= 1;
+
+                      const showEllipsis =
+                        (pageNum === 1 && currentPage > 3) ||
+                        (pageNum === totalPages - 2 && currentPage < totalPages - 4);
+
+                      if (showEllipsis) {
+                        return <span key={pageNum} className="px-2 text-gray-400">...</span>;
+                      }
+
+                      if (!showPage) return null;
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          disabled={loading}
+                          className={`px-3 py-1 text-sm font-medium rounded-md ${pageNum === currentPage
+                              ? 'bg-green-600 text-white'
+                              : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                          {pageNum + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+                    disabled={currentPage >= totalPages - 1 || loading}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>

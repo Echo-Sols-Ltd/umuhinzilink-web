@@ -131,72 +131,9 @@ function SupplierMessagesComponent() {
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col h-full">
-          {/* Header */}
-          <header className="fixed top-0 left-64 z-30 right-0 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
-            {/* Search Section */}
-            <div className="w-1/2 relative">
-              <Input
-                type="text"
-                placeholder="Search..."
-                className="pl-4 pr-10 h-10 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-3xl"
-              />
-              <Search
-                size={18}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              />
-            </div>
-
-            {/* Right Section */}
-            <div className="flex items-center gap-6">
-              {/* Language Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors"
-                >
-                  <span className="text-lg">
-                    {languages.find(lang => lang.code === selectedLanguage)?.flag}
-                  </span>
-                  <span className="font-medium text-gray-700">
-                    {languages.find(lang => lang.code === selectedLanguage)?.name}
-                  </span>
-                  <ChevronDown size={16} className="text-gray-500" />
-                </button>
-
-                {isLanguageDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                    {languages.map(language => (
-                      <button
-                        key={language.code}
-                        onClick={() => {
-                          setSelectedLanguage(language.code);
-                          setIsLanguageDropdownOpen(false);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        <span className="text-lg">{language.flag}</span>
-                        <span>{language.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* User Profile */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">AS</span>
-                </div>
-                <div className="text-sm">
-                  <p className="font-semibold text-gray-900">Agri Supply Co.</p>
-                  <p className="text-gray-500 text-xs">Supplier</p>
-                </div>
-              </div>
-            </div>
-          </header>
-
+     
           {/* Messages Content */}
-          <div className="flex h-screen bg-gray-100 text-gray-800 mt-16">
+          <div className="flex h-screen bg-gray-100 text-gray-800 ">
             {/* Messages Sidebar */}
             <div className="bg-white border-r border-gray-200 flex-1 flex-col">
               <div className="p-4 flex items-center justify-between border-b border-gray-200 bg-green-600 text-white">

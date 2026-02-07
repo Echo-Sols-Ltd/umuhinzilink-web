@@ -11,14 +11,16 @@ export interface ApiResponse<T = unknown> {
  * API response for paginated data.
  */
 export interface PaginatedResponse<T> extends ApiResponse<T> {
-  empty: boolean;
+  empty?: boolean;
   first: boolean;
   last: boolean;
-  number: number;
-  numberOfElements: number;
-  pageable: Pageable;
-  size: number;
-  sort: Sort;
+  number?: number; // legacy?
+  pageNumber?: number; // active
+  numberOfElements?: number;
+  pageable?: Pageable;
+  size?: number; // legacy?
+  pageSize?: number; // active
+  sort?: Sort;
   totalElements: number;
   totalPages: number;
 }

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function VerifyPage() {
-    const { verifyOtp, user,askOtpCode } = useAuth()
+    const { verifyOtp, user, askOtpCode } = useAuth()
     const router = useRouter();
     const [otp, setOtp] = useState(['', '', '', '']);
     const [timer, setTimer] = useState(120);
@@ -54,7 +54,7 @@ export default function VerifyPage() {
         inputRefs.current[Math.min(pastedData.length, 5)]?.focus();
     };
 
-    const handleContinue =async (e: React.FormEvent) => {
+    const handleContinue = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         const otpValue = otp.join('');
@@ -62,12 +62,13 @@ export default function VerifyPage() {
             setError('Please enter the complete 4-digit code');
             return;
         }
-       await verifyOtp(otpValue)
+        await verifyOtp(otpValue)
         console.log('OTP:', otpValue);
     };
 
-    const handleResend = async() => {
-       await askOtpCode()
+    const handleResend = async () => {
+        await askOtpCode();
+        setTimer(120);
     };
 
     const formatTime = (seconds: number) => {
@@ -110,7 +111,7 @@ export default function VerifyPage() {
                             Enter the 4-digit code we sent to your email.
                         </p>
                         <p className="text-green-600 text-sm mb-8">
-                           {user?.email}
+                            {user?.email}
                         </p>
 
                         {/* OTP Form */}
@@ -137,7 +138,7 @@ export default function VerifyPage() {
                             {/* Resend link */}
                             <div className="text-center mb-6">
                                 <span className="text-sm text-gray-600">Didn't receive code? </span>
-                                {timer == 0 ? (
+                                {timer > 0 ? (
                                     <span className="text-sm text-green-600">
                                         Resend in {formatTime(timer)}
                                     </span>

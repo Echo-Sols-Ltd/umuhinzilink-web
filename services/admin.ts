@@ -4,15 +4,17 @@ import { API_ENDPOINTS } from './constants';
 
 export const adminService = {
   // Get all users
-  getAllUsers: async (): Promise<User[]> => {
+  getAllUsers: async (page: number, size: number): Promise<PaginatedResponse<User[]>> => {
     try {
-      const response = await apiClient.get<PaginatedResponse<User[]>>(API_ENDPOINTS.ADMIN.USERS);
-      return response.data!;
+      const response = await apiClient.get<PaginatedResponse<User[]>>(`${API_ENDPOINTS.ADMIN.USERS}?page=${page}&size=${size}`);
+      return response;
     } catch (error) {
       console.error('Error fetching users:', error);
       throw error;
     }
   },
+
+
 
   // Get user by ID
   getUserById: async (userId: string): Promise<User> => {
@@ -178,11 +180,38 @@ export const adminService = {
     }
   },
 
+  // Get supplier products (Paginated)
+  getSupplierProductsPaginated: async (page = 0, size = 10): Promise<PaginatedResponse<SupplierProduct[]>> => {
+    try {
+      const response = await apiClient.get<PaginatedResponse<SupplierProduct[]>>(API_ENDPOINTS.ADMIN.SUPPLIER_PRODUCTS, {
+        params: { page, size }
+      });
+      return response;
+    } catch (error) {
+      console.error('Error fetching supplier products:', error);
+      throw error;
+    }
+  },
+
+  // Get all supplier orders
   // Get all supplier orders
   getAllSupplierOrders: async (): Promise<SupplierOrder[]> => {
     try {
       const response = await apiClient.get<PaginatedResponse<SupplierOrder[]>>(API_ENDPOINTS.ADMIN.SUPPLIER_ORDERS);
       return response.data!;
+    } catch (error) {
+      console.error('Error fetching supplier orders:', error);
+      throw error;
+    }
+  },
+
+  // Get supplier orders (Paginated)
+  getSupplierOrdersPaginated: async (page = 0, size = 10): Promise<PaginatedResponse<SupplierOrder[]>> => {
+    try {
+      const response = await apiClient.get<PaginatedResponse<SupplierOrder[]>>(API_ENDPOINTS.ADMIN.SUPPLIER_ORDERS, {
+        params: { page, size }
+      });
+      return response;
     } catch (error) {
       console.error('Error fetching supplier orders:', error);
       throw error;

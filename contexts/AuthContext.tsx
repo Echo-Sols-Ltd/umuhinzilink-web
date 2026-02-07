@@ -54,7 +54,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [buyer, setBuyer] = useState<Buyer | null>(null);
   const { toast } = useToast()
-  
+
   const fetchFarmer = async () => {
     try {
       const res = await farmerService.getMe();
@@ -179,9 +179,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const buyer = getBuyer();
       if (token && user) {
         setUser(user);
-
+        if (!user.verified) {
+          router.replace('/auth/verify-otp')
+          return
+        }
         if (user.role === UserType.BUYER) {
-          if (!buyer||!user.verified) {
+          if (!buyer) {
             router.replace('/auth/buyer')
             setLoading(false)
             return
@@ -189,7 +192,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           setBuyer(buyer);
         }
         if (user.role === UserType.FARMER) {
-          if (!farmer||!user.verified) {
+          if (!farmer || !user.verified) {
             router.replace('/auth/farmer')
             setLoading(false)
             return
@@ -197,7 +200,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
           setFarmer(farmer);
         }
         if (user.role === UserType.SUPPLIER) {
-          if (!supplier||!user.verified) {
+          if (!supplier || !user.verified) {
             router.replace('/auth/supplier')
             setLoading(false)
             return
