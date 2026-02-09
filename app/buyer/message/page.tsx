@@ -6,6 +6,8 @@ import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, UserType } from '@/types';
 import ConversationSidebar from '@/components/messaging/ConversationSidebar';
 import ChatInterface from '@/components/messaging/ChatInterface';
+import { useMessages } from '@/contexts/MessageContext';
+import { cn } from '@/lib/utils';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -15,22 +17,31 @@ const Logo = () => (
 );
 
 function BuyerMessagesComponent() {
+  const { activeChatUser } = useMessages();
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex flex-1 min-h-0">
-        <Sidebar
-          userType={UserType.BUYER}
-          activeItem='Messages'
-        />
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className={cn("hidden md:block shrink-0")}>
+          <Sidebar
+            userType={UserType.BUYER}
+            activeItem='Messages'
+          />
+        </div>
 
         {/* Main Content */}
-        <main className="flex-1 flex h-[calc(100vh-0px)] overflow-hidden">
+        <main className="flex-1 flex h-full overflow-hidden">
           {/* Conversations Sidebar */}
-          <ConversationSidebar className="w-80 shrink-0" />
+          <ConversationSidebar className={cn(
+            "w-full md:w-80 shrink-0",
+            activeChatUser ? "hidden md:flex" : "flex"
+          )} />
 
           {/* Chat Interface */}
-          <ChatInterface className="flex-1" />
+          <ChatInterface className={cn(
+            "flex-1 overflow-hidden",
+            activeChatUser ? "flex" : "hidden md:flex"
+          )} />
         </main>
       </div>
     </div>

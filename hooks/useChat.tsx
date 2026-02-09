@@ -52,7 +52,7 @@ export const useChat = () => {
         setReplyTo(null)
     }
 
-    const handleReactToMessage = (messageId: number, emoji: string) => {
+    const handleReactToMessage = (messageId: string, emoji: string) => {
         reactToMessage(messageId, emoji)
     }
 

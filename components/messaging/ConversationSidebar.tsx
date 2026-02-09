@@ -81,7 +81,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   };
 
   const isUserOnline = (userId: string) => {
-    return onlineUsers.has(parseInt(userId));
+    return onlineUsers.has(userId);
   };
 
   const getUserData = (userId: string) => {
@@ -102,13 +102,15 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     <>
       <div className={cn('flex flex-col h-full bg-white border-r border-gray-200', className)}>
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 bg-green-600 text-white">
+        <div className="p-4 border-b border-gray-100 bg-white">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <MessageCircle className="w-6 h-6" />
-              <h2 className="text-lg font-semibold">Messages</h2>
+            <div className="flex items-center space-x-2.5">
+              <div className="bg-green-100 p-2 rounded-xl">
+                <MessageCircle className="w-5 h-5 text-green-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 tracking-tight">Messages</h2>
               {totalUnreadCount > 0 && (
-                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                <span className="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm shadow-green-200">
                   {totalUnreadCount}
                 </span>
               )}
@@ -117,15 +119,15 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
         </div>
 
         {/* Search */}
-        <div className="p-3 border-b border-gray-200">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <div className="p-4 border-b border-gray-50">
+          <div className="relative group">
+            <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 transition-colors group-focus-within:text-green-500" />
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Search conversations..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-sm placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -157,20 +159,20 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                     key={user.id}
                     onClick={() => onUserClick(user)}
                     className={cn(
-                      'p-4 cursor-pointer hover:bg-gray-50 transition-colors',
-                      isActive && 'bg-blue-50 border-r-2 border-blue-500'
+                      'p-4 cursor-pointer hover:bg-gray-50/80 transition-all border-l-4 border-transparent',
+                      isActive && 'bg-green-50/50 border-green-600'
                     )}
                   >
                     <div className="flex items-center space-x-3">
                       {/* Avatar */}
                       <div className="relative shrink-0">
-                        <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-600">
-                            {user.names.split(' ').map((n: string) => n[0]).join('')}
+                        <div className="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-sm">
+                          <span className="text-sm font-bold text-gray-600">
+                            {user.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
                           </span>
                         </div>
                         {isUserOnline(user.id) && (
-                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                          <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>
                         )}
                       </div>
 
@@ -200,9 +202,9 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                         <div className="flex items-center justify-between mt-1">
                           <p className={cn(
                             'text-sm truncate',
-                            (unreadCount > 0 || typingUsers.has(parseInt(user.id))) ? 'text-green-600 font-medium' : 'text-gray-500'
+                            (unreadCount > 0 || typingUsers.has(user.id)) ? 'text-green-600 font-medium' : 'text-gray-500'
                           )}>
-                            {typingUsers.has(parseInt(user.id)) ? (
+                            {typingUsers.has(user.id) ? (
                               'typing...'
                             ) : (
                               lastMessage?.content || user.role

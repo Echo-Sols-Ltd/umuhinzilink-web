@@ -5,11 +5,11 @@ import { API_CONFIG, SOCKET_EVENTS } from './constants';
 
 class SocketService {
     public stompClient: Client
-    private onlineUsers: Set<number> = new Set()
-    private onlineUserListeners: ((users: Set<number>) => void)[] = []
+    private onlineUsers: Set<string> = new Set()
+    private onlineUserListeners: ((users: Set<string>) => void)[] = []
     private messageListeners: ((message: Message) => void)[] = []
     private reactionListeners: ((reaction: ChatReaction) => void)[] = []
-    private messageDeletionListeners: ((id: number) => void)[] = []
+    private messageDeletionListeners: ((id: string) => void)[] = []
     private messageEditionListeners: ((message: Message) => void)[] = []
     private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
@@ -174,7 +174,7 @@ class SocketService {
 
     private handleMessageDeletion(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<number>
+            const body = JSON.parse(message.body) as SocketResponse<string>
             this.messageDeletionListeners.forEach(cb => cb(body.data!))
         } catch (error) {
             console.error('error parsing deleted message', error)
@@ -210,8 +210,8 @@ class SocketService {
 
     private handleOnlineUsers(message: IMessage) {
         try {
-            const userIds = JSON.parse(message.body) as number[]
-            const users = new Set<number>(userIds)
+            const userIds = JSON.parse(message.body) as string[]
+            const users = new Set<string>(userIds)
             this.onlineUsers = users
             this.onlineUserListeners.forEach(cb => cb(users))
         } catch (error) {
@@ -252,7 +252,7 @@ class SocketService {
         })
     }
 
-    public messageDeletion(id: number) {
+    public messageDeletion(id: string) {
         if (!this.stompClient.connected) return
         this.stompClient.publish({
             destination: SOCKET_EVENTS.MESSAGE.DELETE_MESSAGE,
@@ -280,15 +280,15 @@ class SocketService {
         return this.onlineUsers
     }
 
-    public onOnlineUsersChange(callback: (users: Set<number>) => void) {
+    public onOnlineUsersChange(callback: (users: Set<string>) => void) {
         this.onlineUserListeners.push(callback)
     }
 
-    public removeOnlineUsersListener(callback: (users: Set<number>) => void) {
+    public removeOnlineUsersListener(callback: (users: Set<string>) => void) {
         this.onlineUserListeners = this.onlineUserListeners.filter(cb => cb !== callback)
     }
 
-    public onMessage(callback: (message: Message) => void) {
+    public onMessage(callback: (message: Message) => void)   {
         this.messageListeners.push(callback)
     }
 
@@ -304,11 +304,11 @@ class SocketService {
         this.reactionListeners = this.reactionListeners.filter(cb => cb !== callback)
     }
 
-    public onMessageDeletion(callback: (id: number) => void) {
+    public onMessageDeletion(callback: (id: string) => void) {
         this.messageDeletionListeners.push(callback)
     }
 
-    public removeMessageDeletionListener(callback: (id: number) => void) {
+    public removeMessageDeletionListener(callback: (id: string) => void) {
         this.messageDeletionListeners = this.messageDeletionListeners.filter(cb => cb !== callback)
     }
 

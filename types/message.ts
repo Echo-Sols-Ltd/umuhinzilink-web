@@ -13,7 +13,7 @@ export enum MessageType {
  * Represents a direct message between users.
  */
 export interface Message {
-  id: number;
+  id: string;
   sender: User;
   receiver: User;
   content: string;
@@ -27,12 +27,12 @@ export interface Message {
 }
 
 export interface Reaction {
-  userId: number;
+  userId: string;
   emoji: string;
 }
 
 export interface ChatReaction {
-  messageId: number;
+  messageId: string;
   reactions: Reaction[];
 }
 
@@ -41,19 +41,19 @@ export interface ChatReaction {
  */
 export interface SendMessageRequest {
   content: string;
-  receiverId: number;
-  senderId: number;
+  receiverId:string;
+  senderId: string;
   type: MessageType;
   fileName?: string;
-  replyToId?: number;
+  replyToId?: string;
 }
 
 export interface EditMessageRequest {
   newMessage: string;
-  id: number;
+  id: string;
 }
 export interface ChatTyping {
-  userId: number;
-  receiverId: number;
+  userId: string;
+  receiverId: string;
   isTyping: boolean;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, act } from 'react';
 import {
   Send,
   Paperclip,
@@ -12,7 +12,8 @@ import {
   X,
   Image as ImageIcon,
   File,
-  Download
+  Download,
+  ArrowLeft
 } from 'lucide-react';
 import Image from 'next/image';
 import { Message, MessageType } from '@/types/message';
@@ -29,6 +30,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   const {
     messages,
     activeChatUser,
+    setActiveChatUser,
     sendMessage,
     editMessage,
     deleteMessage,
@@ -39,11 +41,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   } = useMessages();
 
   const [messageText, setMessageText] = useState('');
-  const [editingMessageId, setEditingMessageId] = useState<number | null>(null);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUserOnline, setIsUserOnline] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -97,7 +100,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     }
   };
 
-  const handleEditMessage = async (messageId: number) => {
+  const handleEditMessage = async (messageId: string) => {
     if (!editingText.trim()) return;
     try {
       await editMessage(messageId, editingText.trim());
@@ -108,7 +111,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     }
   };
 
-  const handleDeleteMessage = async (messageId: number) => {
+  const handleDeleteMessage = async (messageId: string) => {
     if (window.confirm('Are you sure you want to delete this message?')) {
       try {
         await deleteMessage(messageId);
@@ -138,8 +141,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     else return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined });
   };
 
-  const isUserOnline = (userId: string) => onlineUsers.has(parseInt(userId));
-
+  useEffect(() => {
+    setIsUserOnline(onlineUsers.has(activeChatUser?.id || ''));
+  }, [onlineUsers, activeChatUser]);
   const renderMessage = (message: Message, index: number) => {
     const isOwn = message.sender.id === currentUser?.id;
     const showDate = index === 0 ||
@@ -154,10 +158,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
           </div>
         )}
 
-        <div className={cn('flex mb-4', isOwn ? 'justify-end' : 'justify-start')}>
+        <div className={cn('flex mb-4 group', isOwn ? 'justify-end' : 'justify-start')}>
           <div className={cn(
-            'max-w-xs lg:max-w-md px-4 py-2 rounded-lg relative group',
-            isOwn ? 'bg-green-600 text-white rounded-br-none' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
+            'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-2xl relative shadow-sm transition-all',
+            isOwn
+              ? 'bg-green-600 text-white rounded-tr-none ring-1 ring-inset ring-green-500'
+              : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none'
           )}>
             {message.replyTo && (
               <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-green-700 border-green-400 text-green-100' : 'bg-gray-50 border-gray-300 text-gray-600')}>
@@ -201,7 +207,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 )}
 
                 {message.type === MessageType.TEXT && (
-                  <div className="whitespace-pre-wrap break-words">{message.content}</div>
+                  <div className="whitespace-pre-wrap wrap-break-word leading-relaxed">{message.content}</div>
                 )}
 
                 {message.isEdited && (
@@ -211,11 +217,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             )}
 
             {isOwn && editingMessageId !== message.id && (
-              <div className="absolute top-0 right-0 transform translate-x-full opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="flex space-x-1 bg-white border border-gray-200 rounded-lg shadow-lg p-1">
-                  <button onClick={() => setReplyingTo(message)} className="p-1 hover:bg-gray-100 rounded" title="Reply"><Reply className="w-3 h-3 text-gray-600" /></button>
-                  <button onClick={() => { setEditingMessageId(message.id); setEditingText(message.content); }} className="p-1 hover:bg-gray-100 rounded" title="Edit"><Edit3 className="w-3 h-3 text-gray-600" /></button>
-                  <button onClick={() => handleDeleteMessage(message.id)} className="p-1 hover:bg-gray-100 rounded" title="Delete"><Trash2 className="w-3 h-3 text-red-600" /></button>
+              <div className={cn(
+                "absolute top-0 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10",
+                isOwn ? "-left-24" : "-right-24"
+              )}>
+                <div className="flex items-center space-x-1 bg-white border border-gray-100 rounded-full shadow-md p-1.5 translate-y-1">
+                  <button onClick={() => setReplyingTo(message)} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Reply"><Reply className="w-3.5 h-3.5 text-gray-500" /></button>
+                  <button onClick={() => { setEditingMessageId(message.id); setEditingText(message.content); }} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Edit"><Edit3 className="w-3.5 h-3.5 text-gray-500" /></button>
+                  <button onClick={() => handleDeleteMessage(message.id)} className="p-1.5 hover:bg-red-50 rounded-full transition-colors group/del" title="Delete"><Trash2 className="w-3.5 h-3.5 text-gray-500 group-hover/del:text-red-500" /></button>
                 </div>
               </div>
             )}
@@ -248,23 +257,29 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
   return (
     <div className={cn('flex flex-col h-full bg-white', className)}>
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+      <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-white">
         <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setActiveChatUser(null)}
+            className="p-2 -ml-2 hover:bg-gray-100 rounded-full md:hidden transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
           <div className="relative">
-            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-600">
-                {activeChatUser.names.split(' ').map((n: string) => n[0]).join('')}
+            <div className="w-10 h-10 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center shadow-sm">
+              <span className="text-sm font-bold text-gray-600">
+                {activeChatUser.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
               </span>
             </div>
-            {isUserOnline(activeChatUser.id) && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>}
+            {isUserOnline && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>}
           </div>
           <div>
             <h3 className="font-medium text-gray-900">{activeChatUser.names}</h3>
             <p className="text-sm text-gray-500">
-              {typingUsers.has(parseInt(activeChatUser.id)) ? (
+              {typingUsers.has(activeChatUser.id) ? (
                 <span className="text-green-600 animate-pulse">typing...</span>
               ) : (
-                isUserOnline(activeChatUser.id) ? 'Online' : 'Offline'
+                isUserOnline ? 'Online' : 'Offline'
               )}
             </p>
           </div>
@@ -272,21 +287,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         <button className="p-2 hover:bg-gray-100 rounded-full"><MoreVertical className="w-5 h-5 text-gray-600" /></button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-        <div className="flex flex-col justify-end min-h-full space-y-4">
-          {filteredMessages.map((message, index) => renderMessage(message, index))}
-          {activeChatUser && typingUsers.has(parseInt(activeChatUser.id)) && (
-            <div className="flex justify-start">
-              <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50/50">
+        <div className="flex flex-col min-h-full">
+          <div className="flex-1" /> {/* Spacer to push messages to bottom */}
+          <div className="space-y-4">
+            {filteredMessages.map((message, index) => renderMessage(message, index))}
+            {activeChatUser && typingUsers.has(activeChatUser.id) && (
+              <div className="flex justify-start animate-in fade-in slide-in-from-left-2 duration-300">
+                <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm">
+                  <div className="flex space-x-1.5">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
+            )}
+            <div ref={messagesEndRef} className="h-2" />
+          </div>
         </div>
       </div>
 
@@ -317,29 +335,36 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         </div>
       )}
 
-      <div className="p-4 border-t border-gray-200 bg-white">
-        <div className="flex items-end space-x-2">
-          <div className="flex space-x-1">
-            <button onClick={() => fileInputRef.current?.click()} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Attach file"><Paperclip className="w-5 h-5 text-gray-600" /></button>
-            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="p-2 hover:bg-gray-100 rounded-full transition-colors" title="Add emoji"><Smile className="w-5 h-5 text-gray-600" /></button>
+      <div className="p-4 border-t border-gray-100 bg-white">
+        <div className="flex items-end space-x-3 max-w-5xl mx-auto">
+          <div className="flex items-center space-x-1 mb-1">
+            <button onClick={() => fileInputRef.current?.click()} className="p-2.5 hover:bg-gray-100 text-gray-500 rounded-full transition-all active:scale-95" title="Attach file"><Paperclip className="w-5 h-5" /></button>
+            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="p-2.5 hover:bg-gray-100 text-gray-500 rounded-full transition-all active:scale-95" title="Add emoji"><Smile className="w-5 h-5" /></button>
           </div>
           <div className="flex-1 relative">
             <textarea
               value={messageText}
               onChange={(e) => { setMessageText(e.target.value); handleTyping(); }}
-              onKeyPress={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
-              placeholder="Type a message..."
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+              placeholder="Type your message..."
               rows={1}
-              className="w-full resize-none border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              style={{ minHeight: '40px', maxHeight: '120px' }}
+              className="w-full resize-none bg-gray-50 border-none rounded-2xl px-4 py-3 focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-gray-800 placeholder:text-gray-400"
+              style={{ minHeight: '46px', maxHeight: '150px' }}
             />
           </div>
           <button
             onClick={handleSendMessage}
             disabled={!messageText.trim() && !selectedFile}
             className={cn(
-              'p-2 rounded-full transition-colors',
-              messageText.trim() || selectedFile ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              'p-3 rounded-2xl transition-all active:scale-95 shadow-md shrink-0 mb-0.5',
+              messageText.trim() || selectedFile
+                ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-200'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
             )}
           >
             <Send className="w-5 h-5" />

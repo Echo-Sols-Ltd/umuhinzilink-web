@@ -7,22 +7,35 @@ import { UserType } from '@/types';
 import ConversationSidebar from '@/components/messaging/ConversationSidebar';
 import ChatInterface from '@/components/messaging/ChatInterface';
 
+import { useMessages } from '@/contexts/MessageContext';
+import { cn } from '@/lib/utils';
+
 function GovernmentMessagesComponent() {
+    const { activeChatUser } = useMessages();
+
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">
+        <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
             <div className="flex flex-1 min-h-0 overflow-hidden">
-                <Sidebar
-                    userType={UserType.GOVERNMENT}
-                    activeItem='Messages'
-                />
+                <div className={cn("hidden md:block shrink-0")}>
+                    <Sidebar
+                        userType={UserType.GOVERNMENT}
+                        activeItem='Messages'
+                    />
+                </div>
 
                 {/* Main Content */}
                 <main className="flex-1 flex h-full overflow-hidden">
                     {/* Conversations Sidebar */}
-                    <ConversationSidebar className="w-80 shrink-0" />
+                    <ConversationSidebar className={cn(
+                        "w-full md:w-80 shrink-0",
+                        activeChatUser ? "hidden md:flex" : "flex"
+                    )} />
 
                     {/* Chat Interface */}
-                    <ChatInterface className="flex-1" />
+                    <ChatInterface className={cn(
+                        "flex-1 overflow-hidden",
+                        activeChatUser ? "flex" : "hidden md:flex"
+                    )} />
                 </main>
             </div>
         </div>

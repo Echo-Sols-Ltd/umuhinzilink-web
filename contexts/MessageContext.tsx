@@ -11,21 +11,21 @@ export interface MessageContextValue {
   activeChatUser: User | null;
   loading: boolean;
   error: string | null;
-  onlineUsers: Set<number>;
+  onlineUsers: Set<string>;
 
   // Actions
   setActiveChatUser: (user: User | null) => void;
-  sendMessage: (content: string, type?: MessageType, fileName?: string, replyToId?: number) => Promise<void>;
-  editMessage: (messageId: number, newContent: string) => Promise<void>;
-  deleteMessage: (messageId: number) => Promise<void>;
-  reactToMessage: (messageId: number, emoji: string) => Promise<void>;
+  sendMessage: (content: string, type?: MessageType, fileName?: string, replyToId?: string) => Promise<void>;
+  editMessage: (messageId: string, newContent: string) => Promise<void>;
+  deleteMessage: (messageId: string) => Promise<void>;
+  reactToMessage: (messageId: string, emoji: string) => Promise<void>;
   loadMessages: (userId: string) => Promise<void>;
-  markAsRead: (messageIds: number[]) => void;
+  markAsRead: (messageIds: string[]) => void;
 
   // Typing indicators
   isTyping: boolean;
   setIsTyping: (typing: boolean) => void;
-  typingUsers: Set<number>;
+  typingUsers: Set<string>;
 }
 
 const MessageContext = createContext<MessageContextValue | undefined>(undefined);
@@ -38,9 +38,9 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const [activeChatUser, setActiveChatUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [onlineUsers, setOnlineUsers] = useState<Set<number>>(new Set());
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [isTyping, setIsTyping] = useState(false);
-  const [typingUsers, setTypingUsers] = useState<Set<number>>(new Set());
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
   // Handle incoming messages
   const handleIncomingMessage = useCallback((message: Message) => {
@@ -64,7 +64,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Handle message deletion
-  const handleMessageDeleted = useCallback((messageId: number) => {
+  const handleMessageDeleted = useCallback((messageId: string) => {
     setMessages(prev => prev.filter(msg => msg.id !== messageId));
   }, []);
 
@@ -78,7 +78,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Handle online users updates
-  const handleOnlineUsersUpdate = useCallback((users: Set<number>) => {
+  const handleOnlineUsersUpdate = useCallback((users: Set<string>) => {
+    console.log(users)
     setOnlineUsers(users);
   }, []);
 
@@ -127,25 +128,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       const response = await messageService.getConversation(user.id, userId);
 
       if (response.success && response.data) {
-        // Map ChatMessage to Message
-        const history: Message[] = response.data.map(m => ({
-          id: parseInt(m.id),
-          sender: {
-            id: m.senderId,
-            names: `User ${m.senderId}`,
-            email: '', role: 'FARMER' as any, phoneNumber: '', avatar: '', createdAt: '', updatedAt: '', lastLogin: '', verified: true, address: {} as any, password: '', language: 'ENGLISH' as any
-          },
-          receiver: {
-            id: m.receiverId,
-            names: `User ${m.receiverId}`,
-            email: '', role: 'BUYER' as any, phoneNumber: '', avatar: '', createdAt: '', updatedAt: '', lastLogin: '', verified: true, address: {} as any, password: '', language: 'ENGLISH' as any
-          },
-          content: m.content,
-          timestamp: m.createdAt,
-          type: m.messageType as MessageType,
-          isRead: m.isRead,
-          isEdited: false
-        }));
+     
+        const history: Message[] = response.data || []
 
         setMessages(prev => {
           const others = prev.filter(m =>
@@ -163,13 +147,13 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const sendMessage = async (content: string, type: MessageType = MessageType.TEXT, fileName?: string, replyToId?: number) => {
+  const sendMessage = async (content: string, type: MessageType = MessageType.TEXT, fileName?: string, replyToId?: string) => {
     if (!user?.id || !activeChatUser || !socket) return;
 
     const messageRequest: SendMessageRequest = {
       content,
-      receiverId: parseInt(activeChatUser.id),
-      senderId: parseInt(user.id),
+      receiverId: activeChatUser.id,
+      senderId: user.id,
       type,
       fileName,
       replyToId
@@ -178,23 +162,23 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     socket.sendMessage(messageRequest);
   };
 
-  const editMessage = async (messageId: number, newContent: string) => {
+  const editMessage = async (messageId: string, newContent: string) => {
     if (!socket) return;
     socket.messageEdition({ id: messageId, newMessage: newContent });
   };
 
-  const deleteMessage = async (messageId: number) => {
+  const deleteMessage = async (messageId: string) => {
     if (!socket) return;
     socket.messageDeletion(messageId);
   };
 
-  const reactToMessage = async (messageId: number, emoji: string) => {
+  const reactToMessage = async (messageId: string, emoji: string) => {
     if (!socket || !user) return;
     // Local optimistic update could go here
-    socket.messageReact({ messageId, reactions: [{ userId: parseInt(user.id), emoji }] });
+    socket.messageReact({ messageId, reactions: [{ userId: user.id, emoji }] });
   };
 
-  const markAsRead = (messageIds: number[]) => {
+  const markAsRead = (messageIds: string[]) => {
     setMessages(prev =>
       prev.map(msg => (messageIds.includes(msg.id) ? { ...msg, isRead: true } : msg))
     );
@@ -218,8 +202,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       setIsTyping(typing);
       if (socket && user && activeChatUser) {
         socket.sendTyping({
-          userId: parseInt(user.id),
-          receiverId: parseInt(activeChatUser.id),
+          userId: user.id,
+          receiverId: activeChatUser.id,
           isTyping: typing
         });
       }
