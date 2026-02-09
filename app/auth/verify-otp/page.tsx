@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function VerifyPage() {
-    const { verifyOtp, user, askOtpCode } = useAuth()
+    const { verifyOtp, user, askOtpCode, loadAuthState } = useAuth()
     const router = useRouter();
     const [otp, setOtp] = useState(['', '', '', '']);
     const [timer, setTimer] = useState(120);
@@ -80,11 +80,11 @@ export default function VerifyPage() {
     return (
         <div className="flex h-screen">
             {/* Left side - Form */}
-            <div className="flex flex-[2] flex-col justify-between p-8 bg-white">
+            <div className="flex flex-2 flex-col justify-between p-8 bg-white">
                 <div className="flex flex-col flex-1 max-w-md mx-auto w-full">
                     {/* Go back button */}
                     <button
-                        onClick={() => window.history.back()}
+                        onClick={() => loadAuthState()}
                         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +178,7 @@ export default function VerifyPage() {
             </div>
 
             {/* Right side - Image */}
-            <div className="hidden lg:block flex-[2] relative overflow-hidden">
+            <div className="hidden lg:block flex-2 relative overflow-hidden">
                 <Image
                     src="/Image.png"
                     alt="Mountain road"
