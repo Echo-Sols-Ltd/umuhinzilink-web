@@ -389,7 +389,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         user.verified = true;
         localStorage.setItem('user', JSON.stringify(user));
         setUser(user);
-        router.replace('/');
+        await loadAuthState()
       }
     } catch {
       toast({
