@@ -59,20 +59,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await farmerService.getMe();
       if (!res.success) {
-        toast({
-          title: 'Fetching farmer failed',
-          description: res.message || 'Please try again later',
-          variant: 'error',
-        });
         router.replace('/auth/farmer');
         return
       }
       if (res.data) {
         localStorage.setItem('farmer', JSON.stringify(res.data));
-        if (!res.data) {
-          router.replace('/auth/farmer');
-          return;
-        }
         setFarmer(res.data);
       }
     } catch {
@@ -88,18 +79,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await buyerService.getMe();
       if (!res.success) {
-        toast({
-          title: 'Fetching Buyer failed',
-          description: 'Please try again later',
-          variant: 'error',
-        });
+        router.replace('/auth/buyer');
+        return
       }
       if (res.data) {
         localStorage.setItem('buyer', JSON.stringify(res.data));
-        if (!res.data) {
-          router.replace('/auth/buyer');
-          return;
-        }
         setBuyer(res.data);
       }
     } catch {
@@ -115,18 +99,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await supplierService.getMe();
       if (!res.success) {
-        toast({
-          title: 'Fetching supplier failed',
-          description: 'Please try again later',
-          variant: 'error',
-        });
+        router.replace('/auth/supplier');
+        return
       }
       if (res.data) {
         localStorage.setItem('supplier', JSON.stringify(res.data));
-        if (!res.data) {
-          router.replace('/auth/supplier');
-          return;
-        }
         setSupplier(res.data);
       }
     } catch {
