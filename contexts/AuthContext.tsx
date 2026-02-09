@@ -339,7 +339,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.success && res.data) {
         localStorage.setItem('farmer', JSON.stringify(res.data));
         setFarmer(res.data);
-        loadAuthState()
+        router.replace('/');
       }
     } catch {
       toast({

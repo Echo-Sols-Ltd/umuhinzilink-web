@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Star,
   MapPin,
@@ -388,7 +388,7 @@ function ProductsPageComponent() {
             ))}
           </div>
         ) : paginatedProducts.length > 0 ? (
-          <>
+          <div>
             {viewMode === 'grid' ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {paginatedProducts.map((product) => (
@@ -447,7 +447,7 @@ function ProductsPageComponent() {
                 </TouchOptimizedButton>
               </div>
             )}
-          </>
+          </div>
         ) : (
           <div className="text-center py-12">
             <div className="w-16 h-16 text-gray-300 mx-auto mb-4">
@@ -466,7 +466,7 @@ function ProductsPageComponent() {
 
       {/* Product Order Interface Modal */}
       {selectedProduct && !isPurchasing && (
-        <div className='fixed top-0 left-0 w-full h-full z-50 p-40 bg-black/85 align-center justify-center items-center overflow-auto'>
+        <div className='fixed top-0 left-0 w-full h-full z-50 p-4 flex items-center justify-center bg-black/85 overflow-auto'>
           <ProductOrderInterface
             product={selectedProduct}
             productType={selectedProduct.type || 'farmer'}
@@ -516,7 +516,10 @@ function ProductCard({ product, onSelect, onPurchase }: ProductCardProps) {
           />
           <div className="absolute top-2 right-2">
             <TouchOptimizedButton
-              onClick={() => setIsSaved(!isSaved)}
+              onClick={(e: any) => {
+                e.stopPropagation();
+                setIsSaved(!isSaved);
+              }}
               variant="ghost"
               size="sm"
               className="bg-white/80 hover:bg-white"
@@ -554,7 +557,8 @@ function ProductCard({ product, onSelect, onPurchase }: ProductCardProps) {
 
           <div className="flex items-center justify-between mt-3 gap-2">
             <TouchOptimizedButton
-              onClick={() => {
+              onClick={(e: any) => {
+                e.stopPropagation();
                 onPurchase();
               }}
               size="sm"
@@ -605,7 +609,10 @@ function ProductListItem({ product, onSelect, onPurchase }: ProductListItemProps
                   {Number(product.unitPrice).toLocaleString()} RWF
                 </span>
                 <TouchOptimizedButton
-                  onClick={() => setIsSaved(!isSaved)}
+                  onClick={(e: any) => {
+                    e.stopPropagation();
+                    setIsSaved(!isSaved);
+                  }}
                   variant="ghost"
                   size="sm"
                 >
@@ -640,7 +647,8 @@ function ProductListItem({ product, onSelect, onPurchase }: ProductListItemProps
                   <span className="ml-1">4.5</span>
                 </div>
                 <TouchOptimizedButton
-                  onClick={() => {
+                  onClick={(e: any) => {
+                    e.stopPropagation();
                     onPurchase();
                   }}
                   size="sm"
@@ -649,7 +657,10 @@ function ProductListItem({ product, onSelect, onPurchase }: ProductListItemProps
                   Buy Now
                 </TouchOptimizedButton>
                 <TouchOptimizedButton
-                  onClick={onSelect}
+                  onClick={(e: any) => {
+                    e.stopPropagation();
+                    onSelect();
+                  }}
                   size="sm"
                   variant="outline"
                 >
