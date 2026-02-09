@@ -1,16 +1,17 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
-import { Message, SendMessageRequest, SocketResponse, EditMessageRequest } from '@/types'
+import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants';
 
 class SocketService {
     public stompClient: Client
-    private onlineUsers: Set<number> = new Set()
-    private onlineUserListeners: ((users: Set<number>) => void)[] = []
+    private onlineUsers: Set<string> = new Set()
+    private onlineUserListeners: ((users: Set<string>) => void)[] = []
     private messageListeners: ((message: Message) => void)[] = []
-    private reactionListeners: ((message: Message) => void)[] = []
-    private messageDeletionListeners: ((id: number) => void)[] = []
+    private reactionListeners: ((reaction: ChatReaction) => void)[] = []
+    private messageDeletionListeners: ((id: string) => void)[] = []
     private messageEditionListeners: ((message: Message) => void)[] = []
+    private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
@@ -21,7 +22,6 @@ class SocketService {
                 try {
                     const token = localStorage.getItem("auth_token")
                     if (!token) {
-
                         this.logout()
                         throw new Error('Missing access token')
                     }
@@ -29,18 +29,17 @@ class SocketService {
                     return new SockJS(wsUrl, null, {
                         transports: ['websocket', 'xhr-polling', 'eventsource'],
                         timeout: 10000,
-
                     })
                 } catch (error) {
                     console.error('Failed to initialize WebSocket factory:', error)
                     this.logout()
-                    throw error // Prevent client activation
+                    throw error
                 }
             },
             reconnectDelay: 3000,
             onConnect: () => {
                 try {
-                    this.connectionAttempts = 0 // Reset attempts
+                    this.connectionAttempts = 0
                     this.subscribeToPublic()
                 } catch (error) {
                     console.error('Error in onConnect handler:', error)
@@ -53,7 +52,6 @@ class SocketService {
                         frame.body?.includes('401') ||
                         frame.headers['message']?.includes('token')
                     ) {
-                        console.warn('Unauthorized error detected, attempting token refresh')
                         this.handleUnauthorized()
                     } else {
                         this.handleConnectionError(new Error(`STOMP error: ${frame.headers['message']}`))
@@ -65,7 +63,6 @@ class SocketService {
             onWebSocketError: (error) => {
                 try {
                     if (error?.includes('401') || error?.includes('Unauthorized')) {
-                        console.warn('WebSocket 401 error, attempting token refresh')
                         this.handleUnauthorized()
                     } else {
                         this.handleConnectionError(error)
@@ -85,9 +82,8 @@ class SocketService {
             }
             this.connectionAttempts++
             const refreshToken = localStorage.getItem("refresh_token")
-            if (!refreshToken) {
-                throw new Error('No refresh token available')
-            }
+            if (!refreshToken) throw new Error('No refresh token available')
+
             const response = await fetch(`${API_CONFIG.BASE_URL}/api/${API_CONFIG.API_VERSION}/auth/refresh`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -130,77 +126,33 @@ class SocketService {
             localStorage.clear()
             await this.stompClient.deactivate()
             this.onlineUsers = new Set()
-            this.onlineUserListeners.forEach((callback) => {
-                try {
-                    callback(new Set())
-                } catch (error) {
-                    console.error('Error in online users callback:', error)
-                }
-            })
-            this.logoutListeners.forEach((callback) => {
-                try {
-                    callback()
-                } catch (error) {
-                    console.error('Error in logout callback:', error)
-                }
-            })
+            this.onlineUserListeners.forEach(cb => cb(new Set()))
+            this.logoutListeners.forEach(cb => cb())
         } catch (error) {
             console.error('Error during logout:', error)
-        } finally {
-            this.logoutListeners.forEach((callback) => {
-                try {
-                    callback()
-                } catch (error) {
-                    console.error('Error in final logout callback:', error)
-                }
-            })
         }
     }
 
     public onLogout(callback: () => void) {
-        try {
-            this.logoutListeners.push(callback)
-        } catch (error) {
-            console.error('Error adding logout listener:', error)
-        }
+        this.logoutListeners.push(callback)
     }
 
     public removeLogoutListener(callback: () => void) {
-        try {
-            this.logoutListeners = this.logoutListeners.filter(cb => cb !== callback)
-        } catch (error) {
-            console.error('Error removing logout listener:', error)
-        }
+        this.logoutListeners = this.logoutListeners.filter(cb => cb !== callback)
     }
 
     public connect() {
-        try {
-            const token = localStorage.getItem("auth_token")
-            if (!token) {
-                this.logout()
-                return
-            }
-            this.stompClient.activate()
-        } catch (error) {
-            console.error('Error connecting to WebSocket:', error)
-            this.handleConnectionError(error as Error)
+        if (!localStorage.getItem("auth_token")) {
+            this.logout()
+            return
         }
+        this.stompClient.activate()
     }
 
     public async disconnect() {
-        try {
-            await this.stompClient.deactivate()
-            this.onlineUsers = new Set()
-            this.onlineUserListeners.forEach((callback) => {
-                try {
-                    callback(new Set())
-                } catch (error) {
-                    console.error('Error in online users callback:', error)
-                }
-            })
-        } catch (error) {
-            console.error('Error disconnecting WebSocket:', error)
-        }
+        await this.stompClient.deactivate()
+        this.onlineUsers = new Set()
+        this.onlineUserListeners.forEach(cb => cb(new Set()))
     }
 
     public isConnected(): boolean {
@@ -209,226 +161,172 @@ class SocketService {
 
     private subscribeToPublic() {
         try {
-            this.stompClient.subscribe('/topic/onlineUsers', (message) => this.handleOnlineUsers(message))
-            this.stompClient.subscribe('/topic/messages', (message) => this.handleMessage(message))
-            this.stompClient.subscribe('/topic/messageDeletion', (message) => this.handleMessageDeletion(message))
-            this.stompClient.subscribe('/topic/messageEdition', (message) => this.handleMessageEdition(message))
+            this.stompClient.subscribe('/topic/onlineUsers', (msg) => this.handleOnlineUsers(msg))
+            this.stompClient.subscribe('/topic/messages', (msg) => this.handleMessage(msg))
+            this.stompClient.subscribe('/topic/messageDeletion', (msg) => this.handleMessageDeletion(msg))
+            this.stompClient.subscribe('/topic/messageEdition', (msg) => this.handleMessageEdition(msg))
+            this.stompClient.subscribe('/topic/messageReaction', (msg) => this.handleReaction(msg))
+            this.stompClient.subscribe('/topic/typing', (msg) => this.handleTyping(msg))
         } catch (error) {
-            console.error('❌ Error subscribing to public topics:', error)
+            console.error('❌ Error subscribing to topics:', error)
         }
     }
 
     private handleMessageDeletion(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<number>
-
-            this.messageDeletionListeners.forEach((callback) => {
-                callback(body.data!)
-            })
+            const body = JSON.parse(message.body) as SocketResponse<string>
+            this.messageDeletionListeners.forEach(cb => cb(body.data!))
         } catch (error) {
-            console.error('error receiving deleted message', error)
+            console.error('error parsing deleted message', error)
         }
     }
 
     private handleMessageEdition(message: IMessage) {
         try {
             const body = JSON.parse(message.body) as SocketResponse<Message>
-            this.messageEditionListeners.forEach((callback) => {
-                callback(body.data!)
-            })
+            this.messageEditionListeners.forEach(cb => cb(body.data!))
         } catch (error) {
-            console.error('error receiving edited message', error)
+            console.error('error parsing edited message', error)
         }
     }
 
     private handleMessage(message: IMessage) {
         try {
             const body = JSON.parse(message.body) as SocketResponse<Message>
-            this.messageListeners.forEach((callback) => {
-                try {
-                    callback(body.data!)
-                } catch (error) {
-                    console.error('Error in message callback:', error)
-                }
-            })
+            this.messageListeners.forEach(cb => cb(body.data!))
         } catch (error) {
             console.error('Failed to parse message:', error)
         }
     }
 
+    private handleReaction(message: IMessage) {
+        try {
+            const body = JSON.parse(message.body) as SocketResponse<ChatReaction>
+            this.reactionListeners.forEach(cb => cb(body.data!))
+        } catch (error) {
+            console.error('Failed to parse reaction:', error)
+        }
+    }
+
     private handleOnlineUsers(message: IMessage) {
         try {
-            const userIds = JSON.parse(message.body) as number[]
-            const users = new Set<number>(userIds)
+            const userIds = JSON.parse(message.body) as string[]
+            const users = new Set<string>(userIds)
             this.onlineUsers = users
-            this.onlineUserListeners.forEach((callback) => {
-                try {
-                    callback(users)
-                } catch (error) {
-                    console.error('Error in online users callback:', error)
-                }
-            })
+            this.onlineUserListeners.forEach(cb => cb(users))
         } catch (error) {
-            console.error('Failed to parse online user IDs:', error)
+            console.error('Failed to parse online users:', error)
+        }
+    }
+
+    private handleTyping(message: IMessage) {
+        try {
+            const body = JSON.parse(message.body) as SocketResponse<ChatTyping>
+            this.typingListeners.forEach(cb => cb(body.data!))
+        } catch (error) {
+            console.error('Failed to parse typing:', error)
         }
     }
 
     public sendMessage(data: SendMessageRequest) {
-        try {
-            if (!this.stompClient.connected) {
-                console.warn('Cannot send message: WebSocket not connected')
-                return
-            }
-            const payload = data
-            this.stompClient.publish({
-                destination: SOCKET_EVENTS.MESSAGE.SEND_MESSAGE,
-                body: JSON.stringify(payload),
-            })
-        } catch (error) {
-            console.error('Error sending message:', error)
-        }
+        if (!this.stompClient.connected) return
+        this.stompClient.publish({
+            destination: SOCKET_EVENTS.MESSAGE.SEND_MESSAGE,
+            body: JSON.stringify(data),
+        })
     }
 
     public messageReply(data: SendMessageRequest) {
-        try {
-            if (!this.stompClient.connected) {
-                console.warn('Cannot send message: WebSocket not connected')
-                return
-            }
-            const payload = data
-            this.stompClient.publish({
-                destination: SOCKET_EVENTS.MESSAGE.REPLY_MESSAGE,
-                body: JSON.stringify(payload),
-            })
-        } catch (error) {
-            console.error('Error sending message:', error)
-
-        }
+        if (!this.stompClient.connected) return
+        this.stompClient.publish({
+            destination: SOCKET_EVENTS.MESSAGE.REPLY_MESSAGE,
+            body: JSON.stringify(data),
+        })
     }
 
     public messageEdition(data: EditMessageRequest) {
-        try {
-            if (!this.stompClient.connected) {
-                console.warn('Cannot edit message: WebSocket not connected')
-                return
-            }
-            const payload = data
-            this.stompClient.publish({
-                destination: SOCKET_EVENTS.MESSAGE.EDIT_MESSAGE,
-                body: JSON.stringify(payload)
-            })
-        } catch (error) {
-            console.error('Error editing message: ', error)
-        }
+        if (!this.stompClient.connected) return
+        this.stompClient.publish({
+            destination: SOCKET_EVENTS.MESSAGE.EDIT_MESSAGE,
+            body: JSON.stringify(data)
+        })
     }
 
-    public messageDeletion(data: number) {
-        try {
-            if (!this.stompClient.connected) {
-                console.warn('Cannot edit message: WebSocket not connected')
-                return
-            }
-            const payload = data
-            this.stompClient.publish({
-                destination: SOCKET_EVENTS.MESSAGE.DELETE_MESSAGE,
-                body: JSON.stringify(payload)
-            })
-        } catch (error) {
-            console.error('Error editing message: ', error)
-        }
+    public messageDeletion(id: string) {
+        if (!this.stompClient.connected) return
+        this.stompClient.publish({
+            destination: SOCKET_EVENTS.MESSAGE.DELETE_MESSAGE,
+            body: JSON.stringify(id)
+        })
+    }
+
+    public messageReact(data: ChatReaction) {
+        if (!this.stompClient.connected) return
+        this.stompClient.publish({
+            destination: SOCKET_EVENTS.MESSAGE.REACT_MESSAGE,
+            body: JSON.stringify(data)
+        })
+    }
+
+    public sendTyping(data: ChatTyping) {
+        if (!this.stompClient.connected) return
+        this.stompClient.publish({
+            destination: SOCKET_EVENTS.MESSAGE.TYPING,
+            body: JSON.stringify(data)
+        })
     }
 
     public getOnlineUsers() {
-        try {
-            return this.onlineUsers
-        } catch (error) {
-            console.error('Error getting online users:', error)
-            return new Set()
-        }
+        return this.onlineUsers
     }
 
-    public onOnlineUsersChange(callback: (users: Set<number>) => void) {
-        try {
-            this.onlineUserListeners.push(callback)
-        } catch (error) {
-            console.error('Error adding online users listener:', error)
-        }
+    public onOnlineUsersChange(callback: (users: Set<string>) => void) {
+        this.onlineUserListeners.push(callback)
     }
 
-    public removeOnlineUsersListener(callback: (users: Set<number>) => void) {
-        try {
-            this.onlineUserListeners = this.onlineUserListeners.filter(cb => cb !== callback)
-        } catch (error) {
-            console.error('Error removing online users listener:', error)
-        }
+    public removeOnlineUsersListener(callback: (users: Set<string>) => void) {
+        this.onlineUserListeners = this.onlineUserListeners.filter(cb => cb !== callback)
     }
 
-    public onMessage(callback: (message: Message) => void) {
-        try {
-            this.messageListeners.push(callback)
-        } catch (error) {
-            console.error('Error adding message listener:', error)
-        }
+    public onMessage(callback: (message: Message) => void)   {
+        this.messageListeners.push(callback)
     }
 
     public removeMessageListener(callback: (message: Message) => void) {
-        try {
-            this.messageListeners = this.messageListeners.filter(cb => cb !== callback)
-        } catch (error) {
-            console.error('Error removing message listener:', error)
-        }
+        this.messageListeners = this.messageListeners.filter(cb => cb !== callback)
     }
 
-    public onReaction(callback: (message: Message) => void) {
-        try {
-            this.reactionListeners.push(callback)
-        } catch (error) {
-            console.error('Error adding reaction listener:', error)
-        }
+    public onReaction(callback: (reaction: ChatReaction) => void) {
+        this.reactionListeners.push(callback)
     }
 
-    public removeReactionListener(callback: (message: Message) => void) {
-        try {
-            this.reactionListeners = this.reactionListeners.filter(cb => cb !== callback)
-        } catch (error) {
-            console.error('Error removing reaction listener:', error)
-        }
+    public removeReactionListener(callback: (reaction: ChatReaction) => void) {
+        this.reactionListeners = this.reactionListeners.filter(cb => cb !== callback)
     }
 
-    public onMessageDeletion(callBack: (id: number) => void) {
-        try {
-            this.messageDeletionListeners.push(callBack)
-        } catch (error) {
-            console.error('Error adding message deletion: ', error)
-        }
+    public onMessageDeletion(callback: (id: string) => void) {
+        this.messageDeletionListeners.push(callback)
     }
 
-    public removeMessageDeletionListener(callBack: (id: number) => void) {
-        try {
-            this.messageDeletionListeners = this.messageDeletionListeners.filter(cb => cb !== callBack)
-        } catch (error) {
-            console.error('Error removing message deletion listener:', error)
-        }
+    public removeMessageDeletionListener(callback: (id: string) => void) {
+        this.messageDeletionListeners = this.messageDeletionListeners.filter(cb => cb !== callback)
     }
 
-
-    public onMessageEdition(callBack: (message: Message) => void) {
-        try {
-            this.messageEditionListeners.push(callBack)
-        } catch (error) {
-            console.error('Error adding message edition: ', error)
-        }
+    public onMessageEdition(callback: (message: Message) => void) {
+        this.messageEditionListeners.push(callback)
     }
 
-    public removeMessageEditionListener(callBack: (message: Message) => void) {
-        try {
-            this.messageEditionListeners = this.messageEditionListeners.filter(cb => cb !== callBack)
-        } catch (error) {
-            console.error('Error removing message edition listener:', error)
-        }
+    public removeMessageEditionListener(callback: (message: Message) => void) {
+        this.messageEditionListeners = this.messageEditionListeners.filter(cb => cb !== callback)
     }
 
+    public onTyping(callback: (typing: ChatTyping) => void) {
+        this.typingListeners.push(callback)
+    }
 
+    public removeTypingListener(callback: (typing: ChatTyping) => void) {
+        this.typingListeners = this.typingListeners.filter(cb => cb !== callback)
+    }
 }
 
 export const socketService = new SocketService()

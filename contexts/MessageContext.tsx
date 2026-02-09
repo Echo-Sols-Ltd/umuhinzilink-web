@@ -1,40 +1,31 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Message, SendMessageRequest, EditMessageRequest, MessageType } from '@/types/message';
+import { Message, SendMessageRequest, EditMessageRequest, MessageType, ChatReaction, ChatTyping } from '@/types/message';
 import { User } from '@/types/user';
 import { messageService } from '@/services/messages';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 
-export interface Conversation {
-  id: string;
-  participant: User;
-  lastMessage?: Message;
-  unreadCount: number;
-  messages: Message[];
-  isLoading: boolean;
-}
-
 export interface MessageContextValue {
-  conversations: Conversation[];
-  activeConversation: Conversation | null;
+  messages: Message[];
+  activeChatUser: User | null;
   loading: boolean;
   error: string | null;
-  onlineUsers: Set<number>;
+  onlineUsers: Set<string>;
 
   // Actions
-  setActiveConversation: (conversation: Conversation | null) => void;
-  sendMessage: (content: string, type?: MessageType, fileName?: string, replyToId?: number) => Promise<void>;
-  editMessage: (messageId: number, newContent: string) => Promise<void>;
-  deleteMessage: (messageId: number) => Promise<void>;
-  loadConversation: (userId: string) => Promise<void>;
-  markAsRead: (conversationId: string) => void;
-  startNewConversation: (user: User) => void;
+  setActiveChatUser: (user: User | null) => void;
+  sendMessage: (content: string, type?: MessageType, fileName?: string, replyToId?: string) => Promise<void>;
+  editMessage: (messageId: string, newContent: string) => Promise<void>;
+  deleteMessage: (messageId: string) => Promise<void>;
+  reactToMessage: (messageId: string, emoji: string) => Promise<void>;
+  loadMessages: (userId: string) => Promise<void>;
+  markAsRead: (messageIds: string[]) => void;
 
   // Typing indicators
   isTyping: boolean;
   setIsTyping: (typing: boolean) => void;
-  typingUsers: Set<number>;
+  typingUsers: Set<string>;
 }
 
 const MessageContext = createContext<MessageContextValue | undefined>(undefined);
@@ -42,110 +33,67 @@ const MessageContext = createContext<MessageContextValue | undefined>(undefined)
 export function MessageProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const socket = useSocket();
-  const { toast } = useToast()
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
+  const { toast } = useToast();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [activeChatUser, setActiveChatUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [onlineUsers, setOnlineUsers] = useState<Set<number>>(new Set());
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [isTyping, setIsTyping] = useState(false);
-  const [typingUsers, setTypingUsers] = useState<Set<number>>(new Set());
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
   // Handle incoming messages
   const handleIncomingMessage = useCallback((message: Message) => {
-    setConversations(prev => {
-      const updated = [...prev];
-      const conversationIndex = updated.findIndex(conv =>
-        conv.participant.id === message.sender.id.toString() || conv.participant.id === message.receiver.id.toString()
-      );
-
-      if (conversationIndex >= 0) {
-        // Update existing conversation
-        updated[conversationIndex] = {
-          ...updated[conversationIndex],
-          messages: [...updated[conversationIndex].messages, message],
-          lastMessage: message,
-          unreadCount: message.sender.id.toString() !== user?.id
-            ? updated[conversationIndex].unreadCount + 1
-            : updated[conversationIndex].unreadCount
-        };
-      } else {
-        // Create new conversation
-        const participant = message.sender.id.toString() === user?.id ? message.receiver : message.sender;
-        updated.push({
-          id: `${Math.min(parseInt(message.sender.id.toString()), parseInt(message.receiver.id.toString()))}-${Math.max(parseInt(message.sender.id.toString()), parseInt(message.receiver.id.toString()))}`,
-          participant,
-          lastMessage: message,
-          unreadCount: message.sender.id.toString() !== user?.id ? 1 : 0,
-          messages: [message],
-          isLoading: false
-        });
-      }
-
-      return updated;
+    setMessages(prev => {
+      // Avoid duplicates
+      if (prev.some(m => m.id === message.id)) return prev;
+      return [...prev, message];
     });
 
-    // Update active conversation if it matches
-    if (activeConversation) {
-      const isActiveConversation =
-        activeConversation.participant.id === message.sender.id.toString() ||
-        activeConversation.participant.id === message.receiver.id.toString();
-
-      if (isActiveConversation) {
-        setActiveConversation(prev => prev ? {
-          ...prev,
-          messages: [...prev.messages, message],
-          lastMessage: message
-        } : null);
-      }
+    // Notify if not active chat
+    if (activeChatUser?.id !== message.sender.id.toString() && message.sender.id.toString() !== user?.id) {
+      // Optional: Notification logic could go here or in a separate hook
     }
-  }, [activeConversation, user?.id]);
+  }, [activeChatUser, user?.id]);
 
   // Handle message editing
   const handleMessageEdited = useCallback((editedMessage: Message) => {
-    setConversations(prev =>
-      prev.map(conv => ({
-        ...conv,
-        messages: conv.messages.map(msg =>
-          msg.id === editedMessage.id ? editedMessage : msg
-        ),
-        lastMessage: conv.lastMessage?.id === editedMessage.id ? editedMessage : conv.lastMessage
-      }))
+    setMessages(prev =>
+      prev.map(msg => (msg.id === editedMessage.id ? { ...msg, ...editedMessage, isEdited: true } : msg))
     );
-
-    if (activeConversation) {
-      setActiveConversation(prev => prev ? {
-        ...prev,
-        messages: prev.messages.map(msg =>
-          msg.id === editedMessage.id ? editedMessage : msg
-        )
-      } : null);
-    }
-  }, [activeConversation]);
+  }, []);
 
   // Handle message deletion
-  const handleMessageDeleted = useCallback((messageId: number) => {
-    setConversations(prev =>
-      prev.map(conv => ({
-        ...conv,
-        messages: conv.messages.filter(msg => msg.id !== messageId),
-        lastMessage: conv.lastMessage?.id === messageId
-          ? conv.messages[conv.messages.length - 2] || undefined
-          : conv.lastMessage
-      }))
-    );
+  const handleMessageDeleted = useCallback((messageId: string) => {
+    setMessages(prev => prev.filter(msg => msg.id !== messageId));
+  }, []);
 
-    if (activeConversation) {
-      setActiveConversation(prev => prev ? {
-        ...prev,
-        messages: prev.messages.filter(msg => msg.id !== messageId)
-      } : null);
-    }
-  }, [activeConversation]);
+  // Handle reactions
+  const handleReaction = useCallback((reactionData: ChatReaction) => {
+    setMessages(prev =>
+      prev.map(msg =>
+        msg.id === reactionData.messageId ? { ...msg, reactions: reactionData.reactions } : msg
+      )
+    );
+  }, []);
 
   // Handle online users updates
-  const handleOnlineUsersUpdate = useCallback((users: Set<number>) => {
+  const handleOnlineUsersUpdate = useCallback((users: Set<string>) => {
+    console.log(users)
     setOnlineUsers(users);
+  }, []);
+
+  // Handle typing updates
+  const handleTypingUpdate = useCallback((typingData: ChatTyping) => {
+    setTypingUsers(prev => {
+      const next = new Set(prev);
+      if (typingData.isTyping) {
+        next.add(typingData.userId);
+      } else {
+        next.delete(typingData.userId);
+      }
+      return next;
+    });
   }, []);
 
   // Setup socket listeners
@@ -156,17 +104,21 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     socket.onMessageEdition(handleMessageEdited);
     socket.onMessageDeletion(handleMessageDeleted);
     socket.onOnlineUsersChange(handleOnlineUsersUpdate);
+    socket.onReaction(handleReaction);
+    socket.onTyping(handleTypingUpdate);
 
     return () => {
       socket.removeMessageListener(handleIncomingMessage);
       socket.removeMessageEditionListener(handleMessageEdited);
       socket.removeMessageDeletionListener(handleMessageDeleted);
       socket.removeOnlineUsersListener(handleOnlineUsersUpdate);
+      socket.removeReactionListener(handleReaction);
+      socket.removeTypingListener(handleTypingUpdate);
     };
-  }, [socket, handleIncomingMessage, handleMessageEdited, handleMessageDeleted, handleOnlineUsersUpdate]);
+  }, [socket, handleIncomingMessage, handleMessageEdited, handleMessageDeleted, handleOnlineUsersUpdate, handleReaction]);
 
-  // Load conversation messages
-  const loadConversation = async (userId: string) => {
+  // Load messages history
+  const loadMessages = async (userId: string) => {
     if (!user?.id) return;
 
     try {
@@ -176,231 +128,94 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       const response = await messageService.getConversation(user.id, userId);
 
       if (response.success && response.data) {
-        const chatMessages = response.data;
+     
+        const history: Message[] = response.data || []
 
-        // Convert ChatMessage[] to Message[] (mock conversion for now)
-        const messages: Message[] = chatMessages.map(chatMsg => ({
-          id: parseInt(chatMsg.id),
-          sender: {
-            id: chatMsg.senderId,
-            names: `User ${chatMsg.senderId}`,
-            email: `user${chatMsg.senderId}@example.com`,
-            role: 'FARMER' as any,
-            phoneNumber: '',
-            avatar: '',
-            createdAt: chatMsg.createdAt,
-            updatedAt: chatMsg.updatedAt,
-            lastLogin: '',
-            verified: true,
-            address: { province: 'KIGALI_CITY' as any, district: 'GASABO' as any },
-            password: '',
-            language: 'ENGLISH' as any
-          },
-          receiver: {
-            id: chatMsg.receiverId,
-            names: `User ${chatMsg.receiverId}`,
-            email: `user${chatMsg.receiverId}@example.com`,
-            role: 'BUYER' as any,
-            phoneNumber: '',
-            avatar: '',
-            createdAt: chatMsg.createdAt,
-            updatedAt: chatMsg.updatedAt,
-            lastLogin: '',
-            verified: true,
-            address: { province: 'KIGALI_CITY' as any, district: 'GASABO' as any },
-            password: '',
-            language: 'ENGLISH' as any
-          },
-          content: chatMsg.content,
-          timestamp: chatMsg.createdAt,
-          type: chatMsg.messageType as MessageType,
-          edited: false
-        }));
-
-        const participant = messages.length > 0
-          ? (messages[0].sender.id === userId ? messages[0].sender : messages[0].receiver)
-          : {
-            id: userId,
-            names: `User ${userId}`,
-            email: `user${userId}@example.com`,
-            role: 'FARMER' as any,
-            phoneNumber: '',
-            avatar: '',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            lastLogin: '',
-            verified: true,
-            address: { province: 'KIGALI_CITY' as any, district: 'GASABO' as any },
-            password: '',
-            language: 'ENGLISH' as any
-          };
-
-        if (participant) {
-          const conversation: Conversation = {
-            id: `${Math.min(parseInt(user.id), parseInt(userId))}-${Math.max(parseInt(user.id), parseInt(userId))}`,
-            participant,
-            lastMessage: messages[messages.length - 1],
-            unreadCount: 0,
-            messages,
-            isLoading: false
-          };
-
-          setActiveConversation(conversation);
-
-          // Update conversations list
-          setConversations(prev => {
-            const existing = prev.find(c => c.participant.id === userId);
-            if (existing) {
-              return prev.map(c => c.participant.id === userId ? conversation : c);
-            } else {
-              return [...prev, conversation];
-            }
-          });
-        }
+        setMessages(prev => {
+          const others = prev.filter(m =>
+            !((m.sender.id === user.id && m.receiver.id === userId) || (m.sender.id === userId && m.receiver.id === user.id))
+          );
+          return [...others, ...history];
+        });
       } else {
-        setError(response.message || 'Failed to load conversation');
+        setError(response.message || 'Failed to load messages');
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load conversation';
-      setError(errorMessage);
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'error',
-      });
+      setError('An error occurred while loading messages');
     } finally {
       setLoading(false);
     }
   };
 
-  // Send message
-  const sendMessage = async (
-    content: string,
-    type: MessageType = MessageType.TEXT,
-    fileName?: string,
-    replyToId?: number
-  ) => {
-    if (!user?.id || !activeConversation || !socket) return;
+  const sendMessage = async (content: string, type: MessageType = MessageType.TEXT, fileName?: string, replyToId?: string) => {
+    if (!user?.id || !activeChatUser || !socket) return;
 
-    try {
-      const messageRequest: SendMessageRequest = {
-        content,
-        receiverId: parseInt(activeConversation.participant.id),
-        senderId: parseInt(user.id),
-        type,
-        fileName,
-        replyToId
-      };
+    const messageRequest: SendMessageRequest = {
+      content,
+      receiverId: activeChatUser.id,
+      senderId: user.id,
+      type,
+      fileName,
+      replyToId
+    };
 
-      socket.sendMessage(messageRequest);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'error',
-      });
-    }
+    socket.sendMessage(messageRequest);
   };
 
-  // Edit message
-  const editMessage = async (messageId: number, newContent: string) => {
+  const editMessage = async (messageId: string, newContent: string) => {
     if (!socket) return;
-
-    try {
-      const editRequest: EditMessageRequest = {
-        id: messageId,
-        newMessage: newContent
-      };
-
-      socket.messageEdition(editRequest);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to edit message';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'error',
-      });
-    }
+    socket.messageEdition({ id: messageId, newMessage: newContent });
   };
 
-  // Delete message
-  const deleteMessage = async (messageId: number) => {
+  const deleteMessage = async (messageId: string) => {
     if (!socket) return;
-
-    try {
-      socket.messageDeletion(messageId);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete message';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'error',
-      });
-    }
+    socket.messageDeletion(messageId);
   };
 
-  // Mark conversation as read
-  const markAsRead = (conversationId: string) => {
-    setConversations(prev =>
-      prev.map(conv =>
-        conv.id === conversationId ? { ...conv, unreadCount: 0 } : conv
-      )
+  const reactToMessage = async (messageId: string, emoji: string) => {
+    if (!socket || !user) return;
+    // Local optimistic update could go here
+    socket.messageReact({ messageId, reactions: [{ userId: user.id, emoji }] });
+  };
+
+  const markAsRead = (messageIds: string[]) => {
+    setMessages(prev =>
+      prev.map(msg => (messageIds.includes(msg.id) ? { ...msg, isRead: true } : msg))
     );
   };
 
-  // Start new conversation
-  const startNewConversation = (participant: User) => {
-    if (!user?.id) return;
-
-    const conversationId = `${Math.min(parseInt(user.id), parseInt(participant.id))}-${Math.max(parseInt(user.id), parseInt(participant.id))}`;
-    const existingConversation = conversations.find(c => c.id === conversationId);
-
-    if (existingConversation) {
-      setActiveConversation(existingConversation);
-    } else {
-      const newConversation: Conversation = {
-        id: conversationId,
-        participant,
-        unreadCount: 0,
-        messages: [],
-        isLoading: false
-      };
-
-      setConversations(prev => [...prev, newConversation]);
-      setActiveConversation(newConversation);
-    }
-  };
-
   const value: MessageContextValue = {
-    conversations,
-    activeConversation,
+    messages,
+    activeChatUser,
+    setActiveChatUser,
     loading,
     error,
     onlineUsers,
-    setActiveConversation,
     sendMessage,
     editMessage,
     deleteMessage,
-    loadConversation,
+    reactToMessage,
+    loadMessages,
     markAsRead,
-    startNewConversation,
     isTyping,
-    setIsTyping,
+    setIsTyping: (typing: boolean) => {
+      setIsTyping(typing);
+      if (socket && user && activeChatUser) {
+        socket.sendTyping({
+          userId: user.id,
+          receiverId: activeChatUser.id,
+          isTyping: typing
+        });
+      }
+    },
     typingUsers,
   };
 
-  return (
-    <MessageContext.Provider value={value}>
-      {children}
-    </MessageContext.Provider>
-  );
+  return <MessageContext.Provider value={value}>{children}</MessageContext.Provider>;
 }
 
 export function useMessages(): MessageContextValue {
   const context = useContext(MessageContext);
-  if (!context) {
-    throw new Error('useMessages must be used within a MessageProvider');
-  }
+  if (!context) throw new Error('useMessages must be used within a MessageProvider');
   return context;
 }

@@ -1,17 +1,6 @@
-import { ApiResponse, PaginatedResponse } from '@/types';
+import { ApiResponse, Message, PaginatedResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
-
-export interface ChatMessage {
-  id: string;
-  senderId: string;
-  receiverId: string;
-  content: string;
-  messageType: 'TEXT' | 'IMAGE' | 'FILE';
-  createdAt: string;
-  updatedAt: string;
-  isRead: boolean;
-}
 
 export interface ChatMessageReply {
   messageId: string;
@@ -27,13 +16,13 @@ export interface ChatMessageEdit {
 
 export class MessageService {
   // Get conversation messages between two users
-  async getConversation(senderId: string, receiverId: string): Promise<PaginatedResponse<ChatMessage[]>> {
-    return await apiClient.get<PaginatedResponse<ChatMessage[]>>(API_ENDPOINTS.MESSAGES.CONVERSATION(senderId, receiverId));
+  async getConversation(senderId: string, receiverId: string): Promise<PaginatedResponse<Message[]>> {
+    return await apiClient.get<PaginatedResponse<Message[]>>(API_ENDPOINTS.MESSAGES.CONVERSATION(senderId, receiverId));
   }
 
   // Get message by ID
-  async getMessageById(conversationId: string): Promise<ApiResponse<ChatMessage>> {
-    return await apiClient.get<ApiResponse<ChatMessage>>(API_ENDPOINTS.MESSAGES.BY_ID(conversationId));
+  async getMessageById(conversationId: string): Promise<ApiResponse<Message>> {
+    return await apiClient.get<ApiResponse<Message>>(API_ENDPOINTS.MESSAGES.BY_ID(conversationId));
   }
 }
 

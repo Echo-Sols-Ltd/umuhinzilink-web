@@ -1,7 +1,7 @@
 // API Configuration Constants
 
 const PROD_SERVER = 'https://api.umuhinzi-backend.echo-solution.com';
-const DEV_SERVER = 'http://10.12.74.145:6060'
+const DEV_SERVER = 'http://localhost:6060'
 
 export const API_CONFIG = {
   BASE_URL: process.env.NODE_ENV === 'development' ? DEV_SERVER : PROD_SERVER,
@@ -160,6 +160,7 @@ export const SOCKET_EVENTS = {
     REPLY_MESSAGE: '/app/chat.sendMessageReply',
     REACT_MESSAGE: '/app/chat.sendMessageReaction',
     EDIT_MESSAGE: '/app/chat.editMessage',
-    DELETE_MESSAGE: '/app/chat.deleteMessage'
+    DELETE_MESSAGE: '/app/chat.deleteMessage',
+    TYPING: '/app/chat.typing'
   }
 };
