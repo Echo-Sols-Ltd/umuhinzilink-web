@@ -160,6 +160,7 @@ export const SOCKET_EVENTS = {
     REPLY_MESSAGE: '/app/chat.sendMessageReply',
     REACT_MESSAGE: '/app/chat.sendMessageReaction',
     EDIT_MESSAGE: '/app/chat.editMessage',
-    DELETE_MESSAGE: '/app/chat.deleteMessage'
+    DELETE_MESSAGE: '/app/chat.deleteMessage',
+    TYPING: '/app/chat.typing'
   }
 };

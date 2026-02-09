@@ -52,4 +52,8 @@ export interface EditMessageRequest {
   newMessage: string;
   id: number;
 }
-
+export interface ChatTyping {
+  userId: number;
+  receiverId: number;
+  isTyping: boolean;
+}

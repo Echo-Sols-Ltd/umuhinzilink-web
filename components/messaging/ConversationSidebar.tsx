@@ -33,7 +33,8 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     setActiveChatUser,
     onlineUsers,
     markAsRead,
-    loadMessages
+    loadMessages,
+    typingUsers
   } = useMessages();
 
   const { users } = useUser();
@@ -141,7 +142,13 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {filteredUsers.map((user) => {
+              {[...filteredUsers].sort((a, b) => {
+                const lastA = getUserData(a.id).lastMessage;
+                const lastB = getUserData(b.id).lastMessage;
+                const timeA = lastA ? new Date(lastA.timestamp).getTime() : 0;
+                const timeB = lastB ? new Date(lastB.timestamp).getTime() : 0;
+                return timeB - timeA;
+              }).map((user) => {
                 const { lastMessage, unreadCount } = getUserData(user.id);
                 const isActive = activeChatUser?.id === user.id;
 
@@ -193,9 +200,13 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                         <div className="flex items-center justify-between mt-1">
                           <p className={cn(
                             'text-sm truncate',
-                            unreadCount > 0 ? 'text-gray-900 font-medium' : 'text-gray-500'
+                            (unreadCount > 0 || typingUsers.has(parseInt(user.id))) ? 'text-green-600 font-medium' : 'text-gray-500'
                           )}>
-                            {lastMessage?.content || user.role}
+                            {typingUsers.has(parseInt(user.id)) ? (
+                              'typing...'
+                            ) : (
+                              lastMessage?.content || user.role
+                            )}
                           </p>
 
                           {/* Message status for own messages */}

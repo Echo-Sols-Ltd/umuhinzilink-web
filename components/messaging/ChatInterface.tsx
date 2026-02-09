@@ -33,8 +33,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     editMessage,
     deleteMessage,
     onlineUsers,
-    isTyping,
-    setIsTyping
+    isTyping: isCurrentUserTyping,
+    setIsTyping,
+    typingUsers
   } = useMessages();
 
   const [messageText, setMessageText] = useState('');
@@ -56,13 +57,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }, [messages, activeChatUser, currentUser]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or other user starts typing
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [filteredMessages]);
+  }, [filteredMessages, typingUsers]);
 
   const handleTyping = () => {
-    if (!isTyping) setIsTyping(true);
+    if (!isCurrentUserTyping) setIsTyping(true);
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => setIsTyping(false), 2000);
   };
@@ -259,26 +260,34 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
           </div>
           <div>
             <h3 className="font-medium text-gray-900">{activeChatUser.names}</h3>
-            <p className="text-sm text-gray-500">{isUserOnline(activeChatUser.id) ? 'Online' : 'Offline'}</p>
+            <p className="text-sm text-gray-500">
+              {typingUsers.has(parseInt(activeChatUser.id)) ? (
+                <span className="text-green-600 animate-pulse">typing...</span>
+              ) : (
+                isUserOnline(activeChatUser.id) ? 'Online' : 'Offline'
+              )}
+            </p>
           </div>
         </div>
         <button className="p-2 hover:bg-gray-100 rounded-full"><MoreVertical className="w-5 h-5 text-gray-600" /></button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-        {filteredMessages.map((message, index) => renderMessage(message, index))}
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+        <div className="flex flex-col justify-end min-h-full space-y-4">
+          {filteredMessages.map((message, index) => renderMessage(message, index))}
+          {activeChatUser && typingUsers.has(parseInt(activeChatUser.id)) && (
+            <div className="flex justify-start">
+              <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {replyingTo && (

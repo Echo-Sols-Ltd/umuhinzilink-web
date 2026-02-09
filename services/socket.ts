@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
-import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction } from '@/types'
+import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants';
 
 class SocketService {
@@ -11,6 +11,7 @@ class SocketService {
     private reactionListeners: ((reaction: ChatReaction) => void)[] = []
     private messageDeletionListeners: ((id: number) => void)[] = []
     private messageEditionListeners: ((message: Message) => void)[] = []
+    private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
@@ -165,6 +166,7 @@ class SocketService {
             this.stompClient.subscribe('/topic/messageDeletion', (msg) => this.handleMessageDeletion(msg))
             this.stompClient.subscribe('/topic/messageEdition', (msg) => this.handleMessageEdition(msg))
             this.stompClient.subscribe('/topic/messageReaction', (msg) => this.handleReaction(msg))
+            this.stompClient.subscribe('/topic/typing', (msg) => this.handleTyping(msg))
         } catch (error) {
             console.error('❌ Error subscribing to topics:', error)
         }
@@ -217,6 +219,15 @@ class SocketService {
         }
     }
 
+    private handleTyping(message: IMessage) {
+        try {
+            const body = JSON.parse(message.body) as SocketResponse<ChatTyping>
+            this.typingListeners.forEach(cb => cb(body.data!))
+        } catch (error) {
+            console.error('Failed to parse typing:', error)
+        }
+    }
+
     public sendMessage(data: SendMessageRequest) {
         if (!this.stompClient.connected) return
         this.stompClient.publish({
@@ -253,6 +264,14 @@ class SocketService {
         if (!this.stompClient.connected) return
         this.stompClient.publish({
             destination: SOCKET_EVENTS.MESSAGE.REACT_MESSAGE,
+            body: JSON.stringify(data)
+        })
+    }
+
+    public sendTyping(data: ChatTyping) {
+        if (!this.stompClient.connected) return
+        this.stompClient.publish({
+            destination: SOCKET_EVENTS.MESSAGE.TYPING,
             body: JSON.stringify(data)
         })
     }
@@ -299,6 +318,14 @@ class SocketService {
 
     public removeMessageEditionListener(callback: (message: Message) => void) {
         this.messageEditionListeners = this.messageEditionListeners.filter(cb => cb !== callback)
+    }
+
+    public onTyping(callback: (typing: ChatTyping) => void) {
+        this.typingListeners.push(callback)
+    }
+
+    public removeTypingListener(callback: (typing: ChatTyping) => void) {
+        this.typingListeners = this.typingListeners.filter(cb => cb !== callback)
     }
 }
 

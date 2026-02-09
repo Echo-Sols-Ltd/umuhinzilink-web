@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Message, SendMessageRequest, EditMessageRequest, MessageType, ChatReaction } from '@/types/message';
+import { Message, SendMessageRequest, EditMessageRequest, MessageType, ChatReaction, ChatTyping } from '@/types/message';
 import { User } from '@/types/user';
 import { messageService } from '@/services/messages';
 import { useSocket } from './SocketContext';
@@ -82,6 +82,19 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     setOnlineUsers(users);
   }, []);
 
+  // Handle typing updates
+  const handleTypingUpdate = useCallback((typingData: ChatTyping) => {
+    setTypingUsers(prev => {
+      const next = new Set(prev);
+      if (typingData.isTyping) {
+        next.add(typingData.userId);
+      } else {
+        next.delete(typingData.userId);
+      }
+      return next;
+    });
+  }, []);
+
   // Setup socket listeners
   useEffect(() => {
     if (!socket) return;
@@ -91,6 +104,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     socket.onMessageDeletion(handleMessageDeleted);
     socket.onOnlineUsersChange(handleOnlineUsersUpdate);
     socket.onReaction(handleReaction);
+    socket.onTyping(handleTypingUpdate);
 
     return () => {
       socket.removeMessageListener(handleIncomingMessage);
@@ -98,6 +112,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       socket.removeMessageDeletionListener(handleMessageDeleted);
       socket.removeOnlineUsersListener(handleOnlineUsersUpdate);
       socket.removeReactionListener(handleReaction);
+      socket.removeTypingListener(handleTypingUpdate);
     };
   }, [socket, handleIncomingMessage, handleMessageEdited, handleMessageDeleted, handleOnlineUsersUpdate, handleReaction]);
 
@@ -199,7 +214,16 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     loadMessages,
     markAsRead,
     isTyping,
-    setIsTyping,
+    setIsTyping: (typing: boolean) => {
+      setIsTyping(typing);
+      if (socket && user && activeChatUser) {
+        socket.sendTyping({
+          userId: parseInt(user.id),
+          receiverId: parseInt(activeChatUser.id),
+          isTyping: typing
+        });
+      }
+    },
     typingUsers,
   };
 
