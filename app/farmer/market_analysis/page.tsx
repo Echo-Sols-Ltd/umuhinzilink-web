@@ -150,7 +150,7 @@ function MarketAnalysis() {
 
 
         {/* Main Content */}
-        <main className="flex-1 h-full p-6 overflow-auto space-y-6 bg-gray-50">
+        <main className="flex-1 h-screen p-6 space-y-6 bg-gray-50 overflow-auto">
           {/* Filters */}
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center gap-2">

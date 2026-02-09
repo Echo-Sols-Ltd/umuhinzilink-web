@@ -103,15 +103,10 @@ function AiDashboard() {
 
 
       {/* Main Content */}
-      <main className="flex-1  bg-gray-50">
-        {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
-          <h1 className="text-xl font-semibold text-gray-900">AI Tips</h1>
-        </header>
-
-        <div className="p-6">
+      <main className="flex-1  h-screen bg-gray-50">
+        <div className="p-6 h-full overflow-y-auto">
           {/* Weather Alert */}
-          <div className="bg-gradient-to-r from-teal-500 to-green-500 rounded-2xl p-6 mb-8 text-white flex items-center justify-between">
+          <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-8 text-white flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <AlertTriangle className="w-6 h-6" />
               <div>
@@ -128,9 +123,9 @@ function AiDashboard() {
             </div>
           </div>
 
-          <div className="flex gap-8">
+          <div className="flex gap-8 h-full">
             {/* Left Content */}
-            <div className="flex-1">
+            <div className="flex-1 h-full">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-semibold text-gray-900">Suggested AI Tips</h2>
                 <div className="flex items-center space-x-2">
@@ -140,7 +135,7 @@ function AiDashboard() {
               </div>
 
               {/* Tips Grid */}
-              <div className="space-y-4">
+              <div className="space-y-4 h-full">
                 {tips.map((tip, index) => (
                   <div
                     key={index}

@@ -152,10 +152,10 @@ function AddProduce() {
         userType={UserType.FARMER}
         activeItem='Products'
       />
-      <div className="min-h-screen bg-gray-50">
+      <div className="h-screen bg-gray-50">
 
-        <div className="mx-auto max-w-5xl py-10 px-4">
-          <div className="mb-6 flex items-center justify-between">
+        <div className="mx-auto max-w-5xl py-10 px-4 h-full overflow-auto">
+          <div className="mb-6 flex items-center justify-between ">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Add New Produce</h1>
               <p className="text-sm text-gray-500 mt-1">

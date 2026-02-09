@@ -24,6 +24,7 @@ export default function FarmerSignUp() {
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string>('');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast()
 
   const socialLinks = [
@@ -306,12 +307,39 @@ export default function FarmerSignUp() {
           <div className="border-b pb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Image</h2>
             <div className="flex items-center space-x-6">
-              <div className="relative w-30 h-30 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
-                <Upload className="w-8 h-8 text-gray-400" />
+              <div className="relative w-24 h-24 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center overflow-hidden">
+                {profilePreview ? (
+                  <img src={profilePreview} alt="Profile Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <Upload className="w-8 h-8 text-gray-400" />
+                )}
+                {profilePreview && (
+                  <button
+                    type="button"
+                    onClick={removeProfileImage}
+                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-sm hover:bg-red-600 transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
               </div>
               <div className="flex-1">
                 <Label className="text-gray-700 font-medium text-sm mb-2 block">Upload Profile Image</Label>
-                <Button type="button" variant="outline" className="mb-2">Choose Image</Button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleProfileImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mb-2"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {profilePreview ? 'Change Image' : 'Choose Image'}
+                </Button>
                 <p className="text-xs text-gray-500">JPG, PNG, GIF up to 5MB</p>
               </div>
             </div>
@@ -323,17 +351,29 @@ export default function FarmerSignUp() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="text-gray-700 font-medium text-sm">Farm Size</Label>
-                <select className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2">
+                <select
+                  name="farmSize"
+                  value={farmerData.farmSize}
+                  onChange={handleFarmerInputChange}
+                  className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2"
+                >
                   <option value="">Select farm size</option>
-                  {farmSizeOptions.map(option => <option key={option}>{option.replace(/_/g, ' ')}</option>)}
+                  {farmSizeOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
                 </select>
+                {touched.farmSize && fieldErrors.farmSize && <p className="text-red-500 text-xs mt-1">{fieldErrors.farmSize}</p>}
               </div>
               <div>
                 <Label className="text-gray-700 font-medium text-sm">Farming Experience</Label>
-                <select className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2">
+                <select
+                  name="experienceLevel"
+                  value={farmerData.experienceLevel}
+                  onChange={handleFarmerInputChange}
+                  className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2"
+                >
                   <option value="">Select experience level</option>
-                  {experienceLevelOptions.map(option => <option key={option}>{option.replace(/_/g, ' ')}</option>)}
+                  {experienceLevelOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
                 </select>
+                {touched.experienceLevel && fieldErrors.experienceLevel && <p className="text-red-500 text-xs mt-1">{fieldErrors.experienceLevel}</p>}
               </div>
             </div>
           </div>
@@ -344,17 +384,29 @@ export default function FarmerSignUp() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label className="text-gray-700 font-medium text-sm">Province</Label>
-                <select className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2">
+                <select
+                  name="province"
+                  value={farmerData.address.province}
+                  onChange={handleFarmerInputChange}
+                  className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2"
+                >
                   <option value="">Select province</option>
-                  {provinceOptions.map(option => <option key={option}>{option.replace(/_/g, ' ')}</option>)}
+                  {provinceOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
                 </select>
+                {touched.province && fieldErrors.province && <p className="text-red-500 text-xs mt-1">{fieldErrors.province}</p>}
               </div>
               <div>
                 <Label className="text-gray-700 font-medium text-sm">District</Label>
-                <select className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2">
+                <select
+                  name="district"
+                  value={farmerData.address.district}
+                  onChange={handleFarmerInputChange}
+                  className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2"
+                >
                   <option value="">Select district</option>
-                  {districtOptions.map(option => <option key={option}>{option}</option>)}
+                  {districtOptions.map(option => <option key={option} value={option}>{option}</option>)}
                 </select>
+                {touched.district && fieldErrors.district && <p className="text-red-500 text-xs mt-1">{fieldErrors.district}</p>}
               </div>
             </div>
           </div>
@@ -365,17 +417,28 @@ export default function FarmerSignUp() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {commonCrops.map(crop => (
                 <div key={crop} className="flex items-center space-x-2">
-                  <input type="checkbox" className="rounded border-gray-300 text-green-600 focus:ring-green-500" />
+                  <input
+                    type="checkbox"
+                    checked={farmerData.crops.includes(crop as RwandaCrop)}
+                    onChange={(e) => handleCropChange(crop as RwandaCrop, e.target.checked)}
+                    className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  />
                   <Label className="text-sm text-gray-700">{crop.replace(/_/g, ' ')}</Label>
                 </div>
               ))}
             </div>
+            {touched.crops && fieldErrors.crops && <p className="text-red-500 text-xs mt-2">{fieldErrors.crops}</p>}
           </div>
 
           {/* Submit */}
           <div className="space-y-4">
-            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm">
-              Finish Creating Account
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              disabled={loading || uploadLoading}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
+            >
+              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
             </Button>
           </div>
         </form>
