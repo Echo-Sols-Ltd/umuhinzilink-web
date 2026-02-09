@@ -12,7 +12,6 @@ export enum FarmerPages {
   SETTINGS,
   LOGOUT,
 }
-
 export enum AdminPages {
   DASHBOARD,
   USERS,
@@ -21,6 +20,7 @@ export enum AdminPages {
   PRODUCTS,
   PROFILE,
   SETTINGS,
+  MESSAGES,
 }
 
 export enum GovernmentPages {
@@ -30,6 +30,7 @@ export enum GovernmentPages {
   NOTIFICATIONS,
   PROFILE,
   SETTINGS,
+  MESSAGES,
 }
 
 export enum SupplierPages {

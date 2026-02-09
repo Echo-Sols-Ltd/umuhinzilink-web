@@ -199,7 +199,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     },
                     {
                         icon: <Mail className="w-5 h-5" />,
-                        label: 'Message',
+                        label: 'Messages',
                         href: '/buyer/message',
                     },
                     {
@@ -242,7 +242,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     },
                     {
                         icon: <Mail className="w-5 h-5" />,
-                        label: 'Message',
+                        label: 'Messages',
                         href: '/supplier/message',
                     },
                     {
@@ -312,6 +312,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         icon: <Settings className="w-5 h-5" />,
                         label: 'Settings',
                         href: '/admin/settings',
+                    },
+                    {
+                        icon: <Mail className="w-5 h-5" />,
+                        label: 'Messages',
+                        href: '/admin/message',
                     }
                 ];
             case UserType.GOVERNMENT:
@@ -345,6 +350,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         icon: <Settings className="w-5 h-5" />,
                         label: 'Settings',
                         href: '/government/settings',
+                    },
+                    {
+                        icon: <Mail className="w-5 h-5" />,
+                        label: 'Messages',
+                        href: '/government/message',
                     }
                 ];
             default:
@@ -462,7 +472,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 {/* Logo */}
                 <div className="p-4 lg:p-8 border-b border-gray-800/50">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center shadow-lg shadow-black/20 flex-shrink-0">
+                        <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center shadow-lg shadow-black/20 shrink-0">
                             <Tractor className="w-7 h-7 text-white" />
                         </div>
                         <div className="min-w-0">

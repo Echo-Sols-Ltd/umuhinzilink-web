@@ -15,22 +15,19 @@ const Logo = () => (
 );
 
 function BuyerMessagesComponent() {
-  const handleLogout = async () => {
-    // Logout logic here
-  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-1 min-h-0">
         <Sidebar
           userType={UserType.BUYER}
-          activeItem='Message'
+          activeItem='Messages'
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex">
+        <main className="flex-1 flex h-[calc(100vh-0px)] overflow-hidden">
           {/* Conversations Sidebar */}
-          <ConversationSidebar className="flex-1" />
+          <ConversationSidebar className="w-80 shrink-0" />
 
           {/* Chat Interface */}
           <ChatInterface className="flex-1" />
