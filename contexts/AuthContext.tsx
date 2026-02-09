@@ -180,6 +180,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token && user) {
         setUser(user);
         if (!user.verified) {
+          await askOtpCode()
           router.replace('/auth/verify-otp')
           return
         }
