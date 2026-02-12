@@ -18,16 +18,21 @@ const UserContext = createContext<UserContextType | null>(null);
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+  const { toast } = useToast();
+  
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const { toast } = useToast()
+
+  // Fetch all users from API
   useEffect(() => {
-    async function fetchUsers() {
+    const fetchUsers = async () => {
       if (!user) return;
+      
       setLoading(true);
       try {
         const res = await userService.getAllUsers();
+        
         if (!res.success) {
           toast({
             title: 'Server error',
@@ -36,6 +41,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
           });
           return;
         }
+        
         if (res.data) {
           setUsers(res.data);
         }
@@ -45,12 +51,15 @@ function UserProvider({ children }: { children: React.ReactNode }) {
           description: 'Users cannot be fetched',
           variant: 'error',
         });
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
     fetchUsers();
   }, [user]);
 
+  // Filter users by role
   const farmerUsers = users.filter(u => u.role === UserType.FARMER);
   const buyerUsers = users.filter(u => u.role === UserType.BUYER);
   const supplierUsers = users.filter(u => u.role === UserType.SUPPLIER);
@@ -71,6 +80,8 @@ function UserProvider({ children }: { children: React.ReactNode }) {
     </UserContext.Provider>
   );
 }
+
+// Custom hook to access user context
 function useUser(): UserContextType {
   const context = useContext(UserContext);
   if (!context) {

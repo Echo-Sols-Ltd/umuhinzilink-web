@@ -18,6 +18,15 @@ import { supplierService } from '@/services/suppliers';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 
+// Storage keys for localStorage
+const STORAGE_KEYS = {
+  AUTH_TOKEN: 'auth_token',
+  USER: 'user',
+  FARMER: 'farmer',
+  SUPPLIER: 'supplier',
+  BUYER: 'buyer',
+} as const;
+
 interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
   loading: boolean;
@@ -38,6 +47,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// Custom hook to access auth context
 function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (!context) {
@@ -48,22 +58,24 @@ function useAuth(): AuthContextType {
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { toast } = useToast();
+  
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [farmer, setFarmer] = useState<Farmer | null>(null);
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [buyer, setBuyer] = useState<Buyer | null>(null);
-  const { toast } = useToast()
 
+  // Fetch farmer profile from API and store in state/localStorage
   const fetchFarmer = async () => {
     try {
       const res = await farmerService.getMe();
       if (!res.success) {
         router.replace('/auth/farmer');
-        return
+        return;
       }
       if (res.data) {
-        localStorage.setItem('farmer', JSON.stringify(res.data));
+        localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(res.data));
         setFarmer(res.data);
       }
     } catch {
@@ -75,15 +87,16 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Fetch buyer profile from API and store in state/localStorage
   const fetchBuyer = async () => {
     try {
       const res = await buyerService.getMe();
       if (!res.success) {
         router.replace('/auth/buyer');
-        return
+        return;
       }
       if (res.data) {
-        localStorage.setItem('buyer', JSON.stringify(res.data));
+        localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(res.data));
         setBuyer(res.data);
       }
     } catch {
@@ -95,15 +108,16 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Fetch supplier profile from API and store in state/localStorage
   const fetchSupplier = async () => {
     try {
       const res = await supplierService.getMe();
       if (!res.success) {
         router.replace('/auth/supplier');
-        return
+        return;
       }
       if (res.data) {
-        localStorage.setItem('supplier', JSON.stringify(res.data));
+        localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data));
         setSupplier(res.data);
       }
     } catch {
@@ -115,120 +129,107 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getUser = () => {
-    const stringUser = localStorage.getItem('user');
-
-    if (!stringUser) return null;
-    const user: User = JSON.parse(stringUser);
-    return user;
+  // Retrieve user data from localStorage
+  const getStoredData = <T,>(key: string): T | null => {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
+    }
   };
 
-  const getFarmer = () => {
-    const stringUser = localStorage.getItem('farmer');
-    if (!stringUser) return null;
-
-    const user: Farmer = JSON.parse(stringUser);
-    return user;
-  };
-
-  const getBuyer = () => {
-    const stringUser = localStorage.getItem('buyer');
-    if (!stringUser) return null;
-    const user: Buyer = JSON.parse(stringUser);
-    return user;
-  };
-
-  const getSupplier = () => {
-    const stringUser = localStorage.getItem('supplier');
-    if (!stringUser) return null;
-    const user: Supplier = JSON.parse(stringUser);
-    return user;
-  };
-
+  // Load authentication state from localStorage and validate user
   const loadAuthState = async () => {
     try {
-      // localStorage.removeItem('auth_token')
-      setLoading(true)
-      const token = localStorage.getItem('auth_token');
-      const user = getUser();
-      const farmer = getFarmer();
-      const supplier = getSupplier();
-      const buyer = getBuyer();
-      if (token && user) {
-        setUser(user);
-        if (!user.verified) {
-          await askOtpCode()
-          router.replace('/auth/verify-otp')
-          return
-        }
-        if (user.role === UserType.BUYER) {
-          if (!buyer) {
-            router.replace('/auth/buyer')
-            setLoading(false)
-            return
-          }
-          setBuyer(buyer);
-        }
-        if (user.role === UserType.FARMER) {
-          if (!farmer || !user.verified) {
-            router.replace('/auth/farmer')
-            setLoading(false)
-            return
-          }
-          setFarmer(farmer);
-        }
-        if (user.role === UserType.SUPPLIER) {
-          if (!supplier || !user.verified) {
-            router.replace('/auth/supplier')
-            setLoading(false)
-            return
-          }
-          setSupplier(supplier);
-        }
-        setLoading(false)
+      setLoading(true);
+      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+      const user = getStoredData<User>(STORAGE_KEYS.USER);
+      
+      if (!token || !user) {
+        setLoading(false);
         return;
       }
-      setLoading(false)
+
+      setUser(user);
+
+      // Redirect to OTP verification if user is not verified
+      if (!user.verified) {
+        await askOtpCode();
+        router.replace('/auth/verify-otp');
+        setLoading(false);
+        return;
+      }
+
+      // Load role-specific data based on user type
+      const roleData = {
+        [UserType.BUYER]: { data: getStoredData<Buyer>(STORAGE_KEYS.BUYER), setter: setBuyer, route: '/auth/buyer' },
+        [UserType.FARMER]: { data: getStoredData<Farmer>(STORAGE_KEYS.FARMER), setter: setFarmer, route: '/auth/farmer' },
+        [UserType.SUPPLIER]: { data: getStoredData<Supplier>(STORAGE_KEYS.SUPPLIER), setter: setSupplier, route: '/auth/supplier' },
+      };
+
+      const roleConfig = roleData[user.role as keyof typeof roleData];
+      if (roleConfig) {
+        if (!roleConfig.data) {
+          router.replace(roleConfig.route);
+          setLoading(false);
+          return;
+        }
+        roleConfig.setter(roleConfig.data);
+      }
+
+      setLoading(false);
     } catch {
       toast({
         title: 'Loading auth state failed',
         description: 'Please try again later',
         variant: 'error',
       });
+      setLoading(false);
     }
   };
 
+  // Authenticate user with credentials
   const login = async (data: LoginRequest) => {
     try {
       setLoading(true);
       const res = await authService.login(data);
+      
       if (!res.success) {
         toast({
           title: 'Login Failed',
           description: res.message,
           variant: 'error',
         });
+        return;
       }
-      console.log(res)
-      if (res.success && res.data) {
-        localStorage.setItem('auth_token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+
+      if (res.data) {
+        // Store auth token and user data
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
         setUser(res.data.user);
 
-        if (res.data.user.role === UserType.BUYER) {
-          await fetchBuyer();
-        }
-        if (res.data.user.role === UserType.FARMER) {
-          await fetchFarmer();
-        }
-        if (res.data.user.role === UserType.SUPPLIER) {
-          await fetchSupplier();
-        }
+        // Fetch role-specific profile data
+        const roleFetchers = {
+          [UserType.BUYER]: fetchBuyer,
+          [UserType.FARMER]: fetchFarmer,
+          [UserType.SUPPLIER]: fetchSupplier,
+        };
 
-        if (res.data.user.role === UserType.ADMIN) router.replace('/admin/dashboard');
-        else if (res.data.user.role === UserType.FARMER) router.replace('/farmer/dashboard');
-        else if (res.data.user.role === UserType.BUYER) router.replace('/buyer/dashboard');
-        else if (res.data.user.role === UserType.SUPPLIER) router.replace('/supplier/dashboard');
+        const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
+        if (fetcher) await fetcher();
+
+        // Navigate to role-specific dashboard
+        const dashboardRoutes = {
+          [UserType.ADMIN]: '/admin/dashboard',
+          [UserType.FARMER]: '/farmer/dashboard',
+          [UserType.BUYER]: '/buyer/dashboard',
+          [UserType.SUPPLIER]: '/supplier/dashboard',
+        };
+
+        const route = dashboardRoutes[res.data.user.role as keyof typeof dashboardRoutes];
+        if (route) router.replace(route);
       }
     } catch {
       toast({
@@ -241,24 +242,26 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Register new user account
   const register = async (data: UserRequest) => {
     try {
       setLoading(true);
-
       const res = await authService.register(data);
+      
       if (!res.success) {
         toast({
           title: 'Register Failed',
           description: res.message,
           variant: 'error',
         });
+        return;
       }
 
-      if (res.success && res.data) {
-        localStorage.setItem('auth_token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+      if (res.data) {
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
         setUser(res.data.user);
-        loadAuthState()
+        await loadAuthState();
       }
     } catch {
       toast({
@@ -271,19 +274,23 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Register buyer profile
   const registerBuyer = async (data: BuyerRequest) => {
     try {
       setLoading(true);
       const res = await authService.registerBuyer(data);
+      
       if (!res.success) {
         toast({
           title: 'Register Failed',
           description: res.message,
           variant: 'error',
         });
+        return;
       }
-      if (res.success && res.data) {
-        localStorage.setItem('buyer', JSON.stringify(res.data));
+
+      if (res.data) {
+        localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(res.data));
         setBuyer(res.data);
         router.replace('/');
       }
@@ -298,19 +305,23 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Register supplier profile
   const registerSupplier = async (data: SupplierRequest) => {
     try {
       setLoading(true);
       const res = await authService.registerSupplier(data);
+      
       if (!res.success) {
         toast({
           title: 'Register Failed',
           description: res.message,
           variant: 'error',
         });
+        return;
       }
-      if (res.success && res.data) {
-        localStorage.setItem('supplier', JSON.stringify(res.data));
+
+      if (res.data) {
+        localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data));
         setSupplier(res.data);
         router.replace('/');
       }
@@ -325,19 +336,23 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Register farmer profile
   const registerFarmer = async (data: FarmerRequest) => {
     try {
       setLoading(true);
       const res = await authService.registerFarmer(data);
+      
       if (!res.success) {
         toast({
           title: 'Register Failed',
           description: res.message,
           variant: 'error',
         });
+        return;
       }
-      if (res.success && res.data) {
-        localStorage.setItem('farmer', JSON.stringify(res.data));
+
+      if (res.data) {
+        localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(res.data));
         setFarmer(res.data);
         router.replace('/');
       }
@@ -352,22 +367,26 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Verify OTP code for account verification
   const verifyOtp = async (data: string) => {
     try {
       setLoading(true);
       const res = await authService.verifyOtp(data);
+      
       if (!res.success) {
         toast({
           title: 'Verify Failed',
           description: res.message,
           variant: 'error',
         });
+        return;
       }
-      if (res.success && res.data && user) {
-        user.verified = true;
-        localStorage.setItem('user', JSON.stringify(user));
-        setUser(user);
-        await loadAuthState()
+
+      if (res.data && user) {
+        const updatedUser = { ...user, verified: true };
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        await loadAuthState();
       }
     } catch {
       toast({
@@ -380,10 +399,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Request OTP code to be sent to user
   const askOtpCode = async () => {
     try {
       setLoading(true);
       const res = await authService.askOtpCode();
+      
       if (!res.success) {
         toast({
           title: 'Ask OTP Failed',
@@ -402,13 +423,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Clear all auth data and redirect to home
   const logout = async () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('farmer');
-    localStorage.removeItem('supplier');
-    localStorage.removeItem('buyer');
+    Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
     localStorage.clear();
+    
     setUser(null);
     setFarmer(null);
     setSupplier(null);
@@ -417,16 +436,16 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     router.replace('/');
   };
 
-  const updateAvatar = async (data: string) => {
-    setUser(prev => {
-      if (!prev) return null;
-      prev.avatar = data;
-      return prev;
-    });
-    localStorage.setItem('user', JSON.stringify(user));
+  // Update user avatar URL
+  const updateAvatar = async (avatarUrl: string) => {
+    if (!user) return;
+    
+    const updatedUser = { ...user, avatar: avatarUrl };
+    setUser(updatedUser);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
   };
 
-
+  // Load auth state on component mount
   useEffect(() => {
     loadAuthState();
   }, []);
