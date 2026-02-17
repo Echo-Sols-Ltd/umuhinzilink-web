@@ -155,7 +155,7 @@ function ProductsPageComponent() {
 
       {/* Main Content */}
       <main className="flex-1 p-6 overflow-auto  relative">
-     
+
 
         {/* Content with top margin for fixed header */}
         <div className="mt-4">
@@ -173,7 +173,17 @@ function ProductsPageComponent() {
                 </p>
                 <h1 className="text-2xl font-bold mb-2">Manage your agricultural inputs</h1>
                 <h2 className="text-xl font-semibold mb-1">Connect with farmers across Rwanda</h2>
-                <p className="text-sm opacity-90">Total Products: {supplierProducts?.length}</p>
+                <p className="text-sm opacity-90 mb-4">Total Products: {supplierProducts?.length}</p>
+                <button
+                  onClick={() => {
+                    resetForm();
+                    setShowForm(true);
+                  }}
+                  className="bg-white text-green-600 px-6 py-2 rounded-full font-semibold shadow-md hover:bg-green-50 transition-colors flex items-center gap-2"
+                >
+                  <FilePlus className="w-4 h-4" />
+                  Add New Input
+                </button>
               </div>
               <div className="relative">
                 <Image
@@ -200,10 +210,20 @@ function ProductsPageComponent() {
               {supplierProducts?.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <p className="text-gray-500 text-lg">No products found</p>
-                  <p className="text-gray-400 text-sm mt-2">Add your first product to get started</p>
+                  <p className="text-gray-400 text-sm mt-2 mb-4">Add your first product to get started</p>
+                  <button
+                    onClick={() => {
+                      resetForm();
+                      setShowForm(true);
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    <FilePlus className="w-4 h-4" />
+                    Add Input
+                  </button>
                 </div>
               ) : (
-                  supplierProducts?.map(product => (
+                supplierProducts?.map(product => (
                   <div
                     key={product.id}
                     className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"

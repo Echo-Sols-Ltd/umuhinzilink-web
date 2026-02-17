@@ -4,7 +4,6 @@ import { User } from '@/types/user';
 import { messageService } from '@/services/messages';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
-import { useToast } from '@/components/ui/use-toast';
 
 export interface MessageContextValue {
   messages: Message[];
@@ -12,20 +11,18 @@ export interface MessageContextValue {
   loading: boolean;
   error: string | null;
   onlineUsers: Set<string>;
+  typingUsers: Set<string>;
+  isTyping: boolean;
 
-  // Actions
+  // Data operations only
   setActiveChatUser: (user: User | null) => void;
-  sendMessage: (content: string, type?: MessageType, fileName?: string, replyToId?: string) => Promise<void>;
-  editMessage: (messageId: string, newContent: string) => Promise<void>;
-  deleteMessage: (messageId: string) => Promise<void>;
-  reactToMessage: (messageId: string, emoji: string) => Promise<void>;
+  sendMessageRequest: (request: SendMessageRequest) => void;
+  editMessageRequest: (request: EditMessageRequest) => void;
+  deleteMessageRequest: (messageId: string) => void;
+  reactToMessageRequest: (request: ChatReaction) => void;
   loadMessages: (userId: string) => Promise<void>;
   markAsRead: (messageIds: string[]) => void;
-
-  // Typing indicators
-  isTyping: boolean;
-  setIsTyping: (typing: boolean) => void;
-  typingUsers: Set<string>;
+  sendTypingRequest: (request: ChatTyping) => void;
 }
 
 const MessageContext = createContext<MessageContextValue | undefined>(undefined);
@@ -33,7 +30,6 @@ const MessageContext = createContext<MessageContextValue | undefined>(undefined)
 export function MessageProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const socket = useSocket();
-  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [activeChatUser, setActiveChatUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,7 +47,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     });
 
     // Notify if not active chat
-    if (activeChatUser?.id !== message.sender.id.toString() && message.sender.id.toString() !== user?.id) {
+    if (activeChatUser?.id !== message.sender.id && message.sender.id !== user?.id) {
       // Optional: Notification logic could go here or in a separate hook
     }
   }, [activeChatUser, user?.id]);
@@ -115,7 +111,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       socket.removeReactionListener(handleReaction);
       socket.removeTypingListener(handleTypingUpdate);
     };
-  }, [socket, handleIncomingMessage, handleMessageEdited, handleMessageDeleted, handleOnlineUsersUpdate, handleReaction]);
+  }, [socket, handleIncomingMessage, handleMessageEdited, handleMessageDeleted, handleOnlineUsersUpdate, handleReaction, handleTypingUpdate]);
 
   // Load messages history
   const loadMessages = async (userId: string) => {
@@ -147,35 +143,40 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const sendMessage = async (content: string, type: MessageType = MessageType.TEXT, fileName?: string, replyToId?: string) => {
-    if (!user?.id || !activeChatUser || !socket) return;
-
-    const messageRequest: SendMessageRequest = {
-      content,
-      receiverId: activeChatUser.id,
-      senderId: user.id,
-      type,
-      fileName,
-      replyToId
-    };
-
-    socket.sendMessage(messageRequest);
+  // Raw data operations only
+  const sendMessageRequest = (request: SendMessageRequest) => {
+    if (socket) {
+      console.log(request)
+      if (request.replyToId) {
+        socket.messageReply(request);
+      } else {
+        socket.sendMessage(request);
+      }
+    }
   };
 
-  const editMessage = async (messageId: string, newContent: string) => {
-    if (!socket) return;
-    socket.messageEdition({ id: messageId, newMessage: newContent });
+  const editMessageRequest = (request: EditMessageRequest) => {
+    if (socket) {
+      socket.messageEdition(request);
+    }
   };
 
-  const deleteMessage = async (messageId: string) => {
-    if (!socket) return;
-    socket.messageDeletion(messageId);
+  const deleteMessageRequest = (messageId: string) => {
+    if (socket) {
+      socket.messageDeletion(messageId);
+    }
   };
 
-  const reactToMessage = async (messageId: string, emoji: string) => {
-    if (!socket || !user) return;
-    // Local optimistic update could go here
-    socket.messageReact({ messageId, reactions: [{ userId: user.id, emoji }] });
+  const reactToMessageRequest = (request: ChatReaction) => {
+    if (socket) {
+      socket.messageReact(request);
+    }
+  };
+
+  const sendTypingRequest = (request: ChatTyping) => {
+    if (socket) {
+      socket.sendTyping(request);
+    }
   };
 
   const markAsRead = (messageIds: string[]) => {
@@ -191,24 +192,15 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     loading,
     error,
     onlineUsers,
-    sendMessage,
-    editMessage,
-    deleteMessage,
-    reactToMessage,
+    typingUsers,
+    isTyping,
+    sendMessageRequest,
+    editMessageRequest,
+    deleteMessageRequest,
+    reactToMessageRequest,
     loadMessages,
     markAsRead,
-    isTyping,
-    setIsTyping: (typing: boolean) => {
-      setIsTyping(typing);
-      if (socket && user && activeChatUser) {
-        socket.sendTyping({
-          userId: user.id,
-          receiverId: activeChatUser.id,
-          isTyping: typing
-        });
-      }
-    },
-    typingUsers,
+    sendTypingRequest,
   };
 
   return <MessageContext.Provider value={value}>{children}</MessageContext.Provider>;

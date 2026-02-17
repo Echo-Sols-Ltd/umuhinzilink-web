@@ -20,6 +20,7 @@ import { Message, MessageType } from '@/types/message';
 import { useMessages } from '@/contexts/MessageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { useChat } from '@/hooks/useChat';
 
 export interface ChatInterfaceProps {
   className?: string;
@@ -31,14 +32,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     messages,
     activeChatUser,
     setActiveChatUser,
-    sendMessage,
-    editMessage,
-    deleteMessage,
     onlineUsers,
     isTyping: isCurrentUserTyping,
-    setIsTyping,
     typingUsers
   } = useMessages();
+  const { handleSendMessage: sendMessage,
+    handleEditMessage: editMessage,
+    handleDeleteMessage: deleteMessage,
+    handleTyping: setIsTyping,
+    handleReplyMessage: replyMessage
+  } = useChat()
 
   const [messageText, setMessageText] = useState('');
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
@@ -84,12 +87,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         fileName = selectedFile.name;
       }
 
+
+
       await sendMessage(
         messageText.trim() || fileName || '',
         messageType,
-        fileName,
-        replyingTo?.id
+        fileName
       );
+
 
       setMessageText('');
       setSelectedFile(null);
@@ -222,7 +227,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 isOwn ? "-left-24" : "-right-24"
               )}>
                 <div className="flex items-center space-x-1 bg-white border border-gray-100 rounded-full shadow-md p-1.5 translate-y-1">
-                  <button onClick={() => setReplyingTo(message)} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Reply"><Reply className="w-3.5 h-3.5 text-gray-500" /></button>
+                  <button onClick={() => {
+                    setReplyingTo(message);
+                    replyMessage(message)
+                  }} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Reply"><Reply className="w-3.5 h-3.5 text-gray-500" /></button>
                   <button onClick={() => { setEditingMessageId(message.id); setEditingText(message.content); }} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Edit"><Edit3 className="w-3.5 h-3.5 text-gray-500" /></button>
                   <button onClick={() => handleDeleteMessage(message.id)} className="p-1.5 hover:bg-red-50 rounded-full transition-colors group/del" title="Delete"><Trash2 className="w-3.5 h-3.5 text-gray-500 group-hover/del:text-red-500" /></button>
                 </div>
