@@ -162,20 +162,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Load role-specific data based on user type
-      const roleData = {
-        [UserType.BUYER]: { data: getStoredData<Buyer>(STORAGE_KEYS.BUYER), setter: setBuyer, route: '/auth/buyer' },
-        [UserType.FARMER]: { data: getStoredData<Farmer>(STORAGE_KEYS.FARMER), setter: setFarmer, route: '/auth/farmer' },
-        [UserType.SUPPLIER]: { data: getStoredData<Supplier>(STORAGE_KEYS.SUPPLIER), setter: setSupplier, route: '/auth/supplier' },
-      };
-
-      const roleConfig = roleData[user.role as keyof typeof roleData];
-      if (roleConfig) {
-        if (!roleConfig.data) {
-          router.replace(roleConfig.route);
+      if (user.role === UserType.BUYER) {
+        const buyerData = getStoredData<Buyer>(STORAGE_KEYS.BUYER);
+        if (!buyerData) {
+          router.replace('/auth/buyer');
           setLoading(false);
           return;
         }
-        roleConfig.setter(roleConfig.data);
+        setBuyer(buyerData);
+      } else if (user.role === UserType.FARMER) {
+        const farmerData = getStoredData<Farmer>(STORAGE_KEYS.FARMER);
+        if (!farmerData) {
+          router.replace('/auth/farmer');
+          setLoading(false);
+          return;
+        }
+        setFarmer(farmerData);
+      } else if (user.role === UserType.SUPPLIER) {
+        const supplierData = getStoredData<Supplier>(STORAGE_KEYS.SUPPLIER);
+        if (!supplierData) {
+          router.replace('/auth/supplier');
+          setLoading(false);
+          return;
+        }
+        setSupplier(supplierData);
       }
 
       setLoading(false);

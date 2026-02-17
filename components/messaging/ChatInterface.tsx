@@ -20,6 +20,7 @@ import { Message, MessageType } from '@/types/message';
 import { useMessages } from '@/contexts/MessageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { useChat } from '@/hooks/useChat';
 
 export interface ChatInterfaceProps {
   className?: string;
@@ -31,14 +32,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     messages,
     activeChatUser,
     setActiveChatUser,
-    sendMessage,
-    editMessage,
-    deleteMessage,
     onlineUsers,
     isTyping: isCurrentUserTyping,
-    setIsTyping,
     typingUsers
   } = useMessages();
+  const { handleSendMessage: sendMessage,
+    handleEditMessage: editMessage,
+    handleDeleteMessage: deleteMessage,
+    handleTyping: setIsTyping,
+    handleReplyMessage: replyMessage
+  } = useChat()
 
   const [messageText, setMessageText] = useState('');
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
@@ -84,12 +87,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         fileName = selectedFile.name;
       }
 
+      if (replyingTo) replyMessage(replyingTo);
+
+
       await sendMessage(
         messageText.trim() || fileName || '',
         messageType,
-        fileName,
-        replyingTo?.id
+        fileName
       );
+
 
       setMessageText('');
       setSelectedFile(null);
