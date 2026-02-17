@@ -146,7 +146,12 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   // Raw data operations only
   const sendMessageRequest = (request: SendMessageRequest) => {
     if (socket) {
-      socket.sendMessage(request);
+      console.log(request)
+      if (request.replyToId) {
+        socket.messageReply(request);
+      } else {
+        socket.sendMessage(request);
+      }
     }
   };
 

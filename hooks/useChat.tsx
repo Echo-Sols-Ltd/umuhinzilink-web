@@ -49,7 +49,7 @@ export const useChat = () => {
         
         // Business logic: sanitization
         const sanitizedContent = content.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-        
+       
         try {
             // Create the request object
             const messageRequest = {
@@ -108,6 +108,7 @@ export const useChat = () => {
     const handleReplyMessage = useCallback((message: Message) => {
         // Business logic: set reply target
         setReplyTo(message);
+        console.log(replyTo)
     }, [])
 
     const handleCancelReply = useCallback(() => {
