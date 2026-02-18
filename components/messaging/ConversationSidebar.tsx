@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Search,
   Plus,
@@ -39,6 +40,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 
   const { users } = useUser();
   const { user: currentUser } = useAuth();
+  const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -70,6 +72,10 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   };
 
   const onUserClick = async (user: User) => {
+    // Navigate to the specific chat URL
+    router.push(`/buyer/message/${user.id}`);
+    
+    // Also set active chat user and load messages for immediate UI update
     setActiveChatUser(user);
     await loadMessages(user.id);
 

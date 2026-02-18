@@ -221,8 +221,8 @@ function ProductsPageComponent() {
         variant: "success"
       });
       
-      // Navigate to chat page
-      // router.push('/chat');
+      // Navigate to chat page with specific user ID
+      router.push(`/buyer/message/${farmerUser.id}`);
     } catch (error) {
       console.error('Failed to contact farmer:', error);
       toast({
