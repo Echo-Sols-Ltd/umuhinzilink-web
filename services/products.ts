@@ -112,6 +112,14 @@ class ProductService {
     return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(`${API_ENDPOINTS.PRODUCT.SUPPLIER_SEARCH}?${queryParams.toString()}`);
   }
 
+  async getFarmerProduct(id: string): Promise<ApiResponse<FarmerProduct>> {
+    return await apiClient.get<ApiResponse<FarmerProduct>>(API_ENDPOINTS.PRODUCT.BY_FARMER_ID(id));
+  }
+
+  async getSupplierProduct(id: string): Promise<ApiResponse<SupplierProduct>> {
+    return await apiClient.get<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.BY_SUPPLIER_ID(id));
+  }
+
   async uploadProductPhoto(file: File): Promise<ApiResponse<string>> {
     return await apiClient.uploadFile<ApiResponse<string>>(API_ENDPOINTS.FILES.UPLOAD_AVATAR, file)
   }

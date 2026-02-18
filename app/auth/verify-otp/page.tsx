@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function VerifyPage() {
-    const { verifyOtp, user, askOtpCode, loadAuthState } = useAuth()
+    const { verifyOtp, user, askOtpCode, loadAuthState, logout } = useAuth()
     const router = useRouter();
     const [otp, setOtp] = useState(['', '', '', '']);
     const [timer, setTimer] = useState(120);
@@ -76,6 +76,10 @@ export default function VerifyPage() {
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
+
+    const handleSignin = async () => {
+        await logout()
+    }
 
     return (
         <div className="flex h-screen">
@@ -164,9 +168,9 @@ export default function VerifyPage() {
                         {/* Sign in link */}
                         <p className="mt-6 text-sm text-gray-600">
                             Have an account?{' '}
-                            <a href="#" className="text-green-600 hover:text-green-700 font-medium">
+                            <div onClick={() => handleSignin()} className="text-green-600 cursor-pointer hover:text-green-700 font-medium">
                                 Sign In
-                            </a>
+                            </div>
                         </p>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Star,
   MapPin,
@@ -15,12 +16,16 @@ import {
   Heart,
   ChevronLeft,
   ChevronRight,
+  MessageSquare,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
-import { BuyerPages, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
+import { BuyerPages, FarmerProduct, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useProduct } from '@/contexts/ProductContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useChat } from '@/hooks/useChat';
+import { MessageType } from '@/types/message';
 import { ProductOrderInterface } from '@/components/orders/ProductOrderInterface';
 import { productService } from '@/services/products';
 import {
@@ -57,6 +62,9 @@ function ProductsPageComponent() {
   const { buyerProducts, loading: productsLoading } = useProduct();
   const [isPurchasing, setIsPurchasing] = useState(false)
   const { toast } = useToast();
+  const { user: buyer } = useAuth();
+  const { handleUserClick, handleSendMessage } = useChat();
+  const router = useRouter();
   const isMobile = useIsMobile();
 
   const itemsPerPage = 12;
@@ -171,6 +179,58 @@ function ProductsPageComponent() {
     setMaxPrice('');
     setSortBy('newest');
     setCurrentPage(1);
+  };
+
+  const handleContactFarmer = async (product: FarmerProduct) => {
+    if (!buyer) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to contact farmers",
+        variant: "error"
+      });
+      return;
+    }
+
+    if (!product.farmer) {
+      toast({
+        title: "Farmer Not Available",
+        description: "Unable to find farmer information for this product",
+        variant: "error"
+      });
+      return;
+    }
+
+    try {
+      // Create a user object for the farmer
+      const farmerUser = product.farmer.user
+
+      // Switch to chat with the farmer
+      handleUserClick(farmerUser);
+
+      // Send product reference message
+      await handleSendMessage(
+        `Hi! I'm interested in your ${product.name}`,
+        MessageType.PRODUCT,
+        undefined,
+        product.id
+      );
+
+      toast({
+        title: "Message Sent",
+        description: `You can now chat with ${product.farmer.names} about ${product.name}`,
+        variant: "success"
+      });
+      
+      // Navigate to chat page
+      // router.push('/chat');
+    } catch (error) {
+      console.error('Failed to contact farmer:', error);
+      toast({
+        title: "Failed to Send Message",
+        description: "Please try again later",
+        variant: "error"
+      });
+    }
   };
 
 
@@ -400,6 +460,7 @@ function ProductsPageComponent() {
                       setSelectedProduct(product);
                       setIsPurchasing(true);
                     }}
+                    onContact={() => handleContactFarmer(product)}
                   />
                 ))}
               </div>
@@ -414,6 +475,7 @@ function ProductsPageComponent() {
                       setSelectedProduct(product);
                       setIsPurchasing(true);
                     }}
+                    onContact={() => handleContactFarmer(product)}
                   />
                 ))}
               </div>
@@ -500,9 +562,10 @@ interface ProductCardProps {
   product: any;
   onSelect: () => void;
   onPurchase: () => void;
+  onContact: () => void;
 }
 
-function ProductCard({ product, onSelect, onPurchase }: ProductCardProps) {
+function ProductCard({ product, onSelect, onPurchase, onContact }: ProductCardProps) {
   const [isSaved, setIsSaved] = useState(false);
 
   return (
@@ -556,7 +619,7 @@ function ProductCard({ product, onSelect, onPurchase }: ProductCardProps) {
           </div>
 
           <div className="flex items-center justify-between mt-3 gap-2">
-            <TouchOptimizedButton
+            {/* <TouchOptimizedButton
               onClick={(e: any) => {
                 e.stopPropagation();
                 onPurchase();
@@ -565,6 +628,18 @@ function ProductCard({ product, onSelect, onPurchase }: ProductCardProps) {
               className="flex-1"
             >
               Buy Now
+            </TouchOptimizedButton> */}
+            <TouchOptimizedButton
+              onClick={(e: any) => {
+                e.stopPropagation();
+                onContact();
+              }}
+              size="sm"
+              
+              className="flex-1"
+            >
+              <MessageSquare className="w-4 h-4 mr-4" />
+              Contact Seller
             </TouchOptimizedButton>
             <div className="flex items-center">
               <Star className="w-4 h-4 text-yellow-400 fill-current" />
@@ -582,9 +657,10 @@ interface ProductListItemProps {
   product: any;
   onSelect: () => void;
   onPurchase: () => void;
+  onContact: () => void;
 }
 
-function ProductListItem({ product, onSelect, onPurchase }: ProductListItemProps) {
+function ProductListItem({ product, onSelect, onPurchase, onContact }: ProductListItemProps) {
   const [isSaved, setIsSaved] = useState(false);
 
   return (
@@ -655,6 +731,18 @@ function ProductListItem({ product, onSelect, onPurchase }: ProductListItemProps
                   className="bg-green-600 hover:bg-green-700"
                 >
                   Buy Now
+                </TouchOptimizedButton>
+                <TouchOptimizedButton
+                  onClick={(e: any) => {
+                    e.stopPropagation();
+                    onContact();
+                  }}
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center gap-1"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Contact
                 </TouchOptimizedButton>
                 <TouchOptimizedButton
                   onClick={(e: any) => {

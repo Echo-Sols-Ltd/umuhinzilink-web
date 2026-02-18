@@ -6,7 +6,8 @@ export enum MessageType {
   IMAGE = "IMAGE",
   AUDIO = "AUDIO",
   FILE = "FILE",
-  VIDEO = "VIDEO"
+  VIDEO = "VIDEO",
+  PRODUCT = "PRODUCT"
 }
 
 /**
@@ -24,6 +25,7 @@ export interface Message {
   replyTo?: Message;
   fileName?: string;
   reactions?: Reaction[];
+  productRef?: string;
 }
 
 export interface Reaction {
@@ -41,11 +43,12 @@ export interface ChatReaction {
  */
 export interface SendMessageRequest {
   content: string;
-  receiverId:string;
+  receiverId: string;
   senderId: string;
   type: MessageType;
   fileName?: string;
   replyToId?: string;
+  productRef?: string;
 }
 
 export interface EditMessageRequest {
