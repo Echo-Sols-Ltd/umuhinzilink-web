@@ -21,6 +21,7 @@ import { useMessages } from '@/contexts/MessageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { useChat } from '@/hooks/useChat';
+import { ProductReference } from './ProductReference';
 
 export interface ChatInterfaceProps {
   className?: string;
@@ -208,6 +209,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                     <File className="w-4 h-4" />
                     <span className="text-sm">{message.fileName}</span>
                     <button className="ml-auto"><Download className="w-4 h-4" /></button>
+                  </div>
+                )}
+
+                {message.type === MessageType.PRODUCT && message.productRef && (
+                  <div className="mb-2">
+                    <ProductReference 
+                      productId={message.productRef} 
+                      messageContent={message.content}
+                      compact={false} 
+                    />
                   </div>
                 )}
 

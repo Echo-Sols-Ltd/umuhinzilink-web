@@ -27,7 +27,7 @@ export const useChat = () => {
     const [showUserInfo, setShowUserInfo] = useState(false)
     const [replyTo, setReplyTo] = useState<Message | null>(null)
 
-    const handleSendMessage = useCallback(async (content: string, type: MessageType = MessageType.TEXT, fileName?: string) => {
+    const handleSendMessage = useCallback(async (content: string, type: MessageType = MessageType.TEXT, fileName?: string, productRef?: any) => {
         // Business logic validation
         if (!currentUser?.id || !activeChatUser) {
             toast({
@@ -58,7 +58,8 @@ export const useChat = () => {
                 senderId: currentUser.id,
                 type,
                 fileName,
-                replyToId: replyTo?.id
+                replyToId: replyTo?.id,
+                productRef
             };
             
             // Send through context

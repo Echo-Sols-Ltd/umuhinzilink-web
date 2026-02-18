@@ -76,6 +76,11 @@ export const useToast = () => {
     return addGlobalToast(data);
   }, []);
 
+  const replace = useCallback((data: Omit<ToastData, 'id'>) => {
+    clearAllGlobalToasts();
+    return addGlobalToast(data);
+  }, []);
+
   const dismiss = useCallback((id: string) => {
     removeGlobalToast(id);
   }, []);
@@ -87,6 +92,7 @@ export const useToast = () => {
   return {
     toasts,
     toast,
+    replace,
     dismiss,
     dismissAll,
     // Convenience methods
@@ -104,6 +110,19 @@ export const useToast = () => {
     
     loading: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
       toast({ ...options, description, variant: 'loading', duration: 0 }), [toast]),
+    
+    // Replace convenience methods
+    replaceSuccess: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      replace({ ...options, description, variant: 'success' }), [replace]),
+    
+    replaceError: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      replace({ ...options, description, variant: 'error' }), [replace]),
+    
+    replaceWarning: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      replace({ ...options, description, variant: 'warning' }), [replace]),
+    
+    replaceInfo: useCallback((description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => 
+      replace({ ...options, description, variant: 'default' }), [replace]),
   };
 };
 
@@ -128,4 +147,30 @@ export const toast = {
   
   dismiss: removeGlobalToast,
   dismissAll: clearAllGlobalToasts,
+  
+  // Replace functions
+  replace: (data: Omit<ToastData, 'id'>) => {
+    clearAllGlobalToasts();
+    return addGlobalToast(data);
+  },
+  
+  replaceSuccess: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => {
+    clearAllGlobalToasts();
+    return addGlobalToast({ ...options, description, variant: 'success' });
+  },
+  
+  replaceError: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => {
+    clearAllGlobalToasts();
+    return addGlobalToast({ ...options, description, variant: 'error' });
+  },
+  
+  replaceWarning: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => {
+    clearAllGlobalToasts();
+    return addGlobalToast({ ...options, description, variant: 'warning' });
+  },
+  
+  replaceInfo: (description: string, options?: Partial<Omit<ToastData, 'id' | 'variant' | 'description'>>) => {
+    clearAllGlobalToasts();
+    return addGlobalToast({ ...options, description, variant: 'default' });
+  },
 };
