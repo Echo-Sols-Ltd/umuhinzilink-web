@@ -28,6 +28,8 @@ import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import useProductAction from '@/hooks/useProductAction';
 import { Trash2 } from 'lucide-react';
+import { API_CONFIG } from '@/services/constants';
+import { imageUrl } from '@/lib/utils';
 
 
 function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
@@ -237,7 +239,7 @@ function FarmerProducts() {
                     <div className="aspect-4/3 bg-gray-50 flex items-center justify-center">
                       {product.image ? (
                         <img
-                          src={product.image}
+                          src={imageUrl(product.image)}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
