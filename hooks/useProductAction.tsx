@@ -249,6 +249,12 @@ export default function useProductAction() {
         });
         return;
       }
+      toast({
+        title: 'Product Deleted Successfully',
+        description: 'Product {} was deleted',
+        variant: 'success'
+
+      })
       router.back();
     } catch {
       toast({
@@ -292,14 +298,15 @@ export default function useProductAction() {
         description: 'Try again later',
         variant: 'error',
       });
-    }}
-    return {
-      createFarmerProduct,
-      createSupplierProduct,
-      editFarmerProduct,
-      editSupplierProduct,
-      deleteFarmerProduct,
-      deleteSupplierProduct,
-      loading,
     }
   }
+  return {
+    createFarmerProduct,
+    createSupplierProduct,
+    editFarmerProduct,
+    editSupplierProduct,
+    deleteFarmerProduct,
+    deleteSupplierProduct,
+    loading,
+  }
+}

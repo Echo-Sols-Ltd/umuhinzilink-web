@@ -126,11 +126,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         label: 'Messages',
                         href: '/farmer/message',
                     },
-                    // {
-                    //     icon: <Bell className="w-5 h-5" />,
-                    //     label: 'Notifications',
-                    //     href: '/farmer/notifications',
-                    // },
+                    {
+                        icon: <Bell className="w-5 h-5" />,
+                        label: 'Notifications',
+                        href: '/farmer/notifications',
+                    },
                     {
                         icon: <User className="w-5 h-5" />,
                         label: 'Profile',
@@ -141,11 +141,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         label: 'Orders',
                         href: '/farmer/orders',
                     },
-                    // {
-                    //     icon: <Wallet className="w-5 h-5" />,
-                    //     label: 'My Wallet',
-                    //     href: '/farmer/wallet',
-                    // },
+                    {
+                        icon: <Wallet className="w-5 h-5" />,
+                        label: 'My Wallet',
+                        href: '/farmer/wallet',
+                    },
                     {
                         icon: <Settings className="w-5 h-5" />,
                         label: 'Settings',
@@ -174,11 +174,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         label: 'Saved Items',
                         href: '/buyer/saved',
                     },
-                    // {
-                    //     icon: <Wallet className="w-5 h-5" />,
-                    //     label: 'My Wallet',
-                    //     href: '/buyer/wallet',
-                    // },
+                    {
+                        icon: <Wallet className="w-5 h-5" />,
+                        label: 'My Wallet',
+                        href: '/buyer/wallet',
+                    },
                     {
                         icon: <Mail className="w-5 h-5" />,
                         label: 'Messages',

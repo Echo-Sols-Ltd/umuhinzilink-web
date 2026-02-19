@@ -42,7 +42,7 @@ export interface SupplierProductionStat {
 export interface FarmerProduct {
   id: string;
   owner: User;
-  name: RwandaCrop;
+  name: string;
   description: string;
   unitPrice: number;
   image: string;
@@ -61,7 +61,7 @@ export interface FarmerProduct {
 export interface SupplierProduct {
   id: string;
   owner: User;
-  name: ProductType;
+  name: string;
   description: string;
   unitPrice: number;
   images: string[];

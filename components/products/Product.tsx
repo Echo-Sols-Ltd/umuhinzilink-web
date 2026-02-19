@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useChat } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useProductAction from "@/hooks/useProductAction";
 
 interface ProductCardProps {
     product: FarmerProduct | SupplierProduct
@@ -18,6 +19,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, onSelect, onPurchase, onContact }: ProductCardProps) {
     const { toast } = useToast()
     const { user } = useAuth()
+    const {deleteFarmerProduct}=useProductAction()
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
 
@@ -73,6 +75,25 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact }
         }
     };
 
+  const handleDeleteProduct = async (productId: string, productName: string) => {
+    if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await deleteFarmerProduct(productId);
+     
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete product. Please try again.",
+        variant: "error"
+      });
+    }
+  };
+
+
     const isProductOwner = user?.id === product.owner.id
 
     return (
@@ -109,7 +130,7 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact }
                                 Edit
                             </Link>
                             <button
-                                // onClick={() => handleDeleteProduct(product.id, product.name)}
+                                onClick={() => handleDeleteProduct(product.id, product.name)}
                                 className="bg-red-600 text-white px-4 py-2 rounded text-sm flex-1 items-center"
                                 title="Delete product"
                             >

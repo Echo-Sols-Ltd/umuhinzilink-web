@@ -51,27 +51,6 @@ function FarmerProducts() {
   const products = useMemo(() => farmerProducts || [], [farmerProducts]);
   const error = null;
 
-  const handleDeleteProduct = async (productId: string, productName: string) => {
-    if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
-      return;
-    }
-
-    try {
-      await deleteFarmerProduct(productId);
-      toast({
-        title: "Product Deleted",
-        description: `${productName} has been deleted successfully`,
-        variant: "success"
-      });
-    } catch (error) {
-      console.error('Failed to delete product:', error);
-      toast({
-        title: "Delete Failed",
-        description: "Failed to delete product. Please try again.",
-        variant: "error"
-      });
-    }
-  };
 
   const filteredProducts = useMemo(() => {
     let filtered = [...products];

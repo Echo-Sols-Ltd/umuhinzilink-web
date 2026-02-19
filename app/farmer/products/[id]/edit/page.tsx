@@ -28,7 +28,7 @@ function EditProduct() {
   const { farmerProducts } = useProduct();
   const { editFarmerProduct } = useProductAction();
   const { toast } = useToast();
-  
+
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [product, setProduct] = useState<any>(null);
@@ -51,9 +51,10 @@ function EditProduct() {
   useEffect(() => {
     const productId = params.id as string;
     const foundProduct = farmerProducts?.find(p => p.id === productId);
-    
+
     if (foundProduct) {
       setProduct(foundProduct);
+      console.log(foundProduct)
       setFormData({
         name: foundProduct.name,
         quantity: foundProduct.quantity,
@@ -67,7 +68,7 @@ function EditProduct() {
         image: foundProduct.image,
         certification: foundProduct.certification,
       });
-   
+
     }
     setLoading(false);
   }, [params.id, farmerProducts]);
@@ -78,10 +79,11 @@ function EditProduct() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+
   };
 
   // Handle select inputs
-  const handleSelectChange = (name: string, value: string|boolean) => {
+  const handleSelectChange = (name: string, value: string | boolean) => {
     setFormData({
       ...formData,
       [name]: value,
@@ -119,14 +121,8 @@ function EditProduct() {
       }
 
       await editFarmerProduct(productId, payload);
-      
-      toast({
-        title: "Product Updated",
-        description: "Your product has been updated successfully",
-        variant: "success"
-      });
-      
-      router.push('/farmer/products');
+
+    
     } catch (error) {
       console.error('Failed to update product:', error);
       toast({
@@ -173,7 +169,7 @@ function EditProduct() {
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar userType={UserType.FARMER} activeItem='Products' />
-      
+
       <main className="flex-1 overflow-y-auto">
         <div className="bg-white border-b h-16 flex items-center px-8">
           <Link
@@ -203,11 +199,11 @@ function EditProduct() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">
-                     <img
-                      src={imageUrl(product.image)}
-                      alt="Product image"
-                      className="w-full h-full object-cover"
-                    />
+                      <img
+                        src={imageUrl(product.image)}
+                        alt="Product image"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   )}
                 </div>
@@ -361,7 +357,7 @@ function EditProduct() {
               <input
                 type="date"
                 name="harvestDate"
-                value={formData.harvestDate}
+                value={new Date(formData.harvestDate).toLocaleDateString()}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               />

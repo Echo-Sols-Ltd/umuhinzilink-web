@@ -21,7 +21,7 @@ export interface OrderRequest {
 }
 
 export interface FarmerProductRequest {
-  name: RwandaCrop;
+  name: string;
   description: string;
   unitPrice: number;
   image: string;
@@ -35,7 +35,7 @@ export interface FarmerProductRequest {
 }
 
 export interface SupplierProductRequest {
-  name: ProductType;
+  name: string;
   description: string;
   unitPrice: number;
   image: string;

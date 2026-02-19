@@ -24,7 +24,7 @@ function AddProduce() {
   const { createFarmerProduct } = useProductAction();
   const { toast } = useToast();
   const [formData, setFormData] = useState<FarmerProductRequest>({
-    name: RwandaCrop.AVOCADO,
+    name: '',
     quantity: 0,
     unitPrice: 0,
     measurementUnit: MeasurementUnit.KG,
@@ -125,14 +125,6 @@ function AddProduce() {
       };
 
       await createFarmerProduct(productData, imageFile);
-
-      toast({
-        title: 'Produce Added',
-        description: 'Your product has been added to your inventory.',
-        variant: 'success',
-      });
-
-      router.push('/farmer/products');
     } catch (error) {
       console.error('Error adding produce:', error);
       const message = error instanceof Error ? error.message : 'An unknown error occurred.';
@@ -178,18 +170,14 @@ function AddProduce() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Product Name</label>
-                  <Select value={formData.name} onValueChange={(value) => handleSelectChange('name', value)}>
-                    <SelectTrigger className="mt-1 w-full">
-                      <SelectValue placeholder="Select a crop" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(RwandaCrop).map((crop) => (
-                        <SelectItem key={crop} value={crop}>
-                          {crop.replace(/_/g, ' ')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                       <input
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="e.g. Avocado"
+                      required
+                      className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                    />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Category</label>
