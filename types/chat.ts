@@ -1,5 +1,4 @@
-import { User } from './user';
-import { Message, MessageType } from './message';
+import { Message} from './message';
 
 export interface Conversation {
   id: string;
@@ -8,10 +7,14 @@ export interface Conversation {
   updatedAt: string;
 }
 
+
+
 export interface ChatUser {
   id: string;
-  name: string;
-  avatar?: string;
-  role: string;
-  online: boolean;
+  names: string;
+  email: string;
+  avatar: string;
+  unreadMessage: number;
+  totalMessage: number;
+  lastMessage: Message;
 }

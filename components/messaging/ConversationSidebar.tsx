@@ -18,6 +18,8 @@ import { useMessages } from '@/contexts/MessageContext';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import { ChatUser } from '@/types/chat';
+import { chatService } from '@/services/chat';
 
 export interface ConversationSidebarProps {
   className?: string;
@@ -29,27 +31,20 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   onNewConversation
 }) => {
   const {
-    messages,
     activeChatUser,
     setActiveChatUser,
-    onlineUsers,
-    markAsRead,
     loadMessages,
-    typingUsers
+    typingUsers,
+    onlineUsers
   } = useMessages();
 
-  const { users } = useUser();
   const { user: currentUser } = useAuth();
   const router = useRouter();
+  const {chatUsers } = useUser()
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredUsers = users.filter(user =>
-    user.names
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase()) &&
-    user.id !== currentUser?.id
-  );
+
 
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -71,50 +66,25 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     }
   };
 
-  const onUserClick = async (user: User) => {
+  const onUserClick = async (user: ChatUser) => {
     // Navigate to the specific chat URL
-    if(currentUser) {
-      const userNav=currentUser.role.toLowerCase()
+    if (currentUser) {
+      const userNav = currentUser.role.toLowerCase()
       router.push(`/${userNav}/message/${user.id}`);
     }
-    
+
     // Set active chat user and load messages
     setActiveChatUser(user);
     await loadMessages(user.id);
 
-    // Mark messages from this user as read (only messages sent to current user)
-    const unreadFromUser = messages.filter(m => 
-      m.sender.id === user.id && m.receiver.id === currentUser?.id && !m.isRead
-    );
-    
-    if (unreadFromUser.length > 0) {
-      markAsRead(unreadFromUser.map(m => m.id));
-    }
+
   };
 
   const isUserOnline = (userId: string) => {
     return onlineUsers.has(userId);
   };
 
-  const getUserData = (userId: string) => {
-    // Filter messages between current user and target user
-    const userMessages = messages.filter(m =>
-      (m.sender.id === userId && m.receiver.id === currentUser?.id) ||
-      (m.sender.id === currentUser?.id && m.receiver.id === userId)
-    ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-
-    // Get last message safely
-    const lastMessage = userMessages.length > 0 ? userMessages[userMessages.length - 1] : null;
-    
-    // Count unread messages (messages sent by other user to current user that aren't read)
-    const unreadCount = userMessages.filter(m => 
-      m.sender.id === userId && m.receiver.id === currentUser?.id && !m.isRead
-    ).length;
-
-    return { lastMessage, unreadCount };
-  };
-
-  const totalUnreadCount = users.reduce((acc, user) => acc + getUserData(user.id).unreadCount, 0);
+  const totalUnreadCount = chatUsers.reduce((acc, user) => acc + user.unreadMessage, 0);
 
   return (
     <>
@@ -152,7 +122,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 
         {/* Users List */}
         <div className="flex-1 overflow-y-auto">
-          {filteredUsers.length === 0 ? (
+          {chatUsers.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500 p-4">
               <Users className="w-12 h-12 text-gray-300 mb-4" />
               <h3 className="text-lg font-medium mb-2">No users found</h3>
@@ -162,14 +132,13 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {[...filteredUsers].sort((a, b) => {
-                const lastA = getUserData(a.id).lastMessage;
-                const lastB = getUserData(b.id).lastMessage;
+              {[...chatUsers].sort((a, b) => {
+                const lastA = a.lastMessage;
+                const lastB = b.lastMessage;
                 const timeA = lastA ? new Date(lastA.timestamp).getTime() : 0;
                 const timeB = lastB ? new Date(lastB.timestamp).getTime() : 0;
                 return timeB - timeA;
               }).map((user) => {
-                const { lastMessage, unreadCount } = getUserData(user.id);
                 const isActive = activeChatUser?.id === user.id;
 
                 return (
@@ -199,19 +168,19 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                         <div className="flex items-center justify-between">
                           <h3 className={cn(
                             'text-sm font-medium truncate',
-                            unreadCount > 0 ? 'text-gray-900' : 'text-gray-700'
+                            user.unreadMessage > 0 ? 'text-gray-900' : 'text-gray-700'
                           )}>
                             {user.names}
                           </h3>
                           <div className="flex items-center space-x-1">
-                            {lastMessage && (
+                            {user.lastMessage && (
                               <span className="text-xs text-gray-500">
-                                {formatTime(lastMessage.timestamp)}
+                                {formatTime(user.lastMessage.timestamp)}
                               </span>
                             )}
-                            {unreadCount > 0 && (
+                            {user.unreadMessage > 0 && (
                               <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full min-w-[20px] text-center">
-                                {unreadCount}
+                                {user.unreadMessage}
                               </span>
                             )}
                           </div>
@@ -220,19 +189,19 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                         <div className="flex items-center justify-between mt-1">
                           <p className={cn(
                             'text-sm truncate',
-                            (unreadCount > 0 || typingUsers.has(user.id)) ? 'text-green-600 font-medium' : 'text-gray-500'
+                            (user.unreadMessage > 0 || typingUsers.has(user.id)) ? 'text-green-600 font-medium' : 'text-gray-500'
                           )}>
                             {typingUsers.has(user.id) ? (
                               'typing...'
                             ) : (
-                              lastMessage?.content || user.role
+                              user.lastMessage?.content || 'Say Hey'
                             )}
                           </p>
 
                           {/* Message status for own messages */}
-                          {lastMessage && lastMessage.sender.id === currentUser?.id && (
+                          {user.lastMessage && user.lastMessage.sender.id === currentUser?.id && (
                             <div className="flex items-center ml-2">
-                              {lastMessage.isRead ? <CheckCheck className="w-3 h-3 text-blue-500" /> : <Check className="w-3 h-3 text-gray-400" />}
+                              {user.lastMessage.isRead ? <CheckCheck className="w-3 h-3 text-blue-500" /> : <Check className="w-3 h-3 text-gray-400" />}
                             </div>
                           )}
                         </div>

@@ -4,10 +4,11 @@ import { User } from '@/types/user';
 import { messageService } from '@/services/messages';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
+import { ChatUser } from '@/types/chat';
 
 export interface MessageContextValue {
   messages: Message[];
-  activeChatUser: User | null;
+  activeChatUser: ChatUser | null;
   loading: boolean;
   error: string | null;
   onlineUsers: Set<string>;
@@ -15,7 +16,7 @@ export interface MessageContextValue {
   isTyping: boolean;
 
   // Data operations only
-  setActiveChatUser: (user: User | null) => void;
+  setActiveChatUser: (user: ChatUser | null) => void;
   sendMessageRequest: (request: SendMessageRequest) => void;
   editMessageRequest: (request: EditMessageRequest) => void;
   deleteMessageRequest: (messageId: string) => void;
@@ -31,7 +32,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const socket = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [activeChatUser, setActiveChatUser] = useState<User | null>(null);
+  const [activeChatUser, setActiveChatUser] = useState<ChatUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());

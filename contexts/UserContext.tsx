@@ -3,9 +3,12 @@ import { User, UserType } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
 import { userService } from '@/services/users';
 import { useAuth } from './AuthContext';
+import { ChatUser } from '@/types/chat';
+import { chatService } from '@/services/chat';
 
 interface UserContextType {
   users: User[];
+  chatUsers: ChatUser[]
   loading: boolean;
   setCurrentUser: (user: User) => void;
   currentUser: User | null;
@@ -18,8 +21,9 @@ const UserContext = createContext<UserContextType | null>(null);
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+
   const { toast } = useToast();
-  
+  const [chatUsers, setChatUsers] = useState<ChatUser[]>([])
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -28,11 +32,11 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchUsers = async () => {
       if (!user) return;
-      
+
       setLoading(true);
       try {
         const res = await userService.getAllUsers();
-        
+
         if (!res.success) {
           toast({
             title: 'Server error',
@@ -41,7 +45,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
           });
           return;
         }
-        
+
         if (res.data) {
           setUsers(res.data);
         }
@@ -55,8 +59,37 @@ function UserProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
       }
     };
+    const fetchChatUsers = async () => {
+      if (!user) return;
 
+      setLoading(true);
+      try {
+        const res = await chatService.getAllChatUsers();
+
+        if (!res.success) {
+          toast({
+            title: 'Server error',
+            description: 'Users cannot be fetched',
+            variant: 'error',
+          });
+          return;
+        }
+
+        if (res.data) {
+          setChatUsers(res.data);
+        }
+      } catch {
+        toast({
+          title: 'Server error',
+          description: 'Users cannot be fetched',
+          variant: 'error',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchUsers();
+    fetchChatUsers()
   }, [user]);
 
   // Filter users by role
@@ -68,6 +101,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
     <UserContext.Provider
       value={{
         users,
+        chatUsers,
         loading,
         setCurrentUser,
         currentUser,

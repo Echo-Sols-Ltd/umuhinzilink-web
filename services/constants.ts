@@ -141,6 +141,10 @@ export const API_ENDPOINTS = {
     BY_ID: (conversationId: string) => `/messages/${conversationId}`,
     UPLOAD_FILE: '/messages/upload',
   },
+  CHAT: {
+    ALL: '/chat/users',
+    BY_USER: (id: string) => `/chat/${id}`
+  }
 };
 
 export const HTTP_STATUS = {
