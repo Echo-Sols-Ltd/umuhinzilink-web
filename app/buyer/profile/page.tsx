@@ -23,6 +23,8 @@ import { toast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
+import { imageUrl } from '@/lib/utils';
+import { userService } from '@/services/users';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -43,23 +45,36 @@ function BuyerProfileComponent() {
     email: '',
     district: '',
     sector: '',
+    avatar: '',
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const savedProfile = localStorage.getItem('buyerProfile');
     if (savedProfile) {
-      setProfile(JSON.parse(savedProfile));
+      const parsed = JSON.parse(savedProfile);
+      setProfile({
+        firstName: parsed.firstName || '',
+        lastName: parsed.lastName || '',
+        phone: parsed.phone || '',
+        email: parsed.email || '',
+        district: parsed.district || '',
+        sector: parsed.sector || '',
+        avatar: parsed.avatar || '',
+      });
     } else {
       setProfile({
         firstName: 'John',
         lastName: 'Doe',
         phone: '0788000000',
-        email: 'john.doe@email.com',
-        district: 'Gasabo',
-        sector: 'Kacyiru',
+        email: 'john.doe@example.com',
+        district: 'Kigali',
+        sector: 'Technology',
+        avatar: '',
       });
     }
   }, []);
@@ -73,6 +88,36 @@ function BuyerProfileComponent() {
     localStorage.setItem('buyerProfile', JSON.stringify(profile));
     setIsEditing(false);
     alert('Buyer profile updated successfully!');
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!imageFile) return;
+    
+    try {
+      const res = await userService.uploadAvatar(imageFile);
+      setProfile(prev => ({ ...prev, avatar: res.data! }));
+      toast.success("Profile image uploaded successfully", {
+        title: "Image Updated"
+      });
+      setImageFile(null);
+      setPreviewUrl(null);
+    } catch (error) {
+      toast.error("Failed to upload image. Please try again.", {
+        title: "Upload Failed"
+      });
+    }
   };
 
   const handleLogout = async () => {
@@ -93,8 +138,29 @@ function BuyerProfileComponent() {
             {/* Profile Header */}
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-                  <User className="w-10 h-10 text-green-600" />
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
+                    {previewUrl || profile.avatar ? (
+                      <img
+                        src={previewUrl || imageUrl(profile.avatar)}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-10 h-10 text-green-600" />
+                    )}
+                  </div>
+                  <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 cursor-pointer hover:bg-green-600 transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  </label>
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
@@ -103,6 +169,44 @@ function BuyerProfileComponent() {
                   <p className="text-gray-500">Buyer</p>
                 </div>
               </div>
+
+              {/* Image Upload Section */}
+              {imageFile && (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-lg overflow-hidden">
+                        <img
+                          src={previewUrl || ''}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">New Profile Image</p>
+                        <p className="text-xs text-gray-500">{imageFile.name}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setImageFile(null);
+                          setPreviewUrl(null);
+                        }}
+                        className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleImageUpload}
+                        className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                      >
+                        Upload
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {isEditing ? (
                 <div className="flex gap-2">

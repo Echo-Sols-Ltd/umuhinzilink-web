@@ -73,14 +73,20 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 
   const onUserClick = async (user: User) => {
     // Navigate to the specific chat URL
-    router.push(`/buyer/message/${user.id}`);
+    if(currentUser) {
+      const userNav=currentUser.role.toLowerCase()
+      router.push(`/${userNav}/message/${user.id}`);
+    }
     
-    // Also set active chat user and load messages for immediate UI update
+    // Set active chat user and load messages
     setActiveChatUser(user);
     await loadMessages(user.id);
 
-    // Mark messages from this user as read
-    const unreadFromUser = messages.filter(m => m.sender.id === user.id && !m.isRead);
+    // Mark messages from this user as read (only messages sent to current user)
+    const unreadFromUser = messages.filter(m => 
+      m.sender.id === user.id && m.receiver.id === currentUser?.id && !m.isRead
+    );
+    
     if (unreadFromUser.length > 0) {
       markAsRead(unreadFromUser.map(m => m.id));
     }
@@ -91,13 +97,19 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   };
 
   const getUserData = (userId: string) => {
+    // Filter messages between current user and target user
     const userMessages = messages.filter(m =>
       (m.sender.id === userId && m.receiver.id === currentUser?.id) ||
       (m.sender.id === currentUser?.id && m.receiver.id === userId)
     ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
-    const lastMessage = userMessages[userMessages.length - 1];
-    const unreadCount = userMessages.filter(m => m.sender.id === userId && !m.isRead).length;
+    // Get last message safely
+    const lastMessage = userMessages.length > 0 ? userMessages[userMessages.length - 1] : null;
+    
+    // Count unread messages (messages sent by other user to current user that aren't read)
+    const unreadCount = userMessages.filter(m => 
+      m.sender.id === userId && m.receiver.id === currentUser?.id && !m.isRead
+    ).length;
 
     return { lastMessage, unreadCount };
   };

@@ -1,6 +1,7 @@
 import { ApiResponse, Message, PaginatedResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
+import { AxiosProgressEvent, CancelToken } from 'axios';
 
 export interface ChatMessageReply {
   messageId: string;
@@ -23,6 +24,21 @@ export class MessageService {
   // Get message by ID
   async getMessageById(conversationId: string): Promise<ApiResponse<Message>> {
     return await apiClient.get<ApiResponse<Message>>(API_ENDPOINTS.MESSAGES.BY_ID(conversationId));
+  }
+
+  async uploadFile(
+    file: File,
+    onUploadProgress?: (event: AxiosProgressEvent) => void,
+    cancelToken?: CancelToken,
+    timeout: number = 60000
+  ): Promise<ApiResponse<string>> {
+    return await apiClient.uploadFile<ApiResponse<string>>(
+      API_ENDPOINTS.FILES.UPLOAD_MESSAGE,
+      file,
+      onUploadProgress,
+      cancelToken,
+      timeout
+    );
   }
 }
 

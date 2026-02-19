@@ -139,6 +139,7 @@ export const API_ENDPOINTS = {
   MESSAGES: {
     CONVERSATION: (senderId: string, receiverId: string) => `/messages/all/${senderId}/${receiverId}`,
     BY_ID: (conversationId: string) => `/messages/${conversationId}`,
+    UPLOAD_FILE: '/messages/upload',
   },
 };
 
