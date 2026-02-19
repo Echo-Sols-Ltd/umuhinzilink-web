@@ -10,6 +10,7 @@ import { Loader2, ArrowLeft } from 'lucide-react';
 import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
 import useProductAction from '@/hooks/useProductAction';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import { productService } from '@/services/products';
 import {
   Select,
   SelectContent,
@@ -110,14 +111,10 @@ function EditProduct() {
 
       // If new image is selected, upload it first
       if (imageFile) {
-        const formData = new FormData();
-        formData.append('image', imageFile);
-        
-        // Upload image (you'll need to implement this in productService)
-        // const imgRes = await productService.uploadProductPhoto(imageFile);
-        // if (imgRes?.data) {
-        //   payload.image = imgRes.data;
-        // }
+        const imgRes = await productService.uploadProductPhoto(imageFile);
+        if (imgRes?.data) {
+          payload.image = imgRes.data;
+        }
       }
 
       await editFarmerProduct(productId, payload);

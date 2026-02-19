@@ -4,6 +4,7 @@ import React, { useMemo, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
+import { useToast } from '@/components/ui/use-toast';
 import Link from 'next/link';
 import {
   LayoutGrid,
@@ -25,6 +26,8 @@ import {
 import Sidebar from '@/components/shared/Sidebar';
 import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import useProductAction from '@/hooks/useProductAction';
+import { Trash2 } from 'lucide-react';
 
 
 function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
@@ -36,12 +39,36 @@ function FarmerProducts() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { farmerProducts, loading } = useProduct();
+  const { deleteFarmerProduct } = useProductAction();
+  const { toast } = useToast();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const currentUser = user;
   const products = useMemo(() => farmerProducts || [], [farmerProducts]);
   const error = null;
+
+  const handleDeleteProduct = async (productId: string, productName: string) => {
+    if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await deleteFarmerProduct(productId);
+      toast({
+        title: "Product Deleted",
+        description: `${productName} has been deleted successfully`,
+        variant: "success"
+      });
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete product. Please try again.",
+        variant: "error"
+      });
+    }
+  };
 
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
@@ -256,12 +283,21 @@ function FarmerProducts() {
                         >
                           {product.productStatus || 'Pending approval'}
                         </span>
-                        <Link
-                          href={`/farmer/products/${product.id}/edit`}
-                          className="text-sm font-medium text-green-600 hover:text-green-700"
-                        >
-                          Edit
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/farmer/products/${product.id}/edit`}
+                            className="text-sm font-medium text-green-600 hover:text-green-700"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => handleDeleteProduct(product.id, product.name)}
+                            className="text-sm font-medium text-red-600 hover:text-red-700"
+                            title="Delete product"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                       {product.description && (
                         <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
