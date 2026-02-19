@@ -122,7 +122,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   // }, []);
 
   const fetchFarmerProducts = async () => {
-    if (!user?.id) return;
+  
     try {
       setLoading(true);
       const res = await productService.getProductsByFarmer();

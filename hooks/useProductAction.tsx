@@ -292,18 +292,14 @@ export default function useProductAction() {
         description: 'Try again later',
         variant: 'error',
       });
-    } finally {
-      setLoading(false);
+    }}
+    return {
+      createFarmerProduct,
+      createSupplierProduct,
+      editFarmerProduct,
+      editSupplierProduct,
+      deleteFarmerProduct,
+      deleteSupplierProduct,
+      loading,
     }
-  };
-
-  return {
-    createFarmerProduct,
-    createSupplierProduct,
-    editFarmerProduct,
-    editSupplierProduct,
-    deleteFarmerProduct,
-    deleteSupplierProduct,
-    loading,
-  };
-}
+  }

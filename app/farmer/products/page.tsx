@@ -257,10 +257,10 @@ function FarmerProducts() {
                           {product.productStatus || 'Pending approval'}
                         </span>
                         <Link
-                          href={`/farmer/products`}
+                          href={`/farmer/products/${product.id}/edit`}
                           className="text-sm font-medium text-green-600 hover:text-green-700"
                         >
-                          Manage
+                          Edit
                         </Link>
                       </div>
                       {product.description && (
