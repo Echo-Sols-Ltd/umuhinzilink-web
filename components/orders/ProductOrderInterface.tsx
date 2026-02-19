@@ -64,7 +64,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
     );
   };
 
-  const sellerInfo = 'farmer' in product ? product.farmer : product.supplier;
+  const sellerInfo = 'farmer' in product ? product.owner : product.owner;
 
   return (
     <>
@@ -196,15 +196,15 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                 <span className="text-green-600 font-semibold text-lg">
-                  {sellerInfo.user.names.charAt(0)}
+                  {sellerInfo.names.charAt(0)}
                 </span>
               </div>
               <div>
-                <p className="font-medium text-gray-900">{sellerInfo.user.names}</p>
-                <p className="text-sm text-gray-600">{sellerInfo.user.email}</p>
-                {sellerInfo.user.address && (
+                <p className="font-medium text-gray-900">{sellerInfo.names}</p>
+                <p className="text-sm text-gray-600">{sellerInfo.email}</p>
+                {sellerInfo.address && (
                   <p className="text-sm text-gray-500">
-                    {sellerInfo.user.address.district}, {sellerInfo.user.address.province}
+                    {sellerInfo.address.district}, {sellerInfo.address.province}
                   </p>
                 )}
               </div>

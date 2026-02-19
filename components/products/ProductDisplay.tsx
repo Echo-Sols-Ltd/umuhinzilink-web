@@ -24,8 +24,9 @@ import { ProgressiveImage } from '@/components/ui/progressive-loading';
 import { useToast } from '@/components/ui/use-toast';
 import { RwandaCrop, RwandaCropCategory } from '@/types';
 import { FarmerProduct } from '@/types/product';
-import { cn } from '@/lib/utils';
+import { cn, imageUrl } from '@/lib/utils';
 import { ResponsiveLayout, MobileTable, TouchOptimizedButton } from '@/components/ui/responsive-layout';
+import ProductCard from './Product';
 
 export interface ProductDisplayProps {
   products: FarmerProduct[];
@@ -50,206 +51,8 @@ export interface ProductDisplayProps {
   maxPrice?: number;
 }
 
-// Product Card Component
-interface ProductCardProps {
-  product: FarmerProduct;
-  onSelect: () => void;
-  onPurchase: () => void;
-  onContact: () => void;
-}
 
-function ProductCard({ product, onSelect, onPurchase, onContact }: ProductCardProps) {
-  const [isSaved, setIsSaved] = React.useState(false);
 
-  return (
-    <Card className="group cursor-pointer hover:shadow-lg transition-all duration-200 overflow-hidden">
-      <div onClick={onSelect}>
-        {/* Product Image */}
-        <div className="relative h-48 overflow-hidden">
-          <ProgressiveImage
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          
-          {/* Category Badge */}
-          <div className="absolute top-2 left-2">
-            <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm">
-              {product.category}
-            </Badge>
-          </div>
-
-          {/* Save Button */}
-          <button
-            onClick={(e: any) => {
-              e.stopPropagation();
-              setIsSaved(!isSaved);
-            }}
-            className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors"
-          >
-            {isSaved ? <BookmarkCheck className="w-4 h-4 text-green-600" /> : <Bookmark className="w-4 h-4 text-gray-600" />}
-          </button>
-        </div>
-
-        {/* Product Info */}
-        <div className="p-4">
-          <div className="flex items-start justify-between mb-2">
-            <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2">
-              {product.name}
-            </h3>
-            <div className="flex items-center text-sm text-gray-500">
-              <MapPin className="w-4 h-4 mr-1" />
-              <span>{product.farmer?.user?.address?.district || 'Location'}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <span className="text-2xl font-bold text-green-600">
-                {product.unitPrice.toLocaleString()} RWF
-              </span>
-              <span className="text-sm text-gray-500 ml-1">/{product.measurementUnit}</span>
-            </div>
-            <div className="flex items-center">
-              <Star className="w-4 h-4 text-yellow-400 fill-current" />
-              <span className="text-sm text-gray-600 ml-1">4.5</span>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between mb-3 gap-2">
-            <div className="flex items-center text-sm text-gray-600">
-              <span>{product.quantity} {product.measurementUnit}</span>
-              <div className="flex items-center ml-2">
-                <div className="w-2 h-2 bg-green-100 rounded-full mr-1" />
-                <span>{product.farmer?.names}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between mt-3 gap-2">
-            <TouchOptimizedButton
-              onClick={(e: any) => {
-                e.stopPropagation();
-                onPurchase();
-              }}
-              size="sm"
-              className="flex-1"
-            >
-              Buy Now
-            </TouchOptimizedButton>
-            <TouchOptimizedButton
-              onClick={(e: any) => {
-                e.stopPropagation();
-                onContact();
-              }}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-1"
-            >
-              <MessageSquare className="w-4 h-4 mr-4" />
-              Contact Seller
-            </TouchOptimizedButton>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-// Product List Item Component
-interface ProductListItemProps {
-  product: FarmerProduct;
-  onSelect: () => void;
-  onPurchase: () => void;
-  onContact: () => void;
-}
-
-function ProductListItem({ product, onSelect, onPurchase, onContact }: ProductListItemProps) {
-  const [isSaved, setIsSaved] = React.useState(false);
-
-  return (
-    <Card className="hover:shadow-md transition-shadow duration-200">
-      <div className="p-4">
-        <div className="flex gap-4">
-          <div className="shrink-0 w-24 h-24">
-            <ProgressiveImage
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-1">{product.name}</h4>
-                <div className="flex items-center text-sm text-gray-500 mb-2">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  <span>{product.farmer?.user?.address?.district || 'Location'}</span>
-                </div>
-              </div>
-              <Badge variant="secondary" className="bg-green-100 text-green-700">
-                {product.category}
-              </Badge>
-            </div>
-            <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center">
-                <span className="text-lg font-bold text-green-600">
-                  {product.unitPrice.toLocaleString()} RWF/{product.measurementUnit}
-                </span>
-              </div>
-              <div className="flex items-center">
-                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                <span className="text-sm text-gray-600 ml-1">4.5</span>
-              </div>
-            </div>
-            <div className="flex items-center text-sm text-gray-600">
-              <span>{product.quantity} {product.measurementUnit}</span>
-              <div className="flex items-center ml-2">
-                <div className="w-2 h-2 bg-green-100 rounded-full mr-1" />
-                <span>{product.farmer?.names}</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <TouchOptimizedButton
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                  onPurchase();
-                }}
-                size="sm"
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Buy Now
-              </TouchOptimizedButton>
-              <TouchOptimizedButton
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                  onContact();
-                }}
-                size="sm"
-                variant="outline"
-                className="flex items-center gap-1"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Contact
-              </TouchOptimizedButton>
-              <TouchOptimizedButton
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                  onSelect();
-                }}
-                size="sm"
-                variant="outline"
-              >
-                View Details
-              </TouchOptimizedButton>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
 
 // Main ProductDisplay Component
 export function ProductDisplay({
@@ -377,7 +180,7 @@ export function ProductDisplay({
           ) : (
             <div className="space-y-4">
               {products.map((product) => (
-                <ProductListItem
+                <ProductCard
                   key={product.id}
                   product={product}
                   onSelect={() => onProductSelect?.(product)}

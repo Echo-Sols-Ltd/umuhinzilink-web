@@ -167,6 +167,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   useEffect(() => {
     setIsUserOnline(onlineUsers.has(activeChatUser?.id || ''));
   }, [onlineUsers, activeChatUser]);
+  
   const renderMessage = (message: Message, index: number) => {
     const isOwn = message.sender.id === currentUser?.id;
     const showDate = index === 0 ||

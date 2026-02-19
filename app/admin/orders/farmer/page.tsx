@@ -34,7 +34,7 @@ function FarmerOrderManagement() {
     const filteredOrders = orders.filter(order => {
         const matchesSearch =
             order.buyer.names.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.product.farmer.user.names.toLowerCase().includes(searchTerm.toLowerCase());
+            order.product.owner?.names.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesSearch;
     });
 
@@ -113,10 +113,10 @@ function FarmerOrderManagement() {
                                                     {order.buyer.names}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {order.product.farmer.user.role}
+                                                    {order.product.owner?.role}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {order.product.farmer.user.names}
+                                                    {order.product.owner?.names}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {new Date(order.createdAt).toDateString()}

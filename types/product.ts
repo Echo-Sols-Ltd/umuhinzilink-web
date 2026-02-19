@@ -8,7 +8,7 @@ import {
   RwandaCrop,
   RwandaCropCategory,
 } from './enums';
-import { Farmer, Supplier } from './user';
+import { Farmer, Supplier, User } from './user';
 
 export interface Statistics {
   month: Month;
@@ -41,7 +41,7 @@ export interface SupplierProductionStat {
 
 export interface FarmerProduct {
   id: string;
-  farmer: Farmer;
+  owner: User;
   name: RwandaCrop;
   description: string;
   unitPrice: number;
@@ -60,7 +60,7 @@ export interface FarmerProduct {
 
 export interface SupplierProduct {
   id: string;
-  supplier: Supplier;
+  owner: User;
   name: ProductType;
   description: string;
   unitPrice: number;

@@ -292,7 +292,7 @@ function FarmerRequestsComponent() {
                           <td className="px-6 py-4">
                             <div className="flex flex-col">
                               <span className="text-sm font-bold text-gray-900">{order.product?.name || 'Input Item'}</span>
-                              <span className="text-[10px] text-gray-500 font-medium">by {order.product?.supplier?.businessName || 'Verified Supplier'}</span>
+                              <span className="text-[10px] text-gray-500 font-medium">by {order.product?.owner?.names || 'Verified Supplier'}</span>
                               <span className="text-[10px] text-gray-400 italic">{formatDate(order.createdAt)}</span>
                             </div>
                           </td>

@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import Sidebar from '@/components/shared/Sidebar';
+import { imageUrl } from '@/lib/utils';
 
 function EditProduct() {
   const router = useRouter();
@@ -66,7 +67,7 @@ function EditProduct() {
         image: foundProduct.image,
         certification: foundProduct.certification,
       });
-      setPreviewUrl(foundProduct.image);
+   
     }
     setLoading(false);
   }, [params.id, farmerProducts]);
@@ -202,7 +203,11 @@ function EditProduct() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      No image
+                     <img
+                      src={imageUrl(product.image)}
+                      alt="Product image"
+                      className="w-full h-full object-cover"
+                    />
                     </div>
                   )}
                 </div>

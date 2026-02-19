@@ -207,7 +207,7 @@ function Dashboard() {
   const orders = useMemo(() => {
     if (!farmerId) return rawOrders;
     return rawOrders.filter(order => {
-      const productFarmerId = order.product?.farmer?.user?.id || order.product?.farmer?.id;
+      const productFarmerId = order.product?.owner?.id || order.product?.owner?.id;
       return productFarmerId ? productFarmerId === farmerId : true;
     });
   }, [rawOrders, farmerId]);
@@ -215,7 +215,7 @@ function Dashboard() {
   const products = useMemo(() => {
     if (!farmerId) return rawProducts;
     return rawProducts.filter(product => {
-      const ownerId = product.farmer?.user?.id || product.farmer?.id;
+      const ownerId = product.owner?.id || product.owner?.id;
       return ownerId ? ownerId === farmerId : true;
     });
   }, [rawProducts, farmerId]);
@@ -510,7 +510,7 @@ function Dashboard() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                           {product.location ||
-                            product.farmer?.user?.names ||
+                            product.owner?.names ||
                             profile?.address?.district ||
                             '—'}
                         </td>

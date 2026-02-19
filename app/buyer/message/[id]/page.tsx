@@ -5,12 +5,25 @@ import { useParams } from 'next/navigation';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, UserType } from '@/types';
+import { ChatUser } from '@/types/chat';
 import ConversationSidebar from '@/components/messaging/ConversationSidebar';
 import ChatInterface from '@/components/messaging/ChatInterface';
 import { useMessages } from '@/contexts/MessageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { userService } from '@/services/users';
+import { Message } from '@/types/message';
+
+// Helper function to convert User to ChatUser
+const userToChatUser = (user: any): ChatUser => ({
+    id: user.id,
+    names: user.names,
+    email: user.email,
+    avatar: user.avatar,
+    unreadMessage: 0, // Default values, will be updated by context
+    totalMessage: 0,
+    lastMessage: {} as Message, // Will be populated by context
+});
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -32,7 +45,7 @@ function BuyerMessageDetailComponent() {
         try {
           const response = await userService.getUserById(chatId);
           if (response.success && response.data) {
-            setActiveChatUser(response.data);
+            setActiveChatUser(userToChatUser(response.data));
           }
         } catch (error) {
           console.error('Failed to fetch user:', error);

@@ -30,6 +30,7 @@ import useProductAction from '@/hooks/useProductAction';
 import { Trash2 } from 'lucide-react';
 import { API_CONFIG } from '@/services/constants';
 import { imageUrl } from '@/lib/utils';
+import ProductCard from '@/components/products/Product';
 
 
 function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
@@ -232,80 +233,11 @@ function FarmerProducts() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map(product => (
-                  <article
-                    key={product.id}
-                    className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden"
-                  >
-                    <div className="aspect-4/3 bg-gray-50 flex items-center justify-center">
-                      {product.image ? (
-                        <img
-                          src={imageUrl(product.image)}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="text-xs text-gray-400">No image provided</div>
-                      )}
-                    </div>
-                    <div className="p-4 space-y-3">
-                      <header>
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {product.name || 'Unnamed product'}
-                        </h3>
-                        <p className="text-xs uppercase tracking-wide text-gray-400">
-                          {product.category || 'Uncategorized'}
-                        </p>
-                      </header>
-                      <div className="flex items-center justify-between text-sm text-gray-600">
-                        <div>
-                          <span className="text-gray-900 font-medium">
-                            {product.unitPrice != null
-                              ? `RWF ${formatNumber(product.unitPrice)}`
-                              : 'Price N/A'}
-                          </span>
-                        </div>
-                        <div>
-                          {product.quantity != null
-                            ? `${formatNumber(product.quantity)} ${product.measurementUnit || ''}`
-                            : 'Qty N/A'}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>{product.location || 'Location unknown'}</span>
-                        <span>{product.isNegotiable ? 'Negotiable' : 'Fixed price'}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={`px-2 py-1 text-xs rounded-full ${(product.productStatus || '').toLowerCase() === 'in_stock'
-                            ? 'bg-green-100 text-green-700'
-                            : (product.productStatus || '').toLowerCase() === 'out_of_stock'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-yellow-100 text-yellow-700'
-                            }`}
-                        >
-                          {product.productStatus || 'Pending approval'}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <Link
-                            href={`/farmer/products/${product.id}/edit`}
-                            className="text-sm font-medium text-green-600 hover:text-green-700"
-                          >
-                            Edit
-                          </Link>
-                          <button
-                            onClick={() => handleDeleteProduct(product.id, product.name)}
-                            className="text-sm font-medium text-red-600 hover:text-red-700"
-                            title="Delete product"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                      {product.description && (
-                        <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
-                      )}
-                    </div>
-                  </article>
+                <ProductCard
+                product={product}
+                onContact={()=>{}}
+                onPurchase={()=>{}}
+                onSelect={()=>{}}/>
                 ))}
               </div>
             )}

@@ -1,8 +1,20 @@
 import { useState, useMemo, useCallback } from "react"
 import { User, Message, Reaction, MessageType } from '@/types'
+import { ChatUser } from '@/types/chat'
 import { useAuth } from "@/contexts/AuthContext"
 import { useMessages } from "@/contexts/MessageContext"
 import { useToast } from '@/components/ui/use-toast'
+
+// Helper function to convert User to ChatUser
+const userToChatUser = (user: User): ChatUser => ({
+    id: user.id,
+    names: user.names,
+    email: user.email,
+    avatar: user.avatar,
+    unreadMessage: 0, // Default values, will be updated by context
+    totalMessage: 0,
+    lastMessage: {} as Message, // Will be populated by context
+})
 
 export const useChat = () => {
     const { user: currentUser } = useAuth()
@@ -79,10 +91,10 @@ export const useChat = () => {
 
     const handleUserClick = useCallback(async (clickedUser: User) => {
         // Business logic: switch chat and clear reply state
-        setActiveChatUser(clickedUser);
+        setActiveChatUser(userToChatUser(clickedUser));
         setReplyTo(null);
         
-        // Load messages for the new chat
+        // Load messages for new chat
         try {
             await loadMessages(clickedUser.id);
         } catch (error) {
