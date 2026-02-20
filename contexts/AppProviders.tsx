@@ -8,6 +8,7 @@ import { UserProvider } from '@/contexts/UserContext';
 import { WalletProvider } from '@/contexts/WalletContext';
 import { MessageProvider } from '@/contexts/MessageContext';
 import { SocketProvider } from './SocketContext';
+import { NotificationProvider } from './NotificationContext';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -18,15 +19,17 @@ export function AppProviders({ children }: AppProvidersProps) {
     <AuthProvider>
       <SocketProvider>
         <UserProvider>
-          <ProductProvider>
-            <OrderProvider>
-              <WalletProvider>
-                <MessageProvider>
-                  {children}
-                </MessageProvider>
-              </WalletProvider>
-            </OrderProvider>
-          </ProductProvider>
+          <NotificationProvider>
+            <ProductProvider>
+              <OrderProvider>
+                <WalletProvider>
+                  <MessageProvider>
+                    {children}
+                  </MessageProvider>
+                </WalletProvider>
+              </OrderProvider>
+            </ProductProvider>
+          </NotificationProvider>
         </UserProvider>
       </SocketProvider>
     </AuthProvider>

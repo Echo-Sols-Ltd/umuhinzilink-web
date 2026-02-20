@@ -74,19 +74,19 @@ function FarmerProducts() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <h1 className="text-3xl font-black text-gray-900 tracking-tight">Marketplace Inventory</h1>
-              <p className="text-sm text-gray-500 mt-1 font-medium italic">Manage your produce listings and monitor stock levels</p>
+              <h1 className="text-2xl font-bold text-gray-900">Marketplace Inventory</h1>
+              <p className="text-sm text-gray-500 mt-1">Manage your produce listings and monitor stock levels</p>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => fetchFarmerProducts()}
-                className="p-3 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all shadow-sm"
+                className="p-2.5 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
               >
                 <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin text-green-600' : ''}`} />
               </button>
               <Link
                 href="/farmer/add_produce"
-                className="bg-green-600 text-white font-black py-3.5 px-6 rounded-2xl flex items-center gap-2 hover:bg-green-700 transition shadow-lg shadow-green-100 text-xs uppercase tracking-widest"
+                className="bg-green-600 text-white font-semibold py-2.5 px-6 rounded-xl flex items-center gap-2 hover:bg-green-700 transition shadow-sm"
               >
                 <Plus className="w-4 h-4" /> New Listing
               </Link>
@@ -102,23 +102,23 @@ function FarmerProducts() {
           </div>
 
           {/* Filtering Section */}
-          <div className="bg-white p-4 rounded-4xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+          <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search your products..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-14 pr-6 py-3.5 bg-gray-50/50 border border-transparent rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 font-medium italic"
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50/50"
               />
             </div>
-            <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="flex items-center gap-2 w-full md:w-auto">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-40 bg-gray-50/50 border-none rounded-2xl h-12 font-bold text-xs uppercase tracking-widest">
+                <SelectTrigger className="w-full md:w-40 bg-white border-gray-200 rounded-xl h-10 font-medium text-xs uppercase tracking-wider">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl">
+                <SelectContent className="rounded-xl">
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="in_stock">In Stock</SelectItem>
                   <SelectItem value="out_of_stock">Out of Stock</SelectItem>
@@ -128,7 +128,7 @@ function FarmerProducts() {
               {(statusFilter !== 'all' || searchTerm) && (
                 <button
                   onClick={() => { setStatusFilter('all'); setSearchTerm(''); }}
-                  className="px-4 py-2 text-xs font-black text-red-500 uppercase tracking-widest hover:bg-red-50 rounded-xl transition-all"
+                  className="px-4 py-2 text-xs font-semibold text-red-500 uppercase tracking-wider hover:bg-red-50 rounded-lg transition-all"
                 >
                   Reset
                 </button>
@@ -139,31 +139,31 @@ function FarmerProducts() {
           {/* Product Grid */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900 border-l-4 border-green-500 pl-4 uppercase tracking-tight">Active Listings</h2>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{filteredProducts.length} Results</span>
+              <h2 className="text-lg font-semibold text-gray-900 border-l-4 border-green-500 pl-3">Active Listings</h2>
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">{filteredProducts.length} Results</span>
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-3xl border border-gray-100 p-4 space-y-4 shadow-sm">
-                    <Skeleton className="aspect-square rounded-2xl" />
+                  <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 space-y-4 shadow-sm">
+                    <Skeleton className="aspect-square rounded-xl" />
                     <div className="space-y-2">
                       <Skeleton className="h-5 w-3/4" />
                       <Skeleton className="h-4 w-1/2" />
                     </div>
-                    <Skeleton className="h-10 w-full rounded-xl" />
+                    <Skeleton className="h-8 w-full rounded-lg" />
                   </div>
                 ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-[3rem] border border-gray-100 p-20 text-center shadow-sm">
-                <Package className="w-16 h-16 text-gray-200 mx-auto mb-6" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">No listings found</h3>
-                <p className="text-gray-500 font-medium italic">Try adjusting your filters or create a new product listing.</p>
+              <div className="bg-white rounded-[2rem] border border-gray-100 p-16 text-center shadow-sm">
+                <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">No listings found</h3>
+                <p className="text-gray-500 text-sm">Try adjusting your filters or create a new product listing.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredProducts.map(product => (
                   <ProductCard
                     key={product.id}
@@ -184,13 +184,13 @@ function FarmerProducts() {
 
 function HighlightCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-5 transition-all hover:scale-[1.02] hover:shadow-md">
-      <div className={`p-3.5 rounded-2xl bg-linear-to-br ${color} text-white shadow-lg`}>
-        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-6 h-6' })}
+    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 transition-all hover:scale-[1.01]">
+      <div className={`p-3 rounded-xl bg-linear-to-br ${color} text-white shadow-md`}>
+        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-5 h-5' })}
       </div>
       <div>
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1.5">{title}</p>
-        <p className="text-2xl font-black text-gray-900 leading-none">{value.toLocaleString()}</p>
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider leading-none mb-1">{title}</p>
+        <p className="text-xl font-bold text-gray-900 leading-none">{value.toLocaleString()}</p>
       </div>
     </div>
   );

@@ -132,7 +132,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {
                         icon: <Bell className="w-5 h-5" />,
                         label: 'Notifications',
-                        href: '/farmer/notifications',
+                        href: '/notifications',
                     },
                     {
                         icon: <User className="w-5 h-5" />,
@@ -208,6 +208,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         href: '/buyer/contact',
                     },
                     {
+                        icon: <Bell className="w-5 h-5" />,
+                        label: 'Notifications',
+                        href: '/notifications',
+                    },
+                    {
                         icon: <Settings className="w-5 h-5" />,
                         label: 'Settings',
                         href: '/buyer/settings',
@@ -255,6 +260,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     //     label: 'My Wallet',
                     //     href: '/supplier/wallet',
                     // },
+                    {
+                        icon: <Bell className="w-5 h-5" />,
+                        label: 'Notifications',
+                        href: '/notifications',
+                    },
                     {
                         icon: <Settings className="w-5 h-5" />,
                         label: 'Settings',
@@ -312,6 +322,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         icon: <Mail className="w-5 h-5" />,
                         label: 'Messages',
                         href: '/chat',
+                    },
+                    {
+                        icon: <Bell className="w-5 h-5" />,
+                        label: 'Notifications',
+                        href: '/notifications',
                     }
                 ];
             case UserType.GOVERNMENT:
@@ -334,7 +349,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {
                         icon: <Bell className="w-5 h-5" />,
                         label: 'Notifications',
-                        href: '/government/notifications',
+                        href: '/notifications',
                     },
                     {
                         icon: <User className="w-5 h-5" />,

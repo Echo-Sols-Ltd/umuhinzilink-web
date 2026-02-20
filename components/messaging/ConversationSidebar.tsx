@@ -40,7 +40,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 
   const { user: currentUser } = useAuth();
   const router = useRouter();
-  const {chatUsers } = useUser()
+  const { chatUsers } = useUser()
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -67,12 +67,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   };
 
   const onUserClick = async (user: ChatUser) => {
-    // Navigate to the specific chat URL
-    if (currentUser) {
-      const userNav = currentUser.role.toLowerCase()
-      router.push(`/${userNav}/message/${user.id}`);
-    }
-
+    router.push(`/chat/${user.id}`);
     // Set active chat user and load messages
     setActiveChatUser(user);
     await loadMessages(user.id);

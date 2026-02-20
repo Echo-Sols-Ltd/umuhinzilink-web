@@ -123,13 +123,13 @@ function FarmerProductManagement() {
                     {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
-                            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Farmer Inventory</h1>
-                            <p className="text-sm text-gray-500 mt-1 font-medium italic">Moderate and oversee all farmer-listed produce in the marketplace</p>
+                            <h1 className="text-2xl font-bold text-gray-900">Farmer Inventory</h1>
+                            <p className="text-sm text-gray-500 mt-1">Moderate and oversee all farmer-listed produce in the marketplace</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={refreshProducts}
-                                className="p-3 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all shadow-sm"
+                                className="p-2.5 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
                                 disabled={loading}
                             >
                                 <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin text-green-600' : ''}`} />
@@ -138,23 +138,23 @@ function FarmerProductManagement() {
                     </div>
 
                     {/* Filter Bar */}
-                    <div className="bg-white p-4 rounded-4xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+                    <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
                         <div className="relative flex-1 w-full">
-                            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <input
                                 type="text"
-                                placeholder="Search by name, description or farmer..."
+                                placeholder="Search products or farmers..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-14 pr-6 py-3.5 bg-gray-50/50 border border-transparent rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 font-medium"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50/50"
                             />
                         </div>
                         <div className="flex items-center gap-3 w-full md:w-auto">
                             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                <SelectTrigger className="w-full md:w-40 bg-gray-50/50 border-none rounded-2xl h-12 font-bold text-xs uppercase tracking-widest">
+                                <SelectTrigger className="w-full md:w-40 bg-white border-gray-200 rounded-xl h-10 font-medium text-xs uppercase tracking-wider">
                                     <SelectValue placeholder="All Categories" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-2xl">
+                                <SelectContent className="rounded-xl">
                                     <SelectItem value="all">All Categories</SelectItem>
                                     <SelectItem value="CEREALS">Cereals</SelectItem>
                                     <SelectItem value="VEGETABLES">Vegetables</SelectItem>
@@ -165,10 +165,10 @@ function FarmerProductManagement() {
                             </Select>
 
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="w-full md:w-36 bg-gray-50/50 border-none rounded-2xl h-12 font-bold text-xs uppercase tracking-widest">
+                                <SelectTrigger className="w-full md:w-36 bg-white border-gray-200 rounded-xl h-10 font-medium text-xs uppercase tracking-wider">
                                     <SelectValue placeholder="All Status" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-2xl">
+                                <SelectContent className="rounded-xl">
                                     <SelectItem value="all">All Status</SelectItem>
                                     <SelectItem value="IN_STOCK">In Stock</SelectItem>
                                     <SelectItem value="OUT_OF_STOCK">Out of Stock</SelectItem>
@@ -179,26 +179,26 @@ function FarmerProductManagement() {
                     </div>
 
                     {/* Table */}
-                    <div className="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-gray-50/50">
-                                    <TableHead className="font-bold py-6 pl-8">PRODUCT INFO</TableHead>
-                                    <TableHead className="font-bold">PRODUCER</TableHead>
-                                    <TableHead className="font-bold">INVENTORY</TableHead>
-                                    <TableHead className="font-bold">STATUS</TableHead>
-                                    <TableHead className="text-right font-bold pr-8">MODERATION</TableHead>
+                                    <TableHead className="font-semibold py-4 pl-6 uppercase text-[11px] tracking-wider text-gray-500">Product Info</TableHead>
+                                    <TableHead className="font-semibold uppercase text-[11px] tracking-wider text-gray-500">Producer</TableHead>
+                                    <TableHead className="font-semibold uppercase text-[11px] tracking-wider text-gray-500">Inventory</TableHead>
+                                    <TableHead className="font-semibold uppercase text-[11px] tracking-wider text-gray-500">Status</TableHead>
+                                    <TableHead className="text-right font-semibold pr-6 uppercase text-[11px] tracking-wider text-gray-500">Moderation</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {loading ? (
                                     Array.from({ length: 5 }).map((_, i) => (
                                         <TableRow key={i}>
-                                            <TableCell className="pl-8"><Skeleton className="h-14 w-64 rounded-xl" /></TableCell>
+                                            <TableCell className="pl-6"><Skeleton className="h-12 w-64 rounded-xl" /></TableCell>
                                             <TableCell><Skeleton className="h-6 w-32" /></TableCell>
                                             <TableCell><Skeleton className="h-6 w-24" /></TableCell>
                                             <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                                            <TableCell className="text-right pr-8"><Skeleton className="h-10 w-24 ml-auto rounded-lg" /></TableCell>
+                                            <TableCell className="text-right pr-6"><Skeleton className="h-9 w-24 ml-auto rounded-lg" /></TableCell>
                                         </TableRow>
                                     ))
                                 ) : filteredProducts.length > 0 ? (
@@ -206,55 +206,55 @@ function FarmerProductManagement() {
                                         <TableRow
                                             key={product.id}
                                             onClick={() => handleViewProduct(product)}
-                                            className="group hover:bg-gray-50/50 transition-all cursor-pointer font-medium"
+                                            className="group hover:bg-gray-50/50 transition-colors cursor-pointer"
                                         >
-                                            <TableCell className="py-5 pl-8">
-                                                <div className="flex items-center gap-5">
-                                                    <div className="w-16 h-16 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-300">
+                                            <TableCell className="py-4 pl-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center overflow-hidden shrink-0 group-hover:scale-105 transition-transform">
                                                         {product.image ? (
                                                             <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                                                         ) : (
-                                                            <ImageIcon className="w-6 h-6 text-gray-200" />
+                                                            <ImageIcon className="w-5 h-5 text-gray-200" />
                                                         )}
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-gray-900 font-bold text-lg group-hover:text-green-600 transition-colors uppercase tracking-tight leading-tight">{product.name}</span>
-                                                        <span className="text-[10px] text-green-600 font-black uppercase tracking-widest mt-1 bg-green-50 w-fit px-2 py-0.5 rounded-md">{product.category}</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-green-600 transition-colors uppercase text-sm">{product.name}</span>
+                                                        <span className="text-[10px] text-green-600 font-bold uppercase tracking-wider mt-0.5">{product.category}</span>
                                                     </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col">
-                                                    <span className="font-bold text-gray-800">{product.owner?.names || 'Unknown Farmer'}</span>
-                                                    <span className="text-[11px] text-gray-400">Verified Producer</span>
+                                                    <span className="font-medium text-gray-800 text-sm">{product.owner?.names || 'Unknown Farmer'}</span>
+                                                    <span className="text-[10px] text-gray-400 uppercase font-medium">Verified Producer</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col">
-                                                    <span className="font-black text-gray-900 italic">RWF {product.unitPrice?.toLocaleString()}</span>
-                                                    <span className="text-[11px] text-gray-400 font-bold uppercase tracking-tighter">Stock: {product.quantity?.toLocaleString()} {product.measurementUnit}</span>
+                                                    <span className="font-semibold text-gray-900 text-sm">RWF {product.unitPrice?.toLocaleString()}</span>
+                                                    <span className="text-[10px] text-gray-400 font-medium">Qty: {product.quantity?.toLocaleString()} {product.measurementUnit}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge
                                                     variant={getStatusVariant(product.productStatus)}
-                                                    className="font-black text-[9px] px-3 py-1 uppercase tracking-widest rounded-full"
+                                                    className="font-bold text-[9px] px-2 py-0.5 uppercase tracking-wider"
                                                 >
                                                     {product.productStatus?.replace('_', ' ')}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="text-right pr-8">
-                                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                            <TableCell className="text-right pr-6">
+                                                <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setSelectedProduct(product);
                                                             setShowModerationModal(true);
                                                         }}
-                                                        className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all"
+                                                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                                                         title="Moderate"
                                                     >
-                                                        <Filter className="w-5 h-5" />
+                                                        <Filter className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={(e) => {
@@ -262,10 +262,10 @@ function FarmerProductManagement() {
                                                             handleDeleteProduct(product.id);
                                                         }}
                                                         disabled={actionLoading === product.id}
-                                                        className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                                                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
                                                         title="Delete"
                                                     >
-                                                        {actionLoading === product.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                                                        {actionLoading === product.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                                                     </button>
                                                 </div>
                                             </TableCell>
@@ -273,10 +273,10 @@ function FarmerProductManagement() {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="py-24 text-center">
-                                            <div className="flex flex-col items-center justify-center opacity-20">
-                                                <Package className="w-20 h-20 mb-4" />
-                                                <p className="text-xl font-black italic">No Produce Records Found</p>
+                                        <TableCell colSpan={5} className="py-20 text-center">
+                                            <div className="flex flex-col items-center justify-center text-gray-400 opacity-60">
+                                                <Package className="w-12 h-12 mb-3" />
+                                                <p className="text-sm font-medium">No produce records found</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -289,42 +289,42 @@ function FarmerProductManagement() {
 
             {/* Product Details Modal */}
             {showProductModal && selectedProduct && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md p-6">
-                    <div className="bg-white rounded-[2.5rem] shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-gray-100">
-                        <div className="flex items-center justify-between px-10 py-8 border-b border-gray-100">
-                            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tightitalic">Product Deep Scan</h2>
-                            <button onClick={() => setShowProductModal(false)} className="p-3 text-gray-400 hover:text-gray-600 rounded-2xl">
-                                <X className="w-6 h-6" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-6">
+                    <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-100">
+                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
+                            <h2 className="text-xl font-bold text-gray-900">Product Details</h2>
+                            <button onClick={() => setShowProductModal(false)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
-                        <div className="p-10 overflow-y-auto max-h-[calc(90vh-140px)] space-y-8">
-                            <div className="grid md:grid-cols-2 gap-10">
-                                <div className="aspect-square bg-gray-50 rounded-[2rem] overflow-hidden border border-gray-100 flex items-center justify-center">
+                        <div className="p-8 overflow-y-auto max-h-[calc(90vh-120px)] space-y-6">
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div className="aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 flex items-center justify-center">
                                     {selectedProduct.image ? (
                                         <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-full object-cover" />
                                     ) : (
-                                        <ImageIcon className="w-20 h-20 text-gray-200" />
+                                        <ImageIcon className="w-12 h-12 text-gray-200" />
                                     )}
                                 </div>
-                                <div className="space-y-6">
+                                <div className="space-y-4">
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-2">{selectedProduct.category}</p>
-                                        <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tight leading-none">{selectedProduct.name}</h3>
-                                        <p className="text-sm text-gray-500 font-bold mt-2">by {selectedProduct.owner?.names}</p>
+                                        <p className="text-[10px] font-bold uppercase tracking-wider text-green-600 mb-1">{selectedProduct.category}</p>
+                                        <h3 className="text-2xl font-bold text-gray-900 uppercase tracking-tight">{selectedProduct.name}</h3>
+                                        <p className="text-sm text-gray-500 font-medium">Listed by {selectedProduct.owner?.names}</p>
                                     </div>
-                                    <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 grid grid-cols-2 gap-6">
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase text-gray-400">Unit Price</p>
-                                            <p className="text-xl font-black text-gray-900 italic">RWF {selectedProduct.unitPrice?.toLocaleString()}</p>
+                                    <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p className="text-[10px] font-bold uppercase text-gray-400 mb-1">Unit Price</p>
+                                            <p className="text-lg font-bold text-gray-900">RWF {selectedProduct.unitPrice?.toLocaleString()}</p>
                                         </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase text-gray-400">Inventory</p>
-                                            <p className="text-xl font-black text-gray-900 italic">{selectedProduct.quantity?.toLocaleString()} {selectedProduct.measurementUnit}</p>
+                                        <div>
+                                            <p className="text-[10px] font-bold uppercase text-gray-400 mb-1">Inventory</p>
+                                            <p className="text-lg font-bold text-gray-900">{selectedProduct.quantity?.toLocaleString()} {selectedProduct.measurementUnit}</p>
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black uppercase text-gray-400">Details</p>
-                                        <p className="text-gray-600 font-medium leading-relaxed italic">{selectedProduct.description}</p>
+                                    <div>
+                                        <p className="text-[10px] font-bold uppercase text-gray-400 mb-1">Description</p>
+                                        <p className="text-sm text-gray-600 leading-relaxed">{selectedProduct.description}</p>
                                     </div>
                                 </div>
                             </div>
@@ -335,36 +335,36 @@ function FarmerProductManagement() {
 
             {/* Moderation Modal */}
             {showModerationModal && selectedProduct && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md p-6">
-                    <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md border border-gray-100 overflow-hidden animate-in zoom-in-95 duration-300">
-                        <div className="p-10 space-y-8 text-center">
-                            <div className="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto text-amber-600 shadow-xl shadow-amber-50">
-                                <Filter className="w-10 h-10" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-6">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm border border-gray-100 overflow-hidden">
+                        <div className="p-8 space-y-6 text-center">
+                            <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto text-amber-600">
+                                <Filter className="w-8 h-8" />
                             </div>
-                            <div className="space-y-2">
-                                <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Moderate Product</h2>
-                                <p className="text-sm text-gray-500 font-bold uppercase tracking-tight">{selectedProduct.name}</p>
+                            <div className="space-y-1">
+                                <h2 className="text-xl font-bold text-gray-900">Moderate Selection</h2>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">{selectedProduct.name}</p>
                             </div>
                             <textarea
                                 value={moderationReason}
                                 onChange={(e) => setModerationReason(e.target.value)}
-                                placeholder="State reason for your decision..."
-                                className="w-full p-6 bg-gray-50 border-none rounded-3xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 font-medium italic min-h-[120px]"
+                                placeholder="Decision feedback..."
+                                className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-green-500 min-h-[100px]"
                             />
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-3">
                                 <button
                                     onClick={() => handleModerateProduct(selectedProduct.id, 'reject')}
                                     disabled={actionLoading === selectedProduct.id}
-                                    className="flex items-center justify-center gap-2 py-4 bg-gray-100 text-gray-500 text-xs font-black rounded-[1.25rem] hover:bg-red-50 hover:text-red-500 transition-all uppercase tracking-widest disabled:opacity-50"
+                                    className="flex items-center justify-center gap-2 py-3 bg-gray-100 text-gray-600 text-[10px] font-bold rounded-xl hover:bg-red-50 hover:text-red-500 transition-colors uppercase tracking-widest disabled:opacity-50"
                                 >
-                                    <ThumbsDown className="w-4 h-4" /> REJECT
+                                    <ThumbsDown className="w-3.5 h-3.5" /> REJECT
                                 </button>
                                 <button
                                     onClick={() => handleModerateProduct(selectedProduct.id, 'approve')}
                                     disabled={actionLoading === selectedProduct.id}
-                                    className="flex items-center justify-center gap-2 py-4 bg-green-600 text-white text-xs font-black rounded-[1.25rem] hover:bg-green-700 shadow-lg shadow-green-100 transition-all uppercase tracking-widest disabled:opacity-50"
+                                    className="flex items-center justify-center gap-2 py-3 bg-green-600 text-white text-[10px] font-bold rounded-xl hover:bg-green-700 shadow-md shadow-green-100 transition-colors uppercase tracking-widest disabled:opacity-50"
                                 >
-                                    <ThumbsUp className="w-4 h-4" /> APPROVE
+                                    <ThumbsUp className="w-3.5 h-3.5" /> APPROVE
                                 </button>
                             </div>
                         </div>
