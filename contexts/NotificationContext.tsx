@@ -31,7 +31,19 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         try {
             const response = await notificationService.getNotifications(filter);
             if (response.success && response.data) {
-                setNotifications(Array.isArray(response.data) ? response.data : []);
+                // Support both direct array and nested paginated data structures
+                const data = response.data as any;
+                const rawNotifications = Array.isArray(data)
+                    ? data
+                    : (Array.isArray(data.data) ? data.data : []);
+
+                // Normalize notifications (ensure IDs are strings for reliable comparison)
+                const normalizedNotifications = rawNotifications.map((n: any) => ({
+                    ...n,
+                    id: String(n.id)
+                }));
+
+                setNotifications(normalizedNotifications);
             }
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
