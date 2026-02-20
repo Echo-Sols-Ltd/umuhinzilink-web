@@ -12,6 +12,8 @@ import {
   RefreshCw,
   Loader2,
   X,
+  Truck,
+  MoreHorizontal,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
@@ -273,31 +275,24 @@ function MyPurchasesComponent() {
                       </td>
                       <td className="py-4 px-4 text-nowrap">
                         <div className="flex items-center gap-1">
-                          {!order.isPaid && (
-                            <button
-                              onClick={() => handlePayOrder(order.id)}
-                              disabled={paymentLoading === order.id}
-                              className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-md text-xs font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
-                            >
-                              {paymentLoading === order.id ? (
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                              ) : (
-                                <DollarSign className="w-3 h-3" />
-                              )}
-                              Pay Now
-                            </button>
-                          )}
                           <button
-                            onClick={() => setSelectedOrder(order)}
+                            onClick={() => router.push(`/buyer/orders/${order.id}`)}
                             className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                            title="View Order Details"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
-                          <button className="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-full transition-colors">
-                            <RefreshCw className="w-4 h-4" />
-                          </button>
+                          {order.delivery && (
+                            <button
+                              onClick={() => router.push('/buyer/delivery')}
+                              className="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-full transition-colors"
+                              title="View Delivery Tracking"
+                            >
+                              <Truck className="w-4 h-4" />
+                            </button>
+                          )}
                           <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
-                            <MessageCircle className="w-4 h-4" />
+                            <MoreHorizontal className="w-4 h-4" />
                           </button>
                         </div>
                       </td>

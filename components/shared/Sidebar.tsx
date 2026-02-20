@@ -173,6 +173,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         href: '/buyer/purchases',
                     },
                     {
+                        icon: <Truck className="w-5 h-5" />,
+                        label: 'Delivery Tracking',
+                        href: '/buyer/delivery',
+                    },
+                    {
                         icon: <FilePlus className="w-5 h-5" />,
                         label: 'Browse Product',
                         href: '/buyer/product',

@@ -94,7 +94,15 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         </h3>
                         <OrderStatusTracker
                             orderStatus={order.status}
-                            deliveryStatus={order.delivery?.status as any}
+                            deliveryStatus={(() => {
+                              if (!order.delivery?.trackingSteps || order.delivery.trackingSteps.length === 0) {
+                                return undefined;
+                              }
+                              const latestCompletedStep = order.delivery.trackingSteps
+                                .filter(step => step.completed)
+                                .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
+                              return latestCompletedStep?.status;
+                            })()}
                             createdAt={order.createdAt}
                             updatedAt={order.updatedAt}
                         />

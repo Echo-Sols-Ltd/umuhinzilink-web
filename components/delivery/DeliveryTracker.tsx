@@ -77,7 +77,12 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
   const currentStepIndex = delivery.trackingSteps ? 
     Math.max(...delivery.trackingSteps.map((step, index) => step.completed ? index : -1)) : -1;
   
-  const currentStatus = delivery.status as DeliveryStatus || DeliveryStatus.PENDING;
+  // Derive current status from the last completed step in trackingSteps
+  const currentStatus = delivery.trackingSteps && delivery.trackingSteps.length > 0
+    ? delivery.trackingSteps
+        .filter(step => step.completed)
+        .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0]?.status || DeliveryStatus.PENDING
+    : DeliveryStatus.PENDING;
 
   const handleUpdateStatus = (status: DeliveryStatus) => {
     setSelectedStatus(status);

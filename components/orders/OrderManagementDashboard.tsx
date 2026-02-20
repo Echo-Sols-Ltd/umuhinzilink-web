@@ -457,10 +457,26 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
               
               <OrderStatusTracker
                 orderStatus={selectedOrder.status}
-                deliveryStatus={selectedOrder.delivery?.status as any}
+                deliveryStatus={(() => {
+                  if (!selectedOrder.delivery?.trackingSteps || selectedOrder.delivery.trackingSteps.length === 0) {
+                    return undefined;
+                  }
+                  const latestCompletedStep = selectedOrder.delivery.trackingSteps
+                    .filter(step => step.completed)
+                    .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
+                  return latestCompletedStep?.status;
+                })()}
                 createdAt={selectedOrder.createdAt}
                 updatedAt={selectedOrder.updatedAt}
-                deliveryDate={selectedOrder.delivery?.estimatedDelivery}
+                deliveryDate={(() => {
+                  if (!selectedOrder.delivery?.trackingSteps || selectedOrder.delivery.trackingSteps.length === 0) {
+                    return undefined;
+                  }
+                  const latestCompletedStep = selectedOrder.delivery.trackingSteps
+                    .filter(step => step.completed)
+                    .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
+                  return latestCompletedStep?.completedAt;
+                })()}
               />
             </div>
           </div>

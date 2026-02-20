@@ -229,8 +229,15 @@ function BuyerDashboardComponent() {
                             </span>
                           </td>
                           <td className="py-4 text-gray-600">
-                            {order.delivery?.status
-                              ? `${order.delivery.status} · ${formatDate(order.delivery.estimatedDelivery)}`
+                            {order.delivery?.trackingSteps && order.delivery.trackingSteps.length > 0
+                              ? (() => {
+                                  const latestCompletedStep = order.delivery.trackingSteps
+                                    .filter(step => step.completed)
+                                    .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
+                                  return latestCompletedStep 
+                                    ? `${latestCompletedStep.status} · ${formatDate(latestCompletedStep.completedAt)}`
+                                    : 'Processing';
+                              })()
                               : '—'}
                           </td>
                         </tr>
