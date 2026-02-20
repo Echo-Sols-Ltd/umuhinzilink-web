@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus, deliveryStatusOptions } from '@/types';
 import OrderStatusTracker from './OrderStatusTracker';
+import DeliveryTracker from '../delivery/DeliveryTracker';
 
 interface OrderDetailsModalProps {
     order: FarmerOrder | SupplierOrder | null;
@@ -177,32 +178,19 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         </div>
                     </div>
 
-                    {/* Delivery Status Update Section (Only for Farmers/Suppliers to manage) */}
-                    {onUpdateStatus && (
-                        <div className="bg-green-50 rounded-xl p-6 border border-green-100 space-y-4">
-                            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                <Truck className="w-4 h-4 text-green-600" />
-                                Update Delivery Status
-                            </h3>
-                            <div className="flex flex-col sm:flex-row gap-3">
-                                <select
-                                    defaultValue={order.delivery?.status || DeliveryStatus.PENDING}
-                                    onChange={(e) => onUpdateStatus(order.id, e.target.value as DeliveryStatus)}
-                                    disabled={loading}
-                                    className="flex-1 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 transition-all outline-none"
-                                >
-                                    {deliveryStatusOptions.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label.replace('_', ' ')}
-                                        </option>
-                                    ))}
-                                </select>
-                                <p className="text-xs text-gray-500 sm:max-w-[200px]">
-                                    Changing the delivery status will notify the buyer and update the tracking progress.
-                                </p>
-                            </div>
-                        </div>
-                    )}
+                    {/* Delivery Tracking Section */}
+                    <div className="space-y-4">
+                        <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                            <Truck className="w-4 h-4 text-green-600" />
+                            Delivery Tracking
+                        </h3>
+                        <DeliveryTracker
+                            delivery={order.delivery}
+                            onUpdateStatus={(status) => onUpdateStatus?.(order.id, status)}
+                            isLoading={loading}
+                        />
+                    </div>
+
                 </div>
 
                 {/* Footer Actions */}

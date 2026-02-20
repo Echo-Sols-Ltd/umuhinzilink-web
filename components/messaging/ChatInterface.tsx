@@ -19,9 +19,11 @@ import Image from 'next/image';
 import { Message, MessageType } from '@/types/message';
 import { useMessages } from '@/contexts/MessageContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
+import { cn, imageUrl } from '@/lib/utils';
 import { useChat } from '@/hooks/useChat';
 import { ProductReference } from './ProductReference';
+import { messageService } from '@/services/messages';
+import { toast } from '@/components/ui/use-toast';
 
 export interface ChatInterfaceProps {
   className?: string;
@@ -78,24 +80,39 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   const handleSendMessage = async () => {
     if (!messageText.trim() && !selectedFile) return;
 
-    try {
-      let messageType = MessageType.TEXT;
-      let fileName: string | undefined;
+    let content = messageText.trim();
+    let messageType = MessageType.TEXT;
+    let fileName: string | undefined;
 
-      if (selectedFile) {
-        if (selectedFile.type.startsWith('image/')) messageType = MessageType.IMAGE;
-        else messageType = MessageType.FILE;
-        fileName = selectedFile.name;
+    // Handle file upload first
+    if (selectedFile) {
+      try {
+        // Upload the file and get the URL
+        const uploadResponse = await messageService.uploadFile(selectedFile);
+        
+        if (uploadResponse.success && uploadResponse.data) {
+          messageType = selectedFile.type.startsWith('image/') ? MessageType.IMAGE : MessageType.FILE;
+          fileName = uploadResponse.data;
+        } else {
+          toast.error("Failed to upload file", {
+            title: "Upload Error"
+          });
+          return;
+        }
+      } catch (uploadError) {
+        toast.error("Failed to upload file", {
+          title: "Upload Error"
+        });
+        return;
       }
+    }
 
-
-
+    try {
       await sendMessage(
-        messageText.trim() || fileName || '',
+        content,
         messageType,
         fileName
       );
-
 
       setMessageText('');
       setSelectedFile(null);
@@ -150,6 +167,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   useEffect(() => {
     setIsUserOnline(onlineUsers.has(activeChatUser?.id || ''));
   }, [onlineUsers, activeChatUser]);
+  
   const renderMessage = (message: Message, index: number) => {
     const isOwn = message.sender.id === currentUser?.id;
     const showDate = index === 0 ||
@@ -200,7 +218,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
               <>
                 {message.type === MessageType.IMAGE && (
                   <div className="mb-2">
-                    <Image src={message.content} alt="Shared image" width={200} height={200} className="rounded-lg max-w-full h-auto" />
+                    <Image src={imageUrl(message.fileName || '')} alt="Shared image" width={200} height={200} className="rounded-lg max-w-full h-auto" />
                   </div>
                 )}
 

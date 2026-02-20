@@ -35,6 +35,8 @@ import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 import Sidebar from '@/components/shared/Sidebar';
 import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import Image from 'next/image';
+import { imageUrl } from '@/lib/utils';
 
 
 
@@ -205,7 +207,7 @@ function Dashboard() {
   const orders = useMemo(() => {
     if (!farmerId) return rawOrders;
     return rawOrders.filter(order => {
-      const productFarmerId = order.product?.farmer?.user?.id || order.product?.farmer?.id;
+      const productFarmerId = order.product?.owner?.id || order.product?.owner?.id;
       return productFarmerId ? productFarmerId === farmerId : true;
     });
   }, [rawOrders, farmerId]);
@@ -213,7 +215,7 @@ function Dashboard() {
   const products = useMemo(() => {
     if (!farmerId) return rawProducts;
     return rawProducts.filter(product => {
-      const ownerId = product.farmer?.user?.id || product.farmer?.id;
+      const ownerId = product.owner?.id || product.owner?.id;
       return ownerId ? ownerId === farmerId : true;
     });
   }, [rawProducts, farmerId]);
@@ -431,11 +433,12 @@ function Dashboard() {
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                      IMAGE
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
                       PRODUCT
                     </th>
-                    <th scope="col" className="px-4 py-3 hidden sm:table-cell text-left text-sm font-medium text-gray-600">
-                      UPDATED
-                    </th>
+
                     <th scope="col" className="px-4 py-3 hidden md:table-cell text-left text-sm font-medium text-gray-600">
                       QUANTITY
                     </th>
@@ -476,6 +479,15 @@ function Dashboard() {
                     recentProducts.map(product => (
                       <tr key={product.id} className="border-b border-gray-200">
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
+                          <Image
+                            src={imageUrl(product.image)}
+                            alt=''
+                            height={100}
+                            width={100}
+                            className='rounded-lg'
+                          />
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
                           <div>
                             <p className="font-medium text-gray-900">
                               {product.name || 'Unnamed product'}
@@ -485,9 +497,7 @@ function Dashboard() {
                             </p>
                           </div>
                         </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
-                          {formatDate(product.updatedAt || product.createdAt)}
-                        </td>
+
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
                           {product.quantity != null
                             ? `${formatNumber(product.quantity)} ${product.measurementUnit || ''}`
@@ -500,7 +510,7 @@ function Dashboard() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                           {product.location ||
-                            product.farmer?.user?.names ||
+                            product.owner?.names ||
                             profile?.address?.district ||
                             '—'}
                         </td>

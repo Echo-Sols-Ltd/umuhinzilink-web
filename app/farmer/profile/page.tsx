@@ -8,16 +8,7 @@ import {
   Phone,
   MapPin,
   Mail,
-  LayoutGrid,
-  FilePlus,
-  MessageSquare,
-  BarChart2,
-  ShoppingCart,
-  Settings,
-  LogOut,
-  Leaf,
-  Bell,
-  Package,
+
   Loader2,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -25,6 +16,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import { imageUrl } from '@/lib/utils';
+import { userService } from '@/services/users';
 
 const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
@@ -34,6 +27,7 @@ type FarmerProfile = {
   names: string;
   email?: string;
   phoneNumber?: string;
+  avatar?: string;
   address?: {
     district?: string;
     province?: string;
@@ -51,6 +45,9 @@ function FarmerProfileComponent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [logoutPending, setLogoutPending] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { updateAvatar } = useAuth()
 
   useEffect(() => {
     if (!currentUser) {
@@ -66,6 +63,36 @@ function FarmerProfileComponent() {
     if (logoutPending) return;
     setLogoutPending(true);
     logout();
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!imageFile) return;
+
+    try {
+      const res = await userService.uploadAvatar(imageFile)
+      updateAvatar(res.data!)
+      toast.success("Profile image would be uploaded successfully", {
+        title: "Image Updated"
+      });
+      setImageFile(null);
+      setPreviewUrl(null);
+    } catch (error) {
+      toast.error("Failed to upload image. Please try again.", {
+        title: "Upload Failed"
+      });
+    }
   };
 
   const displayName = profile?.names || currentUser?.names || 'Farmer';
@@ -102,8 +129,29 @@ function FarmerProfileComponent() {
             <section className="max-w-4xl bg-white rounded-lg shadow-sm border p-8">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-                    <User className="w-10 h-10 text-green-600" />
+                  <div className="relative">
+                    <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
+                      {previewUrl || profile?.avatar ? (
+                        <img
+                          src={previewUrl || imageUrl(profile?.avatar || '')}
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-10 h-10 text-green-600" />
+                      )}
+                    </div>
+                    <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 cursor-pointer hover:bg-green-600 transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </label>
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold text-gray-900">{displayName}</h1>
@@ -117,6 +165,44 @@ function FarmerProfileComponent() {
                   Last updated: {formatDate(profile.updatedAt || profile.createdAt)}
                 </div>
               </div>
+
+              {/* Image Upload Section */}
+              {imageFile && (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-lg overflow-hidden">
+                        <img
+                          src={previewUrl || ''}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">New Profile Image</p>
+                        <p className="text-xs text-gray-500">{imageFile.name}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setImageFile(null);
+                          setPreviewUrl(null);
+                        }}
+                        className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleImageUpload}
+                        className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                      >
+                        Upload
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-6">
                 <Section title="Personal Information">

@@ -44,7 +44,7 @@ function SupplierProductManagement() {
     const [actionLoading, setActionLoading] = useState<string | null>(null);
 
     const filteredProducts = products?.filter(product => {
-        const supplierName = product.supplier?.businessName || product.supplier?.user?.names || '';
+        const supplierName = product.owner?.names || 'Unknown';
         const matchesSearch =
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -235,17 +235,6 @@ function SupplierProductManagement() {
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-4">
-                                                    <div className="font-medium text-gray-900">{product.name}</div>
-                                                    <div className="text-xs text-gray-500 line-clamp-1">{product.description}</div>
-                                                </td>
-                                                <td className="py-4 px-4 text-sm text-gray-900">{product.category}</td>
-                                                <td className="py-4 px-4 text-sm text-gray-900">
-                                                    {product.supplier?.businessName || product.supplier?.user?.names || 'Unknown'}
-                                                </td>
-                                                <td className="py-4 px-4 text-sm text-gray-900">
-                                                    RWF {product.unitPrice?.toLocaleString()}/{product.measurementUnit}
-                                                </td>
-                                                <td className="py-4 px-4 text-sm text-gray-900">
                                                     {product.quantity?.toLocaleString()} {product.measurementUnit}
                                                 </td>
                                                 <td className="py-4 px-4">

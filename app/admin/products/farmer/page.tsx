@@ -47,7 +47,7 @@ function FarmerProductManagement() {
         const matchesSearch =
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            product.farmer?.user?.names.toLowerCase().includes(searchTerm.toLowerCase());
+            product.owner?.names.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
         const matchesStatus = statusFilter === 'all' || product.productStatus === statusFilter;
@@ -237,7 +237,7 @@ function FarmerProductManagement() {
                                                     <div className="text-xs text-gray-500 line-clamp-1">{product.description}</div>
                                                 </td>
                                                 <td className="py-4 px-4 text-sm text-gray-900">{product.category}</td>
-                                                <td className="py-4 px-4 text-sm text-gray-900">{product.farmer?.user?.names || 'Unknown'}</td>
+                                                <td className="py-4 px-4 text-sm text-gray-900">{product.owner?.names || 'Unknown'}</td>
                                                 <td className="py-4 px-4 text-sm text-gray-900">
                                                     RWF {product.unitPrice?.toLocaleString()}/{product.measurementUnit}
                                                 </td>

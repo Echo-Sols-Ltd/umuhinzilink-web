@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { ProgressiveImage } from '@/components/ui/progressive-loading';
 import { MessageSquare, Package, AlertCircle } from 'lucide-react';
 import { useProductById } from '@/hooks/useProductById';
+import { imageUrl } from '@/lib/utils';
 
 interface ProductReferenceProps {
   productId: string;
@@ -37,10 +38,10 @@ export function ProductReference({ productId, messageContent, compact = false }:
     image: 'image' in product ? product.image : product.images?.[0] || '/placeholder.jpg',
     price: product.unitPrice,
     unit: product.measurementUnit,
-    farmerName: 'farmer' in product ? product.farmer.names : product.supplier.businessName,
+    farmerName: product.owner?.names || 'Unknown',
   };
 
-  const imageSrc = productInfo.image || '/placeholder.jpg';
+  const imageSrc = imageUrl(productInfo.image!) ;
 
   if (compact) {
     return (

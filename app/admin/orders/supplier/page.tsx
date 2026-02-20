@@ -34,7 +34,7 @@ function SupplierOrderManagement() {
     const filteredOrders = orders.filter(order => {
         const matchesSearch =
             order.buyer.names.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.product.supplier.user.names.toLowerCase().includes(searchTerm.toLowerCase());
+            order.product.owner?.names.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesSearch;
     });
 
@@ -113,10 +113,10 @@ function SupplierOrderManagement() {
                                                     {order.buyer.names}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {order.product.supplier.user.role}
+                                                    {order.product.owner?.role}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {order.product.supplier.user.names}
+                                                    {order.product.owner?.names}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {new Date(order.createdAt).toDateString()}

@@ -121,7 +121,7 @@ class ProductService {
   }
 
   async uploadProductPhoto(file: File): Promise<ApiResponse<string>> {
-    return await apiClient.uploadFile<ApiResponse<string>>(API_ENDPOINTS.FILES.UPLOAD_AVATAR, file)
+    return await apiClient.uploadFile<ApiResponse<string>>(API_ENDPOINTS.FILES.UPLOAD_GENERIC, file)
   }
 }
 

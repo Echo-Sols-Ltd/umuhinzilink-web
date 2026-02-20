@@ -9,10 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
+import { imageUrl } from '@/lib/utils';
+import { userService } from '@/services/users';
 
 function GovernmentProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { toast } = useToast()
   
   // Mock user data - replace with actual user data from auth context
@@ -58,11 +62,37 @@ function GovernmentProfile() {
     setIsEditing(false);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // TODO: Implement image upload
-      console.log('Image upload:', file);
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!imageFile) return;
+    
+    try {
+      const res = await userService.uploadAvatar(imageFile);
+      setProfileData(prev => ({ ...prev, avatar: res.data! }));
+      toast({
+        title: "Image Updated",
+        description: "Profile image uploaded successfully",
+        variant: "success"
+      });
+      setImageFile(null);
+      setPreviewUrl(null);
+    } catch (error) {
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload image. Please try again.",
+        variant: "error"
+      });
     }
   };
 
@@ -113,10 +143,10 @@ function GovernmentProfile() {
             {/* Profile Header */}
             <div className="flex items-center space-x-6 mb-6">
               <div className="relative">
-                <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
-                  {profileData.avatar ? (
+                <div className="w-24 h-24 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
+                  {previewUrl || profileData.avatar ? (
                     <img
-                      src={profileData.avatar}
+                      src={previewUrl || imageUrl(profileData.avatar)}
                       alt="Profile"
                       className="w-full h-full rounded-full object-cover"
                     />
@@ -124,17 +154,15 @@ function GovernmentProfile() {
                     <User className="w-12 h-12 text-green-600" />
                   )}
                 </div>
-                {isEditing && (
-                  <label className="absolute bottom-0 right-0 bg-green-600 text-white p-2 rounded-full cursor-pointer hover:bg-green-700">
-                    <Camera className="w-4 h-4" />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
-                )}
+                <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-2 cursor-pointer hover:bg-green-600 transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <Camera className="w-4 h-4" />
+                </label>
               </div>
               <div className="flex-1">
                 <h2 className="text-xl font-semibold text-gray-900">
@@ -165,6 +193,44 @@ function GovernmentProfile() {
                 </div>
               </div>
             </div>
+
+            {/* Image Upload Section */}
+            {imageFile && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden">
+                      <img
+                        src={previewUrl || ''}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">New Profile Image</p>
+                      <p className="text-xs text-gray-500">{imageFile.name}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setImageFile(null);
+                        setPreviewUrl(null);
+                      }}
+                      className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleImageUpload}
+                      className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Profile Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -28,6 +28,7 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
   const { fetchFarmerProducts, fetchFarmerBuyerProducts, fetchFarmerStats } = useProduct()
   const {toast } = useToast()
   const fetchAllData = useCallback(async (user: User) => {
+
     if (!user) return
 
     setLoading(true)
@@ -53,6 +54,7 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
+  
     if (user?.role === 'FARMER') {
       fetchAllData(user)
     }

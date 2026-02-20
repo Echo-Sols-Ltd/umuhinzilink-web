@@ -34,7 +34,10 @@ import {
     LayoutDashboard,
     Shield,
     Truck,
-    Sprout
+    Sprout,
+    Leaf,
+    Download,
+    Loader2
 } from 'lucide-react';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -45,14 +48,8 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isNewUser, setIsNewUser] = useState(false);
     const [showNewUserGuide, setShowNewUserGuide] = useState(false);
-    // Dev toggle for new user simulation (for development only)
-    const [devNewUserMode, setDevNewUserMode] = useState(false);
 
-    // Initialize dev mode from localStorage
-    useEffect(() => {
-        const savedDevMode = localStorage.getItem('devNewUserMode') === 'true';
-        setDevNewUserMode(savedDevMode);
-    }, []);
+ 
     const { navigate } = useNavigationWithLoading();
     const { user, logout } = useAuth();
 
@@ -86,18 +83,6 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
     };
 
     // Check if user is new and what steps they've completed
-    useEffect(() => {
-        const newUserFlag = localStorage.getItem('isNewUser');
-        const hasProfileComplete = localStorage.getItem('profileComplete');
-
-        if ((newUserFlag === 'true' || devNewUserMode) && currentUserType === UserType.FARMER) {
-            setIsNewUser(true);
-            setShowNewUserGuide(!hasProfileComplete);
-        } else {
-            setIsNewUser(false);
-            setShowNewUserGuide(false);
-        }
-    }, [currentUserType, devNewUserMode]);
 
     // Update current active when prop changes
     useEffect(() => {
@@ -158,6 +143,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         icon: <ShoppingCart className="w-5 h-5" />,
                         label: 'Orders',
                         href: '/farmer/orders',
+                    },
+                    {
+                        icon: <Truck className="w-5 h-5" />,
+                        label: 'Delivery Management',
+                        href: '/farmer/delivery',
                     },
                     {
                         icon: <Wallet className="w-5 h-5" />,
@@ -255,11 +245,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         label: 'Contact',
                         href: '/supplier/contact',
                     },
-                    {
-                        icon: <Wallet className="w-5 h-5" />,
-                        label: 'My Wallet',
-                        href: '/supplier/wallet',
-                    },
+                    // {
+                    //     icon: <Wallet className="w-5 h-5" />,
+                    //     label: 'My Wallet',
+                    //     href: '/supplier/wallet',
+                    // },
                     {
                         icon: <Settings className="w-5 h-5" />,
                         label: 'Settings',
@@ -273,11 +263,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         label: 'Dashboard',
                         href: '/admin/dashboard',
                     },
-                    {
-                        icon: <Wallet className="w-5 h-5" />,
-                        label: 'Wallets',
-                        href: '/admin/wallets',
-                    },
+                    // {
+                    //     icon: <Wallet className="w-5 h-5" />,
+                    //     label: 'Wallets',
+                    //     href: '/admin/wallets',
+                    // },
                     {
                         icon: <Users className="w-5 h-5" />,
                         label: 'Users',
@@ -549,58 +539,6 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     </div>
                 </div> */}
 
-                {/* Dev Toggle & New User Guide */}
-                {currentUserType === UserType.FARMER && (
-                    <div className="p-3 lg:p-4 border-t border-gray-800">
-                        {/* Dev Toggle */}
-                        <div className="mb-4">
-                            <button
-                                onClick={() => {
-                                    const newDevMode = !devNewUserMode;
-                                    setDevNewUserMode(newDevMode);
-
-                                    // Store in localStorage
-                                    localStorage.setItem('devNewUserMode', newDevMode.toString());
-
-                                    // Dispatch event for student dashboard to listen
-                                    window.dispatchEvent(new CustomEvent('devModeChanged', {
-                                        detail: { isDevMode: newDevMode }
-                                    }));
-
-                                    if (newDevMode) {
-                                        // Reset all progress when enabling dev mode
-                                        localStorage.removeItem('profileComplete');
-                                        localStorage.removeItem('hasAddedProduct');
-                                        localStorage.setItem('isNewUser', 'true');
-                                    }
-                                }}
-                                className={`w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors ${devNewUserMode
-                                    ? 'bg-green-600 text-white'
-                                    : 'bg-gray-800 text-gray-400 hover:text-white'
-                                    }`}
-                            >
-                                DEV: {devNewUserMode ? 'New Farmer Mode ON' : 'New Farmer Mode OFF'}
-                            </button>
-                        </div>
-
-                        {/* New User Guide */}
-                        {showNewUserGuide && (
-                            <div className="bg-gray-800 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <AlertCircle className="w-4 h-4 text-green-500" />
-                                    <span className="text-sm font-medium text-white">Finish Account Setup</span>
-                                </div>
-                                <p className="text-xs text-gray-400 mb-3">Complete your profile to start selling your produce</p>
-                                <button
-                                    onClick={() => navigate('/farmer/profile')}
-                                    className="w-full bg-green-600 text-white px-3 py-2 rounded-lg text-xs font-medium hover:bg-green-700 transition-colors"
-                                >
-                                    Complete Setup
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                )}
 
                 {/* User Profile */}
                 <div className="p-3 lg:p-4 border-t border-gray-800">

@@ -239,7 +239,7 @@ function MyPurchasesComponent() {
                 )}
 
                 {!ordersLoading && filteredOrders.map((order, index) => {
-                  const farmerName = order.product?.farmer?.user?.names || 'Unknown Farmer';
+                  const farmerName = order.product?.owner?.names || 'Unknown Farmer';
                   const productName = order.product?.name || 'Unknown Product';
                   const quantity = `${order.quantity || 0} ${order.product?.measurementUnit || 'units'}`;
                   const price = `${(order.totalPrice || 0).toLocaleString()} RWF`;

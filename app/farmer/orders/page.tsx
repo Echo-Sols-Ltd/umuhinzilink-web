@@ -21,12 +21,14 @@ import {
   Download,
   Loader2,
   LogOut,
+  Truck,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
 import { FarmerPages, UserType, OrderStatus, FarmerOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 
 type MenuItem = {
   label: string;
@@ -310,11 +312,21 @@ function FarmerOrders() {
                                 Approve
                               </button>
                               <button
-                                onClick={() => handleViewDetails(order)}
+                                onClick={() => router.push(`/farmer/orders/${order.id}`)}
                                 className="text-blue-600 hover:text-blue-800 text-xs font-medium"
                               >
                                 View Details
                               </button>
+                              {order.delivery && (
+                                <button
+                                  onClick={() => router.push('/farmer/delivery')}
+                                  className="text-orange-600 hover:text-orange-800 text-xs font-medium flex items-center gap-1"
+                                  title="Manage All Deliveries"
+                                >
+                                  <Truck className="w-3 h-3" />
+                                  Delivery Hub
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>

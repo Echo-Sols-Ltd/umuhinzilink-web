@@ -31,6 +31,7 @@ import useOrderAction from '@/hooks/useOrderAction';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import { FarmerProduct } from '@/types';
+import ProductCard from '@/components/products/Product';
 
 
 const Logo = () => (
@@ -66,9 +67,6 @@ function BuyerDashboardComponent() {
     });
   };
 
-  const handleLogout = async () => {
-
-  };
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
@@ -106,7 +104,7 @@ function BuyerDashboardComponent() {
                 View All
               </a>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {productsLoading && (
                 <div className="col-span-full text-center text-gray-500 py-6">
                   Loading produce...
@@ -124,54 +122,13 @@ function BuyerDashboardComponent() {
               )}
               {!productsLoading &&
                 !productsError &&
-                recommendedProducts.map(product => {
-                  const priceText = `${Number(product.unitPrice || 0).toLocaleString()} RWF/${product.measurementUnit || ''
-                    }`;
-                  const farmerName = product.farmer?.user?.names || 'Unknown farmer';
-                  const quantityText =
-                    product.quantity !== undefined
-                      ? `${product.quantity?.toLocaleString?.() || product.quantity} ${product.measurementUnit || ''
-                      } available`
-                      : '';
-
-                  return (
-                    <div
-                      key={product.id}
-                      className="bg-white rounded-lg shadow-sm border w-full"
-                    >
-                      <div className="h-48 w-full bg-gray-100 flex items-center justify-center">
-                        {product.image ? (
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-gray-400 text-xs">No image</span>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <h3 className="font-semibold text-gray-900 text-sm line-clamp-1">
-                          {product.name}
-                        </h3>
-                        <p className="text-xs text-gray-500 mb-1 line-clamp-1">by {farmerName}</p>
-                        <div className="mt-2">
-                          <p className="text-green-600 font-bold text-sm">{priceText}</p>
-                          {quantityText && <p className="text-xs text-gray-500">{quantityText}</p>}
-                        </div>
-                        <button
-                          onClick={() => {
-                            setSelectedProduct(product as FarmerProduct);
-                            setIsPurchasing(true);
-                          }}
-                          className="mt-3 w-full bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-700 transition-colors"
-                        >
-                          Buy Now
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+                recommendedProducts.map(product => <ProductCard
+                  key={product.id}
+                  product={product}
+                  onSelect={() => {}}
+                  onPurchase={() => {}}
+                  onContact={() => {}}
+                />)}
             </div>
           </div>
 
@@ -227,8 +184,8 @@ function BuyerDashboardComponent() {
                     !ordersError &&
                     orders.map(order => {
                       const farmerName =
-                        order.product?.farmer?.user?.names || order.buyer?.names || '—';
-                      const farmerAddress = order.product?.farmer?.user?.address ||
+                        order.product?.owner?.names || order.buyer?.names || '—';
+                      const farmerAddress = order.product?.owner?.address ||
                         order.buyer?.address || {
                         district: '—',
                         province: '',
