@@ -93,7 +93,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
         <div className="p-4 border-b border-gray-100 bg-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="bg-green-100 p-2 rounded-xl">
+              <div className="bg-green-100 p-2 rounded-lg">
                 <MessageCircle className="w-5 h-5 text-green-600" />
               </div>
               <h2 className="text-xl font-bold text-gray-900 tracking-tight">Messages</h2>
@@ -115,7 +115,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
               placeholder="Search conversations..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-sm placeholder:text-gray-400"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-sm placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -153,7 +153,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                     <div className="flex items-center space-x-3">
                       {/* Avatar */}
                       <div className="relative shrink-0">
-                        <div className="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-sm">
+                        <div className="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center shadow-sm">
                           <span className="text-sm font-bold text-gray-600">
                             {user.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
                           </span>

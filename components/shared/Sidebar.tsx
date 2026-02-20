@@ -49,7 +49,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
     const [isNewUser, setIsNewUser] = useState(false);
     const [showNewUserGuide, setShowNewUserGuide] = useState(false);
 
- 
+
     const { navigate } = useNavigationWithLoading();
     const { user, logout } = useAuth();
 
@@ -127,7 +127,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {
                         icon: <Mail className="w-5 h-5" />,
                         label: 'Messages',
-                        href: '/farmer/message',
+                        href: '/chat',
                     },
                     {
                         icon: <Bell className="w-5 h-5" />,
@@ -195,7 +195,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {
                         icon: <Mail className="w-5 h-5" />,
                         label: 'Messages',
-                        href: '/buyer/message',
+                        href: '/chat',
                     },
                     {
                         icon: <User className="w-5 h-5" />,
@@ -238,7 +238,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {
                         icon: <Mail className="w-5 h-5" />,
                         label: 'Messages',
-                        href: '/supplier/message',
+                        href: '/chat',
                     },
                     {
                         icon: <User className="w-5 h-5" />,
@@ -311,7 +311,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {
                         icon: <Mail className="w-5 h-5" />,
                         label: 'Messages',
-                        href: '/admin/message',
+                        href: '/chat',
                     }
                 ];
             case UserType.GOVERNMENT:
@@ -349,7 +349,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {
                         icon: <Mail className="w-5 h-5" />,
                         label: 'Messages',
-                        href: '/government/message',
+                        href: '/chat',
                     }
                 ];
             default:
@@ -465,7 +465,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 </button>
 
                 {/* Logo */}
-                <div className="p-4 lg:p-8 border-b border-gray-800/50">
+                <div className="p-4 lg:p-6 border-b border-gray-800/50">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center shadow-lg shadow-black/20 shrink-0">
                             <Tractor className="w-7 h-7 text-white" />

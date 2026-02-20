@@ -262,7 +262,7 @@ function Dashboard() {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto ml-64 relative bg-white">
-          <header className="fixed top-0 left-64 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+          <header className="fixed top-0 left-64 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -317,8 +317,8 @@ function Dashboard() {
             <LoadingOverlay isLoading={loading} message="Loading dashboard data...">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Total Users Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Users className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
@@ -328,8 +328,8 @@ function Dashboard() {
                 </div>
 
                 {/* Farmers Produce Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex items-center gap-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                     <Tractor className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
@@ -342,8 +342,8 @@ function Dashboard() {
                 </div>
 
                 {/* Suppliers Produce Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex items-center gap-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                     <Package className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
@@ -356,8 +356,8 @@ function Dashboard() {
                 </div>
 
                 {/* Orders Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex items-center gap-4">
+                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                     <ShoppingCart className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
@@ -374,7 +374,7 @@ function Dashboard() {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Market Activity Trends */}
-              <div className="col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-lg font-semibold text-gray-900">Market Activity Trends</h2>
                   <div className="flex items-center space-x-2">
@@ -446,7 +446,7 @@ function Dashboard() {
               </div>
 
               {/* User Distribution */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">User Distribution</h3>
                 <div style={{ width: '100%', height: 200 }}>
                   <ResponsiveContainer>
@@ -488,7 +488,7 @@ function Dashboard() {
             {/* Recent Orders and Product Status */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Recent Orders */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
                   <Button variant="outline" size="sm">
@@ -530,7 +530,7 @@ function Dashboard() {
               </div>
 
               {/* Product Status Distribution */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Status</h3>
                 <div style={{ width: '100%', height: 200 }}>
                   <ResponsiveContainer>
@@ -570,7 +570,7 @@ function Dashboard() {
             </div>
 
             {/* Regional Analysis */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">Regional Market Analysis</h3>
                 <div className="flex items-center space-x-2">
@@ -612,7 +612,7 @@ function Dashboard() {
             </div>
 
             {/* Products Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Market Products Overview</h3>
                 <div className="flex items-center space-x-2">
@@ -674,7 +674,7 @@ function Dashboard() {
                   <tbody>
                     {filteredProducts.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="px-4 py-8">
+                        <td colSpan={8} className="px-4 py-6">
                           <EmptyState
                             title="No products found"
                             description="Products will appear here when they are added to the marketplace"

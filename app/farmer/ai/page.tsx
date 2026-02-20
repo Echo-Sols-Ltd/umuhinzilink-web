@@ -30,7 +30,7 @@ const menuItems = [
   { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
   { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
   { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/farmer/message', icon: Mail },
+  { label: 'Messages', href: '/chat', icon: Mail },
   { label: 'Notifications', href: '/farmer/notifications', icon: Bell },
   { label: 'Profile', href: '/farmer/profile', icon: User },
   { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
@@ -106,7 +106,7 @@ function AiDashboard() {
       <main className="flex-1  h-screen bg-gray-50">
         <div className="p-6 h-full overflow-y-auto">
           {/* Weather Alert */}
-          <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-8 text-white flex items-center justify-between">
+          <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-6 mb-8 text-white flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <AlertTriangle className="w-6 h-6" />
               <div>
@@ -123,7 +123,7 @@ function AiDashboard() {
             </div>
           </div>
 
-          <div className="flex gap-8 h-full">
+          <div className="flex gap-6 h-full">
             {/* Left Content */}
             <div className="flex-1 h-full">
               <div className="flex items-center justify-between mb-6">
@@ -139,7 +139,7 @@ function AiDashboard() {
                 {tips.map((tip, index) => (
                   <div
                     key={index}
-                    className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-start space-x-4"
+                    className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 flex items-start space-x-4"
                   >
                     <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       <img src={tip.image} alt={tip.title} className="w-full h-full object-cover" />
@@ -183,7 +183,7 @@ function AiDashboard() {
 
             {/* Right Sidebar - AI Assistant */}
             <div className="w-80">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
                 <div className="flex items-center space-x-2 mb-4">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="font-semibold text-gray-900">Ask AI Assistant</span>

@@ -366,7 +366,7 @@ function Dashboard() {
         activeItem='Dashboard' />
 
       <main className="flex-1 overflow-auto relative bg-white ">
-        <header className=" top-0 left-0 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+        <header className=" top-0 left-0 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div className="flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -418,7 +418,7 @@ function Dashboard() {
             className="mb-6"
           />
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
               <Link
@@ -542,7 +542,7 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
               <Link
@@ -643,7 +643,7 @@ function Dashboard() {
             loading={actionLoading}
           />
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Input Orders</h3>

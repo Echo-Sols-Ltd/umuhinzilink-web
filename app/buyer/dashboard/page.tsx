@@ -82,7 +82,7 @@ function BuyerDashboardComponent() {
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-y-auto">
           {/* Green Welcome Bar */}
-          <div className="bg-green-600 rounded-lg mt-0 text-white px-6 py-8 shadow-sm mb-4">
+          <div className="bg-green-600 rounded-lg mt-0 text-white px-6 py-6 shadow-sm mb-4">
             <h1 className="text-lg font-semibold mb-2">Welcome back, {buyerName}!</h1>
             <p className="text-sm opacity-90">
               Manage your agricultural purchases and connect with farmers across Rwanda

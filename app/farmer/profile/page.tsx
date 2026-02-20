@@ -107,26 +107,26 @@ function FarmerProfileComponent() {
       />
 
       <main className="flex-1 h-full bg-gray-50 overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center px-8 shadow-sm justify-between">
+        <header className="bg-white border-b h-16 flex items-center px-6 shadow-sm justify-between">
           <h1 className="text-xl font-semibold text-gray-900">Profile</h1>
           <p className="text-xs text-gray-500">Manage your farmer details</p>
         </header>
 
         <div className="p-6">
           {loading ? (
-            <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-8 flex items-center justify-center text-gray-500">
+            <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-6 flex items-center justify-center text-gray-500">
               <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading profile...
             </div>
           ) : error ? (
-            <div className="bg-white border border-red-200 rounded-xl shadow-sm p-6 text-red-600">
+            <div className="bg-white border border-red-200 rounded-lg shadow-sm p-6 text-red-600">
               {error}
             </div>
           ) : !profile ? (
-            <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-8 text-center text-gray-500">
+            <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-6 text-center text-gray-500">
               Profile data is not available right now.
             </div>
           ) : (
-            <section className="max-w-4xl bg-white rounded-lg shadow-sm border p-8">
+            <section className="max-w-4xl bg-white rounded-lg shadow-sm border p-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                 <div className="flex items-center gap-4">
                   <div className="relative">

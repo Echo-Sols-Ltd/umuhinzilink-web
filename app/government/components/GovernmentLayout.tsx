@@ -133,7 +133,7 @@ export function GovernmentLayout({
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto ml-64 relative bg-white">
-          <header className="fixed top-0 left-64 right-0 z-30 bg-gray-800 border-b h-16 flex items-center justify-between px-8 shadow-sm">
+          <header className="fixed top-0 left-64 right-0 z-30 bg-gray-800 border-b h-16 flex items-center justify-between px-6 shadow-sm">
             <div className="flex items-center space-x-4 flex-1">
               {headerTitle && (
                 <h1 className="text-lg font-semibold text-gray-200">{headerTitle}</h1>

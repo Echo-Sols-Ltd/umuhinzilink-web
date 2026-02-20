@@ -1,66 +1,51 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import { useToast } from '@/components/ui/use-toast';
 import Link from 'next/link';
 import {
-  LayoutGrid,
-  MessageSquare,
-  Settings,
-  FilePlus,
-  BarChart2,
-  ShoppingCart,
-  User,
-  Mail,
-  Bell,
   Package,
-  ChevronDown,
-  Leaf,
-  Loader2,
-  LogOut,
   Plus,
+  Search,
+  RefreshCw,
+  TrendingUp,
+  CheckCircle,
+  AlertCircle,
+  Clock,
+  LayoutGrid
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { FarmerPages, UserType } from '@/types';
+import { UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
-import useProductAction from '@/hooks/useProductAction';
-import { Trash2 } from 'lucide-react';
-import { API_CONFIG } from '@/services/constants';
-import { imageUrl } from '@/lib/utils';
 import ProductCard from '@/components/products/Product';
-
-
-function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
-  return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
-}
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 function FarmerProducts() {
   const router = useRouter();
-  const pathname = usePathname();
-  const { user, logout } = useAuth();
-  const { farmerProducts, loading } = useProduct();
-  const { deleteFarmerProduct } = useProductAction();
-  const { toast } = useToast();
-  const [logoutPending, setLogoutPending] = useState(false);
+  const { user } = useAuth();
+  const { farmerProducts, loading, fetchFarmerProducts } = useProduct();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const currentUser = user;
-  const products = useMemo(() => farmerProducts || [], [farmerProducts]);
-  const error = null;
 
+  const products = useMemo(() => farmerProducts || [], [farmerProducts]);
 
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
-
     if (statusFilter !== 'all') {
       filtered = filtered.filter(
-        product => (product.productStatus || '').toLowerCase() === statusFilter
+        product => (product.productStatus || '').toLowerCase() === statusFilter.toLowerCase()
       );
     }
-
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(product =>
@@ -69,154 +54,124 @@ function FarmerProducts() {
           .some(value => value!.toLowerCase().includes(term))
       );
     }
-
     return filtered;
   }, [products, statusFilter, searchTerm]);
 
-  const totalProducts = products.length;
-  const activeProducts = products.filter(
-    product => (product.productStatus || '').toLowerCase() === 'in_stock'
-  ).length;
-  const outOfStockProducts = products.filter(
-    product => (product.productStatus || '').toLowerCase() === 'out_of_stock'
-  ).length;
-
-  const totalInventory = useMemo(
-    () =>
-      products.reduce((total, product) => {
-        const qty = Number(product.quantity) || 0;
-        return total + qty;
-      }, 0),
-    [products]
-  );
-
-  const handleLogout = async () => {
-    if (logoutPending) return;
-    setLogoutPending(true);
-
-    try {
-      await logout();
-      router.push('/auth/signin');
-    } catch (error) {
-      console.error('Error during logout:', error);
-    } finally {
-      setLogoutPending(false);
-    }
-  };
-
-  const displayName = currentUser?.names || 'Farmer';
+  const stats = useMemo(() => {
+    const total = products.length;
+    const active = products.filter(p => p.productStatus?.toUpperCase() === 'IN_STOCK').length;
+    const outOfStock = products.filter(p => p.productStatus?.toUpperCase() === 'OUT_OF_STOCK').length;
+    const inventory = products.reduce((acc, p) => acc + (Number(p.quantity) || 0), 0);
+    return { total, active, outOfStock, inventory };
+  }, [products]);
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      <Sidebar
-        userType={UserType.FARMER}
-        activeItem='Products' />
+    <div className="flex h-screen bg-white overflow-hidden">
+      <Sidebar userType={UserType.FARMER} activeItem="Products" />
 
-      <main className="flex-1 bg-gray-50 overflow-y-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">My Products</h1>
-            <p className="text-xs text-gray-500">Welcome back, {displayName.split(' ')[0]}</p>
-          </div>
-          <Link
-            href="/farmer/add_produce"
-            className="bg-green-500 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-green-600 transition"
-          >
-            <Plus className="w-4 h-4" /> Add New Product
-          </Link>
-        </header>
-
-        <div className="p-6 space-y-6">
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <SummaryCard
-              title="Total Products"
-              value={formatNumber(totalProducts)}
-              caption="Listings overall"
-            />
-            <SummaryCard
-              title="Active"
-              value={formatNumber(activeProducts)}
-              caption="In stock"
-              accent="text-green-600"
-            />
-            <SummaryCard
-              title="Out of stock"
-              value={formatNumber(outOfStockProducts)}
-              caption="Marked unavailable"
-              accent="text-red-600"
-            />
-            <SummaryCard
-              title="Inventory"
-              value={formatNumber(totalInventory)}
-              caption="Total available units"
-            />
-          </section>
-
-          <section className="bg-white border border-gray-100 rounded-xl shadow-sm p-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Status</span>
-                  <div className="relative">
-                    <select
-                      value={statusFilter}
-                      onChange={event => setStatusFilter(event.target.value)}
-                      className="appearance-none pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
-                    >
-                      <option value="all">All</option>
-                      <option value="in_stock">In stock</option>
-                      <option value="out_of_stock">Out of stock</option>
-                      <option value="pending">Pending</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Search</span>
-                  <input
-                    value={searchTerm}
-                    onChange={event => setSearchTerm(event.target.value)}
-                    placeholder="Product name, category..."
-                    className="pl-3 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
-                  />
-                </div>
-                {(statusFilter !== 'all' || searchTerm) && (
-                  <button
-                    onClick={() => {
-                      setStatusFilter('all');
-                      setSearchTerm('');
-                    }}
-                    className="text-sm text-red-500"
-                  >
-                    Clear filters
-                  </button>
-                )}
-              </div>
+      <main className="flex-1 overflow-auto bg-gray-50/30">
+        <div className="p-8 max-w-7xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h1 className="text-3xl font-black text-gray-900 tracking-tight">Marketplace Inventory</h1>
+              <p className="text-sm text-gray-500 mt-1 font-medium italic">Manage your produce listings and monitor stock levels</p>
             </div>
-          </section>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => fetchFarmerProducts()}
+                className="p-3 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all shadow-sm"
+              >
+                <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin text-green-600' : ''}`} />
+              </button>
+              <Link
+                href="/farmer/add_produce"
+                className="bg-green-600 text-white font-black py-3.5 px-6 rounded-2xl flex items-center gap-2 hover:bg-green-700 transition shadow-lg shadow-green-100 text-xs uppercase tracking-widest"
+              >
+                <Plus className="w-4 h-4" /> New Listing
+              </Link>
+            </div>
+          </div>
 
-          <section>
+          {/* Highlights */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <HighlightCard title="Total Listings" value={stats.total} icon={<LayoutGrid />} color="from-green-600 to-emerald-600" />
+            <HighlightCard title="In Stock" value={stats.active} icon={<CheckCircle />} color="from-blue-500 to-indigo-600" />
+            <HighlightCard title="Out of Stock" value={stats.outOfStock} icon={<AlertCircle />} color="from-red-500 to-rose-600" />
+            <HighlightCard title="Total Units" value={stats.inventory} icon={<TrendingUp />} color="from-amber-400 to-orange-500" />
+          </div>
+
+          {/* Filtering Section */}
+          <div className="bg-white p-4 rounded-4xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search your products..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="w-full pl-14 pr-6 py-3.5 bg-gray-50/50 border border-transparent rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 font-medium italic"
+              />
+            </div>
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full md:w-40 bg-gray-50/50 border-none rounded-2xl h-12 font-bold text-xs uppercase tracking-widest">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl">
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="in_stock">In Stock</SelectItem>
+                  <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                  <SelectItem value="pending">Pending Review</SelectItem>
+                </SelectContent>
+              </Select>
+              {(statusFilter !== 'all' || searchTerm) && (
+                <button
+                  onClick={() => { setStatusFilter('all'); setSearchTerm(''); }}
+                  className="px-4 py-2 text-xs font-black text-red-500 uppercase tracking-widest hover:bg-red-50 rounded-xl transition-all"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Product Grid */}
+          <section className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900 border-l-4 border-green-500 pl-4 uppercase tracking-tight">Active Listings</h2>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{filteredProducts.length} Results</span>
+            </div>
+
             {loading ? (
-              <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-8 flex flex-col items-center justify-center text-gray-500">
-                <Loader2 className="w-6 h-6 animate-spin mb-2" />
-                Loading products...
-              </div>
-            ) : error ? (
-              <div className="bg-white border border-red-200 rounded-xl shadow-sm p-6 text-red-600">
-                {error}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-3xl border border-gray-100 p-4 space-y-4 shadow-sm">
+                    <Skeleton className="aspect-square rounded-2xl" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                    <Skeleton className="h-10 w-full rounded-xl" />
+                  </div>
+                ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-8 text-center text-gray-500">
-                No products match your filters yet. Try adjusting the filters or add a new listing.
+              <div className="bg-white rounded-[3rem] border border-gray-100 p-20 text-center shadow-sm">
+                <Package className="w-16 h-16 text-gray-200 mx-auto mb-6" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No listings found</h3>
+                <p className="text-gray-500 font-medium italic">Try adjusting your filters or create a new product listing.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {filteredProducts.map(product => (
-                <ProductCard
-                product={product}
-                onContact={()=>{}}
-                onPurchase={()=>{}}
-                onSelect={()=>{}}/>
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onContact={() => { }}
+                    onPurchase={() => { }}
+                    onSelect={() => { }}
+                  />
                 ))}
               </div>
             )}
@@ -227,25 +182,24 @@ function FarmerProducts() {
   );
 }
 
-type SummaryCardProps = {
-  title: string;
-  value: string;
-  caption: string;
-  accent?: string;
-};
-
-function SummaryCard({ title, value, caption, accent }: SummaryCardProps) {
+function HighlightCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-4 flex flex-col gap-1">
-      <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-2xl font-semibold text-gray-900">{value}</p>
-      <p className={`text-xs ${accent ?? 'text-gray-400'}`}>{caption}</p>
+    <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-5 transition-all hover:scale-[1.02] hover:shadow-md">
+      <div className={`p-3.5 rounded-2xl bg-linear-to-br ${color} text-white shadow-lg`}>
+        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-6 h-6' })}
+      </div>
+      <div>
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1.5">{title}</p>
+        <p className="text-2xl font-black text-gray-900 leading-none">{value.toLocaleString()}</p>
+      </div>
     </div>
   );
 }
 
 export default function FarmerProductsPage() {
-  return (<FarmerGuard>
-    <FarmerProducts />
-  </FarmerGuard>);
+  return (
+    <FarmerGuard>
+      <FarmerProducts />
+    </FarmerGuard>
+  );
 }

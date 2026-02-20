@@ -37,7 +37,7 @@ function NewRequest() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 flex items-center justify-center">
-      <div className="w-full max-w-lg bg-white p-8 rounded-lg shadow-md border">
+      <div className="w-full max-w-lg bg-white p-6 rounded-lg shadow-md border">
         <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">
           Request Agri-Inputs on Credit
         </h1>

@@ -124,7 +124,7 @@ function GovernmentSettings() {
 
         <div className="space-y-6">
           {/* Notification Settings */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="p-6">
               <div className="flex items-center mb-4">
                 <Bell className="w-5 h-5 text-green-600 mr-3" />
@@ -215,7 +215,7 @@ function GovernmentSettings() {
           </div>
 
           {/* Security Settings */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="p-6">
               <div className="flex items-center mb-4">
                 <Shield className="w-5 h-5 text-green-600 mr-3" />
@@ -269,7 +269,7 @@ function GovernmentSettings() {
           </div>
 
           {/* Password Change */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="p-6">
               <div className="flex items-center mb-4">
                 <Lock className="w-5 h-5 text-green-600 mr-3" />

@@ -76,7 +76,7 @@ function ProductsPageComponent() {
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let filtered = buyerProducts || [];
-    
+
     // Search filter
     if (search) {
       filtered = filtered.filter(product =>
@@ -92,7 +92,7 @@ function ProductsPageComponent() {
 
     // Location filter
     if (locationFilter) {
-      filtered = filtered.filter(product => 
+      filtered = filtered.filter(product =>
         product.owner?.address?.district?.toLowerCase().includes(locationFilter.toLowerCase())
       );
     }
@@ -171,9 +171,9 @@ function ProductsPageComponent() {
         description: `You can now chat with ${product.owner.names} about ${product.name}`,
         variant: "success"
       });
-      
+
       // Navigate to chat page with specific user ID
-      router.push(`/buyer/message/${farmerUser.id}`);
+      router.push(`/chat/${farmerUser.id}`);
     } catch (error) {
       console.error('Failed to contact farmer:', error);
       toast({
@@ -193,7 +193,7 @@ function ProductsPageComponent() {
     setMaxPrice(undefined);
     setCurrentPage(1);
   };
- 
+
   const handleSearch = () => {
     setCurrentPage(1);
   };

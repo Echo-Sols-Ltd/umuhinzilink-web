@@ -138,7 +138,7 @@ function SupplierProfileComponent() {
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto h-full">
-          <div className="max-w-4xl bg-white rounded-lg shadow-sm border p-8">
+          <div className="max-w-4xl bg-white rounded-lg shadow-sm border p-6">
             {/* Profile Header */}
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-4">

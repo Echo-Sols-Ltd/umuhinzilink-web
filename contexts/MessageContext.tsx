@@ -44,6 +44,21 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     setMessages(prev => {
       // Avoid duplicates
       if (prev.some(m => m.id === message.id)) return prev;
+
+      // Find an optimistic message that hasn't been replaced yet
+      const optimisticIndex = prev.findIndex(m =>
+        (m as any).isOptimistic &&
+        m.content === message.content &&
+        (m.receiver.id === message.receiver.id || m.receiver.id === message.sender.id)
+      );
+
+      if (optimisticIndex >= 0) {
+        // Replace optimistic message
+        const newMessages = [...prev];
+        newMessages[optimisticIndex] = message;
+        return newMessages;
+      }
+
       return [...prev, message];
     });
 
@@ -125,7 +140,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       const response = await messageService.getConversation(user.id, userId);
 
       if (response.success && response.data) {
-     
+
         const history: Message[] = response.data || []
 
         setMessages(prev => {
@@ -147,7 +162,43 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   // Raw data operations only
   const sendMessageRequest = (request: SendMessageRequest) => {
     if (socket) {
-      console.log(request)
+      console.log('Sending message:', request)
+
+      // --- Optimistic UI logic ---
+      if (user && activeChatUser) {
+        const temporaryId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        const optimisticMessage: Message = {
+          id: temporaryId,
+          content: request.content,
+          type: request.type || MessageType.TEXT,
+          fileName: request.fileName,
+          productRef: request.productRef,
+          replyTo: request.replyToId as any,
+          sender: {
+            id: user.id,
+            names: user.names,
+            email: user.email,
+            role: user.role,
+            avatar: user.avatar,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            verified: user.verified
+          } as any,
+          receiver: {
+            id: request.receiverId,
+            names: activeChatUser.names,
+            email: activeChatUser.email,
+            avatar: activeChatUser.avatar
+          } as any,
+          timestamp: new Date().toISOString(),
+          isRead: true,
+        };
+
+        (optimisticMessage as any).isOptimistic = true;
+        setMessages(prev => [...prev, optimisticMessage]);
+      }
+      // --- End Optimistic ---
+
       if (request.replyToId) {
         socket.messageReply(request);
       } else {

@@ -84,7 +84,7 @@ export default function VerifyPage() {
     return (
         <div className="flex h-screen">
             {/* Left side - Form */}
-            <div className="flex flex-2 flex-col justify-between p-8 bg-white">
+            <div className="flex flex-2 flex-col justify-between p-6 bg-white">
                 <div className="flex flex-col flex-1 max-w-md mx-auto w-full">
                     {/* Go back button */}
                     <button
@@ -100,7 +100,7 @@ export default function VerifyPage() {
                     <div className="flex flex-col items-center justify-center flex-1">
                         {/* Logo */}
                         <div className="mb-8">
-                            <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center">
+                            <div className="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center">
                                 <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
                                 </svg>

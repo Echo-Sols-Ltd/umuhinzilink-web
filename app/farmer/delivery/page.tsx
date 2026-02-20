@@ -101,7 +101,7 @@ function FarmerDeliveryPage() {
 
       <main className="flex-1 overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div className="flex items-center space-x-4">
             <button
               onClick={handleBack}
@@ -157,7 +157,7 @@ function FarmerDeliveryPage() {
           {/* Orders Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredOrders.length === 0 ? (
-              <div className="col-span-full bg-white rounded-lg p-8 text-center border border-gray-200">
+              <div className="col-span-full bg-white rounded-lg p-6 text-center border border-gray-200">
                 <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No Orders Found</h3>
                 <p className="text-gray-600">

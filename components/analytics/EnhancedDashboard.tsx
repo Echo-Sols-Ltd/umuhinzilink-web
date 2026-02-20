@@ -286,7 +286,7 @@ export function EnhancedDashboard({
 
   if (loading && !metrics) {
     return (
-      <div className="flex items-center justify-center p-8">
+      <div className="flex items-center justify-center p-6">
         <RefreshCw className="w-8 h-8 animate-spin text-green-600" />
         <span className="ml-2 text-gray-600">Loading dashboard...</span>
       </div>

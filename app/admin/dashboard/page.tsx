@@ -118,7 +118,7 @@ function Dashboard() {
           {/* Top Section - Data Widgets */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Active Users Card - Green Background */}
-            <div className="bg-green-600 rounded-xl p-6 text-white">
+            <div className="bg-green-600 rounded-lg p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-2">Active Users</p>
@@ -134,7 +134,7 @@ function Dashboard() {
             </div>
 
             {/* Products Card - White Background */}
-            <div className="bg-white rounded-xl p-6 border shadow-sm">
+            <div className="bg-white rounded-lg p-6 border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-2">Total Products</p>
@@ -152,7 +152,7 @@ function Dashboard() {
             </div>
 
             {/* Orders Card - White Background */}
-            <div className="bg-white rounded-xl p-6 border shadow-sm">
+            <div className="bg-white rounded-lg p-6 border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-2">Total Orders</p>
@@ -172,7 +172,7 @@ function Dashboard() {
 
           </div>
           {/* Doughnut Chart */}
-          <div className="bg-white rounded-xl p-6 border shadow-sm w-full">
+          <div className="bg-white rounded-lg p-6 border shadow-sm w-full">
             <div className="flex items-center w-full">
               <div className="relative flex-1 max-w-full">
                 <ResponsiveContainer width="100%" height={200}>
@@ -217,7 +217,7 @@ function Dashboard() {
           </div>
 
           {/* Users Table */}
-          <div className="bg-white rounded-xl border shadow-sm">
+          <div className="bg-white rounded-lg border shadow-sm">
             <div className="p-6 border-b flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">Users</h2>
               {loading && <Loader2 className="w-5 h-5 animate-spin text-green-600" />}
@@ -249,7 +249,7 @@ function Dashboard() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {loading ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={6} className="px-6 py-6 text-center text-gray-500">
                         Loading users...
                       </td>
                     </tr>
@@ -291,7 +291,7 @@ function Dashboard() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={6} className="px-6 py-6 text-center text-gray-500">
                         No users found
                       </td>
                     </tr>

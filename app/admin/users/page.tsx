@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import {
   Users,
   Search,
@@ -25,6 +23,8 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
+  UserCheck,
+  UserX,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
@@ -33,30 +33,22 @@ import AdminGuard from '@/contexts/guard/AdminGuard';
 import { useToast } from '@/components/ui/use-toast';
 import { adminService } from '@/services/admin';
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-interface MenuItem {
-  label: string;
-  href: string;
-  icon: any;
-}
-
-const MENU_ITEMS: MenuItem[] = [
-  { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
-  { label: 'Users', href: '/admin/users', icon: Users },
-  { label: 'Orders', href: '/admin/orders', icon: ArrowUpDown },
-  { label: 'Notifications', href: '/admin/reports', icon: Bell },
-];
-
-const MENU_ITEMS_BOTTOM: MenuItem[] = [
-  { label: 'Profile', href: '/admin/settings', icon: UserIcon },
-  { label: 'Settings', href: '/admin/settings', icon: Settings },
-];
 
 function UserManagement() {
   const { deleteUser } = useAdmin();
@@ -167,38 +159,29 @@ function UserManagement() {
     setActionLoading(userId);
     try {
       await deleteUser(userId);
+      await fetchUsers(currentPage);
     } catch (error) {
-      // Error handling is done in the context
+      toast({
+        title: 'Error',
+        description: 'Failed to delete user',
+        variant: 'error',
+      });
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleViewUser = async (user: User) => {
-    try {
-      setSelectedUser(user);
-      setShowUserModal(true);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch user details',
-        variant: 'error',
-      });
-    }
+    setSelectedUser(user);
+    setShowUserModal(true);
   };
 
   return (
     <div className="h-screen bg-white flex overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar
-        userType={UserType.ADMIN}
-        activeItem='Users'
-      />
+      <Sidebar userType={UserType.ADMIN} activeItem="Users" />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-auto">
-        {/* Header - White with Search and Filters */}
-        <header className="bg-white border-b h-16 flex items-center px-6">
+        <header className="bg-white border-b h-16 flex items-center px-6 sticky top-0 z-10">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
             <Menu className="w-6 h-6" />
           </button>
@@ -209,13 +192,13 @@ function UserManagement() {
               placeholder="Search users..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full pl-4 pr-10 py-2 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50/50"
             />
           </div>
 
           <div className="flex gap-2">
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-32 rounded-xl">
                 <SelectValue placeholder="All Roles" />
               </SelectTrigger>
               <SelectContent>
@@ -228,7 +211,7 @@ function UserManagement() {
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-32 rounded-xl">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
@@ -240,86 +223,98 @@ function UserManagement() {
           </div>
         </header>
 
-        {/* Main Content Area */}
         <main className="flex-1 bg-white p-6">
-          {/* Users Table */}
-          <div className="bg-white rounded-xl border shadow-sm">
-            <div className="p-6 border-b flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">Users</h2>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">
-                  {totalUsers} total users
-                </span>
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">User Directory</h2>
+                <p className="text-xs text-gray-500 mt-0.5">Manage and monitor all platform members</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="px-3 py-1 bg-green-50 rounded-full border border-green-100">
+                  <span className="text-xs font-bold text-green-700">
+                    {totalUsers} Member{totalUsers !== 1 ? 's' : ''}
+                  </span>
+                </div>
                 <button
                   onClick={() => fetchUsers(currentPage)}
-                  className="p-2 text-green-600 hover:bg-green-50 rounded-full"
+                  className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
                   disabled={loading}
                 >
-                  <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                 </button>
               </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      PROFILE
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      ROLE
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      NAME
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      EMAIL
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      PHONE
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      STATUS
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      ACTIONS
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {loading ? (
-                    <tr>
-                      <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                        <Loader2 className="w-8 h-8 animate-spin mx-auto" />
-                      </td>
-                    </tr>
-                  ) : filteredUsers.length > 0 ? (
-                    filteredUsers.map(usersItem => (
-                      <tr key={usersItem.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>PROFILE</TableHead>
+                  <TableHead>STATUS</TableHead>
+                  <TableHead>ROLE</TableHead>
+                  <TableHead>CONTACT INFO</TableHead>
+                  <TableHead className="text-right">ACTIONS</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  Array.from({ length: pageSize }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-10 w-10 rounded-full" />
+                          <div className="space-y-2">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-3 w-32" />
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                      <TableCell><Skeleton className="h-8 w-24 rounded-md" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto rounded-md" /></TableCell>
+                    </TableRow>
+                  ))
+                ) : filteredUsers.length > 0 ? (
+                  filteredUsers.map(usersItem => (
+                    <TableRow key={usersItem.id} className="group">
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
                             {usersItem.avatar ? (
-                              <img
-                                src={usersItem.avatar}
-                                alt={`${usersItem.names}'s profile`}
-                                width={40}
-                                height={40}
-                                className="w-full h-full object-cover"
-                              />
+                              <img src={usersItem.avatar} alt={usersItem.names} className="w-full h-full object-cover" />
                             ) : (
-                              <div className="w-full h-full bg-green-500 flex items-center justify-center text-white text-sm font-medium">
-                                {usersItem.names.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
+                              <div className="w-full h-full bg-linear-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white text-xs font-bold">
+                                {usersItem.names.charAt(0).toUpperCase()}
                               </div>
                             )}
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-gray-900 leading-tight">{usersItem.names}</span>
+                            <span className="text-[11px] text-gray-400">{usersItem.email}</span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1.5">
+                          <Badge variant={usersItem.verified ? 'success' : 'warning'} className="font-bold text-[9px] uppercase tracking-wider px-2 py-0.5">
+                            {usersItem.verified ? 'Verified' : 'Pending'}
+                          </Badge>
+                          {(usersItem as any).suspended && (
+                            <Badge variant="destructive" className="font-bold text-[9px] uppercase tracking-wider px-2 py-0.5">
+                              Suspended
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="max-w-[120px]">
                           <Select
                             value={usersItem.role}
                             onValueChange={(newRole) => handleUpdateRole(usersItem.id, newRole)}
                             disabled={actionLoading === usersItem.id}
                           >
-                            <SelectTrigger className="w-24">
+                            <SelectTrigger className="h-8 text-[11px] font-bold uppercase tracking-tight bg-gray-50/50 rounded-lg">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -329,146 +324,111 @@ function UserManagement() {
                               <SelectItem value="ADMIN">Admin</SelectItem>
                             </SelectContent>
                           </Select>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {usersItem.names}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {usersItem.email}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {usersItem.phoneNumber}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${usersItem.verified
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-yellow-100 text-yellow-800'
-                                }`}
-                            >
-                              {usersItem.verified ? 'Verified' : 'Pending'}
-                            </span>
-                            {(usersItem as any).suspended && (
-                              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                Suspended
-                              </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="text-sm text-gray-700 font-medium">{usersItem.phoneNumber || '—'}</span>
+                          <span className="text-[10px] text-gray-400 uppercase tracking-tighter">Primary Contact</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                          <button
+                            onClick={() => handleViewUser(usersItem)}
+                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            title="Quick View"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleSuspendUser(usersItem.id, !(usersItem as any).suspended)}
+                            disabled={actionLoading === usersItem.id}
+                            className={`p-2 rounded-lg transition-all ${(usersItem as any).suspended
+                              ? 'text-gray-400 hover:text-green-600 hover:bg-green-50'
+                              : 'text-gray-400 hover:text-orange-600 hover:bg-orange-50'
+                              }`}
+                          >
+                            {actionLoading === usersItem.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (usersItem as any).suspended ? (
+                              <UserCheck className="w-4 h-4" />
+                            ) : (
+                              <UserX className="w-4 h-4" />
                             )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex items-center space-x-2">
-                            <button
-                              onClick={() => handleViewUser(usersItem)}
-                              className="text-blue-600 hover:text-blue-800 p-1 rounded"
-                              title="View Details"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(usersItem.id)}
+                            disabled={actionLoading === usersItem.id}
+                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-24 text-center">
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        <Users className="w-16 h-16 mb-4 opacity-10" />
+                        <p className="text-lg font-medium">No users match your criteria</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
 
-                            <button
-                              onClick={() => handleSuspendUser(usersItem.id, !(usersItem as any).suspended)}
-                              disabled={actionLoading === usersItem.id}
-                              className={`p-1 rounded ${(usersItem as any).suspended
-                                ? 'text-green-600 hover:text-green-800'
-                                : 'text-orange-600 hover:text-orange-800'
-                                }`}
-                              title={(usersItem as any).suspended ? 'Activate User' : 'Suspend User'}
-                            >
-                              {actionLoading === usersItem.id ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (usersItem as any).suspended ? (
-                                <CheckCircle className="w-4 h-4" />
-                              ) : (
-                                <Ban className="w-4 h-4" />
-                              )}
-                            </button>
-
-                            <button
-                              onClick={() => handleDeleteUser(usersItem.id)}
-                              disabled={actionLoading === usersItem.id}
-                              className="text-red-600 hover:text-red-800 p-1 rounded"
-                              title="Delete User"
-                            >
-                              {actionLoading === usersItem.id ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <Trash2 className="w-4 h-4" />
-                              )}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                        No users found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination Controls */}
             {totalPages > 0 && (
-              <div className="p-4 border-t flex items-center justify-between">
-                <div className="text-sm text-gray-600">
-                  Page {currentPage + 1} of {totalPages}
+              <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-white">
+                <div className="text-sm text-gray-500 font-medium">
+                  Page <span className="text-gray-900">{currentPage + 1}</span> of <span className="text-gray-900">{totalPages}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
                     disabled={currentPage === 0 || loading}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                    className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
                   >
-                    <ChevronLeft className="w-4 h-4" />
-                    Previous
+                    <ChevronLeft className="w-5 h-5" />
                   </button>
-
-                  {/* Page numbers */}
                   <div className="flex items-center gap-1">
                     {Array.from({ length: totalPages }, (_, i) => i).map(pageNum => {
-                      // Show first page, last page, current page, and pages around current
                       const showPage =
                         pageNum === 0 ||
                         pageNum === totalPages - 1 ||
                         Math.abs(pageNum - currentPage) <= 1;
 
-                      const showEllipsis =
-                        (pageNum === 1 && currentPage > 3) ||
-                        (pageNum === totalPages - 2 && currentPage < totalPages - 4);
-
-                      if (showEllipsis) {
-                        return <span key={pageNum} className="px-2 text-gray-400">...</span>;
+                      if (!showPage) {
+                        if ((pageNum === 1 && currentPage > 2) || (pageNum === totalPages - 2 && currentPage < totalPages - 3)) {
+                          return <span key={pageNum} className="px-2 text-gray-300">...</span>;
+                        }
+                        return null;
                       }
-
-                      if (!showPage) return null;
 
                       return (
                         <button
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
                           disabled={loading}
-                          className={`px-3 py-1 text-sm font-medium rounded-md ${pageNum === currentPage
-                              ? 'bg-green-600 text-white'
-                              : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
-                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          className={`min-w-[32px] h-8 text-xs font-bold rounded-lg transition-all ${pageNum === currentPage
+                            ? 'bg-green-600 text-white shadow-sm'
+                            : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
+                            }`}
                         >
                           {pageNum + 1}
                         </button>
                       );
                     })}
                   </div>
-
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
                     disabled={currentPage >= totalPages - 1 || loading}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                    className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
                   >
-                    Next
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
               </div>
@@ -477,101 +437,74 @@ function UserManagement() {
         </main>
       </div>
 
-      {/* User Details Modal */}
       {showUserModal && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">User Details</h2>
-                <button
-                  onClick={() => setShowUserModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-100">
+            <div className="relative h-24 bg-gradient-to-r from-green-500 to-emerald-600">
+              <button
+                onClick={() => setShowUserModal(false)}
+                className="absolute top-4 right-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-              <div className="space-y-6">
-                {/* Profile Section */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+            <div className="px-8 pb-8">
+              <div className="relative -mt-12 mb-6">
+                <div className="w-24 h-24 rounded-2xl bg-white p-1 shadow-lg">
+                  <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center border border-gray-100">
                     {selectedUser.avatar ? (
-                      <img
-                        src={selectedUser.avatar}
-                        alt={`${selectedUser.names}'s profile`}
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={selectedUser.avatar} alt={selectedUser.names} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-green-500 flex items-center justify-center text-white text-lg font-medium">
-                        {selectedUser.names.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
+                      <div className="w-full h-full bg-green-500 flex items-center justify-center text-white text-2xl font-bold">
+                        {selectedUser.names.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{selectedUser.names}</h3>
-                    <p className="text-sm text-gray-500">{selectedUser.email}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${selectedUser.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' :
-                        selectedUser.role === 'FARMER' ? 'bg-green-100 text-green-800' :
-                          selectedUser.role === 'BUYER' ? 'bg-blue-100 text-blue-800' :
-                            'bg-orange-100 text-orange-800'
-                        }`}>
-                        {selectedUser.role}
-                      </span>
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${selectedUser.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                        {selectedUser.verified ? 'Verified' : 'Pending'}
-                      </span>
-                    </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 leading-tight">{selectedUser.names}</h3>
+                  <p className="text-gray-500 font-medium">{selectedUser.email}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Phone</p>
+                    <p className="text-sm font-semibold text-gray-700">{selectedUser.phoneNumber || 'Not linked'}</p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Joined</p>
+                    <p className="text-sm font-semibold text-gray-700">{new Date(selectedUser.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
 
-                {/* Details Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-                    <p className="mt-1 text-sm text-gray-900">{selectedUser.phoneNumber || 'Not provided'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Date Joined</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : 'Unknown'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Last Updated</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {selectedUser.updatedAt ? new Date(selectedUser.updatedAt).toLocaleDateString() : 'Unknown'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Account Status</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {(selectedUser as any).suspended ? 'Suspended' : 'Active'}
-                    </p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={selectedUser.verified ? 'success' : 'warning'} className="font-bold">
+                    {selectedUser.verified ? 'Verified Account' : 'Pending Verification'}
+                  </Badge>
+                  {(selectedUser as any).suspended && (
+                    <Badge variant="destructive" className="font-bold">Suspended</Badge>
+                  )}
                 </div>
 
-                {/* Actions */}
-                <div className="flex justify-end space-x-3 pt-4 border-t">
+                <div className="pt-4 border-t border-gray-100 flex gap-3">
                   <button
-                    onClick={() => setShowUserModal(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                  >
-                    Close
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleSuspendUser(selectedUser.id, !(selectedUser as any).suspended);
-                      setShowUserModal(false);
-                    }}
-                    className={`px-4 py-2 text-sm font-medium rounded-md ${(selectedUser as any).suspended
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-orange-600 text-white hover:bg-orange-700'
+                    onClick={() => handleSuspendUser(selectedUser.id, !(selectedUser as any).suspended)}
+                    className={`flex-1 py-2.5 rounded-xl font-bold text-sm transition-all ${(selectedUser as any).suspended
+                      ? 'bg-green-600 text-white hover:bg-green-700 shadow-md shadow-green-200'
+                      : 'bg-orange-600 text-white hover:bg-orange-700 shadow-md shadow-orange-200'
                       }`}
                   >
-                    {(selectedUser as any).suspended ? 'Activate User' : 'Suspend User'}
+                    {(selectedUser as any).suspended ? 'Reactivate Account' : 'Suspend Account'}
+                  </button>
+                  <button
+                    onClick={() => setShowUserModal(false)}
+                    className="px-6 py-2.5 bg-gray-100 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-200 transition-all"
+                  >
+                    Close
                   </button>
                 </div>
               </div>

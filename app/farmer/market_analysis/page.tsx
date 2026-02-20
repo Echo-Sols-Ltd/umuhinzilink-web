@@ -42,7 +42,7 @@ const menuItems = [
   { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
   { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
   { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Message', href: '/farmer/message', icon: Mail },
+  { label: 'Message', href: '/chat', icon: Mail },
   { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
   { label: 'Profile', href: '/farmer/profile', icon: User },
   { label: 'Contact', href: '/farmercontact', icon: Phone },

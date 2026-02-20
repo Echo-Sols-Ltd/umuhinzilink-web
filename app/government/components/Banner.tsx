@@ -30,7 +30,7 @@ export function Banner({ banners, className = '' }: BannerProps) {
   const currentBanner = banners[currentIndex];
 
   return (
-    <div className={`relative bg-gradient-to-r from-teal-600 to-green-500 rounded-xl p-8 text-white overflow-hidden ${className}`}>
+    <div className={`relative bg-gradient-to-r from-teal-600 to-green-500 rounded-lg p-6 text-white overflow-hidden ${className}`}>
       <button
         onClick={handlePrev}
         className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors z-10"

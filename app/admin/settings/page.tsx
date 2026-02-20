@@ -121,7 +121,7 @@ function SystemSettingsPage() {
       <div className="flex-1 flex flex-col overflow-auto pb-20">
         {/* Header */}
         <header className="bg-white shadow-sm border-b">
-          <div className="px-4 sm:px-6 lg:px-8">
+          <div className="px-4 sm:px-6 lg:px-6">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-4">
                 <Link

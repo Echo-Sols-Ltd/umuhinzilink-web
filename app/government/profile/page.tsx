@@ -138,7 +138,7 @@ function GovernmentProfile() {
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6">
             {/* Profile Header */}
             <div className="flex items-center space-x-6 mb-6">

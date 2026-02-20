@@ -40,7 +40,7 @@ function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-8 shadow-sm">
+      <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-6 shadow-sm">
         <Logo />
       </header>
 
@@ -51,12 +51,12 @@ function ContactPage() {
         />
 
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-8">
+        <main className="flex-1 ml-64 p-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Contact Us</h1>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Contact Info */}
-            <div className="bg-white rounded-xl shadow-sm border p-6 space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-semibold text-gray-800 mb-2">Get in Touch</h2>
                 <p className="text-gray-600">
@@ -80,7 +80,7 @@ function ContactPage() {
             </div>
 
             {/* Contact Form */}
-            <form className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
+            <form className="bg-white rounded-lg shadow-sm border p-6 space-y-4">
               <h2 className="text-lg font-semibold text-gray-800 mb-2">Send us a Message</h2>
 
               <div>

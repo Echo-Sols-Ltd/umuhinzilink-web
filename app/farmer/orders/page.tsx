@@ -22,6 +22,7 @@ import {
   Loader2,
   LogOut,
   Truck,
+  Eye,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
 import { FarmerPages, UserType, OrderStatus, FarmerOrder, DeliveryStatus } from '@/types';
@@ -29,6 +30,16 @@ import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type MenuItem = {
   label: string;
@@ -38,15 +49,15 @@ type MenuItem = {
 };
 
 
-const ORDER_STATUS_META: Record<string, { label: string; badge: string }> = {
-  PENDING: { label: 'Pending', badge: 'bg-yellow-100 text-yellow-700' },
-  PENDING_PAYMENT: { label: 'Pending Payment', badge: 'bg-orange-100 text-orange-700' },
-  ACTIVE: { label: 'In Progress', badge: 'bg-blue-100 text-blue-700' },
-  PROCESSING: { label: 'Processing', badge: 'bg-purple-100 text-purple-700' },
-  SHIPPED: { label: 'Shipped', badge: 'bg-blue-100 text-blue-700' },
-  DELIVERED: { label: 'Delivered', badge: 'bg-green-100 text-green-700' },
-  COMPLETED: { label: 'Completed', badge: 'bg-green-100 text-green-700' },
-  CANCELLED: { label: 'Cancelled', badge: 'bg-red-100 text-red-700' },
+const ORDER_STATUS_META: Record<string, { label: string; variant: string }> = {
+  PENDING: { label: 'Pending', variant: 'warning' },
+  PENDING_PAYMENT: { label: 'Pending Payment', variant: 'secondary' },
+  ACTIVE: { label: 'In Progress', variant: 'info' },
+  PROCESSING: { label: 'Processing', variant: 'secondary' },
+  SHIPPED: { label: 'Shipped', variant: 'info' },
+  DELIVERED: { label: 'Delivered', variant: 'success' },
+  COMPLETED: { label: 'Completed', variant: 'success' },
+  CANCELLED: { label: 'Cancelled', variant: 'destructive' },
 };
 
 function formatDate(value?: string) {
@@ -142,7 +153,7 @@ function FarmerOrders() {
 
 
       <main className="flex-1 h-full bg-gray-50 overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Orders</h1>
             <p className="text-xs text-gray-500">Order overview for {displayName.split(' ')[0]}</p>
@@ -178,7 +189,7 @@ function FarmerOrders() {
             />
           </section>
 
-          <section className="bg-white border border-gray-100 rounded-xl shadow-sm p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <section className="bg-white border border-gray-100 rounded-lg shadow-sm p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2 text-sm text-gray-600">
                 <span>Status</span>
@@ -206,138 +217,130 @@ function FarmerOrders() {
             </div>
           </section>
 
-          <section className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      ORDER ID
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      BUYER
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      ADDRESS
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      DATE
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      PRODUCT
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      QUANTITY
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      AMOUNT
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      STATUS
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                      ACTION
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan={9} className="py-6 px-4 text-center text-gray-500">
-                        <Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading orders...
-                      </td>
-                    </tr>
-                  ) : error ? (
-                    <tr>
-                      <td colSpan={9} className="py-6 px-4 text-center text-red-600">
-                        {error}
-                      </td>
-                    </tr>
-                  ) : filteredOrders.length === 0 ? (
-                    <tr>
-                      <td colSpan={9} className="py-6 px-4 text-center text-gray-500">
-                        No orders match the selected filter.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredOrders.map(order => {
-                      const statusKey = (order.status || 'PENDING').toUpperCase();
-                      const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.PENDING;
-                      const buyerAddress = order.buyer?.address
-                        ? `${order.buyer.address.district || ''}${order.buyer.address.province ? `, ${order.buyer.address.province}` : ''}`.trim()
-                        : '—';
-                      const quantity =
-                        Number(order.quantity) || Number(order.product?.quantity) || 0;
-                      const amount =
-                        Number(order.totalPrice) ||
-                        (Number(order.product?.unitPrice) || 0) * quantity;
+          <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ORDER ID</TableHead>
+                  <TableHead>BUYER</TableHead>
+                  <TableHead>DATE</TableHead>
+                  <TableHead>PRODUCT</TableHead>
+                  <TableHead>QUANTITY</TableHead>
+                  <TableHead>AMOUNT</TableHead>
+                  <TableHead>STATUS</TableHead>
+                  <TableHead className="text-right">ACTION</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto rounded-md" /></TableCell>
+                    </TableRow>
+                  ))
+                ) : filteredOrders.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="py-20 text-center">
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        <Package className="w-12 h-12 mb-4 opacity-20" />
+                        <p className="text-lg font-medium">No orders found</p>
+                        <p className="text-sm">Try adjusting your filters</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredOrders.map(order => {
+                    const statusKey = (order.status || 'PENDING').toUpperCase();
+                    const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.PENDING;
+                    const buyerAddress = order.buyer?.address
+                      ? `${order.buyer.address.district || ''}${order.buyer.address.province ? `, ${order.buyer.address.province}` : ''}`.trim()
+                      : '—';
+                    const quantity =
+                      Number(order.quantity) || Number(order.product?.quantity) || 0;
+                    const amount =
+                      Number(order.totalPrice) ||
+                      (Number(order.product?.unitPrice) || 0) * quantity;
 
-                      return (
-                        <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="py-4 px-4 text-sm font-medium text-gray-900">
-                            #{order.id.slice(0, 2)}
-                          </td>
-                          <td className="py-4 px-4 text-sm text-gray-900">
-                            {order.buyer?.names || order.buyer?.email || 'Unknown buyer'}
-                          </td>
-                          <td className="py-4 px-4 text-sm text-gray-600">{buyerAddress || '—'}</td>
-                          <td className="py-4 px-4 text-sm text-gray-600">
-                            {formatDate(order.createdAt)}
-                          </td>
-                          <td className="py-4 px-4 text-sm text-gray-900">
-                            {order.product?.name || '—'}
-                          </td>
-                          <td className="py-4 px-4 text-sm text-gray-600">
-                            {quantity
-                              ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}`
-                              : '—'}
-                          </td>
-                          <td className="py-4 px-4 text-sm text-gray-900">
-                            RWF {formatNumber(amount)}
-                          </td>
-                          <td className="py-4 px-4">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${statusMeta.badge}`}
-                            >
-                              {statusMeta.label}
+                    return (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-semibold text-gray-900">
+                          <span className="text-gray-400 font-normal mr-0.5">#</span>
+                          {order.id.slice(0, 4).toUpperCase()}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-gray-900 truncate max-w-[150px]">
+                              {order.buyer?.names || order.buyer?.email || 'Unknown buyer'}
                             </span>
-                          </td>
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              {statusKey === 'PENDING' && (
-                                <button
-                                  onClick={() => handleAcceptOrder(order.id)}
-                                  disabled={actionLoading}
-                                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-xs font-medium transition disabled:opacity-50"
-                                >
-                                  Approve
-                                </button>
-                              )}
-                              <button
-                                onClick={() => router.push(`/farmer/orders/${order.id}`)}
-                                className="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                              >
-                                View Details
-                              </button>
-                              {order.delivery && statusKey !== 'PENDING' && statusKey !== 'CANCELLED' && (
-                                <button
-                                  onClick={() => router.push('/farmer/delivery')}
-                                  className="text-orange-600 hover:text-orange-800 text-xs font-medium flex items-center gap-1"
-                                  title="Manage All Deliveries"
-                                >
-                                  <Truck className="w-3 h-3" />
-                                  Delivery Hub
-                                </button>
-                              )}
+                            <span className="text-[10px] text-gray-400 truncate max-w-[150px]">
+                              {buyerAddress || '—'}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-gray-500">{formatDate(order.createdAt)}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-green-50 rounded flex items-center justify-center border border-green-100 shrink-0">
+                              <Leaf className="w-4 h-4 text-green-600" />
                             </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+                            <span className="font-medium text-gray-900">{order.product?.name || '—'}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-gray-600">
+                          {quantity
+                            ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}`
+                            : '—'}
+                        </TableCell>
+                        <TableCell className="font-bold text-gray-900">
+                          {formatNumber(amount)} RWF
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={statusMeta.variant as any} className="font-semibold text-[10px] uppercase tracking-wide">
+                            {statusMeta.label}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {statusKey === 'PENDING' && (
+                              <button
+                                onClick={() => handleAcceptOrder(order.id)}
+                                disabled={actionLoading}
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-full text-[11px] font-bold transition shadow-sm disabled:opacity-50"
+                              >
+                                Approve
+                              </button>
+                            )}
+                            <button
+                              onClick={() => router.push(`/farmer/orders/${order.id}`)}
+                              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                              title="View Order Details"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            {order.delivery && statusKey !== 'PENDING' && statusKey !== 'CANCELLED' && (
+                              <button
+                                onClick={() => router.push('/farmer/delivery')}
+                                className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all"
+                                title="Tracking Details"
+                              >
+                                <Truck className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
           </section>
         </div>
       </main>
@@ -364,7 +367,7 @@ type SummaryCardProps = {
 
 function SummaryCard({ title, value, caption, accent }: SummaryCardProps) {
   return (
-    <div className="bg-white border border-gray-100 rounded-xl shadow-sm p-4 flex flex-col gap-1">
+    <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-4 flex flex-col gap-1">
       <p className="text-sm text-gray-500">{title}</p>
       <p className="text-2xl font-semibold text-gray-900">{value}</p>
       <p className={`text-xs ${accent ?? 'text-gray-400'}`}>{caption}</p>

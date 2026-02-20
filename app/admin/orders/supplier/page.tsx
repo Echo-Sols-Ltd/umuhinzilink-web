@@ -5,29 +5,37 @@ import { useRouter } from 'next/navigation';
 import {
     Search,
     Menu,
+    Filter,
+    ArrowDownLeft,
+    User,
+    Calendar,
+    Eye,
+    Trash2,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 
 function SupplierOrderManagement() {
-    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const { supplierOrders: orders } = useAdmin();
 
-
-    const getStatusColor = (status: string) => {
+    const getStatusVariant = (status: string) => {
         switch (status) {
-            case 'Completed':
-                return 'bg-green-100 text-green-800';
-            case 'Processing':
-                return 'bg-purple-100 text-purple-800';
-            case 'Failed':
-                return 'bg-red-100 text-red-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
+            case 'Completed': return 'success';
+            case 'Processing': return 'info';
+            case 'Failed': return 'destructive';
+            default: return 'secondary';
         }
     };
 
@@ -40,105 +48,125 @@ function SupplierOrderManagement() {
 
     return (
         <div className="h-screen bg-white flex overflow-hidden">
-            {/* Sidebar */}
+            <Sidebar userType={UserType.ADMIN} activeItem="Supplier Orders" />
 
-            <Sidebar
-                userType={UserType.ADMIN}
-                activeItem='Supplier Orders'
-            />
-
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col overflow-auto">
-                {/* Header - White with Search */}
-                <header className="bg-white border-b h-16 flex items-center px-6">
-                    <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
-                        <Menu className="w-6 h-6" />
-                    </button>
-                    <h1 className="text-xl font-bold text-gray-800 mr-4">Supplier Orders</h1>
-                    <div className="relative flex-1 max-w-md">
-                        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                        <input
-                            type="text"
-                            placeholder="Search here..."
-                            value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                        />
+            <div className="flex-1 flex flex-col overflow-auto bg-gray-50/30">
+                {/* Header */}
+                <header className="bg-white border-b px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Supplier Ecosystem</h1>
+                        <p className="text-sm text-gray-500 mt-1 font-medium">Audit all supply chain transactions from warehouses to farmers</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="relative max-w-sm">
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <input
+                                type="text"
+                                placeholder="Search by names..."
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                className="pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 w-64 shadow-sm"
+                            />
+                        </div>
                     </div>
                 </header>
 
-                {/* Main Content Area */}
-                <main className="flex-1 bg-white p-6">
-                    {/* Transactions Table */}
-                    <div className="bg-white rounded-xl border shadow-sm">
-                        <div className="p-6 border-b">
-                            <h2 className="text-2xl font-bold text-gray-900">Supplier Transactions</h2>
+                <main className="p-8 max-w-7xl mx-auto w-full space-y-8">
+                    {/* Table Container */}
+                    <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-gray-100 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 bg-blue-50 rounded-2xl">
+                                    <ArrowDownLeft className="w-6 h-6 text-blue-600" />
+                                </div>
+                                <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Supplier Transactions</h2>
+                            </div>
+                            <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-xl text-xs font-bold hover:bg-black transition-all shadow-lg shadow-gray-200">
+                                <Filter className="w-4 h-4" />
+                                Export Ledger
+                            </button>
                         </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 border-b border-gray-200">
-                                    <tr>
-                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                                            SENDER (BUYER)
-                                        </th>
-                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                                            NAME
-                                        </th>
-                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                                            RECEIVER (SUPPLIER)
-                                        </th>
-                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                                            NAME
-                                        </th>
-                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                                            DATE
-                                        </th>
-                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                                            STATUS
-                                        </th>
-                                        <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                                            ACTION
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {filteredOrders.length == 0 ?
-                                        <tr><td colSpan={7} className="text-center py-4">No orders found</td></tr>
-                                        : filteredOrders.map(order => (
-                                            <tr key={order.id} className="hover:bg-gray-50">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {order.buyer.role}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {order.buyer.names}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {order.product.owner?.role}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {order.product.owner?.names}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {new Date(order.createdAt).toDateString()}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span
-                                                        className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}
-                                                    >
-                                                        {order.status}
+
+                        <Table>
+                            <TableHeader>
+                                <TableRow className="bg-gray-50/30">
+                                    <TableHead className="py-6 pl-8 font-bold">SETTLEMENT INFO</TableHead>
+                                    <TableHead className="font-bold">PARTICIPANTS</TableHead>
+                                    <TableHead className="font-bold">EXECUTION DATE</TableHead>
+                                    <TableHead className="font-bold">STATUS</TableHead>
+                                    <TableHead className="text-right pr-8 font-bold">ACTIONS</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredOrders.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="py-24 text-center">
+                                            <div className="flex flex-col items-center justify-center opacity-20">
+                                                <Search className="w-16 h-16 mb-4" />
+                                                <p className="text-xl font-black italic">No Transactions Captured</p>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    filteredOrders.map(order => (
+                                        <TableRow key={order.id} className="group hover:bg-gray-50/50 transition-all">
+                                            <TableCell className="py-5 pl-8">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">SUP-REF: {order.id.slice(0, 8)}</span>
+                                                    <span className="font-bold text-gray-900 text-base leading-tight italic">
+                                                        RWF {order.totalPrice.toLocaleString()}
                                                     </span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <div className="flex items-center space-x-4">
-                                                        <button className="text-green-600 hover:text-green-800">View</button>
-                                                        <button className="text-red-600 hover:text-red-800">Delete</button>
+                                                    <span className="text-[11px] text-gray-400 font-bold">Bulk Input Purchase</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-6">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Sender (Buyer)</span>
+                                                        <span className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+                                                            <User className="w-3.5 h-3.5 text-green-500" />
+                                                            {order.buyer.names}
+                                                        </span>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                                    <div className="w-4 h-px bg-gray-200" />
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Receiver (Supplier)</span>
+                                                        <span className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+                                                            <User className="w-3.5 h-3.5 text-orange-500" />
+                                                            {order.product.owner?.names}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2 font-bold text-gray-600 text-sm">
+                                                    <Calendar className="w-4 h-4 text-gray-400" />
+                                                    {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge
+                                                    variant={getStatusVariant(order.status)}
+                                                    className="font-black text-[9px] px-3 py-1 uppercase tracking-widest rounded-full"
+                                                >
+                                                    {order.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-right pr-8">
+                                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                                                    <button className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all" title="View Audit">
+                                                        <Eye className="w-5 h-5" />
+                                                    </button>
+                                                    <button className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all" title="Flag Transaction">
+                                                        <Trash2 className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
                     </div>
                 </main>
             </div>

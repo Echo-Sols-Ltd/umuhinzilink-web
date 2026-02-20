@@ -33,12 +33,12 @@ function SupplierSettingsPageComponent() {
       />
 
       {/* Main Content */}
-      <main className="flex-1 p-8 h-full overflow-auto">
+      <main className="flex-1 p-6 h-full overflow-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Settings</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Profile Settings */}
-          <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
+          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <User className="text-green-600 w-5 h-5" />
               <h2 className="text-lg font-semibold text-gray-800">Profile Settings</h2>
@@ -104,7 +104,7 @@ function SupplierSettingsPageComponent() {
           </div>
 
           {/* Change Password */}
-          <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
+          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <Lock className="text-green-600 w-5 h-5" />
               <h2 className="text-lg font-semibold text-gray-800">Change Password</h2>
@@ -143,7 +143,7 @@ function SupplierSettingsPageComponent() {
         </div>
 
         {/* Notifications */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
+        <div className="bg-white rounded-lg shadow-sm border p-6 mt-8">
           <div className="flex items-center gap-2 mb-4">
             <Bell className="text-green-600 w-5 h-5" />
             <h2 className="text-lg font-semibold text-gray-800">Notifications</h2>

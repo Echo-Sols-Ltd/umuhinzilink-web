@@ -16,6 +16,9 @@ class SocketService {
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
+    // Queue for messages sent while disconnected
+    private messageQueue: { destination: string; body: string }[] = []
+
     constructor() {
         this.stompClient = new Client({
             webSocketFactory: () => {
@@ -41,6 +44,7 @@ class SocketService {
                 try {
                     this.connectionAttempts = 0
                     this.subscribeToPublic()
+                    this.flushMessageQueue()
                 } catch (error) {
                     console.error('Error in onConnect handler:', error)
                 }
@@ -228,52 +232,51 @@ class SocketService {
         }
     }
 
-    public sendMessage(data: SendMessageRequest) {
+    private enqueueOrPublish(destination: string, body: string) {
+        if (!this.stompClient.connected) {
+            console.log(`Socket not connected. Queueing message for ${destination}`)
+            this.messageQueue.push({ destination, body })
+            // Automatically try to connect if we aren't already
+            if (localStorage.getItem("auth_token")) {
+                this.connect()
+            }
+            return
+        }
+        this.stompClient.publish({ destination, body })
+    }
+
+    private flushMessageQueue() {
         if (!this.stompClient.connected) return
-        this.stompClient.publish({
-            destination: SOCKET_EVENTS.MESSAGE.SEND_MESSAGE,
-            body: JSON.stringify(data),
-        })
+        while (this.messageQueue.length > 0) {
+            const msg = this.messageQueue.shift()
+            if (msg) {
+                this.stompClient.publish(msg)
+            }
+        }
+    }
+
+    public sendMessage(data: SendMessageRequest) {
+        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.SEND_MESSAGE, JSON.stringify(data))
     }
 
     public messageReply(data: SendMessageRequest) {
-        if (!this.stompClient.connected) return
-        this.stompClient.publish({
-            destination: SOCKET_EVENTS.MESSAGE.REPLY_MESSAGE,
-            body: JSON.stringify(data),
-        })
+        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.REPLY_MESSAGE, JSON.stringify(data))
     }
 
     public messageEdition(data: EditMessageRequest) {
-        if (!this.stompClient.connected) return
-        this.stompClient.publish({
-            destination: SOCKET_EVENTS.MESSAGE.EDIT_MESSAGE,
-            body: JSON.stringify(data)
-        })
+        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.EDIT_MESSAGE, JSON.stringify(data))
     }
 
     public messageDeletion(id: string) {
-        if (!this.stompClient.connected) return
-        this.stompClient.publish({
-            destination: SOCKET_EVENTS.MESSAGE.DELETE_MESSAGE,
-            body: JSON.stringify(id)
-        })
+        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.DELETE_MESSAGE, JSON.stringify(id))
     }
 
     public messageReact(data: ChatReaction) {
-        if (!this.stompClient.connected) return
-        this.stompClient.publish({
-            destination: SOCKET_EVENTS.MESSAGE.REACT_MESSAGE,
-            body: JSON.stringify(data)
-        })
+        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.REACT_MESSAGE, JSON.stringify(data))
     }
 
     public sendTyping(data: ChatTyping) {
-        if (!this.stompClient.connected) return
-        this.stompClient.publish({
-            destination: SOCKET_EVENTS.MESSAGE.TYPING,
-            body: JSON.stringify(data)
-        })
+        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.TYPING, JSON.stringify(data))
     }
 
     public getOnlineUsers() {
@@ -288,7 +291,7 @@ class SocketService {
         this.onlineUserListeners = this.onlineUserListeners.filter(cb => cb !== callback)
     }
 
-    public onMessage(callback: (message: Message) => void)   {
+    public onMessage(callback: (message: Message) => void) {
         this.messageListeners.push(callback)
     }
 
