@@ -157,7 +157,7 @@ function FarmerProducts() {
                 ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-[2rem] border border-gray-100 p-16 text-center shadow-sm">
+              <div className="bg-white rounded-3xl border border-gray-100 p-16 text-center shadow-sm">
                 <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">No listings found</h3>
                 <p className="text-gray-500 text-sm">Try adjusting your filters or create a new product listing.</p>

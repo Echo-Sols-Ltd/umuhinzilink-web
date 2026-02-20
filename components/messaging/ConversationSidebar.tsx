@@ -71,9 +71,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     // Set active chat user and load messages
     setActiveChatUser(user);
     await loadMessages(user.id);
-
-
-  };
+  };o
 
   const isUserOnline = (userId: string) => {
     return onlineUsers.has(userId);

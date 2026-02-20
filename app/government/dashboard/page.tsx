@@ -268,8 +268,8 @@ function Dashboard() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   type="text"
-                  className="pl-10 pr-4 py-2 w-80 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500"
-                  placeholder="Search products, users, orders..."
+                  className="pl-10 pr-4 py-2 w-80 rounded-lg border-transparent bg-gray-50 focus:bg-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                  placeholder="Search market analytics..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -279,25 +279,25 @@ function Dashboard() {
                 disabled={loading}
                 variant="outline"
                 size="sm"
-                className="flex items-center space-x-2"
+                className="rounded-lg border-gray-200"
               >
-                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                <span>Refresh</span>
+                <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin text-green-600' : ''}`} />
+                <span>Sync Data</span>
               </Button>
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <span role="img" aria-label="RW flag">🇷🇼</span>
-                <span>Kinyarwanda</span>
-                <ChevronDown className="w-4 h-4" />
+                <span className="font-medium">Kinyarwanda</span>
+                <ChevronDown className="w-3.5 h-3.5" />
               </div>
-              <Bell className="w-5 h-5 text-gray-600" />
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">{initials || 'G'}</span>
+              <Bell className="w-5 h-5 text-gray-500 cursor-pointer hover:text-green-600 transition-colors" />
+              <div className="flex items-center space-x-2 pl-2 border-l border-gray-100">
+                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center shadow-lg shadow-green-100">
+                  <span className="text-white text-xs font-bold">{initials || 'G'}</span>
                 </div>
-                <span className="text-sm font-medium text-gray-700">{shortName}</span>
-                <ChevronDown className="w-4 h-4 text-gray-600" />
+                <span className="text-sm font-semibold text-gray-700">{shortName}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
               </div>
             </div>
           </header>
@@ -314,56 +314,52 @@ function Dashboard() {
             )}
 
             {/* Top Row - Key Metrics */}
-            <LoadingOverlay isLoading={loading} message="Loading dashboard data...">
+            <LoadingOverlay isLoading={loading} message="Analysing market data...">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Total Users Card */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4 group hover:border-blue-100 transition-colors">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
                     <Users className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Total Users</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(userStats.totalUsers)}</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Users</p>
+                    <p className="text-2xl font-bold text-gray-900 leading-tight">{formatNumber(userStats.totalUsers)}</p>
                   </div>
                 </div>
 
-                {/* Farmers Produce Card */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4 group hover:border-green-100 transition-colors">
+                  <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors">
                     <Tractor className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Farmers Produce</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(farmerProductStats.totalProducts)}</p>
-                    <p className="text-xs font-medium text-green-500">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Farmers Produce</p>
+                    <p className="text-2xl font-bold text-gray-900 leading-tight">{formatNumber(farmerProductStats.totalProducts)}</p>
+                    <p className="text-[10px] font-bold text-green-600 uppercase mt-0.5 tracking-tighter">
                       {farmerProductStats.inStockCount} in stock
                     </p>
                   </div>
                 </div>
 
-                {/* Suppliers Produce Card */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4 group hover:border-purple-100 transition-colors">
+                  <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-colors">
                     <Package className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Suppliers Produce</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(supplierProductStats.totalProducts)}</p>
-                    <p className="text-xs font-medium text-green-500">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Suppliers Produce</p>
+                    <p className="text-2xl font-bold text-gray-900 leading-tight">{formatNumber(supplierProductStats.totalProducts)}</p>
+                    <p className="text-[10px] font-bold text-green-600 uppercase mt-0.5 tracking-tighter">
                       {supplierProductStats.inStockCount} in stock
                     </p>
                   </div>
                 </div>
 
-                {/* Orders Card */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4 group hover:border-orange-100 transition-colors">
+                  <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors">
                     <ShoppingCart className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Total Orders</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(orderStats.totalOrders)}</p>
-                    <p className="text-xs font-medium text-green-500">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Orders</p>
+                    <p className="text-2xl font-bold text-gray-900 leading-tight">{formatNumber(orderStats.totalOrders)}</p>
+                    <p className="text-[10px] font-bold text-green-600 uppercase mt-0.5 tracking-tighter">
                       {orderStats.completedCount} completed
                     </p>
                   </div>
@@ -659,16 +655,14 @@ function Dashboard() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left text-gray-500">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-gray-50/50 border-b border-gray-100">
                     <tr>
-                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">PRODUCT NAME</th>
-                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">CATEGORY</th>
-                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">TYPE</th>
-                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">STATUS</th>
-                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">PRICE</th>
-                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">QUANTITY</th>
-                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">LOCATION</th>
-                      <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">DATE ADDED</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Product Name</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Category</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Type</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider text-center">Price / Qty</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Location</th>
+                      <th scope="col" className="px-6 py-4 text-right font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -684,41 +678,41 @@ function Dashboard() {
                       </tr>
                     ) : (
                       filteredProducts.slice(0, 10).map((product, index) => (
-                        <tr key={`${product.type}-${product.id || index}`} className="border-b border-gray-200 hover:bg-gray-50">
-                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {product.name || 'Unknown Product'}
+                        <tr key={`${product.type}-${product.id || index}`} className="group border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="text-sm font-semibold text-gray-800">{product.name || 'Unknown Product'}</span>
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
                             {product.category || 'Uncategorized'}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-1 text-xs rounded-full ${product.type === 'farmer'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-blue-100 text-blue-800'
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${product.type === 'farmer'
+                              ? 'bg-green-50 text-green-600'
+                              : 'bg-blue-50 text-blue-600'
                               }`}>
                               {product.type === 'farmer' ? 'Farmer' : 'Supplier'}
                             </span>
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-1 text-xs rounded-full ${product.productStatus === 'IN_STOCK' ? 'bg-green-100 text-green-800' :
-                              product.productStatus === 'LOW_STOCK' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
-                              }`}>
-                              {product.productStatus?.replace('_', ' ').toLowerCase() || 'unknown'}
-                            </span>
+                          <td className="px-6 py-4 whitespace-nowrap text-center">
+                            <div className="flex flex-col">
+                              <span className="text-xs font-bold text-gray-900">
+                                {product.unitPrice ? `${formatNumber(product.unitPrice)} RWF` : 'N/A'}
+                              </span>
+                              <span className="text-[10px] text-gray-400">
+                                {product.quantity ? `${product.quantity} ${product.measurementUnit || 'units'}` : 'N/A'}
+                              </span>
+                            </div>
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product.unitPrice ? `${formatNumber(product.unitPrice)} RWF` : 'N/A'}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product.quantity ? `${product.quantity} ${product.measurementUnit || 'units'}` : 'N/A'}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
                             {product.location || 'Unknown'}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {(product as any).createdAt || (product as any).updatedAt ?
-                              new Date((product as any).createdAt || (product as any).updatedAt).toLocaleDateString() : 'N/A'}
+                          <td className="px-6 py-4 whitespace-nowrap text-right">
+                            <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${product.productStatus === 'IN_STOCK' ? 'bg-green-50 text-green-600' :
+                              product.productStatus === 'LOW_STOCK' ? 'bg-amber-50 text-amber-600' :
+                                'bg-red-50 text-red-600'
+                              }`}>
+                              {product.productStatus?.replace('_', ' ') || 'unknown'}
+                            </span>
                           </td>
                         </tr>
                       ))

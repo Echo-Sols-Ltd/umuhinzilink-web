@@ -31,7 +31,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         try {
             const response = await notificationService.getNotifications(filter);
             if (response.success && response.data) {
-                setNotifications(response.data);
+                setNotifications(Array.isArray(response.data) ? response.data : []);
             }
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
@@ -45,7 +45,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             const response = await notificationService.markAsRead(id);
             if (response.success) {
                 setNotifications(prev =>
-                    prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
+                    (Array.isArray(prev) ? prev : []).map(n => (n.id === id ? { ...n, isRead: true } : n))
                 );
             }
         } catch (error) {
@@ -61,7 +61,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         try {
             const response = await notificationService.markAllAsRead();
             if (response.success) {
-                setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+                setNotifications(prev => (Array.isArray(prev) ? prev : []).map(n => ({ ...n, isRead: true })));
                 toast({
                     title: 'Success',
                     description: 'All notifications marked as read',
@@ -81,7 +81,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         try {
             const response = await notificationService.deleteNotification(id);
             if (response.success) {
-                setNotifications(prev => prev.filter(n => n.id !== id));
+                setNotifications(prev => (Array.isArray(prev) ? prev : []).filter(n => n.id !== id));
             }
         } catch (error) {
             toast({
@@ -120,7 +120,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         }
     }, [user, fetchNotifications]);
 
-    const unreadCount = notifications.filter(n => !n.isRead).length;
+    const unreadCount = (Array.isArray(notifications) ? notifications : []).filter(n => n && !n.isRead).length;
 
     return (
         <NotificationContext.Provider

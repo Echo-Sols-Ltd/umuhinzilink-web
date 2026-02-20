@@ -64,34 +64,37 @@ function DashboardComponent() {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar
-          userType={UserType.SUPPLIER}
-          activeItem='Dashboard'
-        />
+      {/* Sidebar */}
+      <Sidebar
+        userType={UserType.SUPPLIER}
+        activeItem='Dashboard'
+      />
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto h-full">
-    
-          {/* Content */}
-          <div className="mt-4">
-            {/* Welcome banner */}
-            <div className="bg-green-600 text-white p-6 rounded-lg mb-6">
-              <h1 className="text-2xl font-bold mb-2">Welcome back, {supplierName}!</h1>
-              <p className="text-green-100">
+      {/* Main Content */}
+      <main className="flex-1 p-6 overflow-auto h-full">
+
+        {/* Content */}
+        <div className="mt-4">
+          {/* Welcome banner */}
+          <div className="bg-green-600 rounded-2xl text-white px-8 py-8 shadow-lg shadow-green-100 mb-6 relative overflow-hidden">
+            <div className="relative z-10">
+              <h1 className="text-2xl font-bold mb-1 tracking-tight">Welcome back, {supplierName}!</h1>
+              <p className="text-sm text-green-50 font-medium">
                 Manage your agricultural inputs and connect with farmers across Rwanda
               </p>
             </div>
-
-            {/* Enhanced Analytics Dashboard */}
-            <EnhancedDashboard
-              userRole="supplier"
-              orders={[]} // Will be populated from supplier context
-              products={stats.topProducts || []}
-              className="mb-6"
-            />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
           </div>
-        </main>
+
+          {/* Enhanced Analytics Dashboard */}
+          <EnhancedDashboard
+            userRole="supplier"
+            orders={[]} // Will be populated from supplier context
+            products={stats.topProducts || []}
+            className="mb-6"
+          />
+        </div>
+      </main>
     </div>
   );
 }
