@@ -275,6 +275,17 @@ function MyPurchasesComponent() {
                       </td>
                       <td className="py-4 px-4 text-nowrap">
                         <div className="flex items-center gap-1">
+                          {!order.isPaid && order.status !== 'CANCELLED' && (
+                            <button
+                              onClick={() => handlePayOrder(order.id)}
+                              disabled={paymentLoading === order.id}
+                              className="px-3 py-1 bg-orange-500 text-white text-xs font-medium rounded hover:bg-orange-600 transition-colors disabled:opacity-50 flex items-center gap-1 mr-1"
+                              title="Pay Now"
+                            >
+                              {paymentLoading === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <DollarSign className="w-3 h-3" />}
+                              Pay
+                            </button>
+                          )}
                           <button
                             onClick={() => router.push(`/buyer/orders/${order.id}`)}
                             className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full transition-colors"

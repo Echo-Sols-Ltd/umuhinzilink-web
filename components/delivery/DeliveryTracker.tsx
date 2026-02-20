@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { DeliveryStep, Delivery } from '@/types/order';
 import { DeliveryStatus } from '@/types/enums';
 import { Check, Clock, Truck, Package, AlertCircle, Calendar } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { UserType } from '@/types/enums';
 
 interface DeliveryTrackerProps {
   delivery: Delivery | undefined;
@@ -63,6 +65,9 @@ const DELIVERY_STATUS_COLORS: Record<DeliveryStatus, string> = {
 export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = false }: DeliveryTrackerProps) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<DeliveryStatus | null>(null);
+  const { user } = useAuth();
+
+  const canUpdateStatus = user?.role !== UserType.BUYER;
 
   if (!delivery) {
     return (
@@ -74,14 +79,14 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
   }
 
   // Find the current step based on trackingSteps
-  const currentStepIndex = delivery.trackingSteps ? 
+  const currentStepIndex = delivery.trackingSteps ?
     Math.max(...delivery.trackingSteps.map((step, index) => step.completed ? index : -1)) : -1;
-  
+
   // Derive current status from the last completed step in trackingSteps
   const currentStatus = delivery.trackingSteps && delivery.trackingSteps.length > 0
     ? delivery.trackingSteps
-        .filter(step => step.completed)
-        .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0]?.status || DeliveryStatus.PENDING
+      .filter(step => step.completed)
+      .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0]?.status || DeliveryStatus.PENDING
     : DeliveryStatus.PENDING;
 
   const handleUpdateStatus = (status: DeliveryStatus) => {
@@ -134,7 +139,7 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
         </div>
 
         {/* Update Delivery Button */}
-        {nextStatus && !isLoading && (
+        {nextStatus && !isLoading && canUpdateStatus && (
           <button
             onClick={() => handleUpdateStatus(nextStatus.status)}
             className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors flex items-center space-x-2"
@@ -160,16 +165,14 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
                   relative z-10 w-8 h-8 rounded-full flex items-center justify-center
                   ${isCompleted ? 'bg-green-500' : isCurrent ? 'bg-blue-500' : 'bg-gray-300'}
                 `}>
-                  <Icon className={`w-4 h-4 text-white ${
-                    isCompleted ? 'text-white' : isCurrent ? 'text-white' : step.color
-                  }`} />
+                  <Icon className={`w-4 h-4 text-white ${isCompleted ? 'text-white' : isCurrent ? 'text-white' : step.color
+                    }`} />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2">
-                    <h3 className={`font-medium ${
-                      isCompleted ? 'text-green-600' : isCurrent ? 'text-gray-900' : 'text-gray-500'
-                    }`}>
+                    <h3 className={`font-medium ${isCompleted ? 'text-green-600' : isCurrent ? 'text-gray-900' : 'text-gray-500'
+                      }`}>
                       {step.label}
                     </h3>
                     {isCompleted && (
@@ -179,12 +182,11 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
                       <Clock className="w-4 h-4 text-blue-500 animate-pulse" />
                     )}
                   </div>
-                  <p className={`text-sm mt-1 ${
-                    isCompleted ? 'text-green-600' : isCurrent ? 'text-gray-600' : 'text-gray-400'
-                  }`}>
+                  <p className={`text-sm mt-1 ${isCompleted ? 'text-green-600' : isCurrent ? 'text-gray-600' : 'text-gray-400'
+                    }`}>
                     {step.description}
                   </p>
-                  
+
                   {/* Show timestamp for completed steps */}
                   {isCompleted && delivery.trackingSteps && delivery.trackingSteps[index] && (
                     <p className="text-xs text-green-600 mt-1 font-medium">
@@ -206,18 +208,15 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
             {delivery.trackingSteps.map((step, index) => (
               <div key={index} className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-2">
-                  <div className={`w-2 h-2 rounded-full ${
-                    step.completed ? 'bg-green-500' : 'bg-gray-300'
-                  }`}></div>
-                  <span className={`${
-                    step.completed ? 'text-green-600 font-medium' : 'text-gray-700'
-                  }`}>
+                  <div className={`w-2 h-2 rounded-full ${step.completed ? 'bg-green-500' : 'bg-gray-300'
+                    }`}></div>
+                  <span className={`${step.completed ? 'text-green-600 font-medium' : 'text-gray-700'
+                    }`}>
                     {DELIVERY_STATUS_LABELS[step.status]}
                   </span>
                 </div>
-                <span className={`${
-                  step.completed ? 'text-green-600' : 'text-gray-500'
-                }`}>
+                <span className={`${step.completed ? 'text-green-600' : 'text-gray-500'
+                  }`}>
                   {new Date(step.completedAt).toLocaleString()}
                 </span>
               </div>

@@ -97,7 +97,7 @@ function OrdersPageComponent() {
       />
 
       <main className="flex-1 h-full overflow-auto">
-    
+
         <div className="p-8 space-y-8">
           {/* Stats Summary */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -154,57 +154,60 @@ function OrdersPageComponent() {
                       </td>
                     </tr>
                   ) : (
-                    filteredOrders.map((order) => (
-                      <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                        <td className="py-3 px-4 text-gray-900 text-sm">
-                          <div className="flex flex-col">
-                            <span className="font-medium">#{order.id.slice(0, 8)}</span>
-                            <span className="text-gray-500 text-xs">{new Date(order.createdAt).toLocaleDateString()}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 bg-green-50 rounded-full flex items-center justify-center text-green-600">
-                              <User className="w-3 h-3" />
+                    filteredOrders.map((order) => {
+                      const statusKey = (order.status || 'PENDING').toUpperCase();
+                      return (
+                        <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                          <td className="py-3 px-4 text-gray-900 text-sm">
+                            <div className="flex flex-col">
+                              <span className="font-medium">#{order.id.slice(0, 8)}</span>
+                              <span className="text-gray-500 text-xs">{new Date(order.createdAt).toLocaleDateString()}</span>
                             </div>
-                            <span>{order.buyer?.names || 'Farmer'}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">
-                          <div className="flex flex-col">
-                            <span>{order.product?.name || 'Input'}</span>
-                            <span className="text-gray-500 text-xs">{order.quantity} {order.product?.measurementUnit}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-green-600 font-medium text-sm">
-                          RWF {order.totalPrice.toLocaleString()}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className={`${getStatusBadge(order.status)} px-2 py-1 rounded-full text-xs font-medium`}>
-                            {order.status}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-2">
-                            {order.status === 'PENDING' && (
+                          </td>
+                          <td className="py-3 px-4 text-gray-900 text-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 bg-green-50 rounded-full flex items-center justify-center text-green-600">
+                                <User className="w-3 h-3" />
+                              </div>
+                              <span>{order.buyer?.names || 'Farmer'}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-gray-900 text-sm">
+                            <div className="flex flex-col">
+                              <span>{order.product?.name || 'Input'}</span>
+                              <span className="text-gray-500 text-xs">{order.quantity} {order.product?.measurementUnit}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-green-600 font-medium text-sm">
+                            RWF {order.totalPrice.toLocaleString()}
+                          </td>
+                          <td className="py-3 px-4">
+                            <span className={`${getStatusBadge(order.status)} px-2 py-1 rounded-full text-xs font-medium`}>
+                              {order.status}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex gap-2">
+                              {statusKey === 'PENDING' && (
+                                <button
+                                  onClick={() => handleAcceptOrder(order.id)}
+                                  disabled={actionLoading}
+                                  className="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-medium hover:bg-green-200 transition-colors cursor-pointer disabled:opacity-50"
+                                >
+                                  Approve
+                                </button>
+                              )}
                               <button
-                                onClick={() => handleAcceptOrder(order.id)}
-                                disabled={actionLoading}
-                                className="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-medium hover:bg-green-200 transition-colors cursor-pointer disabled:opacity-50"
+                                onClick={() => handleViewDetails(order)}
+                                className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs font-medium hover:bg-blue-200 transition-colors cursor-pointer"
                               >
-                                Approve
+                                View
                               </button>
-                            )}
-                            <button
-                              onClick={() => handleViewDetails(order)}
-                              className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs font-medium hover:bg-blue-200 transition-colors cursor-pointer"
-                            >
-                              View
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

@@ -304,21 +304,22 @@ function FarmerOrders() {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
-                              {order.status === OrderStatus.PENDING && (
+                              {statusKey === 'PENDING' && (
                                 <button
                                   onClick={() => handleAcceptOrder(order.id)}
                                   disabled={actionLoading}
                                   className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-xs font-medium transition disabled:opacity-50"
                                 >
                                   Approve
-                                </button>)}
+                                </button>
+                              )}
                               <button
                                 onClick={() => router.push(`/farmer/orders/${order.id}`)}
                                 className="text-blue-600 hover:text-blue-800 text-xs font-medium"
                               >
                                 View Details
                               </button>
-                              {order.delivery && (
+                              {order.delivery && statusKey !== 'PENDING' && statusKey !== 'CANCELLED' && (
                                 <button
                                   onClick={() => router.push('/farmer/delivery')}
                                   className="text-orange-600 hover:text-orange-800 text-xs font-medium flex items-center gap-1"

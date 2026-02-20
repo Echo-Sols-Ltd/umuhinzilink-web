@@ -14,7 +14,7 @@ function BuyerDeliveryPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { buyerOrders } = useOrder();
-  
+
   const [orders, setOrders] = useState<FarmerOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,13 +28,13 @@ function BuyerDeliveryPage() {
   }, [buyerOrders]);
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.product.owner?.names.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -62,7 +62,7 @@ function BuyerDeliveryPage() {
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
-      
+
       <main className="flex-1 overflow-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
           <h1 className="text-xl font-semibold text-gray-900 flex items-center">
@@ -87,7 +87,7 @@ function BuyerDeliveryPage() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <div className="flex items-center space-x-2">
                   <Filter className="w-4 h-4 text-gray-400" />
@@ -114,8 +114,8 @@ function BuyerDeliveryPage() {
                 <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No Orders Found</h3>
                 <p className="text-gray-600">
-                  {searchTerm || statusFilter !== 'all' 
-                    ? 'No orders match your filters.' 
+                  {searchTerm || statusFilter !== 'all'
+                    ? 'No orders match your filters.'
                     : 'No orders available.'}
                 </p>
               </div>
@@ -161,32 +161,43 @@ function BuyerDeliveryPage() {
                     </div>
 
                     {/* Delivery Tracking */}
-                    <div className="border-t border-gray-100 pt-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-medium text-gray-900 flex items-center">
-                          <Calendar className="w-4 h-4 mr-2 text-green-600" />
-                          Delivery Tracking
-                        </h4>
-                        <button
-                          onClick={() => router.push(`/buyer/orders/${order.id}`)}
-                          className="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                        >
-                          View Full Details
-                        </button>
+                    {order.status !== 'PENDING' && order.status !== 'CANCELLED' ? (
+                      <div className="border-t border-gray-100 pt-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-medium text-gray-900 flex items-center">
+                            <Calendar className="w-4 h-4 mr-2 text-green-600" />
+                            Delivery Tracking
+                          </h4>
+                          <button
+                            onClick={() => router.push(`/buyer/orders/${order.id}`)}
+                            className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                          >
+                            View Full Details
+                          </button>
+                        </div>
+                        {order.delivery ? (
+                          <DeliveryTracker
+                            delivery={order.delivery}
+                            onUpdateStatus={() => { }} // Buyers cannot update status
+                            isLoading={false}
+                          />
+                        ) : (
+                          <div className="bg-gray-50 rounded-lg p-4 text-center">
+                            <Calendar className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                            <p className="text-sm text-gray-600">Delivery tracking not yet available</p>
+                          </div>
+                        )}
                       </div>
-                      {order.delivery ? (
-                        <DeliveryTracker
-                          delivery={order.delivery}
-                          onUpdateStatus={() => {}} // Buyers cannot update status
-                          isLoading={false}
-                        />
-                      ) : (
+                    ) : (
+                      <div className="border-t border-gray-100 pt-4">
                         <div className="bg-gray-50 rounded-lg p-4 text-center">
                           <Calendar className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                          <p className="text-sm text-gray-600">Delivery tracking not yet available</p>
+                          <p className="text-sm text-gray-600">
+                            {order.status === 'CANCELLED' ? 'Delivery is cancelled' : 'Waiting for order approval'}
+                          </p>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))

@@ -44,7 +44,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     if (!isOpen || !order) return null;
 
     const status = (order.status as string)?.toUpperCase();
-    const isActionable = true;
+    const isActionable = status === 'PENDING';
     const buyer = order.buyer;
     const product = order.product;
 
@@ -95,13 +95,13 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <OrderStatusTracker
                             orderStatus={order.status}
                             deliveryStatus={(() => {
-                              if (!order.delivery?.trackingSteps || order.delivery.trackingSteps.length === 0) {
-                                return undefined;
-                              }
-                              const latestCompletedStep = order.delivery.trackingSteps
-                                .filter(step => step.completed)
-                                .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
-                              return latestCompletedStep?.status;
+                                if (!order.delivery?.trackingSteps || order.delivery.trackingSteps.length === 0) {
+                                    return undefined;
+                                }
+                                const latestCompletedStep = order.delivery.trackingSteps
+                                    .filter(step => step.completed)
+                                    .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
+                                return latestCompletedStep?.status;
                             })()}
                             createdAt={order.createdAt}
                             updatedAt={order.updatedAt}
@@ -187,17 +187,19 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </div>
 
                     {/* Delivery Tracking Section */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-green-600" />
-                            Delivery Tracking
-                        </h3>
-                        <DeliveryTracker
-                            delivery={order.delivery}
-                            onUpdateStatus={(status) => onUpdateStatus?.(order.id, status)}
-                            isLoading={loading}
-                        />
-                    </div>
+                    {status !== 'PENDING' && status !== 'CANCELLED' && (
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                <Truck className="w-4 h-4 text-green-600" />
+                                Delivery Tracking
+                            </h3>
+                            <DeliveryTracker
+                                delivery={order.delivery}
+                                onUpdateStatus={(status) => onUpdateStatus?.(order.id, status)}
+                                isLoading={loading}
+                            />
+                        </div>
+                    )}
 
                 </div>
 

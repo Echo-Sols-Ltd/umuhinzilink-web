@@ -607,13 +607,15 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => handleAcceptOrder(order.id)}
-                                disabled={actionLoading}
-                                className="text-green-600 hover:text-green-900 font-bold"
-                              >
-                                Approve
-                              </button>
+                              {isPending && (
+                                <button
+                                  onClick={() => handleAcceptOrder(order.id)}
+                                  disabled={actionLoading}
+                                  className="text-green-600 hover:text-green-900 font-bold"
+                                >
+                                  Approve
+                                </button>
+                              )}
                               <button
                                 onClick={() => handleViewDetails(order)}
                                 className="text-blue-600 hover:text-blue-900"
