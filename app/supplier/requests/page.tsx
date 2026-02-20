@@ -1,26 +1,31 @@
 'use client';
-import React from 'react';
+
+import React, { useState } from 'react';
 import {
-  CheckCircle,
-  LayoutGrid,
-  FilePlus,
-  ShoppingCart,
-  User,
-  Phone,
-  Settings,
-  LogOut,
-  Mail,
   Search,
   Filter,
+  RefreshCw,
+  User,
+  MapPin,
+  Calendar,
+  Package,
+  Eye,
+  CheckCircle,
+  XCircle,
+  Zap,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
-import { Input } from '@/components/ui/input';
-import { useAuth } from '@/contexts/AuthContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { SupplierPages, UserType } from '@/types';
+import { UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 
 const requestData = [
   {
@@ -68,260 +73,132 @@ const requestData = [
     quantity: '75',
     status: 'Approved',
   },
-  {
-    id: 'R006',
-    farmer: 'Eric Cyiza',
-    address: '987 Kanombe Road, Kicukiro 250',
-    date: '30 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '90',
-    status: 'Pending',
-  },
-  {
-    id: 'R007',
-    farmer: 'Grace Mukantwari',
-    address: '147 Gisozi Street, Gasabo 250',
-    date: '29 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '110',
-    status: 'Approved',
-  },
-  {
-    id: 'R008',
-    farmer: 'Patrick Habimana',
-    address: '258 Muhima Avenue, Nyarugenge 250',
-    date: '28 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '85',
-    status: 'Pending',
-  },
-  {
-    id: 'R009',
-    farmer: 'Alice Cyiza',
-    address: '369 Kacyiru Road, Gasabo 250',
-    date: '27 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '95',
-    status: 'Approved',
-  },
-  {
-    id: 'R010',
-    farmer: 'Alice Cyiza',
-    address: '741 Nyakabanda Street, Nyarugenge 250',
-    date: '26 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '105',
-    status: 'Pending',
-  },
-  {
-    id: 'R011',
-    farmer: 'Alice Cyiza',
-    address: '852 Kimihurura Avenue, Gasabo 250',
-    date: '25 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '125',
-    status: 'Approved',
-  },
-  {
-    id: 'R012',
-    farmer: 'Alice Cyiza',
-    address: '963 Rugando Road, Gasabo 250',
-    date: '24 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '70',
-    status: 'Pending',
-  },
-  {
-    id: 'R013',
-    farmer: 'Alice Cyiza',
-    address: '159 Kabuga Street, Gasabo 250',
-    date: '23 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '115',
-    status: 'Approved',
-  },
-  {
-    id: 'R014',
-    farmer: 'Alice Cyiza',
-    address: '357 Nyarutarama Avenue, Gasabo 250',
-    date: '22 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '140',
-    status: 'Pending',
-  },
-  {
-    id: 'R015',
-    farmer: 'Alice Cyiza',
-    address: '468 Kinyinya Road, Gasabo 250',
-    date: '21 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '160',
-    status: 'Approved',
-  },
-  {
-    id: 'R016',
-    farmer: 'Alice Cyiza',
-    address: '579 Jabana Street, Gasabo 250',
-    date: '20 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '130',
-    status: 'Pending',
-  },
-  {
-    id: 'R017',
-    farmer: 'Alice Cyiza',
-    address: '681 Rusororo Avenue, Gasabo 250',
-    date: '19 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '180',
-    status: 'Approved',
-  },
-  {
-    id: 'R018',
-    farmer: 'Alice Cyiza',
-    address: '792 Ndera Road, Gasabo 250',
-    date: '18 Jul 2024',
-    input: 'Fertilizer Seeds',
-    quantity: '200',
-    status: 'Pending',
-  },
 ];
 
 function FarmerRequestsComponent() {
-  const router = useRouter();
-  const { logout } = useAuth()
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleLogout = () => {
-    logout();
-  };
+  const filteredRequests = requestData.filter(req =>
+    req.farmer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    req.input.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-        <Sidebar
-          userType={UserType.SUPPLIER}
-          activeItem='Farmer Request'
-        />
+    <div className="flex h-screen bg-white overflow-hidden">
+      <Sidebar userType={UserType.SUPPLIER} activeItem="Farmer Request" />
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto h-full">
-       
-          {/* Content with top margin for fixed header */}
-          <div className="mt-4">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-xl font-semibold text-gray-900">Farmer Request</h1>
+      <main className="flex-1 overflow-auto bg-gray-50/30">
+        <div className="p-8 max-w-7xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Farmer Requests</h1>
+              <p className="text-sm text-gray-500 mt-1 font-medium">Review and respond to agricultural input requests</p>
             </div>
-
-            {/* Search and Filters */}
-            <div className="flex justify-between items-center mb-4 gap-4">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="w-full bg-white border border-gray-300 text-gray-600 rounded-md py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500"
-                />
-              </div>
-              <div className="flex gap-2">
-                <button className="bg-white border border-gray-300 text-gray-700 rounded-md py-2 px-3 text-sm flex items-center gap-1 hover:bg-gray-50 transition-colors cursor-pointer">
-                  Filter
-                  <Filter className="w-3 h-3" />
-                </button>
-                <button className="bg-white border border-gray-300 text-gray-700 rounded-md py-2 px-3 text-sm hover:bg-gray-50 transition-colors cursor-pointer">
-                  Export
-                </button>
-                <button className="bg-green-600 text-white rounded-md py-2 px-3 text-sm hover:bg-green-700 transition-colors cursor-pointer">
-                  Filter
-                </button>
-              </div>
-            </div>
-
-            {/* Table */}
-            <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50">
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ID</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        FARMER
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        ADDRESS
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        DATE
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        INPUT
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        QUANTITY
-                      </th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
-                        ACTION
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {requestData.map((request, index) => (
-                      <tr key={request.id} className={index < 17 ? 'border-b border-gray-100' : ''}>
-                        <td className="py-3 px-4 text-gray-900 text-sm">{request.id}</td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">{request.farmer}</td>
-                        <td className="py-3 px-4 text-gray-500 text-sm">{request.address}</td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">{request.date}</td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">{request.input}</td>
-                        <td className="py-3 px-4 text-gray-900 text-sm">{request.quantity}</td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-1">
-                            <button className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium hover:bg-green-200 transition-colors cursor-pointer">
-                              Approve
-                            </button>
-                            <button className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium hover:bg-red-200 transition-colors cursor-pointer">
-                              Decline
-                            </button>
-                            <button className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium hover:bg-blue-200 transition-colors cursor-pointer">
-                              Offer
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Pagination */}
-            <div className="flex justify-center items-center mt-6">
-              <div className="flex items-center gap-1">
-                <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
-                  &lt;
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center bg-green-600 text-white rounded text-sm font-medium">
-                  1
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors text-sm cursor-pointer">
-                  2
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors text-sm cursor-pointer">
-                  3
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors text-sm cursor-pointer">
-                  4
-                </button>
-                <span className="px-2 text-gray-400">...</span>
-                <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors text-sm cursor-pointer">
-                  10
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
-                  &gt;
-                </button>
-              </div>
+            <div className="flex items-center gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-600 shadow-sm hover:bg-gray-50 transition-all">
+                <RefreshCw className="w-4 h-4" />
+                Refresh
+              </button>
             </div>
           </div>
-        </main>
-      </div>
+
+          {/* Action Bar */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search farmers or inputs..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 transition-all">
+                <Filter className="w-4 h-4" />
+                Filter
+              </button>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50/50">
+                  <TableHead className="font-bold py-5">FARMER INFO</TableHead>
+                  <TableHead className="font-bold">INPUT DETAILS</TableHead>
+                  <TableHead className="font-bold">REQUEST DATE</TableHead>
+                  <TableHead className="font-bold">STATUS</TableHead>
+                  <TableHead className="text-right font-bold pr-8">ACTIONS</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredRequests.map((request) => (
+                  <TableRow key={request.id} className="group hover:bg-gray-50/50 transition-colors">
+                    <TableCell className="py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-green-50 to-emerald-50 border border-green-100 flex items-center justify-center text-green-600 shadow-sm group-hover:scale-110 transition-transform">
+                          <User className="w-5 h-5" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-bold text-gray-900">{request.farmer}</span>
+                          <span className="text-[11px] text-gray-400 font-medium flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {request.address}
+                          </span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-1.5 font-bold text-gray-800">
+                          <Package className="w-4 h-4 text-blue-500" />
+                          {request.input}
+                        </div>
+                        <span className="text-[11px] text-gray-400 font-bold tracking-wider mt-1 uppercase">
+                          QTY: {request.quantity} units
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 font-medium text-gray-600">
+                        <Calendar className="w-4 h-4 text-gray-400" />
+                        {request.date}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={request.status === 'Approved' ? 'success' : 'warning'}
+                        className="font-bold text-[10px] px-3 py-1 uppercase tracking-widest rounded-full"
+                      >
+                        {request.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right pr-8">
+                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-[11px] font-bold rounded-xl hover:bg-green-700 shadow-md shadow-green-100 transition-all">
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          Approve
+                        </button>
+                        <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Decline">
+                          <XCircle className="w-5 h-5" />
+                        </button>
+                        <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Make Offer">
+                          <Zap className="w-5 h-5 font-bold" />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 

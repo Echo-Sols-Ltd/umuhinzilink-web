@@ -1,6 +1,6 @@
 import { imageUrl } from "@/lib/utils";
 import { FarmerProduct, MessageType, SupplierProduct } from "@/types";
-import { Heart, MessageSquare, Trash2, UserIcon } from "lucide-react";
+import { Heart, MessageSquare, Trash2, UserIcon, Clock } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChat } from "@/hooks/useChat";
@@ -9,21 +9,22 @@ import Link from "next/link";
 import useProductAction from "@/hooks/useProductAction";
 
 interface ProductCardProps {
-    product: FarmerProduct | SupplierProduct
-    onSelect: () => void;
-    onPurchase: () => void;
-    onContact: () => void;
+    product: SupplierProduct | FarmerProduct
+    onSelect?: () => void;
+    onPurchase?: () => void;
+    onContact?: () => void;
+    onEdit?: (product: any) => void;
 }
 
 
-export default function ProductCard({ product, onSelect, onPurchase, onContact }: ProductCardProps) {
+export default function ProductCard({ product, onSelect, onPurchase, onContact, onEdit }: ProductCardProps) {
     const { toast } = useToast()
     const { user } = useAuth()
-    const {deleteFarmerProduct}=useProductAction()
+    const { deleteFarmerProduct, deleteSupplierProduct } = useProductAction()
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
 
-    const handleContactFarmer = async (product: FarmerProduct) => {
+    const handleContactFarmer = async (product: any) => {
         if (!user) {
             toast({
                 title: "Authentication Required",
@@ -35,26 +36,23 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact }
 
         if (!product.owner) {
             toast({
-                title: "Farmer Not Available",
-                description: "Unable to find farmer information for this product",
+                title: "Information Not Available",
+                description: "Unable to find contact information for this product",
                 variant: "error"
             });
             return;
         }
 
         try {
-            // Create a user object for farmer
-            const farmerUser = product.owner;
+            const partnerUser = product.owner;
+            handleUserClick(partnerUser);
 
-            // Switch to chat with the farmer
-            handleUserClick(farmerUser);
-
-            // Send product reference message
             await handleSendMessage(
                 `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
                 MessageType.PRODUCT,
                 product.owner.names,
-                product.id
+                product.id,
+                partnerUser // overrideReceiver: bypasses stale activeChatUser state
             );
 
             toast({
@@ -63,10 +61,9 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact }
                 variant: "success"
             });
 
-            // Navigate to global chat page with specific user ID
-            router.push(`/chat/${farmerUser.id}`);
+            router.push(`/chat/${partnerUser.id}`);
         } catch (error) {
-            console.error('Failed to contact farmer:', error);
+            console.error('Failed to contact owner:', error);
             toast({
                 title: "Failed to Send Message",
                 description: "Please try again later",
@@ -75,90 +72,130 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact }
         }
     };
 
-  const handleDeleteProduct = async (productId: string, productName: string) => {
-    if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
-      return;
-    }
+    const handleDeleteProduct = async (productId: string, productName: string) => {
+        if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+            return;
+        }
 
-    try {
-      await deleteFarmerProduct(productId);
-     
-    } catch (error) {
-      console.error('Failed to delete product:', error);
-      toast({
-        title: "Delete Failed",
-        description: "Failed to delete product. Please try again.",
-        variant: "error"
-      });
-    }
-  };
+        try {
+            if (product.owner.role === 'FARMER') {
+                await deleteFarmerProduct(productId);
+            } else {
+                await deleteSupplierProduct(productId);
+            }
+        } catch (error) {
+            console.error('Failed to delete product:', error);
+            toast({
+                title: "Delete Failed",
+                description: "Failed to delete product. Please try again.",
+                variant: "error"
+            });
+        }
+    };
 
-
-    const isProductOwner = user?.id === product.owner.id
+    const isProductOwner = user?.id === product.owner?.id;
 
     return (
-        <div key={product.name} className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="relative">
+        <div
+            onClick={onSelect}
+            className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-green-100/30 transition-all duration-300 cursor-pointer"
+        >
+            <div className="relative aspect-square overflow-hidden bg-gray-50">
                 <img
                     src={imageUrl(product.image!)}
                     alt={product.name}
-                    className="h-48 w-full object-cover" />
-                <button className="absolute top-3 right-3 bg-white p-1 rounded-full shadow">
-                    <Heart className="w-5 h-5 text-red-500" />
-                </button>
-            </div>
-            <div className="p-4">
-                <div className="flex justify-between items-center">
-                    <h3 className="font-semibold text-lg text-gray-900">{product.name}</h3>
-                    <p className="text-green-600 font-bold text-sm">{product.unitPrice}</p>
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+
+                <div className="absolute top-3 right-3 flex flex-col gap-2">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); }}
+                        className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-sm hover:bg-white transition-colors text-gray-400 hover:text-red-500"
+                    >
+                        <Heart className="w-4 h-4" />
+                    </button>
+
+                    {isProductOwner && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteProduct(product.id, product.name);
+                            }}
+                            className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-sm hover:bg-white transition-colors text-gray-400 hover:text-red-500"
+                            title="Delete product"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                    )}
                 </div>
-                <p className="text-sm text-gray-500 mt-1">Available: {product.quantity}</p>
-                <div className="flex items-center text-sm text-gray-500 mt-1">
-                    <UserIcon className="w-4 h-4 mr-1" /> { product.owner.names}
-                    <span className="mx-1">•</span>
-                    {product.location}
+
+                <div className="absolute top-3 left-3">
+                    <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-white/90 backdrop-blur-sm shadow-sm ${product.productStatus === 'IN_STOCK' ? 'text-green-600' : 'text-amber-600'
+                        }`}>
+                        {product.productStatus?.replace('_', ' ') || 'Available'}
+                    </span>
+                </div>
+            </div>
+
+            <div className="p-4">
+                <div className="flex justify-between items-start mb-1">
+                    <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-green-600 transition-colors uppercase text-sm tracking-tight">{product.name}</h3>
+                </div>
+
+                <div className="flex items-baseline gap-1 mb-3">
+                    <span className="text-lg font-extrabold text-green-700">{Number(product.unitPrice).toLocaleString()}</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase">RWF / {product.measurementUnit || 'unit'}</span>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                    <div className="flex items-center text-[11px] font-medium text-gray-500">
+                        <UserIcon className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+                        <span className="truncate">{product.owner?.names || 'Unknown'}</span>
+                    </div>
+                    <div className="flex items-center text-[11px] font-medium text-gray-500">
+                        <Clock className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+                        <span>Qty: {product.quantity}</span>
+                    </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="mt-3 flex items-center gap-2">
+                <div className="flex items-center gap-2 pt-1">
                     {isProductOwner ? (
-                        <div className="flex gap-x-5 justify-end">
-                            <Link
-                                href={`/farmer/products/${product.id}/edit`}
-                                className="bg-green-600 text-white px-4 py-2 rounded text-sm flex-1"
-                            >
-                                Edit
-                            </Link>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (onEdit) onEdit(product);
+                                else router.push(`/${product.owner.role.toLowerCase()}/products/${product.id}/edit`);
+                            }}
+                            className="flex-1 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300"
+                        >
+                            Edit Item
+                        </button>
+                    ) : (
+                        <>
                             <button
-                                onClick={() => handleDeleteProduct(product.id, product.name)}
-                                className="bg-red-600 text-white px-4 py-2 rounded text-sm flex-1 items-center"
-                                title="Delete product"
+                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-lg shadow-green-100"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onPurchase) onPurchase();
+                                }}
                             >
-                                <Trash2 className="w-4 h-4" />
+                                Buy Now
                             </button>
-                        </div>
-                    ) : (<>
-                        <button className="bg-green-600 text-white px-4 py-2 rounded text-sm flex-1"
-                            onClick={(e: any) => {
-                                e.stopPropagation();
-                                onPurchase();
-                            }}>
-                            Buy Now
-                        </button>
-                        <button className="border border-gray-300 p-2 rounded"
-                            onClick={(e: any) => {
-                                e.stopPropagation();
-                                handleContactFarmer(product as FarmerProduct)
-                            }}>
-                            <MessageSquare className="w-4 h-4 text-black" />
-                        </button>
-                        <button className="border border-red-300 p-2 rounded">
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                        </button>
-                    </>
+                            <button
+                                className="p-2 bg-gray-50 text-gray-600 hover:bg-green-50 hover:text-green-600 rounded-lg transition-all duration-300 border border-transparent hover:border-green-100"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onContact) onContact();
+                                    else handleContactFarmer(product);
+                                }}
+                            >
+                                <MessageSquare className="w-4 h-4" />
+                            </button>
+                        </>
                     )}
                 </div>
             </div>
-        </div >
-    )
+        </div>
+    );
 }

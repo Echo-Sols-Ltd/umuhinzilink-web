@@ -366,7 +366,7 @@ function Dashboard() {
         activeItem='Dashboard' />
 
       <main className="flex-1 overflow-auto relative bg-white ">
-        <header className=" top-0 left-0 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+        <header className=" top-0 left-0 right-0 z-30 bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div className="flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -404,10 +404,9 @@ function Dashboard() {
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
               Good {new Date().getHours() < 12 ? 'Morning' : 'Day'} 👋, {shortName}
             </h1>
-            <p className="text-gray-600">
-              Here&apos;s what&apos;s happening with your farm today{profileLoading ? '...' : '.'}
+            <p className="text-gray-600 text-sm">
+              Here's what's happening with your farm today
             </p>
-            {profileError && <p className="text-sm text-red-500 mt-2">{profileError}</p>}
           </div>
 
           {/* Enhanced Analytics Dashboard */}
@@ -418,7 +417,7 @@ function Dashboard() {
             className="mb-6"
           />
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Recent Products</h3>
               <Link
@@ -430,30 +429,15 @@ function Dashboard() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left text-gray-500">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                <thead className="text-[11px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
                   <tr>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                      IMAGE
-                    </th>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                      PRODUCT
-                    </th>
-
-                    <th scope="col" className="px-4 py-3 hidden md:table-cell text-left text-sm font-medium text-gray-600">
-                      QUANTITY
-                    </th>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                      PRICE
-                    </th>
-                    <th scope="col" className="px-4 py-3 hidden lg:table-cell text-left text-sm font-medium text-gray-600">
-                      LOCATION
-                    </th>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                      STATUS
-                    </th>
-                    <th scope="col" className="px-4 py-3 text-right text-sm font-medium text-gray-600">
-                      ACTION
-                    </th>
+                    <th scope="col" className="px-4 py-3 font-semibold">IMAGE</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">PRODUCT</th>
+                    <th scope="col" className="px-4 py-3 hidden md:table-cell font-semibold">QUANTITY</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">PRICE</th>
+                    <th scope="col" className="px-4 py-3 hidden lg:table-cell font-semibold">LOCATION</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">STATUS</th>
+                    <th scope="col" className="px-4 py-3 text-right font-semibold">ACTION</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -516,14 +500,14 @@ function Dashboard() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
                           <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${(product.productStatus || '').toLowerCase() === 'in_stock'
-                              ? 'bg-green-100 text-green-800'
+                            className={`px-2 py-0.5 inline-flex text-[10px] font-bold rounded-md uppercase tracking-wider ${(product.productStatus || '').toLowerCase() === 'in_stock'
+                              ? 'bg-green-100 text-green-700'
                               : (product.productStatus || '').toLowerCase() === 'out_of_stock'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-yellow-100 text-yellow-700'
                               }`}
                           >
-                            {product.productStatus || 'Unknown'}
+                            {product.productStatus?.replace('_', ' ') || 'Unknown'}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -542,7 +526,7 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
               <Link
@@ -554,14 +538,14 @@ function Dashboard() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left text-gray-500">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                <thead className="text-[11px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
                   <tr>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">ORDER ID</th>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">BUYER</th>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">PRODUCT</th>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">AMOUNT</th>
-                    <th scope="col" className="px-4 py-3 text-left text-sm font-medium text-gray-600">STATUS</th>
-                    <th scope="col" className="px-4 py-3 text-right text-sm font-medium text-gray-600">ACTIONS</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">ORDER ID</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">BUYER</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">PRODUCT</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">AMOUNT</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">STATUS</th>
+                    <th scope="col" className="px-4 py-3 text-right font-semibold">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -597,7 +581,7 @@ function Dashboard() {
                             RWF {formatNumber(order.totalPrice || 0)}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusKey === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${statusKey === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
                               statusKey === 'ACTIVE' ? 'bg-blue-100 text-blue-700' :
                                 statusKey === 'COMPLETED' ? 'bg-green-100 text-green-700' :
                                   'bg-gray-100 text-gray-700'
@@ -607,13 +591,15 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => handleAcceptOrder(order.id)}
-                                disabled={actionLoading}
-                                className="text-green-600 hover:text-green-900 font-bold"
-                              >
-                                Approve
-                              </button>
+                              {isPending && (
+                                <button
+                                  onClick={() => handleAcceptOrder(order.id)}
+                                  disabled={actionLoading}
+                                  className="text-green-600 hover:text-green-700 font-semibold"
+                                >
+                                  Approve
+                                </button>
+                              )}
                               <button
                                 onClick={() => handleViewDetails(order)}
                                 className="text-blue-600 hover:text-blue-900"
@@ -641,7 +627,7 @@ function Dashboard() {
             loading={actionLoading}
           />
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Input Orders</h3>
@@ -677,11 +663,11 @@ function Dashboard() {
                       </p>
                     </div>
                     <span
-                      className={`px-2 py-1 text-xs rounded-full ${(request.status || '').toLowerCase() === 'approved'
-                        ? 'bg-green-100 text-green-700'
+                      className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${(request.status || '').toLowerCase() === 'approved'
+                        ? 'bg-green-50 text-green-700'
                         : (request.status || '').toLowerCase() === 'rejected'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-yellow-100 text-yellow-700'
+                          ? 'bg-red-50 text-red-700'
+                          : 'bg-yellow-50 text-yellow-700'
                         }`}
                     >
                       {request.status || 'Pending'}

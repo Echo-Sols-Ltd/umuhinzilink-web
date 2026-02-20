@@ -89,7 +89,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       try {
         // Upload the file and get the URL
         const uploadResponse = await messageService.uploadFile(selectedFile);
-        
+
         if (uploadResponse.success && uploadResponse.data) {
           messageType = selectedFile.type.startsWith('image/') ? MessageType.IMAGE : MessageType.FILE;
           fileName = uploadResponse.data;
@@ -167,7 +167,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   useEffect(() => {
     setIsUserOnline(onlineUsers.has(activeChatUser?.id || ''));
   }, [onlineUsers, activeChatUser]);
-  
+
   const renderMessage = (message: Message, index: number) => {
     const isOwn = message.sender.id === currentUser?.id;
     const showDate = index === 0 ||
@@ -184,14 +184,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
         <div className={cn('flex mb-4 group', isOwn ? 'justify-end' : 'justify-start')}>
           <div className={cn(
-            'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-2xl relative shadow-sm transition-all',
+            'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-lg relative shadow-sm transition-all',
             isOwn
               ? 'bg-green-600 text-white rounded-tr-none ring-1 ring-inset ring-green-500'
               : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none'
           )}>
             {message.replyTo && (
               <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-green-700 border-green-400 text-green-100' : 'bg-gray-50 border-gray-300 text-gray-600')}>
-                <div className="font-medium">{message.replyTo.sender.names}</div>
+                <div className="font-medium">{message.replyTo.sender?.names ?? 'Unknown'}</div>
                 <div className="truncate">{message.replyTo.content}</div>
               </div>
             )}
@@ -232,10 +232,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
                 {message.type === MessageType.PRODUCT && message.productRef && (
                   <div className="mb-2">
-                    <ProductReference 
-                      productId={message.productRef} 
+                    <ProductReference
+                      productId={message.productRef}
                       messageContent={message.content}
-                      compact={false} 
+                      compact={false}
                     />
                   </div>
                 )}
@@ -303,7 +303,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div className="relative">
-            <div className="w-10 h-10 bg-linear-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center shadow-sm">
+            <div className="w-10 h-10 bg-linear-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-sm font-bold text-gray-600">
                 {activeChatUser.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
               </span>
@@ -331,7 +331,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             {filteredMessages.map((message, index) => renderMessage(message, index))}
             {activeChatUser && typingUsers.has(activeChatUser.id) && (
               <div className="flex justify-start animate-in fade-in slide-in-from-left-2 duration-300">
-                <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm">
+                <div className="bg-white border border-gray-100 rounded-lg rounded-tl-none px-4 py-3 shadow-sm">
                   <div className="flex space-x-1.5">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
@@ -390,7 +390,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
               }}
               placeholder="Type your message..."
               rows={1}
-              className="w-full resize-none bg-gray-50 border-none rounded-2xl px-4 py-3 focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-gray-800 placeholder:text-gray-400"
+              className="w-full resize-none bg-gray-50 border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-gray-800 placeholder:text-gray-400"
               style={{ minHeight: '46px', maxHeight: '150px' }}
             />
           </div>
@@ -398,7 +398,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             onClick={handleSendMessage}
             disabled={!messageText.trim() && !selectedFile}
             className={cn(
-              'p-3 rounded-2xl transition-all active:scale-95 shadow-md shrink-0 mb-0.5',
+              'p-3 rounded-lg transition-all active:scale-95 shadow-md shrink-0 mb-0.5',
               messageText.trim() || selectedFile
                 ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-200'
                 : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'

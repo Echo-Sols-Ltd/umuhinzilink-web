@@ -35,12 +35,12 @@ function ContactComponent() {
           activeItem='Contact'
         />
         {/* Main Content */}
-        <main className="flex-1 p-8 overflow-auto h-full">
+        <main className="flex-1 p-6 overflow-auto h-full">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Contact Us</h1>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Contact Info */}
-            <div className="bg-white rounded-xl shadow-sm border p-6 space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-semibold text-gray-800 mb-2">Get in Touch</h2>
                 <p className="text-gray-600">
@@ -64,7 +64,7 @@ function ContactComponent() {
             </div>
 
             {/* Contact Form */}
-            <form className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
+            <form className="bg-white rounded-lg shadow-sm border p-6 space-y-4">
               <h2 className="text-lg font-semibold text-gray-800 mb-2">Send us a Message</h2>
 
               <div>

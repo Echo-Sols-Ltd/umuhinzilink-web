@@ -44,7 +44,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     if (!isOpen || !order) return null;
 
     const status = (order.status as string)?.toUpperCase();
-    const isActionable = true;
+    const isActionable = status === 'PENDING';
     const buyer = order.buyer;
     const product = order.product;
 
@@ -60,7 +60,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
                 {/* Header */}
                 <div className="p-6 border-b flex items-center justify-between bg-gray-50/50">
                     <div>
@@ -87,14 +87,22 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-8">
                     {/* Order Status Tracker */}
-                    <div className="bg-white rounded-xl border p-6 shadow-sm">
+                    <div className="bg-white rounded-lg border p-6 shadow-sm">
                         <h3 className="text-sm font-semibold text-gray-900 mb-6 flex items-center gap-2">
                             <Truck className="w-4 h-4 text-green-600" />
                             Order Status
                         </h3>
                         <OrderStatusTracker
                             orderStatus={order.status}
-                            deliveryStatus={order.delivery?.status as any}
+                            deliveryStatus={(() => {
+                                if (!order.delivery?.trackingSteps || order.delivery.trackingSteps.length === 0) {
+                                    return undefined;
+                                }
+                                const latestCompletedStep = order.delivery.trackingSteps
+                                    .filter(step => step.completed)
+                                    .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
+                                return latestCompletedStep?.status;
+                            })()}
                             createdAt={order.createdAt}
                             updatedAt={order.updatedAt}
                         />
@@ -107,7 +115,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <User className="w-4 h-4 text-green-600" />
                                 Customer Information
                             </h3>
-                            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                                 <p className="text-sm font-medium text-gray-900">{buyer.names || 'N/A'}</p>
                                 <div className="flex items-center gap-2 text-xs text-gray-600">
                                     <Mail className="w-3.5 h-3.5" />
@@ -135,7 +143,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <Package className="w-4 h-4 text-green-600" />
                                 Product Details
                             </h3>
-                            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                                 <p className="text-sm font-medium text-gray-900">{product.name}</p>
                                 <div className="flex justify-between text-xs text-gray-600">
                                     <span>Quantity:</span>
@@ -160,7 +168,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <CreditCard className="w-4 h-4 text-green-600" />
                                 Payment Method
                             </h3>
-                            <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="bg-gray-50 rounded-lg p-4">
                                 <p className="text-sm text-gray-700">{order.paymentMethod.replace('_', ' ')}</p>
                                 <p className="text-xs mt-1 font-medium text-gray-500">
                                     Status: {order.isPaid ? 'PAID' : 'UNPAID'}
@@ -172,24 +180,26 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <Calendar className="w-4 h-4 text-green-600" />
                                 Order Date
                             </h3>
-                            <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="bg-gray-50 rounded-lg p-4">
                                 <p className="text-sm text-gray-700">{formatDate(order.createdAt)}</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Delivery Tracking Section */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-green-600" />
-                            Delivery Tracking
-                        </h3>
-                        <DeliveryTracker
-                            delivery={order.delivery}
-                            onUpdateStatus={(status) => onUpdateStatus?.(order.id, status)}
-                            isLoading={loading}
-                        />
-                    </div>
+                    {status !== 'PENDING' && status !== 'CANCELLED' && (
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                <Truck className="w-4 h-4 text-green-600" />
+                                Delivery Tracking
+                            </h3>
+                            <DeliveryTracker
+                                delivery={order.delivery}
+                                onUpdateStatus={(status) => onUpdateStatus?.(order.id, status)}
+                                isLoading={loading}
+                            />
+                        </div>
+                    )}
 
                 </div>
 

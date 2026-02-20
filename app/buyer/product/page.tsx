@@ -43,6 +43,8 @@ import { ResponsiveLayout, MobileTable, TouchOptimizedButton } from '@/component
 import { ProgressiveImage } from '@/components/ui/progressive-loading';
 import { useIsMobile } from '@/hooks/use-mobile';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
+import { useMessages } from '@/contexts/MessageContext';
+import { useUser } from '@/contexts/UserContext';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -56,6 +58,7 @@ function ProductsPageComponent() {
   const { toast } = useToast();
   const { user: buyer } = useAuth();
   const { handleUserClick, handleSendMessage } = useChat();
+  const { chatUsers } = useUser()
   const { buyerProducts, loading: productsLoading } = useProduct();
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<FarmerProduct | null>(null);
@@ -76,7 +79,7 @@ function ProductsPageComponent() {
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let filtered = buyerProducts || [];
-    
+
     // Search filter
     if (search) {
       filtered = filtered.filter(product =>
@@ -92,7 +95,7 @@ function ProductsPageComponent() {
 
     // Location filter
     if (locationFilter) {
-      filtered = filtered.filter(product => 
+      filtered = filtered.filter(product =>
         product.owner?.address?.district?.toLowerCase().includes(locationFilter.toLowerCase())
       );
     }
@@ -154,9 +157,10 @@ function ProductsPageComponent() {
     try {
       // Create a user object for farmer
       const farmerUser = product.owner;
+      const chatUser = chatUsers.find(user => user.id === farmerUser.id);
 
       // Switch to chat with the farmer
-      handleUserClick(farmerUser);
+      handleUserClick(chatUser!);
 
       // Send product reference message
       await handleSendMessage(
@@ -171,9 +175,9 @@ function ProductsPageComponent() {
         description: `You can now chat with ${product.owner.names} about ${product.name}`,
         variant: "success"
       });
-      
+
       // Navigate to chat page with specific user ID
-      router.push(`/buyer/message/${farmerUser.id}`);
+      router.push(`/chat/${farmerUser.id}`);
     } catch (error) {
       console.error('Failed to contact farmer:', error);
       toast({
@@ -193,7 +197,7 @@ function ProductsPageComponent() {
     setMaxPrice(undefined);
     setCurrentPage(1);
   };
- 
+
   const handleSearch = () => {
     setCurrentPage(1);
   };

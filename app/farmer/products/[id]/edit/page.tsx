@@ -171,7 +171,7 @@ function EditProduct() {
       <Sidebar userType={UserType.FARMER} activeItem='Products' />
 
       <main className="flex-1 overflow-y-auto">
-        <div className="bg-white border-b h-16 flex items-center px-8">
+        <div className="bg-white border-b h-16 flex items-center px-6">
           <Link
             href="/farmer/products"
             className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
@@ -182,7 +182,7 @@ function EditProduct() {
           <h1 className="text-xl font-semibold text-gray-900">Edit Product</h1>
         </div>
 
-        <div className="p-8">
+        <div className="p-6">
           <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
             {/* Product Image */}
             <div>

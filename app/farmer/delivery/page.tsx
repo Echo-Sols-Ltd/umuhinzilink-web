@@ -17,7 +17,7 @@ function FarmerDeliveryPage() {
   const { user } = useAuth();
   const { farmerOrders, updateFarmerOrderStatus } = useOrder();
   const { toast } = useToast();
-  
+
   const [orders, setOrders] = useState<FarmerOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,7 +35,7 @@ function FarmerDeliveryPage() {
     setUpdatingStatus(orderId);
     try {
       await updateFarmerOrderStatus(orderId, newStatus);
-      
+
       toast({
         title: "Delivery Status Updated",
         description: `Order delivery status has been updated successfully.`,
@@ -59,13 +59,13 @@ function FarmerDeliveryPage() {
 
   // Filter orders based on search and status
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.buyer.names.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -98,10 +98,10 @@ function FarmerDeliveryPage() {
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar userType={UserType.FARMER} activeItem='Orders' />
-      
+
       <main className="flex-1 overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-8 shadow-sm">
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div className="flex items-center space-x-4">
             <button
               onClick={handleBack}
@@ -134,7 +134,7 @@ function FarmerDeliveryPage() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <div className="flex items-center space-x-2">
                   <Filter className="w-4 h-4 text-gray-400" />
@@ -157,12 +157,12 @@ function FarmerDeliveryPage() {
           {/* Orders Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredOrders.length === 0 ? (
-              <div className="col-span-full bg-white rounded-lg p-8 text-center border border-gray-200">
+              <div className="col-span-full bg-white rounded-lg p-6 text-center border border-gray-200">
                 <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No Orders Found</h3>
                 <p className="text-gray-600">
-                  {searchTerm || statusFilter !== 'all' 
-                    ? 'No orders match your filters.' 
+                  {searchTerm || statusFilter !== 'all'
+                    ? 'No orders match your filters.'
                     : 'No orders available.'}
                 </p>
               </div>
@@ -213,17 +213,28 @@ function FarmerDeliveryPage() {
                     </div>
 
                     {/* Delivery Tracking */}
-                    <div className="border-t border-gray-100 pt-4">
-                      <h4 className="font-medium text-gray-900 mb-4 flex items-center">
-                        <Calendar className="w-4 h-4 mr-2 text-green-600" />
-                        Delivery Tracking
-                      </h4>
-                      <DeliveryTracker
-                        delivery={order.delivery}
-                        onUpdateStatus={(status) => handleUpdateDeliveryStatus(order.id, status)}
-                        isLoading={updatingStatus === order.id}
-                      />
-                    </div>
+                    {order.status !== 'PENDING' && order.status !== 'CANCELLED' ? (
+                      <div className="border-t border-gray-100 pt-4">
+                        <h4 className="font-medium text-gray-900 mb-4 flex items-center">
+                          <Calendar className="w-4 h-4 mr-2 text-green-600" />
+                          Delivery Tracking
+                        </h4>
+                        <DeliveryTracker
+                          delivery={order.delivery}
+                          onUpdateStatus={(status) => handleUpdateDeliveryStatus(order.id, status)}
+                          isLoading={updatingStatus === order.id}
+                        />
+                      </div>
+                    ) : (
+                      <div className="border-t border-gray-100 pt-4">
+                        <div className="bg-gray-50 rounded-lg p-4 text-center">
+                          <Calendar className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600">
+                            {order.status === 'CANCELLED' ? 'Delivery is cancelled' : 'Waiting for order approval'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))

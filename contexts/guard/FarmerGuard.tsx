@@ -1,37 +1,43 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useFarmer } from '@/contexts/FarmerContext';
+import React, { useEffect } from 'react';
 import { useAuth } from '../AuthContext';
+import { useRouter } from 'next/navigation';
 import { UserType } from '@/types';
+import { Loader2 } from 'lucide-react';
 
 const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, loading } = useAuth()
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        if (loading || !user) return
+    if (loading) return; // Still initializing — wait
 
-        if (user.role !== UserType.FARMER) {
-          window.location.href = '/unauthorized';
-          return;
-        }
-      } catch (error) {
-        console.error('Authorization error:', error);
-        window.location.href = '/unauthorized';
-      }
-    };
+    if (!user) {
+      router.replace('/auth/farmer');
+      return;
+    }
 
-    checkAuth();
-  }, [user, loading]);
+    if (user.role !== UserType.FARMER) {
+      router.replace('/unauthorized');
+    }
+  }, [user, loading, router]);
 
+  // Show spinner while auth is loading
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+          <p className="text-sm text-gray-500 font-medium">Loading your session...</p>
+        </div>
       </div>
     );
+  }
+
+  // Don't render children until we know user is the right role
+  if (!user || user.role !== UserType.FARMER) {
+    return null;
   }
 
   return <>{children}</>;

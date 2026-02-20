@@ -286,7 +286,7 @@ export function EnhancedDashboard({
 
   if (loading && !metrics) {
     return (
-      <div className="flex items-center justify-center p-8">
+      <div className="flex items-center justify-center p-6">
         <RefreshCw className="w-8 h-8 animate-spin text-green-600" />
         <span className="ml-2 text-gray-600">Loading dashboard...</span>
       </div>
@@ -298,10 +298,10 @@ export function EnhancedDashboard({
       {/* Header Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h2>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Market Analytics</h2>
           {error && (
-            <Badge variant="destructive" className="text-xs">
-              Using cached data
+            <Badge variant="secondary" className="text-[10px] font-bold bg-amber-50 text-amber-600 border-none uppercase tracking-wider">
+              Offline Cache
             </Badge>
           )}
         </div>
@@ -322,16 +322,18 @@ export function EnhancedDashboard({
             size="sm"
             onClick={handleRefresh}
             disabled={loading}
+            className="rounded-lg border-gray-200"
           >
-            <RefreshCw className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            <RefreshCw className={`w-3.5 h-3.5 mr-2 ${loading ? 'animate-spin text-green-600' : ''}`} />
+            <span className="text-xs font-semibold">Sync</span>
           </Button>
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
+            className={`text-xs font-semibold ${autoRefresh ? 'text-green-600 bg-green-50' : 'text-gray-400'}`}
           >
-            Auto-refresh: {autoRefresh ? 'ON' : 'OFF'}
+            {autoRefresh ? 'Live Sync ON' : 'Sync Paused'}
           </Button>
         </div>
       </div>
@@ -339,18 +341,18 @@ export function EnhancedDashboard({
       {/* Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {metricCards.map((card, index) => (
-          <Card key={index}>
+          <Card key={index} className="border-gray-100 shadow-sm rounded-2xl group hover:border-green-100 transition-colors">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{card.title}</p>
-                  <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{card.title}</p>
+                  <p className="text-2xl font-bold text-gray-900 tracking-tight">{card.value}</p>
                   {card.description && (
-                    <p className="text-xs text-gray-500 mt-1">{card.description}</p>
+                    <p className="text-[10px] font-medium text-gray-400 mt-1 uppercase tracking-tighter">{card.description}</p>
                   )}
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                  {card.icon}
+                <div className="w-10 h-10 bg-gray-50/50 rounded-xl flex items-center justify-center text-green-600 group-hover:bg-green-50 transition-colors">
+                  {React.cloneElement(card.icon as React.ReactElement<any>, { className: 'w-5 h-5' })}
                 </div>
               </div>
             </CardContent>

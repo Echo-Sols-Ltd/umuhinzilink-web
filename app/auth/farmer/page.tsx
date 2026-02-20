@@ -281,7 +281,7 @@ export default function FarmerSignUp() {
     <div className="w-full h-screen bg-gray-50 flex  items-center">
 
 
-      <div className="w-full h-full bg-white shadow-lg rounded-xl p-6 sm:p-8 overflow-scroll z-20 relative">
+      <div className="w-full h-full bg-white shadow-lg rounded-lg p-6 sm:p-6 overflow-scroll z-20 relative">
         <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
           Create Your Farmer Account
         </h1>

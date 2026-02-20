@@ -21,7 +21,6 @@ const UserContext = createContext<UserContextType | null>(null);
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-
   const { toast } = useToast();
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([])
   const [users, setUsers] = useState<User[]>([]);

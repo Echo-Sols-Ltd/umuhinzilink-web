@@ -19,7 +19,7 @@ import {
   X,
 } from 'lucide-react';
 import Link from 'next/link';
-import { toast } from '@/components/ui/use-toast'; 
+import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useProduct } from '@/contexts/ProductContext';
@@ -82,11 +82,14 @@ function BuyerDashboardComponent() {
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-y-auto">
           {/* Green Welcome Bar */}
-          <div className="bg-green-600 rounded-lg mt-0 text-white px-6 py-8 shadow-sm mb-4">
-            <h1 className="text-lg font-semibold mb-2">Welcome back, {buyerName}!</h1>
-            <p className="text-sm opacity-90">
-              Manage your agricultural purchases and connect with farmers across Rwanda
-            </p>
+          <div className="bg-green-600 rounded-2xl mt-0 text-white px-8 py-8 shadow-lg shadow-green-100 mb-6 relative overflow-hidden">
+            <div className="relative z-10">
+              <h1 className="text-2xl font-bold mb-1 tracking-tight text-white">Welcome back, {buyerName}!</h1>
+              <p className="text-sm text-green-50 font-medium">
+                Manage your agricultural purchases and connect with farmers across Rwanda
+              </p>
+            </div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
           </div>
           {/* Enhanced Analytics Dashboard */}
           <EnhancedDashboard
@@ -125,37 +128,34 @@ function BuyerDashboardComponent() {
                 recommendedProducts.map(product => <ProductCard
                   key={product.id}
                   product={product}
-                  onSelect={() => {}}
-                  onPurchase={() => {}}
-                  onContact={() => {}}
+                  onSelect={() => { }}
+                  onPurchase={() => { }}
                 />)}
             </div>
           </div>
 
           {/* Recent Orders */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="font-semibold text-gray-600">Recent Orders</h2>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b border-gray-50 bg-white">
+              <h2 className="text-xl font-bold text-gray-900">Recent Orders</h2>
               <button
                 onClick={() => setShowOrderManagement(true)}
-                className="text-green-600 text-sm hover:underline"
+                className="text-green-600 text-xs font-bold uppercase tracking-wider hover:text-green-700 transition-colors"
               >
                 Manage All Orders
               </button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ID</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">FARMER</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">LOCATION</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">ORDERED</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">PRODUCT</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">QTY</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">TOTAL</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">STATUS</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">DELIVERY</th>
+                <thead className="bg-gray-50/50 border-b border-gray-100">
+                  <tr>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">ID</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">FARMER / LOCATION</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">ORDERED</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">PRODUCT / QTY</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">TOTAL</th>
+                    <th className="text-center py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">STATUS</th>
+                    <th className="text-right py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">DELIVERY</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -229,8 +229,15 @@ function BuyerDashboardComponent() {
                             </span>
                           </td>
                           <td className="py-4 text-gray-600">
-                            {order.delivery?.status
-                              ? `${order.delivery.status} · ${formatDate(order.delivery.estimatedDelivery)}`
+                            {order.delivery?.trackingSteps && order.delivery.trackingSteps.length > 0
+                              ? (() => {
+                                const latestCompletedStep = order.delivery.trackingSteps
+                                  .filter(step => step.completed)
+                                  .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
+                                return latestCompletedStep
+                                  ? `${latestCompletedStep.status} · ${formatDate(latestCompletedStep.completedAt)}`
+                                  : 'Processing';
+                              })()
                               : '—'}
                           </td>
                         </tr>

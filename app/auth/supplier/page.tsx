@@ -246,7 +246,7 @@ const {toast}=useToast()
 
 return (
   <div className="w-full h-screen bg-gray-50 flex items-center">
-    <div className="w-full overflow-scroll h-full bg-white rounded-xl p-6 sm:p-8 z-20 relative py-20">
+    <div className="w-full overflow-scroll h-full bg-white rounded-lg p-6 sm:p-6 z-20 relative py-20">
       <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
         Create Your Supplier Account
       </h1>

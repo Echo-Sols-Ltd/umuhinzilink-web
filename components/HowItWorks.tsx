@@ -38,7 +38,7 @@ const HowItWorks: FC = () => {
           Simple steps to transform your farming business
         </p>
 
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map(step => (
             <div key={step.number} className="text-center">
               <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-lg font-bold mx-auto">

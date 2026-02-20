@@ -9,6 +9,7 @@ import ConversationSidebar from '@/components/messaging/ConversationSidebar';
 import ChatInterface from '@/components/messaging/ChatInterface';
 import { useMessages } from '@/contexts/MessageContext';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -18,25 +19,15 @@ const Logo = () => (
 );
 
 function GlobalChatListComponent() {
-  const { user } = useAuth();
+  const { user ,loading} = useAuth();
   const router = useRouter();
   const { activeChatUser } = useMessages();
 
-  // Redirect if not authenticated
-  React.useEffect(() => {
-    if (!user) {
-      router.push('/auth/login');
-      return;
-    }
-  }, [user, router]);
 
-  if (!user) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
-          <p className="text-gray-600">Please log in to access chat.</p>
-        </div>
+      <Loader2 className='text-green-600 animate-spin' size={50}/>
       </div>
     );
   }

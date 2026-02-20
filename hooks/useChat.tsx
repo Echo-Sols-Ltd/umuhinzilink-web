@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import { User, Message, Reaction, MessageType } from '@/types'
 import { ChatUser } from '@/types/chat'
 import { useAuth } from "@/contexts/AuthContext"
@@ -6,7 +6,7 @@ import { useMessages } from "@/contexts/MessageContext"
 import { useToast } from '@/components/ui/use-toast'
 
 // Helper function to convert User to ChatUser
-const userToChatUser = (user: User): ChatUser => ({
+export const userToChatUser = (user: User): ChatUser => ({
     id: user.id,
     names: user.names,
     email: user.email,
@@ -39,9 +39,19 @@ export const useChat = () => {
     const [showUserInfo, setShowUserInfo] = useState(false)
     const [replyTo, setReplyTo] = useState<Message | null>(null)
 
-    const handleSendMessage = useCallback(async (content: string, type: MessageType = MessageType.TEXT, fileName?: string, productRef?: any) => {
+
+    const handleSendMessage = useCallback(async (
+        content: string,
+        type: MessageType = MessageType.TEXT,
+        fileName?: string,
+        productRef?: any,
+        overrideReceiver?: { id: string } // allows bypassing stale activeChatUser closure
+    ) => {
+        // Use overrideReceiver (fresh value from caller) or fall back to context state
+        const receiver = overrideReceiver ?? activeChatUser;
+
         // Business logic validation
-        if (!currentUser?.id || !activeChatUser) {
+        if (!currentUser?.id || !receiver) {
             toast({
                 title: "Error",
                 description: "Cannot send message - user or chat not selected",
@@ -49,7 +59,7 @@ export const useChat = () => {
             });
             return;
         }
-        
+
         if (!content.trim() && !fileName) {
             toast({
                 title: "Error",
@@ -58,25 +68,25 @@ export const useChat = () => {
             });
             return;
         }
-        
+
         // Business logic: sanitization
         const sanitizedContent = content.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-       
+
         try {
             // Create the request object
             const messageRequest = {
                 content: sanitizedContent,
-                receiverId: activeChatUser.id,
+                receiverId: receiver.id,
                 senderId: currentUser.id,
                 type,
                 fileName,
                 replyToId: replyTo?.id,
                 productRef
             };
-            
+
             // Send through context
             sendMessageRequest(messageRequest);
-            
+
             // Business logic: clear reply state after sending
             setReplyTo(null);
         } catch (error) {
@@ -89,11 +99,10 @@ export const useChat = () => {
         }
     }, [currentUser, activeChatUser, replyTo, sendMessageRequest, toast])
 
-    const handleUserClick = useCallback(async (clickedUser: User) => {
-        // Business logic: switch chat and clear reply state
-        setActiveChatUser(userToChatUser(clickedUser));
+    const handleUserClick = useCallback(async (clickedUser: ChatUser) => {
+        setActiveChatUser(clickedUser);
         setReplyTo(null);
-        
+
         // Load messages for new chat
         try {
             await loadMessages(clickedUser.id);
@@ -139,13 +148,13 @@ export const useChat = () => {
             });
             return;
         }
-        
+
         // Create reaction request
         const reactionRequest = {
             messageId,
             reactions: [{ userId: currentUser.id, emoji }]
         };
-        
+
         // Send through context
         reactToMessageRequest(reactionRequest);
     }, [currentUser, reactToMessageRequest, toast])
@@ -160,14 +169,14 @@ export const useChat = () => {
             });
             return;
         }
-        
+
         try {
             // Create edit request
             const editRequest = {
                 id: messageId,
                 newMessage: newContent.trim()
             };
-            
+
             // Send through context
             editMessageRequest(editRequest);
         } catch (error) {
@@ -185,7 +194,7 @@ export const useChat = () => {
         if (!window.confirm('Are you sure you want to delete this message?')) {
             return;
         }
-        
+
         try {
             // Send through context
             deleteMessageRequest(messageId);
@@ -202,14 +211,14 @@ export const useChat = () => {
     const handleTyping = useCallback((isTyping: boolean) => {
         // Business logic validation
         if (!currentUser?.id || !activeChatUser?.id) return;
-        
+
         // Create typing request
         const typingRequest = {
             userId: currentUser.id,
             receiverId: activeChatUser.id,
             isTyping
         };
-        
+
         // Send through context
         sendTypingRequest(typingRequest);
     }, [currentUser, activeChatUser, sendTypingRequest])

@@ -105,7 +105,7 @@ const ModalToastItem: React.FC<ModalToastItemProps> = ({ toast, onRemove }) => {
     >
       <div
         className={cn(
-          'relative w-full max-w-md transform rounded-xl border p-6 transition-all duration-300 ease-out',
+          'relative w-full max-w-md transform rounded-lg border p-6 transition-all duration-300 ease-out',
           styles.container,
           isVisible && !isExiting
             ? 'scale-100 translate-y-0'

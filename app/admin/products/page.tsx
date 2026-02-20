@@ -34,12 +34,12 @@ function ProductManagement() {
           <h1 className="text-xl font-bold text-gray-800">Product Management</h1>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-8">
-          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+        <main className="flex-1 bg-gray-50 p-6">
+          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
             {/* Farmer Products Card */}
-            <div className="bg-white rounded-xl shadow-sm border p-8 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-6">
-                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center">
                   <Sprout className="w-8 h-8 text-green-600" />
                 </div>
                 <span className="text-3xl font-bold text-gray-900">{farmerProducts.length}</span>
@@ -57,9 +57,9 @@ function ProductManagement() {
             </div>
 
             {/* Supplier Products Card */}
-            <div className="bg-white rounded-xl shadow-sm border p-8 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-6">
-                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Package className="w-8 h-8 text-blue-600" />
                 </div>
                 <span className="text-3xl font-bold text-gray-900">{supplierProducts.length}</span>

@@ -166,7 +166,7 @@ function RevenueAnalytics() {
       <div className="flex-1 flex flex-col overflow-auto pb-20">
         {/* Header */}
         <header className="bg-white shadow-sm border-b">
-          <div className="px-4 sm:px-6 lg:px-8">
+          <div className="px-4 sm:px-6 lg:px-6">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-4">
                 <Link
@@ -204,7 +204,7 @@ function RevenueAnalytics() {
             {statCards.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <div key={index} className="bg-white rounded-xl shadow-sm p-6 border">
+                <div key={index} className="bg-white rounded-lg shadow-sm p-6 border">
                   <div className="flex items-center justify-between mb-4">
                     <div
                       className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
@@ -235,7 +235,7 @@ function RevenueAnalytics() {
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Revenue Chart */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
+            <div className="bg-white rounded-lg shadow-sm p-6 border">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h2>
               <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
                 <div className="text-center">
@@ -247,7 +247,7 @@ function RevenueAnalytics() {
             </div>
 
             {/* Orders Chart */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
+            <div className="bg-white rounded-lg shadow-sm p-6 border">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Orders Trend</h2>
               <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
                 <div className="text-center">
@@ -262,7 +262,7 @@ function RevenueAnalytics() {
           {/* Top Products and Farmers */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Top Products */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
+            <div className="bg-white rounded-lg shadow-sm p-6 border">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Products</h2>
               <div className="space-y-4">
                 {analytics.topProducts.map((product, index) => (
@@ -289,7 +289,7 @@ function RevenueAnalytics() {
             </div>
 
             {/* Top Farmers */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
+            <div className="bg-white rounded-lg shadow-sm p-6 border">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Farmers</h2>
               <div className="space-y-4">
                 {analytics.topFarmers.map((farmer, index) => (
@@ -317,7 +317,7 @@ function RevenueAnalytics() {
           </div>
 
           {/* Monthly Data Table */}
-          <div className="bg-white rounded-xl shadow-sm p-6 border mt-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border mt-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Monthly Performance</h2>
             <div className="overflow-x-auto">
               <table className="w-full">

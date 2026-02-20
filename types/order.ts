@@ -9,12 +9,11 @@ export interface DeliveryStep {
 }
 
 export interface Delivery {
+  id: string;
   isCanceled: boolean;
   deliveryStartDate: string;
   deliveredDate: string;
   trackingSteps: DeliveryStep[];
-  status?: string;
-  estimatedDelivery?: string;
 }
 
 export interface FarmerOrder {

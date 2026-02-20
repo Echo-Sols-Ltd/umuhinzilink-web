@@ -1,234 +1,255 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Search,
-  Plus,
   MessageCircle,
   Users,
-  Clock,
   Check,
   CheckCheck,
-  X
+  X,
 } from 'lucide-react';
-import { User } from '@/types/user';
-import { UserType } from '@/types/enums';
 import { useMessages } from '@/contexts/MessageContext';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { ChatUser } from '@/types/chat';
-import { chatService } from '@/services/chat';
 
 export interface ConversationSidebarProps {
   className?: string;
   onNewConversation?: () => void;
 }
 
+// ─── Time formatter ───────────────────────────────────────────────────────────
+const formatTime = (timestamp: string): string => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffH = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+
+  if (diffH < 24) return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  if (diffH < 168) return date.toLocaleDateString('en-US', { weekday: 'short' });
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+// ─── Initials helper ──────────────────────────────────────────────────────────
+const getInitials = (name: string): string =>
+  name.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+// ─── Avatar colour from name (deterministic) ─────────────────────────────────
+const AVATAR_PALETTES = [
+  'from-violet-500 to-purple-700',
+  'from-sky-500 to-blue-700',
+  'from-emerald-500 to-green-700',
+  'from-amber-500 to-orange-600',
+  'from-rose-500 to-pink-700',
+  'from-teal-500 to-cyan-700',
+];
+const avatarGradient = (name: string) =>
+  AVATAR_PALETTES[Math.abs(name.charCodeAt(0) + (name.charCodeAt(1) || 0)) % AVATAR_PALETTES.length];
+
+// ─── Component ────────────────────────────────────────────────────────────────
 export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   className,
-  onNewConversation
+  onNewConversation,
 }) => {
   const {
     activeChatUser,
     setActiveChatUser,
     loadMessages,
     typingUsers,
-    onlineUsers
+    onlineUsers,
   } = useMessages();
 
   const { user: currentUser } = useAuth();
   const router = useRouter();
-  const {chatUsers } = useUser()
+  const { chatUsers } = useUser();
 
   const [searchTerm, setSearchTerm] = useState('');
 
+  // ── Derived data ─────────────────────────────────────────────────────────
+  const totalUnread = chatUsers.reduce((acc, u) => acc + u.unreadMessage, 0);
+  const onlineCount = onlineUsers.size;
 
+  const sorted = useMemo(() =>
+    [...chatUsers]
+      .filter(u => !searchTerm || u.names.toLowerCase().includes(searchTerm.toLowerCase()))
+      .sort((a, b) => {
+        const tA = a.lastMessage ? new Date(a.lastMessage.timestamp).getTime() : 0;
+        const tB = b.lastMessage ? new Date(b.lastMessage.timestamp).getTime() : 0;
+        return tB - tA;
+      }),
+    [chatUsers, searchTerm]
+  );
 
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-
-    if (diffInHours < 24) {
-      return date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } else if (diffInHours < 168) { // 7 days
-      return date.toLocaleDateString('en-US', { weekday: 'short' });
-    } else {
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
-      });
-    }
-  };
-
+  // ── Handlers ─────────────────────────────────────────────────────────────
   const onUserClick = async (user: ChatUser) => {
-    // Navigate to the specific chat URL
-    if (currentUser) {
-      const userNav = currentUser.role.toLowerCase()
-      router.push(`/${userNav}/message/${user.id}`);
-    }
-
-    // Set active chat user and load messages
+    router.push(`/chat/${user.id}`);
     setActiveChatUser(user);
     await loadMessages(user.id);
-
-
   };
-
-  const isUserOnline = (userId: string) => {
-    return onlineUsers.has(userId);
-  };
-
-  const totalUnreadCount = chatUsers.reduce((acc, user) => acc + user.unreadMessage, 0);
 
   return (
-    <>
-      <div className={cn('flex flex-col h-full bg-white border-r border-gray-200', className)}>
-        {/* Header */}
-        <div className="p-4 border-b border-gray-100 bg-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2.5">
-              <div className="bg-green-100 p-2 rounded-xl">
-                <MessageCircle className="w-5 h-5 text-green-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 tracking-tight">Messages</h2>
-              {totalUnreadCount > 0 && (
-                <span className="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm shadow-green-200">
-                  {totalUnreadCount}
-                </span>
-              )}
+    <div className={cn('flex flex-col h-full bg-white', className)}>
+
+      {/* ── Header ───────────────────────────────────────────── */}
+      <div className="px-4 pt-5 pb-4 border-b border-gray-100">
+        <div className="flex items-center justify-between mb-0.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+              <MessageCircle className="w-4 h-4 text-green-600" />
             </div>
+            <h2 className="text-lg font-bold text-gray-900 tracking-tight">Messages</h2>
+            {totalUnread > 0 && (
+              <span className="bg-green-600 text-white text-[10px] font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-sm shadow-green-200">
+                {totalUnread > 99 ? '99+' : totalUnread}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Search */}
-        <div className="p-4 border-b border-gray-50">
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 transition-colors group-focus-within:text-green-500" />
-            <input
-              type="text"
-              placeholder="Search conversations..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-sm placeholder:text-gray-400"
-            />
-          </div>
+        {/* Online pill */}
+        <div className="flex items-center gap-1.5 mt-2.5">
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-xs text-gray-500 font-medium">
+            {onlineCount} {onlineCount === 1 ? 'person' : 'people'} online
+          </span>
         </div>
+      </div>
 
-        {/* Users List */}
-        <div className="flex-1 overflow-y-auto">
-          {chatUsers.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500 p-4">
-              <Users className="w-12 h-12 text-gray-300 mb-4" />
-              <h3 className="text-lg font-medium mb-2">No users found</h3>
-              <p className="text-sm text-center">
-                Try searching for someone else
+      {/* ── Search ───────────────────────────────────────────── */}
+      <div className="px-4 py-3 border-b border-gray-50">
+        <div className="relative group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-green-500 transition-colors" />
+          <input
+            type="text"
+            placeholder="Search conversations…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-9 py-2 rounded-lg bg-gray-50 border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-all"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── List ─────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto">
+        {sorted.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center">
+              <Users className="w-7 h-7 text-gray-300" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-700">
+                {searchTerm ? 'No results found' : 'No conversations yet'}
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {searchTerm ? 'Try a different name' : 'Start chatting with someone'}
               </p>
             </div>
-          ) : (
-            <div className="divide-y divide-gray-200">
-              {[...chatUsers].sort((a, b) => {
-                const lastA = a.lastMessage;
-                const lastB = b.lastMessage;
-                const timeA = lastA ? new Date(lastA.timestamp).getTime() : 0;
-                const timeB = lastB ? new Date(lastB.timestamp).getTime() : 0;
-                return timeB - timeA;
-              }).map((user) => {
-                const isActive = activeChatUser?.id === user.id;
+          </div>
+        ) : (
+          <ul>
+            {sorted.map((user) => {
+              const isActive = activeChatUser?.id === user.id;
+              const isOnline = onlineUsers.has(user.id);
+              const isTyping = typingUsers.has(user.id);
+              const hasUnread = user.unreadMessage > 0;
+              const initials = getInitials(user.names);
+              const gradient = avatarGradient(user.names);
+              const ownLast = user.lastMessage?.sender.id === currentUser?.id;
 
-                return (
-                  <div
-                    key={user.id}
+              return (
+                <li key={user.id}>
+                  <button
                     onClick={() => onUserClick(user)}
                     className={cn(
-                      'p-4 cursor-pointer hover:bg-gray-50/80 transition-all border-l-4 border-transparent',
-                      isActive && 'bg-green-50/50 border-green-600'
+                      'w-full text-left px-4 py-3.5 flex items-center gap-3 transition-all duration-150',
+                      'border-l-2',
+                      isActive
+                        ? 'bg-green-50 border-green-500'
+                        : 'border-transparent hover:bg-gray-50/80'
                     )}
                   >
-                    <div className="flex items-center space-x-3">
-                      {/* Avatar */}
-                      <div className="relative shrink-0">
-                        <div className="w-12 h-12 bg-linear-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-sm">
-                          <span className="text-sm font-bold text-gray-600">
-                            {user.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
+                    {/* Avatar */}
+                    <div className="relative shrink-0">
+                      <div className={cn(
+                        'w-11 h-11 rounded-xl flex items-center justify-center',
+                        'bg-gradient-to-br shadow-sm text-white text-sm font-bold',
+                        gradient
+                      )}>
+                        {initials}
+                      </div>
+                      {isOnline && (
+                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      {/* Row 1: name + time */}
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={cn(
+                          'text-sm truncate',
+                          hasUnread ? 'font-bold text-gray-900' : 'font-medium text-gray-700'
+                        )}>
+                          {user.names}
+                        </span>
+                        {user.lastMessage && (
+                          <span className={cn(
+                            'text-[11px] shrink-0',
+                            hasUnread ? 'text-green-600 font-semibold' : 'text-gray-400'
+                          )}>
+                            {formatTime(user.lastMessage.timestamp)}
                           </span>
-                        </div>
-                        {isUserOnline(user.id) && (
-                          <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>
                         )}
                       </div>
 
-                      {/* User Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h3 className={cn(
-                            'text-sm font-medium truncate',
-                            user.unreadMessage > 0 ? 'text-gray-900' : 'text-gray-700'
-                          )}>
-                            {user.names}
-                          </h3>
-                          <div className="flex items-center space-x-1">
-                            {user.lastMessage && (
-                              <span className="text-xs text-gray-500">
-                                {formatTime(user.lastMessage.timestamp)}
-                              </span>
-                            )}
-                            {user.unreadMessage > 0 && (
-                              <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full min-w-[20px] text-center">
-                                {user.unreadMessage}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between mt-1">
-                          <p className={cn(
-                            'text-sm truncate',
-                            (user.unreadMessage > 0 || typingUsers.has(user.id)) ? 'text-green-600 font-medium' : 'text-gray-500'
-                          )}>
-                            {typingUsers.has(user.id) ? (
-                              'typing...'
-                            ) : (
-                              user.lastMessage?.content || 'Say Hey'
-                            )}
-                          </p>
-
-                          {/* Message status for own messages */}
-                          {user.lastMessage && user.lastMessage.sender.id === currentUser?.id && (
-                            <div className="flex items-center ml-2">
-                              {user.lastMessage.isRead ? <CheckCheck className="w-3 h-3 text-blue-500" /> : <Check className="w-3 h-3 text-gray-400" />}
-                            </div>
+                      {/* Row 2: preview + badges */}
+                      <div className="flex items-center justify-between gap-2 mt-0.5">
+                        <p className={cn(
+                          'text-[12px] truncate flex items-center gap-1',
+                          isTyping ? 'text-green-500 font-medium italic' :
+                            hasUnread ? 'text-gray-700 font-medium' : 'text-gray-400'
+                        )}>
+                          {/* Read receipt for own last message */}
+                          {!isTyping && ownLast && (
+                            <span className="shrink-0">
+                              {user.lastMessage?.isRead
+                                ? <CheckCheck className="w-3 h-3 text-blue-500" />
+                                : <Check className="w-3 h-3 text-gray-400" />
+                              }
+                            </span>
                           )}
-                        </div>
+                          {isTyping
+                            ? 'typing…'
+                            : (user.lastMessage?.content || 'Say Hey 👋')
+                          }
+                        </p>
 
-                        <div className="flex items-center mt-1">
-                          {isUserOnline(user.id) && (
-                            <span className="text-xs text-green-600">Online</span>
-                          )}
-                        </div>
+                        {/* Unread badge */}
+                        {hasUnread && (
+                          <span className="shrink-0 min-w-[18px] h-[18px] px-1 bg-green-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                            {user.unreadMessage > 99 ? '99+' : user.unreadMessage}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Online Users Count */}
-        <div className="p-3 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Users className="w-4 h-4" />
-            <span>{onlineUsers.size} users online</span>
-          </div>
-        </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
