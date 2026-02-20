@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Edit } from 'lucide-react';
 import { useGovernment } from '@/contexts/GovernmentContext';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
+import { imageUrl } from '@/lib/utils';
 
 // Banner data
 const bannerData: BannerData[] = [
@@ -37,7 +38,7 @@ function SuppliersProducePage() {
     toast({
       title: 'Set Price',
       description: 'Price setting functionality will be implemented here.',
-      variant:'success'
+      variant: 'success'
     });
   };
 
@@ -64,7 +65,7 @@ function SuppliersProducePage() {
                 {/* Product Image */}
                 <div className="relative w-full h-48 bg-gray-100">
                   <img
-                    src={product.image}
+                    src={imageUrl(product.image)}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />

@@ -59,8 +59,8 @@ function useAuth(): AuthContextType {
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { toast } = useToast();
-  
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [farmer, setFarmer] = useState<Farmer | null>(null);
   const [supplier, setSupplier] = useState<Supplier | null>(null);
@@ -145,7 +145,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
       const user = getStoredData<User>(STORAGE_KEYS.USER);
-      
+
       if (!token || !user) {
         setLoading(false);
         return;
@@ -204,7 +204,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const res = await authService.login(data);
-      
+
       if (!res.success) {
         toast({
           title: 'Login Failed',
@@ -257,7 +257,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const res = await authService.register(data);
-      
+
       if (!res.success) {
         toast({
           title: 'Register Failed',
@@ -289,7 +289,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const res = await authService.registerBuyer(data);
-      
+
       if (!res.success) {
         toast({
           title: 'Register Failed',
@@ -320,7 +320,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const res = await authService.registerSupplier(data);
-      
+
       if (!res.success) {
         toast({
           title: 'Register Failed',
@@ -351,7 +351,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const res = await authService.registerFarmer(data);
-      
+
       if (!res.success) {
         toast({
           title: 'Register Failed',
@@ -382,7 +382,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const res = await authService.verifyOtp(data);
-      
+
       if (!res.success) {
         toast({
           title: 'Verify Failed',
@@ -414,7 +414,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const res = await authService.askOtpCode();
-      
+
       if (!res.success) {
         toast({
           title: 'Ask OTP Failed',
@@ -437,7 +437,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
     localStorage.clear();
-    
+
     setUser(null);
     setFarmer(null);
     setSupplier(null);
@@ -449,7 +449,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   // Update user avatar URL
   const updateAvatar = async (avatarUrl: string) => {
     if (!user) return;
-    
+
     const updatedUser = { ...user, avatar: avatarUrl };
     setUser(updatedUser);
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));

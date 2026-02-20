@@ -89,7 +89,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       try {
         // Upload the file and get the URL
         const uploadResponse = await messageService.uploadFile(selectedFile);
-        
+
         if (uploadResponse.success && uploadResponse.data) {
           messageType = selectedFile.type.startsWith('image/') ? MessageType.IMAGE : MessageType.FILE;
           fileName = uploadResponse.data;
@@ -167,7 +167,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   useEffect(() => {
     setIsUserOnline(onlineUsers.has(activeChatUser?.id || ''));
   }, [onlineUsers, activeChatUser]);
-  
+
   const renderMessage = (message: Message, index: number) => {
     const isOwn = message.sender.id === currentUser?.id;
     const showDate = index === 0 ||
@@ -191,7 +191,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
           )}>
             {message.replyTo && (
               <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-green-700 border-green-400 text-green-100' : 'bg-gray-50 border-gray-300 text-gray-600')}>
-                <div className="font-medium">{message.replyTo.sender.names}</div>
+                <div className="font-medium">{message.replyTo.sender?.names ?? 'Unknown'}</div>
                 <div className="truncate">{message.replyTo.content}</div>
               </div>
             )}
@@ -232,10 +232,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
                 {message.type === MessageType.PRODUCT && message.productRef && (
                   <div className="mb-2">
-                    <ProductReference 
-                      productId={message.productRef} 
+                    <ProductReference
+                      productId={message.productRef}
                       messageContent={message.content}
-                      compact={false} 
+                      compact={false}
                     />
                   </div>
                 )}

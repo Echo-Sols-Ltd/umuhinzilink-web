@@ -21,6 +21,7 @@ import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import useOrderAction from '@/hooks/useOrderAction';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import { imageUrl } from '@/lib/utils';
 import {
   Table,
   TableBody,
@@ -162,7 +163,7 @@ function FarmerRequestsComponent() {
                   <div key={product.id} className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
                     <div className="aspect-square bg-gray-50 relative overflow-hidden flex items-center justify-center p-6">
                       {product.image ? (
-                        <img src={product.image} alt={product.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        <img src={imageUrl(product.image)} alt={product.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
                       ) : (
                         <Package className="w-12 h-12 text-gray-200" />
                       )}

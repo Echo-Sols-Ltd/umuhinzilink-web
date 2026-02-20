@@ -12,6 +12,7 @@ import { useGovernment } from '@/contexts/GovernmentContext';
 import { GovernmentLayout } from '../components/GovernmentLayout';
 import { GovernmentPages } from '@/types';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
+import { imageUrl } from '@/lib/utils';
 
 // Banner data
 const bannerData = [
@@ -78,7 +79,7 @@ function FarmersProducePage() {
     >
       <div className="space-y-6">
         {/* Banner Section */}
-        <div className="relative bg-gradient-to-r from-green-700 to-green-500 rounded-lg p-6 text-white overflow-hidden">
+        <div className="relative bg-linear-to-r from-green-700 to-green-500 rounded-lg p-6 text-white overflow-hidden">
           <button
             onClick={handleBannerPrev}
             className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors z-10"
@@ -100,7 +101,7 @@ function FarmersProducePage() {
             </div>
             <div className="w-64 h-48 bg-white/10 rounded-lg flex items-center justify-center">
               <img
-                src={currentBanner.image}
+                src={imageUrl(currentBanner.image)}
                 alt="Banner"
                 className="w-full h-full object-cover rounded-lg"
               />
@@ -125,7 +126,7 @@ function FarmersProducePage() {
                 {/* Product Image with Navigation */}
                 <div className="relative w-full h-48 bg-gray-100">
                   <img
-                    src={product.image}
+                    src={imageUrl(product.image)}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />

@@ -18,7 +18,7 @@ function GovernmentProfile() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { toast } = useToast()
-  
+
   // Mock user data - replace with actual user data from auth context
   const [profileData, setProfileData] = useState({
     names: 'John Government Official',
@@ -76,7 +76,7 @@ function GovernmentProfile() {
 
   const handleImageUpload = async () => {
     if (!imageFile) return;
-    
+
     try {
       const res = await userService.uploadAvatar(imageFile);
       setProfileData(prev => ({ ...prev, avatar: res.data! }));
@@ -146,7 +146,7 @@ function GovernmentProfile() {
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
                   {previewUrl || profileData.avatar ? (
                     <img
-                      src={previewUrl || imageUrl(profileData.avatar)}
+                      src={imageUrl(previewUrl || profileData.avatar)}
                       alt="Profile"
                       className="w-full h-full rounded-full object-cover"
                     />
@@ -201,7 +201,7 @@ function GovernmentProfile() {
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-lg overflow-hidden">
                       <img
-                        src={previewUrl || ''}
+                        src={imageUrl(previewUrl)}
                         alt="Preview"
                         className="w-full h-full object-cover"
                       />

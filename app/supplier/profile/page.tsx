@@ -109,7 +109,7 @@ function SupplierProfileComponent() {
 
   const handleImageUpload = async () => {
     if (!imageFile) return;
-    
+
     try {
       const res = await userService.uploadAvatar(imageFile);
       setProfile(prev => ({ ...prev, avatar: res.data! }));
@@ -131,190 +131,190 @@ function SupplierProfileComponent() {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-        <Sidebar
-          userType={UserType.SUPPLIER}
-          activeItem='Profile'
-        />
+      <Sidebar
+        userType={UserType.SUPPLIER}
+        activeItem='Profile'
+      />
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto h-full">
-          <div className="max-w-4xl bg-white rounded-lg shadow-sm border p-6">
-            {/* Profile Header */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
-                    {previewUrl || profile.avatar ? (
+      {/* Main Content */}
+      <main className="flex-1 p-6 overflow-auto h-full">
+        <div className="max-w-4xl bg-white rounded-lg shadow-sm border p-6">
+          {/* Profile Header */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
+                  {previewUrl || profile.avatar ? (
+                    <img
+                      src={imageUrl(previewUrl || profile.avatar)}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Store className="w-10 h-10 text-green-600" />
+                  )}
+                </div>
+                <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 cursor-pointer hover:bg-green-600 transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </label>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {profile.firstName} {profile.lastName}
+                </h1>
+                <p className="text-gray-500">Supplier</p>
+                <p className="text-sm text-gray-600">{profile.businessName}</p>
+              </div>
+            </div>
+
+            {/* Image Upload Section */}
+            {imageFile && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden">
                       <img
-                        src={previewUrl || imageUrl(profile.avatar)}
-                        alt="Profile"
+                        src={imageUrl(previewUrl)}
+                        alt="Preview"
                         className="w-full h-full object-cover"
                       />
-                    ) : (
-                      <Store className="w-10 h-10 text-green-600" />
-                    )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">New Profile Image</p>
+                      <p className="text-xs text-gray-500">{imageFile.name}</p>
+                    </div>
                   </div>
-                  <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 cursor-pointer hover:bg-green-600 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="hidden"
-                    />
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                  </label>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    {profile.firstName} {profile.lastName}
-                  </h1>
-                  <p className="text-gray-500">Supplier</p>
-                  <p className="text-sm text-gray-600">{profile.businessName}</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setImageFile(null);
+                        setPreviewUrl(null);
+                      }}
+                      className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleImageUpload}
+                      className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                    >
+                      Upload
+                    </button>
+                  </div>
                 </div>
               </div>
+            )}
 
-              {/* Image Upload Section */}
-              {imageFile && (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-lg overflow-hidden">
-                        <img
-                          src={previewUrl || ''}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">New Profile Image</p>
-                        <p className="text-xs text-gray-500">{imageFile.name}</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setImageFile(null);
-                          setPreviewUrl(null);
-                        }}
-                        className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={handleImageUpload}
-                        className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
-                      >
-                        Upload
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {isEditing ? (
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSave}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700"
-                  >
-                    <Save className="w-4 h-4" /> Save
-                  </button>
-                  <button
-                    onClick={() => setIsEditing(false)}
-                    className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-300"
-                  >
-                    <X className="w-4 h-4" /> Cancel
-                  </button>
-                </div>
-              ) : (
+            {isEditing ? (
+              <div className="flex gap-2">
                 <button
-                  onClick={() => setIsEditing(true)}
+                  onClick={handleSave}
                   className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700"
                 >
-                  <Edit2 className="w-4 h-4" /> Edit
+                  <Save className="w-4 h-4" /> Save
                 </button>
-              )}
-            </div>
-
-            {/* Profile Sections */}
-            <div className="space-y-6">
-              <Section title="Personal Information">
-                <Field
-                  label="First Name"
-                  value={profile.firstName}
-                  isEditing={isEditing}
-                  name="firstName"
-                  onChange={handleChange}
-                />
-                <Field
-                  label="Last Name"
-                  value={profile.lastName}
-                  isEditing={isEditing}
-                  name="lastName"
-                  onChange={handleChange}
-                />
-              </Section>
-
-              <Section title="Contact Information">
-                <Field
-                  label="Phone Number"
-                  value={profile.phoneNumber}
-                  icon={<Phone className="w-4 h-4 text-gray-500" />}
-                  isEditing={isEditing}
-                  name="phoneNumber"
-                  onChange={handleChange}
-                />
-                <Field
-                  label="Email"
-                  value={profile.email}
-                  icon={<Mail className="w-4 h-4 text-gray-500" />}
-                  isEditing={isEditing}
-                  name="email"
-                  onChange={handleChange}
-                />
-              </Section>
-
-              <Section title="Address">
-                <Field
-                  label="District"
-                  value={profile.district}
-                  icon={<MapPin className="w-4 h-4 text-gray-500" />}
-                  isEditing={isEditing}
-                  name="district"
-                  onChange={handleChange}
-                />
-                <Field
-                  label="Sector"
-                  value={profile.sector}
-                  isEditing={isEditing}
-                  name="sector"
-                  onChange={handleChange}
-                />
-              </Section>
-
-              <Section title="Business Information">
-                <Field
-                  label="Business Name"
-                  value={profile.businessName}
-                  icon={<Package className="w-4 h-4 text-gray-500" />}
-                  isEditing={isEditing}
-                  name="businessName"
-                  onChange={handleChange}
-                />
-                <Field
-                  label="Business Type"
-                  value={profile.businessType}
-                  isEditing={isEditing}
-                  name="businessType"
-                  onChange={handleChange}
-                />
-              </Section>
-            </div>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-300"
+                >
+                  <X className="w-4 h-4" /> Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700"
+              >
+                <Edit2 className="w-4 h-4" /> Edit
+              </button>
+            )}
           </div>
-        </main>
-      </div>
+
+          {/* Profile Sections */}
+          <div className="space-y-6">
+            <Section title="Personal Information">
+              <Field
+                label="First Name"
+                value={profile.firstName}
+                isEditing={isEditing}
+                name="firstName"
+                onChange={handleChange}
+              />
+              <Field
+                label="Last Name"
+                value={profile.lastName}
+                isEditing={isEditing}
+                name="lastName"
+                onChange={handleChange}
+              />
+            </Section>
+
+            <Section title="Contact Information">
+              <Field
+                label="Phone Number"
+                value={profile.phoneNumber}
+                icon={<Phone className="w-4 h-4 text-gray-500" />}
+                isEditing={isEditing}
+                name="phoneNumber"
+                onChange={handleChange}
+              />
+              <Field
+                label="Email"
+                value={profile.email}
+                icon={<Mail className="w-4 h-4 text-gray-500" />}
+                isEditing={isEditing}
+                name="email"
+                onChange={handleChange}
+              />
+            </Section>
+
+            <Section title="Address">
+              <Field
+                label="District"
+                value={profile.district}
+                icon={<MapPin className="w-4 h-4 text-gray-500" />}
+                isEditing={isEditing}
+                name="district"
+                onChange={handleChange}
+              />
+              <Field
+                label="Sector"
+                value={profile.sector}
+                isEditing={isEditing}
+                name="sector"
+                onChange={handleChange}
+              />
+            </Section>
+
+            <Section title="Business Information">
+              <Field
+                label="Business Name"
+                value={profile.businessName}
+                icon={<Package className="w-4 h-4 text-gray-500" />}
+                isEditing={isEditing}
+                name="businessName"
+                onChange={handleChange}
+              />
+              <Field
+                label="Business Type"
+                value={profile.businessType}
+                isEditing={isEditing}
+                name="businessType"
+                onChange={handleChange}
+              />
+            </Section>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 

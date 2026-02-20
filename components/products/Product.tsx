@@ -9,7 +9,7 @@ import Link from "next/link";
 import useProductAction from "@/hooks/useProductAction";
 
 interface ProductCardProps {
-    product: any; // Using any for flexibility between FarmerProduct and SupplierProduct
+    product: SupplierProduct | FarmerProduct
     onSelect?: () => void;
     onPurchase?: () => void;
     onContact?: () => void;
@@ -51,7 +51,8 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
                 `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
                 MessageType.PRODUCT,
                 product.owner.names,
-                product.id
+                product.id,
+                partnerUser // overrideReceiver: bypasses stale activeChatUser state
             );
 
             toast({
@@ -77,7 +78,7 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
         }
 
         try {
-            if (product.type === 'farmer') {
+            if (product.owner.role === 'FARMER') {
                 await deleteFarmerProduct(productId);
             } else {
                 await deleteSupplierProduct(productId);
@@ -164,7 +165,7 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
                             onClick={(e) => {
                                 e.stopPropagation();
                                 if (onEdit) onEdit(product);
-                                else router.push(`/${product.type}/products/${product.id}/edit`);
+                                else router.push(`/${product.owner.role.toLowerCase()}/products/${product.id}/edit`);
                             }}
                             className="flex-1 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300"
                         >

@@ -130,7 +130,6 @@ function BuyerDashboardComponent() {
                   product={product}
                   onSelect={() => { }}
                   onPurchase={() => { }}
-                  onContact={() => { }}
                 />)}
             </div>
           </div>

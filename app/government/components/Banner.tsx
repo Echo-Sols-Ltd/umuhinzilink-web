@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { imageUrl } from '@/lib/utils';
 
 export interface BannerData {
   title: string;
@@ -30,7 +31,7 @@ export function Banner({ banners, className = '' }: BannerProps) {
   const currentBanner = banners[currentIndex];
 
   return (
-    <div className={`relative bg-gradient-to-r from-teal-600 to-green-500 rounded-lg p-6 text-white overflow-hidden ${className}`}>
+    <div className={`relative bg-linear-to-r from-teal-600 to-green-500 rounded-lg p-6 text-white overflow-hidden ${className}`}>
       <button
         onClick={handlePrev}
         className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors z-10"
@@ -53,7 +54,7 @@ export function Banner({ banners, className = '' }: BannerProps) {
         </div>
         <div className="w-64 h-48 bg-white/10 rounded-lg flex items-center justify-center ml-8">
           <img
-            src={currentBanner.image}
+            src={imageUrl(currentBanner.image)}
             alt="Banner"
             className="w-full h-full object-cover rounded-lg"
           />

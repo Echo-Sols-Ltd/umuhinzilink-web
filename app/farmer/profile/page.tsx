@@ -133,7 +133,7 @@ function FarmerProfileComponent() {
                     <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
                       {previewUrl || profile?.avatar ? (
                         <img
-                          src={previewUrl || imageUrl(profile?.avatar || '')}
+                          src={imageUrl(previewUrl || profile?.avatar)}
                           alt="Profile"
                           className="w-full h-full object-cover"
                         />
@@ -173,7 +173,7 @@ function FarmerProfileComponent() {
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 rounded-lg overflow-hidden">
                         <img
-                          src={previewUrl || ''}
+                          src={imageUrl(previewUrl)}
                           alt="Preview"
                           className="w-full h-full object-cover"
                         />
@@ -299,7 +299,7 @@ function Field({ label, value, icon }: { label: string; value: string; icon?: Re
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      <div className="flex items-center gap-2 text-gray-900 bg-gray-50 border border-gray-200 rounded-md px-3 py-2 min-h-[2.5rem]">
+      <div className="flex items-center gap-2 text-gray-900 bg-gray-50 border border-gray-200 rounded-md px-3 py-2 min-h-10">
         {icon}
         {content}
       </div>
