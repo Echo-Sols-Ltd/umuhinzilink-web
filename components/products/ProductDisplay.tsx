@@ -27,6 +27,7 @@ import { FarmerProduct } from '@/types/product';
 import { cn, imageUrl } from '@/lib/utils';
 import { ResponsiveLayout, MobileTable, TouchOptimizedButton } from '@/components/ui/responsive-layout';
 import ProductCard from './Product';
+import ProductRow from './ProductRow';
 
 export interface ProductDisplayProps {
   products: FarmerProduct[];
@@ -180,7 +181,7 @@ export function ProductDisplay({
           ) : (
             <div className="space-y-4">
               {products.map((product) => (
-                <ProductCard
+                <ProductRow
                   key={product.id}
                   product={product}
                   onSelect={() => onProductSelect?.(product)}
@@ -204,7 +205,7 @@ export function ProductDisplay({
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          
+
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <Button
               key={page}
@@ -216,7 +217,7 @@ export function ProductDisplay({
               {page}
             </Button>
           ))}
-          
+
           <Button
             variant="outline"
             size="sm"
