@@ -8,11 +8,11 @@ class NotificationService {
     }
 
     async markAsRead(notificationId: string): Promise<ApiResponse<void>> {
-        return apiClient.patch(`/notifications/${notificationId}/read`);
+        return apiClient.put(`/notifications/${notificationId}/read`);
     }
 
     async markAllAsRead(): Promise<ApiResponse<void>> {
-        return apiClient.patch('/notifications/read-all');
+        return apiClient.put('/notifications/read-all');
     }
 
     async deleteNotification(notificationId: string): Promise<ApiResponse<void>> {

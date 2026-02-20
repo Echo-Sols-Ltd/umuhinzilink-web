@@ -257,7 +257,7 @@ function ProductsPageComponent() {
                   supplierProducts?.map(product => (
                     <ProductCard
                       key={product.id}
-                      product={{ ...product, type: 'supplier' }}
+                      product={{ ...product}}
                       onEdit={handleEdit}
                     />
                   ))

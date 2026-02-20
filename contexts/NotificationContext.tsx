@@ -1,16 +1,22 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Notification, NotificationFilter } from '@/types/notification';
+import { Notification, NotificationFilter, NotificationType } from '@/types/notification';
 import { notificationService } from '@/services/notification';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/components/ui/use-toast';
+import { PaginatedResponse } from '@/types/api';
 
 interface NotificationContextType {
     notifications: Notification[];
     unreadCount: number;
+    totalElements: number;
+    totalPages: number;
+    currentPage: number;
     loading: boolean;
-    fetchNotifications: (filter?: NotificationFilter) => Promise<void>;
+    fetchNotifications: (filter?: NotificationFilter & { page?: number; size?: number }) => Promise<void>;
+    fetchAll: (params: { page: number; size: number }) => Promise<void>;
+    fetchByType: (type: NotificationType, params: { page: number; size: number }) => Promise<void>;
     markAsRead: (id: string) => Promise<void>;
     markAllAsRead: () => Promise<void>;
     deleteNotification: (id: string) => Promise<void>;
@@ -22,10 +28,13 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(false);
+    const [totalElements, setTotalElements] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
     const { user } = useAuth();
     const { toast } = useToast();
 
-    const fetchNotifications = useCallback(async (filter?: NotificationFilter) => {
+    const fetchNotifications = useCallback(async (filter?: NotificationFilter & { page?: number; size?: number }) => {
         if (!user) return;
         setLoading(true);
         try {
@@ -33,17 +42,31 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             if (response.success && response.data) {
                 // Support both direct array and nested paginated data structures
                 const data = response.data as any;
-                const rawNotifications = Array.isArray(data)
-                    ? data
-                    : (Array.isArray(data.data) ? data.data : []);
 
-                // Normalize notifications (ensure IDs are strings for reliable comparison)
-                const normalizedNotifications = rawNotifications.map((n: any) => ({
-                    ...n,
-                    id: String(n.id)
-                }));
+                if (Array.isArray(data)) {
+                    const normalizedNotifications = data.map((n: any) => ({
+                        ...n,
+                        id: String(n.id)
+                    }));
+                    setNotifications(normalizedNotifications);
+                    setTotalElements(data.length);
+                    setTotalPages(1);
+                    setCurrentPage(0);
+                } else {
+                    // Handle PaginatedResponse
+                    const rawNotifications = Array.isArray(data.data) ? data.data : [];
+                    const normalizedNotifications = rawNotifications.map((n: any) => ({
+                        ...n,
+                        id: String(n.id)
+                    }));
+                    setNotifications(normalizedNotifications);
 
-                setNotifications(normalizedNotifications);
+                    // Use totalElements/totalPages if they exist in the response
+                    const paginated = response as unknown as PaginatedResponse<Notification[]>;
+                    setTotalElements(paginated.totalElements || rawNotifications.length);
+                    setTotalPages(paginated.totalPages || 1);
+                    setCurrentPage(paginated.pageNumber || paginated.number || 0);
+                }
             }
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
@@ -51,6 +74,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             setLoading(false);
         }
     }, [user]);
+
+    const fetchAll = useCallback(async (params: { page: number; size: number }) => {
+        await fetchNotifications(params);
+    }, [fetchNotifications]);
+
+    const fetchByType = useCallback(async (type: NotificationType, params: { page: number; size: number }) => {
+        await fetchNotifications({ ...params, type });
+    }, [fetchNotifications]);
 
     const markAsRead = async (id: string) => {
         try {
@@ -139,8 +170,13 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             value={{
                 notifications,
                 unreadCount,
+                totalElements,
+                totalPages,
+                currentPage,
                 loading,
                 fetchNotifications,
+                fetchAll,
+                fetchByType,
                 markAsRead,
                 markAllAsRead,
                 deleteNotification,

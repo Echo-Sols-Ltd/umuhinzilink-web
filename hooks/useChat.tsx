@@ -6,7 +6,7 @@ import { useMessages } from "@/contexts/MessageContext"
 import { useToast } from '@/components/ui/use-toast'
 
 // Helper function to convert User to ChatUser
-const userToChatUser = (user: User): ChatUser => ({
+export const userToChatUser = (user: User): ChatUser => ({
     id: user.id,
     names: user.names,
     email: user.email,

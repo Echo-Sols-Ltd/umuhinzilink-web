@@ -3,7 +3,7 @@ import { FarmerProduct, MessageType, SupplierProduct } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { useChat } from "@/hooks/useChat";
+import { useChat, userToChatUser } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useProductAction from "@/hooks/useProductAction";
@@ -43,7 +43,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
 
         try {
             const farmerUser = product.owner;
-            handleUserClick(farmerUser);
+            handleUserClick(userToChatUser(farmerUser));
             await handleSendMessage(
                 `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
                 MessageType.PRODUCT,

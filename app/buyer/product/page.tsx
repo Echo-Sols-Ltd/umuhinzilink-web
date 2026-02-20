@@ -43,6 +43,8 @@ import { ResponsiveLayout, MobileTable, TouchOptimizedButton } from '@/component
 import { ProgressiveImage } from '@/components/ui/progressive-loading';
 import { useIsMobile } from '@/hooks/use-mobile';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
+import { useMessages } from '@/contexts/MessageContext';
+import { useUser } from '@/contexts/UserContext';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -56,6 +58,7 @@ function ProductsPageComponent() {
   const { toast } = useToast();
   const { user: buyer } = useAuth();
   const { handleUserClick, handleSendMessage } = useChat();
+  const { chatUsers } = useUser()
   const { buyerProducts, loading: productsLoading } = useProduct();
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<FarmerProduct | null>(null);
@@ -154,9 +157,10 @@ function ProductsPageComponent() {
     try {
       // Create a user object for farmer
       const farmerUser = product.owner;
+      const chatUser = chatUsers.find(user => user.id === farmerUser.id);
 
       // Switch to chat with the farmer
-      handleUserClick(farmerUser);
+      handleUserClick(chatUser!);
 
       // Send product reference message
       await handleSendMessage(
