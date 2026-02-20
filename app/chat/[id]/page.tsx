@@ -1,0 +1,110 @@
+'use client';
+
+import React, { useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+import Sidebar from '@/components/shared/Sidebar';
+import { UserType } from '@/types';
+import { ChatUser } from '@/types/chat';
+import ConversationSidebar from '@/components/messaging/ConversationSidebar';
+import ChatInterface from '@/components/messaging/ChatInterface';
+import { useMessages } from '@/contexts/MessageContext';
+import { cn } from '@/lib/utils';
+import { userService } from '@/services/users';
+import { Message } from '@/types/message';
+
+// Helper function to convert User to ChatUser
+const userToChatUser = (user: any): ChatUser => ({
+    id: user.id,
+    names: user.names,
+    email: user.email,
+    avatar: user.avatar,
+    unreadMessage: 0, // Default values, will be updated by context
+    totalMessage: 0,
+    lastMessage: {} as Message, // Will be populated by context
+});
+
+const Logo = () => (
+  <span className="font-extrabold text-2xl tracking-tight">
+    <span className="text-green-700">Umuhinzi</span>
+    <span className="text-black">Link</span>
+  </span>
+);
+
+function GlobalChatComponent() {
+  const params = useParams();
+  const { user } = useAuth();
+  const router = useRouter();
+  const { activeChatUser, setActiveChatUser } = useMessages();
+  const chatId = params.id as string;
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+  }, [user, router]);
+
+  useEffect(() => {
+    if (chatId && user) {
+      // Fetch user details by ID and set as active chat
+      const fetchUserAndSetChat = async () => {
+        try {
+          const response = await userService.getUserById(chatId);
+          if (response.success && response.data) {
+            setActiveChatUser(userToChatUser(response.data));
+          }
+        } catch (error) {
+          console.error('Failed to fetch user:', error);
+        }
+      };
+
+      fetchUserAndSetChat();
+    }
+  }, [chatId, user, setActiveChatUser]);
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
+          <p className="text-gray-600">Please log in to access chat.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className={cn("hidden md:block shrink-0")}>
+          <Sidebar
+            userType={user?.role as UserType}
+            activeItem='Messages'
+          />
+        </div>
+
+        {/* Main Content */}
+        <main className="flex-1 flex h-full overflow-hidden">
+          {/* Conversations Sidebar */}
+          <ConversationSidebar className={cn(
+            "w-full md:w-80 shrink-0",
+            activeChatUser ? "hidden md:flex" : "flex"
+          )} />
+
+          {/* Chat Interface */}
+          <ChatInterface className={cn(
+            "flex-1 overflow-hidden",
+            activeChatUser ? "flex" : "hidden md:flex"
+          )} />
+        </main>
+      </div>
+    </div>
+  );
+}
+
+export default function GlobalChatPage() {
+  return <GlobalChatComponent />;
+}

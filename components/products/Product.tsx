@@ -63,8 +63,8 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact }
                 variant: "success"
             });
 
-            // Navigate to chat page with specific user ID
-            router.push(`/buyer/message/${farmerUser.id}`);
+            // Navigate to global chat page with specific user ID
+            router.push(`/chat/${farmerUser.id}`);
         } catch (error) {
             console.error('Failed to contact farmer:', error);
             toast({

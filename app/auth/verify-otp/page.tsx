@@ -30,7 +30,7 @@ export default function VerifyPage() {
         setOtp(newOtp);
 
         // Move to next input
-        if (value && index < 5) {
+        if (value && index < 3) {
             inputRefs.current[index + 1]?.focus();
         }
     };
@@ -43,15 +43,15 @@ export default function VerifyPage() {
 
     const handlePaste = (e: React.ClipboardEvent) => {
         e.preventDefault();
-        const pastedData = e.clipboardData.getData('text').slice(0, 6);
+        const pastedData = e.clipboardData.getData('text').trim().slice(0, 4);
         if (!/^\d+$/.test(pastedData)) return;
 
         const newOtp = [...otp];
         pastedData.split('').forEach((char, index) => {
-            if (index < 6) newOtp[index] = char;
+            if (index < 4) newOtp[index] = char;
         });
         setOtp(newOtp);
-        inputRefs.current[Math.min(pastedData.length, 5)]?.focus();
+        inputRefs.current[Math.min(pastedData.length, 3)]?.focus();
     };
 
     const handleContinue = async (e: React.FormEvent) => {
