@@ -15,28 +15,32 @@ const DELIVERY_STEPS = [
     label: 'Order Received',
     description: 'Order has been received and is being processed',
     icon: Package,
-    color: 'text-gray-500'
+    color: 'text-gray-500',
+    completedColor: 'text-green-500'
   },
   {
     status: DeliveryStatus.SCHEDULED,
     label: 'Preparing Order',
     description: 'Order is being prepared for delivery',
     icon: Package,
-    color: 'text-blue-500'
+    color: 'text-blue-500',
+    completedColor: 'text-green-500'
   },
   {
     status: DeliveryStatus.IN_TRANSIT,
     label: 'In Transit',
     description: 'Order is on the way to delivery location',
     icon: Truck,
-    color: 'text-orange-500'
+    color: 'text-orange-500',
+    completedColor: 'text-green-500'
   },
   {
     status: DeliveryStatus.DELIVERED,
     label: 'Delivered',
     description: 'Order has been successfully delivered',
     icon: Check,
-    color: 'text-green-500'
+    color: 'text-green-500',
+    completedColor: 'text-green-500'
   }
 ];
 
@@ -69,8 +73,11 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
     );
   }
 
-  const currentStepIndex = delivery.status ? DELIVERY_STEPS.findIndex(step => step.status === delivery.status) : -1;
-  const currentStatus = delivery.status || DeliveryStatus.PENDING;
+  // Find the current step based on trackingSteps
+  const currentStepIndex = delivery.trackingSteps ? 
+    Math.max(...delivery.trackingSteps.map((step, index) => step.completed ? index : -1)) : -1;
+  
+  const currentStatus = delivery.status as DeliveryStatus || DeliveryStatus.PENDING;
 
   const handleUpdateStatus = (status: DeliveryStatus) => {
     setSelectedStatus(status);
@@ -94,6 +101,18 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
   };
 
   const nextStatus = getNextStatus();
+
+  // Check if a step is completed based on trackingSteps
+  const isStepCompleted = (stepStatus: DeliveryStatus) => {
+    if (!delivery.trackingSteps) return false;
+    const step = delivery.trackingSteps.find(s => s.status === stepStatus);
+    return step?.completed || false;
+  };
+
+  // Check if a step is currently active (last completed step)
+  const isStepActive = (stepStatus: DeliveryStatus, index: number) => {
+    return index === currentStepIndex;
+  };
 
   return (
     <div className="space-y-6">
@@ -123,12 +142,11 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
 
       {/* Progress Steps */}
       <div className="relative">
-        <div className="absolute left-4 top-8 bottom-8 w-0.5 bg-gray-300"></div>
+        <div className="absolute left-4 top-8 bottom-8 w-0.5 bg-gradient-b from-green-500 to-gray-300"></div>
         <div className="space-y-8">
           {DELIVERY_STEPS.map((step, index) => {
-            const isActive = index <= currentStepIndex;
-            const isCompleted = index < currentStepIndex;
-            const isCurrent = index === currentStepIndex;
+            const isCompleted = isStepCompleted(step.status);
+            const isCurrent = isStepActive(step.status, index);
             const Icon = step.icon;
 
             return (
@@ -137,12 +155,16 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
                   relative z-10 w-8 h-8 rounded-full flex items-center justify-center
                   ${isCompleted ? 'bg-green-500' : isCurrent ? 'bg-blue-500' : 'bg-gray-300'}
                 `}>
-                  <Icon className={`w-4 h-4 text-white ${isCompleted ? 'text-white' : step.color}`} />
+                  <Icon className={`w-4 h-4 text-white ${
+                    isCompleted ? 'text-white' : isCurrent ? 'text-white' : step.color
+                  }`} />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2">
-                    <h3 className={`font-medium ${isActive ? 'text-gray-900' : 'text-gray-500'}`}>
+                    <h3 className={`font-medium ${
+                      isCompleted ? 'text-green-600' : isCurrent ? 'text-gray-900' : 'text-gray-500'
+                    }`}>
                       {step.label}
                     </h3>
                     {isCompleted && (
@@ -152,13 +174,15 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
                       <Clock className="w-4 h-4 text-blue-500 animate-pulse" />
                     )}
                   </div>
-                  <p className={`text-sm mt-1 ${isActive ? 'text-gray-600' : 'text-gray-400'}`}>
+                  <p className={`text-sm mt-1 ${
+                    isCompleted ? 'text-green-600' : isCurrent ? 'text-gray-600' : 'text-gray-400'
+                  }`}>
                     {step.description}
                   </p>
                   
                   {/* Show timestamp for completed steps */}
                   {isCompleted && delivery.trackingSteps && delivery.trackingSteps[index] && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-green-600 mt-1 font-medium">
                       Completed: {new Date(delivery.trackingSteps[index].completedAt).toLocaleString()}
                     </p>
                   )}
@@ -180,9 +204,15 @@ export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = 
                   <div className={`w-2 h-2 rounded-full ${
                     step.completed ? 'bg-green-500' : 'bg-gray-300'
                   }`}></div>
-                  <span className="text-gray-700">{DELIVERY_STATUS_LABELS[step.status as DeliveryStatus]}</span>
+                  <span className={`${
+                    step.completed ? 'text-green-600 font-medium' : 'text-gray-700'
+                  }`}>
+                    {DELIVERY_STATUS_LABELS[step.status]}
+                  </span>
                 </div>
-                <span className="text-gray-500">
+                <span className={`${
+                  step.completed ? 'text-green-600' : 'text-gray-500'
+                }`}>
                   {new Date(step.completedAt).toLocaleString()}
                 </span>
               </div>

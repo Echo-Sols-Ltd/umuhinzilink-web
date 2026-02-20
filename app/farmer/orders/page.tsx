@@ -312,19 +312,19 @@ function FarmerOrders() {
                                 Approve
                               </button>
                               <button
-                                onClick={() => handleViewDetails(order)}
+                                onClick={() => router.push(`/farmer/orders/${order.id}`)}
                                 className="text-blue-600 hover:text-blue-800 text-xs font-medium"
                               >
                                 View Details
                               </button>
                               {order.delivery && (
                                 <button
-                                  onClick={() => handleViewDetails(order)}
+                                  onClick={() => router.push('/farmer/delivery')}
                                   className="text-orange-600 hover:text-orange-800 text-xs font-medium flex items-center gap-1"
-                                  title="Update Delivery"
+                                  title="Manage All Deliveries"
                                 >
                                   <Truck className="w-3 h-3" />
-                                  Delivery
+                                  Delivery Hub
                                 </button>
                               )}
                             </div>

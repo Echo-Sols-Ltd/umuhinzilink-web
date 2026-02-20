@@ -34,7 +34,10 @@ import {
     LayoutDashboard,
     Shield,
     Truck,
-    Sprout
+    Sprout,
+    Leaf,
+    Download,
+    Loader2
 } from 'lucide-react';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -140,6 +143,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         icon: <ShoppingCart className="w-5 h-5" />,
                         label: 'Orders',
                         href: '/farmer/orders',
+                    },
+                    {
+                        icon: <Truck className="w-5 h-5" />,
+                        label: 'Delivery Management',
+                        href: '/farmer/delivery',
                     },
                     {
                         icon: <Wallet className="w-5 h-5" />,

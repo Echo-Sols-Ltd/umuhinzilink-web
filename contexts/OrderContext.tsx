@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { orderService } from '@/services/orders';
-import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct } from '@/types';
+import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus } from '@/types';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
 
@@ -38,6 +38,8 @@ export type OrderContextValue = {
   editFarmerOrder: (data: FarmerOrder) => void;
   editFarmerBuyerOrder: (data: SupplierOrder) => void;
   editSupplierOrder: (data: SupplierOrder) => void;
+
+  updateFarmerOrderStatus: (id: string, status: DeliveryStatus) => Promise<void>;
 
   fetchBuyerOrders: () => Promise<FarmerOrder[] | null>;
   fetchFarmerOrders: () => Promise<FarmerOrder[] | null>;
@@ -206,6 +208,29 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(data);
   };
 
+  const updateFarmerOrderStatus = async (id: string, status: DeliveryStatus) => {
+    try {
+      const response = await orderService.updateFarmerOrderStatus(id, status);
+      if (response.success && response.data) {
+        // Update local state
+        setFarmerOrders(prev => {
+          if (!prev) return prev;
+          const updated = prev.map(order => 
+            order.id === id ? { ...order, ...response.data } : order
+          );
+          localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
+          return updated;
+        });
+        setCurrentFarmerOrder(prev => 
+          prev?.id === id ? { ...prev, ...response.data } : prev
+        );
+      }
+    } catch (error) {
+      console.error('Failed to update farmer order status:', error);
+      throw error;
+    }
+  };
+
 
   // 🔹 Derived Orders
   const pendingBuyerOrders = useMemo(
@@ -297,6 +322,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     editFarmerOrder,
     editSupplierOrder,
     editFarmerBuyerOrder,
+    updateFarmerOrderStatus,
     fetchBuyerOrders,
     fetchFarmerOrders,
     fetchSupplierOrders,
