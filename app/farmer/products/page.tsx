@@ -80,13 +80,13 @@ function FarmerProducts() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => fetchFarmerProducts()}
-                className="p-2.5 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
+                className="p-2.5 bg-white border border-gray-100 rounded-lg hover:bg-gray-50 transition-all shadow-sm"
               >
                 <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin text-green-600' : ''}`} />
               </button>
               <Link
                 href="/farmer/add_produce"
-                className="bg-green-600 text-white font-semibold py-2.5 px-6 rounded-xl flex items-center gap-2 hover:bg-green-700 transition shadow-sm"
+                className="bg-green-600 text-white font-semibold py-2.5 px-6 rounded-lg flex items-center gap-2 hover:bg-green-700 transition shadow-sm"
               >
                 <Plus className="w-4 h-4" /> New Listing
               </Link>
@@ -102,7 +102,7 @@ function FarmerProducts() {
           </div>
 
           {/* Filtering Section */}
-          <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+          <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
             <div className="relative flex-1 w-full">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
@@ -110,15 +110,15 @@ function FarmerProducts() {
                 placeholder="Search your products..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50/50"
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50/50"
               />
             </div>
             <div className="flex items-center gap-2 w-full md:w-auto">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-40 bg-white border-gray-200 rounded-xl h-10 font-medium text-xs uppercase tracking-wider">
+                <SelectTrigger className="w-full md:w-40 bg-white border-gray-200 rounded-lg h-10 font-medium text-xs uppercase tracking-wider">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl">
+                <SelectContent className="rounded-lg">
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="in_stock">In Stock</SelectItem>
                   <SelectItem value="out_of_stock">Out of Stock</SelectItem>
@@ -146,8 +146,8 @@ function FarmerProducts() {
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 space-y-4 shadow-sm">
-                    <Skeleton className="aspect-square rounded-xl" />
+                  <div key={i} className="bg-white rounded-xl border border-gray-100 p-4 space-y-4 shadow-sm">
+                    <Skeleton className="aspect-square rounded-lg" />
                     <div className="space-y-2">
                       <Skeleton className="h-5 w-3/4" />
                       <Skeleton className="h-4 w-1/2" />
@@ -157,7 +157,7 @@ function FarmerProducts() {
                 ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-gray-100 p-16 text-center shadow-sm">
+              <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center shadow-sm">
                 <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">No listings found</h3>
                 <p className="text-gray-500 text-sm">Try adjusting your filters or create a new product listing.</p>
@@ -184,8 +184,8 @@ function FarmerProducts() {
 
 function HighlightCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 transition-all hover:scale-[1.01]">
-      <div className={`p-3 rounded-xl bg-linear-to-br ${color} text-white shadow-md`}>
+    <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 transition-all hover:scale-[1.01]">
+      <div className={`p-3 rounded-lg bg-linear-to-br ${color} text-white shadow-md`}>
         {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-5 h-5' })}
       </div>
       <div>

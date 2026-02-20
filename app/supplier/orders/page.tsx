@@ -98,17 +98,18 @@ function OrdersPageComponent() {
       <main className="flex-1 h-full overflow-auto bg-gray-50/30">
         <div className="p-8 max-w-7xl mx-auto space-y-8">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Order Management</h1>
-              <p className="text-sm text-gray-500 mt-1 font-medium">Monitor and process incoming request from farmers</p>
+              <p className="text-sm text-gray-500 mt-1 font-medium italic">Monitor and process incoming requests from farmers across regions</p>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => fetchSupplierOrders()}
-                className="p-2.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all border border-gray-100 bg-white shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-white text-gray-600 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-gray-50 border border-gray-100 shadow-sm transition-all"
               >
-                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                Refresh List
               </button>
             </div>
           </div>
@@ -122,7 +123,7 @@ function OrdersPageComponent() {
           </div>
 
           {/* Orders Table */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-green-50 rounded-lg">
@@ -147,14 +148,14 @@ function OrdersPageComponent() {
             </div>
 
             <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ORDER ID</TableHead>
-                  <TableHead>FARMER</TableHead>
-                  <TableHead>PRODUCT</TableHead>
-                  <TableHead>AMOUNT</TableHead>
-                  <TableHead>STATUS</TableHead>
-                  <TableHead className="text-right">ACTIONS</TableHead>
+              <TableHeader className="bg-gray-50/50">
+                <TableRow className="hover:bg-transparent border-0">
+                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest">Order ID</TableHead>
+                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest">Farmer</TableHead>
+                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest">Input Item</TableHead>
+                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest text-center">Value</TableHead>
+                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest text-center">Status</TableHead>
+                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -260,12 +261,12 @@ function OrdersPageComponent() {
 
 function StatCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5 transition-all hover:shadow-md hover:scale-[1.02]">
-      <div className={`p-3 rounded-xl bg-linear-to-br ${color} text-white shadow-lg`}>
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5 transition-all hover:shadow-xl hover:shadow-green-100/20 group">
+      <div className={`p-3.5 rounded-xl bg-linear-to-br ${color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
         {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-6 h-6' })}
       </div>
       <div>
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">{title}</p>
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">{title}</p>
         <p className="text-2xl font-black text-gray-900 leading-none">{value.toLocaleString()}</p>
       </div>
     </div>
