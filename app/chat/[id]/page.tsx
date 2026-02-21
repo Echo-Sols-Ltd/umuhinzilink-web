@@ -39,13 +39,6 @@ function GlobalChatComponent() {
   const { activeChatUser, setActiveChatUser } = useMessages();
   const chatId = params.id as string;
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!user) {
-      router.push('/auth/login');
-      return;
-    }
-  }, [user, router]);
 
   useEffect(() => {
     if (chatId && user) {
