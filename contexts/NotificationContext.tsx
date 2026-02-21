@@ -65,7 +65,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                     const paginated = response as unknown as PaginatedResponse<Notification[]>;
                     setTotalElements(paginated.totalElements || rawNotifications.length);
                     setTotalPages(paginated.totalPages || 1);
-                    setCurrentPage(paginated.pageNumber || paginated.number || 0);
+                    setCurrentPage(paginated.pageNumber || 0);
                 }
             }
         } catch (error) {

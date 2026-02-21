@@ -125,19 +125,14 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [currentProduct, setCurrentProduct] = useState<FarmerProduct | null>(null);
 
 
-  const getListFromPaginated = <T>(res: { data?: T; content?: T }): T | null => {
-    const raw = Array.isArray((res as { content?: T }).content)
-      ? (res as { content: T }).content
-      : res.data;
-    return raw ?? null;
-  };
+
 
   const fetchBuyerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getBuyerOrders(page, size);
       if (!res.success) return null;
-      const list = getListFromPaginated<FarmerOrder[]>(res) ?? [];
+      const list = res.data ?? [];
       setBuyerOrders(Array.isArray(list) ? list : []);
       setBuyerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
       setBuyerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -154,7 +149,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       const res = await orderService.getFarmerOrders(page, size);
       if (!res.success) return null;
-      const list = getListFromPaginated<FarmerOrder[]>(res) ?? [];
+      const list = res.data ?? [];
       setFarmerOrders(Array.isArray(list) ? list : []);
       setFarmerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
       setFarmerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -172,7 +167,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       const res = await orderService.getSupplierOrders(page, size);
       if (!res.success) return null;
-      const list = getListFromPaginated<SupplierOrder[]>(res) ?? [];
+      const list =  res.data ?? [];
       setSupplierOrders(Array.isArray(list) ? list : []);
       setSupplierOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
       setSupplierOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -190,7 +185,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       const res = await orderService.getFarmerBuyerOrders(page, size);
       if (!res.success) return null;
-      const list = getListFromPaginated<SupplierOrder[]>(res) ?? [];
+      const list = res.data ?? [];
       setFarmerBuyerOrders(Array.isArray(list) ? list : []);
       setFarmerBuyerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
       setFarmerBuyerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);

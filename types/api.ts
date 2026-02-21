@@ -10,19 +10,16 @@ export interface ApiResponse<T = unknown> {
 /**
  * API response for paginated data.
  */
-export interface PaginatedResponse<T> extends ApiResponse<T> {
-  empty?: boolean;
-  first: boolean;
-  last: boolean;
-  number?: number; // legacy?
-  pageNumber?: number; // active
-  numberOfElements?: number;
-  pageable?: Pageable;
-  size?: number; // legacy?
-  pageSize?: number; // active
-  sort?: Sort;
-  totalElements: number;
-  totalPages: number;
+export interface PaginatedResponse<T> {
+  success: boolean,
+  data: T,
+  message: string,
+  pageNumber: number,
+  pageSize: number,
+  totalElements: number,
+  totalPages: number,
+  first: boolean,
+  last: boolean
 }
 
 /**

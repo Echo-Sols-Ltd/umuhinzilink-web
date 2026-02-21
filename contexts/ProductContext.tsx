@@ -153,19 +153,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   //   loadCachedData();
   // }, []);
 
-  const getListFromPaginated = <T>(res: { data?: T; content?: T }): T | null => {
-    const raw = Array.isArray((res as { content?: T }).content)
-      ? (res as { content: T }).content
-      : res.data;
-    return raw ?? null;
-  };
+ 
 
   const fetchFarmerProducts = async (page = 0, size = 10) => {
     try {
       setLoading(true);
       const res = await productService.getProductsByFarmer(page, size);
       if (res.success) {
-        const list = getListFromPaginated<FarmerProduct[]>(res) ?? [];
+        const list = res.data ?? [];
         setFarmerProducts(Array.isArray(list) ? list : []);
         setFarmerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
         setFarmerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -184,7 +179,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       const res = await productService.getProductsBySupplier(page, size);
       if (res.success) {
-        const list = getListFromPaginated<SupplierProduct[]>(res) ?? [];
+        const list = res.data ?? [];
         setSupplierProducts(Array.isArray(list) ? list : []);
         setSupplierProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
         setSupplierProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -203,7 +198,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       const res = await productService.getBuyerProducts(page, size);
       if (res.success) {
-        const list = getListFromPaginated<FarmerProduct[]>(res) ?? [];
+        const list = res.data ?? [];
         setBuyerProducts(Array.isArray(list) ? list : []);
         setBuyerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
         setBuyerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -222,7 +217,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       const res = await productService.getFarmerBuyerProducts(page, size);
       if (res.success) {
-        const list = getListFromPaginated<SupplierProduct[]>(res) ?? [];
+        const list = res.data ?? [];
         setFarmerBuyerProducts(Array.isArray(list) ? list : []);
         setFarmerBuyerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
         setFarmerBuyerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -430,7 +425,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         return;
       }
       removeSupplierProduct(id);
-      toast({ title: 'Product deleted successfully', variant: 'success' });
+      toast({ title: 'Product deleted successfully', description: 'Product was deleted', variant: 'success' });
       router.back();
     } catch {
       toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
