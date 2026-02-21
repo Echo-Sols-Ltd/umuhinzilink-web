@@ -51,7 +51,7 @@ function BuyerProvider({ children }: { children: React.ReactNode }) {
     if (user?.role === 'BUYER') {
       fetchAllData();
     }
-  }, [user?.role, user?.id, fetchAllData]);
+  }, [user]);
 
   const value: BuyerContextType = {
     loading,

@@ -133,6 +133,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       const res = await orderService.getBuyerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
+      console.log("this is the list", res)
       setBuyerOrders(Array.isArray(list) ? list : []);
       setBuyerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
       setBuyerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
