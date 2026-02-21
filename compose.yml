@@ -1,6 +1,6 @@
 services:
   web:
-    image: ghrc.io/echosols/umuhinzilink-web:latest
+    image: ghcr.io/echo-sols-ltd/umuhinzilink-web:latest
     environment:
       - NODE_ENV=production
     network_mode: host
