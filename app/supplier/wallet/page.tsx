@@ -7,11 +7,9 @@ import { UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import { useWallet } from '@/contexts/WalletContext';
-import useWalletAction from '@/hooks/useWalletAction';
 
 function WalletPage() {
-    const { wallet, transactions, loading } = useWallet();
-    const { handleDeposit } = useWalletAction();
+    const { wallet, transactions, loading, handleDeposit } = useWallet();
 
     return (
         <div className="flex h-screen bg-gray-50">

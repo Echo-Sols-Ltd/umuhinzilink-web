@@ -1,34 +1,23 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 
 import {
-  LayoutGrid,
-  FilePlus,
-  MessageSquare,
-  BarChart2,
-  ShoppingCart,
-  User,
-  Settings,
-  Mail,
-  Bell,
   Package,
   Leaf,
   Download,
-  Loader2,
-  LogOut,
   Truck,
   Eye,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { FarmerPages, UserType, OrderStatus, FarmerOrder, DeliveryStatus } from '@/types';
+import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
-import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import { Pagination } from '@/components/ui/pagination';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import {
   Table,
@@ -75,26 +64,43 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
 }
 
+const ITEMS_PER_PAGE = 10;
+
 function FarmerOrders() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { farmerOrders, loading } = useOrder();
-  const { acceptFarmerOrder, cancelFarmerOrder, updateFarmerOrderStatus, loading: actionLoading } = useOrderAction();
+  const {
+    farmerOrders,
+    loading,
+    mutationLoading: actionLoading,
+    acceptFarmerOrder,
+    cancelFarmerOrder,
+    updateFarmerOrderStatus,
+  } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Use context data instead of manual state
-  const currentUser = user;
   const orders = useMemo(() => farmerOrders || [], [farmerOrders]);
-  const error = null;
+  const currentUser = user;
 
   const filteredOrders = useMemo(() => {
     if (statusFilter === 'all') return orders;
     return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
   }, [orders, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
+  const paginatedOrders = useMemo(
+    () => filteredOrders.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
+    [filteredOrders, currentPage]
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter]);
 
   const metrics = useMemo(() => {
     const total = orders.length;
@@ -245,7 +251,7 @@ function FarmerOrders() {
                       <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto rounded-md" /></TableCell>
                     </TableRow>
                   ))
-                ) : filteredOrders.length === 0 ? (
+                ) : paginatedOrders.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="py-20 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-400">
@@ -256,7 +262,7 @@ function FarmerOrders() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredOrders.map(order => {
+                  paginatedOrders.map(order => {
                     const statusKey = (order.status || 'PENDING').toUpperCase();
                     const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.PENDING;
                     const buyerAddress = order.buyer?.address
@@ -341,6 +347,19 @@ function FarmerOrders() {
                 )}
               </TableBody>
             </Table>
+            {filteredOrders.length > ITEMS_PER_PAGE && (
+              <div className="p-4 border-t border-gray-100">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                  disabled={loading}
+                  showSummary
+                  totalItems={filteredOrders.length}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                />
+              </div>
+            )}
           </section>
         </div>
       </main>

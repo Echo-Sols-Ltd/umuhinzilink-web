@@ -7,7 +7,6 @@ import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import { useWallet } from '@/contexts/WalletContext';
-import useWalletAction from '@/hooks/useWalletAction';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl tracking-tight">
@@ -17,8 +16,7 @@ const Logo = () => (
 );
 
 function WalletPageComponent() {
-  const { wallet, transactions, loading } = useWallet();
-  const { handleDeposit } = useWalletAction();
+  const { wallet, transactions, loading, handleDeposit } = useWallet();
 
   const handleLogout = async () => {
     // Logout logic here

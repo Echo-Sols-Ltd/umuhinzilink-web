@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   CheckCircle,
   Package,
@@ -19,8 +19,8 @@ import { useOrder } from '@/contexts/OrderContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, SupplierOrder, DeliveryStatus } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
-import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import { Pagination } from '@/components/ui/pagination';
 import {
   Table,
   TableBody,
@@ -32,17 +32,23 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
+const ITEMS_PER_PAGE = 10;
+
 function OrdersPageComponent() {
-  const { supplierOrders, fetchSupplierOrders, loading } = useOrder();
-  const { acceptSupplierOrder, cancelSupplierOrder, updateSupplierOrderStatus, loading: actionLoading } = useOrderAction();
+  const {
+    supplierOrders,
+    fetchSupplierOrders,
+    loading,
+    mutationLoading: actionLoading,
+    acceptSupplierOrder,
+    cancelSupplierOrder,
+    updateSupplierOrderStatus,
+  } = useOrder();
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<SupplierOrder | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-
-  useEffect(() => {
-    fetchSupplierOrders();
-  }, []);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const orders = useMemo(() => supplierOrders || [], [supplierOrders]);
 
@@ -50,6 +56,16 @@ function OrdersPageComponent() {
     if (statusFilter === 'all') return orders;
     return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
   }, [orders, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
+  const paginatedOrders = useMemo(
+    () => filteredOrders.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
+    [filteredOrders, currentPage]
+  );
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter]);
 
   const stats = useMemo(() => {
     const total = orders.length;
@@ -170,7 +186,7 @@ function OrdersPageComponent() {
                       <TableCell className="text-right"><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
                     </TableRow>
                   ))
-                ) : filteredOrders.length === 0 ? (
+                ) : paginatedOrders.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="py-20 text-center">
                       <div className="flex flex-col items-center justify-center opacity-40">
@@ -181,7 +197,7 @@ function OrdersPageComponent() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredOrders.map((order) => (
+                  paginatedOrders.map((order) => (
                     <TableRow key={order.id} className="group transition-colors hover:bg-gray-50/50">
                       <TableCell>
                         <div className="flex flex-col">
@@ -242,6 +258,19 @@ function OrdersPageComponent() {
                 )}
               </TableBody>
             </Table>
+            {filteredOrders.length > ITEMS_PER_PAGE && (
+              <div className="p-4 border-t border-gray-100">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                  disabled={loading}
+                  showSummary
+                  totalItems={filteredOrders.length}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>

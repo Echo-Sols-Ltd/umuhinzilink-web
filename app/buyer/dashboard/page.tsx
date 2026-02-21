@@ -27,7 +27,6 @@ import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import OrderManagementDashboard from '@/components/orders/OrderManagementDashboard';
-import useOrderAction from '@/hooks/useOrderAction';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import { FarmerProduct } from '@/types';
@@ -43,9 +42,15 @@ const Logo = () => (
 
 function BuyerDashboardComponent() {
   const { user, logout } = useAuth();
-  const { buyerOrders, loading: ordersLoading, error: ordersError } = useOrder();
+  const {
+    buyerOrders,
+    loading: ordersLoading,
+    error: ordersError,
+    acceptFarmerOrder,
+    cancelFarmerOrder,
+    updateFarmerOrderStatus,
+  } = useOrder();
   const { buyerProducts, loading: productsLoading, error: productsError } = useProduct();
-  const { acceptFarmerOrder, cancelFarmerOrder, updateFarmerOrderStatus } = useOrderAction();
   const [logoutPending, setLogoutPending] = useState(false);
   const [showOrderManagement, setShowOrderManagement] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<FarmerProduct | null>(null);

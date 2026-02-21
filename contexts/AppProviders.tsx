@@ -21,13 +21,13 @@ export function AppProviders({ children }: AppProvidersProps) {
         <UserProvider>
           <NotificationProvider>
             <ProductProvider>
-              <OrderProvider>
-                <WalletProvider>
+              <WalletProvider>
+                <OrderProvider>
                   <MessageProvider>
                     {children}
                   </MessageProvider>
-                </WalletProvider>
-              </OrderProvider>
+                </OrderProvider>
+              </WalletProvider>
             </ProductProvider>
           </NotificationProvider>
         </UserProvider>

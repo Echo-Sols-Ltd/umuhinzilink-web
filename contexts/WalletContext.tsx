@@ -29,6 +29,12 @@ export type WalletContextValue = {
 
   refreshWalletData: () => Promise<void>;
   getPaymentStatus: (transactionId: string) => Promise<PaymentResponseDTO | null>;
+
+  handleDeposit: (amount: number, description?: string) => Promise<WalletTransactionDTO | null>;
+  handleWalletPayment: (orderId: string, description?: string) => Promise<WalletTransactionDTO | null>;
+  handleExternalPayment: (request: PaymentRequest) => Promise<PaymentResponseDTO | null>;
+  checkPaymentStatus: (transactionId: string) => Promise<PaymentResponseDTO | null>;
+  refreshData: () => Promise<void>;
 };
 
 const WalletContext = createContext<WalletContextValue | undefined>(undefined);
@@ -350,6 +356,32 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     ]);
   };
 
+  const handleDeposit = async (amount: number, description?: string): Promise<WalletTransactionDTO | null> => {
+    const result = await deposit(amount, description);
+    if (result) await refreshWalletData();
+    return result;
+  };
+
+  const handleWalletPayment = async (orderId: string, description?: string): Promise<WalletTransactionDTO | null> => {
+    const result = await payOrder(orderId, description);
+    if (result) await refreshWalletData();
+    return result;
+  };
+
+  const handleExternalPayment = async (request: PaymentRequest): Promise<PaymentResponseDTO | null> => {
+    const result = await processPayment(request);
+    if (result) await refreshWalletData();
+    return result;
+  };
+
+  const checkPaymentStatus = async (transactionId: string): Promise<PaymentResponseDTO | null> => {
+    return getPaymentStatus(transactionId);
+  };
+
+  const refreshData = async (): Promise<void> => {
+    await refreshWalletData();
+  };
+
   // Auto-fetch when user logs in
   useEffect(() => {
     if (!user?.id) return;
@@ -370,6 +402,11 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     processPayment,
     refreshWalletData,
     getPaymentStatus,
+    handleDeposit,
+    handleWalletPayment,
+    handleExternalPayment,
+    checkPaymentStatus,
+    refreshData,
   };
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;

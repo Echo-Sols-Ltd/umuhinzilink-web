@@ -21,8 +21,8 @@ import Sidebar from '@/components/shared/Sidebar';
 import { UserType, OrderStatus } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useOrder } from '@/contexts/OrderContext';
+import { useWallet } from '@/contexts/WalletContext';
 import OrderStatusTracker from '@/components/orders/OrderStatusTracker';
-import useWalletAction from '@/hooks/useWalletAction';
 import {
   Table,
   TableBody,
@@ -45,7 +45,7 @@ function MyPurchasesComponent() {
   const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
   const { toast } = useToast()
   const { buyerOrders, loading: ordersLoading, fetchBuyerOrders } = useOrder();
-  const { handleWalletPayment } = useWalletAction();
+  const { handleWalletPayment } = useWallet();
 
   const categories = useMemo(() => {
     if (!buyerOrders) return [];

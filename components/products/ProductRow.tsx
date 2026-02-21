@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useChat, userToChatUser } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import useProductAction from "@/hooks/useProductAction";
+import { useProduct } from "@/contexts/ProductContext";
 
 interface ProductRowProps {
     product: FarmerProduct | SupplierProduct
@@ -18,7 +18,7 @@ interface ProductRowProps {
 export default function ProductRow({ product, onSelect, onPurchase, onContact }: ProductRowProps) {
     const { toast } = useToast()
     const { user } = useAuth()
-    const { deleteFarmerProduct } = useProductAction()
+    const { deleteFarmerProduct } = useProduct()
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
 

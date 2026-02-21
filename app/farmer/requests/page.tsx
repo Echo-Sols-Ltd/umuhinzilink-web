@@ -18,7 +18,6 @@ import {
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, SupplierProduct, SupplierOrder, OrderStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
-import useOrderAction from '@/hooks/useOrderAction';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import { imageUrl } from '@/lib/utils';
@@ -32,11 +31,20 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Pagination } from '@/components/ui/pagination';
+
+const ORDERS_PER_PAGE = 10;
 
 function FarmerRequestsComponent() {
   const { farmerBuyerProducts, fetchFarmerBuyerProducts, loading: productsLoading, error: productsError } = useProduct();
-  const { farmerBuyerOrders, fetchFarmerBuyerOrders, loading: ordersLoading } = useOrder();
-  const { cancelSupplierOrder, processOrderPayment, loading: actionLoading } = useOrderAction();
+  const {
+    farmerBuyerOrders,
+    fetchFarmerBuyerOrders,
+    loading: ordersLoading,
+    cancelSupplierOrder,
+    processOrderPayment,
+    mutationLoading: actionLoading,
+  } = useOrder();
 
   const [payingId, setPayingId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -44,6 +52,7 @@ function FarmerRequestsComponent() {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [viewingOrder, setViewingOrder] = useState<SupplierOrder | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [ordersPage, setOrdersPage] = useState(1);
 
   useEffect(() => {
     fetchFarmerBuyerProducts();
@@ -57,6 +66,16 @@ function FarmerRequestsComponent() {
     if (statusFilter === 'all') return orders;
     return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
   }, [orders, statusFilter]);
+
+  const ordersTotalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE));
+  const paginatedOrders = useMemo(
+    () => filteredOrders.slice((ordersPage - 1) * ORDERS_PER_PAGE, ordersPage * ORDERS_PER_PAGE),
+    [filteredOrders, ordersPage]
+  );
+
+  useEffect(() => {
+    setOrdersPage(1);
+  }, [statusFilter]);
 
   const stats = useMemo(() => {
     const total = orders.length;
@@ -243,7 +262,7 @@ function FarmerRequestsComponent() {
                         <TableCell className="text-right pr-8"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
                       </TableRow>
                     ))
-                  ) : filteredOrders.length === 0 ? (
+                  ) : paginatedOrders.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="py-20 text-center">
                         <div className="flex flex-col items-center justify-center opacity-30">
@@ -253,7 +272,7 @@ function FarmerRequestsComponent() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredOrders.map(order => (
+                    paginatedOrders.map(order => (
                       <TableRow key={order.id} className="group hover:bg-gray-50/50 transition-colors">
                         <TableCell className="py-5">
                           <div className="flex items-center gap-4">
@@ -319,6 +338,19 @@ function FarmerRequestsComponent() {
                   )}
                 </TableBody>
               </Table>
+              {filteredOrders.length > ORDERS_PER_PAGE && (
+                <div className="p-4 border-t border-gray-100">
+                  <Pagination
+                    currentPage={ordersPage}
+                    totalPages={ordersTotalPages}
+                    onPageChange={setOrdersPage}
+                    disabled={ordersLoading}
+                    showSummary
+                    totalItems={filteredOrders.length}
+                    itemsPerPage={ORDERS_PER_PAGE}
+                  />
+                </div>
+              )}
             </div>
           </section>
         </div>

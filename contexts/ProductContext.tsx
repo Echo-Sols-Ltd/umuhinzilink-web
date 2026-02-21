@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useMemo, useState, ReactNode } from 'react';
 import { productService } from '@/services/products';
 import {
   FarmerProductionStat,
@@ -7,7 +7,10 @@ import {
   ProductStatus,
   SupplierProductionStat,
 } from '@/types';
+import type { FarmerProductRequest, SupplierProductRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
+import { useToast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 const STORAGE_KEYS = {
   FARMER_PRODUCTS: 'farmerProducts',
@@ -24,6 +27,15 @@ type ProductContextValue = {
   updateFarmerProduct: (id: string, data: FarmerProduct) => void;
   updateBuyerProduct: (id: string, data: FarmerProduct) => void;
   updateSupplierProduct: (id: string, data: SupplierProduct) => void;
+  removeFarmerProduct: (id: string) => void;
+  removeSupplierProduct: (id: string) => void;
+  createFarmerProduct: (payload: FarmerProductRequest, image: File) => Promise<void>;
+  createSupplierProduct: (payload: SupplierProductRequest) => Promise<void>;
+  saveFarmerProduct: (id: string, payload: FarmerProductRequest) => Promise<void>;
+  saveSupplierProduct: (id: string, payload: SupplierProductRequest) => Promise<void>;
+  deleteFarmerProduct: (id: string) => Promise<void>;
+  deleteSupplierProduct: (id: string) => Promise<void>;
+  mutationLoading: boolean;
   fetchFarmerProducts: () => Promise<void>;
   fetchSupplierProducts: () => Promise<void>;
   fetchBuyerProducts: () => Promise<void>;
@@ -72,7 +84,10 @@ const ProductContext = createContext<ProductContextValue | undefined>(undefined)
 
 export function ProductProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [mutationLoading, setMutationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[] | null>([]);
@@ -263,6 +278,133 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const removeFarmerProduct = (id: string) => {
+    setFarmerProducts(prev => {
+      const updated = prev?.filter(p => p.id !== id) ?? [];
+      localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const removeSupplierProduct = (id: string) => {
+    setSupplierProducts(prev => {
+      const updated = prev?.filter(p => p.id !== id) ?? [];
+      localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const createFarmerProduct = async (payload: FarmerProductRequest, image: File) => {
+    try {
+      setMutationLoading(true);
+      const imgRes = await productService.uploadProductPhoto(image);
+      if (!imgRes?.data) return;
+      payload.image = imgRes.data;
+      const res = await productService.createFarmerProduct(payload);
+      if (!res?.success || !res.data) {
+        toast({ title: 'Failed to Create product', description: 'Try again later', variant: 'error' });
+        return;
+      }
+      addFarmerProduct(res.data);
+      router.push('/');
+      toast({ title: 'Product created', description: 'Product created successfully', variant: 'success' });
+    } catch {
+      toast({ title: 'Failed to Create product', description: 'Try again later', variant: 'error' });
+    } finally {
+      setMutationLoading(false);
+    }
+  };
+
+  const createSupplierProduct = async (payload: SupplierProductRequest) => {
+    try {
+      setMutationLoading(true);
+      const res = await productService.createSupplierProduct(payload);
+      if (!res?.success || !res.data) {
+        toast({ title: 'Failed to Create product', description: 'Try again later', variant: 'error' });
+        return;
+      }
+      addSupplierProduct(res.data);
+      router.push('/');
+      toast({ title: 'Product created', description: 'Product created successfully', variant: 'success' });
+    } catch {
+      toast({ title: 'Failed to Create product', description: 'Try again later', variant: 'error' });
+    } finally {
+      setMutationLoading(false);
+    }
+  };
+
+  const saveFarmerProduct = async (id: string, payload: FarmerProductRequest) => {
+    try {
+      setMutationLoading(true);
+      const res = await productService.updateFarmerProduct(id, payload);
+      if (!res?.success || !res.data) {
+        toast({ title: 'Failed to Edit product', description: 'Try again later', variant: 'error' });
+        return;
+      }
+      updateFarmerProduct(res.data.id, res.data);
+      toast({ title: 'Product edited', description: 'The product was updated successfully', variant: 'success' });
+      router.back();
+    } catch {
+      toast({ title: 'Failed to Edit product', description: 'Try again later', variant: 'error' });
+    } finally {
+      setMutationLoading(false);
+    }
+  };
+
+  const saveSupplierProduct = async (id: string, payload: SupplierProductRequest) => {
+    try {
+      setMutationLoading(true);
+      const res = await productService.updateSupplierProduct(id, payload);
+      if (!res?.success || !res.data) {
+        toast({ title: 'Failed to Edit product', description: 'Try again later', variant: 'error' });
+        return;
+      }
+      updateSupplierProduct(res.data.id, res.data);
+      toast({ title: 'Product edited', description: 'Product updated successfully', variant: 'success' });
+      router.back();
+    } catch {
+      toast({ title: 'Failed to Edit product', description: 'Try again later', variant: 'error' });
+    } finally {
+      setMutationLoading(false);
+    }
+  };
+
+  const deleteFarmerProduct = async (id: string) => {
+    try {
+      setMutationLoading(true);
+      const res = await productService.deleteFarmerProduct(id);
+      if (!res?.success) {
+        toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
+        return;
+      }
+      removeFarmerProduct(id);
+      toast({ title: 'Product Deleted Successfully', description: 'Product was deleted', variant: 'success' });
+      router.back();
+    } catch {
+      toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
+    } finally {
+      setMutationLoading(false);
+    }
+  };
+
+  const deleteSupplierProduct = async (id: string) => {
+    try {
+      setMutationLoading(true);
+      const res = await productService.deleteSupplierProduct(id);
+      if (!res?.success) {
+        toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
+        return;
+      }
+      removeSupplierProduct(id);
+      toast({ title: 'Product deleted successfully', variant: 'success' });
+      router.back();
+    } catch {
+      toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
+    } finally {
+      setMutationLoading(false);
+    }
+  };
+
   // 🔹 Filters
   const instockFarmerProducts = useMemo(
     () => farmerProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
@@ -322,6 +464,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     updateFarmerProduct,
     updateBuyerProduct,
     updateSupplierProduct,
+    removeFarmerProduct,
+    removeSupplierProduct,
+    createFarmerProduct,
+    createSupplierProduct,
+    saveFarmerProduct,
+    saveSupplierProduct,
+    deleteFarmerProduct,
+    deleteSupplierProduct,
+    mutationLoading,
     fetchFarmerProducts,
     fetchSupplierProducts,
     fetchBuyerProducts,
