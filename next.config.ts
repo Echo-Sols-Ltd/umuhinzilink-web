@@ -14,10 +14,34 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'api.umuhinzi-backend.echo-solution.com',
+        hostname: 'api.umuhinzilink.echo-solution.com',
       },
     ],
     unoptimized: true,
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https://api.umuhinzilink.echo-solution.com",
+              "font-src 'self'",
+              "connect-src 'self' https://api.umuhinzilink.echo-solution.com ws://localhost:* wss://api.umuhinzilink.echo-solution.com",
+              "frame-src 'self'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; '),
+          },
+        ],
+      },
+    ];
   },
 };
 
