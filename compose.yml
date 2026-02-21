@@ -1,15 +1,9 @@
 services:
   web:
-    image: ghcr.io/echo-sols-ltd/umuhinzilink-web:latest
-    ports:
-      - "7023:3000"
+    build: .
     environment:
       - NODE_ENV=production
-    volumes:
-      - ./:/app
-      - /app/node_modules
-    networks:
-      - umuhinzilink-net
+    network_mode: host
     healthcheck:
       test:
         [
@@ -23,8 +17,4 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    # restart: unless-stopped
-
-networks:
-  umuhinzilink-net:
-    driver: bridge
+    restart: unless-stopped
