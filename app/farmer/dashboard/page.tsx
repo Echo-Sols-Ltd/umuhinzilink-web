@@ -33,7 +33,6 @@ import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 import Sidebar from '@/components/shared/Sidebar';
-import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import Image from 'next/image';
 import { imageUrl } from '@/lib/utils';
@@ -164,8 +163,16 @@ function Dashboard() {
   const router = useRouter();
   const { user, farmer, loading: authLoading, logout } = useAuth();
   const { farmerProducts, loading: productsLoading, error: productsError } = useProduct();
-  const { farmerOrders, farmerBuyerOrders, loading: ordersLoading, fetchFarmerBuyerOrders } = useOrder();
-  const { acceptFarmerOrder, cancelFarmerOrder, updateFarmerOrderStatus, loading: actionLoading } = useOrderAction();
+  const {
+    farmerOrders,
+    farmerBuyerOrders,
+    loading: ordersLoading,
+    fetchFarmerBuyerOrders,
+    acceptFarmerOrder,
+    cancelFarmerOrder,
+    updateFarmerOrderStatus,
+    mutationLoading: actionLoading,
+  } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
 
   // Use context data - all hooks must be called before any early returns

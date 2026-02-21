@@ -1,36 +1,34 @@
 import { useState } from 'react';
 import { supplierService, SupplierProductRequest } from '@/services/suppliers';
-import { SupplierProduct, SupplierOrder, ApiResponse } from '@/types';
+import { SupplierProduct, SupplierOrder } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
+import { useProduct } from '@/contexts/ProductContext';
+import { useOrder } from '@/contexts/OrderContext';
 
 export const useSupplierAction = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast()
-  // Product Management Actions
+  const { toast } = useToast();
+  const { addSupplierProduct, updateSupplierProduct, removeSupplierProduct } = useProduct();
+  const { editSupplierOrder } = useOrder();
+
+  // Product Management Actions (sync with ProductContext)
   const createProduct = async (productData: SupplierProductRequest): Promise<SupplierProduct | null> => {
     setLoading(true);
     setError(null);
     try {
       const response = await supplierService.createProduct(productData);
       if (response.success && response.data) {
-        toast({
-          title: "Success",
-          description: "Product created successfully",
-          variant: 'success'
-        });
+        addSupplierProduct(response.data);
+        toast({ title: 'Success', description: 'Product created successfully', variant: 'success' });
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to create product');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to create product';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create product';
       setError(errorMessage);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: 'error',
-      });
+      toast({ title: 'Error', description: errorMessage, variant: 'error' });
       return null;
     } finally {
       setLoading(false);
@@ -47,8 +45,8 @@ export const useSupplierAction = () => {
       } else {
         throw new Error(response.message || 'Failed to fetch products');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to fetch products';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch products';
       setError(errorMessage);
       toast({
         title: "Error",
@@ -76,8 +74,8 @@ export const useSupplierAction = () => {
       } else {
         throw new Error(response.message || 'Failed to fetch products');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to fetch products';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch products';
       setError(errorMessage);
       toast({
         title: "Error",
@@ -109,8 +107,8 @@ export const useSupplierAction = () => {
       } else {
         throw new Error(response.message || 'Failed to search products');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to search products';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to search products';
       setError(errorMessage);
       toast({
         title: "Error",
@@ -129,23 +127,16 @@ export const useSupplierAction = () => {
     try {
       const response = await supplierService.updateProduct(id, productData);
       if (response.success && response.data) {
-        toast({
-          title: "Success",
-          description: "Product updated successfully",
-          variant: 'success'
-        });
+        updateSupplierProduct(response.data.id, response.data);
+        toast({ title: 'Success', description: 'Product updated successfully', variant: 'success' });
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to update product');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to update product';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update product';
       setError(errorMessage);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: 'error',
-      });
+      toast({ title: 'Error', description: errorMessage, variant: 'error' });
       return null;
     } finally {
       setLoading(false);
@@ -158,23 +149,16 @@ export const useSupplierAction = () => {
     try {
       const response = await supplierService.deleteProduct(id);
       if (response.success) {
-        toast({
-          title: "Success",
-          description: "Product deleted successfully",
-          variant: 'success'
-        });
+        removeSupplierProduct(id);
+        toast({ title: 'Success', description: 'Product deleted successfully', variant: 'success' });
         return true;
       } else {
         throw new Error(response.message || 'Failed to delete product');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to delete product';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete product';
       setError(errorMessage);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: 'error',
-      });
+      toast({ title: 'Error', description: errorMessage, variant: 'error' });
       return false;
     } finally {
       setLoading(false);
@@ -192,8 +176,8 @@ export const useSupplierAction = () => {
       } else {
         throw new Error(response.message || 'Failed to fetch orders');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to fetch orders';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch orders';
       setError(errorMessage);
       toast({
         title: "Error",
@@ -212,23 +196,16 @@ export const useSupplierAction = () => {
     try {
       const response = await supplierService.acceptOrder(id);
       if (response.success && response.data) {
-        toast({
-          title: "Success",
-          description: "Order accepted successfully",
-          variant: 'success'
-        });
+        editSupplierOrder(response.data);
+        toast({ title: 'Success', description: 'Order accepted successfully', variant: 'success' });
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to accept order');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to accept order';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to accept order';
       setError(errorMessage);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: 'error',
-      });
+      toast({ title: 'Error', description: errorMessage, variant: 'error' });
       return null;
     } finally {
       setLoading(false);
@@ -241,23 +218,16 @@ export const useSupplierAction = () => {
     try {
       const response = await supplierService.rejectOrder(id);
       if (response.success && response.data) {
-        toast({
-          title: "Success",
-          description: "Order rejected successfully",
-          variant: 'success'
-        });
+        editSupplierOrder(response.data);
+        toast({ title: 'Success', description: 'Order rejected successfully', variant: 'success' });
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to reject order');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to reject order';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to reject order';
       setError(errorMessage);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: 'error',
-      });
+      toast({ title: 'Error', description: errorMessage, variant: 'error' });
       return null;
     } finally {
       setLoading(false);
@@ -270,23 +240,16 @@ export const useSupplierAction = () => {
     try {
       const response = await supplierService.updateOrderStatus(id, status);
       if (response.success && response.data) {
-        toast({
-          title: "Success",
-          description: "Order status updated successfully",
-          variant: 'success'
-        });
+        editSupplierOrder(response.data);
+        toast({ title: 'Success', description: 'Order status updated successfully', variant: 'success' });
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to update order status');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to update order status';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update order status';
       setError(errorMessage);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: 'error',
-      });
+      toast({ title: 'Error', description: errorMessage, variant: 'error' });
       return null;
     } finally {
       setLoading(false);
@@ -304,8 +267,8 @@ export const useSupplierAction = () => {
       } else {
         throw new Error(response.message || 'Failed to fetch dashboard stats');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to fetch dashboard stats';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch dashboard stats';
       setError(errorMessage);
       toast({
         title: "Error",
@@ -328,8 +291,8 @@ export const useSupplierAction = () => {
       } else {
         throw new Error(response.message || 'Failed to fetch product stats');
       }
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to fetch product stats';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch product stats';
       setError(errorMessage);
       toast({
         title: "Error",

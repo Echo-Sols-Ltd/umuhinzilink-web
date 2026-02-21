@@ -1,10 +1,8 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
-import { useToast } from '@/components/ui/use-toast';
 import Link from 'next/link';
 import {
   Package,
@@ -14,7 +12,6 @@ import {
   TrendingUp,
   CheckCircle,
   AlertCircle,
-  Clock,
   LayoutGrid
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
@@ -22,6 +19,7 @@ import { UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import ProductCard from '@/components/products/Product';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Pagination } from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
@@ -30,14 +28,26 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+const ITEMS_PER_PAGE = 12;
+
 function FarmerProducts() {
-  const router = useRouter();
   const { user } = useAuth();
-  const { farmerProducts, loading, fetchFarmerProducts } = useProduct();
+  const {
+    farmerProducts,
+    loading,
+    fetchFarmerProducts,
+    farmerProductsTotalPages: totalPages,
+    farmerProductsTotalElements: totalElements,
+  } = useProduct();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const products = useMemo(() => farmerProducts || [], [farmerProducts]);
+
+  useEffect(() => {
+    fetchFarmerProducts(currentPage - 1, ITEMS_PER_PAGE);
+  }, [currentPage]);
 
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
@@ -56,6 +66,10 @@ function FarmerProducts() {
     }
     return filtered;
   }, [products, statusFilter, searchTerm]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, searchTerm]);
 
   const stats = useMemo(() => {
     const total = products.length;
@@ -163,17 +177,32 @@ function FarmerProducts() {
                 <p className="text-gray-500 text-sm">Try adjusting your filters or create a new product listing.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredProducts.map(product => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onContact={() => { }}
-                    onPurchase={() => { }}
-                    onSelect={() => { }}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredProducts.map(product => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onContact={() => { }}
+                      onPurchase={() => { }}
+                      onSelect={() => { }}
+                    />
+                  ))}
+                </div>
+                {totalPages > 1 && (
+                  <div className="mt-6">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                      disabled={loading}
+                      showSummary
+                      totalItems={totalElements}
+                      itemsPerPage={ITEMS_PER_PAGE}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </section>
         </div>

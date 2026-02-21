@@ -113,6 +113,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Inputs', href: '/supplier/products' },
                         { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Farmer Requests', href: '/supplier/requests' },
                         { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Orders', href: '/supplier/orders' },
+                        { icon:<Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/supplier/wallet' },
                     ],
                 },
                 {

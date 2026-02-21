@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useChat } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import useProductAction from "@/hooks/useProductAction";
+import { useProduct } from "@/contexts/ProductContext";
 
 interface ProductCardProps {
     product: SupplierProduct | FarmerProduct
@@ -20,7 +20,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, onSelect, onPurchase, onContact, onEdit }: ProductCardProps) {
     const { toast } = useToast()
     const { user } = useAuth()
-    const { deleteFarmerProduct, deleteSupplierProduct } = useProductAction()
+    const { deleteFarmerProduct, deleteSupplierProduct } = useProduct()
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
 

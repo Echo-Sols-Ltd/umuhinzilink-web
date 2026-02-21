@@ -16,9 +16,16 @@ export interface ChatMessageEdit {
 }
 
 export class MessageService {
-  // Get conversation messages between two users
-  async getConversation(senderId: string, receiverId: string): Promise<PaginatedResponse<Message[]>> {
-    return await apiClient.get<PaginatedResponse<Message[]>>(API_ENDPOINTS.MESSAGES.CONVERSATION(senderId, receiverId));
+  // Get conversation messages between two users (paginated)
+  async getConversation(
+    senderId: string,
+    receiverId: string,
+    page = 0,
+    size = 20
+  ): Promise<PaginatedResponse<Message[]>> {
+    return await apiClient.get<PaginatedResponse<Message[]>>(
+      `${API_ENDPOINTS.MESSAGES.CONVERSATION(senderId, receiverId)}?page=${page}&size=${size}`
+    );
   }
 
   // Get message by ID

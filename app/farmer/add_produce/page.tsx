@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
-import useProductAction from '@/hooks/useProductAction';
+import { useProduct } from '@/contexts/ProductContext';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import {
   Select,
@@ -21,7 +21,7 @@ import Sidebar from '@/components/shared/Sidebar';
 function AddProduce() {
   const router = useRouter();
   const { user } = useAuth();
-  const { createFarmerProduct } = useProductAction();
+  const { createFarmerProduct } = useProduct();
   const { toast } = useToast();
   const [formData, setFormData] = useState<FarmerProductRequest>({
     name: '',

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   CheckCircle,
   LayoutGrid,
@@ -34,15 +34,45 @@ import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import { ProductCategory, ProductType, MeasurementUnit, CertificationType } from '@/types/enums';
 import { useProduct } from '@/contexts/ProductContext';
 import ProductCard from '@/components/products/Product';
+import { Pagination } from '@/components/ui/pagination';
+
+const ITEMS_PER_PAGE = 12;
 
 function ProductsPageComponent() {
   const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const { logout } = useAuth();
   const { loading } = useSupplier();
   const supplierActions = useSupplierAction();
-  const { supplierProducts, } = useProduct()
+  const {
+    supplierProducts,
+    fetchSupplierProducts,
+    supplierProductsTotalPages: totalPages,
+    supplierProductsTotalElements: totalElements,
+  } = useProduct();
+
+  const filteredProducts = useMemo(() => {
+    const list = supplierProducts || [];
+    if (!searchTerm.trim()) return list;
+    const term = searchTerm.toLowerCase();
+    return list.filter(
+      (p) =>
+        p.name?.toLowerCase().includes(term) ||
+        p.description?.toLowerCase().includes(term) ||
+        p.category?.toLowerCase().includes(term)
+    );
+  }, [supplierProducts, searchTerm]);
+
+  useEffect(() => {
+    fetchSupplierProducts(currentPage - 1, ITEMS_PER_PAGE);
+  }, [currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
   const handleLogout = () => {
     logout();
   };
@@ -214,6 +244,8 @@ function ProductsPageComponent() {
               <input
                 type="text"
                 placeholder="Search your inventory..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-transparent rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
               />
             </div>
@@ -223,7 +255,7 @@ function ProductsPageComponent() {
           <section className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-bold text-gray-900 border-l-4 border-green-500 pl-3 uppercase tracking-widest">Active Listings</h2>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{supplierProducts?.length || 0} Results</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{filteredProducts.length} Results</span>
             </div>
 
             {loading ? (
@@ -240,7 +272,7 @@ function ProductsPageComponent() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-20">
-                {supplierProducts?.length === 0 ? (
+                {filteredProducts.length === 0 ? (
                   <div className="col-span-full bg-white rounded-2xl border border-gray-100 p-16 text-center shadow-sm">
                     <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">No inputs found</h3>
@@ -254,13 +286,28 @@ function ProductsPageComponent() {
                     </button>
                   </div>
                 ) : (
-                  supplierProducts?.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={{ ...product}}
-                      onEdit={handleEdit}
-                    />
-                  ))
+                  <>
+                    {filteredProducts.map((product) => (
+                      <ProductCard
+                        key={product.id}
+                        product={{ ...product }}
+                        onEdit={handleEdit}
+                      />
+                    ))}
+                    {totalPages > 1 && (
+                      <div className="col-span-full mt-6">
+                        <Pagination
+                          currentPage={currentPage}
+                          totalPages={totalPages}
+                          onPageChange={setCurrentPage}
+                          disabled={loading}
+                          showSummary
+                          totalItems={totalElements}
+                          itemsPerPage={ITEMS_PER_PAGE}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}

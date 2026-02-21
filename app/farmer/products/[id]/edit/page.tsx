@@ -8,7 +8,6 @@ import { useProduct } from '@/contexts/ProductContext';
 import Link from 'next/link';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
-import useProductAction from '@/hooks/useProductAction';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { productService } from '@/services/products';
 import {
@@ -25,8 +24,7 @@ function EditProduct() {
   const router = useRouter();
   const params = useParams();
   const { user } = useAuth();
-  const { farmerProducts } = useProduct();
-  const { editFarmerProduct } = useProductAction();
+  const { farmerProducts, saveFarmerProduct: editFarmerProduct } = useProduct();
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(true);

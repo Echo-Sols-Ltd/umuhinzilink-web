@@ -1,34 +1,23 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 
 import {
-  LayoutGrid,
-  FilePlus,
-  MessageSquare,
-  BarChart2,
-  ShoppingCart,
-  User,
-  Settings,
-  Mail,
-  Bell,
   Package,
   Leaf,
   Download,
-  Loader2,
-  LogOut,
   Truck,
   Eye,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { FarmerPages, UserType, OrderStatus, FarmerOrder, DeliveryStatus } from '@/types';
+import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
-import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import { Pagination } from '@/components/ui/pagination';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import {
   Table,
@@ -75,34 +64,52 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0, ...options });
 }
 
+const ITEMS_PER_PAGE = 10;
+
 function FarmerOrders() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { farmerOrders, loading } = useOrder();
-  const { acceptFarmerOrder, cancelFarmerOrder, updateFarmerOrderStatus, loading: actionLoading } = useOrderAction();
+  const {
+    farmerOrders,
+    loading,
+    mutationLoading: actionLoading,
+    acceptFarmerOrder,
+    cancelFarmerOrder,
+    updateFarmerOrderStatus,
+    fetchFarmerOrders,
+    farmerOrdersTotalPages: totalPages,
+    farmerOrdersTotalElements: totalElements,
+  } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Use context data instead of manual state
-  const currentUser = user;
   const orders = useMemo(() => farmerOrders || [], [farmerOrders]);
-  const error = null;
+  const currentUser = user;
 
   const filteredOrders = useMemo(() => {
     if (statusFilter === 'all') return orders;
     return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
   }, [orders, statusFilter]);
 
+  useEffect(() => {
+    fetchFarmerOrders(currentPage - 1, ITEMS_PER_PAGE);
+  }, [currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter]);
+
   const metrics = useMemo(() => {
-    const total = orders.length;
+    const total = totalElements;
     const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0);
     const paid = orders.filter(order => order.isPaid).length;
     const pending = orders.filter(order => (order.status || '').toLowerCase() === 'pending').length;
     return { total, totalRevenue, paid, pending };
-  }, [orders]);
+  }, [orders, totalElements]);
 
   const handleLogout = async () => {
     if (logoutPending) return;
@@ -341,6 +348,19 @@ function FarmerOrders() {
                 )}
               </TableBody>
             </Table>
+            {totalPages > 1 && (
+              <div className="p-4 border-t border-gray-100">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                  disabled={loading}
+                  showSummary
+                  totalItems={totalElements}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                />
+              </div>
+            )}
           </section>
         </div>
       </main>

@@ -18,7 +18,6 @@ import {
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, SupplierProduct, SupplierOrder, OrderStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
-import useOrderAction from '@/hooks/useOrderAction';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import { imageUrl } from '@/lib/utils';
@@ -32,11 +31,22 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Pagination } from '@/components/ui/pagination';
+
+const ORDERS_PER_PAGE = 10;
 
 function FarmerRequestsComponent() {
   const { farmerBuyerProducts, fetchFarmerBuyerProducts, loading: productsLoading, error: productsError } = useProduct();
-  const { farmerBuyerOrders, fetchFarmerBuyerOrders, loading: ordersLoading } = useOrder();
-  const { cancelSupplierOrder, processOrderPayment, loading: actionLoading } = useOrderAction();
+  const {
+    farmerBuyerOrders,
+    fetchFarmerBuyerOrders,
+    loading: ordersLoading,
+    cancelSupplierOrder,
+    processOrderPayment,
+    mutationLoading: actionLoading,
+    farmerBuyerOrdersTotalPages: ordersTotalPages,
+    farmerBuyerOrdersTotalElements: ordersTotalElements,
+  } = useOrder();
 
   const [payingId, setPayingId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -44,11 +54,15 @@ function FarmerRequestsComponent() {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [viewingOrder, setViewingOrder] = useState<SupplierOrder | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [ordersPage, setOrdersPage] = useState(1);
 
   useEffect(() => {
-    fetchFarmerBuyerProducts();
-    fetchFarmerBuyerOrders();
+    fetchFarmerBuyerProducts(0, 100);
   }, []);
+
+  useEffect(() => {
+    fetchFarmerBuyerOrders(ordersPage - 1, ORDERS_PER_PAGE);
+  }, [ordersPage]);
 
   const orders = useMemo(() => farmerBuyerOrders || [], [farmerBuyerOrders]);
   const products = useMemo(() => farmerBuyerProducts || [], [farmerBuyerProducts]);
@@ -58,13 +72,17 @@ function FarmerRequestsComponent() {
     return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
   }, [orders, statusFilter]);
 
+  useEffect(() => {
+    setOrdersPage(1);
+  }, [statusFilter]);
+
   const stats = useMemo(() => {
-    const total = orders.length;
+    const total = ordersTotalElements;
     const pending = orders.filter(req => (req.status || '').toUpperCase() === 'PENDING').length;
     const completed = orders.filter(req => (req.status || '').toUpperCase() === 'COMPLETED').length;
     const active = orders.filter(req => (req.status || '').toUpperCase() === 'ACTIVE').length;
     return { total, pending, completed, active };
-  }, [orders]);
+  }, [orders, ordersTotalElements]);
 
   const handleBuyClick = (product: SupplierProduct) => {
     setSelectedProduct(product);
@@ -119,7 +137,7 @@ function FarmerRequestsComponent() {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => { fetchFarmerBuyerProducts(); fetchFarmerBuyerOrders(); }}
+                onClick={() => { fetchFarmerBuyerProducts(0, 100); fetchFarmerBuyerOrders(0, ORDERS_PER_PAGE); setOrdersPage(1); }}
                 className="p-2.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all border border-gray-100 bg-white shadow-sm"
               >
                 <RefreshCw className={`w-5 h-5 ${productsLoading || ordersLoading ? 'animate-spin' : ''}`} />
@@ -319,6 +337,19 @@ function FarmerRequestsComponent() {
                   )}
                 </TableBody>
               </Table>
+              {ordersTotalPages > 1 && (
+                <div className="p-4 border-t border-gray-100">
+                  <Pagination
+                    currentPage={ordersPage}
+                    totalPages={ordersTotalPages}
+                    onPageChange={setOrdersPage}
+                    disabled={ordersLoading}
+                    showSummary
+                    totalItems={ordersTotalElements}
+                    itemsPerPage={ORDERS_PER_PAGE}
+                  />
+                </div>
+              )}
             </div>
           </section>
         </div>

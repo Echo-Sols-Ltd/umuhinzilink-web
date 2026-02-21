@@ -21,8 +21,8 @@ import Sidebar from '@/components/shared/Sidebar';
 import { UserType, OrderStatus } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useOrder } from '@/contexts/OrderContext';
+import { useWallet } from '@/contexts/WalletContext';
 import OrderStatusTracker from '@/components/orders/OrderStatusTracker';
-import useWalletAction from '@/hooks/useWalletAction';
 import {
   Table,
   TableBody,
@@ -44,8 +44,14 @@ function MyPurchasesComponent() {
   const itemsPerPage = 10;
   const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
   const { toast } = useToast()
-  const { buyerOrders, loading: ordersLoading, fetchBuyerOrders } = useOrder();
-  const { handleWalletPayment } = useWalletAction();
+  const {
+    buyerOrders,
+    loading: ordersLoading,
+    fetchBuyerOrders,
+    buyerOrdersTotalPages: totalPages,
+    buyerOrdersTotalElements: totalElements,
+  } = useOrder();
+  const { handleWalletPayment } = useWallet();
 
   const categories = useMemo(() => {
     if (!buyerOrders) return [];
@@ -53,29 +59,24 @@ function MyPurchasesComponent() {
     return Array.from(cats) as string[];
   }, [buyerOrders]);
 
-  // Filter and process orders
   const filteredOrders = useMemo(() => {
     if (!buyerOrders) return [];
-
     return buyerOrders.filter(order => {
       const matchesSearch = searchTerm === '' ||
         order.product?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.id.toLowerCase().includes(searchTerm.toLowerCase());
-
       const matchesStatus = filterStatus === 'all' ||
         order.status.toLowerCase() === filterStatus.toLowerCase();
-
       const matchesCategory = selectedCategory === 'all' ||
         order.product?.category === selectedCategory;
-
       return matchesSearch && matchesStatus && matchesCategory;
     });
   }, [buyerOrders, searchTerm, filterStatus, selectedCategory]);
 
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage) || 1;
-  const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  React.useEffect(() => {
+    fetchBuyerOrders(currentPage - 1, itemsPerPage);
+  }, [currentPage]);
 
-  // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, filterStatus, selectedCategory]);
@@ -83,14 +84,13 @@ function MyPurchasesComponent() {
   // Calculate stats
   const stats = useMemo(() => {
     if (!buyerOrders) return { total: 0, completed: 0, inProgress: 0, totalSpent: 0 };
-
-    const total = buyerOrders.length;
+    const total = totalElements;
     const completed = buyerOrders.filter(o => o.status === 'COMPLETED').length;
     const inProgress = buyerOrders.filter(o => o.status === 'ACTIVE' || o.status === 'PENDING').length;
     const totalSpent = buyerOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
 
     return { total, completed, inProgress, totalSpent };
-  }, [buyerOrders]);
+  }, [buyerOrders, totalElements]);
 
   const handlePayOrder = async (orderId: string) => {
     try {
@@ -104,7 +104,7 @@ function MyPurchasesComponent() {
           variant: 'success',
         });
         // Refresh orders to show updated status
-        await fetchBuyerOrders();
+        await fetchBuyerOrders(currentPage - 1, itemsPerPage);
       }
     } catch (err) {
       console.error('Payment error:', err);
@@ -291,7 +291,7 @@ function MyPurchasesComponent() {
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedOrders.map((order) => {
+                filteredOrders.map((order) => {
                   const farmerName = order.product?.owner?.names || 'Unknown Farmer';
                   const productName = order.product?.name || 'Unknown Product';
                   const quantity = `${order.quantity || 0} ${order.product?.measurementUnit || 'units'}`;
@@ -377,7 +377,7 @@ function MyPurchasesComponent() {
         {totalPages > 1 && (
           <div className="flex justify-between items-center mt-6">
             <p className="text-sm text-gray-600">
-              Showing {Math.min(filteredOrders.length, (currentPage - 1) * itemsPerPage + 1)} to {Math.min(filteredOrders.length, currentPage * itemsPerPage)} of {filteredOrders.length} results
+              Showing {Math.min(filteredOrders.length, (currentPage - 1) * itemsPerPage + 1)} to {Math.min(filteredOrders.length, currentPage * itemsPerPage)} of {totalElements} results
             </p>
             <div className="flex items-center gap-2">
               <button
