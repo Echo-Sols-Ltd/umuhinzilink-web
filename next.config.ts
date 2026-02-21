@@ -13,8 +13,8 @@ const nextConfig: NextConfig = {
         hostname: 'localhost',
       },
       {
-        protocol: 'http',
-        hostname: '10.12.75.153',
+        protocol: 'https',
+        hostname: 'api.umuhinzi-backend.echo-solution.com',
       },
     ],
     unoptimized: true,
