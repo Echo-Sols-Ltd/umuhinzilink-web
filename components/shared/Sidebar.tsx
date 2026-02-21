@@ -144,6 +144,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                         { icon: <BarChart2 className="w-4.5 h-4.5" />, label: 'Analytics', href: '/admin/analytics' },
                         { icon: <AlertCircle className="w-4.5 h-4.5" />, label: 'Reports', href: '/admin/reports' },
                         { icon: <Shield className="w-4.5 h-4.5" />, label: 'Security', href: '/admin/security' },
+                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallets', href: '/admin/wallets' },
                     ],
                 },
                 {

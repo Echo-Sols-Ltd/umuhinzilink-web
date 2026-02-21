@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAdmin } from '@/contexts/AdminContext';
 
 export default function AdminWalletsPage() {
     const [wallets, setWallets] = useState<WalletDTO[]>([]);
@@ -47,6 +48,7 @@ export default function AdminWalletsPage() {
     const [loadingTransactions, setLoadingTransactions] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const { toast } = useToast()
+    const { systemWallet} = useAdmin()
 
     const fetchWallets = async () => {
         try {
@@ -130,6 +132,7 @@ export default function AdminWalletsPage() {
     const getTransactionStatusVariant = (status: string) => {
         switch (status) {
             case 'COMPLETED': return 'success';
+            case 'INCOME': return 'success'
             case 'PENDING': return 'warning';
             case 'FAILED': return 'destructive';
             default: return 'secondary';
@@ -166,31 +169,31 @@ export default function AdminWalletsPage() {
 
                     {/* Quick Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-5">
+                        <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center gap-5">
                             <div className="p-4 bg-green-600 rounded-2xl text-white shadow-lg shadow-green-100">
                                 <Wallet className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">System Liquidity</p>
-                                <p className="text-2xl font-black text-gray-900 leading-none">RWF {wallets.reduce((acc, w) => acc + w.balance, 0).toLocaleString()}+</p>
+                                <p className="text-xs font-bold text-gray-400 uppercase  mb-1.5">System Liquidity</p>
+                                <p className="text-2xl font-semibold text-gray-900 ">RWF {wallets.reduce((acc, w) => acc + w.balance, 0).toLocaleString()}+</p>
                             </div>
                         </div>
-                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-5">
+                        <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center gap-5">
                             <div className="p-4 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-100">
                                 <History className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Active Wallets</p>
-                                <p className="text-2xl font-black text-gray-900 leading-none">{totalElements}</p>
+                                <p className="text-xs font-bold text-gray-400 uppercase  mb-1.5">Active Wallets</p>
+                                <p className="text-2xl font-semibold text-gray-900">{totalElements}</p>
                             </div>
                         </div>
-                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-5">
+                        <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center gap-5">
                             <div className="p-4 bg-purple-600 rounded-2xl text-white shadow-lg shadow-purple-100">
                                 <CreditCard className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Avg Balance</p>
-                                <p className="text-2xl font-black text-gray-900 leading-none">RWF {(wallets.length ? wallets.reduce((acc, w) => acc + w.balance, 0) / wallets.length : 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                                <p className="text-xs font-bold text-gray-400 uppercase mb-1.5">Avg Balance</p>
+                                <p className="text-2xl font-semibold text-gray-900">RWF {(wallets.length ? wallets.reduce((acc, w) => acc + w.balance, 0) / wallets.length : 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                             </div>
                         </div>
                     </div>
@@ -204,24 +207,24 @@ export default function AdminWalletsPage() {
                                 placeholder="Search by name, email, or wallet ID..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-14 pr-6 py-4 bg-white border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm font-medium"
+                                className="w-full pl-14 pr-6 py-4 bg-white border border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm font-medium"
                             />
                         </div>
-                        <button onClick={fetchWallets} className="p-4 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all shadow-sm">
+                        <button onClick={fetchWallets} className="p-4 bg-white border border-gray-100 rounded-lg hover:bg-gray-50 transition-all shadow-sm">
                             <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin text-green-600' : ''}`} />
                         </button>
                     </div>
 
                     {/* Table */}
-                    <div className="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-gray-50/50">
-                                    <TableHead className="font-bold py-6 pl-8">WALLET OWNER</TableHead>
-                                    <TableHead className="font-bold">BALANCE</TableHead>
-                                    <TableHead className="font-bold">STATUS</TableHead>
-                                    <TableHead className="font-bold">CREATED ON</TableHead>
-                                    <TableHead className="text-right font-bold pr-8">ACTIONS</TableHead>
+                                    <TableHead className="font-semibold py-6 pl-8">WALLET OWNER</TableHead>
+                                    <TableHead className="font-semibold">BALANCE</TableHead>
+                                    <TableHead className="font-semibold">STATUS</TableHead>
+                                    <TableHead className="font-semibold">CREATED ON</TableHead>
+                                    <TableHead className="text-right font-semibold pr-8">ACTIONS</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -248,28 +251,27 @@ export default function AdminWalletsPage() {
                                                         <User className="w-5 h-5" />
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-gray-900 font-bold group-hover:text-green-600 transition-colors uppercase tracking-tight">{wallet.userName || 'Unknown User'}</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-green-600 transition-colors uppercase tracking-tight">{wallet.userName || 'Unknown User'}</span>
                                                         <span className="text-[11px] text-gray-400 font-medium">{wallet.userEmail}</span>
                                                     </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col">
-                                                    <span className="text-lg font-black text-gray-900">
+                                                    <span className="text-lg font-semibold text-gray-900">
                                                         {wallet.balance.toLocaleString()} {wallet.currency}
                                                     </span>
-                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{wallet.id.substring(0, 8)}...</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge
                                                     variant={wallet.active ? 'success' : 'destructive'}
-                                                    className="font-black text-[9px] px-3 py-1 uppercase tracking-widest rounded-full"
+                                                    className="font-semibold text-xs px-3 py-1  rounded-full"
                                                 >
                                                     {wallet.active ? 'Active' : 'Locked'}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="text-gray-500 font-bold text-sm">
+                                            <TableCell className="text-gray-500 font-medium text-sm">
                                                 {new Date(wallet.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                                             </TableCell>
                                             <TableCell className="text-right pr-8">
@@ -337,8 +339,8 @@ export default function AdminWalletsPage() {
                                     <Wallet className="w-7 h-7" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Ledger Summary</h2>
-                                    <p className="text-xs text-gray-500 font-bold tracking-widest uppercase mt-1">Wallet ID: {selectedWallet.id}</p>
+                                    <h2 className="text-2xl font-semibold text-gray-900 uppercase">Ledger Summary</h2>
+                                    <p className="text-xs text-gray-500 font-semibold uppercase mt-1">Wallet ID: {selectedWallet.id}</p>
                                 </div>
                             </div>
                             <button
@@ -354,37 +356,37 @@ export default function AdminWalletsPage() {
                             {/* Detailed Info Grid */}
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                                 <div className="space-y-1">
-                                    <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Account Holder</p>
-                                    <p className="font-bold text-gray-900 text-lg">{selectedWallet.userName}</p>
+                                    <p className="text-[10px] uppercase font-semibold text-gray-400 tracking-widest">Account Holder</p>
+                                    <p className="font-semibold text-gray-900 text-lg">{selectedWallet.userName}</p>
                                     <p className="text-sm text-gray-500 font-medium">{selectedWallet.userEmail}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Available Balance</p>
-                                    <p className="font-black text-green-600 text-2xl">
+                                    <p className="text-[10px] uppercase font-semibold text-gray-400 tracking-widest">Available Balance</p>
+                                    <p className="font-semibold text-green-600 text-2xl">
                                         RWF {selectedWallet.balance.toLocaleString()}
                                     </p>
-                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Currency: {selectedWallet.currency}</p>
+                                    <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-tighter">Currency: {selectedWallet.currency}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Account Status</p>
-                                    <Badge variant={selectedWallet.active ? 'success' : 'destructive'} className="font-black text-[10px] px-3 py-1 rounded-full uppercase tracking-widest">
+                                    <p className="text-[10px] uppercase font-semibold text-gray-400 tracking-widest">Account Status</p>
+                                    <Badge variant={selectedWallet.active ? 'success' : 'destructive'} className="font-semibold text-[10px] px-3 py-1 rounded-full uppercase tracking-widest">
                                         {selectedWallet.active ? 'Active' : 'Restricted'}
                                     </Badge>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Member Since</p>
-                                    <p className="font-bold text-gray-900">{new Date(selectedWallet.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                    <p className="text-[10px] uppercase font-semibold text-gray-400 tracking-widest">Member Since</p>
+                                    <p className="font-semibold text-gray-900">{new Date(selectedWallet.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                                 </div>
                             </div>
 
                             {/* Transaction History Section */}
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between border-b pb-4">
-                                    <h3 className="text-xl font-black text-gray-900 flex items-center gap-3">
+                                    <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-3">
                                         <History className="w-5 h-5 text-gray-400" />
                                         Transaction Audit
                                     </h3>
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Recent 50 Activities</span>
+                                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Recent {userTransactions.length} Activities</span>
                                 </div>
 
                                 {loadingTransactions ? (
@@ -393,14 +395,14 @@ export default function AdminWalletsPage() {
                                         <p className="font-bold text-gray-400 text-xs uppercase tracking-widest">Decrypting Ledger...</p>
                                     </div>
                                 ) : userTransactions.length > 0 ? (
-                                    <div className="bg-gray-50/50 rounded-3xl border border-gray-100 overflow-hidden">
+                                    <div className="bg-gray-50/50 rounded-lg border border-gray-100 overflow-hidden">
                                         <Table>
                                             <TableHeader>
                                                 <TableRow className="border-none">
-                                                    <TableHead className="text-[10px] font-black uppercase text-gray-400 py-4 pl-6">Type</TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase text-gray-400 py-4">Status</TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase text-gray-400 py-4 text-right">Amount</TableHead>
-                                                    <TableHead className="text-[10px] font-black uppercase text-gray-400 py-4 pr-6">Date</TableHead>
+                                                    <TableHead className="text-sm font-semibold uppercase text-gray-400 py-4 pl-6">Type</TableHead>
+                                                    <TableHead className="text-sm font-semibold uppercase text-gray-400 py-4">Status</TableHead>
+                                                    <TableHead className="text-sm font-semibold uppercase text-gray-400 py-4 text-right">Amount</TableHead>
+                                                    <TableHead className="text-sm font-semibold uppercase text-gray-400 py-4 pr-6">Date</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
@@ -414,21 +416,21 @@ export default function AdminWalletsPage() {
                                                                     <div className="p-2 bg-orange-50 rounded-lg text-orange-600"><ArrowUpRight className="w-4 h-4" /></div>
                                                                 )}
                                                                 <div className="flex flex-col">
-                                                                    <span className="font-bold text-[11px] text-gray-900 uppercase tracking-tight">{tx.type}</span>
-                                                                    <span className="text-[10px] text-gray-400 font-medium line-clamp-1 max-w-[200px]">{tx.description}</span>
+                                                                    <span className="font-bold text-xs text-gray-900 uppercase ">{tx.type}</span>
+                                                                    <span className="text-xs text-gray-400 font-medium line-clamp-1 max-w-[200px]">{tx.description}</span>
                                                                 </div>
                                                             </div>
                                                         </TableCell>
                                                         <TableCell>
-                                                            <Badge variant={getTransactionStatusVariant(tx.status)} className="font-black text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-md">
+                                                            <Badge variant={getTransactionStatusVariant(tx.status)} className="font-semibold text-xs uppercase px-2 py-0.5 rounded-md">
                                                                 {tx.status}
                                                             </Badge>
                                                         </TableCell>
-                                                        <TableCell className="text-right font-black text-gray-900 text-sm italic">
-                                                            {(tx.type === 'DEPOSIT' || tx.type === 'TRANSFER_IN' ? '+' : '-')} RWF {tx.amount.toLocaleString()}
+                                                        <TableCell className="text-right font-semibold text-gray-900 text-sm ">
+                                                            {(tx.type === 'DEPOSIT' || tx.type === 'TRANSFER_IN'|| tx.type ==='INCOME' ? '+' : '-')} RWF {tx.amount.toLocaleString()}
                                                         </TableCell>
                                                         <TableCell className="pr-6 text-right">
-                                                            <span className="text-[10px] font-bold text-gray-400">{new Date(tx.createdAt).toLocaleDateString()}</span>
+                                                            <span className="text-xs font-bold text-gray-400">{new Date(tx.createdAt).toLocaleDateString()}</span>
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}
