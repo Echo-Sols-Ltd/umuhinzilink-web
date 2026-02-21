@@ -1,6 +1,6 @@
 services:
   web:
-    build: .
+    image: ghrc.io/echosols/umuhinzilink-web:latest
     environment:
       - NODE_ENV=production
     network_mode: host
@@ -12,7 +12,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost:3000",
+          "http://localhost:7023",
         ]
       interval: 30s
       timeout: 10s
