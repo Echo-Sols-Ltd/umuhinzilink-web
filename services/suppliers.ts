@@ -41,8 +41,10 @@ export class SupplierService {
     return await apiClient.post<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.CREATE_SUPPLIER, productData);
   }
 
-  async getMyProducts(): Promise<PaginatedResponse<SupplierProduct[]>> {
-    return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(API_ENDPOINTS.PRODUCT.SUPPLIER_ALL);
+  async getMyProducts(page = 0, size = 10): Promise<PaginatedResponse<SupplierProduct[]>> {
+    return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(
+      `${API_ENDPOINTS.PRODUCT.SUPPLIER_ALL}?page=${page}&size=${size}`
+    );
   }
 
   async getAllProducts(params?: {
@@ -52,8 +54,8 @@ export class SupplierService {
     sortDirection?: string;
   }): Promise<PaginatedResponse<SupplierProduct[]>> {
     const queryParams = new URLSearchParams();
-    if (params?.page !== undefined) queryParams.append('page', params.page.toString());
-    if (params?.size !== undefined) queryParams.append('size', params.size.toString());
+    queryParams.append('page', String(params?.page ?? 0));
+    queryParams.append('size', String(params?.size ?? 10));
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params?.sortDirection) queryParams.append('sortDirection', params.sortDirection);
 
@@ -98,8 +100,10 @@ export class SupplierService {
   }
 
   // Order Management Methods
-  async getMyOrders(): Promise<PaginatedResponse<SupplierOrder[]>> {
-    return await apiClient.get<PaginatedResponse<SupplierOrder[]>>(API_ENDPOINTS.ORDER.SUPPLIER_ALL);
+  async getMyOrders(page = 0, size = 10): Promise<PaginatedResponse<SupplierOrder[]>> {
+    return await apiClient.get<PaginatedResponse<SupplierOrder[]>>(
+      `${API_ENDPOINTS.ORDER.SUPPLIER_ALL}?page=${page}&size=${size}`
+    );
   }
 
   async getOrderById(id: string): Promise<ApiResponse<SupplierOrder>> {

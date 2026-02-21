@@ -61,7 +61,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const orders = [...farmerOrders, ...supplierOrders];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [systemWallet, setSystemWallet] = useState<WalletDTO | null>(null)
+  const [systemWallet, setSystemWallet] = useState<WalletDTO | null>(null);
+
+  const toList = <T,>(r: { data?: T[]; content?: T[] }): T[] =>
+    Array.isArray((r as { content?: T[] }).content) ? (r as { content: T[] }).content : (Array.isArray(r.data) ? r.data : []);
 
   // Fetch all data
   const fetchAllData = useCallback(async (user: User) => {
@@ -71,22 +74,22 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes, systemTransactions, sysWallet] = await Promise.all([
+      const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes, transactionsRes, sysWallet] = await Promise.all([
         adminService.getAllUsers(0, 4),
-        adminService.getAllFarmerProducts(),
-        adminService.getAllSupplierProducts(),
-        adminService.getAllFarmerOrders(),
-        adminService.getAllSupplierOrders(),
-        adminService.getTransactionMonitoring(),
+        adminService.getAllFarmerProducts(0, 50),
+        adminService.getAllSupplierProducts(0, 50),
+        adminService.getAllFarmerOrders(0, 50),
+        adminService.getAllSupplierOrders(0, 50),
+        adminService.getTransactionMonitoring(0, 50),
         adminService.getSystemWallet()
       ]);
 
-      setSystemTransactions(systemTransactions || [])
-      setUsers(usersRes);
-      setFarmerProducts(farmerProductsRes || []);
-      setSupplierProducts(supplierProductsRes || []);
-      setFarmerOrders(farmerOrdersRes || []);
-      setSupplierOrders(supplierOrdersRes || []);
+      setSystemTransactions(toList(transactionsRes));
+      setUsers(usersRes ?? null);
+      setFarmerProducts(toList(farmerProductsRes));
+      setSupplierProducts(toList(supplierProductsRes));
+      setFarmerOrders(toList(farmerOrdersRes));
+      setSupplierOrders(toList(supplierOrdersRes));
       setSystemWallet(sysWallet)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
@@ -121,11 +124,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const refreshProducts = async () => {
     try {
       const [farmerRes, supplierRes] = await Promise.all([
-        adminService.getAllFarmerProducts(),
-        adminService.getAllSupplierProducts()
+        adminService.getAllFarmerProducts(0, 50),
+        adminService.getAllSupplierProducts(0, 50)
       ]);
-      setFarmerProducts(farmerRes || []);
-      setSupplierProducts(supplierRes || []);
+      setFarmerProducts(toList(farmerRes));
+      setSupplierProducts(toList(supplierRes));
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
@@ -140,11 +143,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const refreshOrders = async () => {
     try {
       const [farmerRes, supplierRes] = await Promise.all([
-        adminService.getAllFarmerOrders(),
-        adminService.getAllSupplierOrders()
+        adminService.getAllFarmerOrders(0, 50),
+        adminService.getAllSupplierOrders(0, 50)
       ]);
-      setFarmerOrders(farmerRes || []);
-      setSupplierOrders(supplierRes || []);
+      setFarmerOrders(toList(farmerRes));
+      setSupplierOrders(toList(supplierRes));
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';
       setError(message);

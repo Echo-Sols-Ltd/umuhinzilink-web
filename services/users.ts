@@ -5,12 +5,14 @@ import { AxiosProgressEvent, CancelToken } from 'axios';
 
 export class UserService {
   /**
-   * Fetch all users. Each user may now include:
+   * Fetch all users (paginated). Each user may now include:
    * - latestMessage: Message | null
    * - online: boolean (if privacy allows)
    */
-  async getAllUsers(): Promise<PaginatedResponse<User[]>> {
-    return await apiClient.get<PaginatedResponse<User[]>>(API_ENDPOINTS.USER.ALL);
+  async getAllUsers(page = 0, size = 10): Promise<PaginatedResponse<User[]>> {
+    return await apiClient.get<PaginatedResponse<User[]>>(
+      `${API_ENDPOINTS.USER.ALL}?page=${page}&size=${size}`
+    );
   }
 
   /**

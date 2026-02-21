@@ -32,12 +32,22 @@ const ITEMS_PER_PAGE = 12;
 
 function FarmerProducts() {
   const { user } = useAuth();
-  const { farmerProducts, loading, fetchFarmerProducts } = useProduct();
+  const {
+    farmerProducts,
+    loading,
+    fetchFarmerProducts,
+    farmerProductsTotalPages: totalPages,
+    farmerProductsTotalElements: totalElements,
+  } = useProduct();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   const products = useMemo(() => farmerProducts || [], [farmerProducts]);
+
+  useEffect(() => {
+    fetchFarmerProducts(currentPage - 1, ITEMS_PER_PAGE);
+  }, [currentPage]);
 
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
@@ -56,12 +66,6 @@ function FarmerProducts() {
     }
     return filtered;
   }, [products, statusFilter, searchTerm]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
-  const paginatedProducts = useMemo(
-    () => filteredProducts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
-    [filteredProducts, currentPage]
-  );
 
   useEffect(() => {
     setCurrentPage(1);
@@ -175,7 +179,7 @@ function FarmerProducts() {
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {paginatedProducts.map(product => (
+                  {filteredProducts.map(product => (
                     <ProductCard
                       key={product.id}
                       product={product}
@@ -185,7 +189,7 @@ function FarmerProducts() {
                     />
                   ))}
                 </div>
-                {filteredProducts.length > ITEMS_PER_PAGE && (
+                {totalPages > 1 && (
                   <div className="mt-6">
                     <Pagination
                       currentPage={currentPage}
@@ -193,7 +197,7 @@ function FarmerProducts() {
                       onPageChange={setCurrentPage}
                       disabled={loading}
                       showSummary
-                      totalItems={filteredProducts.length}
+                      totalItems={totalElements}
                       itemsPerPage={ITEMS_PER_PAGE}
                     />
                   </div>

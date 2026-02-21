@@ -47,7 +47,12 @@ function ProductsPageComponent() {
   const { logout } = useAuth();
   const { loading } = useSupplier();
   const supplierActions = useSupplierAction();
-  const { supplierProducts } = useProduct();
+  const {
+    supplierProducts,
+    fetchSupplierProducts,
+    supplierProductsTotalPages: totalPages,
+    supplierProductsTotalElements: totalElements,
+  } = useProduct();
 
   const filteredProducts = useMemo(() => {
     const list = supplierProducts || [];
@@ -61,11 +66,9 @@ function ProductsPageComponent() {
     );
   }, [supplierProducts, searchTerm]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
-  const paginatedProducts = useMemo(
-    () => filteredProducts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
-    [filteredProducts, currentPage]
-  );
+  useEffect(() => {
+    fetchSupplierProducts(currentPage - 1, ITEMS_PER_PAGE);
+  }, [currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -269,7 +272,7 @@ function ProductsPageComponent() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-20">
-                {paginatedProducts.length === 0 ? (
+                {filteredProducts.length === 0 ? (
                   <div className="col-span-full bg-white rounded-2xl border border-gray-100 p-16 text-center shadow-sm">
                     <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">No inputs found</h3>
@@ -284,14 +287,14 @@ function ProductsPageComponent() {
                   </div>
                 ) : (
                   <>
-                    {paginatedProducts.map((product) => (
+                    {filteredProducts.map((product) => (
                       <ProductCard
                         key={product.id}
                         product={{ ...product }}
                         onEdit={handleEdit}
                       />
                     ))}
-                    {filteredProducts.length > ITEMS_PER_PAGE && (
+                    {totalPages > 1 && (
                       <div className="col-span-full mt-6">
                         <Pagination
                           currentPage={currentPage}
@@ -299,7 +302,7 @@ function ProductsPageComponent() {
                           onPageChange={setCurrentPage}
                           disabled={loading}
                           showSummary
-                          totalItems={filteredProducts.length}
+                          totalItems={totalElements}
                           itemsPerPage={ITEMS_PER_PAGE}
                         />
                       </div>

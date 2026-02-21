@@ -40,7 +40,7 @@ export class PaymentService {
     return await apiClient.get<ApiResponse<PaymentResponseDTO>>(API_ENDPOINTS.PAYMENT.ORDER_PAYMENT(orderId));
   }
 
-  // Get user's transaction history
+  // Get user's transaction history (paginated)
   async getMyTransactions(params?: {
     page?: number;
     size?: number;
@@ -54,16 +54,16 @@ export class PaymentService {
     number: number;
   }>> {
     const queryParams = new URLSearchParams();
-    if (params?.page !== undefined) queryParams.append('page', params.page.toString());
-    if (params?.size !== undefined) queryParams.append('size', params.size.toString());
+    queryParams.append('page', String(params?.page ?? 0));
+    queryParams.append('size', String(params?.size ?? 10));
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
 
-    const url = `${API_ENDPOINTS.PAYMENT.MY_TRANSACTIONS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `${API_ENDPOINTS.PAYMENT.MY_TRANSACTIONS}?${queryParams.toString()}`;
     return await apiClient.get<ApiResponse<{ content: PaymentResponseDTO[]; totalElements: number; totalPages: number; size: number; number: number }>>(url);
   }
 
-  // Admin: Get all transactions
+  // Admin: Get all transactions (paginated)
   async getAllTransactions(params?: {
     page?: number;
     size?: number;
@@ -77,12 +77,12 @@ export class PaymentService {
     number: number;
   }>> {
     const queryParams = new URLSearchParams();
-    if (params?.page !== undefined) queryParams.append('page', params.page.toString());
-    if (params?.size !== undefined) queryParams.append('size', params.size.toString());
+    queryParams.append('page', String(params?.page ?? 0));
+    queryParams.append('size', String(params?.size ?? 10));
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
 
-    const url = `${API_ENDPOINTS.PAYMENT.ADMIN_ALL_TRANSACTIONS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const url = `${API_ENDPOINTS.PAYMENT.ADMIN_ALL_TRANSACTIONS}?${queryParams.toString()}`;
     return await apiClient.get<ApiResponse<{ content: PaymentResponseDTO[]; totalElements: number; totalPages: number; size: number; number: number }>>(url);
   }
 }

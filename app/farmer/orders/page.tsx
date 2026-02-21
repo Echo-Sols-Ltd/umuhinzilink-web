@@ -77,6 +77,9 @@ function FarmerOrders() {
     acceptFarmerOrder,
     cancelFarmerOrder,
     updateFarmerOrderStatus,
+    fetchFarmerOrders,
+    farmerOrdersTotalPages: totalPages,
+    farmerOrdersTotalElements: totalElements,
   } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -92,23 +95,21 @@ function FarmerOrders() {
     return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
   }, [orders, statusFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
-  const paginatedOrders = useMemo(
-    () => filteredOrders.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
-    [filteredOrders, currentPage]
-  );
+  useEffect(() => {
+    fetchFarmerOrders(currentPage - 1, ITEMS_PER_PAGE);
+  }, [currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [statusFilter]);
 
   const metrics = useMemo(() => {
-    const total = orders.length;
+    const total = totalElements;
     const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0);
     const paid = orders.filter(order => order.isPaid).length;
     const pending = orders.filter(order => (order.status || '').toLowerCase() === 'pending').length;
     return { total, totalRevenue, paid, pending };
-  }, [orders]);
+  }, [orders, totalElements]);
 
   const handleLogout = async () => {
     if (logoutPending) return;
@@ -251,7 +252,7 @@ function FarmerOrders() {
                       <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto rounded-md" /></TableCell>
                     </TableRow>
                   ))
-                ) : paginatedOrders.length === 0 ? (
+                ) : filteredOrders.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="py-20 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-400">
@@ -262,7 +263,7 @@ function FarmerOrders() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedOrders.map(order => {
+                  filteredOrders.map(order => {
                     const statusKey = (order.status || 'PENDING').toUpperCase();
                     const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.PENDING;
                     const buyerAddress = order.buyer?.address
@@ -347,7 +348,7 @@ function FarmerOrders() {
                 )}
               </TableBody>
             </Table>
-            {filteredOrders.length > ITEMS_PER_PAGE && (
+            {totalPages > 1 && (
               <div className="p-4 border-t border-gray-100">
                 <Pagination
                   currentPage={currentPage}
@@ -355,7 +356,7 @@ function FarmerOrders() {
                   onPageChange={setCurrentPage}
                   disabled={loading}
                   showSummary
-                  totalItems={filteredOrders.length}
+                  totalItems={totalElements}
                   itemsPerPage={ITEMS_PER_PAGE}
                 />
               </div>

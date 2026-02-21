@@ -43,6 +43,8 @@ function OrdersPageComponent() {
     acceptSupplierOrder,
     cancelSupplierOrder,
     updateSupplierOrderStatus,
+    supplierOrdersTotalPages: totalPages,
+    supplierOrdersTotalElements: totalElements,
   } = useOrder();
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -55,20 +57,18 @@ function OrdersPageComponent() {
   const filteredOrders = useMemo(() => {
     if (statusFilter === 'all') return orders;
     return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
-  }, [orders, statusFilter]);
+  }, [orders, statusFilter, totalElements]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
-  const paginatedOrders = useMemo(
-    () => filteredOrders.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
-    [filteredOrders, currentPage]
-  );
+  useEffect(() => {
+    fetchSupplierOrders(currentPage - 1, ITEMS_PER_PAGE);
+  }, [currentPage]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [statusFilter]);
 
   const stats = useMemo(() => {
-    const total = orders.length;
+    const total = totalElements;
     const pending = orders.filter(o => (o.status || '').toUpperCase() === 'PENDING').length;
     const active = orders.filter(o => (o.status || '').toUpperCase() === 'ACTIVE').length;
     const completed = orders.filter(o => (o.status || '').toUpperCase() === 'COMPLETED').length;
@@ -186,7 +186,7 @@ function OrdersPageComponent() {
                       <TableCell className="text-right"><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
                     </TableRow>
                   ))
-                ) : paginatedOrders.length === 0 ? (
+                ) : filteredOrders.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="py-20 text-center">
                       <div className="flex flex-col items-center justify-center opacity-40">
@@ -197,7 +197,7 @@ function OrdersPageComponent() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedOrders.map((order) => (
+                  filteredOrders.map((order) => (
                     <TableRow key={order.id} className="group transition-colors hover:bg-gray-50/50">
                       <TableCell>
                         <div className="flex flex-col">
@@ -258,7 +258,7 @@ function OrdersPageComponent() {
                 )}
               </TableBody>
             </Table>
-            {filteredOrders.length > ITEMS_PER_PAGE && (
+            {totalPages > 1 && (
               <div className="p-4 border-t border-gray-100">
                 <Pagination
                   currentPage={currentPage}
@@ -266,7 +266,7 @@ function OrdersPageComponent() {
                   onPageChange={setCurrentPage}
                   disabled={loading}
                   showSummary
-                  totalItems={filteredOrders.length}
+                  totalItems={totalElements}
                   itemsPerPage={ITEMS_PER_PAGE}
                 />
               </div>

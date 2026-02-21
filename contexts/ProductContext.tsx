@@ -36,12 +36,20 @@ type ProductContextValue = {
   deleteFarmerProduct: (id: string) => Promise<void>;
   deleteSupplierProduct: (id: string) => Promise<void>;
   mutationLoading: boolean;
-  fetchFarmerProducts: () => Promise<void>;
-  fetchSupplierProducts: () => Promise<void>;
-  fetchBuyerProducts: () => Promise<void>;
-  fetchFarmerBuyerProducts: () => Promise<void>;
+  fetchFarmerProducts: (page?: number, size?: number) => Promise<void>;
+  fetchSupplierProducts: (page?: number, size?: number) => Promise<void>;
+  fetchBuyerProducts: (page?: number, size?: number) => Promise<void>;
+  fetchFarmerBuyerProducts: (page?: number, size?: number) => Promise<void>;
   fetchFarmerStats: () => Promise<void>;
   fetchSupplierStats: () => Promise<void>;
+  farmerProductsTotalPages: number;
+  farmerProductsTotalElements: number;
+  supplierProductsTotalPages: number;
+  supplierProductsTotalElements: number;
+  buyerProductsTotalPages: number;
+  buyerProductsTotalElements: number;
+  farmerBuyerProductsTotalPages: number;
+  farmerBuyerProductsTotalElements: number;
   loading: boolean;
   error: string | null;
   farmerProducts: FarmerProduct[] | null;
@@ -95,6 +103,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [buyerProducts, setBuyerProducts] = useState<FarmerProduct[] | null>([]);
   const [farmerBuyerProducts, setFarmerBuyerProducts] = useState<SupplierProduct[] | null>([]);
 
+  const [farmerProductsTotalPages, setFarmerProductsTotalPages] = useState(0);
+  const [farmerProductsTotalElements, setFarmerProductsTotalElements] = useState(0);
+  const [supplierProductsTotalPages, setSupplierProductsTotalPages] = useState(0);
+  const [supplierProductsTotalElements, setSupplierProductsTotalElements] = useState(0);
+  const [buyerProductsTotalPages, setBuyerProductsTotalPages] = useState(0);
+  const [buyerProductsTotalElements, setBuyerProductsTotalElements] = useState(0);
+  const [farmerBuyerProductsTotalPages, setFarmerBuyerProductsTotalPages] = useState(0);
+  const [farmerBuyerProductsTotalElements, setFarmerBuyerProductsTotalElements] = useState(0);
+
   const [farmerStats, setFarmerStats] = useState<FarmerProductionStat[] | null>([]);
   const [supplierStats, setSupplierStats] = useState<SupplierProductionStat[] | null>([]);
 
@@ -136,15 +153,23 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   //   loadCachedData();
   // }, []);
 
-  const fetchFarmerProducts = async () => {
-  
+  const getListFromPaginated = <T>(res: { data?: T; content?: T }): T | null => {
+    const raw = Array.isArray((res as { content?: T }).content)
+      ? (res as { content: T }).content
+      : res.data;
+    return raw ?? null;
+  };
+
+  const fetchFarmerProducts = async (page = 0, size = 10) => {
     try {
       setLoading(true);
-      const res = await productService.getProductsByFarmer();
-      console.log('farmer response', res.data)
+      const res = await productService.getProductsByFarmer(page, size);
       if (res.success) {
-        setFarmerProducts(res.data ?? []);
-        localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(res.data ?? []));
+        const list = getListFromPaginated<FarmerProduct[]>(res) ?? [];
+        setFarmerProducts(Array.isArray(list) ? list : []);
+        setFarmerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
+        setFarmerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+        localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(Array.isArray(list) ? list : []));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch farmer products');
@@ -153,14 +178,17 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchSupplierProducts = async () => {
+  const fetchSupplierProducts = async (page = 0, size = 10) => {
     if (!user?.id) return;
     try {
       setLoading(true);
-      const res = await productService.getProductsBySupplier();
+      const res = await productService.getProductsBySupplier(page, size);
       if (res.success) {
-        setSupplierProducts(res.data ?? []);
-        localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(res.data ?? []));
+        const list = getListFromPaginated<SupplierProduct[]>(res) ?? [];
+        setSupplierProducts(Array.isArray(list) ? list : []);
+        setSupplierProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
+        setSupplierProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+        localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(Array.isArray(list) ? list : []));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch supplier products');
@@ -169,14 +197,17 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchBuyerProducts = async () => {
+  const fetchBuyerProducts = async (page = 0, size = 10) => {
     if (!user?.id) return;
     try {
       setLoading(true);
-      const res = await productService.getBuyerProducts();
+      const res = await productService.getBuyerProducts(page, size);
       if (res.success) {
-        setBuyerProducts(res.data ?? []);
-        localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(res.data ?? []));
+        const list = getListFromPaginated<FarmerProduct[]>(res) ?? [];
+        setBuyerProducts(Array.isArray(list) ? list : []);
+        setBuyerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
+        setBuyerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+        localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(Array.isArray(list) ? list : []));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch buyer products');
@@ -185,16 +216,19 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchFarmerBuyerProducts = async () => {
+  const fetchFarmerBuyerProducts = async (page = 0, size = 10) => {
     if (!user?.id) return;
     try {
       setLoading(true);
-      const res = await productService.getFarmerBuyerProducts();
+      const res = await productService.getFarmerBuyerProducts(page, size);
       if (res.success) {
-        setFarmerBuyerProducts(res.data ?? []);
+        const list = getListFromPaginated<SupplierProduct[]>(res) ?? [];
+        setFarmerBuyerProducts(Array.isArray(list) ? list : []);
+        setFarmerBuyerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
+        setFarmerBuyerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
         localStorage.setItem(
           STORAGE_KEYS.FARMER_BUYER_PRODUCTS,
-          JSON.stringify(res.data ?? [])
+          JSON.stringify(Array.isArray(list) ? list : [])
         );
       }
     } catch (err) {
@@ -479,6 +513,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     fetchFarmerBuyerProducts,
     fetchFarmerStats,
     fetchSupplierStats,
+    farmerProductsTotalPages,
+    farmerProductsTotalElements,
+    supplierProductsTotalPages,
+    supplierProductsTotalElements,
+    buyerProductsTotalPages,
+    buyerProductsTotalElements,
+    farmerBuyerProductsTotalPages,
+    farmerBuyerProductsTotalElements,
     loading,
     error,
     farmerProducts,

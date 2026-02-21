@@ -55,10 +55,19 @@ export type OrderContextValue = {
 
   mutationLoading: boolean;
 
-  fetchBuyerOrders: () => Promise<FarmerOrder[] | null>;
-  fetchFarmerOrders: () => Promise<FarmerOrder[] | null>;
-  fetchSupplierOrders: () => Promise<SupplierOrder[] | null>;
-  fetchFarmerBuyerOrders: () => Promise<SupplierOrder[] | null>;
+  fetchBuyerOrders: (page?: number, size?: number) => Promise<FarmerOrder[] | null>;
+  fetchFarmerOrders: (page?: number, size?: number) => Promise<FarmerOrder[] | null>;
+  fetchSupplierOrders: (page?: number, size?: number) => Promise<SupplierOrder[] | null>;
+  fetchFarmerBuyerOrders: (page?: number, size?: number) => Promise<SupplierOrder[] | null>;
+
+  farmerOrdersTotalPages: number;
+  farmerOrdersTotalElements: number;
+  supplierOrdersTotalPages: number;
+  supplierOrdersTotalElements: number;
+  buyerOrdersTotalPages: number;
+  buyerOrdersTotalElements: number;
+  farmerBuyerOrdersTotalPages: number;
+  farmerBuyerOrdersTotalElements: number;
 
   // Derived order states
   pendingBuyerOrders: FarmerOrder[];
@@ -98,6 +107,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[] | null>(null);
   const [farmerBuyerOrders, setFarmerBuyerOrders] = useState<SupplierOrder[] | null>(null);
 
+  const [farmerOrdersTotalPages, setFarmerOrdersTotalPages] = useState(0);
+  const [farmerOrdersTotalElements, setFarmerOrdersTotalElements] = useState(0);
+  const [supplierOrdersTotalPages, setSupplierOrdersTotalPages] = useState(0);
+  const [supplierOrdersTotalElements, setSupplierOrdersTotalElements] = useState(0);
+  const [buyerOrdersTotalPages, setBuyerOrdersTotalPages] = useState(0);
+  const [buyerOrdersTotalElements, setBuyerOrdersTotalElements] = useState(0);
+  const [farmerBuyerOrdersTotalPages, setFarmerBuyerOrdersTotalPages] = useState(0);
+  const [farmerBuyerOrdersTotalElements, setFarmerBuyerOrdersTotalElements] = useState(0);
+
   const [currentFarmerOrder, setCurrentFarmerOrder] = useState<FarmerOrder | null>(null);
   const [currentSupplierOrder, setCurrentSupplierOrder] = useState<SupplierOrder | null>(null);
   const [currentFarmerBuyerOrder, setCurrentFarmerBuyerOrder] = useState<SupplierOrder | null>(
@@ -107,17 +125,23 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [currentProduct, setCurrentProduct] = useState<FarmerProduct | null>(null);
 
 
-  // 🔹 Fetch Buyer Orders
-  const fetchBuyerOrders = async (): Promise<FarmerOrder[] | null> => {
+  const getListFromPaginated = <T>(res: { data?: T; content?: T }): T | null => {
+    const raw = Array.isArray((res as { content?: T }).content)
+      ? (res as { content: T }).content
+      : res.data;
+    return raw ?? null;
+  };
+
+  const fetchBuyerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
     try {
       setLoading(true);
-      const res = await orderService.getBuyerOrders();
-      if (!res.success) {
-        return null;
-      }
-      setBuyerOrders(res.data ?? null);
-      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(res.data ?? []));
-      return res.data ?? null;
+      const res = await orderService.getBuyerOrders(page, size);
+      if (!res.success) return null;
+      const list = getListFromPaginated<FarmerOrder[]>(res) ?? [];
+      setBuyerOrders(Array.isArray(list) ? list : []);
+      setBuyerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
+      setBuyerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+      return Array.isArray(list) ? list : null;
     } catch {
       return null;
     } finally {
@@ -125,17 +149,17 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // 🔹 Fetch Farmer Orders
-  const fetchFarmerOrders = async (): Promise<FarmerOrder[] | null> => {
+  const fetchFarmerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
     try {
       setLoading(true);
-      const res = await orderService.getFarmerOrders();
-      if (!res.success) {
-        return null;
-      }
-      setFarmerOrders(res.data ?? null);
-      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(res.data ?? []));
-      return res.data ?? null;
+      const res = await orderService.getFarmerOrders(page, size);
+      if (!res.success) return null;
+      const list = getListFromPaginated<FarmerOrder[]>(res) ?? [];
+      setFarmerOrders(Array.isArray(list) ? list : []);
+      setFarmerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
+      setFarmerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(Array.isArray(list) ? list : []));
+      return Array.isArray(list) ? list : null;
     } catch {
       return null;
     } finally {
@@ -143,17 +167,17 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // 🔹 Fetch Supplier Orders
-  const fetchSupplierOrders = async (): Promise<SupplierOrder[] | null> => {
+  const fetchSupplierOrders = async (page = 0, size = 10): Promise<SupplierOrder[] | null> => {
     try {
       setLoading(true);
-      const res = await orderService.getSupplierOrders();
-      if (!res.success) {
-        return null;
-      }
-      setSupplierOrders(res.data ?? null);
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data ?? []));
-      return res.data ?? null;
+      const res = await orderService.getSupplierOrders(page, size);
+      if (!res.success) return null;
+      const list = getListFromPaginated<SupplierOrder[]>(res) ?? [];
+      setSupplierOrders(Array.isArray(list) ? list : []);
+      setSupplierOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
+      setSupplierOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(Array.isArray(list) ? list : []));
+      return Array.isArray(list) ? list : null;
     } catch {
       return null;
     } finally {
@@ -161,18 +185,18 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // 🔹 Fetch Farmer Buyer Orders
-  const fetchFarmerBuyerOrders = async (): Promise<SupplierOrder[] | null> => {
+  const fetchFarmerBuyerOrders = async (page = 0, size = 10): Promise<SupplierOrder[] | null> => {
     try {
       setLoading(true);
-      const res = await orderService.getFarmerBuyerOrders();
-      if (!res.success) {
-        return null;
-      }
-      setFarmerBuyerOrders(res.data ?? null);
-      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(res.data ?? []));
-      return res.data ?? null;
-    } catch (err) {
+      const res = await orderService.getFarmerBuyerOrders(page, size);
+      if (!res.success) return null;
+      const list = getListFromPaginated<SupplierOrder[]>(res) ?? [];
+      setFarmerBuyerOrders(Array.isArray(list) ? list : []);
+      setFarmerBuyerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
+      setFarmerBuyerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(Array.isArray(list) ? list : []));
+      return Array.isArray(list) ? list : null;
+    } catch {
       return null;
     } finally {
       setLoading(false);
@@ -551,6 +575,14 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     fetchFarmerOrders,
     fetchSupplierOrders,
     fetchFarmerBuyerOrders,
+    farmerOrdersTotalPages,
+    farmerOrdersTotalElements,
+    supplierOrdersTotalPages,
+    supplierOrdersTotalElements,
+    buyerOrdersTotalPages,
+    buyerOrdersTotalElements,
+    farmerBuyerOrdersTotalPages,
+    farmerBuyerOrdersTotalElements,
     pendingBuyerOrders,
     completedBuyerOrders,
     cancelledBuyerOrders,

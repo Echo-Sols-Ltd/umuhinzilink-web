@@ -44,6 +44,8 @@ function FarmerRequestsComponent() {
     cancelSupplierOrder,
     processOrderPayment,
     mutationLoading: actionLoading,
+    farmerBuyerOrdersTotalPages: ordersTotalPages,
+    farmerBuyerOrdersTotalElements: ordersTotalElements,
   } = useOrder();
 
   const [payingId, setPayingId] = useState<string | null>(null);
@@ -55,9 +57,12 @@ function FarmerRequestsComponent() {
   const [ordersPage, setOrdersPage] = useState(1);
 
   useEffect(() => {
-    fetchFarmerBuyerProducts();
-    fetchFarmerBuyerOrders();
+    fetchFarmerBuyerProducts(0, 100);
   }, []);
+
+  useEffect(() => {
+    fetchFarmerBuyerOrders(ordersPage - 1, ORDERS_PER_PAGE);
+  }, [ordersPage]);
 
   const orders = useMemo(() => farmerBuyerOrders || [], [farmerBuyerOrders]);
   const products = useMemo(() => farmerBuyerProducts || [], [farmerBuyerProducts]);
@@ -67,23 +72,17 @@ function FarmerRequestsComponent() {
     return orders.filter(order => (order.status || '').toLowerCase() === statusFilter.toLowerCase());
   }, [orders, statusFilter]);
 
-  const ordersTotalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE));
-  const paginatedOrders = useMemo(
-    () => filteredOrders.slice((ordersPage - 1) * ORDERS_PER_PAGE, ordersPage * ORDERS_PER_PAGE),
-    [filteredOrders, ordersPage]
-  );
-
   useEffect(() => {
     setOrdersPage(1);
   }, [statusFilter]);
 
   const stats = useMemo(() => {
-    const total = orders.length;
+    const total = ordersTotalElements;
     const pending = orders.filter(req => (req.status || '').toUpperCase() === 'PENDING').length;
     const completed = orders.filter(req => (req.status || '').toUpperCase() === 'COMPLETED').length;
     const active = orders.filter(req => (req.status || '').toUpperCase() === 'ACTIVE').length;
     return { total, pending, completed, active };
-  }, [orders]);
+  }, [orders, ordersTotalElements]);
 
   const handleBuyClick = (product: SupplierProduct) => {
     setSelectedProduct(product);
@@ -138,7 +137,7 @@ function FarmerRequestsComponent() {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => { fetchFarmerBuyerProducts(); fetchFarmerBuyerOrders(); }}
+                onClick={() => { fetchFarmerBuyerProducts(0, 100); fetchFarmerBuyerOrders(0, ORDERS_PER_PAGE); setOrdersPage(1); }}
                 className="p-2.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all border border-gray-100 bg-white shadow-sm"
               >
                 <RefreshCw className={`w-5 h-5 ${productsLoading || ordersLoading ? 'animate-spin' : ''}`} />
@@ -262,7 +261,7 @@ function FarmerRequestsComponent() {
                         <TableCell className="text-right pr-8"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
                       </TableRow>
                     ))
-                  ) : paginatedOrders.length === 0 ? (
+                  ) : filteredOrders.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="py-20 text-center">
                         <div className="flex flex-col items-center justify-center opacity-30">
@@ -272,7 +271,7 @@ function FarmerRequestsComponent() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    paginatedOrders.map(order => (
+                    filteredOrders.map(order => (
                       <TableRow key={order.id} className="group hover:bg-gray-50/50 transition-colors">
                         <TableCell className="py-5">
                           <div className="flex items-center gap-4">
@@ -338,7 +337,7 @@ function FarmerRequestsComponent() {
                   )}
                 </TableBody>
               </Table>
-              {filteredOrders.length > ORDERS_PER_PAGE && (
+              {ordersTotalPages > 1 && (
                 <div className="p-4 border-t border-gray-100">
                   <Pagination
                     currentPage={ordersPage}
@@ -346,7 +345,7 @@ function FarmerRequestsComponent() {
                     onPageChange={setOrdersPage}
                     disabled={ordersLoading}
                     showSummary
-                    totalItems={filteredOrders.length}
+                    totalItems={ordersTotalElements}
                     itemsPerPage={ORDERS_PER_PAGE}
                   />
                 </div>

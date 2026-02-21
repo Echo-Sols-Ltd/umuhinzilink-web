@@ -11,20 +11,28 @@ class OrderService {
     return await apiClient.post<ApiResponse<SupplierOrder>>(API_ENDPOINTS.ORDER.CREATE_SUPPLIER, payload);
   }
 
-  async getBuyerOrders(): Promise<PaginatedResponse<FarmerOrder[]>> {
-    return await apiClient.get<PaginatedResponse<FarmerOrder[]>>(API_ENDPOINTS.ORDER.BUYER_ALL);
+  async getBuyerOrders(page = 0, size = 10): Promise<PaginatedResponse<FarmerOrder[]>> {
+    return await apiClient.get<PaginatedResponse<FarmerOrder[]>>(
+      `${API_ENDPOINTS.ORDER.BUYER_ALL}?page=${page}&size=${size}`
+    );
   }
 
-  async getFarmerBuyerOrders(): Promise<PaginatedResponse<SupplierOrder[]>> {
-    return await apiClient.get<PaginatedResponse<SupplierOrder[]>>(API_ENDPOINTS.ORDER.FARMER_BUYER_ALL);
+  async getFarmerBuyerOrders(page = 0, size = 10): Promise<PaginatedResponse<SupplierOrder[]>> {
+    return await apiClient.get<PaginatedResponse<SupplierOrder[]>>(
+      `${API_ENDPOINTS.ORDER.FARMER_BUYER_ALL}?page=${page}&size=${size}`
+    );
   }
 
-  async getSupplierOrders(): Promise<PaginatedResponse<SupplierOrder[]>> {
-    return await apiClient.get<PaginatedResponse<SupplierOrder[]>>(API_ENDPOINTS.ORDER.SUPPLIER_ALL);
+  async getSupplierOrders(page = 0, size = 10): Promise<PaginatedResponse<SupplierOrder[]>> {
+    return await apiClient.get<PaginatedResponse<SupplierOrder[]>>(
+      `${API_ENDPOINTS.ORDER.SUPPLIER_ALL}?page=${page}&size=${size}`
+    );
   }
 
-  async getFarmerOrders(): Promise<PaginatedResponse<FarmerOrder[]>> {
-    return await apiClient.get<PaginatedResponse<FarmerOrder[]>>(API_ENDPOINTS.ORDER.FARMER_ALL);
+  async getFarmerOrders(page = 0, size = 10): Promise<PaginatedResponse<FarmerOrder[]>> {
+    return await apiClient.get<PaginatedResponse<FarmerOrder[]>>(
+      `${API_ENDPOINTS.ORDER.FARMER_ALL}?page=${page}&size=${size}`
+    );
   }
 
   async getSupplierOrderById(id: string): Promise<ApiResponse<SupplierOrder>> {
