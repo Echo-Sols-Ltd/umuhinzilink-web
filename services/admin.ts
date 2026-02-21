@@ -1,4 +1,4 @@
-import { ApiResponse, FarmerOrder, FarmerProduct, PaginatedResponse, SupplierOrder, SupplierProduct, User, WalletTransactionDTO } from '@/types';
+import { ApiResponse, FarmerOrder, FarmerProduct, PaginatedResponse, SupplierOrder, SupplierProduct, User, WalletDTO, WalletTransactionDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -214,6 +214,17 @@ export const adminService = {
       return response;
     } catch (error) {
       console.error('Error fetching supplier orders:', error);
+      throw error;
+    }
+  },
+
+
+  getSystemWallet: async (): Promise<WalletDTO> => {
+    try {
+      const response = await apiClient.get<ApiResponse<WalletDTO>>(API_ENDPOINTS.WALLET.SYSTEM_WALLET);
+      return response.data!;
+    } catch (error) {
+      console.error('Error fetching system wallet:', error);
       throw error;
     }
   },

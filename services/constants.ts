@@ -126,6 +126,7 @@ export const API_ENDPOINTS = {
     // Admin endpoints
     ADMIN_ALL_WALLETS: '/admin/wallets',
     ADMIN_ALL_TRANSACTIONS: '/admin/transactions',
+    SYSTEM_WALLET: '/admin/wallet/system',
     ADMIN_WALLET_BY_USER: (userId: string) => `/admin/wallets/user/${userId}`,
     ADMIN_TRANSACTIONS_BY_USER: (userId: string) => `/admin/transactions/user/${userId}`,
   },

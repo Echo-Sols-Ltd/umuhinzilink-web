@@ -29,7 +29,7 @@ export interface WalletTransactionDTO {
   amount: number;
   balanceBefore?: number;
   balanceAfter?: number;
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'PAYMENT' | 'TRANSFER_IN' | 'TRANSFER_OUT';
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'PAYMENT' | 'TRANSFER_IN' | 'TRANSFER_OUT'|'INCOME';
   status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
   description: string;
   orderId?: string;

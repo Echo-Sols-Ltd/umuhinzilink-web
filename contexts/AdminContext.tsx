@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/components/ui/use-toast';
-import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO, PaginatedResponse } from '@/types';
+import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO, PaginatedResponse, WalletDTO } from '@/types';
 
 interface AdminContextType {
   users: PaginatedResponse<User[]> | null;
@@ -12,6 +12,7 @@ interface AdminContextType {
   supplierProducts: SupplierProduct[];
   farmerOrders: FarmerOrder[];
   supplierOrders: SupplierOrder[];
+  systemWallet: WalletDTO | null
   systemTransactions: WalletTransactionDTO[]
   products: (FarmerProduct | SupplierProduct)[]; // Aggregate for dashboard/generic views
   orders: (FarmerOrder | SupplierOrder)[]; // Aggregate for dashboard/generic views
@@ -60,6 +61,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const orders = [...farmerOrders, ...supplierOrders];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [systemWallet, setSystemWallet] = useState<WalletDTO | null>(null)
 
   // Fetch all data
   const fetchAllData = useCallback(async (user: User) => {
@@ -69,15 +71,15 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes, systemTransactions] = await Promise.all([
+      const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes, systemTransactions, sysWallet] = await Promise.all([
         adminService.getAllUsers(0, 4),
         adminService.getAllFarmerProducts(),
         adminService.getAllSupplierProducts(),
         adminService.getAllFarmerOrders(),
         adminService.getAllSupplierOrders(),
         adminService.getTransactionMonitoring(),
+        adminService.getSystemWallet()
       ]);
-      console.log(usersRes)
 
       setSystemTransactions(systemTransactions || [])
       setUsers(usersRes);
@@ -85,6 +87,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       setSupplierProducts(supplierProductsRes || []);
       setFarmerOrders(farmerOrdersRes || []);
       setSupplierOrders(supplierOrdersRes || []);
+      setSystemWallet(sysWallet)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
       setError(message);
@@ -252,6 +255,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     <AdminContext.Provider
       value={{
         systemTransactions,
+        systemWallet,
         users,
         farmerProducts,
         supplierProducts,
