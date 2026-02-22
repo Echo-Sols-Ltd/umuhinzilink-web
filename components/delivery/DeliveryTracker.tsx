@@ -9,6 +9,9 @@ interface DeliveryTrackerProps {
   delivery: Delivery | undefined;
   onUpdateStatus: (newStatus: DeliveryStatus) => void;
   isLoading?: boolean;
+  // New props for ownership checking
+  orderType?: 'farmer' | 'supplier' | 'buyer'; // Who owns this order view
+  isOrderOwner?: boolean; // Is the current user the owner of the order
 }
 
 const DELIVERY_STEPS = [
@@ -62,12 +65,22 @@ const DELIVERY_STATUS_COLORS: Record<DeliveryStatus, string> = {
   [DeliveryStatus.FAILED]: 'bg-red-100 text-red-700'
 };
 
-export default function DeliveryTracker({ delivery, onUpdateStatus, isLoading = false }: DeliveryTrackerProps) {
+export default function DeliveryTracker({ 
+  delivery, 
+  onUpdateStatus, 
+  isLoading = false, 
+  orderType = 'farmer',
+  isOrderOwner = false 
+}: DeliveryTrackerProps) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<DeliveryStatus | null>(null);
   const { user } = useAuth();
 
-  const canUpdateStatus = user?.role !== UserType.BUYER;
+  // Only order owners can update delivery status
+  // - Farmers can update their supplier orders (orders they placed)
+  // - Suppliers can update farmer orders (orders they received)
+  // - Buyers cannot update any delivery status
+  const canUpdateStatus = isOrderOwner && user?.role !== UserType.BUYER;
 
   if (!delivery) {
     return (

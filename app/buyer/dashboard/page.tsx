@@ -74,27 +74,41 @@ function BuyerDashboardComponent() {
 
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      {/* Sidebar */}
+      <Sidebar
+        userType={UserType.BUYER}
+        activeItem='Dashboard'
+      />
 
-      {/* Sidebar + Main content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar
-          userType={UserType.BUYER}
-          activeItem='Dashboard'
-        />
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-auto">
+        {/* Header */}
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Buyer Dashboard</h1>
+            <p className="text-xs text-gray-500">Manage your agricultural purchases and connect with farmers</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors">
+              <ShoppingCart className="w-4 h-4" /> Browse Products
+            </button>
+          </div>
+        </header>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          {/* Green Welcome Bar */}
-          <div className="bg-green-600 rounded-2xl mt-0 text-white px-8 py-8 shadow-lg shadow-green-100 mb-6 relative overflow-hidden">
-            <div className="relative z-10">
-              <h1 className="text-2xl font-bold mb-1 tracking-tight text-white">Welcome back, {buyerName}!</h1>
-              <p className="text-sm text-green-50 font-medium">
-                Manage your agricultural purchases and connect with farmers across Rwanda
-              </p>
+        {/* Main Content Area */}
+        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+          {/* Welcome Section */}
+          <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Welcome back, {buyerName}!</h2>
+                <p className="text-sm text-gray-600 mt-1">Here's an overview of your recent activity and recommendations</p>
+              </div>
+              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                <User className="w-6 h-6 text-green-600" />
+              </div>
             </div>
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
           </div>
           {/* Enhanced Analytics Dashboard */}
           <EnhancedDashboard

@@ -178,7 +178,7 @@ function FarmerRequestsComponent() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right pr-8">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                      <div className="flex items-center justify-end gap-2  transition-all transform translate-x-4 group-hover:translate-x-0">
                         <button className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-[11px] font-bold rounded-xl hover:bg-green-700 shadow-md shadow-green-100 transition-all">
                           <CheckCircle className="w-3.5 h-3.5" />
                           Approve

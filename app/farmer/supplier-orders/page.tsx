@@ -8,17 +8,19 @@ import { useOrder } from '@/contexts/OrderContext';
 
 import {
   Package,
-  Leaf,
+  ShoppingCart,
   Download,
   Truck,
   Eye,
+  Plus,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
+import { UserType, SupplierOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import { Pagination } from '@/components/ui/pagination';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
+import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import {
   Table,
   TableBody,
@@ -29,14 +31,6 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-
-type MenuItem = {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  isLogout?: boolean;
-};
-
 
 const ORDER_STATUS_META: Record<string, { label: string; variant: string }> = {
   PENDING: { label: 'Pending', variant: 'warning' },
@@ -66,28 +60,29 @@ function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
 
 const ITEMS_PER_PAGE = 10;
 
-function FarmerOrders() {
+function FarmerSupplierOrders() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const {
-    farmerOrders,
+    farmerBuyerOrders,
     loading,
     mutationLoading: actionLoading,
-    acceptFarmerOrder,
-    cancelFarmerOrder,
-    updateFarmerOrderStatus,
-    fetchFarmerOrders,
-    farmerOrdersTotalPages: totalPages,
-    farmerOrdersTotalElements: totalElements,
+    acceptSupplierOrder,
+    cancelSupplierOrder,
+    updateSupplierOrderStatus,
+    fetchFarmerBuyerOrders,
+    farmerBuyerOrdersTotalPages: totalPages,
+    farmerBuyerOrdersTotalElements: totalElements,
   } = useOrder();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<SupplierOrder | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const orders = useMemo(() => farmerOrders || [], [farmerOrders]);
+  const orders = useMemo(() => farmerBuyerOrders || [], [farmerBuyerOrders]);
   const currentUser = user;
 
   const filteredOrders = useMemo(() => {
@@ -96,7 +91,7 @@ function FarmerOrders() {
   }, [orders, statusFilter]);
 
   useEffect(() => {
-    fetchFarmerOrders(currentPage - 1, ITEMS_PER_PAGE);
+    fetchFarmerBuyerOrders(currentPage - 1, ITEMS_PER_PAGE);
   }, [currentPage]);
 
   useEffect(() => {
@@ -105,10 +100,10 @@ function FarmerOrders() {
 
   const metrics = useMemo(() => {
     const total = totalElements;
-    const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0);
+    const totalCost = orders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0);
     const paid = orders.filter(order => order.isPaid).length;
     const pending = orders.filter(order => (order.status || '').toLowerCase() === 'pending').length;
-    return { total, totalRevenue, paid, pending };
+    return { total, totalCost, paid, pending };
   }, [orders, totalElements]);
 
   const handleLogout = async () => {
@@ -126,7 +121,7 @@ function FarmerOrders() {
   };
 
   const handleAcceptOrder = async (orderId: string) => {
-    await acceptFarmerOrder(orderId);
+    await acceptSupplierOrder(orderId);
     if (selectedOrder?.id === orderId) {
       setIsDetailsModalOpen(false);
     }
@@ -134,7 +129,7 @@ function FarmerOrders() {
 
   const handleCancelOrder = async (orderId: string) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
-      await cancelFarmerOrder(orderId);
+      await cancelSupplierOrder(orderId);
       if (selectedOrder?.id === orderId) {
         setIsDetailsModalOpen(false);
       }
@@ -142,10 +137,10 @@ function FarmerOrders() {
   };
 
   const handleUpdateStatus = async (orderId: string, status: DeliveryStatus) => {
-    await updateFarmerOrderStatus(orderId, status);
+    await updateSupplierOrderStatus(orderId, status);
   };
 
-  const handleViewDetails = (order: FarmerOrder) => {
+  const handleViewDetails = (order: SupplierOrder) => {
     setSelectedOrder(order);
     setIsDetailsModalOpen(true);
   };
@@ -156,18 +151,25 @@ function FarmerOrders() {
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
-        activeItem='Orders' />
-
+        activeItem='Supplier Orders' />
 
       <main className="flex-1 h-full bg-gray-50 overflow-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Orders</h1>
-            <p className="text-xs text-gray-500">Order overview for {displayName.split(' ')[0]}</p>
+            <h1 className="text-xl font-semibold text-gray-900">Supplier Orders</h1>
+            <p className="text-xs text-gray-500">Orders placed with suppliers for {displayName.split(' ')[0]}</p>
           </div>
-          <button className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-orange-600 transition">
-            <Download className="w-4 h-4" /> Export
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsCreationModalOpen(true)}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition"
+            >
+              <Plus className="w-4 h-4" /> Request Input
+            </button>
+            <button className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-orange-600 transition">
+              <Download className="w-4 h-4" /> Export
+            </button>
+          </div>
         </header>
 
         <div className="p-6 space-y-6">
@@ -178,9 +180,9 @@ function FarmerOrders() {
               caption="All time"
             />
             <SummaryCard
-              title="Revenue"
-              value={`RWF ${formatNumber(metrics.totalRevenue)}`}
-              caption="Gross value"
+              title="Total Cost"
+              value={`RWF ${formatNumber(metrics.totalCost)}`}
+              caption="Order value"
             />
             <SummaryCard
               title="Paid"
@@ -229,9 +231,9 @@ function FarmerOrders() {
               <TableHeader>
                 <TableRow>
                   <TableHead>ORDER ID</TableHead>
-                  <TableHead>BUYER</TableHead>
+                  <TableHead>SUPPLIER</TableHead>
                   <TableHead>DATE</TableHead>
-                  <TableHead>PRODUCT</TableHead>
+                  <TableHead>INPUT ITEM</TableHead>
                   <TableHead>QUANTITY</TableHead>
                   <TableHead>AMOUNT</TableHead>
                   <TableHead>STATUS</TableHead>
@@ -256,9 +258,9 @@ function FarmerOrders() {
                   <TableRow>
                     <TableCell colSpan={8} className="py-20 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-400">
-                        <Package className="w-12 h-12 mb-4 opacity-20" />
-                        <p className="text-lg font-medium">No orders found</p>
-                        <p className="text-sm">Try adjusting your filters</p>
+                        <ShoppingCart className="w-12 h-12 mb-4 opacity-20" />
+                        <p className="text-lg font-medium">No supplier orders found</p>
+                        <p className="text-sm">Create your first request to get started</p>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -266,7 +268,7 @@ function FarmerOrders() {
                   filteredOrders.map(order => {
                     const statusKey = (order.status || 'PENDING').toUpperCase();
                     const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.PENDING;
-                    const buyerAddress = order.buyer?.address
+                    const supplierAddress = order.buyer?.address
                       ? `${order.buyer.address.district || ''}${order.buyer.address.province ? `, ${order.buyer.address.province}` : ''}`.trim()
                       : '—';
                     const quantity =
@@ -284,18 +286,18 @@ function FarmerOrders() {
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium text-gray-900 truncate max-w-[150px]">
-                              {order.buyer?.names || order.buyer?.email || 'Unknown buyer'}
+                              {'Supplier'}
                             </span>
                             <span className="text-[10px] text-gray-400 truncate max-w-[150px]">
-                              {buyerAddress || '—'}
+                              {'Supplier Address'}
                             </span>
                           </div>
                         </TableCell>
                         <TableCell className="text-gray-500">{formatDate(order.createdAt)}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-green-50 rounded flex items-center justify-center border border-green-100 shrink-0">
-                              <Leaf className="w-4 h-4 text-green-600" />
+                            <div className="w-8 h-8 bg-blue-50 rounded flex items-center justify-center border border-blue-100 shrink-0">
+                              <Package className="w-4 h-4 text-blue-600" />
                             </div>
                             <span className="font-medium text-gray-900">{order.product?.name || '—'}</span>
                           </div>
@@ -315,17 +317,8 @@ function FarmerOrders() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2  transition-opacity">
-                            {statusKey === 'PENDING' && (
-                              <button
-                                onClick={() => handleAcceptOrder(order.id)}
-                                disabled={actionLoading}
-                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-full text-[11px] font-bold transition shadow-sm disabled:opacity-50"
-                              >
-                                Approve
-                              </button>
-                            )}
                             <button
-                              onClick={() => router.push(`/farmer/orders/${order.id}`)}
+                              onClick={() => router.push(`/farmer/supplier-orders/${order.id}`)}
                               className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                               title="View Order Details"
                             >
@@ -374,6 +367,12 @@ function FarmerOrders() {
         onUpdateStatus={handleUpdateStatus}
         loading={actionLoading}
       />
+
+      <OrderCreationModal
+        isOpen={isCreationModalOpen}
+        onClose={() => setIsCreationModalOpen(false)}
+        orderType="supplier"
+      />
     </div>
   );
 }
@@ -395,8 +394,8 @@ function SummaryCard({ title, value, caption, accent }: SummaryCardProps) {
   );
 }
 
-export default function FarmerOrderPage() {
+export default function FarmerSupplierOrderPage() {
   return (<FarmerGuard>
-    <FarmerOrders />
+    <FarmerSupplierOrders />
   </FarmerGuard>)
 }

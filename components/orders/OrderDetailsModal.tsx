@@ -19,6 +19,8 @@ import {
 import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus, deliveryStatusOptions } from '@/types';
 import OrderStatusTracker from './OrderStatusTracker';
 import DeliveryTracker from '../delivery/DeliveryTracker';
+import { useAuth } from '@/contexts/AuthContext';
+import { UserType } from '@/types';
 
 interface OrderDetailsModalProps {
     order: FarmerOrder | SupplierOrder | null;
@@ -41,7 +43,19 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     onPay,
     loading = false,
 }) => {
+    const { user } = useAuth();
+    
     if (!isOpen || !order) return null;
+
+    // Determine if current user is the order owner
+    // - For FarmerOrder: Farmer is owner, buyer cannot update delivery
+    // - For SupplierOrder: Supplier is owner, buyer (farmer) cannot update delivery
+    const isOrderOwner = 
+        (user?.role === UserType.FARMER && 'buyer' in order) || // Farmer viewing farmer orders
+        (user?.role === UserType.SUPPLIER && 'buyer' in order); // Supplier viewing supplier orders
+    
+    // Determine order type for DeliveryTracker
+    const orderType = user?.role === UserType.FARMER ? 'farmer' : 'supplier';
 
     const status = (order.status as string)?.toUpperCase();
     const isActionable = status === 'PENDING';
@@ -197,6 +211,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 delivery={order.delivery}
                                 onUpdateStatus={(status) => onUpdateStatus?.(order.id, status)}
                                 isLoading={loading}
+                                orderType={orderType}
+                                isOrderOwner={isOrderOwner}
                             />
                         </div>
                     )}

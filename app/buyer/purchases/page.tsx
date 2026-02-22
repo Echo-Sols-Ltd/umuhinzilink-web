@@ -138,12 +138,36 @@ function MyPurchasesComponent() {
       />
 
       {/* Main Content */}
-      <main className="h-screen flex-1 p-6 overflow-auto">
+      <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">My Purchases</h1>
-          <p className="text-gray-600">Track your orders and manage your purchases</p>
-        </div>
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">My Purchases</h1>
+            <p className="text-xs text-gray-500">Track your orders and manage your purchases</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search orders..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+              />
+            </div>
+            <button
+              onClick={() => fetchBuyerOrders(currentPage - 1, itemsPerPage)}
+              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              disabled={ordersLoading}
+            >
+              <RefreshCw className={`w-4 h-4 ${ordersLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+        </header>
+
+        {/* Main Content Area */}
+        <main className="flex-1 bg-gray-50 p-6 space-y-6">
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -336,7 +360,7 @@ function MyPurchasesComponent() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-1  transition-opacity">
                           {!order.isPaid && order.status !== 'CANCELLED' && (
                             <button
                               onClick={() => handlePayOrder(order.id)}
@@ -408,60 +432,61 @@ function MyPurchasesComponent() {
             </div>
           </div>
         )}
-      </main>
 
-      {/* Order Status Tracker Modal */}
-      {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Order #{selectedOrder.id.slice(-6)} - Status Tracking
-                </h2>
-                <button
-                  onClick={() => setSelectedOrder(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+        {/* Order Status Tracker Modal */}
+        {selectedOrder && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Order #{selectedOrder.id.slice(-6)} - Status Tracking
+                  </h2>
+                  <button
+                    onClick={() => setSelectedOrder(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
 
-              {/* Order Details */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Product:</span>
-                    <span className="ml-2 font-medium">{selectedOrder.product?.name}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Farmer:</span>
-                    <span className="ml-2 font-medium">{selectedOrder.product?.farmer?.user?.names}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Quantity:</span>
-                    <span className="ml-2 font-medium">{selectedOrder.quantity} {selectedOrder.product?.measurementUnit}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Total:</span>
-                    <span className="ml-2 font-medium">{(selectedOrder.totalPrice || 0).toLocaleString()} RWF</span>
+                {/* Order Details */}
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Product:</span>
+                      <span className="ml-2 font-medium">{selectedOrder.product?.name}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Farmer:</span>
+                      <span className="ml-2 font-medium">{selectedOrder.product?.farmer?.user?.names}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Quantity:</span>
+                      <span className="ml-2 font-medium">{selectedOrder.quantity} {selectedOrder.product?.measurementUnit}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Total:</span>
+                      <span className="ml-2 font-medium">{(selectedOrder.totalPrice || 0).toLocaleString()} RWF</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <OrderStatusTracker
-                orderStatus={selectedOrder.status}
-                deliveryStatus={selectedOrder.delivery?.status}
-                createdAt={selectedOrder.createdAt}
-                updatedAt={selectedOrder.updatedAt}
-                deliveryDate={selectedOrder.delivery?.estimatedDelivery}
-              />
+                <OrderStatusTracker
+                  orderStatus={selectedOrder.status}
+                  deliveryStatus={selectedOrder.delivery?.status}
+                  createdAt={selectedOrder.createdAt}
+                  updatedAt={selectedOrder.updatedAt}
+                  deliveryDate={selectedOrder.delivery?.estimatedDelivery}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </main>
     </div>
-  );
+  </div>
+);
 }
 
 export default function MyPurchases() {

@@ -41,78 +41,74 @@ interface AnalyticsData {
     previous: number;
     growth: number;
   };
-  monthlyData: {
+  topProducts: Array<{
+    name: string;
+    revenue: number;
+    orders: number;
+  }>;
+  topFarmers: Array<{
+    name: string;
+    revenue: number;
+    orders: number;
+    products: number;
+  }>;
+  monthlyData: Array<{
     month: string;
     revenue: number;
     orders: number;
     users: number;
-  }[];
-  topProducts: {
-    name: string;
-    orders: number;
-    revenue: number;
-    farmer: string;
-  }[];
-  topFarmers: {
-    name: string;
-    orders: number;
-    revenue: number;
-    products: number;
-  }[];
+  }>;
 }
-
 
 function RevenueAnalytics() {
   const router = useRouter();
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [timeRange, setTimeRange] = useState('month');
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mock analytics data - replace with actual API calls
-    setAnalytics({
-      revenue: {
-        current: 284750,
-        previous: 245000,
-        growth: 16.2,
-      },
-      orders: {
-        current: 3421,
-        previous: 2987,
-        growth: 14.5,
-      },
-      users: {
-        current: 1247,
-        previous: 1089,
-        growth: 14.5,
-      },
-      products: {
-        current: 892,
-        previous: 756,
-        growth: 18.0,
-      },
-      monthlyData: [
-        { month: 'Jan', revenue: 45000, orders: 520, users: 980 },
-        { month: 'Feb', revenue: 52000, orders: 610, users: 1050 },
-        { month: 'Mar', revenue: 61000, orders: 720, users: 1120 },
-        { month: 'Apr', revenue: 58000, orders: 680, users: 1180 },
-        { month: 'May', revenue: 68750, orders: 891, users: 1247 },
-      ],
-      topProducts: [
-        { name: 'Fresh Tomatoes', orders: 145, revenue: 8750, farmer: 'John Farmer' },
-        { name: 'Organic Lettuce', orders: 98, revenue: 5400, farmer: 'Jane Farmer' },
-        { name: 'Fresh Carrots', orders: 87, revenue: 4200, farmer: 'John Farmer' },
-        { name: 'Green Peppers', orders: 76, revenue: 3800, farmer: 'Mike Farmer' },
-        { name: 'Fresh Onions', orders: 65, revenue: 3200, farmer: 'Sarah Farmer' },
-      ],
-      topFarmers: [
-        { name: 'John Farmer', orders: 232, revenue: 12950, products: 3 },
-        { name: 'Jane Farmer', orders: 98, revenue: 5400, products: 2 },
-        { name: 'Mike Farmer', orders: 76, revenue: 3800, products: 4 },
-        { name: 'Sarah Farmer', orders: 65, revenue: 3200, products: 2 },
-        { name: 'David Farmer', orders: 54, revenue: 2800, products: 3 },
-      ],
-    });
-  }, []);
+    // Simulate loading analytics data
+    setTimeout(() => {
+      setAnalytics({
+        revenue: {
+          current: 125000,
+          previous: 100000,
+          growth: 25,
+        },
+        orders: {
+          current: 1250,
+          previous: 1000,
+          growth: 25,
+        },
+        users: {
+          current: 2500,
+          previous: 2000,
+          growth: 25,
+        },
+        products: {
+          current: 500,
+          previous: 400,
+          growth: 25,
+        },
+        topProducts: [
+          { name: 'Fresh Tomatoes', revenue: 15000, orders: 150 },
+          { name: 'Organic Lettuce', revenue: 12000, orders: 120 },
+          { name: 'Farm Eggs', revenue: 10000, orders: 100 },
+        ],
+        topFarmers: [
+          { name: 'Green Valley Farm', revenue: 25000, orders: 250, products: 15 },
+          { name: 'Sunshine Acres', revenue: 20000, orders: 200, products: 12 },
+          { name: 'Happy Harvest', revenue: 18000, orders: 180, products: 10 },
+        ],
+        monthlyData: [
+          { month: 'Jan', revenue: 20000, orders: 200, users: 400 },
+          { month: 'Feb', revenue: 22000, orders: 220, users: 440 },
+          { month: 'Mar', revenue: 25000, orders: 250, users: 500 },
+        ],
+      });
+      setLoading(false);
+    }, 1000);
+  }, [timeRange]);
 
   if (!analytics) {
     return (
@@ -158,82 +154,82 @@ function RevenueAnalytics() {
   ];
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden ">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Analytics'
       />
-      <div className="flex-1 flex flex-col overflow-auto pb-20">
+      <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="px-4 sm:px-6 lg:px-6">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center space-x-4">
-                <Link
-                  href="/admin/dashboard"
-                  className="flex items-center text-gray-600 hover:text-gray-900"
-                >
-                  <ChevronLeft className="w-5 h-5 mr-1" />
-                  Back to Dashboard
-                </Link>
-                <h1 className="text-xl font-semibold text-gray-900">Revenue Analytics</h1>
-              </div>
-              <div className="flex items-center space-x-3">
-                <select
-                  value={timeRange}
-                  onChange={e => setTimeRange(e.target.value)}
-                  className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                >
-                  <option value="week">Last Week</option>
-                  <option value="month">Last Month</option>
-                  <option value="quarter">Last Quarter</option>
-                  <option value="year">Last Year</option>
-                </select>
-                <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
-                  <Download className="w-4 h-4" />
-                  <span>Export</span>
-                </button>
-              </div>
-            </div>
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Analytics Dashboard</h1>
+            <p className="text-xs text-gray-500">Revenue insights and platform metrics</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+              <Download className="w-4 h-4" />
+            </button>
+            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+              <Filter className="w-4 h-4" />
+            </button>
           </div>
         </header>
 
-        <main className="p-6">
+        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+          {/* Time Range Selector */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <select
+                value={timeRange}
+                onChange={e => setTimeRange(e.target.value)}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+              >
+                <option value="week">Last Week</option>
+                <option value="month">Last Month</option>
+                <option value="quarter">Last Quarter</option>
+                <option value="year">Last Year</option>
+              </select>
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
+                <Download className="w-4 h-4" />
+                <span>Export</span>
+              </button>
+            </div>
+          </div>
+
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {statCards.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <div key={index} className="bg-white rounded-lg shadow-sm p-6 border">
-                  <div className="flex items-center justify-between mb-4">
-                    <div
-                      className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
-                    >
-                      <Icon className="w-6 h-6 text-white" />
+                <div key={index} className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      {stat.changeType === 'positive' ? (
-                        <TrendingUp className="w-4 h-4 text-green-600" />
-                      ) : (
-                        <TrendingDown className="w-4 h-4 text-red-600" />
-                      )}
-                      <span
-                        className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                          }`}
-                      >
-                        {stat.change}
-                      </span>
+                    <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center`}>
+                      <Icon className="w-5 h-5 text-white" />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-                  <p className="text-gray-600 text-sm mt-1">{stat.title}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    {stat.changeType === 'positive' ? (
+                      <TrendingUp className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <TrendingDown className="w-4 h-4 text-red-600" />
+                    )}
+                    <span className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+                      {stat.change}
+                    </span>
+                    <span className="text-xs text-gray-500">vs last period</span>
+                  </div>
                 </div>
               );
             })}
           </div>
 
           {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Revenue Chart */}
             <div className="bg-white rounded-lg shadow-sm p-6 border">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h2>
@@ -276,12 +272,11 @@ function RevenueAnalytics() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{product.name}</p>
-                        <p className="text-sm text-gray-500">{product.farmer}</p>
+                        <p className="text-sm text-gray-500">{product.orders} orders</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-gray-900">${(product.revenue || 0).toLocaleString()}</p>
-                      <p className="text-sm text-gray-500">{product.orders || 0} orders</p>
+                      <p className="font-medium text-gray-900">${product.revenue.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
@@ -307,8 +302,8 @@ function RevenueAnalytics() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-gray-900">${(farmer.revenue || 0).toLocaleString()}</p>
-                      <p className="text-sm text-gray-500">{farmer.orders || 0} orders</p>
+                      <p className="font-medium text-gray-900">${farmer.revenue.toLocaleString()}</p>
+                      <p className="text-sm text-gray-500">{farmer.orders} orders</p>
                     </div>
                   </div>
                 ))}
@@ -317,7 +312,7 @@ function RevenueAnalytics() {
           </div>
 
           {/* Monthly Data Table */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border mt-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Monthly Performance</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -340,7 +335,7 @@ function RevenueAnalytics() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200">
                   {analytics.monthlyData.map((month, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">

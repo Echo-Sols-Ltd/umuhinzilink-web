@@ -29,6 +29,7 @@ import {
     Leaf,
     AlertCircle,
     ChevronRight,
+    Store,
 } from 'lucide-react';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -52,6 +53,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'Products', href: '/farmer/products' },
                         { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Input Request', href: '/farmer/requests' },
                         { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Orders', href: '/farmer/orders' },
+                        { icon: <Store className="w-4.5 h-4.5" />, label: 'Supplier Orders', href: '/farmer/supplier-orders' },
                         { icon: <Truck className="w-4.5 h-4.5" />, label: 'Deliveries', href: '/farmer/delivery' },
                         { icon: <BarChart2 className="w-4.5 h-4.5" />, label: 'Market Analytics', href: '/farmer/market_analysis' },
                         { icon: <MessageSquare className="w-4.5 h-4.5" />, label: 'AI Tips', href: '/farmer/ai' },

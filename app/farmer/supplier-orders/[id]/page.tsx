@@ -5,21 +5,21 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, FarmerOrder } from '@/types';
+import { UserType, SupplierOrder } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import { DeliveryStatus } from '@/types/enums';
 import { useToast } from '@/components/ui/use-toast';
-import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard } from 'lucide-react';
+import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard, ShoppingCart } from 'lucide-react';
 
-function FarmerOrderDetailPage() {
+function FarmerSupplierOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { farmerOrders, updateFarmerOrderStatus } = useOrder();
+  const { supplierOrders, updateSupplierOrderStatus } = useOrder();
   const { toast } = useToast();
   
-  const [order, setOrder] = useState<FarmerOrder | null>(null);
+  const [order, setOrder] = useState<SupplierOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const orderId = params.id as string;
@@ -27,14 +27,14 @@ function FarmerOrderDetailPage() {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        // Find order in the existing farmerOrders
-        const foundOrder = farmerOrders?.find(o => o.id === orderId) || null;
+        // Find order in the existing supplierOrders
+        const foundOrder = supplierOrders?.find(o => o.id === orderId) || null;
         if (foundOrder) {
           setOrder(foundOrder);
         } else {
           // Fallback to API call if not found in context
           const { orderService } = await import('@/services/orders');
-          const response = await orderService.getFarmerOrderById(orderId);
+          const response = await orderService.getSupplierOrderById(orderId);
           if (response.success && response.data) {
             setOrder(response.data);
           }
@@ -54,14 +54,14 @@ function FarmerOrderDetailPage() {
     if (orderId) {
       fetchOrder();
     }
-  }, [orderId, farmerOrders, toast]);
+  }, [orderId, supplierOrders, toast]);
 
   const handleUpdateDeliveryStatus = async (newStatus: DeliveryStatus) => {
     if (!order) return;
     
     setUpdatingStatus(true);
     try {
-      await updateFarmerOrderStatus(order.id, newStatus);
+      await updateSupplierOrderStatus(order.id, newStatus);
       
       // Update local order state
       setOrder(prev => prev ? {
@@ -98,13 +98,13 @@ function FarmerOrderDetailPage() {
   };
 
   const handleBack = () => {
-    router.push('/farmer/orders');
+    router.push('/farmer/supplier-orders');
   };
 
   if (loading) {
     return (
       <div className="flex h-screen bg-gray-50">
-        <Sidebar userType={UserType.FARMER} activeItem='Orders' />
+        <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
         </main>
@@ -115,10 +115,10 @@ function FarmerOrderDetailPage() {
   if (!order) {
     return (
       <div className="flex h-screen bg-gray-50">
-        <Sidebar userType={UserType.FARMER} activeItem='Orders' />
+        <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Order Not Found</h2>
             <p className="text-gray-600">The order you're looking for doesn't exist.</p>
           </div>
@@ -127,12 +127,12 @@ function FarmerOrderDetailPage() {
     );
   }
 
-  const buyer = order.buyer;
+  const supplier = order.buyer; // Using buyer as placeholder until supplier data is available
   const product = order.product;
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar userType={UserType.FARMER} activeItem='Orders' />
+      <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
       
       <main className="flex-1 overflow-auto">
         {/* Header */}
@@ -143,7 +143,7 @@ function FarmerOrderDetailPage() {
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Orders</span>
+              <span>Back to Supplier Orders</span>
             </button>
             <div className="h-8 w-px bg-gray-300"></div>
             <h1 className="text-xl font-semibold text-gray-900">Order Details</h1>
@@ -160,7 +160,7 @@ function FarmerOrderDetailPage() {
                   <Package className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Product</p>
+                  <p className="text-sm text-gray-500">Input Item</p>
                   <p className="font-semibold text-gray-900">{product.name}</p>
                 </div>
               </div>
@@ -172,8 +172,8 @@ function FarmerOrderDetailPage() {
                   <User className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Customer</p>
-                  <p className="font-semibold text-gray-900">{buyer.names}</p>
+                  <p className="text-sm text-gray-500">Supplier</p>
+                  <p className="font-semibold text-gray-900">{supplier.names}</p>
                 </div>
               </div>
             </div>
@@ -193,47 +193,47 @@ function FarmerOrderDetailPage() {
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Customer Information */}
+            {/* Supplier Information */}
             <div className="bg-white rounded-lg p-6 border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <User className="w-5 h-5 mr-2 text-green-600" />
-                Customer Information
+                Supplier Information
               </h2>
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-gray-700">Name</label>
-                  <p className="text-gray-900">{buyer.names}</p>
+                  <p className="text-gray-900">{supplier.names}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Email</label>
-                  <p className="text-gray-900">{buyer.email}</p>
+                  <p className="text-gray-900">{supplier.email}</p>
                 </div>
-                {buyer.phoneNumber && (
+                {supplier.phoneNumber && (
                   <div>
                     <label className="text-sm font-medium text-gray-700">Phone</label>
-                    <p className="text-gray-900">{buyer.phoneNumber}</p>
+                    <p className="text-gray-900">{supplier.phoneNumber}</p>
                   </div>
                 )}
-                {buyer.address && (
+                {supplier.address && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Delivery Address</label>
+                    <label className="text-sm font-medium text-gray-700">Supplier Address</label>
                     <p className="text-gray-900">
-                      {buyer.address.district}, {buyer.address.province}
+                      {supplier.address.district}, {supplier.address.province}
                     </p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Product Information */}
+            {/* Input Item Information */}
             <div className="bg-white rounded-lg p-6 border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Package className="w-5 h-5 mr-2 text-green-600" />
-                Product Details
+                Input Item Details
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Product Name</label>
+                  <label className="text-sm font-medium text-gray-700">Input Name</label>
                   <p className="text-gray-900">{product.name}</p>
                 </div>
                 <div>
@@ -272,7 +272,7 @@ function FarmerOrderDetailPage() {
               delivery={order.delivery}
               onUpdateStatus={handleUpdateDeliveryStatus}
               isLoading={updatingStatus}
-              orderType="farmer"
+              orderType="supplier"
               isOrderOwner={true}
             />
           </div>
@@ -282,12 +282,12 @@ function FarmerOrderDetailPage() {
   );
 }
 
-function FarmerOrderDetailPageWithGuard() {
+function FarmerSupplierOrderDetailPageWithGuard() {
   return (
     <FarmerGuard>
-      <FarmerOrderDetailPage />
+      <FarmerSupplierOrderDetailPage />
     </FarmerGuard>
   );
 }
 
-export default FarmerOrderDetailPageWithGuard;
+export default FarmerSupplierOrderDetailPageWithGuard;

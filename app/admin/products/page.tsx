@@ -18,7 +18,7 @@ function ProductManagement() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="h-screen bg-white flex overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.ADMIN}
@@ -27,14 +27,19 @@ function ProductManagement() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center px-6">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
-            <Menu className="w-6 h-6" />
-          </button>
-          <h1 className="text-xl font-bold text-gray-800">Product Management</h1>
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Product Management</h1>
+            <p className="text-xs text-gray-500">Monitor and manage all platform products</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+              <Menu className="w-4 h-4" />
+            </button>
+          </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6">
+        <main className="flex-1 bg-gray-50 p-6 space-y-6">
           <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
             {/* Farmer Products Card */}
             <div className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">

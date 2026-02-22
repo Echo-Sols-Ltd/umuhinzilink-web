@@ -162,33 +162,54 @@ function ReportsPageComponent() {
   ];
 
   return (
-    <div className="h-screen bg-white flex overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Reports'
       />
-      <div className="flex-1 flex flex-col overflow-auto pb-20">
+      <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="px-4 sm:px-6 lg:px-6">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center space-x-4">
-                <Link
-                  href="/admin/dashboard"
-                  className="flex items-center text-gray-600 hover:text-gray-900"
-                >
-                  <ChevronLeft className="w-5 h-5 mr-1" />
-                  Back to Dashboard
-                </Link>
-                <h1 className="text-xl font-semibold text-gray-900">Reports</h1>
-              </div>
-            </div>
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Reports Center</h1>
+            <p className="text-xs text-gray-500">Generate and download platform reports</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+              <Download className="w-4 h-4" />
+            </button>
           </div>
         </header>
 
-        <main className="p-6">
+        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+          {/* Search and Filter */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search reports..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+              />
+            </div>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+            >
+              <option value="all">All Reports</option>
+              <option value="sales">Sales</option>
+              <option value="users">Users</option>
+              <option value="products">Products</option>
+              <option value="financial">Financial</option>
+              <option value="inventory">Inventory</option>
+            </select>
+          </div>
+
           {/* Generate New Report Section */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Generate New Report</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {reportTemplates.map((template, index) => (
