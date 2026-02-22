@@ -314,7 +314,7 @@ function FarmerOrders() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex items-center justify-end gap-2  transition-opacity">
                             {statusKey === 'PENDING' && (
                               <button
                                 onClick={() => handleAcceptOrder(order.id)}

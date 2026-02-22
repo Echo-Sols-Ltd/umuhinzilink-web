@@ -252,7 +252,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
             {isOwn && editingMessageId !== message.id && (
               <div className={cn(
-                "absolute top-0 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10",
+                "absolute top-0  transition-all duration-200 z-10",
                 isOwn ? "-left-24" : "-right-24"
               )}>
                 <div className="flex items-center space-x-1 bg-white border border-gray-100 rounded-full shadow-md p-1.5 translate-y-1">

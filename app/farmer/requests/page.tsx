@@ -313,7 +313,7 @@ function FarmerRequestsComponent() {
                           </div>
                         </TableCell>
                         <TableCell className="text-right pr-8">
-                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                          <div className="flex items-center justify-end gap-2  transition-all">
                             {order.status === OrderStatus.PENDING && !order.isPaid && (
                               <button
                                 onClick={() => handlePayOrder(order)}

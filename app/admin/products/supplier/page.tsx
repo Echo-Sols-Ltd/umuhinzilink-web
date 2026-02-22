@@ -246,7 +246,7 @@ function SupplierProductManagement() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-right pr-6">
-                                                <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center justify-end gap-1 transition-opacity">
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();

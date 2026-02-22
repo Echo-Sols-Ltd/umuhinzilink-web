@@ -48,7 +48,7 @@ export default function AdminWalletsPage() {
     const [loadingTransactions, setLoadingTransactions] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const { toast } = useToast()
-    const { systemWallet} = useAdmin()
+    const { systemWallet } = useAdmin()
 
     const fetchWallets = async () => {
         try {
@@ -280,7 +280,7 @@ export default function AdminWalletsPage() {
                                                         e.stopPropagation();
                                                         handleWalletClick(wallet);
                                                     }}
-                                                    className="p-3 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-2xl transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 group-hover:block"
+                                                    className="p-3 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-2xl transition-all  translate-x-4 group-hover:translate-x-0 group-hover:block"
                                                 >
                                                     <ArrowUpRight className="w-5 h-5" />
                                                 </button>
@@ -427,7 +427,7 @@ export default function AdminWalletsPage() {
                                                             </Badge>
                                                         </TableCell>
                                                         <TableCell className="text-right font-semibold text-gray-900 text-sm ">
-                                                            {(tx.type === 'DEPOSIT' || tx.type === 'TRANSFER_IN'|| tx.type ==='INCOME' ? '+' : '-')} RWF {tx.amount.toLocaleString()}
+                                                            {(tx.type === 'DEPOSIT' || tx.type === 'TRANSFER_IN' || tx.type === 'INCOME' ? '+' : '-')} RWF {tx.amount.toLocaleString()}
                                                         </TableCell>
                                                         <TableCell className="pr-6 text-right">
                                                             <span className="text-xs font-bold text-gray-400">{new Date(tx.createdAt).toLocaleDateString()}</span>

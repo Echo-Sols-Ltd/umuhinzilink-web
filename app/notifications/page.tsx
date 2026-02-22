@@ -296,7 +296,7 @@ export default function NotificationsPage() {
                                             </div>
 
                                             {/* Actions — visible on hover */}
-                                            <div className="flex items-center gap-1 self-center opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                                            <div className="flex items-center gap-1 self-center  transition-opacity shrink-0">
                                                 {!n.isRead && (
                                                     <button
                                                         onClick={() => markAsRead(n.id)}

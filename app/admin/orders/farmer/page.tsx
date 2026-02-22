@@ -153,7 +153,7 @@ function FarmerOrderManagement() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-right pr-8">
-                                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                                                <div className="flex items-center justify-end gap-2 transition-all transform translate-x-4 group-hover:translate-x-0">
                                                     <button className="p-3 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-2xl transition-all" title="View Audit">
                                                         <Eye className="w-5 h-5" />
                                                     </button>

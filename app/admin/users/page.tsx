@@ -49,6 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { imageUrl } from '@/lib/utils';
 
 function UserManagement() {
   const { deleteUser } = useAdmin();
@@ -282,7 +283,7 @@ function UserManagement() {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
                             {usersItem.avatar ? (
-                              <img src={usersItem.avatar} alt={usersItem.names} className="w-full h-full object-cover" />
+                              <img src={imageUrl(usersItem.avatar)} alt={usersItem.names} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full bg-linear-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white text-xs font-bold">
                                 {usersItem.names.charAt(0).toUpperCase()}
@@ -333,7 +334,7 @@ function UserManagement() {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                        <div className="flex items-center justify-end gap-1 transition-all">
                           <button
                             onClick={() => handleViewUser(usersItem)}
                             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"

@@ -234,7 +234,7 @@ function OrdersPageComponent() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                        <div className="flex items-center justify-end gap-2  transition-all">
                           {order.status.toUpperCase() === 'PENDING' && (
                             <button
                               onClick={() => handleAcceptOrder(order.id)}
