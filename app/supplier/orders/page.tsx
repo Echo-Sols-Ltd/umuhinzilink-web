@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { useOrder } from '@/contexts/OrderContext';
 import Sidebar from '@/components/shared/Sidebar';
@@ -35,6 +36,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 const ITEMS_PER_PAGE = 10;
 
 function OrdersPageComponent() {
+  const router = useRouter();
   const {
     supplierOrders,
     fetchSupplierOrders,
@@ -245,9 +247,9 @@ function OrdersPageComponent() {
                             </button>
                           )}
                           <button
-                            onClick={() => handleViewDetails(order)}
+                            onClick={() => router.push(`/supplier/orders/${order.id}`)}
                             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                            title="View Details"
+                            title="View Order Details"
                           >
                             <Eye className="w-4 h-4" />
                           </button>

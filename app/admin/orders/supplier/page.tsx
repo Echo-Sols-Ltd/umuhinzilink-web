@@ -47,16 +47,25 @@ function SupplierOrderManagement() {
     });
 
     return (
-        <div className="h-screen bg-white flex overflow-hidden">
+        <div className="flex h-screen bg-gray-50 overflow-hidden">
             <Sidebar userType={UserType.ADMIN} activeItem="Supplier Orders" />
 
-            <div className="flex-1 flex flex-col overflow-auto bg-gray-50/30">
+            <div className="flex-1 flex flex-col overflow-auto">
                 {/* Header */}
-                <header className="bg-white border-b px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
                     <div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Supplier Ecosystem</h1>
-                        <p className="text-sm text-gray-500 mt-1 font-medium">Audit all supply chain transactions from warehouses to farmers</p>
+                        <h1 className="text-xl font-semibold text-gray-900">Supplier Orders</h1>
+                        <p className="text-xs text-gray-500">Monitor and manage supplier-to-farmer transactions</p>
                     </div>
+                    <div className="flex items-center gap-3">
+                        <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                            <Filter className="w-4 h-4" />
+                        </button>
+                    </div>
+                </header>
+
+                <main className="flex-1 bg-gray-50 p-6 space-y-6">
+                    {/* Search Section */}
                     <div className="flex items-center gap-3">
                         <div className="relative max-w-sm">
                             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -69,11 +78,9 @@ function SupplierOrderManagement() {
                             />
                         </div>
                     </div>
-                </header>
 
-                <main className="p-8 max-w-7xl mx-auto w-full space-y-8">
                     {/* Table Container */}
-                    <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                         <div className="p-8 border-b border-gray-100 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-blue-50 rounded-2xl">

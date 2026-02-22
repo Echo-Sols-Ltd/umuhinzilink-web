@@ -14,10 +14,14 @@ import {
 } from './enums';
 
 export interface OrderRequest {
-  productId: string;
+  productId?: string; // Made optional for custom supplier orders
   quantity: number;
   totalPrice: number;
   paymentMethod: PaymentMethod;
+  notes?: string;
+  // Additional fields for supplier orders
+  productName?: string; // For custom supplier orders
+  unitPrice?: number; // For custom supplier orders
 }
 
 export interface FarmerProductRequest {

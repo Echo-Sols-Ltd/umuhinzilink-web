@@ -178,53 +178,62 @@ function UserManagement() {
   };
 
   return (
-    <div className="h-screen bg-white flex overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar userType={UserType.ADMIN} activeItem="Users" />
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center px-6 sticky top-0 z-10">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden mr-4">
-            <Menu className="w-6 h-6" />
-          </button>
-          <div className="relative flex-1 max-w-md mr-4">
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-4 pr-10 py-2 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50/50"
-            />
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">User Management</h1>
+            <p className="text-xs text-gray-500">Manage and monitor all platform members</p>
           </div>
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-32 rounded-lg border border-gray-300">
+                  <SelectValue placeholder="All Roles" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="FARMER">Farmer</SelectItem>
+                  <SelectItem value="BUYER">Buyer</SelectItem>
+                  <SelectItem value="SUPPLIER">Supplier</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                </SelectContent>
+              </Select>
 
-          <div className="flex gap-2">
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-32 rounded-xl">
-                <SelectValue placeholder="All Roles" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="FARMER">Farmer</SelectItem>
-                <SelectItem value="BUYER">Buyer</SelectItem>
-                <SelectItem value="SUPPLIER">Supplier</SelectItem>
-                <SelectItem value="ADMIN">Admin</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-32 rounded-xl">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="verified">Verified</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-32 rounded-lg border border-gray-300">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <button
+              onClick={() => fetchUsers(currentPage)}
+              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              disabled={loading}
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
           </div>
         </header>
 
-        <main className="flex-1 bg-white p-6">
+        <main className="flex-1 bg-gray-50 p-6">
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white">
               <div>
@@ -441,7 +450,7 @@ function UserManagement() {
       {showUserModal && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-100">
-            <div className="relative h-24 bg-gradient-to-r from-green-500 to-emerald-600">
+            <div className="relative h-24 bg-linear-to-r from-green-500 to-emerald-600">
               <button
                 onClick={() => setShowUserModal(false)}
                 className="absolute top-4 right-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all"

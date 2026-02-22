@@ -80,59 +80,102 @@ function FarmerProducts() {
   }, [products]);
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar userType={UserType.FARMER} activeItem="Products" />
 
-      <main className="flex-1 overflow-auto bg-gray-50/30">
-        <div className="p-8 max-w-7xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Marketplace Inventory</h1>
-              <p className="text-sm text-gray-500 mt-1">Manage your produce listings and monitor stock levels</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => fetchFarmerProducts()}
-                className="p-2.5 bg-white border border-gray-100 rounded-lg hover:bg-gray-50 transition-all shadow-sm"
-              >
-                <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin text-green-600' : ''}`} />
-              </button>
-              <Link
-                href="/farmer/add_produce"
-                className="bg-green-600 text-white font-semibold py-2.5 px-6 rounded-lg flex items-center gap-2 hover:bg-green-700 transition shadow-sm"
-              >
-                <Plus className="w-4 h-4" /> New Listing
-              </Link>
-            </div>
+      <div className="flex-1 flex flex-col overflow-auto">
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Marketplace Inventory</h1>
+            <p className="text-xs text-gray-500">Manage your produce listings and monitor stock levels</p>
           </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => fetchFarmerProducts()}
+              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+            <Link
+              href="/farmer/add_produce"
+              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors"
+            >
+              <Plus className="w-4 h-4" /> New Listing
+            </Link>
+          </div>
+        </header>
 
-          {/* Highlights */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <HighlightCard title="Total Listings" value={stats.total} icon={<LayoutGrid />} color="from-green-600 to-emerald-600" />
-            <HighlightCard title="In Stock" value={stats.active} icon={<CheckCircle />} color="from-blue-500 to-indigo-600" />
-            <HighlightCard title="Out of Stock" value={stats.outOfStock} icon={<AlertCircle />} color="from-red-500 to-rose-600" />
-            <HighlightCard title="Total Units" value={stats.inventory} icon={<TrendingUp />} color="from-amber-400 to-orange-500" />
+        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+
+          {/* Metrics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Listings</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                </div>
+                <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                  <LayoutGrid className="w-5 h-5 text-green-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">In Stock</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+                </div>
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Out of Stock</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.outOfStock}</p>
+                </div>
+                <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-red-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Units</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.inventory}</p>
+                </div>
+                <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-amber-600" />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Filtering Section */}
-          <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search your products..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500 bg-gray-50/50"
+                className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
               />
             </div>
-            <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="flex items-center gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-40 bg-white border-gray-200 rounded-lg h-10 font-medium text-xs uppercase tracking-wider">
+                <SelectTrigger className="w-40 rounded-lg border border-gray-300">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg">
+                <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="in_stock">In Stock</SelectItem>
                   <SelectItem value="out_of_stock">Out of Stock</SelectItem>
@@ -142,7 +185,7 @@ function FarmerProducts() {
               {(statusFilter !== 'all' || searchTerm) && (
                 <button
                   onClick={() => { setStatusFilter('all'); setSearchTerm(''); }}
-                  className="px-4 py-2 text-xs font-semibold text-red-500 uppercase tracking-wider hover:bg-red-50 rounded-lg transition-all"
+                  className="px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   Reset
                 </button>
@@ -205,8 +248,8 @@ function FarmerProducts() {
               </>
             )}
           </section>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

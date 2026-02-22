@@ -10,8 +10,9 @@ import { useOrder } from '@/contexts/OrderContext';
 export interface OrderCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  product: FarmerProduct | SupplierProduct | null;
-  productType: 'farmer' | 'supplier';
+  product?: FarmerProduct | SupplierProduct | null;
+  productType?: 'farmer' | 'supplier';
+  orderType?: 'buyer' | 'supplier';
 }
 
 export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
@@ -19,11 +20,14 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   onClose,
   product,
   productType,
+  orderType = 'buyer',
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.MOBILE_MONEY);
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [productName, setProductName] = useState('');
+  const [unitPrice, setUnitPrice] = useState(0);
 
   const { createFarmerOrder, createSupplierOrder, mutationLoading: loading } = useOrder();
 
@@ -34,16 +38,30 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
       setPaymentMethod(PaymentMethod.MOBILE_MONEY);
       setNotes('');
       setErrors({});
+      setProductName(product?.name || '');
+      setUnitPrice(product?.unitPrice || 0);
     }
   }, [isOpen, product]);
 
-  if (!isOpen || !product) return null;
+  if (!isOpen) return null;
 
-  const totalPrice = product.unitPrice * quantity;
-  const maxQuantity = product.quantity;
+  // For supplier order type (farmer requesting from supplier), no product is required
+  if (orderType !== 'supplier' && !product) return null;
+
+  const totalPrice = unitPrice * quantity;
+  const maxQuantity = product?.quantity || 1000; // Default high limit for custom orders
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
+
+    if (orderType === 'supplier') {
+      if (!productName.trim()) {
+        newErrors.productName = 'Product name is required';
+      }
+      if (unitPrice <= 0) {
+        newErrors.unitPrice = 'Unit price must be greater than 0';
+      }
+    }
 
     if (quantity < 1) {
       newErrors.quantity = 'Quantity must be at least 1';
@@ -65,15 +83,22 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
     if (!validateForm()) return;
 
     const orderData = {
-      productId: product.id,
+      productId: product?.id,
       quantity,
       totalPrice,
       paymentMethod,
       notes: notes.trim() || undefined,
+      // For supplier orders, include product details
+      ...(orderType === 'supplier' && {
+        productName: productName.trim(),
+        unitPrice,
+      }),
     };
 
     try {
-      if (productType === 'farmer') {
+      if (orderType === 'supplier') {
+        await createSupplierOrder(orderData);
+      } else if (productType === 'farmer') {
         await createFarmerOrder(orderData);
       } else {
         await createSupplierOrder(orderData);
@@ -116,41 +141,92 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
 
         {/* Product Info */}
         <div className="p-6 border-b bg-gray-50">
-          <div className="flex space-x-4">
-            <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-              <Image
-                src={product.image || '/placeholder.png'}
-                alt={product.name}
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
+          {orderType === 'supplier' ? (
+            // Custom product input for supplier orders
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">Request Agricultural Input</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Input Name *
+                </label>
+                <input
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  placeholder="e.g., Fertilizer, Seeds, Pesticides"
+                  className={cn(
+                    'w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent',
+                    errors.productName && 'border-red-500'
+                  )}
+                />
+                {errors.productName && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <AlertCircle size={16} className="mr-1" />
+                    {errors.productName}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Estimated Unit Price (RWF) *
+                </label>
+                <input
+                  type="number"
+                  value={unitPrice}
+                  onChange={(e) => setUnitPrice(Number(e.target.value))}
+                  placeholder="0"
+                  min="0"
+                  className={cn(
+                    'w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent',
+                    errors.unitPrice && 'border-red-500'
+                  )}
+                />
+                {errors.unitPrice && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <AlertCircle size={16} className="mr-1" />
+                    {errors.unitPrice}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
-              <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center space-x-4">
-                  <span className="text-lg font-bold text-green-600">
-                    {product.unitPrice.toLocaleString()} RWF
-                  </span>
-                  <span className="text-sm text-gray-500">per {product.measurementUnit}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className={cn(
-                    'w-2 h-2 rounded-full',
-                    isOutOfStock ? 'bg-red-500' : isLowStock ? 'bg-yellow-500' : 'bg-green-500'
-                  )} />
-                  <span className={cn(
-                    'text-sm font-medium',
-                    isOutOfStock ? 'text-red-600' : isLowStock ? 'text-yellow-600' : 'text-green-600'
-                  )}>
-                    {isOutOfStock ? 'Out of Stock' : `${maxQuantity} available`}
-                  </span>
+          ) : (
+            // Existing product display
+            <div className="flex space-x-4">
+              <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+                <Image
+                  src={product?.image || '/placeholder.png'}
+                  alt={product?.name || ''}
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">{product?.name}</h3>
+                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product?.description}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center space-x-4">
+                    <span className="text-lg font-bold text-green-600">
+                      {product?.unitPrice?.toLocaleString()} RWF
+                    </span>
+                    <span className="text-sm text-gray-500">per {product?.measurementUnit}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className={cn(
+                      'w-2 h-2 rounded-full',
+                      isOutOfStock ? 'bg-red-500' : isLowStock ? 'bg-yellow-500' : 'bg-green-500'
+                    )} />
+                    <span className={cn(
+                      'text-sm font-medium',
+                      isOutOfStock ? 'text-red-600' : isLowStock ? 'text-yellow-600' : 'text-green-600'
+                    )}>
+                      {isOutOfStock ? 'Out of Stock' : `${maxQuantity} available`}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Order Form */}
@@ -191,7 +267,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                 +
               </button>
               <span className="text-sm text-gray-500">
-                {product.measurementUnit}
+                {orderType === 'supplier' ? 'units' : product?.measurementUnit}
               </span>
             </div>
             {errors.quantity && (
@@ -269,11 +345,11 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Unit Price:</span>
-                <span className="font-medium">{product.unitPrice.toLocaleString()} RWF</span>
+                <span className="font-medium">{unitPrice.toLocaleString()} RWF</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Quantity:</span>
-                <span className="font-medium">{quantity} {product.measurementUnit}</span>
+                <span className="font-medium">{quantity} {orderType === 'supplier' ? 'units' : product?.measurementUnit}</span>
               </div>
               <div className="border-t pt-2 flex justify-between">
                 <span className="font-semibold text-gray-900">Total:</span>
@@ -295,16 +371,16 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={loading || isOutOfStock}
+              disabled={loading || (orderType !== 'supplier' && isOutOfStock)}
               className={cn(
                 'flex-1 px-4 py-2 rounded-lg font-medium transition-colors',
-                isOutOfStock
+                (orderType !== 'supplier' && isOutOfStock)
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-green-600 text-white hover:bg-green-700',
                 loading && 'opacity-50 cursor-not-allowed'
               )}
             >
-              {loading ? 'Creating Order...' : isOutOfStock ? 'Out of Stock' : 'Create Order'}
+              {loading ? 'Creating Order...' : (orderType === 'supplier' ? 'Send Request' : (isOutOfStock ? 'Out of Stock' : 'Create Order'))}
             </button>
           </div>
         </form>

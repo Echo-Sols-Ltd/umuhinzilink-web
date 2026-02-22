@@ -124,40 +124,83 @@ function FarmerRequestsComponent() {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar userType={UserType.FARMER} activeItem="Input Request" />
 
-      <main className="flex-1 overflow-auto bg-gray-50/30">
-        <div className="p-8 max-w-7xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Farm Input Center</h1>
-              <p className="text-sm text-gray-500 mt-1 font-medium">Purchase seeds, fertilizers and tools from verified suppliers</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => { fetchFarmerBuyerProducts(0, 100); fetchFarmerBuyerOrders(0, ORDERS_PER_PAGE); setOrdersPage(1); }}
-                className="p-2.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all border border-gray-100 bg-white shadow-sm"
-              >
-                <RefreshCw className={`w-5 h-5 ${productsLoading || ordersLoading ? 'animate-spin' : ''}`} />
-              </button>
-            </div>
+      <div className="flex-1 flex flex-col overflow-auto">
+        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Farm Input Center</h1>
+            <p className="text-xs text-gray-500">Purchase seeds, fertilizers and tools from verified suppliers</p>
           </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => { fetchFarmerBuyerProducts(0, 100); fetchFarmerBuyerOrders(0, ORDERS_PER_PAGE); setOrdersPage(1); }}
+              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+            >
+              <RefreshCw className={`w-4 h-4 ${productsLoading || ordersLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+        </header>
 
-          {/* Highlights */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <HighlightCard title="My Orders" value={stats.total} icon={<ShoppingCart />} color="from-green-600 to-emerald-600" />
-            <HighlightCard title="Pending" value={stats.pending} icon={<Clock />} color="from-amber-400 to-orange-500" />
-            <HighlightCard title="In Delivery" value={stats.active} icon={<Package />} color="from-blue-500 to-indigo-600" />
-            <HighlightCard title="Successful" value={stats.completed} icon={<CheckCircle />} color="from-purple-500 to-fuchsia-600" />
+        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+
+          {/* Metrics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">My Orders</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                </div>
+                <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                  <ShoppingCart className="w-5 h-5 text-green-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Pending</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+                </div>
+                <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-amber-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">In Delivery</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+                </div>
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <Package className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Successful</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
+                </div>
+                <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-purple-600" />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Product Grid */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900 border-l-4 border-green-500 pl-4">Premium Inputs</h2>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Available Now</span>
+              <h2 className="text-lg font-semibold text-gray-900">Premium Inputs</h2>
+              <span className="text-xs text-gray-500 uppercase tracking-wider">Available Now</span>
             </div>
 
             {productsLoading ? (
@@ -186,20 +229,20 @@ function FarmerRequestsComponent() {
                         <Package className="w-12 h-12 text-gray-200" />
                       )}
                       <div className="absolute top-3 right-3">
-                        <span className="px-2.5 py-1 bg-white/90 backdrop-blur-md rounded-lg text-[10px] font-black text-green-700 shadow-sm border border-green-50">
+                        <span className="px-2.5 py-1 bg-white/90 backdrop-blur-md rounded-lg text-[10px] font-semibold text-green-700 shadow-sm border border-green-50">
                           {product.category || 'AGRI-INPUT'}
                         </span>
                       </div>
                     </div>
                     <div className="p-5 space-y-4">
                       <div>
-                        <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-green-600 transition-colors uppercase tracking-tight">{product.name}</h3>
+                        <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-green-600 transition-colors">{product.name}</h3>
                         <p className="text-[11px] text-gray-400 font-medium mt-1 line-clamp-1 capitalize">{product.description || 'Verified agricultural supply'}</p>
                       </div>
                       <div className="flex items-end justify-between">
                         <div>
                           <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tighter">Unit Price</p>
-                          <p className="text-lg font-black text-gray-900 leading-none">
+                          <p className="text-lg font-bold text-gray-900 leading-none">
                             RWF {product.unitPrice?.toLocaleString() || '0'}
                           </p>
                         </div>
@@ -224,7 +267,7 @@ function FarmerRequestsComponent() {
           {/* Orders History */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900 border-l-4 border-amber-500 pl-4">Purchase History</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Purchase History</h2>
               <div className="flex gap-2">
                 {['All', 'Pending', 'Active', 'Completed'].map((tab) => (
                   <button
@@ -352,8 +395,8 @@ function FarmerRequestsComponent() {
               )}
             </div>
           </section>
-        </div>
-      </main>
+        </main>
+      </div>
 
       <OrderCreationModal
         isOpen={isOrderModalOpen}
@@ -365,10 +408,10 @@ function FarmerRequestsComponent() {
       <OrderDetailsModal
         order={viewingOrder}
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
-        onCancel={handleCancelOrder}
-        onPay={handlePayOrder}
-        loading={actionLoading}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setViewingOrder(null);
+        }}
       />
     </div>
   );

@@ -180,6 +180,8 @@ function BuyerDeliveryPage() {
                             delivery={order.delivery}
                             onUpdateStatus={() => { }} // Buyers cannot update status
                             isLoading={false}
+                            orderType="buyer"
+                            isOrderOwner={false} // Buyers are never order owners for delivery updates
                           />
                         ) : (
                           <div className="bg-gray-50 rounded-lg p-4 text-center">

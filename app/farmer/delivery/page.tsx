@@ -223,6 +223,8 @@ function FarmerDeliveryPage() {
                           delivery={order.delivery}
                           onUpdateStatus={(status) => handleUpdateDeliveryStatus(order.id, status)}
                           isLoading={updatingStatus === order.id}
+                          orderType="farmer"
+                          isOrderOwner={true} // Farmers are owners of their orders
                         />
                       </div>
                     ) : (
