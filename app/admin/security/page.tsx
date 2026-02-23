@@ -177,7 +177,7 @@ function SecurityPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Security'
@@ -196,14 +196,14 @@ function SecurityPage() {
           </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
           {/* Security Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Logs</p>
-                  <p className="text-2xl font-bold text-gray-900">{securityMetrics.totalLogs}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{securityMetrics.totalLogs}</p>
                 </div>
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
                   <Activity className="w-5 h-5 text-white" />
@@ -214,7 +214,7 @@ function SecurityPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Failed Attempts</p>
-                  <p className="text-2xl font-bold text-gray-900">{securityMetrics.failedAttempts}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{securityMetrics.failedAttempts}</p>
                 </div>
                 <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
                   <Ban className="w-5 h-5 text-white" />
@@ -225,7 +225,7 @@ function SecurityPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Warnings</p>
-                  <p className="text-2xl font-bold text-gray-900">{securityMetrics.warnings}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{securityMetrics.warnings}</p>
                 </div>
                 <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5 text-white" />
@@ -236,7 +236,7 @@ function SecurityPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Active Settings</p>
-                  <p className="text-2xl font-bold text-gray-900">{securityMetrics.activeSettings}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{securityMetrics.activeSettings}</p>
                 </div>
                 <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5 text-white" />
@@ -250,7 +250,7 @@ function SecurityPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Security Settings</h2>
             <div className="space-y-4">
               {securitySettings.map((setting) => (
-                <div key={setting.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key={setting.id} className="flex items-center justify-between p-4 bg-white rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                       <Shield className="w-5 h-5 text-green-600" />
@@ -262,14 +262,12 @@ function SecurityPage() {
                   </div>
                   <button
                     onClick={() => toggleSetting(setting.id)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      setting.enabled ? 'bg-green-600' : 'bg-gray-200'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${setting.enabled ? 'bg-green-600' : 'bg-gray-200'
+                      }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        setting.enabled ? 'translate-x-6' : 'translate-x-1'
-                      }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${setting.enabled ? 'translate-x-6' : 'translate-x-1'
+                        }`}
                     />
                   </button>
                 </div>
@@ -282,7 +280,7 @@ function SecurityPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Security Logs</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-white border-b border-gray-200">
                   <tr>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Timestamp</th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Action</th>
@@ -293,7 +291,7 @@ function SecurityPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {securityLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-gray-50">
+                    <tr key={log.id} className="hover:bg-white">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.timestamp}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.action}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.user}</td>

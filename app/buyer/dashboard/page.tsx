@@ -34,7 +34,7 @@ import ProductCard from '@/components/products/Product';
 
 
 const Logo = () => (
-  <span className="font-extrabold text-2xl tracking-tight">
+  <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
     <span className="text-black">Link</span>
   </span>
@@ -74,7 +74,7 @@ function BuyerDashboardComponent() {
 
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.BUYER}
@@ -97,7 +97,7 @@ function BuyerDashboardComponent() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
           {/* Welcome Section */}
           <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
@@ -156,25 +156,25 @@ function BuyerDashboardComponent() {
           {/* Recent Orders */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="flex justify-between items-center p-6 border-b border-gray-50 bg-white">
-              <h2 className="text-xl font-bold text-gray-900">Recent Orders</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Recent Orders</h2>
               <button
                 onClick={() => setShowOrderManagement(true)}
-                className="text-green-600 text-xs font-bold uppercase tracking-wider hover:text-green-700 transition-colors"
+                className="text-green-600 text-xs font-semibold uppercase  hover:text-green-700 transition-colors"
               >
                 Manage All Orders
               </button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50/50 border-b border-gray-100">
+                <thead className="bg-white/50 border-b border-gray-100">
                   <tr>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">ID</th>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">FARMER / LOCATION</th>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">ORDERED</th>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">PRODUCT / QTY</th>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">TOTAL</th>
-                    <th className="text-center py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">STATUS</th>
-                    <th className="text-right py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">DELIVERY</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">ID</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">FARMER / LOCATION</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">ORDERED</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">PRODUCT / QTY</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">TOTAL</th>
+                    <th className="text-center py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">STATUS</th>
+                    <th className="text-right py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">DELIVERY</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -218,7 +218,7 @@ function BuyerDashboardComponent() {
                           : quantity * unitPrice;
 
                       return (
-                        <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <tr key={order.id} className="border-b border-gray-100 hover:bg-white">
                           <td className="py-4 text-gray-900">{order.id}</td>
                           <td className="py-4 text-gray-900">{farmerName}</td>
                           <td className="py-4 text-gray-600">

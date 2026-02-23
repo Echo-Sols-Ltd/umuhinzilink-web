@@ -102,7 +102,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                 <div>
                     <div className="flex justify-between items-start">
                         <h3 className="font-semibold text-lg text-gray-900">{product.name}</h3>
-                        <p className="text-green-600 font-bold text-lg">{product.unitPrice} RWF / {product.measurementUnit}</p>
+                        <p className="text-green-600 font-semibold text-lg">{product.unitPrice} RWF / {product.measurementUnit}</p>
                     </div>
                     <p className="text-sm text-gray-500 mt-1">Available: {product.quantity} {product.measurementUnit}</p>
                     <div className="flex items-center text-sm text-gray-500 mt-1">
@@ -132,7 +132,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                             </button>
                         </>
                     ) : (<>
-                        <button className="border border-gray-300 hover:bg-gray-50 transition-colors p-2.5 rounded-lg flex items-center justify-center"
+                        <button className="border border-gray-300 hover:bg-white transition-colors p-2.5 rounded-lg flex items-center justify-center"
                             onClick={(e: any) => {
                                 e.stopPropagation();
                                 handleContactFarmer(product as FarmerProduct)

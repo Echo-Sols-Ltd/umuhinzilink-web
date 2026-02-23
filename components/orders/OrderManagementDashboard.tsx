@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { 
-  Search, 
-  Filter, 
-  Download, 
-  Eye, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
+import {
+  Search,
+  Filter,
+  Download,
+  Eye,
+  CheckCircle,
+  XCircle,
+  Clock,
   Truck,
   MoreVertical,
   Calendar,
@@ -53,7 +53,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
   const filteredAndSortedOrders = useMemo(() => {
     let filtered = orders.filter(order => {
       // Search filter
-      const searchMatch = searchTerm === '' || 
+      const searchMatch = searchTerm === '' ||
         order.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.buyer.names.toLowerCase().includes(searchTerm.toLowerCase());
@@ -126,13 +126,13 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
   };
 
   const canAcceptOrder = (order: FarmerOrder | SupplierOrder) => {
-    return (userRole === 'farmer' || userRole === 'supplier') && 
-           order.status === OrderStatus.PENDING;
+    return (userRole === 'farmer' || userRole === 'supplier') &&
+      order.status === OrderStatus.PENDING;
   };
 
   const canUpdateStatus = (order: FarmerOrder | SupplierOrder) => {
-    return (userRole === 'farmer' || userRole === 'supplier') && 
-           order.status === OrderStatus.ACTIVE;
+    return (userRole === 'farmer' || userRole === 'supplier') &&
+      order.status === OrderStatus.ACTIVE;
   };
 
   const formatCurrency = (amount: number) => {
@@ -168,7 +168,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Orders</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.total}</p>
             </div>
             <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
               <Calendar className="w-5 h-5 text-gray-600" />
@@ -180,7 +180,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+              <p className="text-2xl font-semibold text-yellow-600">{stats.pending}</p>
             </div>
             <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
               <Clock className="w-5 h-5 text-yellow-600" />
@@ -192,7 +192,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Active</p>
-              <p className="text-2xl font-bold text-blue-600">{stats.active}</p>
+              <p className="text-2xl font-semibold text-blue-600">{stats.active}</p>
             </div>
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
               <Truck className="w-5 h-5 text-blue-600" />
@@ -204,7 +204,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
+              <p className="text-2xl font-semibold text-green-600">{stats.completed}</p>
             </div>
             <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
               <CheckCircle className="w-5 h-5 text-green-600" />
@@ -216,7 +216,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Value</p>
-              <p className="text-2xl font-bold text-green-600">{formatCurrency(stats.totalValue)}</p>
+              <p className="text-2xl font-semibold text-green-600">{formatCurrency(stats.totalValue)}</p>
             </div>
             <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
               <DollarSign className="w-5 h-5 text-green-600" />
@@ -243,7 +243,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
           {/* Filter Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-white"
           >
             <Filter className="w-4 h-4" />
             <span>Filters</span>
@@ -298,42 +298,42 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
             <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
             <p className="text-gray-500">
-              {searchTerm || filterType !== 'all' 
-                ? 'Try adjusting your search or filters' 
+              {searchTerm || filterType !== 'all'
+                ? 'Try adjusting your search or filters'
                 : 'Orders will appear here when they are created'}
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-white">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
                     Order
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
                     {userRole === 'buyer' ? 'Seller' : 'Customer'}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
                     Product
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
                     Amount
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredAndSortedOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50">
+                  <tr key={order.id} className="hover:bg-white">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         #{order.id.slice(-8)}
@@ -372,7 +372,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-bold text-gray-900">
+                      <div className="text-sm font-semibold text-gray-900">
                         {formatCurrency(order.totalPrice)}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -404,7 +404,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        
+
                         {canAcceptOrder(order) && (
                           <button
                             onClick={() => onAcceptOrder?.(order.id)}
@@ -414,7 +414,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
                             <CheckCircle className="w-4 h-4" />
                           </button>
                         )}
-                        
+
                         {canAcceptOrder(order) && (
                           <button
                             onClick={() => onRejectOrder?.(order.id)}
@@ -424,7 +424,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
                             <XCircle className="w-4 h-4" />
                           </button>
                         )}
-                        
+
                         <button className="text-gray-400 hover:text-gray-600">
                           <MoreVertical className="w-4 h-4" />
                         </button>
@@ -454,7 +454,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
                   <XCircle className="w-6 h-6" />
                 </button>
               </div>
-              
+
               <OrderStatusTracker
                 orderStatus={selectedOrder.status}
                 deliveryStatus={(() => {

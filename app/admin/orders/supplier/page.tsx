@@ -47,7 +47,7 @@ function SupplierOrderManagement() {
     });
 
     return (
-        <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <div className="flex h-screen bg-white overflow-hidden">
             <Sidebar userType={UserType.ADMIN} activeItem="Supplier Orders" />
 
             <div className="flex-1 flex flex-col overflow-auto">
@@ -64,7 +64,7 @@ function SupplierOrderManagement() {
                     </div>
                 </header>
 
-                <main className="flex-1 bg-gray-50 p-6 space-y-6">
+                <main className="flex-1 bg-white p-6 space-y-6">
                     {/* Search Section */}
                     <div className="flex items-center gap-3">
                         <div className="relative max-w-sm">
@@ -74,7 +74,7 @@ function SupplierOrderManagement() {
                                 placeholder="Search by names..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 w-64 shadow-sm"
+                                className="pl-12 pr-4 py-2.5 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 w-64 shadow-sm"
                             />
                         </div>
                     </div>
@@ -86,9 +86,9 @@ function SupplierOrderManagement() {
                                 <div className="p-3 bg-blue-50 rounded-2xl">
                                     <ArrowDownLeft className="w-6 h-6 text-blue-600" />
                                 </div>
-                                <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Supplier Transactions</h2>
+                                <h2 className="text-2xl font-semibold text-gray-900 uppercase ">Supplier Transactions</h2>
                             </div>
-                            <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-xl text-xs font-bold hover:bg-black transition-all shadow-lg shadow-gray-200">
+                            <button className="flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-xl text-xs font-semibold hover:bg-black transition-all shadow-lg shadow-gray-200">
                                 <Filter className="w-4 h-4" />
                                 Export Ledger
                             </button>
@@ -96,12 +96,12 @@ function SupplierOrderManagement() {
 
                         <Table>
                             <TableHeader>
-                                <TableRow className="bg-gray-50/30">
-                                    <TableHead className="py-6 pl-8 font-bold">SETTLEMENT INFO</TableHead>
-                                    <TableHead className="font-bold">PARTICIPANTS</TableHead>
-                                    <TableHead className="font-bold">EXECUTION DATE</TableHead>
-                                    <TableHead className="font-bold">STATUS</TableHead>
-                                    <TableHead className="text-right pr-8 font-bold">ACTIONS</TableHead>
+                                <TableRow className="bg-white/30">
+                                    <TableHead className="py-6 pl-8 font-semibold">SETTLEMENT INFO</TableHead>
+                                    <TableHead className="font-semibold">PARTICIPANTS</TableHead>
+                                    <TableHead className="font-semibold">EXECUTION DATE</TableHead>
+                                    <TableHead className="font-semibold">STATUS</TableHead>
+                                    <TableHead className="text-right pr-8 font-semibold">ACTIONS</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -110,35 +110,35 @@ function SupplierOrderManagement() {
                                         <TableCell colSpan={5} className="py-24 text-center">
                                             <div className="flex flex-col items-center justify-center opacity-20">
                                                 <Search className="w-16 h-16 mb-4" />
-                                                <p className="text-xl font-black italic">No Transactions Captured</p>
+                                                <p className="text-xl font-semibold italic">No Transactions Captured</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     filteredOrders.map(order => (
-                                        <TableRow key={order.id} className="group hover:bg-gray-50/50 transition-all">
+                                        <TableRow key={order.id} className="group hover:bg-white/50 transition-all">
                                             <TableCell className="py-5 pl-8">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">SUP-REF: {order.id.slice(0, 8)}</span>
-                                                    <span className="font-bold text-gray-900 text-base leading-tight italic">
+                                                    <span className="text-[10px] font-semibold text-blue-600 uppercase  mb-1">SUP-REF: {order.id.slice(0, 8)}</span>
+                                                    <span className="font-semibold text-gray-900 text-base leading-tight italic">
                                                         RWF {order.totalPrice.toLocaleString()}
                                                     </span>
-                                                    <span className="text-[11px] text-gray-400 font-bold">Bulk Input Purchase</span>
+                                                    <span className="text-[11px] text-gray-400 font-semibold">Bulk Input Purchase</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-6">
                                                     <div className="flex flex-col">
-                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Sender (Buyer)</span>
-                                                        <span className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+                                                        <span className="text-[10px] font-semibold text-gray-400 uppercase ">Sender (Buyer)</span>
+                                                        <span className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">
                                                             <User className="w-3.5 h-3.5 text-green-500" />
                                                             {order.buyer.names}
                                                         </span>
                                                     </div>
                                                     <div className="w-4 h-px bg-gray-200" />
                                                     <div className="flex flex-col">
-                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Receiver (Supplier)</span>
-                                                        <span className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+                                                        <span className="text-[10px] font-semibold text-gray-400 uppercase ">Receiver (Supplier)</span>
+                                                        <span className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">
                                                             <User className="w-3.5 h-3.5 text-orange-500" />
                                                             {order.product.owner?.names}
                                                         </span>
@@ -146,7 +146,7 @@ function SupplierOrderManagement() {
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-2 font-bold text-gray-600 text-sm">
+                                                <div className="flex items-center gap-2 font-semibold text-gray-600 text-sm">
                                                     <Calendar className="w-4 h-4 text-gray-400" />
                                                     {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                                                 </div>
@@ -154,7 +154,7 @@ function SupplierOrderManagement() {
                                             <TableCell>
                                                 <Badge
                                                     variant={getStatusVariant(order.status)}
-                                                    className="font-black text-[9px] px-3 py-1 uppercase tracking-widest rounded-full"
+                                                    className="font-semibold text-[9px] px-3 py-1 uppercase  rounded-full"
                                                 >
                                                     {order.status}
                                                 </Badge>

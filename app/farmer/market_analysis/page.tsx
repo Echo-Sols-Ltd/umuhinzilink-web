@@ -123,7 +123,7 @@ const priceData = [
 ];
 
 const Logo = () => (
-  <span className="font-extrabold text-2xl tracking-tight">
+  <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
     <span className="text-black">Link</span>
   </span>
@@ -150,7 +150,7 @@ function MarketAnalysis() {
 
 
         {/* Main Content */}
-        <main className="flex-1 h-screen p-6 space-y-6 bg-gray-50 overflow-auto">
+        <main className="flex-1 h-screen p-6 space-y-6 bg-white overflow-auto">
           {/* Filters */}
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center gap-2">
@@ -285,7 +285,7 @@ function MarketAnalysis() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`font-bold ${item.textColor}`}>{item.change}</span>
+                      <span className={`font-semibold ${item.textColor}`}>{item.change}</span>
                       {item.color === 'green' && <ArrowUp className="w-4 h-4 text-green-600" />}
                       {item.color === 'yellow' && (
                         <TrendingUp className="w-4 h-4 text-yellow-600" />

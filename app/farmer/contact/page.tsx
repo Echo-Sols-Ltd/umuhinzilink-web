@@ -18,7 +18,7 @@ import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
 
 const Logo = () => (
-  <span className="font-extrabold text-2xl tracking-tight">
+  <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
     <span className="text-black">Link</span>
   </span>
@@ -38,7 +38,7 @@ const menuItems = [
 
 function ContactPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white border-b h-16 flex items-center px-6 shadow-sm">
         <Logo />
@@ -52,7 +52,7 @@ function ContactPage() {
 
         {/* Main Content */}
         <main className="flex-1 ml-64 p-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Contact Us</h1>
+          <h1 className="text-2xl font-semibold text-gray-800 mb-6">Contact Us</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Contact Info */}

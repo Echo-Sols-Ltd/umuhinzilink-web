@@ -44,16 +44,16 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     loading = false,
 }) => {
     const { user } = useAuth();
-    
+
     if (!isOpen || !order) return null;
 
     // Determine if current user is the order owner
     // - For FarmerOrder: Farmer is owner, buyer cannot update delivery
     // - For SupplierOrder: Supplier is owner, buyer (farmer) cannot update delivery
-    const isOrderOwner = 
+    const isOrderOwner =
         (user?.role === UserType.FARMER && 'buyer' in order) || // Farmer viewing farmer orders
         (user?.role === UserType.SUPPLIER && 'buyer' in order); // Supplier viewing supplier orders
-    
+
     // Determine order type for DeliveryTracker
     const orderType = user?.role === UserType.FARMER ? 'farmer' : 'supplier';
 
@@ -76,11 +76,11 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
                 {/* Header */}
-                <div className="p-6 border-b flex items-center justify-between bg-gray-50/50">
+                <div className="p-6 border-b flex items-center justify-between bg-white/50">
                     <div>
                         <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-xl font-bold text-gray-900">Order Details</h2>
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                            <h2 className="text-xl font-semibold text-gray-900">Order Details</h2>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold uppercase  ${status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
                                 status === 'ACTIVE' || status === 'PENDING_PAYMENT' ? 'bg-blue-100 text-blue-700' :
                                     status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
                                         'bg-gray-100 text-gray-700'
@@ -129,7 +129,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <User className="w-4 h-4 text-green-600" />
                                 Customer Information
                             </h3>
-                            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                            <div className="bg-white rounded-lg p-4 space-y-3">
                                 <p className="text-sm font-medium text-gray-900">{buyer.names || 'N/A'}</p>
                                 <div className="flex items-center gap-2 text-xs text-gray-600">
                                     <Mail className="w-3.5 h-3.5" />
@@ -157,7 +157,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <Package className="w-4 h-4 text-green-600" />
                                 Product Details
                             </h3>
-                            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                            <div className="bg-white rounded-lg p-4 space-y-3">
                                 <p className="text-sm font-medium text-gray-900">{product.name}</p>
                                 <div className="flex justify-between text-xs text-gray-600">
                                     <span>Quantity:</span>
@@ -167,7 +167,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                     <span>Unit Price:</span>
                                     <span>RWF {product.unitPrice?.toLocaleString()}</span>
                                 </div>
-                                <div className="flex justify-between text-sm font-bold text-gray-900 pt-2 border-t border-gray-200">
+                                <div className="flex justify-between text-sm font-semibold text-gray-900 pt-2 border-t border-gray-200">
                                     <span>Total Price:</span>
                                     <span className="text-green-600">RWF {order.totalPrice.toLocaleString()}</span>
                                 </div>
@@ -182,7 +182,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <CreditCard className="w-4 h-4 text-green-600" />
                                 Payment Method
                             </h3>
-                            <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="bg-white rounded-lg p-4">
                                 <p className="text-sm text-gray-700">{order.paymentMethod.replace('_', ' ')}</p>
                                 <p className="text-xs mt-1 font-medium text-gray-500">
                                     Status: {order.isPaid ? 'PAID' : 'UNPAID'}
@@ -194,7 +194,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <Calendar className="w-4 h-4 text-green-600" />
                                 Order Date
                             </h3>
-                            <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="bg-white rounded-lg p-4">
                                 <p className="text-sm text-gray-700">{formatDate(order.createdAt)}</p>
                             </div>
                         </div>
@@ -220,7 +220,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-6 border-t bg-gray-50 flex items-center justify-end gap-3">
+                <div className="p-6 border-t bg-white flex items-center justify-end gap-3">
                     {onPay && !order.isPaid && status !== 'CANCELLED' && (
                         <button
                             onClick={() => onPay(order)}
@@ -233,7 +233,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     )}
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 shadow-sm transition-all"
+                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-white shadow-sm transition-all"
                     >
                         Close
                     </button>

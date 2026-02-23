@@ -152,7 +152,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Dashboard' />
@@ -178,7 +178,7 @@ function Dashboard() {
           </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
           {/* Welcome Section */}
           <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
@@ -198,7 +198,7 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Products</p>
-                  <p className="text-2xl font-bold text-gray-900">{products.length}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{products.length}</p>
                 </div>
                 <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
                   <Leaf className="w-5 h-5 text-green-600" />
@@ -210,7 +210,7 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                  <p className="text-2xl font-bold text-gray-900">{totalOrders}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{totalOrders}</p>
                 </div>
                 <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
                   <ShoppingCart className="w-5 h-5 text-blue-600" />
@@ -222,7 +222,7 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Revenue</p>
-                  <p className="text-2xl font-bold text-gray-900">RWF {formatNumber(totalRevenue)}</p>
+                  <p className="text-2xl font-semibold text-gray-900">RWF {formatNumber(totalRevenue)}</p>
                 </div>
                 <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
                   <DollarSign className="w-5 h-5 text-amber-600" />
@@ -234,7 +234,7 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Requests</p>
-                  <p className="text-2xl font-bold text-gray-900">{requests.length}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{requests.length}</p>
                 </div>
                 <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
                   <UsersIcon className="w-5 h-5 text-purple-600" />

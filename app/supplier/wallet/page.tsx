@@ -12,7 +12,7 @@ function WalletPage() {
     const { wallet, transactions, loading, handleDeposit } = useWallet();
 
     return (
-        <div className="flex h-screen bg-gray-50">
+        <div className="flex h-screen bg-white">
             <Sidebar
                 userType={UserType.SUPPLIER}
                 activeItem='My Wallet'
@@ -25,7 +25,7 @@ function WalletPage() {
                     <div className="flex items-center space-x-3">
                         <Wallet className="w-8 h-8 text-green-600" />
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">My Wallet</h1>
+                            <h1 className="text-2xl font-semibold text-gray-900">My Wallet</h1>
                             <p className="text-gray-600">Manage your business earnings, balance and transactions</p>
                         </div>
                     </div>

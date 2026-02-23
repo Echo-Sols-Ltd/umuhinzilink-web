@@ -153,13 +153,13 @@ function FarmerOrders() {
   const displayName = currentUser?.names || 'Farmer';
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Orders' />
 
 
-      <main className="flex-1 h-full bg-gray-50 overflow-auto">
+      <main className="flex-1 h-full bg-white overflow-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Orders</h1>
@@ -305,11 +305,11 @@ function FarmerOrders() {
                             ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}`
                             : '—'}
                         </TableCell>
-                        <TableCell className="font-bold text-gray-900">
+                        <TableCell className="font-semibold text-gray-900">
                           {formatNumber(amount)} RWF
                         </TableCell>
                         <TableCell>
-                          <Badge variant={statusMeta.variant as any} className="font-semibold text-[10px] uppercase tracking-wide">
+                          <Badge variant={statusMeta.variant as any} className="font-semibold text-[10px] uppercase ">
                             {statusMeta.label}
                           </Badge>
                         </TableCell>
@@ -319,7 +319,7 @@ function FarmerOrders() {
                               <button
                                 onClick={() => handleAcceptOrder(order.id)}
                                 disabled={actionLoading}
-                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-full text-[11px] font-bold transition shadow-sm disabled:opacity-50"
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-full text-[11px] font-semibold transition shadow-sm disabled:opacity-50"
                               >
                                 Approve
                               </button>

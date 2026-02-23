@@ -12,14 +12,14 @@ import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 const Logo = () => (
-  <span className="font-extrabold text-2xl tracking-tight">
+  <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
     <span className="text-black">Link</span>
   </span>
 );
 
 function GlobalChatListComponent() {
-  const { user ,loading} = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const { activeChatUser } = useMessages();
 
@@ -27,13 +27,13 @@ function GlobalChatListComponent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-      <Loader2 className='text-green-600 animate-spin' size={50}/>
+        <Loader2 className='text-green-600 animate-spin' size={50} />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col h-screen bg-white overflow-hidden">
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <div className={cn("hidden md:block shrink-0")}>
           <Sidebar

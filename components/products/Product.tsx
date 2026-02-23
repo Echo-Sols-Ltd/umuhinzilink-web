@@ -100,7 +100,7 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
             onClick={onSelect}
             className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-green-100/30 transition-all duration-300 cursor-pointer"
         >
-            <div className="relative aspect-square overflow-hidden bg-gray-50">
+            <div className="relative aspect-square overflow-hidden bg-white">
                 <img
                     src={imageUrl(product.image!)}
                     alt={product.name}
@@ -130,7 +130,7 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
                 </div>
 
                 <div className="absolute top-3 left-3">
-                    <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-white/90 backdrop-blur-sm shadow-sm ${product.productStatus === 'IN_STOCK' ? 'text-green-600' : 'text-amber-600'
+                    <span className={`px-2 py-0.5 text-[10px] font-semibold uppercase  rounded-md bg-white/90 backdrop-blur-sm shadow-sm ${product.productStatus === 'IN_STOCK' ? 'text-green-600' : 'text-amber-600'
                         }`}>
                         {product.productStatus?.replace('_', ' ') || 'Available'}
                     </span>
@@ -139,12 +139,12 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
 
             <div className="p-4">
                 <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-green-600 transition-colors uppercase text-sm tracking-tight">{product.name}</h3>
+                    <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-green-600 transition-colors uppercase text-sm ">{product.name}</h3>
                 </div>
 
                 <div className="flex items-baseline gap-1 mb-3">
                     <span className="text-lg font-extrabold text-green-700">{Number(product.unitPrice).toLocaleString()}</span>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">RWF / {product.measurementUnit || 'unit'}</span>
+                    <span className="text-[10px] font-semibold text-gray-400 uppercase">RWF / {product.measurementUnit || 'unit'}</span>
                 </div>
 
                 <div className="space-y-2 mb-4">
@@ -167,14 +167,14 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
                                 if (onEdit) onEdit(product);
                                 else router.push(`/${product.owner.role.toLowerCase()}/products/${product.id}/edit`);
                             }}
-                            className="flex-1 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300"
+                            className="flex-1 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white py-2 rounded-lg text-xs font-semibold uppercase  transition-all duration-300"
                         >
                             Edit Item
                         </button>
                     ) : (
                         <>
                             <button
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-lg shadow-green-100"
+                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-xs font-semibold uppercase  transition-all duration-300 shadow-lg shadow-green-100"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     if (onPurchase) onPurchase();
@@ -183,7 +183,7 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
                                 Buy Now
                             </button>
                             <button
-                                className="p-2 bg-gray-50 text-gray-600 hover:bg-green-50 hover:text-green-600 rounded-lg transition-all duration-300 border border-transparent hover:border-green-100"
+                                className="p-2 bg-white text-gray-600 hover:bg-green-50 hover:text-green-600 rounded-lg transition-all duration-300 border border-transparent hover:border-green-100"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     if (onContact) onContact();

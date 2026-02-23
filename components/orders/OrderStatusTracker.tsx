@@ -215,7 +215,7 @@ export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       </div>
 
       {/* Overall Status Badge */}
-      <div className="mt-6 flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+      <div className="mt-6 flex items-center justify-between p-4 bg-white rounded-lg">
         <div className="flex items-center space-x-2">
           <div className={cn(
             'w-3 h-3 rounded-full',

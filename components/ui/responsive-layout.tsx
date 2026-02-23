@@ -40,7 +40,7 @@ export function ResponsiveLayout({
   };
 
   return (
-    <div className={`flex flex-col h-screen bg-gray-50 ${className}`}>
+    <div className={`flex flex-col h-screen bg-white ${className}`}>
       {/* Mobile Header */}
       {isMobile && (
         <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -193,7 +193,7 @@ export function MobileTable({
       {/* Desktop Table */}
       <div className={`hidden md:block overflow-x-auto ${className}`}>
         <table className="w-full text-sm text-left text-gray-500">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+          <thead className="text-xs text-gray-700 uppercase bg-white">
             <tr>
               {headers.map((header, index) => (
                 <th key={index} scope="col" className="px-4 py-3">
@@ -238,7 +238,7 @@ export function TouchOptimizedButton({
   const variantClasses = {
     primary: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500',
     secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-    outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
+    outline: 'border border-gray-300 text-gray-700 hover:bg-white focus:ring-gray-500',
     ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
   };
 

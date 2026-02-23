@@ -86,7 +86,7 @@ function FarmerDeliveryPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-white">
         <Sidebar userType={UserType.FARMER} activeItem='Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
@@ -96,7 +96,7 @@ function FarmerDeliveryPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-white">
       <Sidebar userType={UserType.FARMER} activeItem='Orders' />
 
       <main className="flex-1 overflow-auto">
@@ -170,7 +170,7 @@ function FarmerDeliveryPage() {
               filteredOrders.map(order => (
                 <div key={order.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                   {/* Order Header */}
-                  <div className="p-4 border-b border-gray-100 bg-gray-50">
+                  <div className="p-4 border-b border-gray-100 bg-white">
                     <div className="flex items-center justify-between">
                       <div>
                         <h3 className="font-semibold text-gray-900">#{order.id.slice(0, 8)}</h3>
@@ -229,7 +229,7 @@ function FarmerDeliveryPage() {
                       </div>
                     ) : (
                       <div className="border-t border-gray-100 pt-4">
-                        <div className="bg-gray-50 rounded-lg p-4 text-center">
+                        <div className="bg-white rounded-lg p-4 text-center">
                           <Calendar className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                           <p className="text-sm text-gray-600">
                             {order.status === 'CANCELLED' ? 'Delivery is cancelled' : 'Waiting for order approval'}

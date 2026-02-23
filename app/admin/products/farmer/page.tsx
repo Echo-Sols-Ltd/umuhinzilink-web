@@ -99,7 +99,7 @@ function FarmerProductManagement() {
     };
 
     return (
-        <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <div className="flex h-screen bg-white overflow-hidden">
             <Sidebar userType={UserType.ADMIN} activeItem="Farmer Products" />
 
             <div className="flex-1 flex flex-col overflow-auto">
@@ -115,7 +115,7 @@ function FarmerProductManagement() {
                     </div>
                 </header>
 
-                <main className="flex-1 bg-gray-50 p-6 space-y-6">
+                <main className="flex-1 bg-white p-6 space-y-6">
                     {/* Search and Filters */}
                     <div className="flex items-center justify-between gap-4">
                         <div className="relative flex-1 max-w-md">
@@ -221,7 +221,7 @@ function FarmerProductManagement() {
                                                             setSelectedProduct(product);
                                                             setShowProductModal(true);
                                                         }}
-                                                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                                                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors"
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </button>

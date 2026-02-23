@@ -15,7 +15,7 @@ import { UserRequest, UserType } from '@/types';
 export default function SignUp() {
   const { register } = useAuth();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const {toast}=useToast()
+  const { toast } = useToast()
   const [formData, setFormData] = useState<UserRequest>({
     names: '',
     email: '',
@@ -115,7 +115,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col sm:flex-row bg-gray-50 overflow-hidden">
+    <div className="w-full h-screen flex flex-col sm:flex-row bg-white overflow-hidden">
       {/* LEFT – Form */}
       <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white overflow-auto">
         <div className="w-full max-w-md flex flex-col justify-center">

@@ -28,7 +28,7 @@ export default function SignIn() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('logout')) {
-      toast({ title: 'Signed Out', description: 'You have been logged out successfully.' ,variant:'success'});
+      toast({ title: 'Signed Out', description: 'You have been logged out successfully.', variant: 'success' });
     }
     if (urlParams.get('registered')) {
       toast({
@@ -96,7 +96,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col sm:flex-row bg-gray-50 overflow-hidden">
+    <div className="w-full h-screen flex flex-col sm:flex-row bg-white overflow-hidden">
       {/* LEFT – Form Section */}
       <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white">
         <div className="w-full max-w-md flex flex-col justify-center">
@@ -136,8 +136,8 @@ export default function SignIn() {
                 onBlur={handleBlur}
                 disabled={loading}
                 className={`mt-1 ${touched.email && fieldErrors.email
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'focus:ring-green-500'
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'focus:ring-green-500'
                   }`}
               />
               {touched.email && fieldErrors.email && (
@@ -156,8 +156,8 @@ export default function SignIn() {
                 onBlur={handleBlur}
                 disabled={loading}
                 className={`mt-1 pr-10 ${touched.password && fieldErrors.password
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'focus:ring-green-500'
+                  ? 'border-red-500 focus:ring-red-500'
+                  : 'focus:ring-green-500'
                   }`}
               />
               <button

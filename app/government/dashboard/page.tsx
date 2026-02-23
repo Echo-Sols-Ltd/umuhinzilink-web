@@ -268,7 +268,7 @@ function Dashboard() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   type="text"
-                  className="pl-10 pr-4 py-2 w-80 rounded-lg border-transparent bg-gray-50 focus:bg-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                  className="pl-10 pr-4 py-2 w-80 rounded-lg border-transparent bg-white focus:bg-white focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
                   placeholder="Search market analytics..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -294,7 +294,7 @@ function Dashboard() {
               <Bell className="w-5 h-5 text-gray-500 cursor-pointer hover:text-green-600 transition-colors" />
               <div className="flex items-center space-x-2 pl-2 border-l border-gray-100">
                 <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center shadow-lg shadow-green-100">
-                  <span className="text-white text-xs font-bold">{initials || 'G'}</span>
+                  <span className="text-white text-xs font-semibold">{initials || 'G'}</span>
                 </div>
                 <span className="text-sm font-semibold text-gray-700">{shortName}</span>
                 <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
@@ -321,8 +321,8 @@ function Dashboard() {
                     <Users className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Users</p>
-                    <p className="text-2xl font-bold text-gray-900 leading-tight">{formatNumber(userStats.totalUsers)}</p>
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase ">Total Users</p>
+                    <p className="text-2xl font-semibold text-gray-900 leading-tight">{formatNumber(userStats.totalUsers)}</p>
                   </div>
                 </div>
 
@@ -331,9 +331,9 @@ function Dashboard() {
                     <Tractor className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Farmers Produce</p>
-                    <p className="text-2xl font-bold text-gray-900 leading-tight">{formatNumber(farmerProductStats.totalProducts)}</p>
-                    <p className="text-[10px] font-bold text-green-600 uppercase mt-0.5 tracking-tighter">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase ">Farmers Produce</p>
+                    <p className="text-2xl font-semibold text-gray-900 leading-tight">{formatNumber(farmerProductStats.totalProducts)}</p>
+                    <p className="text-[10px] font-semibold text-green-600 uppercase mt-0.5 ">
                       {farmerProductStats.inStockCount} in stock
                     </p>
                   </div>
@@ -344,9 +344,9 @@ function Dashboard() {
                     <Package className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Suppliers Produce</p>
-                    <p className="text-2xl font-bold text-gray-900 leading-tight">{formatNumber(supplierProductStats.totalProducts)}</p>
-                    <p className="text-[10px] font-bold text-green-600 uppercase mt-0.5 tracking-tighter">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase ">Suppliers Produce</p>
+                    <p className="text-2xl font-semibold text-gray-900 leading-tight">{formatNumber(supplierProductStats.totalProducts)}</p>
+                    <p className="text-[10px] font-semibold text-green-600 uppercase mt-0.5 ">
                       {supplierProductStats.inStockCount} in stock
                     </p>
                   </div>
@@ -357,9 +357,9 @@ function Dashboard() {
                     <ShoppingCart className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Orders</p>
-                    <p className="text-2xl font-bold text-gray-900 leading-tight">{formatNumber(orderStats.totalOrders)}</p>
-                    <p className="text-[10px] font-bold text-green-600 uppercase mt-0.5 tracking-tighter">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase ">Total Orders</p>
+                    <p className="text-2xl font-semibold text-gray-900 leading-tight">{formatNumber(orderStats.totalOrders)}</p>
+                    <p className="text-[10px] font-semibold text-green-600 uppercase mt-0.5 ">
                       {orderStats.completedCount} completed
                     </p>
                   </div>
@@ -500,7 +500,7 @@ function Dashboard() {
                 ) : (
                   <div className="space-y-3">
                     {recentOrders.map(order => (
-                      <div key={order.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div key={order.id} className="flex items-center gap-3 p-3 bg-white rounded-lg">
                         <div className={`w-2 h-2 rounded-full ${order.status === 'COMPLETED' ? 'bg-green-500' :
                           order.status === 'PENDING' ? 'bg-yellow-500' :
                             'bg-red-500'
@@ -655,14 +655,14 @@ function Dashboard() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left text-gray-500">
-                  <thead className="bg-gray-50/50 border-b border-gray-100">
+                  <thead className="bg-white/50 border-b border-gray-100">
                     <tr>
-                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Product Name</th>
-                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Category</th>
-                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Type</th>
-                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider text-center">Price / Qty</th>
-                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Location</th>
-                      <th scope="col" className="px-6 py-4 text-right font-semibold text-[11px] text-gray-400 uppercase tracking-wider">Status</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase ">Product Name</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase ">Category</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase ">Type</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase  text-center">Price / Qty</th>
+                      <th scope="col" className="px-6 py-4 text-left font-semibold text-[11px] text-gray-400 uppercase ">Location</th>
+                      <th scope="col" className="px-6 py-4 text-right font-semibold text-[11px] text-gray-400 uppercase ">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -678,7 +678,7 @@ function Dashboard() {
                       </tr>
                     ) : (
                       filteredProducts.slice(0, 10).map((product, index) => (
-                        <tr key={`${product.type}-${product.id || index}`} className="group border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                        <tr key={`${product.type}-${product.id || index}`} className="group border-b border-gray-100 hover:bg-white/50 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className="text-sm font-semibold text-gray-800">{product.name || 'Unknown Product'}</span>
                           </td>
@@ -686,7 +686,7 @@ function Dashboard() {
                             {product.category || 'Uncategorized'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${product.type === 'farmer'
+                            <span className={`px-2 py-0.5 text-[10px] font-semibold uppercase  rounded-md ${product.type === 'farmer'
                               ? 'bg-green-50 text-green-600'
                               : 'bg-blue-50 text-blue-600'
                               }`}>
@@ -695,7 +695,7 @@ function Dashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-center">
                             <div className="flex flex-col">
-                              <span className="text-xs font-bold text-gray-900">
+                              <span className="text-xs font-semibold text-gray-900">
                                 {product.unitPrice ? `${formatNumber(product.unitPrice)} RWF` : 'N/A'}
                               </span>
                               <span className="text-[10px] text-gray-400">
@@ -707,7 +707,7 @@ function Dashboard() {
                             {product.location || 'Unknown'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${product.productStatus === 'IN_STOCK' ? 'bg-green-50 text-green-600' :
+                            <span className={`px-2 py-0.5 text-[10px] font-semibold uppercase  rounded-md ${product.productStatus === 'IN_STOCK' ? 'bg-green-50 text-green-600' :
                               product.productStatus === 'LOW_STOCK' ? 'bg-amber-50 text-amber-600' :
                                 'bg-red-50 text-red-600'
                               }`}>

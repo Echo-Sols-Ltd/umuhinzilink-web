@@ -17,7 +17,7 @@ function BuyerOrderDetailPage() {
   const { user } = useAuth();
   const { buyerOrders } = useOrder();
   const { toast } = useToast();
-  
+
   const [order, setOrder] = useState<FarmerOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const orderId = params.id as string;
@@ -60,7 +60,7 @@ function BuyerOrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-white">
         <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
@@ -71,7 +71,7 @@ function BuyerOrderDetailPage() {
 
   if (!order) {
     return (
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-white">
         <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -88,9 +88,9 @@ function BuyerOrderDetailPage() {
   const farmer = order.product.owner;
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-white">
       <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
-      
+
       <main className="flex-1 overflow-auto">
         {/* Header */}
         <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
@@ -122,7 +122,7 @@ function BuyerOrderDetailPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-green-100 rounded-lg">
@@ -134,7 +134,7 @@ function BuyerOrderDetailPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-orange-100 rounded-lg">
@@ -203,7 +203,7 @@ function BuyerOrderDetailPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Total Price</label>
-                  <p className="text-lg font-bold text-green-600">RWF {order.totalPrice.toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-green-600">RWF {order.totalPrice.toLocaleString()}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Payment Method</label>
@@ -228,13 +228,13 @@ function BuyerOrderDetailPage() {
             {order.delivery ? (
               <DeliveryTracker
                 delivery={order.delivery}
-                onUpdateStatus={() => {}} // Buyers cannot update status
+                onUpdateStatus={() => { }} // Buyers cannot update status
                 isLoading={false}
                 orderType="buyer"
                 isOrderOwner={false} // Buyers are never order owners for delivery updates
               />
             ) : (
-              <div className="bg-gray-50 rounded-lg p-6 text-center">
+              <div className="bg-white rounded-lg p-6 text-center">
                 <Truck className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600">Delivery information not yet available</p>
                 <p className="text-sm text-gray-500 mt-2">The farmer will update delivery status once the order is processed.</p>

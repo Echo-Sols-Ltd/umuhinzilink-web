@@ -60,7 +60,7 @@ export default function ImpactStories() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-bold text-gray-900">Impact & Success Stories</h2>
+        <h2 className="text-center text-2xl font-semibold text-gray-900">Impact & Success Stories</h2>
         <p className="text-center text-gray-600 mt-2">
           Real farmers, real results from our Nyagatare pilot
         </p>
@@ -91,7 +91,7 @@ export default function ImpactStories() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-8">
           {metrics.map((m, i) => (
             <div key={i} className="flex flex-col items-center">
-              <p className="text-lg font-bold mt-2 text-green-600 ">{m.value}</p>
+              <p className="text-lg font-semibold mt-2 text-green-600 ">{m.value}</p>
               <p className="text-gray-600 text-sm">{m.label}</p>
             </div>
           ))}

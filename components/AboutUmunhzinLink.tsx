@@ -28,7 +28,7 @@ const AboutUmuhinzinLink: React.FC = () => {
         <p className="text-sm text-green-600 font-semibold mb-2 border border-gray-300  w-52 px-5 py-2 rounded-md">
           About UmuhinzinLink
         </p>
-        <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
+        <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-gray-900">
           Bridging the Gap Between Farmers and Markets
         </h2>
         <p className="text-gray-700 mb-8">

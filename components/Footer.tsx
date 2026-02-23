@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Logo and  Description */}
         <div>
-          <p className="font-bold text-white">🌱 UmuhinziLink</p>
+          <p className="font-semibold text-white">🌱 UmuhinziLink</p>
           <p className="mt-2 text-sm">
             Empowering Rwandan farmers through digital agriculture and AI-powered solutions.
           </p>

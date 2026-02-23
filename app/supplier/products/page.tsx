@@ -173,18 +173,18 @@ function ProductsPageComponent() {
         activeItem='My Inputs'
       />
 
-      <main className="flex-1 overflow-auto bg-gray-50/30 relative">
+      <main className="flex-1 overflow-auto bg-white/30 relative">
         <div className="p-8 max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Input Inventory</h1>
+              <h1 className="text-2xl font-semibold text-gray-900">Input Inventory</h1>
               <p className="text-sm text-gray-500 mt-1">Manage and update your agricultural supplies for farmers</p>
             </div>
             <div className="flex items-center gap-3">
               <Link
                 href="/supplier/products/add-input"
-                className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-green-700 transition-all shadow-lg shadow-green-100"
+                className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-lg font-semibold text-xs uppercase  hover:bg-green-700 transition-all shadow-lg shadow-green-100"
               >
                 <Plus className="w-4 h-4" />
                 Add New Input
@@ -196,24 +196,24 @@ function ProductsPageComponent() {
           <div className="bg-green-600 rounded-2xl p-8 text-white relative overflow-hidden shadow-xl shadow-green-100/50">
             <div className="relative z-10 max-w-2xl">
               <div className="flex items-center gap-2 mb-4">
-                <span className="px-2 py-1 bg-white/20 backdrop-blur-md rounded text-[10px] font-bold uppercase tracking-widest">Supplier Portal</span>
+                <span className="px-2 py-1 bg-white/20 backdrop-blur-md rounded text-[10px] font-semibold uppercase ">Supplier Portal</span>
                 <span className="text-xs font-medium text-green-100">
                   {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                 </span>
               </div>
-              <h2 className="text-3xl font-extrabold mb-2 tracking-tight">Expand your reach to thousands of farmers.</h2>
+              <h2 className="text-3xl font-extrabold mb-2 ">Expand your reach to thousands of farmers.</h2>
               <p className="text-green-50 text-sm mb-6 max-w-lg leading-relaxed font-medium">
                 Keep your inventory updated to help farmers find the best seeds, fertilizers, and tools for their season.
               </p>
               <div className="flex items-center gap-6">
                 <div>
-                  <p className="text-2xl font-bold">{supplierProducts?.length || 0}</p>
-                  <p className="text-[10px] font-bold text-green-200 uppercase tracking-wider mt-1">Total Items</p>
+                  <p className="text-2xl font-semibold">{supplierProducts?.length || 0}</p>
+                  <p className="text-[10px] font-semibold text-green-200 uppercase  mt-1">Total Items</p>
                 </div>
                 <div className="w-px h-10 bg-white/20"></div>
                 <div>
-                  <p className="text-2xl font-bold text-white">Rwanda</p>
-                  <p className="text-[10px] font-bold text-green-200 uppercase tracking-wider mt-1">Market Reach</p>
+                  <p className="text-2xl font-semibold text-white">Rwanda</p>
+                  <p className="text-[10px] font-semibold text-green-200 uppercase  mt-1">Market Reach</p>
                 </div>
               </div>
             </div>
@@ -230,7 +230,7 @@ function ProductsPageComponent() {
                 placeholder="Search your inventory..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-transparent rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="w-full pl-10 pr-4 py-2.5 bg-white/50 border border-transparent rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
               />
             </div>
           </div>
@@ -238,8 +238,8 @@ function ProductsPageComponent() {
           {/* Grid */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold text-gray-900 border-l-4 border-green-500 pl-3 uppercase tracking-widest">Active Listings</h2>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{filteredProducts.length} Results</span>
+              <h2 className="text-xs font-semibold text-gray-900 border-l-4 border-green-500 pl-3 uppercase ">Active Listings</h2>
+              <span className="text-[10px] font-semibold text-gray-400 uppercase ">{filteredProducts.length} Results</span>
             </div>
 
             {loading ? (
@@ -263,7 +263,7 @@ function ProductsPageComponent() {
                     <p className="text-gray-500 text-sm mb-6">Start by listing your first agricultural input product.</p>
                     <button
                       onClick={() => { resetForm(); setShowForm(true); }}
-                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white rounded-lg font-bold text-xs uppercase tracking-wider transition-all"
+                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white rounded-lg font-semibold text-xs uppercase  transition-all"
                     >
                       <Plus className="w-4 h-4" />
                       Add Input
@@ -303,7 +303,7 @@ function ProductsPageComponent() {
           <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 p-4">
             <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900">
                   {editingProduct ? 'Edit Input' : 'Add New Input'}
                 </h2>
                 <button onClick={() => { setShowForm(false); resetForm(); }} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -313,12 +313,12 @@ function ProductsPageComponent() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Product Details</label>
+                  <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Product Details</label>
                   <select
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all"
+                    className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all"
                   >
                     <option value="">Select Product Type</option>
                     {Object.values(ProductType).map(type => (
@@ -330,7 +330,7 @@ function ProductsPageComponent() {
                     value={formData.category}
                     onChange={e => setFormData({ ...formData, category: e.target.value })}
                     required
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all"
+                    className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all"
                   >
                     <option value="">Select Category</option>
                     {Object.values(ProductCategory).map(category => (
@@ -343,29 +343,29 @@ function ProductsPageComponent() {
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     required
-                    className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all min-h-[100px]"
+                    className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all min-h-[100px]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Price (RWF)</label>
+                    <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Price (RWF)</label>
                     <input
                       type="number"
                       placeholder="0.00"
                       value={formData.unitPrice}
                       onChange={e => setFormData({ ...formData, unitPrice: e.target.value })}
                       required
-                      className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                      className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Measurement</label>
+                    <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Measurement</label>
                     <select
                       value={formData.measurementUnit}
                       onChange={e => setFormData({ ...formData, measurementUnit: e.target.value })}
                       required
-                      className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                      className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm"
                     >
                       <option value="">Unit</option>
                       {Object.values(MeasurementUnit).map(unit => (
@@ -377,23 +377,23 @@ function ProductsPageComponent() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Stock Quantity</label>
+                    <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Stock Quantity</label>
                     <input
                       type="number"
                       placeholder="0"
                       value={formData.quantity}
                       onChange={e => setFormData({ ...formData, quantity: e.target.value })}
                       required
-                      className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                      className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Certification</label>
+                    <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Certification</label>
                     <select
                       value={formData.certification}
                       onChange={e => setFormData({ ...formData, certification: e.target.value })}
                       required
-                      className="w-full bg-gray-50 border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                      className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm"
                     >
                       <option value="">None</option>
                       {Object.values(CertificationType).map(cert => (
@@ -404,7 +404,7 @@ function ProductsPageComponent() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Product Media</label>
+                  <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Product Media</label>
                   <FileUpload
                     onUploadComplete={handleImageUpload}
                     uploadType="generic"
@@ -418,14 +418,14 @@ function ProductsPageComponent() {
                   <button
                     type="button"
                     onClick={() => { setShowForm(false); resetForm(); }}
-                    className="flex-1 px-6 py-3 rounded-lg border border-gray-100 font-bold text-xs uppercase tracking-wider text-gray-500 hover:bg-gray-50 transition-all"
+                    className="flex-1 px-6 py-3 rounded-lg border border-gray-100 font-semibold text-xs uppercase  text-gray-500 hover:bg-white transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={supplierActions.loading}
-                    className="flex-1 px-6 py-3 rounded-lg bg-green-600 text-white font-bold text-xs uppercase tracking-wider hover:bg-green-700 disabled:opacity-50 transition-all shadow-lg shadow-green-100"
+                    className="flex-1 px-6 py-3 rounded-lg bg-green-600 text-white font-semibold text-xs uppercase  hover:bg-green-700 disabled:opacity-50 transition-all shadow-lg shadow-green-100"
                   >
                     {supplierActions.loading ? 'Processing...' : (editingProduct ? 'Update Listing' : 'List Input')}
                   </button>

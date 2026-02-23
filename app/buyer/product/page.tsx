@@ -47,7 +47,7 @@ import { useMessages } from '@/contexts/MessageContext';
 import { useUser } from '@/contexts/UserContext';
 
 const Logo = () => (
-  <span className="font-extrabold text-2xl tracking-tight">
+  <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
     <span className="text-black">Link</span>
   </span>
@@ -206,7 +206,7 @@ function ProductsPageComponent() {
     <div className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-bold text-gray-900">Browse Products</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Browse Products</h1>
           <div className="flex items-center space-x-2">
             <Button
               variant={viewMode === 'grid' ? 'default' : 'outline'}

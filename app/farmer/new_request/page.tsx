@@ -32,13 +32,13 @@ function NewRequest() {
     setErrorMsg('');
     setLoading(true);
 
-  
+
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 flex items-center justify-center">
+    <div className="min-h-screen bg-white py-10 px-4 flex items-center justify-center">
       <div className="w-full max-w-lg bg-white p-6 rounded-lg shadow-md border">
-        <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">
+        <h1 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
           Request Agri-Inputs on Credit
         </h1>
         <p className="text-gray-500 text-center mb-6">
@@ -93,9 +93,8 @@ function NewRequest() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-md text-white font-medium transition-colors ${
-              loading ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
-            }`}
+            className={`w-full py-3 rounded-md text-white font-medium transition-colors ${loading ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+              }`}
           >
             {loading ? 'Submitting...' : 'Submit Request'}
           </button>

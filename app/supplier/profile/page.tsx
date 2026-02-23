@@ -30,7 +30,7 @@ const inputClass =
   'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
 
 const Logo = () => (
-  <span className="font-extrabold text-2xl tracking-tight">
+  <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
     <span className="text-black">Link</span>
   </span>
@@ -130,7 +130,7 @@ function SupplierProfileComponent() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.SUPPLIER}
         activeItem='Profile'
@@ -167,7 +167,7 @@ function SupplierProfileComponent() {
                 </label>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-semibold text-gray-900">
                   {profile.firstName} {profile.lastName}
                 </h1>
                 <p className="text-gray-500">Supplier</p>
@@ -177,7 +177,7 @@ function SupplierProfileComponent() {
 
             {/* Image Upload Section */}
             {imageFile && (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+              <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-lg overflow-hidden">
@@ -198,7 +198,7 @@ function SupplierProfileComponent() {
                         setImageFile(null);
                         setPreviewUrl(null);
                       }}
-                      className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                      className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-white"
                     >
                       Cancel
                     </button>
@@ -348,7 +348,7 @@ function Field({
       {isEditing ? (
         <input type="text" name={name} value={value} onChange={onChange} className={inputClass} />
       ) : (
-        <div className="flex items-center gap-2 text-gray-900 bg-gray-50 border border-gray-200 rounded-md px-3 py-2">
+        <div className="flex items-center gap-2 text-gray-900 bg-white border border-gray-200 rounded-md px-3 py-2">
           {icon}
           {value || <span className="text-gray-400">Not provided</span>}
         </div>

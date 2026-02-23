@@ -43,7 +43,7 @@ export default function AdminWalletsPage() {
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const { toast } = useToast()
-    const { systemWallet} = useAdmin()
+    const { systemWallet } = useAdmin()
 
     const fetchWallets = async () => {
         try {
@@ -98,12 +98,12 @@ export default function AdminWalletsPage() {
         <div className="flex h-screen bg-white overflow-hidden">
             <Sidebar userType={UserType.ADMIN} activeItem="Wallets" />
 
-            <main className="flex-1 overflow-auto bg-gray-50/30">
+            <main className="flex-1 overflow-auto bg-white/30">
                 <div className="p-8 max-w-7xl mx-auto space-y-8">
                     {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
-                            <h1 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                            <h1 className="text-3xl font-semibold text-gray-900  flex items-center gap-3">
                                 <ShieldCheck className="w-8 h-8 text-green-600" />
                                 Treasury Management
                             </h1>
@@ -111,11 +111,11 @@ export default function AdminWalletsPage() {
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="bg-white p-1 rounded-lg shadow-sm border border-gray-100 flex">
-                                <button className="px-4 py-2 bg-green-50 text-green-700 text-xs font-bold rounded-xl flex items-center gap-2">
+                                <button className="px-4 py-2 bg-green-50 text-green-700 text-xs font-semibold rounded-xl flex items-center gap-2">
                                     <TrendingUp className="w-4 h-4" />
                                     Wallets
                                 </button>
-                                <button className="px-4 py-2 text-gray-400 text-xs font-bold rounded-xl hover:text-gray-600 transition-all">
+                                <button className="px-4 py-2 text-gray-400 text-xs font-semibold rounded-xl hover:text-gray-600 transition-all">
                                     Transactions
                                 </button>
                             </div>
@@ -129,7 +129,7 @@ export default function AdminWalletsPage() {
                                 <Wallet className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase  mb-1.5">System Liquidity</p>
+                                <p className="text-xs font-semibold text-gray-400 uppercase  mb-1.5">System Liquidity</p>
                                 <p className="text-2xl font-semibold text-gray-900 ">RWF {wallets.reduce((acc, w) => acc + w.balance, 0).toLocaleString()}+</p>
                             </div>
                         </div>
@@ -138,7 +138,7 @@ export default function AdminWalletsPage() {
                                 <History className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase  mb-1.5">Active Wallets</p>
+                                <p className="text-xs font-semibold text-gray-400 uppercase  mb-1.5">Active Wallets</p>
                                 <p className="text-2xl font-semibold text-gray-900">{totalElements}</p>
                             </div>
                         </div>
@@ -147,7 +147,7 @@ export default function AdminWalletsPage() {
                                 <CreditCard className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase mb-1.5">Avg Balance</p>
+                                <p className="text-xs font-semibold text-gray-400 uppercase mb-1.5">Avg Balance</p>
                                 <p className="text-2xl font-semibold text-gray-900">RWF {(wallets.length ? wallets.reduce((acc, w) => acc + w.balance, 0) / wallets.length : 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                             </div>
                         </div>
@@ -165,7 +165,7 @@ export default function AdminWalletsPage() {
                                 className="w-full pl-14 pr-6 py-4 bg-white border border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm font-medium"
                             />
                         </div>
-                        <button onClick={fetchWallets} className="p-4 bg-white border border-gray-100 rounded-lg hover:bg-gray-50 transition-all shadow-sm">
+                        <button onClick={fetchWallets} className="p-4 bg-white border border-gray-100 rounded-lg hover:bg-white transition-all shadow-sm">
                             <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin text-green-600' : ''}`} />
                         </button>
                     </div>
@@ -174,7 +174,7 @@ export default function AdminWalletsPage() {
                     <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
                         <Table>
                             <TableHeader>
-                                <TableRow className="bg-gray-50/50">
+                                <TableRow className="bg-white/50">
                                     <TableHead className="font-semibold py-6 pl-8">WALLET OWNER</TableHead>
                                     <TableHead className="font-semibold">BALANCE</TableHead>
                                     <TableHead className="font-semibold">STATUS</TableHead>
@@ -198,7 +198,7 @@ export default function AdminWalletsPage() {
                                         <TableRow
                                             key={wallet.id}
                                             onClick={() => handleWalletClick(wallet)}
-                                            className="group cursor-pointer hover:bg-gray-50/50 transition-all font-medium"
+                                            className="group cursor-pointer hover:bg-white/50 transition-all font-medium"
                                         >
                                             <TableCell className="py-5 pl-8">
                                                 <div className="flex items-center gap-4">
@@ -206,7 +206,7 @@ export default function AdminWalletsPage() {
                                                         <User className="w-5 h-5" />
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-gray-900 font-semibold group-hover:text-green-600 transition-colors uppercase tracking-tight">{wallet.userName || 'Unknown User'}</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-green-600 transition-colors uppercase ">{wallet.userName || 'Unknown User'}</span>
                                                         <span className="text-[11px] text-gray-400 font-medium">{wallet.userEmail}</span>
                                                     </div>
                                                 </div>
@@ -247,7 +247,7 @@ export default function AdminWalletsPage() {
                                         <TableCell colSpan={5} className="py-24 text-center">
                                             <div className="flex flex-col items-center justify-center opacity-20">
                                                 <Wallet className="w-20 h-20 mb-4" />
-                                                <p className="text-xl font-black italic">No Wallets Found</p>
+                                                <p className="text-xl font-semibold italic">No Wallets Found</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -259,7 +259,7 @@ export default function AdminWalletsPage() {
                     {/* Pagination */}
                     {!loading && totalPages > 1 && (
                         <div className="flex items-center justify-between px-8 py-6 bg-white rounded-4xl border border-gray-100 shadow-sm">
-                            <p className="text-sm text-gray-500 font-bold">
+                            <p className="text-sm text-gray-500 font-semibold">
                                 Showing PAGE <span className="text-gray-900">{page + 1}</span> OF <span className="text-gray-900">{totalPages}</span>
                             </p>
                             <div className="flex items-center gap-3">

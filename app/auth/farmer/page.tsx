@@ -278,7 +278,7 @@ export default function FarmerSignUp() {
 
 
   return (
-    <div className="w-full h-screen bg-gray-50 flex  items-center">
+    <div className="w-full h-screen bg-white flex  items-center">
 
 
       <div className="w-full h-full bg-white shadow-lg rounded-lg p-6 sm:p-6 overflow-scroll z-20 relative">

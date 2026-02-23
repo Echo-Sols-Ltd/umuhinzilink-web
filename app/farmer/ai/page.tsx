@@ -78,7 +78,7 @@ const Logo = () => (
     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center mr-3">
       <Leaf className="w-5 h-5 text-green-600" />
     </div>
-    <span className="font-bold text-xl text-white">UmuhinziLink</span>
+    <span className="font-semibold text-xl text-white">UmuhinziLink</span>
   </div>
 );
 
@@ -95,7 +95,7 @@ function AiDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-white">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.FARMER}
@@ -103,7 +103,7 @@ function AiDashboard() {
 
 
       {/* Main Content */}
-      <main className="flex-1  h-screen bg-gray-50">
+      <main className="flex-1  h-screen bg-white">
         <div className="p-6 h-full overflow-y-auto">
           {/* Weather Alert */}
           <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-6 mb-8 text-white flex items-center justify-between">
@@ -119,7 +119,7 @@ function AiDashboard() {
             </div>
             <div className="text-right">
               <div className="text-sm opacity-90">Now</div>
-              <div className="font-bold">15:30</div>
+              <div className="font-semibold">15:30</div>
             </div>
           </div>
 
@@ -194,7 +194,7 @@ function AiDashboard() {
                     Hi! I&apos;m your AI farming assistant. Ask me anything about farming, crops, or
                     agricultural best practices.
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="bg-white rounded-lg p-3">
                     <div className="text-xs text-gray-500 mb-1">You</div>
                     <div className="text-sm">How do I prepare soil for maize planting?</div>
                   </div>

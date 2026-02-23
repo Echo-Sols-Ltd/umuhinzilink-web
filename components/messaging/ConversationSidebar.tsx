@@ -99,9 +99,9 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
               <MessageCircle className="w-4 h-4 text-green-600" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 tracking-tight">Messages</h2>
+            <h2 className="text-lg font-semibold text-gray-900 ">Messages</h2>
             {totalUnread > 0 && (
-              <span className="bg-green-600 text-white text-[10px] font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-sm shadow-green-200">
+              <span className="bg-green-600 text-white text-[10px] font-semibold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-sm shadow-green-200">
                 {totalUnread > 99 ? '99+' : totalUnread}
               </span>
             )}
@@ -126,7 +126,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             placeholder="Search conversations…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-9 py-2 rounded-lg bg-gray-50 border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-all"
+            className="w-full pl-9 pr-9 py-2 rounded-lg bg-white border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-all"
           />
           {searchTerm && (
             <button
@@ -143,7 +143,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
       <div className="flex-1 overflow-y-auto">
         {sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center">
               <Users className="w-7 h-7 text-gray-300" />
             </div>
             <div>
@@ -175,14 +175,14 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       'border-l-2',
                       isActive
                         ? 'bg-green-50 border-green-500'
-                        : 'border-transparent hover:bg-gray-50/80'
+                        : 'border-transparent hover:bg-white/80'
                     )}
                   >
                     {/* Avatar */}
                     <div className="relative shrink-0">
                       <div className={cn(
                         'w-11 h-11 rounded-xl flex items-center justify-center',
-                        'bg-gradient-to-br shadow-sm text-white text-sm font-bold',
+                        'bg-gradient-to-br shadow-sm text-white text-sm font-semibold',
                         gradient
                       )}>
                         {initials}
@@ -198,7 +198,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       <div className="flex items-center justify-between gap-2">
                         <span className={cn(
                           'text-sm truncate',
-                          hasUnread ? 'font-bold text-gray-900' : 'font-medium text-gray-700'
+                          hasUnread ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'
                         )}>
                           {user.names}
                         </span>
@@ -236,7 +236,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 
                         {/* Unread badge */}
                         {hasUnread && (
-                          <span className="shrink-0 min-w-[18px] h-[18px] px-1 bg-green-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                          <span className="shrink-0 min-w-[18px] h-[18px] px-1 bg-green-600 text-white text-[10px] font-semibold rounded-full flex items-center justify-center shadow-sm">
                             {user.unreadMessage > 99 ? '99+' : user.unreadMessage}
                           </span>
                         )}

@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Check Your Email</h2>
             <p className="text-gray-600 mb-6">
               We've sent a password reset link to {email}
             </p>
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Sign In
           </Link>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h2>
+          <h2 className="text-3xl font-semibold text-gray-900 mb-2">Forgot Password?</h2>
           <p className="text-gray-600">
             Enter your email address and we'll send you a link to reset your password.
           </p>

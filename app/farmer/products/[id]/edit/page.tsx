@@ -120,7 +120,7 @@ function EditProduct() {
 
       await editFarmerProduct(productId, payload);
 
-    
+
     } catch (error) {
       console.error('Failed to update product:', error);
       toast({
@@ -135,7 +135,7 @@ function EditProduct() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <div className="flex h-screen bg-white overflow-hidden">
         <Sidebar userType={UserType.FARMER} activeItem='Products' />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin" />
@@ -146,11 +146,11 @@ function EditProduct() {
 
   if (!product) {
     return (
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <div className="flex h-screen bg-white overflow-hidden">
         <Sidebar userType={UserType.FARMER} activeItem='Products' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Product Not Found</h2>
             <p className="text-gray-600 mb-4">The product you're looking for doesn't exist.</p>
             <Link
               href="/farmer/products"
@@ -165,7 +165,7 @@ function EditProduct() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar userType={UserType.FARMER} activeItem='Products' />
 
       <main className="flex-1 overflow-y-auto">
@@ -401,7 +401,7 @@ function EditProduct() {
             <div className="flex justify-end space-x-4">
               <Link
                 href="/farmer/products"
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-white"
               >
                 Cancel
               </Link>

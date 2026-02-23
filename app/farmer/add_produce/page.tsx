@@ -139,17 +139,17 @@ function AddProduce() {
   };
 
   return (
-    <div className='flex h-screen bg-gray-50 overflow-hidden'>
+    <div className='flex h-screen bg-white overflow-hidden'>
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Products'
       />
-      <div className="h-screen bg-gray-50">
+      <div className="h-screen bg-white">
 
         <div className="mx-auto max-w-5xl py-10 px-4 h-full overflow-auto">
           <div className="mb-6 flex items-center justify-between ">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Add New Produce</h1>
+              <h1 className="text-3xl font-semibold text-gray-900">Add New Produce</h1>
               <p className="text-sm text-gray-500 mt-1">
                 List freshly harvested produce to make it available for buyers.
               </p>
@@ -170,14 +170,14 @@ function AddProduce() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Product Name</label>
-                       <input
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="e.g. Avocado"
-                      required
-                      className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                    />
+                  <input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="e.g. Avocado"
+                    required
+                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Category</label>

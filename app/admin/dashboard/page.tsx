@@ -89,7 +89,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.ADMIN}
@@ -109,20 +109,20 @@ function Dashboard() {
             <input
               type="text"
               placeholder="Search users or analytics..."
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
             />
           </div>
         </header>
 
         {/* Dashboard Content */}
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
           {/* Top Section - Data Widgets */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Active Users</p>
-                  <p className="text-2xl font-bold text-gray-900">{(userStats?.totalUsers || 0).toLocaleString()}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{(userStats?.totalUsers || 0).toLocaleString()}</p>
                   <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
                     <span>Farmers: {userStats?.farmerCount || 0}</span>
                     <span className="text-gray-300">|</span>
@@ -139,7 +139,7 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Products</p>
-                  <p className="text-2xl font-bold text-gray-900">{productStats.totalProducts}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{productStats.totalProducts}</p>
                   <p className="text-xs text-green-600 mt-1">In Stock: {productStats.inStockCount}</p>
                 </div>
                 <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
@@ -152,7 +152,7 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                  <p className="text-2xl font-bold text-gray-900">{orderStats.totalOrders}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{orderStats.totalOrders}</p>
                   <p className="text-xs text-amber-600 mt-1">Pending: {orderStats.pendingCount}</p>
                 </div>
                 <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
@@ -165,7 +165,7 @@ function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Suppliers</p>
-                  <p className="text-2xl font-bold text-gray-900">{userStats?.supplierCount || 0}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{userStats?.supplierCount || 0}</p>
                   <p className="text-xs text-purple-600 mt-1">Active partners</p>
                 </div>
                 <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
@@ -197,7 +197,7 @@ function Dashboard() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-2xl font-semibold text-gray-900">
                     {(totalValue || 0).toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-500">Total Users</p>
@@ -230,13 +230,13 @@ function Dashboard() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-white border-b border-gray-200">
                   <tr>
-                    <th className="text-left py-3 px-6 font-semibold text-xs text-gray-600 uppercase tracking-wider">Role</th>
-                    <th className="text-left py-3 px-6 font-semibold text-xs text-gray-600 uppercase tracking-wider">Name</th>
-                    <th className="text-left py-3 px-6 font-semibold text-xs text-gray-600 uppercase tracking-wider">Contact</th>
-                    <th className="text-left py-3 px-6 font-semibold text-xs text-gray-600 uppercase tracking-wider">Status</th>
-                    <th className="text-right py-3 px-6 font-semibold text-xs text-gray-600 uppercase tracking-wider">Actions</th>
+                    <th className="text-left py-3 px-6 font-semibold text-xs text-gray-600 uppercase ">Role</th>
+                    <th className="text-left py-3 px-6 font-semibold text-xs text-gray-600 uppercase ">Name</th>
+                    <th className="text-left py-3 px-6 font-semibold text-xs text-gray-600 uppercase ">Contact</th>
+                    <th className="text-left py-3 px-6 font-semibold text-xs text-gray-600 uppercase ">Status</th>
+                    <th className="text-right py-3 px-6 font-semibold text-xs text-gray-600 uppercase ">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -251,7 +251,7 @@ function Dashboard() {
                     </tr>
                   ) : users?.data && users.data?.length > 0 ? (
                     users.data.slice(0, 10).map(user => (
-                      <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={user.id} className="hover:bg-white transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
                             {user.role}

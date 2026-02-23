@@ -158,7 +158,7 @@ export default function WhoWeServe() {
   return (
     <section className="py-12 bg-white">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-bold text-gray-900">Who We Serve</h2>
+        <h2 className="text-center text-2xl font-semibold text-gray-900">Who We Serve</h2>
         <p className="text-center text-gray-600 mt-2">
           Three interconnected communities driving agricultural growth
         </p>

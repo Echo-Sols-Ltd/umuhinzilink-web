@@ -162,7 +162,7 @@ function ReportsPageComponent() {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Reports'
@@ -181,7 +181,7 @@ function ReportsPageComponent() {
           </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
           {/* Search and Filter */}
           <div className="flex items-center justify-between gap-4">
             <div className="relative flex-1 max-w-md">
@@ -215,7 +215,7 @@ function ReportsPageComponent() {
               {reportTemplates.map((template, index) => (
                 <button
                   key={index}
-                  className="p-4 border rounded-lg hover:bg-gray-50 text-left transition-colors"
+                  className="p-4 border rounded-lg hover:bg-white text-left transition-colors"
                 >
                   <div className="flex items-center space-x-3 mb-2">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
@@ -270,7 +270,7 @@ function ReportsPageComponent() {
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-white border-b border-gray-200">
                   <tr>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
                       REPORT
@@ -294,7 +294,7 @@ function ReportsPageComponent() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredReports.map(report => (
-                    <tr key={report.id} className="hover:bg-gray-50">
+                    <tr key={report.id} className="hover:bg-white">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-3">
                           <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -348,7 +348,7 @@ function ReportsPageComponent() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-500">Total Reports</p>
-                  <p className="text-2xl font-bold text-gray-900">{reports.length}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{reports.length}</p>
                 </div>
               </div>
             </div>
@@ -359,7 +359,7 @@ function ReportsPageComponent() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-500">This Month</p>
-                  <p className="text-2xl font-bold text-gray-900">12</p>
+                  <p className="text-2xl font-semibold text-gray-900">12</p>
                 </div>
               </div>
             </div>
@@ -370,7 +370,7 @@ function ReportsPageComponent() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-500">Downloads</p>
-                  <p className="text-2xl font-bold text-gray-900">47</p>
+                  <p className="text-2xl font-semibold text-gray-900">47</p>
                 </div>
               </div>
             </div>
@@ -381,7 +381,7 @@ function ReportsPageComponent() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-500">Scheduled</p>
-                  <p className="text-2xl font-bold text-gray-900">3</p>
+                  <p className="text-2xl font-semibold text-gray-900">3</p>
                 </div>
               </div>
             </div>

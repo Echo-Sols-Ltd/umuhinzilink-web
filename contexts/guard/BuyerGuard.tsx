@@ -26,7 +26,7 @@ export default function BuyerGuard({ children }: { children: React.ReactNode }) 
     // Show spinner while auth is loading
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-white">
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="w-10 h-10 animate-spin text-green-600" />
                     <p className="text-sm text-gray-500 font-medium">Loading your session...</p>

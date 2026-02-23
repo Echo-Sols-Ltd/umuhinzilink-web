@@ -22,16 +22,16 @@ export default function Unauthorized() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
         <div className="mb-6">
           <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Access Denied</h1>
           <p className="text-gray-600">You don&apos;t have permission to access this page.</p>
         </div>
 
         {user && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="mb-6 p-4 bg-white rounded-lg">
             <p className="text-sm text-gray-700">
               <span className="font-medium">Signed in as:</span> {user.names}
             </p>

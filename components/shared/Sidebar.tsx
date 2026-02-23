@@ -34,6 +34,7 @@ import {
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProps, SidebarItem, UserType } from '@/types';
+import { imageUrl } from '@/lib/utils';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface NavGroup {
@@ -113,7 +114,6 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/supplier/dashboard' },
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Inputs', href: '/supplier/products' },
-                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Farmer Requests', href: '/supplier/requests' },
                         { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Orders', href: '/supplier/orders' },
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/supplier/wallet' },
                     ],
@@ -289,9 +289,9 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                 className="w-10 h-10 object-cover" />
                         </div>
                         <div className="min-w-0">
-                            <p className="font-bold text-[15px] text-white leading-tight tracking-tight">UmuhinziLink</p>
+                            <p className="font-semibold text-[15px] text-white leading-tight ">UmuhinziLink</p>
                             {/* Role badge */}
-                            <span className={`inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${badge.bg} ${badge.text}`}>
+                            <span className={`inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase  ${badge.bg} ${badge.text}`}>
                                 <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
                                 {badge.label}
                             </span>
@@ -304,7 +304,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {navGroups.map((group, gi) => (
                         <div key={gi}>
                             {group.label && (
-                                <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 select-none">
+                                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase  text-gray-500 select-none">
                                     {group.label}
                                 </p>
                             )}
@@ -349,8 +349,12 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     <div className="flex items-center gap-3">
                         {/* Avatar */}
                         <div className="relative shrink-0">
-                            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-green-500 to-emerald-700 flex items-center justify-center text-xs font-bold text-white shadow-md">
-                                {userInitials}
+                            <div className="w-9 h-9 rounded-full bg-linear-to-br from-green-500 to-emerald-700 flex items-center justify-center text-xs font-semibold text-white shadow-md">
+                                <img
+                                    src={imageUrl(user?.avatar)}
+                                    alt="Avatar"
+                                    className="w-9 h-9 rounded-full object-cover"
+                                />
                             </div>
                             {/* Online dot */}
                             <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 border-2 border-[#0a1628] rounded-full" />
