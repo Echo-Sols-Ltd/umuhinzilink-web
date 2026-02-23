@@ -32,6 +32,10 @@ export class SupplierService {
     return await apiClient.get<ApiResponse<Supplier>>(API_ENDPOINTS.SUPPLIER.BY_ID(id));
   }
 
+  async getSupplierById(id: string): Promise<ApiResponse<Supplier>> {
+    return await apiClient.get<ApiResponse<Supplier>>(API_ENDPOINTS.SUPPLIER.BY_ID(id));
+  }
+
   async getMe(): Promise<ApiResponse<Supplier>> {
     return await apiClient.get<ApiResponse<Supplier>>(API_ENDPOINTS.SUPPLIER.ME);
   }
@@ -125,6 +129,11 @@ export class SupplierService {
   // Dashboard Methods
   async getDashboardStats(): Promise<ApiResponse<SupplierDashboard>> {
     return await apiClient.get<ApiResponse<SupplierDashboard>>(API_ENDPOINTS.DASHBOARD.SUPPLIER_STATS);
+  }
+
+  // Update Methods
+  async updateSupplier(id: string, data: Partial<Supplier>): Promise<ApiResponse<Supplier>> {
+    return await apiClient.put<ApiResponse<Supplier>>(API_ENDPOINTS.SUPPLIER.BY_ID(id), data);
   }
 }
 
