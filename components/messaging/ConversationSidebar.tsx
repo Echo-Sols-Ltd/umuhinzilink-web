@@ -15,6 +15,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { ChatUser } from '@/types/chat';
+import { useChat } from '@/hooks/useChat';
 
 export interface ConversationSidebarProps {
   className?: string;
@@ -61,9 +62,11 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     onlineUsers,
   } = useMessages();
 
+  const { markMessagesAsRead } = useChat()
+
   const { user: currentUser } = useAuth();
   const router = useRouter();
-  const { chatUsers } = useUser();
+  const { chatUsers ,resetUnreadCountForUser} = useUser();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -87,6 +90,8 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     router.push(`/chat/${user.id}`);
     setActiveChatUser(user);
     await loadMessages(user.id);
+    await markMessagesAsRead(user.id)
+    resetUnreadCountForUser(user.id)
   };
 
   return (

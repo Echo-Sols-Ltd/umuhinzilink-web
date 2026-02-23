@@ -4,6 +4,7 @@ import { ChatUser } from '@/types/chat'
 import { useAuth } from "@/contexts/AuthContext"
 import { useMessages } from "@/contexts/MessageContext"
 import { useToast } from '@/components/ui/use-toast'
+import { messageService } from "@/services/messages"
 
 // Helper function to convert User to ChatUser
 export const userToChatUser = (user: User): ChatUser => ({
@@ -231,6 +232,12 @@ export const useChat = () => {
         ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
     }, [messages, activeChatUser, currentUser])
 
+    const markMessagesAsRead = useCallback(async (id:string) => {
+        if (!id) return;
+        await messageService.markMessagesAsRead(id);
+        
+    }, [])
+
     return {
         selectedUser,
         showUserInfo,
@@ -252,6 +259,7 @@ export const useChat = () => {
         handleTyping,
         // Direct context passthrough (read-only)
         setActiveChat: setActiveChatUser,
-        markAsRead
+        markAsRead,
+        markMessagesAsRead
     }
 }

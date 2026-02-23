@@ -33,6 +33,9 @@ export class MessageService {
     return await apiClient.get<ApiResponse<Message>>(API_ENDPOINTS.MESSAGES.BY_ID(conversationId));
   }
 
+  async markMessagesAsRead(conversationId: string): Promise<ApiResponse<void>> {
+    return await apiClient.put<ApiResponse<void>>(API_ENDPOINTS.MESSAGES.MARK_READ(conversationId));
+  }
   async uploadFile(
     file: File,
     onUploadProgress?: (event: AxiosProgressEvent) => void,
