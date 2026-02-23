@@ -15,6 +15,7 @@ interface UserContextType {
   farmerUsers: User[];
   buyerUsers: User[];
   supplierUsers: User[];
+  resetUnreadCountForUser: (id: string) => void
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -91,6 +92,10 @@ function UserProvider({ children }: { children: React.ReactNode }) {
     fetchChatUsers()
   }, [user]);
 
+  const resetUnreadCountForUser = async (id: string) => {
+    setChatUsers(chatUsers.map(u => u.id === id ? { ...u, unreadMessage: 0 } : u))
+  }
+
   // Filter users by role
   const farmerUsers = users.filter(u => u.role === UserType.FARMER);
   const buyerUsers = users.filter(u => u.role === UserType.BUYER);
@@ -107,6 +112,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
         farmerUsers,
         buyerUsers,
         supplierUsers,
+        resetUnreadCountForUser
       }}
     >
       {children}

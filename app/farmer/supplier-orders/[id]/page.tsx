@@ -18,7 +18,7 @@ function FarmerSupplierOrderDetailPage() {
   const { user } = useAuth();
   const { supplierOrders, updateSupplierOrderStatus } = useOrder();
   const { toast } = useToast();
-  
+
   const [order, setOrder] = useState<SupplierOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [updatingStatus, setUpdatingStatus] = useState(false);
@@ -58,11 +58,11 @@ function FarmerSupplierOrderDetailPage() {
 
   const handleUpdateDeliveryStatus = async (newStatus: DeliveryStatus) => {
     if (!order) return;
-    
+
     setUpdatingStatus(true);
     try {
       await updateSupplierOrderStatus(order.id, newStatus);
-      
+
       // Update local order state
       setOrder(prev => prev ? {
         ...prev,
@@ -103,7 +103,7 @@ function FarmerSupplierOrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-white">
         <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
@@ -114,7 +114,7 @@ function FarmerSupplierOrderDetailPage() {
 
   if (!order) {
     return (
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-white">
         <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -131,9 +131,9 @@ function FarmerSupplierOrderDetailPage() {
   const product = order.product;
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-white">
       <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
-      
+
       <main className="flex-1 overflow-auto">
         {/* Header */}
         <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
@@ -165,7 +165,7 @@ function FarmerSupplierOrderDetailPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-green-100 rounded-lg">
@@ -177,7 +177,7 @@ function FarmerSupplierOrderDetailPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-orange-100 rounded-lg">
@@ -246,7 +246,7 @@ function FarmerSupplierOrderDetailPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Total Price</label>
-                  <p className="text-lg font-bold text-green-600">RWF {order.totalPrice.toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-green-600">RWF {order.totalPrice.toLocaleString()}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Payment Method</label>

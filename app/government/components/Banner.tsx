@@ -49,7 +49,7 @@ export function Banner({ banners, className = '' }: BannerProps) {
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-sm opacity-90 mb-2">{formatDate()}</p>
-          <h2 className="text-2xl font-bold mb-2">{currentBanner.title}</h2>
+          <h2 className="text-2xl font-semibold mb-2">{currentBanner.title}</h2>
           <p className="text-lg opacity-90">{currentBanner.subtitle}</p>
         </div>
         <div className="w-64 h-48 bg-white/10 rounded-lg flex items-center justify-center ml-8">

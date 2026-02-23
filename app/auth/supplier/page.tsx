@@ -25,7 +25,7 @@ export default function SupplierSignUp() {
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string>('');
-const {toast}=useToast()
+  const { toast } = useToast()
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
@@ -244,220 +244,216 @@ const {toast}=useToast()
     });
   };
 
-return (
-  <div className="w-full h-screen bg-gray-50 flex items-center">
-    <div className="w-full overflow-scroll h-full bg-white rounded-lg p-6 sm:p-6 z-20 relative py-20">
-      <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
-        Create Your Supplier Account
-      </h1>
+  return (
+    <div className="w-full h-screen bg-white flex items-center">
+      <div className="w-full overflow-scroll h-full bg-white rounded-lg p-6 sm:p-6 z-20 relative py-20">
+        <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
+          Create Your Supplier Account
+        </h1>
 
-      <div className="flex gap-4 justify-center mb-6">
-        {socialLinks.map((linkItem, idx) => (
-          <Link
-            key={idx}
-            href={linkItem.link}
-            target="_blank"
-            className="p-3 text-gray-700 transition border border-gray-100 rounded-md hover:bg-gray-100"
-          >
-            {linkItem.icon}
-          </Link>
-        ))}
-      </div>
-
-      <p className="text-center text-gray-400 text-sm mb-6">Or fill in your details below</p>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Profile Image Section */}
-        <div className="border-b pb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Image</h2>
-          <div className="flex items-center space-x-6">
-            <div className="relative">
-              {profilePreview ? (
-                <div className="relative">
-                  <Image
-                    src={profilePreview}
-                    alt="Profile preview"
-                    width={120}
-                    height={120}
-                    className="w-30 h-30 rounded-full object-cover border-4 border-gray-200"
-                  />
-                  <button
-                    type="button"
-                    onClick={removeProfileImage}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                <div className="w-30 h-30 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
-                  <Upload className="w-8 h-8 text-gray-400" />
-                </div>
-              )}
-            </div>
-            <Button
-              type="button"
-              onClick={() => document.getElementById('profileImage')?.click()}
-              disabled={loading || uploadLoading}
-              variant="outline"
+        <div className="flex gap-4 justify-center mb-6">
+          {socialLinks.map((linkItem, idx) => (
+            <Link
+              key={idx}
+              href={linkItem.link}
+              target="_blank"
+              className="p-3 text-gray-700 transition border border-gray-100 rounded-md hover:bg-gray-100"
             >
-              Choose Image
-            </Button>
-            <input
-              id="profileImage"
-              type="file"
-              accept="image/*"
-              onChange={handleProfileImageChange}
-              className="hidden"
-              disabled={loading || uploadLoading}
-            />
-          </div>
+              {linkItem.icon}
+            </Link>
+          ))}
         </div>
 
-        {/* Business Information Section */}
-        <div className="border-b pb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="businessName" className="text-gray-700 font-medium text-sm">
-                Business Name
-              </Label>
-              <Input
-                id="businessName"
-                name="businessName"
-                type="text"
-                value={supplierData.businessName}
-                onChange={handleSupplierInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                placeholder="Enter your business name"
-                className={`text-gray-700 font-medium text-sm ${
-                  touched.businessName && fieldErrors.businessName
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                }`}
-                required
+        <p className="text-center text-gray-400 text-sm mb-6">Or fill in your details below</p>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Image Section */}
+          <div className="border-b pb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Image</h2>
+            <div className="flex items-center space-x-6">
+              <div className="relative">
+                {profilePreview ? (
+                  <div className="relative">
+                    <Image
+                      src={profilePreview}
+                      alt="Profile preview"
+                      width={120}
+                      height={120}
+                      className="w-30 h-30 rounded-full object-cover border-4 border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeProfileImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-30 h-30 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-gray-400" />
+                  </div>
+                )}
+              </div>
+              <Button
+                type="button"
+                onClick={() => document.getElementById('profileImage')?.click()}
+                disabled={loading || uploadLoading}
+                variant="outline"
+              >
+                Choose Image
+              </Button>
+              <input
+                id="profileImage"
+                type="file"
+                accept="image/*"
+                onChange={handleProfileImageChange}
+                className="hidden"
+                disabled={loading || uploadLoading}
               />
             </div>
+          </div>
 
-            <div>
-              <Label htmlFor="supplierType" className="text-gray-700 font-medium text-sm">
-                Supplier Type
-              </Label>
-              <select
-                id="supplierType"
-                name="supplierType"
-                value={supplierData.supplierType}
-                onChange={handleSupplierInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${
-                  touched.supplierType && fieldErrors.supplierType
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                }`}
-                required
-              >
-                <option value="">Select supplier type</option>
-                {supplierTypeOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label.replace(/_/g, ' ')}
-                  </option>
-                ))}
-              </select>
+          {/* Business Information Section */}
+          <div className="border-b pb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="businessName" className="text-gray-700 font-medium text-sm">
+                  Business Name
+                </Label>
+                <Input
+                  id="businessName"
+                  name="businessName"
+                  type="text"
+                  value={supplierData.businessName}
+                  onChange={handleSupplierInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  placeholder="Enter your business name"
+                  className={`text-gray-700 font-medium text-sm ${touched.businessName && fieldErrors.businessName
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    }`}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="supplierType" className="text-gray-700 font-medium text-sm">
+                  Supplier Type
+                </Label>
+                <select
+                  id="supplierType"
+                  name="supplierType"
+                  value={supplierData.supplierType}
+                  onChange={handleSupplierInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.supplierType && fieldErrors.supplierType
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    }`}
+                  required
+                >
+                  <option value="">Select supplier type</option>
+                  {supplierTypeOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label.replace(/_/g, ' ')}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Business Location Section */}
-        <div className="border-b pb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Location</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="province" className="text-gray-700 font-medium text-sm">
-                Province
-              </Label>
-              <select
-                id="province"
-                name="province"
-                value={supplierData.address.province}
-                onChange={handleSupplierInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${
-                  touched.province && fieldErrors.province
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                }`}
-                required
-              >
-                <option value="">Select province</option>
-                {provinceOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label.replace(/_/g, ' ')}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Business Location Section */}
+          <div className="border-b pb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Location</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="province" className="text-gray-700 font-medium text-sm">
+                  Province
+                </Label>
+                <select
+                  id="province"
+                  name="province"
+                  value={supplierData.address.province}
+                  onChange={handleSupplierInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    }`}
+                  required
+                >
+                  <option value="">Select province</option>
+                  {provinceOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label.replace(/_/g, ' ')}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <Label htmlFor="district" className="text-gray-700 font-medium text-sm">
-                District
-              </Label>
-              <select
-                id="district"
-                name="district"
-                value={supplierData.address.district}
-                onChange={handleSupplierInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${
-                  touched.district && fieldErrors.district
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
-                }`}
-                required
-              >
-                <option value="">Select district</option>
-                {districtOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <div>
+                <Label htmlFor="district" className="text-gray-700 font-medium text-sm">
+                  District
+                </Label>
+                <select
+                  id="district"
+                  name="district"
+                  value={supplierData.address.district}
+                  onChange={handleSupplierInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    }`}
+                  required
+                >
+                  <option value="">Select district</option>
+                  {districtOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Submit Button */}
-        <div className="space-y-4">
-          <Button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
-            disabled={loading || uploadLoading}
-          >
-            {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
-          </Button>
-        </div>
-      </form>
-    </div>
+          {/* Submit Button */}
+          <div className="space-y-4">
+            <Button
+              type="submit"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
+              disabled={loading || uploadLoading}
+            >
+              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
+            </Button>
+          </div>
+        </form>
+      </div>
 
-    {/* Hero Section */}
-    <div className="relative w-full h-full flex flex-col justify-center items-center text-center ">
-      <Image
-        src="/Image.png"
-        alt="background"
-        fill
-        className="absolute top-0 left-0 object-cover w-full h-full"
-      />
-      <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-        Supplier Registration
-      </h1>
-      <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-        Join our agricultural marketplace and connect with farmers and buyers
-      </p>
+      {/* Hero Section */}
+      <div className="relative w-full h-full flex flex-col justify-center items-center text-center ">
+        <Image
+          src="/Image.png"
+          alt="background"
+          fill
+          className="absolute top-0 left-0 object-cover w-full h-full"
+        />
+        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
+          Supplier Registration
+        </h1>
+        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
+          Join our agricultural marketplace and connect with farmers and buyers
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
 
 }

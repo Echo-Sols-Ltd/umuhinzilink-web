@@ -190,7 +190,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
               : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none'
           )}>
             {message.replyTo && (
-              <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-green-700 border-green-400 text-green-100' : 'bg-gray-50 border-gray-300 text-gray-600')}>
+              <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-green-700 border-green-400 text-green-100' : 'bg-white border-gray-300 text-gray-600')}>
                 <div className="font-medium">{message.replyTo.sender?.names ?? 'Unknown'}</div>
                 <div className="truncate">{message.replyTo.content}</div>
               </div>
@@ -211,7 +211,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 />
                 <div className="flex space-x-2">
                   <button onClick={() => handleEditMessage(message.id)} className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Save</button>
-                  <button onClick={() => { setEditingMessageId(null); setEditingText(''); }} className="text-xs bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600">Cancel</button>
+                  <button onClick={() => { setEditingMessageId(null); setEditingText(''); }} className="text-xs bg-white0 text-white px-2 py-1 rounded hover:bg-gray-600">Cancel</button>
                 </div>
               </div>
             ) : (
@@ -282,7 +282,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
   if (!activeChatUser) {
     return (
-      <div className={cn('flex-1 flex items-center justify-center bg-gray-50', className)}>
+      <div className={cn('flex-1 flex items-center justify-center bg-white', className)}>
         <div className="text-center text-gray-500">
           <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4"><Send className="w-8 h-8 text-gray-400" /></div>
           <h3 className="text-lg font-medium mb-2">No conversation selected</h3>
@@ -303,10 +303,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div className="relative">
-            <div className="w-10 h-10 bg-linear-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center shadow-sm">
-              <span className="text-sm font-bold text-gray-600">
+            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+              {activeChatUser.avatar ? <img
+                src={imageUrl(activeChatUser.avatar)}
+                alt={activeChatUser.names}
+                className="rounded-full object-cover w-10 h-10"
+              /> : <div className='font-bold text-white text-lg'>
                 {activeChatUser.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
-              </span>
+              </div>}
             </div>
             {isUserOnline && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>}
           </div>
@@ -324,7 +328,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         <button className="p-2 hover:bg-gray-100 rounded-full"><MoreVertical className="w-5 h-5 text-gray-600" /></button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50/50">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-white/50">
         <div className="flex flex-col min-h-full">
           <div className="flex-1" /> {/* Spacer to push messages to bottom */}
           <div className="space-y-4">
@@ -361,7 +365,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       )}
 
       {selectedFile && (
-        <div className="px-4 py-2 bg-gray-50 border-t border-gray-200">
+        <div className="px-4 py-2 bg-white border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               {selectedFile.type.startsWith('image/') ? <ImageIcon className="w-4 h-4 text-gray-600" /> : <File className="w-4 h-4 text-gray-600" />}
@@ -390,7 +394,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
               }}
               placeholder="Type your message..."
               rows={1}
-              className="w-full resize-none bg-gray-50 border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-gray-800 placeholder:text-gray-400"
+              className="w-full resize-none bg-white border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-gray-800 placeholder:text-gray-400"
               style={{ minHeight: '46px', maxHeight: '150px' }}
             />
           </div>

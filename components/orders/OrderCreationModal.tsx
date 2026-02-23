@@ -140,7 +140,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
         </div>
 
         {/* Product Info */}
-        <div className="p-6 border-b bg-gray-50">
+        <div className="p-6 border-b bg-white">
           {orderType === 'supplier' ? (
             // Custom product input for supplier orders
             <div className="space-y-4">
@@ -206,7 +206,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                 <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product?.description}</p>
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center space-x-4">
-                    <span className="text-lg font-bold text-green-600">
+                    <span className="text-lg font-semibold text-green-600">
                       {product?.unitPrice?.toLocaleString()} RWF
                     </span>
                     <span className="text-sm text-gray-500">per {product?.measurementUnit}</span>
@@ -241,7 +241,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                 type="button"
                 onClick={() => handleQuantityChange((quantity - 1).toString())}
                 disabled={quantity <= 1}
-                className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 -
               </button>
@@ -262,7 +262,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                 type="button"
                 onClick={() => handleQuantityChange((quantity + 1).toString())}
                 disabled={quantity >= maxQuantity || isOutOfStock}
-                className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 +
               </button>
@@ -291,7 +291,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                     'flex items-center p-3 border rounded-lg cursor-pointer transition-colors',
                     paymentMethod === method
                       ? 'border-green-500 bg-green-50'
-                      : 'border-gray-300 hover:bg-gray-50'
+                      : 'border-gray-300 hover:bg-white'
                   )}
                 >
                   <input
@@ -337,7 +337,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
           </div>
 
           {/* Order Summary */}
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-white rounded-lg p-4">
             <h4 className="text-sm font-medium text-gray-900 mb-3 flex items-center">
               <Calculator size={16} className="mr-2" />
               Order Summary
@@ -353,7 +353,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
               </div>
               <div className="border-t pt-2 flex justify-between">
                 <span className="font-semibold text-gray-900">Total:</span>
-                <span className="font-bold text-lg text-green-600">
+                <span className="font-semibold text-lg text-green-600">
                   {totalPrice.toLocaleString()} RWF
                 </span>
               </div>
@@ -365,7 +365,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors"
             >
               Cancel
             </button>

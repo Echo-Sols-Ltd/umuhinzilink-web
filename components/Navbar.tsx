@@ -37,9 +37,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo placeholder */}
         <div className="flex items-center space-x-2">
-          <span className="text-2xl font-extrabold tracking-tight text-green-600 font-sans">
+          <span className="text-2xl font-extrabold  text-green-600 font-sans">
             Umuhinzi
-            <span className="text-2xl font-extrabold tracking-tight text-gray-700 font-sans">
+            <span className="text-2xl font-extrabold  text-gray-700 font-sans">
               Link
             </span>
           </span>
@@ -58,7 +58,7 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               className={
-                `px-3 py-2 rounded-md text-base font-medium tracking-wide transition-colors duration-200 ` +
+                `px-3 py-2 rounded-md text-base font-medium  transition-colors duration-200 ` +
                 (activeSection === link.href.replace('#', '')
                   ? 'bg-green-100 text-green-700 font-semibold'
                   : 'text-gray-700 hover:text-green-600')

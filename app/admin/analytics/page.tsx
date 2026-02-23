@@ -154,7 +154,7 @@ function RevenueAnalytics() {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Analytics'
@@ -176,7 +176,7 @@ function RevenueAnalytics() {
           </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
           {/* Time Range Selector */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -206,7 +206,7 @@ function RevenueAnalytics() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                      <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
                     </div>
                     <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center`}>
                       <Icon className="w-5 h-5 text-white" />
@@ -233,7 +233,7 @@ function RevenueAnalytics() {
             {/* Revenue Chart */}
             <div className="bg-white rounded-lg shadow-sm p-6 border">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h2>
-              <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+              <div className="h-64 flex items-center justify-center bg-white rounded-lg">
                 <div className="text-center">
                   <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                   <p className="text-gray-500">Revenue chart visualization</p>
@@ -245,7 +245,7 @@ function RevenueAnalytics() {
             {/* Orders Chart */}
             <div className="bg-white rounded-lg shadow-sm p-6 border">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Orders Trend</h2>
-              <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+              <div className="h-64 flex items-center justify-center bg-white rounded-lg">
                 <div className="text-center">
                   <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                   <p className="text-gray-500">Orders chart visualization</p>
@@ -264,7 +264,7 @@ function RevenueAnalytics() {
                 {analytics.topProducts.map((product, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-white rounded-lg"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm font-medium text-green-800">
@@ -290,7 +290,7 @@ function RevenueAnalytics() {
                 {analytics.topFarmers.map((farmer, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-white rounded-lg"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-800">
@@ -316,7 +316,7 @@ function RevenueAnalytics() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Monthly Performance</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-white border-b border-gray-200">
                   <tr>
                     <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
                       MONTH
@@ -337,7 +337,7 @@ function RevenueAnalytics() {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {analytics.monthlyData.map((month, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
+                    <tr key={index} className="hover:bg-white">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {month.month}
                       </td>

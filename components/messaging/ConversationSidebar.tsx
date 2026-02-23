@@ -13,8 +13,9 @@ import {
 import { useMessages } from '@/contexts/MessageContext';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
+import { cn, imageUrl } from '@/lib/utils';
 import { ChatUser } from '@/types/chat';
+import { useChat } from '@/hooks/useChat';
 
 export interface ConversationSidebarProps {
   className?: string;
@@ -61,9 +62,11 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     onlineUsers,
   } = useMessages();
 
+  const { markMessagesAsRead } = useChat()
+
   const { user: currentUser } = useAuth();
   const router = useRouter();
-  const { chatUsers } = useUser();
+  const { chatUsers ,resetUnreadCountForUser} = useUser();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -87,6 +90,8 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     router.push(`/chat/${user.id}`);
     setActiveChatUser(user);
     await loadMessages(user.id);
+    await markMessagesAsRead(user.id)
+    resetUnreadCountForUser(user.id)
   };
 
   return (
@@ -99,21 +104,13 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
               <MessageCircle className="w-4 h-4 text-green-600" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 tracking-tight">Messages</h2>
+            <h2 className="text-lg font-semibold text-gray-900 ">Messages</h2>
             {totalUnread > 0 && (
-              <span className="bg-green-600 text-white text-[10px] font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-sm shadow-green-200">
+              <span className="bg-green-600 text-white text-[10px] font-semibold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-sm shadow-green-200">
                 {totalUnread > 99 ? '99+' : totalUnread}
               </span>
             )}
           </div>
-        </div>
-
-        {/* Online pill */}
-        <div className="flex items-center gap-1.5 mt-2.5">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-gray-500 font-medium">
-            {onlineCount} {onlineCount === 1 ? 'person' : 'people'} online
-          </span>
         </div>
       </div>
 
@@ -126,7 +123,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             placeholder="Search conversations…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-9 py-2 rounded-lg bg-gray-50 border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-all"
+            className="w-full pl-9 pr-9 py-2 rounded-lg bg-white border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-all"
           />
           {searchTerm && (
             <button
@@ -143,7 +140,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
       <div className="flex-1 overflow-y-auto">
         {sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center">
               <Users className="w-7 h-7 text-gray-300" />
             </div>
             <div>
@@ -156,7 +153,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             </div>
           </div>
         ) : (
-          <ul>
+          <ul >
             {sorted.map((user) => {
               const isActive = activeChatUser?.id === user.id;
               const isOnline = onlineUsers.has(user.id);
@@ -175,17 +172,23 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       'border-l-2',
                       isActive
                         ? 'bg-green-50 border-green-500'
-                        : 'border-transparent hover:bg-gray-50/80'
+                        : 'border-transparent hover:bg-white/80'
                     )}
                   >
                     {/* Avatar */}
                     <div className="relative shrink-0">
                       <div className={cn(
-                        'w-11 h-11 rounded-xl flex items-center justify-center',
-                        'bg-gradient-to-br shadow-sm text-white text-sm font-bold',
+                        'w-11 h-11 rounded-full flex items-center justify-center',
+                        'shadow-sm text-white font-semibold bg-green-500',
                         gradient
                       )}>
-                        {initials}
+                        {user.avatar ? <img
+                          src={imageUrl(user.avatar)}
+                          alt={user.names}
+                          className="rounded-full object-cover w-11 h-11"
+                        /> : <div className='font-bold text-lg'>
+                          {initials}
+                        </div>}
                       </div>
                       {isOnline && (
                         <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
@@ -198,7 +201,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       <div className="flex items-center justify-between gap-2">
                         <span className={cn(
                           'text-sm truncate',
-                          hasUnread ? 'font-bold text-gray-900' : 'font-medium text-gray-700'
+                          hasUnread ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'
                         )}>
                           {user.names}
                         </span>
@@ -216,7 +219,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       <div className="flex items-center justify-between gap-2 mt-0.5">
                         <p className={cn(
                           'text-[12px] truncate flex items-center gap-1',
-                          isTyping ? 'text-green-500 font-medium italic' :
+                          isTyping ? 'text-green-500 font-medium ' :
                             hasUnread ? 'text-gray-700 font-medium' : 'text-gray-400'
                         )}>
                           {/* Read receipt for own last message */}
@@ -236,7 +239,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 
                         {/* Unread badge */}
                         {hasUnread && (
-                          <span className="shrink-0 min-w-[18px] h-[18px] px-1 bg-green-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                          <span className="shrink-0 min-w-[18px] h-[18px] px-1 bg-green-600 text-white text-[10px] font-semibold rounded-full flex items-center justify-center shadow-sm">
                             {user.unreadMessage > 99 ? '99+' : user.unreadMessage}
                           </span>
                         )}

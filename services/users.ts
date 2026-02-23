@@ -37,6 +37,10 @@ export class UserService {
       timeout
     );
   }
+
+  async updateProfile(id: string, data: Partial<User>): Promise<ApiResponse<User>> {
+    return await apiClient.put<ApiResponse<User>>(API_ENDPOINTS.USER.BY_ID(id), data);
+  }
 }
 
 export const userService = new UserService();

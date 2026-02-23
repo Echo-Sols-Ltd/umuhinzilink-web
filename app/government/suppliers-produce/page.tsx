@@ -81,7 +81,7 @@ function SuppliersProducePage() {
                     <p className="text-sm text-gray-500">{product.category}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p className="text-lg font-bold text-green-600">${product.unitPrice.toFixed(1)}</p>
+                    <p className="text-lg font-semibold text-green-600">${product.unitPrice.toFixed(1)}</p>
                     <p className="text-sm text-gray-500">Stock: {product.quantity}</p>
                   </div>
                   <div className="flex items-center gap-2">

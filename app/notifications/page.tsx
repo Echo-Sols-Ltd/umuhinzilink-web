@@ -75,7 +75,7 @@ const iconBgClass: Record<NotificationType | string, string> = {
 
 function NotificationIcon({ type }: { type: NotificationType }) {
     const meta = TYPE_META[type] ?? TYPE_META.INFO;
-    const bg = iconBgClass[type] ?? 'bg-gray-50 text-gray-500';
+    const bg = iconBgClass[type] ?? 'bg-white text-gray-500';
     return (
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${bg}`}>
             {meta.icon}
@@ -139,11 +139,11 @@ export default function NotificationsPage() {
     if (!user) return null;
 
     return (
-        <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <div className="flex h-screen bg-white overflow-hidden">
             <Sidebar userType={user.role as UserType} activeItem="Notifications" />
 
             <main className="flex-1 overflow-auto">
-                <div className="p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
+                <div className="p-6 lg:p-8 max-w-full space-y-6">
 
                     {/* ── Header ──────────────────────────────────────────── */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -152,7 +152,7 @@ export default function NotificationsPage() {
                                 <Bell className="w-5 h-5 text-green-600" />
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold text-gray-900 leading-tight">Notifications</h1>
+                                <h1 className="text-xl font-semibold text-gray-900 leading-tight">Notifications</h1>
                                 <p className="text-xs text-gray-500 mt-0.5">
                                     {unreadCount > 0
                                         ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`
@@ -172,7 +172,7 @@ export default function NotificationsPage() {
                             <button
                                 onClick={markAllAsRead}
                                 disabled={loading || unreadCount === 0}
-                                className="px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-xs font-semibold text-gray-600 transition-all disabled:opacity-40 shadow-sm"
+                                className="px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-white text-xs font-semibold text-gray-600 transition-all disabled:opacity-40 shadow-sm"
                             >
                                 <span className="flex items-center gap-1.5">
                                     <Check className="w-3.5 h-3.5" />
@@ -200,7 +200,7 @@ export default function NotificationsPage() {
                                 >
                                     {tab.label}
                                     {tab.value === 'UNREAD' && unreadCount > 0 && (
-                                        <span className="ml-1.5 bg-green-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                                        <span className="ml-1.5 bg-green-600 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
                                             {unreadCount > 99 ? '99+' : unreadCount}
                                         </span>
                                     )}
@@ -217,7 +217,7 @@ export default function NotificationsPage() {
                                     placeholder="Search notifications…"
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
-                                    className="w-full pl-9 pr-8 py-2 bg-gray-50 rounded-lg text-sm text-gray-800 placeholder:text-gray-400 border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 outline-none transition-all"
+                                    className="w-full pl-9 pr-8 py-2 bg-white rounded-lg text-sm text-gray-800 placeholder:text-gray-400 border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 outline-none transition-all"
                                 />
                                 {searchTerm && (
                                     <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -242,7 +242,7 @@ export default function NotificationsPage() {
                                 ))
                             ) : visible.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-                                    <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4">
+                                    <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4">
                                         <Bell className="w-8 h-8 text-gray-200" />
                                     </div>
                                     <p className="text-sm font-semibold text-gray-700">
@@ -255,11 +255,11 @@ export default function NotificationsPage() {
                             ) : (
                                 visible.map(n => {
                                     const meta = TYPE_META[n.type] ?? TYPE_META.INFO;
-                                    const bg = iconBgClass[n.type] ?? 'bg-gray-50 text-gray-500';
+                                    const bg = iconBgClass[n.type] ?? 'bg-white text-gray-500';
                                     return (
                                         <div
                                             key={n.id}
-                                            className={`group relative flex gap-3.5 px-4 py-4 transition-colors ${n.isRead ? 'hover:bg-gray-50/60' : 'bg-green-50/40 hover:bg-green-50/60'
+                                            className={`group relative flex gap-3.5 px-4 py-4 transition-colors ${n.isRead ? 'hover:bg-white/60' : 'bg-green-50/40 hover:bg-green-50/60'
                                                 }`}
                                         >
                                             {/* Unread dot */}
@@ -279,7 +279,7 @@ export default function NotificationsPage() {
                                                         <span className={`text-sm font-semibold ${n.isRead ? 'text-gray-700' : 'text-gray-900'}`}>
                                                             {n.title}
                                                         </span>
-                                                        <span className={`inline-flex items-center border text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${meta.badge}`}>
+                                                        <span className={`inline-flex items-center border text-[10px] font-semibold uppercase  px-2 py-0.5 rounded-full ${meta.badge}`}>
                                                             {n.type.replace('_', ' ')}
                                                         </span>
                                                     </div>
@@ -322,7 +322,7 @@ export default function NotificationsPage() {
 
                         {/* ── Pagination ────────────────────────────────────── */}
                         {!loading && totalPages > 1 && (
-                            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/40">
+                            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-white/40">
                                 <span className="text-xs text-gray-500">
                                     Page {currentPage + 1} of {totalPages}
                                     <span className="text-gray-400 ml-1">({totalElements} total)</span>

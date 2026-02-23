@@ -34,6 +34,7 @@ import {
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProps, SidebarItem, UserType } from '@/types';
+import { imageUrl } from '@/lib/utils';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface NavGroup {
@@ -70,7 +71,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     label: 'Account',
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/farmer/wallet' },
-                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/farmer/profile' },
+                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
                         { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/farmer/settings' },
                     ],
                 },
@@ -82,7 +83,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     label: 'Core',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/buyer/dashboard' },
-                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Browse Products', href: '/buyer/product' },
+                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Browse Products', href: '/buyer/products' },
                         { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'My Purchases', href: '/buyer/purchases' },
                         { icon: <Truck className="w-4.5 h-4.5" />, label: 'Delivery Tracking', href: '/buyer/delivery' },
                         { icon: <Heart className="w-4.5 h-4.5" />, label: 'Saved Items', href: '/buyer/saved' },
@@ -100,7 +101,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     label: 'Account',
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/buyer/wallet' },
-                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/buyer/profile' },
+                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
                         { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/buyer/settings' },
                     ],
                 },
@@ -113,7 +114,6 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/supplier/dashboard' },
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Inputs', href: '/supplier/products' },
-                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Farmer Requests', href: '/supplier/requests' },
                         { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Orders', href: '/supplier/orders' },
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/supplier/wallet' },
                     ],
@@ -123,13 +123,12 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
-                        { icon: <Phone className="w-4.5 h-4.5" />, label: 'Contact', href: '/supplier/contact' },
                     ],
                 },
                 {
                     label: 'Account',
                     items: [
-                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/supplier/profile' },
+                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
                         { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/supplier/settings' },
                     ],
                 },
@@ -185,7 +184,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                 {
                     label: 'Account',
                     items: [
-                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/government/profile' },
+                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
                         { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/government/settings' },
                     ],
                 },
@@ -264,7 +263,8 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 className={`
                     fixed lg:static inset-y-0 left-0 z-50 w-64
                     flex flex-col h-screen
-                    bg-[#0a1628] text-white
+                    bg-white text-black
+                    shadow-lg
                     transform transition-transform duration-300 ease-in-out
                     lg:transform-none
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -289,9 +289,9 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                 className="w-10 h-10 object-cover" />
                         </div>
                         <div className="min-w-0">
-                            <p className="font-bold text-[15px] text-white leading-tight tracking-tight">UmuhinziLink</p>
+                            <p className="font-semibold text-[15px] text-black leading-tight ">UmuhinziLink</p>
                             {/* Role badge */}
-                            <span className={`inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${badge.bg} ${badge.text}`}>
+                            <span className={`inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase  ${badge.bg} ${badge.text}`}>
                                 <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
                                 {badge.label}
                             </span>
@@ -304,7 +304,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {navGroups.map((group, gi) => (
                         <div key={gi}>
                             {group.label && (
-                                <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 select-none">
+                                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase  text-gray-500 select-none">
                                     {group.label}
                                 </p>
                             )}
@@ -319,21 +319,21 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                                     group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm
                                                     transition-all duration-150 relative
                                                     ${isActive
-                                                        ? 'bg-green-600/20 text-green-400 font-semibold'
-                                                        : 'text-gray-400 hover:text-white hover:bg-white/5 font-medium'
+                                                        ? 'bg-green-600 text-white font-semibold'
+                                                        : 'text-gray-900 hover:text-green-600 hover:bg-green-600/10 font-medium'
                                                     }
                                                 `}
                                             >
                                                 {/* Active left bar */}
                                                 {isActive && (
-                                                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-green-400 rounded-r-full" />
+                                                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-white rounded-r-full" />
                                                 )}
-                                                <span className={`shrink-0 transition-colors ${isActive ? 'text-green-400' : 'text-gray-500 group-hover:text-gray-300'}`}>
+                                                <span className={`shrink-0 transition-colors ${isActive ? 'text-white' : 'text-gray-900 group-hover:text-green-600'}`}>
                                                     {item.icon}
                                                 </span>
                                                 <span className="truncate">{item.label}</span>
                                                 {isActive && (
-                                                    <ChevronRight className="w-3.5 h-3.5 ml-auto text-green-500 opacity-60" />
+                                                    <ChevronRight className="w-3.5 h-3.5 ml-auto text-white" />
                                                 )}
                                             </button>
                                         </li>
@@ -349,16 +349,20 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     <div className="flex items-center gap-3">
                         {/* Avatar */}
                         <div className="relative shrink-0">
-                            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-green-500 to-emerald-700 flex items-center justify-center text-xs font-bold text-white shadow-md">
-                                {userInitials}
+                            <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center text-xs font-semibold text-white shadow-md">
+                                {user?.avatar ? <img
+                                    src={imageUrl(user?.avatar)}
+                                    alt="Avatar"
+                                    className="w-9 h-9 rounded-full object-cover"
+                                /> : <User className="w-4 h-4" />}
                             </div>
                             {/* Online dot */}
-                            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 border-2 border-[#0a1628] rounded-full" />
+                            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 border-2 border-white rounded-full" />
                         </div>
 
                         {/* Name / Email */}
                         <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold text-white truncate leading-tight">{userName}</p>
+                            <p className="text-[13px] font-semibold text-gray-900 truncate leading-tight">{userName}</p>
                             <p className="text-[11px] text-gray-500 truncate leading-tight mt-0.5">{userEmail}</p>
                         </div>
 

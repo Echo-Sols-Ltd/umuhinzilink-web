@@ -9,7 +9,7 @@ export default function CallToAction() {
 
   return (
     <section className="bg-green-600 py-20 text-white text-center">
-      <h2 className="text-2xl font-bold">Ready to Transform Your Farming?</h2>
+      <h2 className="text-2xl font-semibold">Ready to Transform Your Farming?</h2>
       <p className="mt-2">
         Join thousands of farmers already using UmuhinziLink to grow their business
       </p>

@@ -57,10 +57,10 @@ function GovernmentNotifications() {
 
   const filteredNotifications = notifications.filter(notification => {
     const matchesSearch = notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         notification.message.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === 'all' || 
-                         (filterType === 'read' && notification.read) ||
-                         (filterType === 'unread' && !notification.read);
+      notification.message.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterType === 'all' ||
+      (filterType === 'read' && notification.read) ||
+      (filterType === 'unread' && !notification.read);
     return matchesSearch && matchesFilter;
   });
 
@@ -99,7 +99,7 @@ function GovernmentNotifications() {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+              <h1 className="text-2xl font-semibold text-gray-900">Notifications</h1>
               <p className="text-gray-600 mt-1">
                 Stay updated with important system alerts and updates
                 {unreadCount > 0 && (
@@ -129,31 +129,28 @@ function GovernmentNotifications() {
             <div className="flex gap-2">
               <button
                 onClick={() => setFilterType('all')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filterType === 'all'
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterType === 'all'
                     ? 'bg-green-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 All
               </button>
               <button
                 onClick={() => setFilterType('unread')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filterType === 'unread'
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterType === 'unread'
                     ? 'bg-green-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 Unread
               </button>
               <button
                 onClick={() => setFilterType('read')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filterType === 'read'
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterType === 'read'
                     ? 'bg-green-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 Read
               </button>
@@ -167,9 +164,8 @@ function GovernmentNotifications() {
             filteredNotifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`p-4 rounded-lg border transition-all hover:shadow-md ${
-                  notification.read ? 'bg-white border-gray-200' : getNotificationBg(notification.type)
-                }`}
+                className={`p-4 rounded-lg border transition-all hover:shadow-md ${notification.read ? 'bg-white border-gray-200' : getNotificationBg(notification.type)
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3 flex-1">
@@ -203,7 +199,7 @@ function GovernmentNotifications() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No notifications found</h3>
               <p className="text-gray-600">
-                {searchTerm || filterType !== 'all' 
+                {searchTerm || filterType !== 'all'
                   ? 'Try adjusting your search or filters'
                   : 'You\'re all caught up! No new notifications.'
                 }
@@ -212,7 +208,7 @@ function GovernmentNotifications() {
           )}
         </div>
       </div>
-        </GovernmentLayout>
+    </GovernmentLayout>
   );
 }
 

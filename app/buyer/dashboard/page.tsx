@@ -34,7 +34,7 @@ import ProductCard from '@/components/products/Product';
 
 
 const Logo = () => (
-  <span className="font-extrabold text-2xl tracking-tight">
+  <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
     <span className="text-black">Link</span>
   </span>
@@ -74,7 +74,7 @@ function BuyerDashboardComponent() {
 
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.BUYER}
@@ -84,32 +84,20 @@ function BuyerDashboardComponent() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-white border-b  flex items-center justify-between p-6 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Buyer Dashboard</h1>
             <p className="text-xs text-gray-500">Manage your agricultural purchases and connect with farmers</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors">
+            <Link href="/buyer/products" className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors">
               <ShoppingCart className="w-4 h-4" /> Browse Products
-            </button>
+            </Link>
           </div>
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
-          {/* Welcome Section */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">Welcome back, {buyerName}!</h2>
-                <p className="text-sm text-gray-600 mt-1">Here's an overview of your recent activity and recommendations</p>
-              </div>
-              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                <User className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
+        <main className="flex-1 bg-white p-6 space-y-6">
           {/* Enhanced Analytics Dashboard */}
           <EnhancedDashboard
             userRole="buyer"
@@ -156,25 +144,24 @@ function BuyerDashboardComponent() {
           {/* Recent Orders */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="flex justify-between items-center p-6 border-b border-gray-50 bg-white">
-              <h2 className="text-xl font-bold text-gray-900">Recent Orders</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Recent Orders</h2>
               <button
                 onClick={() => setShowOrderManagement(true)}
-                className="text-green-600 text-xs font-bold uppercase tracking-wider hover:text-green-700 transition-colors"
+                className="text-green-600 text-xs font-semibold uppercase  hover:text-green-700 transition-colors"
               >
                 Manage All Orders
               </button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50/50 border-b border-gray-100">
+                <thead className="bg-white/50 border-b border-gray-100">
                   <tr>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">ID</th>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">FARMER / LOCATION</th>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">ORDERED</th>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">PRODUCT / QTY</th>
-                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">TOTAL</th>
-                    <th className="text-center py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">STATUS</th>
-                    <th className="text-right py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase tracking-wider">DELIVERY</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">ID</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">FARMER / LOCATION</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">PRODUCT / QTY</th>
+                    <th className="text-left py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">TOTAL</th>
+                    <th className="text-center py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">STATUS</th>
+                    <th className="text-right py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">DELIVERY</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -218,21 +205,14 @@ function BuyerDashboardComponent() {
                           : quantity * unitPrice;
 
                       return (
-                        <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="py-4 text-gray-900">{order.id}</td>
-                          <td className="py-4 text-gray-900">{farmerName}</td>
-                          <td className="py-4 text-gray-600">
-                            {farmerAddress?.district
-                              ? `${farmerAddress.district}, ${farmerAddress?.province ?? ''}`
-                              : '—'}
-                          </td>
-                          <td className="py-4 text-gray-600">{formatDate(order.createdAt)}</td>
-                          <td className="py-4 text-gray-900">{productName}</td>
-                          <td className="py-4 text-gray-600">
+                        <tr key={order.id} className="border-b border-gray-100 hover:bg-white px-4 items-center">
+                          <td className="p-4 text-gray-900">{order.id.slice(0, 6).toUpperCase()}</td>
+                          <td className="p-4 text-gray-900">{productName}</td>
+                          <td className="p-4 text-gray-600">
                             {quantity} {order.product?.measurementUnit || ''}
                           </td>
-                          <td className="py-4 text-gray-900">{(totalPrice || 0).toLocaleString()} RWF</td>
-                          <td className="py-4">
+                          <td className="p-4 text-gray-900">{(totalPrice || 0).toLocaleString()} RWF</td>
+                          <td className="p-4">
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-medium ${order.status?.toLowerCase() === 'pending'
                                 ? 'bg-yellow-100 text-yellow-700'
@@ -257,7 +237,7 @@ function BuyerDashboardComponent() {
                                   ? `${latestCompletedStep.status} · ${formatDate(latestCompletedStep.completedAt)}`
                                   : 'Processing';
                               })()
-                              : '—'}
+                              : 'Not Yet Delivered'}
                           </td>
                         </tr>
                       );

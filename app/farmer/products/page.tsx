@@ -80,11 +80,11 @@ function FarmerProducts() {
   }, [products]);
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar userType={UserType.FARMER} activeItem="Products" />
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-white border-b  flex items-center justify-between p-6 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Marketplace Inventory</h1>
             <p className="text-xs text-gray-500">Manage your produce listings and monitor stock levels</p>
@@ -100,12 +100,12 @@ function FarmerProducts() {
               href="/farmer/add_produce"
               className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors"
             >
-              <Plus className="w-4 h-4" /> New Listing
+              <Plus className="w-4 h-4" /> Add Product
             </Link>
           </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
 
           {/* Metrics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -113,7 +113,7 @@ function FarmerProducts() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Listings</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.total}</p>
                 </div>
                 <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
                   <LayoutGrid className="w-5 h-5 text-green-600" />
@@ -125,7 +125,7 @@ function FarmerProducts() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">In Stock</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.active}</p>
                 </div>
                 <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-blue-600" />
@@ -137,7 +137,7 @@ function FarmerProducts() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Out of Stock</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.outOfStock}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.outOfStock}</p>
                 </div>
                 <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
                   <AlertCircle className="w-5 h-5 text-red-600" />
@@ -149,7 +149,7 @@ function FarmerProducts() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Units</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.inventory}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.inventory}</p>
                 </div>
                 <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-amber-600" />
@@ -159,15 +159,15 @@ function FarmerProducts() {
           </div>
 
           {/* Filtering Section */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="relative flex-1 max-w-md">
+          <div className="bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="relative flex-1 ">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search your products..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -197,7 +197,7 @@ function FarmerProducts() {
           <section className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 border-l-4 border-green-500 pl-3">Active Listings</h2>
-              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">{filteredProducts.length} Results</span>
+              <span className="text-xs font-medium text-gray-400 uppercase ">{filteredProducts.length} Results</span>
             </div>
 
             {loading ? (
@@ -261,8 +261,8 @@ function HighlightCard({ title, value, icon, color }: { title: string; value: nu
         {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-5 h-5' })}
       </div>
       <div>
-        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider leading-none mb-1">{title}</p>
-        <p className="text-xl font-bold text-gray-900 leading-none">{value.toLocaleString()}</p>
+        <p className="text-[10px] font-semibold text-gray-400 uppercase  leading-none mb-1">{title}</p>
+        <p className="text-xl font-semibold text-gray-900 leading-none">{value.toLocaleString()}</p>
       </div>
     </div>
   );

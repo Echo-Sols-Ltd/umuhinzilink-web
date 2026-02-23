@@ -191,7 +191,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
               <Wallet className="w-6 h-6" />
               <h2 className="text-lg font-semibold">Wallet Balance</h2>
             </div>
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-semibold">
               {wallet ? formatCurrency(wallet.balance) : formatCurrency(0)}
             </p>
             <p className="text-green-100 text-sm mt-1">
@@ -216,7 +216,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Deposits</p>
-              <p className="text-xl font-bold text-green-600">{formatCurrency(stats.totalDeposits)}</p>
+              <p className="text-xl font-semibold text-green-600">{formatCurrency(stats.totalDeposits)}</p>
             </div>
             <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-green-600" />
@@ -228,7 +228,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Payments</p>
-              <p className="text-xl font-bold text-blue-600">{formatCurrency(stats.totalPayments)}</p>
+              <p className="text-xl font-semibold text-blue-600">{formatCurrency(stats.totalPayments)}</p>
             </div>
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
               <CreditCard className="w-5 h-5 text-blue-600" />
@@ -240,7 +240,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Withdrawals</p>
-              <p className="text-xl font-bold text-red-600">{formatCurrency(stats.totalWithdrawals)}</p>
+              <p className="text-xl font-semibold text-red-600">{formatCurrency(stats.totalWithdrawals)}</p>
             </div>
             <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
               <TrendingDown className="w-5 h-5 text-red-600" />
@@ -252,7 +252,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-xl font-bold text-yellow-600">{stats.pendingTransactions}</p>
+              <p className="text-xl font-semibold text-yellow-600">{stats.pendingTransactions}</p>
             </div>
             <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
               <Clock className="w-5 h-5 text-yellow-600" />
@@ -279,7 +279,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
           {/* Filter Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-white"
           >
             <Filter className="w-4 h-4" />
             <span>Filters</span>
@@ -348,7 +348,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
         ) : (
           <div className="divide-y divide-gray-200">
             {filteredAndSortedTransactions.map((transaction) => (
-              <div key={transaction.id} className="p-4 hover:bg-gray-50">
+              <div key={transaction.id} className="p-4 hover:bg-white">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     {getTransactionIcon(transaction.type, transaction.status)}
@@ -445,7 +445,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
                 <div className="flex space-x-3 pt-4">
                   <button
                     onClick={() => setShowDepositModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors"
                   >
                     Cancel
                   </button>

@@ -10,20 +10,10 @@ import {
   Package,
   DollarSign,
   RefreshCw,
-  Download,
-  Filter,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { InteractiveChart, ChartDataPoint } from './InteractiveChart';
+import { ChartDataPoint } from './InteractiveChart';
 import { analyticsService, DashboardMetrics, AnalyticsFilters } from '@/services/analytics';
 import { toast } from '@/components/ui/use-toast';
 
@@ -298,43 +288,12 @@ export function EnhancedDashboard({
       {/* Header Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Market Analytics</h2>
+          <h2 className="text-xl font-semibold text-gray-900 ">Market Analytics</h2>
           {error && (
-            <Badge variant="secondary" className="text-[10px] font-bold bg-amber-50 text-amber-600 border-none uppercase tracking-wider">
+            <Badge variant="secondary" className="text-[10px] font-semibold bg-amber-50 text-amber-600 border-none uppercase ">
               Offline Cache
             </Badge>
           )}
-        </div>
-        <div className="flex items-center gap-2">
-          <Select value={filters.period} onValueChange={handlePeriodChange}>
-            <SelectTrigger className="w-24">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7d">7 Days</SelectItem>
-              <SelectItem value="30d">30 Days</SelectItem>
-              <SelectItem value="90d">90 Days</SelectItem>
-              <SelectItem value="1y">1 Year</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={loading}
-            className="rounded-lg border-gray-200"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 mr-2 ${loading ? 'animate-spin text-green-600' : ''}`} />
-            <span className="text-xs font-semibold">Sync</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-            className={`text-xs font-semibold ${autoRefresh ? 'text-green-600 bg-green-50' : 'text-gray-400'}`}
-          >
-            {autoRefresh ? 'Live Sync ON' : 'Sync Paused'}
-          </Button>
         </div>
       </div>
 
@@ -345,13 +304,13 @@ export function EnhancedDashboard({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{card.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 tracking-tight">{card.value}</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase  mb-1">{card.title}</p>
+                  <p className="text-2xl font-semibold text-gray-900 ">{card.value}</p>
                   {card.description && (
-                    <p className="text-[10px] font-medium text-gray-400 mt-1 uppercase tracking-tighter">{card.description}</p>
+                    <p className="text-[10px] font-medium text-gray-400 mt-1 uppercase ">{card.description}</p>
                   )}
                 </div>
-                <div className="w-10 h-10 bg-gray-50/50 rounded-xl flex items-center justify-center text-green-600 group-hover:bg-green-50 transition-colors">
+                <div className="w-10 h-10 bg-white/50 rounded-xl flex items-center justify-center text-green-600 group-hover:bg-green-50 transition-colors">
                   {React.cloneElement(card.icon as React.ReactElement<any>, { className: 'w-5 h-5' })}
                 </div>
               </div>

@@ -7,7 +7,7 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
         {/* Text Section */}
         <div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
+          <h1 className="text-4xl md:text-5xl font-semibold text-gray-900">
             Connect Farmers to <span className="text-green-600">Digital Markets</span>
           </h1>
           <p className="mt-4 text-gray-700 max-w-lg">
@@ -31,15 +31,15 @@ export default function Hero() {
           {/* Stats */}
           <div className="mt-10 flex space-x-10">
             <div>
-              <p className="text-green-600 text-2xl font-bold">500+</p>
+              <p className="text-green-600 text-2xl font-semibold">500+</p>
               <p className="text-gray-600 text-sm">Registered Farmers</p>
             </div>
             <div>
-              <p className="text-purple-600 text-2xl font-bold">50+</p>
+              <p className="text-purple-600 text-2xl font-semibold">50+</p>
               <p className="text-gray-600 text-sm">Input Suppliers</p>
             </div>
             <div>
-              <p className="text-blue-600 text-2xl font-bold">1000+</p>
+              <p className="text-blue-600 text-2xl font-semibold">1000+</p>
               <p className="text-gray-600 text-sm">Transactions Completed</p>
             </div>
           </div>

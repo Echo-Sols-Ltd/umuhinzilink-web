@@ -100,13 +100,13 @@ function FarmerProfileComponent() {
   const lastName = restNames.join(' ');
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Profile'
       />
 
-      <main className="flex-1 h-full bg-gray-50 overflow-auto">
+      <main className="flex-1 h-full bg-white overflow-auto">
         <header className="bg-white border-b h-16 flex items-center px-6 shadow-sm justify-between">
           <h1 className="text-xl font-semibold text-gray-900">Profile</h1>
           <p className="text-xs text-gray-500">Manage your farmer details</p>
@@ -154,7 +154,7 @@ function FarmerProfileComponent() {
                     </label>
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{displayName}</h1>
+                    <h1 className="text-2xl font-semibold text-gray-900">{displayName}</h1>
                     <p className="text-gray-500">Registered Farmer</p>
                     {profile.farmSize && (
                       <p className="text-xs text-gray-400">Farm size: {profile.farmSize}</p>
@@ -168,7 +168,7 @@ function FarmerProfileComponent() {
 
               {/* Image Upload Section */}
               {imageFile && (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 rounded-lg overflow-hidden">
@@ -189,7 +189,7 @@ function FarmerProfileComponent() {
                           setImageFile(null);
                           setPreviewUrl(null);
                         }}
-                        className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                        className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-white"
                       >
                         Cancel
                       </button>
@@ -299,7 +299,7 @@ function Field({ label, value, icon }: { label: string; value: string; icon?: Re
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      <div className="flex items-center gap-2 text-gray-900 bg-gray-50 border border-gray-200 rounded-md px-3 py-2 min-h-10">
+      <div className="flex items-center gap-2 text-gray-900 bg-white border border-gray-200 rounded-md px-3 py-2 min-h-10">
         {icon}
         {content}
       </div>

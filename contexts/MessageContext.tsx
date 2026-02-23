@@ -237,6 +237,11 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const markMessagesAsRead = (userId: string) => {
+   
+  };
+
+
   const value: MessageContextValue = {
     messages,
     activeChatUser,

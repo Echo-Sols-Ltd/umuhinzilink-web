@@ -96,7 +96,7 @@ function FarmersProducePage() {
           </button>
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-2">{currentBanner.title}</h2>
+              <h2 className="text-2xl font-semibold mb-2">{currentBanner.title}</h2>
               <p className="text-lg opacity-90">{currentBanner.subtitle}</p>
             </div>
             <div className="w-64 h-48 bg-white/10 rounded-lg flex items-center justify-center">
@@ -150,7 +150,7 @@ function FarmersProducePage() {
                 <div className="p-4 space-y-3">
                   <h3 className="font-semibold text-gray-900 text-sm">{product.name}</h3>
                   <div className="flex items-center justify-between">
-                    <p className="text-lg font-bold text-gray-900">${product.unitPrice.toFixed(2)}</p>
+                    <p className="text-lg font-semibold text-gray-900">${product.unitPrice.toFixed(2)}</p>
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <Star

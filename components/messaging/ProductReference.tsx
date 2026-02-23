@@ -16,7 +16,7 @@ export function ProductReference({ productId, messageContent, compact = false }:
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+      <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200">
         <Package className="w-4 h-4 text-gray-400 animate-pulse" />
         <span className="text-sm text-gray-500">Loading product...</span>
       </div>
@@ -41,11 +41,11 @@ export function ProductReference({ productId, messageContent, compact = false }:
     farmerName: product.owner?.names || 'Unknown',
   };
 
-  const imageSrc = imageUrl(productInfo.image!) ;
+  const imageSrc = imageUrl(productInfo.image!);
 
   if (compact) {
     return (
-      <div className="flex flex-col gap-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+      <div className="flex flex-col gap-2 p-2 bg-white rounded-lg border border-gray-200">
         <div className="flex items-center gap-2">
           <ProgressiveImage
             src={imageSrc}
@@ -80,7 +80,7 @@ export function ProductReference({ productId, messageContent, compact = false }:
           </div>
           <div className="flex-1 p-3">
             <h4 className="font-semibold text-sm text-gray-900 mb-1">{productInfo.name}</h4>
-            <p className="text-lg font-bold text-green-600 mb-1">
+            <p className="text-lg font-semibold text-green-600 mb-1">
               {productInfo.price} RWF/{productInfo.unit}
             </p>
             <p className="text-xs text-gray-500">

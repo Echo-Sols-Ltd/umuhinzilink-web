@@ -48,6 +48,7 @@ function FarmerRequestsComponent() {
     farmerBuyerOrdersTotalElements: ordersTotalElements,
   } = useOrder();
 
+  const router = useRouter()
   const [payingId, setPayingId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedProduct, setSelectedProduct] = useState<SupplierProduct | null>(null);
@@ -124,7 +125,7 @@ function FarmerRequestsComponent() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar userType={UserType.FARMER} activeItem="Input Request" />
 
       <div className="flex-1 flex flex-col overflow-auto">
@@ -143,7 +144,7 @@ function FarmerRequestsComponent() {
           </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
 
           {/* Metrics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -151,7 +152,7 @@ function FarmerRequestsComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">My Orders</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.total}</p>
                 </div>
                 <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
                   <ShoppingCart className="w-5 h-5 text-green-600" />
@@ -163,7 +164,7 @@ function FarmerRequestsComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.pending}</p>
                 </div>
                 <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
                   <Clock className="w-5 h-5 text-amber-600" />
@@ -175,7 +176,7 @@ function FarmerRequestsComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">In Delivery</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.active}</p>
                 </div>
                 <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
                   <Package className="w-5 h-5 text-blue-600" />
@@ -187,7 +188,7 @@ function FarmerRequestsComponent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Successful</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
+                  <p className="text-2xl font-semibold text-gray-900">{stats.completed}</p>
                 </div>
                 <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-purple-600" />
@@ -200,7 +201,7 @@ function FarmerRequestsComponent() {
           <section className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Premium Inputs</h2>
-              <span className="text-xs text-gray-500 uppercase tracking-wider">Available Now</span>
+              <span className="text-xs text-gray-500 uppercase ">Available Now</span>
             </div>
 
             {productsLoading ? (
@@ -222,7 +223,7 @@ function FarmerRequestsComponent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {products.map(product => (
                   <div key={product.id} className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
-                    <div className="aspect-square bg-gray-50 relative overflow-hidden flex items-center justify-center p-6">
+                    <div className="aspect-square bg-white relative overflow-hidden flex items-center justify-center p-6">
                       {product.image ? (
                         <img src={imageUrl(product.image)} alt={product.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
                       ) : (
@@ -241,18 +242,18 @@ function FarmerRequestsComponent() {
                       </div>
                       <div className="flex items-end justify-between">
                         <div>
-                          <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tighter">Unit Price</p>
-                          <p className="text-lg font-bold text-gray-900 leading-none">
+                          <p className="text-[10px] uppercase font-semibold text-gray-400 ">Unit Price</p>
+                          <p className="text-lg font-semibold text-gray-900 leading-none">
                             RWF {product.unitPrice?.toLocaleString() || '0'}
                           </p>
                         </div>
-                        <p className="text-[11px] font-bold text-gray-400">
+                        <p className="text-[11px] font-semibold text-gray-400">
                           {product.quantity} {product.measurementUnit}
                         </p>
                       </div>
                       <button
                         onClick={() => handleBuyClick(product)}
-                        className="w-full py-2.5 bg-green-600 text-white rounded-xl text-xs font-bold hover:bg-green-700 shadow-md shadow-green-100 transition-all flex items-center justify-center gap-2 group/btn"
+                        className="w-full py-2.5 bg-green-600 text-white rounded-xl text-xs font-semibold hover:bg-green-700 shadow-md shadow-green-100 transition-all flex items-center justify-center gap-2 group/btn"
                       >
                         <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                         Purchase Now
@@ -273,7 +274,7 @@ function FarmerRequestsComponent() {
                   <button
                     key={tab}
                     onClick={() => setStatusFilter(tab.toLowerCase())}
-                    className={`px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all ${statusFilter === tab.toLowerCase()
+                    className={`px-4 py-1.5 rounded-xl text-[11px] font-semibold transition-all ${statusFilter === tab.toLowerCase()
                       ? 'bg-amber-100 text-amber-700 shadow-sm'
                       : 'text-gray-500 hover:bg-gray-100'
                       }`}
@@ -287,11 +288,11 @@ function FarmerRequestsComponent() {
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gray-50/50">
-                    <TableHead className="font-bold py-5">ORDER DETAILS</TableHead>
-                    <TableHead className="font-bold">TOTAL PRICE</TableHead>
-                    <TableHead className="font-bold">STATUS</TableHead>
-                    <TableHead className="text-right font-bold pr-8">ACTIONS</TableHead>
+                  <TableRow className="bg-white/50">
+                    <TableHead className="font-semibold py-5">ORDER DETAILS</TableHead>
+                    <TableHead className="font-semibold">TOTAL PRICE</TableHead>
+                    <TableHead className="font-semibold">STATUS</TableHead>
+                    <TableHead className="text-right font-semibold pr-8">ACTIONS</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -309,23 +310,23 @@ function FarmerRequestsComponent() {
                       <TableCell colSpan={4} className="py-20 text-center">
                         <div className="flex flex-col items-center justify-center opacity-30">
                           <Package className="w-16 h-16 mb-4" />
-                          <h3 className="text-lg font-bold text-gray-800">No Purchase History</h3>
+                          <h3 className="text-lg font-semibold text-gray-800">No Purchase History</h3>
                         </div>
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredOrders.map(order => (
-                      <TableRow key={order.id} className="group hover:bg-gray-50/50 transition-colors">
+                      <TableRow key={order.id} className="group hover:bg-white/50 transition-colors">
                         <TableCell className="py-5">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0">
                               <Package className="w-5 h-5 text-gray-400" />
                             </div>
                             <div className="flex flex-col">
-                              <span className="font-bold text-gray-900 leading-tight">
+                              <span className="font-semibold text-gray-900 leading-tight">
                                 {order.product?.name || 'Agri-Input'}
                               </span>
-                              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+                              <span className="text-[10px] text-gray-400 font-semibold uppercase  mt-0.5">
                                 Ordered from {order.product?.owner?.names || 'Supplier'}
                               </span>
                             </div>
@@ -333,23 +334,23 @@ function FarmerRequestsComponent() {
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="text-sm font-bold text-gray-900 italic">RWF {order.totalPrice.toLocaleString()}</span>
-                            <span className="text-[10px] text-gray-500 font-bold tracking-tight">
+                            <span className="text-sm font-semibold text-gray-900 ">RWF {order.totalPrice.toLocaleString()}</span>
+                            <span className="text-[10px] text-gray-500 font-semibold ">
                               {order.quantity} {order.product?.measurementUnit} × RWF {order.product?.unitPrice?.toLocaleString()}
                             </span>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col items-start gap-1.5">
-                            <Badge variant={getStatusVariant(order.status)} className="font-bold text-[9px] uppercase tracking-widest px-2.5 py-0.5 rounded-full">
+                            <Badge variant={getStatusVariant(order.status)} className="font-semibold text-[9px] uppercase  px-2.5 py-0.5 rounded-full">
                               {order.status}
                             </Badge>
                             {order.isPaid ? (
-                              <span className="text-[9px] font-black text-blue-600 flex items-center gap-1 leading-none">
+                              <span className="text-[9px] font-semibold text-blue-600 flex items-center gap-1 leading-none">
                                 <CheckCircle className="w-2.5 h-2.5" /> PAID
                               </span>
                             ) : (
-                              <span className="text-[9px] font-black text-orange-500 flex items-center gap-1 leading-none uppercase">
+                              <span className="text-[9px] font-semibold text-orange-500 flex items-center gap-1 leading-none uppercase">
                                 <Clock className="w-2.5 h-2.5" /> Unpaid
                               </span>
                             )}
@@ -361,14 +362,14 @@ function FarmerRequestsComponent() {
                               <button
                                 onClick={() => handlePayOrder(order)}
                                 disabled={payingId === order.id}
-                                className="px-3 py-1.5 bg-orange-600 text-white text-[11px] font-bold rounded-xl hover:bg-orange-700 shadow-md shadow-orange-100 disabled:opacity-50 transition-all flex items-center gap-1.5"
+                                className="px-3 py-1.5 bg-orange-600 text-white text-[11px] font-semibold rounded-xl hover:bg-orange-700 shadow-md shadow-orange-100 disabled:opacity-50 transition-all flex items-center gap-1.5"
                               >
                                 {payingId === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <ArrowUpRight className="w-3 h-3" />}
                                 Pay Order
                               </button>
                             )}
                             <button
-                              onClick={() => handleViewOrder(order)}
+                              onClick={() => router.push(`/farmer/orders/${order.id}`)}
                               className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all"
                             >
                               <Info className="w-5 h-5" />
@@ -424,8 +425,8 @@ function HighlightCard({ title, value, icon, color }: { title: string; value: nu
         {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-6 h-6' })}
       </div>
       <div>
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">{title}</p>
-        <p className="text-2xl font-black text-gray-900 leading-none">{value}</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase  leading-none mb-1.5">{title}</p>
+        <p className="text-2xl font-semibold text-gray-900 leading-none">{value}</p>
       </div>
     </div>
   );

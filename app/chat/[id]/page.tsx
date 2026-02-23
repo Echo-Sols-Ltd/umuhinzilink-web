@@ -16,17 +16,17 @@ import { Message } from '@/types/message';
 
 // Helper function to convert User to ChatUser
 const userToChatUser = (user: any): ChatUser => ({
-    id: user.id,
-    names: user.names,
-    email: user.email,
-    avatar: user.avatar,
-    unreadMessage: 0, // Default values, will be updated by context
-    totalMessage: 0,
-    lastMessage: {} as Message, // Will be populated by context
+  id: user.id,
+  names: user.names,
+  email: user.email,
+  avatar: user.avatar,
+  unreadMessage: 0, // Default values, will be updated by context
+  totalMessage: 0,
+  lastMessage: {} as Message, // Will be populated by context
 });
 
 const Logo = () => (
-  <span className="font-extrabold text-2xl tracking-tight">
+  <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
     <span className="text-black">Link</span>
   </span>
@@ -36,7 +36,7 @@ function GlobalChatComponent() {
   const params = useParams();
   const { user } = useAuth();
   const router = useRouter();
-  const { activeChatUser, setActiveChatUser } = useMessages();
+  const { activeChatUser, setActiveChatUser,loadMessages } = useMessages();
   const chatId = params.id as string;
 
 
@@ -48,6 +48,7 @@ function GlobalChatComponent() {
           const response = await userService.getUserById(chatId);
           if (response.success && response.data) {
             setActiveChatUser(userToChatUser(response.data));
+           await loadMessages(chatId);
           }
         } catch (error) {
           console.error('Failed to fetch user:', error);
@@ -62,7 +63,7 @@ function GlobalChatComponent() {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
+          <h1 className="text-2xl font-semibold mb-4">Authentication Required</h1>
           <p className="text-gray-600">Please log in to access chat.</p>
         </div>
       </div>
@@ -70,7 +71,7 @@ function GlobalChatComponent() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col h-screen bg-white overflow-hidden">
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <div className={cn("hidden md:block shrink-0")}>
           <Sidebar

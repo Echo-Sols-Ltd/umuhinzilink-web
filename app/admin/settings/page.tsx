@@ -113,7 +113,7 @@ function SystemSettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Settings'
@@ -132,7 +132,7 @@ function SystemSettingsPage() {
           </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6 space-y-6">
+        <main className="flex-1 bg-white p-6 space-y-6">
           {/* General Settings */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">General Settings</h2>
@@ -142,7 +142,7 @@ function SystemSettingsPage() {
                 <input
                   type="text"
                   value={settings.siteName}
-                  onChange={(e) => setSettings({...settings, siteName: e.target.value})}
+                  onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500"
                 />
               </div>
@@ -151,7 +151,7 @@ function SystemSettingsPage() {
                 <input
                   type="email"
                   value={settings.contactEmail}
-                  onChange={(e) => setSettings({...settings, contactEmail: e.target.value})}
+                  onChange={(e) => setSettings({ ...settings, contactEmail: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500"
                 />
               </div>
@@ -160,7 +160,7 @@ function SystemSettingsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Site Description</label>
               <textarea
                 value={settings.siteDescription}
-                onChange={(e) => setSettings({...settings, siteDescription: e.target.value})}
+                onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500"
               />

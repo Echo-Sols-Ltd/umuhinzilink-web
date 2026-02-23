@@ -26,7 +26,7 @@ function SupplierSettingsPageComponent() {
     // Handle logout logic
   };
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.SUPPLIER}
         activeItem='Settings'
@@ -34,7 +34,7 @@ function SupplierSettingsPageComponent() {
 
       {/* Main Content */}
       <main className="flex-1 p-6 h-full overflow-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Settings</h1>
+        <h1 className="text-2xl font-semibold text-gray-800 mb-6">Settings</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Profile Settings */}

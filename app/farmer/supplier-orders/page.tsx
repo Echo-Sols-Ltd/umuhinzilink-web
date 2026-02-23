@@ -148,19 +148,19 @@ function FarmerSupplierOrders() {
   const displayName = currentUser?.names || 'Farmer';
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Supplier Orders' />
 
-      <main className="flex-1 h-full bg-gray-50 overflow-auto">
+      <main className="flex-1 h-full bg-white overflow-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Supplier Orders</h1>
             <p className="text-xs text-gray-500">Orders placed with suppliers for {displayName.split(' ')[0]}</p>
           </div>
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => setIsCreationModalOpen(true)}
               className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition"
             >
@@ -307,11 +307,11 @@ function FarmerSupplierOrders() {
                             ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}`
                             : '—'}
                         </TableCell>
-                        <TableCell className="font-bold text-gray-900">
+                        <TableCell className="font-semibold text-gray-900">
                           {formatNumber(amount)} RWF
                         </TableCell>
                         <TableCell>
-                          <Badge variant={statusMeta.variant as any} className="font-semibold text-[10px] uppercase tracking-wide">
+                          <Badge variant={statusMeta.variant as any} className="font-semibold text-[10px] uppercase ">
                             {statusMeta.label}
                           </Badge>
                         </TableCell>

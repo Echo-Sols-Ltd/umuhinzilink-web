@@ -103,14 +103,14 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
               onClick={() => onSaveProduct?.(product.id)}
               className={cn(
                 'w-10 h-10 rounded-full flex items-center justify-center transition-colors',
-                isSaved ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
+                isSaved ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:bg-white'
               )}
             >
               <Heart className={cn('w-5 h-5', isSaved && 'fill-current')} />
             </button>
             <button
               onClick={() => onShareProduct?.(product)}
-              className="w-10 h-10 bg-white text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+              className="w-10 h-10 bg-white text-gray-600 rounded-full flex items-center justify-center hover:bg-white transition-colors"
             >
               <Share2 className="w-5 h-5" />
             </button>
@@ -132,10 +132,10 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
         <div className="p-6">
           {/* Header */}
           <div className="mb-4">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">{product.name}</h1>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <span className="text-3xl font-bold text-green-600">
+                <span className="text-3xl font-semibold text-green-600">
                   {product.unitPrice.toLocaleString()} RWF
                 </span>
                 <span className="text-gray-500">per {product.measurementUnit}</span>
@@ -233,7 +233,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
                 'px-6 py-3 border rounded-lg font-medium transition-colors',
                 isSaved
                   ? 'border-red-500 text-red-600 bg-red-50 hover:bg-red-100'
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                  : 'border-gray-300 text-gray-700 hover:bg-white'
               )}
             >
               {isSaved ? 'Saved' : 'Save'}

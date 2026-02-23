@@ -91,7 +91,7 @@ export function InteractiveChart({
     const average = total / values.length;
     const max = Math.max(...values);
     const min = Math.min(...values);
-    
+
     // Calculate trend (comparing first half vs second half)
     const midPoint = Math.floor(values.length / 2);
     const firstHalf = values.slice(0, midPoint);
@@ -127,7 +127,7 @@ export function InteractiveChart({
           headers.join(','),
           ...data.map(row => headers.map(header => row[header]).join(','))
         ].join('\n');
-        
+
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -166,18 +166,18 @@ export function InteractiveChart({
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis 
-              dataKey={xAxisKey} 
+            <XAxis
+              dataKey={xAxisKey}
               tick={{ fontSize: 12, fill: '#6b7280' }}
               axisLine={false}
               tickLine={false}
             />
-            <YAxis 
+            <YAxis
               tick={{ fontSize: 12, fill: '#6b7280' }}
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip 
+            <Tooltip
               contentStyle={{
                 backgroundColor: '#fff',
                 border: '1px solid #e5e7eb',
@@ -199,18 +199,18 @@ export function InteractiveChart({
         return (
           <BarChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis 
-              dataKey={xAxisKey} 
+            <XAxis
+              dataKey={xAxisKey}
               tick={{ fontSize: 12, fill: '#6b7280' }}
               axisLine={false}
               tickLine={false}
             />
-            <YAxis 
+            <YAxis
               tick={{ fontSize: 12, fill: '#6b7280' }}
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip 
+            <Tooltip
               contentStyle={{
                 backgroundColor: '#fff',
                 border: '1px solid #e5e7eb',
@@ -246,18 +246,18 @@ export function InteractiveChart({
         return (
           <LineChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis 
-              dataKey={xAxisKey} 
+            <XAxis
+              dataKey={xAxisKey}
               tick={{ fontSize: 12, fill: '#6b7280' }}
               axisLine={false}
               tickLine={false}
             />
-            <YAxis 
+            <YAxis
               tick={{ fontSize: 12, fill: '#6b7280' }}
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip 
+            <Tooltip
               contentStyle={{
                 backgroundColor: '#fff',
                 border: '1px solid #e5e7eb',
@@ -331,19 +331,19 @@ export function InteractiveChart({
         {showMetrics && metrics && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-semibold text-gray-900">
                 {(metrics.total || 0).toLocaleString()}
               </p>
               <p className="text-xs text-gray-500">Total</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-semibold text-gray-900">
                 {Math.round(metrics.average || 0).toLocaleString()}
               </p>
               <p className="text-xs text-gray-500">Average</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-semibold text-gray-900">
                 {(metrics.max || 0).toLocaleString()}
               </p>
               <p className="text-xs text-gray-500">Peak</p>
@@ -355,10 +355,9 @@ export function InteractiveChart({
                 ) : metrics.trend === 'down' ? (
                   <TrendingDown className="w-4 h-4 text-red-500" />
                 ) : null}
-                <p className={`text-2xl font-bold ${
-                  metrics.trend === 'up' ? 'text-green-500' : 
-                  metrics.trend === 'down' ? 'text-red-500' : 'text-gray-900'
-                }`}>
+                <p className={`text-2xl font-semibold ${metrics.trend === 'up' ? 'text-green-500' :
+                    metrics.trend === 'down' ? 'text-red-500' : 'text-gray-900'
+                  }`}>
                   {metrics.trendPercentage.toFixed(1)}%
                 </p>
               </div>

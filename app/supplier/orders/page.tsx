@@ -113,18 +113,18 @@ function OrdersPageComponent() {
     <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar userType={UserType.SUPPLIER} activeItem="Orders" />
 
-      <main className="flex-1 h-full overflow-auto bg-gray-50/30">
+      <main className="flex-1 h-full overflow-auto bg-white/30">
         <div className="p-8 max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Order Management</h1>
-              <p className="text-sm text-gray-500 mt-1 font-medium italic">Monitor and process incoming requests from farmers across regions</p>
+              <h1 className="text-2xl font-semibold text-gray-900 ">Order Management</h1>
+              <p className="text-sm text-gray-500 mt-1 font-medium ">Monitor and process incoming requests from farmers across regions</p>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => fetchSupplierOrders()}
-                className="flex items-center gap-2 px-4 py-2 bg-white text-gray-600 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-gray-50 border border-gray-100 shadow-sm transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-white text-gray-600 rounded-lg font-semibold text-xs uppercase  hover:bg-white border border-gray-100 shadow-sm transition-all"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
                 Refresh List
@@ -134,10 +134,10 @@ function OrdersPageComponent() {
 
           {/* Stats Summary */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard title="Total Orders" value={stats.total} icon={<ShoppingCart />} color="from-gray-700 to-gray-900" />
-            <StatCard title="Pending" value={stats.pending} icon={<Clock />} color="from-amber-400 to-orange-500" />
-            <StatCard title="In Progress" value={stats.active} icon={<Package />} color="from-blue-500 to-indigo-600" />
-            <StatCard title="Completed" value={stats.completed} icon={<CheckCircle />} color="from-green-500 to-emerald-600" />
+            <StatCard title="Total Orders" value={stats.total} icon={<ShoppingCart />} color="bg-gray-800" />
+            <StatCard title="Pending" value={stats.pending} icon={<Clock />} color="bg-orange-600" />
+            <StatCard title="In Progress" value={stats.active} icon={<Package />} color="bg-indigo-800" />
+            <StatCard title="Completed" value={stats.completed} icon={<CheckCircle />} color="bg-emerald-800" />
           </div>
 
           {/* Orders Table */}
@@ -147,16 +147,16 @@ function OrdersPageComponent() {
                 <div className="p-2 bg-green-50 rounded-lg">
                   <Package className="w-5 h-5 text-green-600" />
                 </div>
-                <h2 className="text-lg font-bold text-gray-800">Recent Orders</h2>
+                <h2 className="text-lg font-semibold text-gray-800">Recent Orders</h2>
               </div>
               <div className="flex gap-2">
                 {['All', 'Pending', 'Active', 'Completed'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setStatusFilter(tab.toLowerCase())}
-                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === tab.toLowerCase()
+                    className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${statusFilter === tab.toLowerCase()
                       ? 'bg-green-600 text-white shadow-md shadow-green-100'
-                      : 'text-gray-500 hover:bg-gray-50'
+                      : 'text-gray-500 hover:bg-white'
                       }`}
                   >
                     {tab}
@@ -166,14 +166,14 @@ function OrdersPageComponent() {
             </div>
 
             <Table>
-              <TableHeader className="bg-gray-50/50">
+              <TableHeader className="bg-white/50">
                 <TableRow className="hover:bg-transparent border-0">
-                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest">Order ID</TableHead>
-                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest">Farmer</TableHead>
-                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest">Input Item</TableHead>
-                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest text-center">Value</TableHead>
-                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest text-center">Status</TableHead>
-                  <TableHead className="py-4 px-6 font-bold text-[11px] text-gray-400 uppercase tracking-widest text-right">Action</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Order ID</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Farmer</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Input Item</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-center">Value</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-center">Status</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -193,18 +193,18 @@ function OrdersPageComponent() {
                     <TableCell colSpan={6} className="py-20 text-center">
                       <div className="flex flex-col items-center justify-center opacity-40">
                         <ShoppingCart className="w-16 h-16 mb-4" />
-                        <h3 className="text-lg font-bold">No orders found</h3>
+                        <h3 className="text-lg font-semibold">No orders found</h3>
                         <p className="text-sm">Incoming orders will appear here</p>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredOrders.map((order) => (
-                    <TableRow key={order.id} className="group transition-colors hover:bg-gray-50/50">
+                    <TableRow key={order.id} className="group transition-colors hover:bg-white/50">
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-bold text-gray-900 leading-tight">#{order.id.slice(0, 8).toUpperCase()}</span>
-                          <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400 mt-0.5">
+                          <span className="font-semibold text-gray-900 leading-tight">#{order.id.slice(0, 8).toUpperCase()}</span>
+                          <span className="text-[10px] uppercase  font-semibold text-gray-400 mt-0.5">
                             {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                           </span>
                         </div>
@@ -226,12 +226,12 @@ function OrdersPageComponent() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="font-bold text-gray-900">
+                        <span className="font-semibold text-gray-900">
                           RWF {order.totalPrice.toLocaleString()}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getStatusVariant(order.status)} className="font-bold text-[10px] px-2.5 py-0.5 uppercase tracking-wider">
+                        <Badge variant={getStatusVariant(order.status)} className="font-semibold text-[10px] px-2.5 py-0.5 uppercase ">
                           {order.status}
                         </Badge>
                       </TableCell>
@@ -241,7 +241,7 @@ function OrdersPageComponent() {
                             <button
                               onClick={() => handleAcceptOrder(order.id)}
                               disabled={actionLoading}
-                              className="px-3 py-1.5 bg-green-600 text-white text-[11px] font-bold rounded-lg hover:bg-green-700 shadow-sm shadow-green-100 disabled:opacity-50 transition-all"
+                              className="px-3 py-1.5 bg-green-600 text-white text-[11px] font-semibold rounded-lg hover:bg-green-700 shadow-sm shadow-green-100 disabled:opacity-50 transition-all"
                             >
                               Approve
                             </button>
@@ -292,13 +292,13 @@ function OrdersPageComponent() {
 
 function StatCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5 transition-all hover:shadow-xl hover:shadow-green-100/20 group">
-      <div className={`p-3.5 rounded-xl bg-linear-to-br ${color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5 transition-all hover:shadow-xl hover:shadow-green-100/20 group">
+      <div className={`p-3.5 rounded-lg ${color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
         {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-6 h-6' })}
       </div>
       <div>
-        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">{title}</p>
-        <p className="text-2xl font-black text-gray-900 leading-none">{value.toLocaleString()}</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase  leading-none mb-1.5">{title}</p>
+        <p className="text-2xl font-semibold text-gray-900 leading-none">{value.toLocaleString()}</p>
       </div>
     </div>
   );
