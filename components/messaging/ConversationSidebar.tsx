@@ -13,7 +13,7 @@ import {
 import { useMessages } from '@/contexts/MessageContext';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
+import { cn, imageUrl } from '@/lib/utils';
 import { ChatUser } from '@/types/chat';
 
 export interface ConversationSidebarProps {
@@ -107,14 +107,6 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             )}
           </div>
         </div>
-
-        {/* Online pill */}
-        <div className="flex items-center gap-1.5 mt-2.5">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-gray-500 font-medium">
-            {onlineCount} {onlineCount === 1 ? 'person' : 'people'} online
-          </span>
-        </div>
       </div>
 
       {/* ── Search ───────────────────────────────────────────── */}
@@ -181,11 +173,17 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                     {/* Avatar */}
                     <div className="relative shrink-0">
                       <div className={cn(
-                        'w-11 h-11 rounded-xl flex items-center justify-center',
-                        'bg-gradient-to-br shadow-sm text-white text-sm font-semibold',
+                        'w-11 h-11 rounded-full flex items-center justify-center',
+                        'shadow-sm text-white font-semibold bg-green-500',
                         gradient
                       )}>
-                        {initials}
+                       {user.avatar? <img
+                          src={imageUrl(user.avatar)}
+                          alt={user.names}
+                          className="rounded-full object-cover w-11 h-11"
+                        />:<div className='font-bold text-lg'>
+                          {initials}
+                        </div>}
                       </div>
                       {isOnline && (
                         <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
