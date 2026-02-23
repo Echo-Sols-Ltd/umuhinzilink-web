@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  User, 
-  Phone, 
-  MapPin, 
-  Mail, 
-  Loader2, 
-  Edit2, 
-  Save, 
-  X, 
-  Package, 
+import {
+  User,
+  Phone,
+  MapPin,
+  Mail,
+  Loader2,
+  Edit2,
+  Save,
+  X,
+  Package,
   Store,
   Building2,
   TrendingUp,
@@ -196,8 +196,8 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
                 <span className="text-lg font-bold">{profileCompletion}%</span>
               </div>
               <div className="w-48 bg-white/30 rounded-full h-2">
-                <div 
-                  className="bg-white h-2 rounded-full transition-all duration-500" 
+                <div
+                  className="bg-white h-2 rounded-full transition-all duration-500"
                   style={{ width: `${profileCompletion}%` }}
                 ></div>
               </div>
@@ -278,33 +278,30 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
           <nav className="flex space-x-1 p-1">
             <button
               onClick={() => setActiveTab('info')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                activeTab === 'info'
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'info'
                   ? 'bg-green-100 text-green-700 border border-green-200'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              }`}
+                }`}
             >
               <FileText className="w-4 h-4" />
               Business Information
             </button>
             <button
               onClick={() => setActiveTab('activity')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                activeTab === 'activity'
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'activity'
                   ? 'bg-green-100 text-green-700 border border-green-200'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              }`}
+                }`}
             >
               <BarChart3 className="w-4 h-4" />
               Activity & Analytics
             </button>
             <button
               onClick={() => setActiveTab('badges')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                activeTab === 'badges'
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${activeTab === 'badges'
                   ? 'bg-green-100 text-green-700 border border-green-200'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              }`}
+                }`}
             >
               <Award className="w-4 h-4" />
               Badges & Verification
@@ -426,8 +423,8 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
                     value={profile.user?.address?.province || '—'}
                     icon={<MapPin className="w-4 h-4 text-gray-500" />}
                     isEditing={isEditing}
-                    onChange={(value) => handleChange('user', { 
-                      ...profile.user, 
+                    onChange={(value) => handleChange('user', {
+                      ...profile.user,
                       address: { ...profile.user?.address, province: value }
                     })}
                   />
@@ -601,17 +598,17 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
   );
 }
 
-function EnhancedField({ 
-  label, 
-  value, 
-  icon, 
-  isEditing, 
-  onChange 
-}: { 
-  label: string; 
-  value: string; 
-  icon?: React.ReactNode; 
-  isEditing: boolean; 
+function EnhancedField({
+  label,
+  value,
+  icon,
+  isEditing,
+  onChange
+}: {
+  label: string;
+  value: string;
+  icon?: React.ReactNode;
+  isEditing: boolean;
   onChange: (value: string) => void;
 }) {
   return (
@@ -631,7 +628,7 @@ function EnhancedField({
       ) : (
         <div className="flex items-center gap-3 text-gray-900 bg-white border border-gray-200 rounded-lg px-4 py-3 min-h-12">
           {icon}
-          <span className="font-medium">{value || <span className="text-gray-400 italic">Not provided</span>}</span>
+          <span className="font-medium">{value || <span className="text-gray-400 ">Not provided</span>}</span>
         </div>
       )}
     </div>
@@ -647,17 +644,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function Field({ 
-  label, 
-  value, 
-  icon, 
-  isEditing, 
-  onChange 
-}: { 
-  label: string; 
-  value: string; 
-  icon?: React.ReactNode; 
-  isEditing: boolean; 
+function Field({
+  label,
+  value,
+  icon,
+  isEditing,
+  onChange
+}: {
+  label: string;
+  value: string;
+  icon?: React.ReactNode;
+  isEditing: boolean;
   onChange: (value: string) => void;
 }) {
   return (

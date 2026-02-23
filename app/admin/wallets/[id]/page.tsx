@@ -137,7 +137,7 @@ export default function WalletDetailPage() {
                 <main className="flex-1 overflow-auto bg-white/30">
                     <div className="p-8 max-w-7xl mx-auto">
                         <div className="text-center">
-                            <p className="text-gray-400 font-semibold italic uppercase text-xs ">Wallet not found</p>
+                            <p className="text-gray-400 font-semibold  uppercase text-xs ">Wallet not found</p>
                         </div>
                     </div>
                 </main>
@@ -261,7 +261,7 @@ export default function WalletDetailPage() {
                                 </div>
                             ) : (
                                 <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
-                                    <p className="text-gray-400 font-semibold italic uppercase text-xs ">No transaction history found for this account</p>
+                                    <p className="text-gray-400 font-semibold  uppercase text-xs ">No transaction history found for this account</p>
                                 </div>
                             )}
                         </div>

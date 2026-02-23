@@ -48,6 +48,7 @@ function FarmerRequestsComponent() {
     farmerBuyerOrdersTotalElements: ordersTotalElements,
   } = useOrder();
 
+  const router = useRouter()
   const [payingId, setPayingId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedProduct, setSelectedProduct] = useState<SupplierProduct | null>(null);
@@ -333,7 +334,7 @@ function FarmerRequestsComponent() {
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="text-sm font-semibold text-gray-900 italic">RWF {order.totalPrice.toLocaleString()}</span>
+                            <span className="text-sm font-semibold text-gray-900 ">RWF {order.totalPrice.toLocaleString()}</span>
                             <span className="text-[10px] text-gray-500 font-semibold ">
                               {order.quantity} {order.product?.measurementUnit} × RWF {order.product?.unitPrice?.toLocaleString()}
                             </span>
@@ -368,7 +369,7 @@ function FarmerRequestsComponent() {
                               </button>
                             )}
                             <button
-                              onClick={() => handleViewOrder(order)}
+                              onClick={() => router.push(`/farmer/orders/${order.id}`)}
                               className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all"
                             >
                               <Info className="w-5 h-5" />

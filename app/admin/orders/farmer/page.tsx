@@ -110,7 +110,7 @@ function FarmerOrderManagement() {
                                         <TableCell colSpan={5} className="py-24 text-center">
                                             <div className="flex flex-col items-center justify-center opacity-20">
                                                 <Search className="w-16 h-16 mb-4" />
-                                                <p className="text-xl font-semibold italic">No Transactions Captured</p>
+                                                <p className="text-xl font-semibold ">No Transactions Captured</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -120,7 +120,7 @@ function FarmerOrderManagement() {
                                             <TableCell className="py-5 pl-8">
                                                 <div className="flex flex-col">
                                                     <span className="text-[10px] font-semibold text-green-600 uppercase  mb-1">TX-REF: {order.id.slice(0, 8)}</span>
-                                                    <span className="font-semibold text-gray-900 text-base leading-tight italic">
+                                                    <span className="font-semibold text-gray-900 text-base leading-tight ">
                                                         RWF {order.totalPrice.toLocaleString()}
                                                     </span>
                                                     <span className="text-[11px] text-gray-400 font-medium">Farmer Settlement Order</span>

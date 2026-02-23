@@ -82,7 +82,7 @@ export default function ImpactStories() {
                 </div>
               </div>
               {/* Quote */}
-              <p className="text-gray-800 text-sm italic">“{t.quote}”</p>
+              <p className="text-gray-800 text-sm ">“{t.quote}”</p>
             </div>
           ))}
         </div>

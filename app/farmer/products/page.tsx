@@ -84,7 +84,7 @@ function FarmerProducts() {
       <Sidebar userType={UserType.FARMER} activeItem="Products" />
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-white border-b  flex items-center justify-between p-6 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Marketplace Inventory</h1>
             <p className="text-xs text-gray-500">Manage your produce listings and monitor stock levels</p>
@@ -100,7 +100,7 @@ function FarmerProducts() {
               href="/farmer/add_produce"
               className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors"
             >
-              <Plus className="w-4 h-4" /> New Listing
+              <Plus className="w-4 h-4" /> Add Product
             </Link>
           </div>
         </header>
@@ -159,8 +159,8 @@ function FarmerProducts() {
           </div>
 
           {/* Filtering Section */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="relative flex-1 max-w-md">
+          <div className="bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="relative flex-1 ">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"

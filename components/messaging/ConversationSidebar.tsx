@@ -177,11 +177,11 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                         'shadow-sm text-white font-semibold bg-green-500',
                         gradient
                       )}>
-                       {user.avatar? <img
+                        {user.avatar ? <img
                           src={imageUrl(user.avatar)}
                           alt={user.names}
                           className="rounded-full object-cover w-11 h-11"
-                        />:<div className='font-bold text-lg'>
+                        /> : <div className='font-bold text-lg'>
                           {initials}
                         </div>}
                       </div>
@@ -214,7 +214,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       <div className="flex items-center justify-between gap-2 mt-0.5">
                         <p className={cn(
                           'text-[12px] truncate flex items-center gap-1',
-                          isTyping ? 'text-green-500 font-medium italic' :
+                          isTyping ? 'text-green-500 font-medium ' :
                             hasUnread ? 'text-gray-700 font-medium' : 'text-gray-400'
                         )}>
                           {/* Read receipt for own last message */}

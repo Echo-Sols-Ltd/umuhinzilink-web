@@ -247,7 +247,7 @@ export default function AdminWalletsPage() {
                                         <TableCell colSpan={5} className="py-24 text-center">
                                             <div className="flex flex-col items-center justify-center opacity-20">
                                                 <Wallet className="w-20 h-20 mb-4" />
-                                                <p className="text-xl font-semibold italic">No Wallets Found</p>
+                                                <p className="text-xl font-semibold ">No Wallets Found</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>

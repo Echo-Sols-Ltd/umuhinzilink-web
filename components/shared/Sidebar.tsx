@@ -83,7 +83,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     label: 'Core',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/buyer/dashboard' },
-                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Browse Products', href: '/buyer/product' },
+                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Browse Products', href: '/buyer/products' },
                         { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'My Purchases', href: '/buyer/purchases' },
                         { icon: <Truck className="w-4.5 h-4.5" />, label: 'Delivery Tracking', href: '/buyer/delivery' },
                         { icon: <Heart className="w-4.5 h-4.5" />, label: 'Saved Items', href: '/buyer/saved' },
@@ -362,7 +362,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
 
                         {/* Name / Email */}
                         <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold text-white truncate leading-tight">{userName}</p>
+                            <p className="text-[13px] font-semibold text-gray-900 truncate leading-tight">{userName}</p>
                             <p className="text-[11px] text-gray-500 truncate leading-tight mt-0.5">{userEmail}</p>
                         </div>
 
