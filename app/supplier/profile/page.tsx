@@ -9,12 +9,6 @@ import {
   Edit2,
   Save,
   X,
-  CheckCircle,
-  LayoutGrid,
-  FilePlus,
-  ShoppingCart,
-  Settings,
-  LogOut,
   Package,
   Store,
 } from 'lucide-react';

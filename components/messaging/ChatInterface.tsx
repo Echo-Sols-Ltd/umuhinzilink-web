@@ -303,10 +303,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div className="relative">
-            <div className="w-10 h-10 bg-linear-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center shadow-sm">
-              <span className="text-sm font-semibold text-gray-600">
+            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+              {activeChatUser.avatar ? <img
+                src={imageUrl(activeChatUser.avatar)}
+                alt={activeChatUser.names}
+                className="rounded-full object-cover w-10 h-10"
+              /> : <div className='font-bold text-white text-lg'>
                 {activeChatUser.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
-              </span>
+              </div>}
             </div>
             {isUserOnline && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>}
           </div>

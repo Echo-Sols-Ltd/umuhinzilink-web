@@ -36,7 +36,7 @@ function GlobalChatComponent() {
   const params = useParams();
   const { user } = useAuth();
   const router = useRouter();
-  const { activeChatUser, setActiveChatUser } = useMessages();
+  const { activeChatUser, setActiveChatUser,loadMessages } = useMessages();
   const chatId = params.id as string;
 
 
@@ -48,6 +48,7 @@ function GlobalChatComponent() {
           const response = await userService.getUserById(chatId);
           if (response.success && response.data) {
             setActiveChatUser(userToChatUser(response.data));
+           await loadMessages(chatId);
           }
         } catch (error) {
           console.error('Failed to fetch user:', error);

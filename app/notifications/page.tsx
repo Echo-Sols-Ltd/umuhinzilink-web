@@ -143,7 +143,7 @@ export default function NotificationsPage() {
             <Sidebar userType={user.role as UserType} activeItem="Notifications" />
 
             <main className="flex-1 overflow-auto">
-                <div className="p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
+                <div className="p-6 lg:p-8 max-w-full space-y-6">
 
                     {/* ── Header ──────────────────────────────────────────── */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

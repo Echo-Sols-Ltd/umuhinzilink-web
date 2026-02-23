@@ -148,7 +148,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             </div>
           </div>
         ) : (
-          <ul>
+          <ul >
             {sorted.map((user) => {
               const isActive = activeChatUser?.id === user.id;
               const isOnline = onlineUsers.has(user.id);
