@@ -464,7 +464,7 @@ function UserManagement() {
                 <div className="w-24 h-24 rounded-2xl bg-white p-1 shadow-lg">
                   <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center border border-gray-100">
                     {selectedUser.avatar ? (
-                      <img src={selectedUser.avatar} alt={selectedUser.names} className="w-full h-full object-cover" />
+                      <img src={imageUrl(selectedUser.avatar)} alt={selectedUser.names} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-green-500 flex items-center justify-center text-white text-2xl font-bold">
                         {selectedUser.names.charAt(0).toUpperCase()}

@@ -29,6 +29,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { imageUrl } from '@/lib/utils';
 
 function FarmerProductManagement() {
     const { farmerProducts, refreshProducts } = useAdmin();
@@ -182,7 +183,7 @@ function FarmerProductManagement() {
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                                                         {product.image ? (
-                                                            <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-lg" />
+                                                            <img src={imageUrl(product.image)} alt={product.name} className="w-full h-full object-cover rounded-lg" />
                                                         ) : (
                                                             <Package className="w-5 h-5 text-gray-400" />
                                                         )}

@@ -138,20 +138,7 @@ function ProductsPageComponent() {
   };
 
   const handleEdit = (product: any) => {
-    setEditingProduct(product);
-    setFormData({
-      name: product.name,
-      category: product.category,
-      description: product.description,
-      unitPrice: product.unitPrice.toString(),
-      measurementUnit: product.measurementUnit,
-      quantity: product.quantity.toString(),
-      location: product.location,
-      isNegotiable: product.isNegotiable,
-      certification: product.certification,
-      imageUrl: product.image || '',
-    });
-    setShowForm(true);
+    router.push(`/supplier/products/edit/${product.id}`);
   };
 
   const handleDelete = async (productId: string) => {
@@ -195,16 +182,13 @@ function ProductsPageComponent() {
               <p className="text-sm text-gray-500 mt-1">Manage and update your agricultural supplies for farmers</p>
             </div>
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => {
-                  resetForm();
-                  setShowForm(true);
-                }}
+              <Link
+                href="/supplier/products/add-input"
                 className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-green-700 transition-all shadow-lg shadow-green-100"
               >
                 <Plus className="w-4 h-4" />
                 Add New Input
-              </button>
+              </Link>
             </div>
           </div>
 

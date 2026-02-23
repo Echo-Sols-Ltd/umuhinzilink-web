@@ -115,7 +115,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Inputs', href: '/supplier/products' },
                         { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Farmer Requests', href: '/supplier/requests' },
                         { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Orders', href: '/supplier/orders' },
-                        { icon:<Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/supplier/wallet' },
+                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/supplier/wallet' },
                     ],
                 },
                 {
@@ -282,8 +282,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 {/* ── Logo / Brand ─────────────────────────────────── */}
                 <div className="px-5 py-5 border-b border-white/5">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-green-500 to-emerald-700 flex items-center justify-center shadow-lg shadow-green-900/40 shrink-0">
-                            <Tractor className="w-5 h-5 text-white" />
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-green-900/40 shrink-0">
+                            <img
+                                src="/logo.png"
+                                alt="Logo"
+                                className="w-10 h-10 object-cover" />
                         </div>
                         <div className="min-w-0">
                             <p className="font-bold text-[15px] text-white leading-tight tracking-tight">UmuhinziLink</p>
