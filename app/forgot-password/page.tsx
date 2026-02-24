@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { authService } from '@/services/auth';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -21,19 +22,18 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      // TODO: Implement password reset API call
-      // await authService.forgotPassword(email);
+      await authService.requestPasswordReset(email);
 
       setSubmitted(true);
       toast({
-        title: 'Reset Link Sent',
-        description: 'Check your email for password reset instructions.',
+        title: 'Reset Code Sent',
+        description: 'Check your email for the 6-digit reset code.',
         variant: 'success',
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to send reset link. Please try again.',
+        description: error.message || 'Failed to send reset code. Please try again.',
         variant: 'error',
       });
     } finally {
@@ -51,7 +51,10 @@ export default function ForgotPasswordPage() {
             </div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Check Your Email</h2>
             <p className="text-gray-600 mb-6">
-              We've sent a password reset link to {email}
+              We've sent a 6-digit reset code to {email}. 
+              <Link href={`/reset-password?email=${encodeURIComponent(email)}`} className="text-green-600 font-semibold hover:text-green-700 block mt-2">
+                Click here to reset your password
+              </Link>
             </p>
             <Button
               onClick={() => router.push('/auth/signin')}
@@ -78,7 +81,7 @@ export default function ForgotPasswordPage() {
           </Link>
           <h2 className="text-3xl font-semibold text-gray-900 mb-2">Forgot Password?</h2>
           <p className="text-gray-600">
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we'll send you a 6-digit code to reset your password.
           </p>
         </div>
 
@@ -106,7 +109,7 @@ export default function ForgotPasswordPage() {
             className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3"
             disabled={loading}
           >
-            {loading ? 'Sending...' : 'Send Reset Link'}
+            {loading ? 'Sending...' : 'Send Reset Code'}
           </Button>
         </form>
 
