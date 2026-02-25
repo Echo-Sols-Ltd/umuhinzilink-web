@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FarmerProduct, SupplierProduct, PaymentMethod } from '@/types';
 import { cn } from '@/lib/utils';
 import { useOrder } from '@/contexts/OrderContext';
+import useOrderAction from '@/hooks/useOrderAction';
 
 export interface OrderCreationModalProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   const [productName, setProductName] = useState('');
   const [unitPrice, setUnitPrice] = useState(0);
 
-  const { createFarmerOrder, createSupplierOrder, mutationLoading: loading } = useOrder();
+  const { createFarmerOrder, createSupplierOrder, loading } = useOrderAction();
 
   // Reset form when modal opens/closes
   useEffect(() => {

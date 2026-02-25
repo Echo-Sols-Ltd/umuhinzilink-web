@@ -10,6 +10,7 @@ import { MessageProvider } from '@/contexts/MessageContext';
 import { ProfileProvider } from '@/contexts/ProfileContext';
 import { SocketProvider } from './SocketContext';
 import { NotificationProvider } from './NotificationContext';
+import { BrowserNotificationProvider } from './BrowserNotificationContext';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -17,24 +18,28 @@ interface AppProvidersProps {
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
+
     <AuthProvider>
-      <SocketProvider>
-        <UserProvider>
-          <NotificationProvider>
-            <ProductProvider>
-              <WalletProvider>
-                <OrderProvider>
-                  <MessageProvider>
-                    <ProfileProvider>
-                      {children}
-                    </ProfileProvider>
-                  </MessageProvider>
-                </OrderProvider>
-              </WalletProvider>
-            </ProductProvider>
-          </NotificationProvider>
-        </UserProvider>
-      </SocketProvider>
+      <BrowserNotificationProvider>
+        <SocketProvider>
+          <UserProvider>
+            <NotificationProvider>
+              <ProductProvider>
+                <WalletProvider>
+                  <OrderProvider>
+                    <MessageProvider>
+                      <ProfileProvider>
+                        {children}
+                      </ProfileProvider>
+                    </MessageProvider>
+                  </OrderProvider>
+                </WalletProvider>
+              </ProductProvider>
+            </NotificationProvider>
+          </UserProvider>
+        </SocketProvider>
+      </BrowserNotificationProvider>
     </AuthProvider>
+
   );
 }

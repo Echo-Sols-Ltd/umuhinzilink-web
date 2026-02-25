@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import { useOrder } from '@/contexts/OrderContext';
+import useOrderAction from '@/hooks/useOrderAction';
 import {
   Loader2,
   ShoppingCart,
@@ -41,12 +42,14 @@ function FarmerRequestsComponent() {
     farmerBuyerOrders,
     fetchFarmerBuyerOrders,
     loading: ordersLoading,
-    cancelSupplierOrder,
-    processOrderPayment,
-    mutationLoading: actionLoading,
     farmerBuyerOrdersTotalPages: ordersTotalPages,
     farmerBuyerOrdersTotalElements: ordersTotalElements,
   } = useOrder();
+  const {
+    cancelSupplierOrder,
+    processOrderPayment,
+    loading: actionLoading,
+  } = useOrderAction();
 
   const router = useRouter()
   const [payingId, setPayingId] = useState<string | null>(null);

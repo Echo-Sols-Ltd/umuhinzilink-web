@@ -1,11 +1,13 @@
-import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
+import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
 import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus } from '@/types';
 import type { OrderRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
-import { useWallet } from './WalletContext';
-import { useToast } from '@/components/ui/use-toast';
+import { socketService } from '@/services/socket';
+import { useSocket } from './SocketContext';
+import { OrderChangeResponse, OrderDeliveryChange } from '@/services/websocket';
+import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 
 const STORAGE_KEYS = {
   BUYER: 'buyerOrders',
@@ -42,16 +44,8 @@ export type OrderContextValue = {
   editFarmerBuyerOrder: (data: SupplierOrder) => void;
   editSupplierOrder: (data: SupplierOrder) => void;
 
-  updateFarmerOrderStatus: (id: string, status: DeliveryStatus) => Promise<void>;
-  updateSupplierOrderStatus: (id: string, status: DeliveryStatus) => Promise<SupplierOrder | null>;
-
-  createFarmerOrder: (payload: OrderRequest) => Promise<void>;
-  createSupplierOrder: (payload: OrderRequest) => Promise<void>;
-  acceptFarmerOrder: (id: string) => Promise<FarmerOrder | null>;
-  acceptSupplierOrder: (id: string) => Promise<SupplierOrder | null>;
-  cancelFarmerOrder: (id: string) => Promise<FarmerOrder | null>;
-  cancelSupplierOrder: (id: string) => Promise<SupplierOrder | null>;
-  processOrderPayment: (orderId: string, paymentMethod?: unknown) => Promise<unknown>;
+  // State management functions
+  setMutationLoading: (loading: boolean) => void;
 
   mutationLoading: boolean;
 
@@ -96,11 +90,11 @@ const OrderContext = createContext<OrderContextValue | undefined>(undefined);
 export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { updateBuyerProduct } = useProduct();
-  const { payOrder: payWithWallet } = useWallet();
-  const { toast } = useToast();
+  const socket = useSocket()
+  const { showNotification, isEnabled } = useBrowserNotification();
 
   const [loading, setLoading] = useState(false);
-  const [mutationLoading, setMutationLoading] = useState(false);
+  const [mutationLoadingState, setMutationLoadingState] = useState(false);
 
   const [buyerOrders, setBuyerOrders] = useState<FarmerOrder[] | null>(null);
   const [farmerOrders, setFarmerOrders] = useState<FarmerOrder[] | null>(null);
@@ -123,9 +117,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   );
   const [currentBuyerOrder, setCurrentBuyerOrder] = useState<FarmerOrder | null>(null);
   const [currentProduct, setCurrentProduct] = useState<FarmerProduct | null>(null);
-
-
-
 
   const fetchBuyerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
     try {
@@ -168,7 +159,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       const res = await orderService.getSupplierOrders(page, size);
       if (!res.success) return null;
-      const list =  res.data ?? [];
+      const list = res.data ?? [];
       setSupplierOrders(Array.isArray(list) ? list : []);
       setSupplierOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
       setSupplierOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -245,227 +236,233 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(data);
   };
 
-  const updateFarmerOrderStatus = async (id: string, status: DeliveryStatus) => {
-    try {
-      setMutationLoading(true);
-      const response = await orderService.updateFarmerOrderStatus(id, status);
-      if (response.success && response.data) {
-        setFarmerOrders(prev => {
-          if (!prev) return prev;
-          const updated = prev.map(order =>
-            order.id === id ? { ...order, ...response.data } : order
-          );
-          localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
-          return updated;
-        });
-        setCurrentFarmerOrder(prev =>
-          prev?.id === id ? { ...prev, ...response.data } : prev
-        );
-        toast({ title: 'Order status updated successfully', description: 'Delivery status has been updated.', variant: 'success' });
-      } else {
-        toast({ title: 'Failed to update order status', description: response.message || 'Failed to update', variant: 'error' });
-      }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Failed to update farmer order status';
-      toast({ title: 'Failed to update order status', description: msg, variant: 'error' });
-      throw error;
-    } finally {
-      setMutationLoading(false);
-    }
+  const setMutationLoading = (loading: boolean) => {
+    setMutationLoadingState(loading);
   };
 
-  const createFarmerOrder = async (payload: OrderRequest) => {
-    try {
-      setMutationLoading(true);
-      const res = await orderService.createFarmerOrder(payload);
-      if (!res.success) {
-        toast({ title: 'Failed to create order', description: res.message || 'Failed to create order', variant: 'error' });
-        return;
-      }
-      const newOrder = res.data;
-      if (!newOrder) {
-        toast({ title: 'Failed to create order', description: 'Failed to create order: empty response', variant: 'error' });
-        return;
-      }
-      addFarmerOrder(newOrder);
-      toast({ title: 'Order created successfully', description: 'Initiating payment...', variant: 'success' });
-      const paymentRes = await payWithWallet(newOrder.id, 'Order Payment');
-      if (paymentRes?.status === 'COMPLETED') {
-        // Order already updated via addFarmerOrder
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to create order';
-      toast({ title: 'Failed to create order', description: msg, variant: 'error' });
-    } finally {
-      setMutationLoading(false);
-    }
-  };
+  // Socket event handlers
+  const handleNewOrder = useCallback((orderChange: OrderChangeResponse) => {
+    console.log("this is new order", orderChange);
 
-  const createSupplierOrder = async (payload: OrderRequest) => {
-    try {
-      setMutationLoading(true);
-      const res = await orderService.createSupplierOrder(payload);
-      if (!res.success) {
-        toast({ title: 'Failed to create order', description: res.message || 'Failed to create order', variant: 'error' });
-        return;
-      }
-      const newOrder = res.data;
-      if (!newOrder) {
-        toast({ title: 'Failed to create order', description: 'Failed to create order: empty response', variant: 'error' });
-        return;
-      }
-      addFarmerBuyerOrder(newOrder);
-      toast({ title: 'Order created successfully', description: 'Initiating payment...', variant: 'success' });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to create order';
-      toast({ title: 'Failed to create order', description: msg, variant: 'error' });
-    } finally {
-      setMutationLoading(false);
+    // Add null check to prevent undefined errors
+    if (!orderChange) {
+      console.error('Order change data is undefined');
+      return;
     }
-  };
 
-  const acceptFarmerOrder = async (id: string): Promise<FarmerOrder | null> => {
-    try {
-      setMutationLoading(true);
-      const res = await orderService.acceptFarmerOrder(id);
-      if (!res.success) {
-        toast({ title: 'Failed to accept order', description: res.message || 'Failed to accept order', variant: 'error' });
-        return null;
+    // Show notification for new order
+    if (isEnabled) {
+      showNotification({
+        type: 'order',
+        title: 'New Order Received',
+        body: `Order #${orderChange.orderId} has been placed with status: ${orderChange.status}`,
+        icon: '/icons/order.svg',
+        onClick: () => {
+          // Navigate to orders page
+          window.location.href = '/farmer/orders';
+        },
+      });
+    }
+
+    // For new orders, we need to refresh appropriate list since we don't have full order data
+    // This is a limitation of the current socket event structure
+    // In a real implementation, you might want to fetch the full order or have the socket send complete order data
+    fetchBuyerOrders();
+    fetchFarmerOrders();
+    fetchSupplierOrders();
+    fetchFarmerBuyerOrders();
+  }, [isEnabled, showNotification, fetchBuyerOrders, fetchFarmerOrders, fetchSupplierOrders, fetchFarmerBuyerOrders]);
+
+  const handleOrderStatusChange = useCallback((orderChange: OrderChangeResponse) => {
+    console.log("this is order status change", orderChange);
+
+    // Add null check to prevent undefined errors
+    if (!orderChange) {
+      console.error('Order change data is undefined');
+      return;
+    }
+
+    // Show notification for order status change
+    if (isEnabled) {
+      showNotification({
+        type: 'order',
+        title: 'Order Status Updated',
+        body: `Order #${orderChange.orderId} status changed to: ${orderChange.status}`,
+        icon: '/icons/order.svg',
+        onClick: () => {
+          // Navigate to orders page
+          window.location.href = '/farmer/orders';
+        },
+      });
+    }
+
+    // Update order status across all relevant lists by orderId
+    const { orderId, status } = orderChange;
+
+    // Helper function to update order status
+    const updateOrderStatus = (order: any) => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          status: status,
+          updatedAt: new Date().toISOString(),
+        };
       }
-      const updated = res.data;
-      if (!updated) {
-        toast({ title: 'Failed to accept order', description: 'Empty response', variant: 'error' });
-        return null;
-      }
-      editFarmerOrder(updated);
-      toast({ title: 'Order accepted successfully', description: 'The order has been accepted.', variant: 'success' });
+      return order;
+    };
+
+    // Update farmer orders
+    setFarmerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map(updateOrderStatus);
+      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
       return updated;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to accept order';
-      toast({ title: 'Failed to accept order', description: msg, variant: 'error' });
-      return null;
-    } finally {
-      setMutationLoading(false);
-    }
-  };
+    });
 
-  const acceptSupplierOrder = async (id: string): Promise<SupplierOrder | null> => {
-    try {
-      setMutationLoading(true);
-      const res = await orderService.acceptSupplierOrder(id);
-      if (!res.success) {
-        toast({ title: 'Failed to accept order', description: res.message || 'Failed to accept order', variant: 'error' });
-        return null;
-      }
-      const updated = res.data;
-      if (!updated) {
-        toast({ title: 'Failed to accept order', description: 'Empty response', variant: 'error' });
-        return null;
-      }
-      editSupplierOrder(updated);
-      toast({ title: 'Order accepted successfully', description: 'The order has been accepted.', variant: 'success' });
+    // Update buyer orders
+    setBuyerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map(updateOrderStatus);
+      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
       return updated;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to accept order';
-      toast({ title: 'Failed to accept order', description: msg, variant: 'error' });
-      return null;
-    } finally {
-      setMutationLoading(false);
-    }
-  };
+    });
 
-  const cancelFarmerOrder = async (id: string): Promise<FarmerOrder | null> => {
-    try {
-      setMutationLoading(true);
-      const res = await orderService.cancelFarmerOrder(id);
-      if (!res.success) {
-        toast({ title: 'Failed to cancel order', description: res.message || 'Failed to cancel order', variant: 'error' });
-        return null;
-      }
-      const updated = res.data;
-      if (!updated) {
-        toast({ title: 'Failed to cancel order', description: 'Empty response', variant: 'error' });
-        return null;
-      }
-      editFarmerOrder(updated);
-      toast({ title: 'Order cancelled successfully', description: 'The order has been cancelled.', variant: 'success' });
+    // Update supplier orders
+    setSupplierOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map(updateOrderStatus);
+      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
       return updated;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to cancel order';
-      toast({ title: 'Failed to cancel order', description: msg, variant: 'error' });
-      return null;
-    } finally {
-      setMutationLoading(false);
-    }
-  };
+    });
 
-  const cancelSupplierOrder = async (id: string): Promise<SupplierOrder | null> => {
-    try {
-      setMutationLoading(true);
-      const res = await orderService.cancelSupplierOrder(id);
-      if (!res.success) {
-        toast({ title: 'Failed to cancel order', description: res.message || 'Failed to cancel order', variant: 'error' });
-        return null;
-      }
-      const updated = res.data;
-      if (!updated) {
-        toast({ title: 'Failed to cancel order', description: 'Empty response', variant: 'error' });
-        return null;
-      }
-      editSupplierOrder(updated);
-      toast({ title: 'Order cancelled successfully', description: 'The order has been cancelled.', variant: 'success' });
+    // Update farmer buyer orders
+    setFarmerBuyerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map(updateOrderStatus);
+      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
       return updated;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to cancel order';
-      toast({ title: 'Failed to cancel order', description: msg, variant: 'error' });
-      return null;
-    } finally {
-      setMutationLoading(false);
-    }
-  };
+    });
 
-  const updateSupplierOrderStatus = async (id: string, status: DeliveryStatus): Promise<SupplierOrder | null> => {
-    try {
-      setMutationLoading(true);
-      const res = await orderService.updateSupplierOrderStatus(id, status);
-      if (!res.success) {
-        toast({ title: 'Failed to update order status', description: res.message || 'Failed to update order status', variant: 'error' });
-        return null;
+    // Update current orders if they match
+    setCurrentFarmerOrder(prev =>
+      prev?.id === orderId ? updateOrderStatus(prev) : prev
+    );
+    setCurrentBuyerOrder(prev =>
+      prev?.id === orderId ? updateOrderStatus(prev) : prev
+    );
+    setCurrentSupplierOrder(prev =>
+      prev?.id === orderId ? updateOrderStatus(prev) : prev
+    );
+    setCurrentFarmerBuyerOrder(prev =>
+      prev?.id === orderId ? updateOrderStatus(prev) : prev
+    );
+  }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
+  const handleOrderDeliveryChange = useCallback((deliveryChange: OrderDeliveryChange) => {
+    if (!deliveryChange) {
+      console.error('Delivery change data is undefined');
+      return;
+    }
+    console.log(isEnabled)
+
+    if (isEnabled) {
+      showNotification({
+        type: 'delivery',
+        title: 'Delivery Status Updated',
+        body: `Order #${deliveryChange.orderId} delivery status: ${deliveryChange.status}`,
+        icon: '/icons/delivery.svg',
+        onClick: () => {
+          // Navigate to delivery page
+          window.location.href = '/farmer/delivery';
+        },
+      });
+    }
+
+    // Update order delivery status across all relevant lists by orderId
+    const { orderId, status } = deliveryChange;
+
+    // Helper function to update delivery status
+    const updateDeliveryStatus = (order: any) => {
+      if (order.id === orderId) {
+        // Create or update delivery object with proper status
+        const updatedDelivery = {
+          ...order.delivery,
+          status: status, // Use the delivery status from socket event
+          updatedAt: new Date().toISOString(),
+        };
+
+        return {
+          ...order,
+          delivery: updatedDelivery,
+          // Also update a deliveryStatus field if it exists on the order
+          ...(order.deliveryStatus && { deliveryStatus: status })
+        };
       }
-      const updated = res.data;
-      if (!updated) {
-        toast({ title: 'Failed to update order status', description: 'Empty response', variant: 'error' });
-        return null;
-      }
-      editSupplierOrder(updated);
-      toast({ title: 'Order status updated successfully', description: 'Delivery status has been updated.', variant: 'success' });
+      return order;
+    };
+
+    // Update farmer orders delivery status
+    setFarmerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map(updateDeliveryStatus);
+      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
       return updated;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to update order status';
-      toast({ title: 'Failed to update order status', description: msg, variant: 'error' });
-      return null;
-    } finally {
-      setMutationLoading(false);
-    }
-  };
+    });
 
-  const processOrderPayment = async (orderId: string, _paymentMethod?: unknown): Promise<unknown> => {
-    try {
-      setMutationLoading(true);
-      toast({ title: 'Wallet Payment', description: 'Processing payment from your wallet...', variant: 'loading' });
-      const res = await payWithWallet(orderId, 'Order Payment');
-      if (res && (res as { status?: string }).status === 'COMPLETED') {
-        await fetchFarmerBuyerOrders();
-        return res;
-      }
-      return null;
-    } catch {
-      toast({ title: 'Payment error', description: 'An error occurred while processing your payment.', variant: 'error' });
-      return null;
-    } finally {
-      setMutationLoading(false);
-    }
-  };
+    // Update buyer orders delivery status
+    setBuyerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map(updateDeliveryStatus);
+      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Update supplier orders delivery status
+    setSupplierOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map(updateDeliveryStatus);
+      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Update farmer buyer orders delivery status
+    setFarmerBuyerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map(updateDeliveryStatus);
+      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Update current orders if they match
+    setCurrentFarmerOrder(prev =>
+      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
+    );
+    setCurrentBuyerOrder(prev =>
+      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
+    );
+    setCurrentSupplierOrder(prev =>
+      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
+    );
+    setCurrentFarmerBuyerOrder(prev =>
+      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
+    );
+  }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
+
+  const cleanupSocketListeners = useCallback(() => {
+    if (!socket) return;
+    socket.removeNewOrderListener(handleNewOrder);
+    socket.removeOrderStatusChangeListener(handleOrderStatusChange);
+    socket.removeOrderDeliveryChangeListener(handleOrderDeliveryChange);
+  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.onNewOrder(handleNewOrder);
+    socket.onOrderStatusChange(handleOrderStatusChange);
+    socket.onOrderDeliveryChange(handleOrderDeliveryChange);
+
+    return cleanupSocketListeners;
+  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, cleanupSocketListeners]);
 
   // 🔹 Derived Orders
   const pendingBuyerOrders = useMemo(
@@ -557,16 +554,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     editFarmerOrder,
     editSupplierOrder,
     editFarmerBuyerOrder,
-    updateFarmerOrderStatus,
-    updateSupplierOrderStatus,
-    createFarmerOrder,
-    createSupplierOrder,
-    acceptFarmerOrder,
-    acceptSupplierOrder,
-    cancelFarmerOrder,
-    cancelSupplierOrder,
-    processOrderPayment,
-    mutationLoading,
+    setMutationLoading,
+    mutationLoading: mutationLoadingState,
     fetchBuyerOrders,
     fetchFarmerOrders,
     fetchSupplierOrders,
