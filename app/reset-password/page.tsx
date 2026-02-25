@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Lock, CheckCircle, Eye, EyeOff } from 'lucide-react';
@@ -12,11 +12,11 @@ import { authService } from '@/services/auth';
 
 type ResetStep = 'code' | 'password' | 'success';
 
-export default function ResetPasswordPage() {
+function ResetPassword() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailFromQuery = searchParams.get('email') || '';
-  
+
   const [email, setEmail] = useState(emailFromQuery);
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -37,7 +37,7 @@ export default function ResetPasswordPage() {
 
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateEmail(email)) {
       toast({
         title: 'Invalid Email',
@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validatePassword(newPassword)) {
       toast({
         title: 'Weak Password',
@@ -156,7 +156,7 @@ export default function ResetPasswordPage() {
             {step === 'code' ? 'Verify Reset Code' : 'Reset Password'}
           </h2>
           <p className="text-gray-600">
-            {step === 'code' 
+            {step === 'code'
               ? 'Enter the 6-digit code sent to your email address.'
               : 'Enter your new password below.'
             }
@@ -279,5 +279,14 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPassword />
+    </Suspense>
   );
 }
