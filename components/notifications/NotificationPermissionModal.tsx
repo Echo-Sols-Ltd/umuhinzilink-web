@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Bell, BellOff, Settings, Info } from 'lucide-react';
+import { X, Bell, MessageCircle, Package, ShoppingBag, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 
@@ -53,128 +53,125 @@ export const NotificationPermissionModal: React.FC<NotificationPermissionModalPr
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Icon and title */}
-        <div className="flex items-center mb-4">
-          <div className="bg-blue-100 p-3 rounded-full mr-4">
-            <Bell className="w-6 h-6 text-blue-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Enable Notifications
-            </h2>
-            <p className="text-sm text-gray-600">
-              Stay updated with real-time alerts
-            </p>
-          </div>
-        </div>
-
-        {/* Benefits */}
-        <div className="space-y-3 mb-6">
-          <div className="flex items-start">
-            <div className="bg-green-100 p-1 rounded-full mr-3 mt-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center">
+            <div className="bg-gradient-to-br from-green-400 to-green-600 p-3 rounded-2xl mr-4 shadow-lg">
+              <Bell className="w-8 h-8 text-white" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">New Messages</p>
-              <p className="text-xs text-gray-600">
-                Get notified when someone sends you a message
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start">
-            <div className="bg-green-100 p-1 rounded-full mr-3 mt-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Order Updates</p>
-              <p className="text-xs text-gray-600">
-                Track your orders in real-time
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start">
-            <div className="bg-green-100 p-1 rounded-full mr-3 mt-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">New Products</p>
-              <p className="text-xs text-gray-600">
-                Be the first to know about new products
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Info note */}
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-6">
-          <div className="flex items-start">
-            <Info className="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-blue-800">
-              You can change notification preferences anytime in your settings. 
-              We'll only send notifications for important updates.
-            </p>
-          </div>
-        </div>
-
-        {/* Action buttons */}
-        <div className="space-y-3">
-          <Button
-            onClick={handleEnableNotifications}
-            disabled={isRequesting || !isSupported}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            {isRequesting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Requesting Permission...
-              </>
-            ) : (
-              <>
-                <Bell className="w-4 h-4 mr-2" />
+              <h2 className="text-2xl font-bold text-gray-900">
                 Enable Notifications
-              </>
-            )}
-          </Button>
-
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={handleSkip}
-              className="flex-1"
-            >
-              Skip
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={handleLater}
-              className="flex-1"
-            >
-              Ask Later
-            </Button>
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Stay updated with real-time alerts
+              </p>
+            </div>
           </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-50 rounded-xl"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
 
-        {/* Settings link */}
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => {
-              // Navigate to settings or open browser settings
-              window.open('chrome://settings/content/notifications', '_blank');
-            }}
-            className="text-xs text-gray-500 hover:text-gray-700 flex items-center justify-center mx-auto"
-          >
-            <Settings className="w-3 h-3 mr-1" />
-            Manage browser settings
-          </button>
+        {/* Content */}
+        <div className="p-6">
+          <p className="text-gray-700 mb-6 leading-relaxed">
+            Get instant notifications for new messages, order updates, and product changes. 
+            Stay connected and never miss important updates.
+          </p>
+
+          {/* Benefits */}
+          <div className="space-y-4 mb-8">
+            <div className="flex items-start p-4 bg-green-50 rounded-2xl border border-green-100">
+              <div className="bg-gradient-to-br from-green-400 to-green-600 p-2 rounded-xl mr-4 shadow-md">
+                <MessageCircle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-gray-900">New Messages</p>
+                <p className="text-sm text-gray-600">
+                  Get notified when someone sends you a message
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start p-4 bg-green-50 rounded-2xl border border-green-100">
+              <div className="bg-gradient-to-br from-green-400 to-green-600 p-2 rounded-xl mr-4 shadow-md">
+                <Package className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-gray-900">Order Updates</p>
+                <p className="text-sm text-gray-600">
+                  Track your orders in real-time
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start p-4 bg-green-50 rounded-2xl border border-green-100">
+              <div className="bg-gradient-to-br from-green-400 to-green-600 p-2 rounded-xl mr-4 shadow-md">
+                <ShoppingBag className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-gray-900">New Products</p>
+                <p className="text-sm text-gray-600">
+                  Discover new items in the marketplace
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="space-y-3">
+            <Button
+              onClick={handleEnableNotifications}
+              disabled={isRequesting || !isSupported}
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
+            >
+              {isRequesting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Requesting Permission...
+                </>
+              ) : (
+                <>
+                  <Bell className="w-4 h-4 mr-2" />
+                  Enable Notifications
+                </>
+              )}
+            </Button>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={handleSkip}
+                className="flex-1"
+              >
+                Skip
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleLater}
+                className="flex-1"
+              >
+                Ask Later
+              </Button>
+            </div>
+          </div>
+
+          {/* Settings link */}
+          <div className="text-center mt-4">
+            <button
+              onClick={() => {
+                // Navigate to settings or open browser settings
+                window.open('chrome://settings/content/notifications', '_blank');
+              }}
+              className="text-xs text-gray-500 hover:text-gray-700 flex items-center justify-center mx-auto"
+            >
+              <Settings className="w-3 h-3 mr-1" />
+              Manage browser settings
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -207,41 +204,42 @@ export const NotificationPrompt: React.FC<{
   };
 
   return (
-    <div className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <Bell className="w-5 h-5 text-blue-600 mr-3" />
-          <div>
-            <p className="text-sm font-medium text-blue-900">
-              Enable notifications for real-time updates
-            </p>
-            <p className="text-xs text-blue-700">
-              Get alerts for messages, orders, and new products
-            </p>
-          </div>
+    <div className={`bg-white rounded-2xl shadow-2xl border border-green-200 p-4 ${className}`}>
+      <div className="flex items-start">
+        <div className="bg-gradient-to-br from-green-400 to-green-600 p-3 rounded-xl mr-4 shadow-md">
+          <Bell className="w-6 h-6 text-white" />
         </div>
-        <div className="flex items-center gap-2 ml-4">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={onDismiss}
-            className="text-blue-700 border-blue-300"
-          >
-            <BellOff className="w-4 h-4 mr-1" />
-            No thanks
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleEnable}
-            disabled={isRequesting || !isSupported}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {isRequesting ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              'Enable'
-            )}
-          </Button>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Enable Notifications?
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Get instant alerts for messages, orders, and updates
+          </p>
+          
+          <div className="flex gap-2">
+            <button
+              onClick={handleEnable}
+              disabled={isRequesting || !isSupported}
+              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-200"
+            >
+              {isRequesting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Requesting...
+                </>
+              ) : (
+                'Enable Now'
+              )}
+            </button>
+            
+            <button
+              onClick={onDismiss}
+              className="text-gray-500 hover:text-gray-700 px-4 py-2 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+            >
+              Not Now
+            </button>
+          </div>
         </div>
       </div>
     </div>
