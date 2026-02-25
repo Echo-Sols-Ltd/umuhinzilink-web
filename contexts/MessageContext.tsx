@@ -5,6 +5,8 @@ import { messageService } from '@/services/messages';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
 import { ChatUser } from '@/types/chat';
+import { useBrowserNotification } from '@/hooks/useBrowserNotification';
+import { useToast } from '@/components/ui/use-toast';
 
 export interface MessageContextValue {
   messages: Message[];
@@ -31,6 +33,8 @@ const MessageContext = createContext<MessageContextValue | undefined>(undefined)
 export function MessageProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const socket = useSocket();
+  const { shouldUseInAppNotifications, showNotification } = useBrowserNotification();
+  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [activeChatUser, setActiveChatUser] = useState<ChatUser | null>(null);
   const [loading, setLoading] = useState(false);
@@ -62,11 +66,40 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       return [...prev, message];
     });
 
-    // Notify if not active chat
-    if (activeChatUser?.id !== message.sender.id && message.sender.id !== user?.id) {
-      // Optional: Notification logic could go here or in a separate hook
+    // Intelligent Message Notification Logic
+    // 1. Check if user is NOT in active chat with sender
+    // 2. Check if message is not from self
+    const isNotSelf = message.sender.id !== user?.id;
+    const isNotActiveChat = activeChatUser?.id !== message.sender.id;
+
+    if (isNotSelf && isNotActiveChat) {
+      console.log('📨 New message notification logic:', {
+        sender: message.sender.names,
+        activeChatUser: activeChatUser?.names,
+        shouldUseInAppNotifications
+      });
+
+      // Use intelligent notification routing
+      const browserNotificationShown = showNotification({
+        type: 'message',
+        title: `New message from ${message.sender.names}`,
+        body: message.content,
+        icon: message.sender.avatar || '/icons/message.svg',
+        onClick: () => {
+          // Navigate to chat with sender
+          window.location.href = `/chat/${message.sender.id}`;
+        },
+      });
+
+      // Show in-app toast if browser notification wasn't shown (page is active)
+      if (!browserNotificationShown && shouldUseInAppNotifications) {
+        toast({
+          description: `New message from ${message.sender.names}`,
+          variant: 'default'
+        });
+      }
     }
-  }, [activeChatUser, user?.id]);
+  }, [activeChatUser, user?.id, shouldUseInAppNotifications, showNotification, toast]);
 
   // Handle message editing
   const handleMessageEdited = useCallback((editedMessage: Message) => {
