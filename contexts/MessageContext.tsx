@@ -97,13 +97,15 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
   // Handle typing updates
   const handleTypingUpdate = useCallback((typingData: ChatTyping) => {
+    console.log(typingData)
     setTypingUsers(prev => {
       const next = new Set(prev);
-      if (typingData.isTyping) {
+      if (typingData.typing) {
         next.add(typingData.userId);
       } else {
         next.delete(typingData.userId);
       }
+      console.log(next)
       return next;
     });
   }, []);

@@ -58,5 +58,5 @@ export interface EditMessageRequest {
 export interface ChatTyping {
   userId: string;
   receiverId: string;
-  isTyping: boolean;
+  typing: boolean;
 }

@@ -167,11 +167,11 @@ class SocketService {
         try {
 
             this.stompClient.subscribe('/topic/onlineUsers', (msg) => this.handleOnlineUsers(msg))
-            this.stompClient.subscribe('/user/queue/private', (msg) => this.handleMessage(msg))
-            this.stompClient.subscribe('/topic/messageDeletion', (msg) => this.handleMessageDeletion(msg))
-            this.stompClient.subscribe('/topic/messageEdition', (msg) => this.handleMessageEdition(msg))
-            this.stompClient.subscribe('/topic/messageReaction', (msg) => this.handleReaction(msg))
-            this.stompClient.subscribe('/topic/typing', (msg) => this.handleTyping(msg))
+            this.stompClient.subscribe('/user/queue/messages', (msg) => this.handleMessage(msg))
+            this.stompClient.subscribe('/user/queue/messageDeletion', (msg) => this.handleMessageDeletion(msg))
+            this.stompClient.subscribe('/user/queue/messageEdition', (msg) => this.handleMessageEdition(msg))
+            this.stompClient.subscribe('/user/queue/messageReaction', (msg) => this.handleReaction(msg))
+            this.stompClient.subscribe('/user/queue/typing', (msg) => this.handleTyping(msg))
         } catch (error) {
             console.error('❌ Error subscribing to topics:', error)
         }

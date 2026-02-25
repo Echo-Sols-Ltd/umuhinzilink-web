@@ -209,7 +209,7 @@ export const useChat = () => {
         }
     }, [deleteMessageRequest, toast])
 
-    const handleTyping = useCallback((isTyping: boolean) => {
+    const handleTyping = useCallback((typing: boolean) => {
         // Business logic validation
         if (!currentUser?.id || !activeChatUser?.id) return;
 
@@ -217,7 +217,7 @@ export const useChat = () => {
         const typingRequest = {
             userId: currentUser.id,
             receiverId: activeChatUser.id,
-            isTyping
+            typing
         };
 
         // Send through context
