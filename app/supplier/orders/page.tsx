@@ -114,7 +114,7 @@ function OrdersPageComponent() {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
-      <Sidebar userType={UserType.SUPPLIER} activeItem="Orders" />
+      <Sidebar userType={UserType.SUPPLIER} activeItem="Farmer Orders" />
 
       <main className="flex-1 h-full overflow-auto bg-white/30">
         <div className="p-8 max-w-7xl mx-auto space-y-8">

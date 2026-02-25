@@ -117,7 +117,7 @@ function FarmerSupplierOrderDetailPage() {
   if (!order) {
     return (
       <div className="flex h-screen bg-white">
-        <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
+        <Sidebar userType={UserType.FARMER} activeItem='Supply Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -129,12 +129,12 @@ function FarmerSupplierOrderDetailPage() {
     );
   }
 
-  const supplier = order.buyer; // Using buyer as placeholder until supplier data is available
+  const supplier = order.buyer; 
   const product = order.product;
 
   return (
     <div className="flex h-screen bg-white">
-      <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
+      <Sidebar userType={UserType.FARMER} activeItem='Supply Orders' />
 
       <main className="flex-1 overflow-auto">
         {/* Header */}

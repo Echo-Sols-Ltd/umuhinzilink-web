@@ -15,7 +15,7 @@ function WalletPage() {
         <div className="flex h-screen bg-white">
             <Sidebar
                 userType={UserType.FARMER}
-                activeItem='My Wallet'
+                activeItem='Wallet'
             />
 
             {/* Main Content */}

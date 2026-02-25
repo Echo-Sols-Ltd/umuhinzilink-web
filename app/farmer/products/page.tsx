@@ -81,7 +81,7 @@ function FarmerProducts() {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
-      <Sidebar userType={UserType.FARMER} activeItem="Products" />
+      <Sidebar userType={UserType.FARMER} activeItem="My Products" />
 
       <div className="flex-1 flex flex-col overflow-auto">
         <header className="bg-white border-b  flex items-center justify-between p-6 shadow-sm">

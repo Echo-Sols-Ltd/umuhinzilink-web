@@ -39,7 +39,7 @@ function SettingsComponent() {
     <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
-        activeItem='Settings'
+        activeItem='Account Settings'
       />
 
       <main className="flex-1 p-6 h-full overflow-auto">

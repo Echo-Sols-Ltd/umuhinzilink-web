@@ -106,7 +106,7 @@ function SavedItemsComponent() {
       {/* Sidebar */}
       <Sidebar
         userType={UserType.BUYER}
-        activeItem='Saved Items'
+        activeItem='Favorites'
       />
 
       {/* Main Content */}

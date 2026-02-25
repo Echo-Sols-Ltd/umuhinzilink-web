@@ -159,7 +159,7 @@ function FarmerOrders() {
     <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
-        activeItem='Orders' />
+        activeItem='Customer Orders' />
 
 
       <main className="flex-1 h-full bg-white overflow-auto">

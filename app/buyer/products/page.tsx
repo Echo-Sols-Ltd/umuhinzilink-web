@@ -239,7 +239,7 @@ function ProductsPageComponent() {
     </div>
   );
 
-  const sidebar = <Sidebar userType={UserType.BUYER} activeItem='Browse Product' />;
+  const sidebar = <Sidebar userType={UserType.BUYER} activeItem='Marketplace' />;
 
   return (
     <ResponsiveLayout sidebar={sidebar} header={header}>

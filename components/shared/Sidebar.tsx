@@ -63,7 +63,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     label: 'Communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
-                        { icon: <Bell className="w-4.5 h-4.5" />, label: 'Alerts', href: '/notifications' },
+                        { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
