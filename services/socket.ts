@@ -172,8 +172,39 @@ class SocketService {
             this.stompClient.subscribe('/user/queue/messageEdition', (msg) => this.handleMessageEdition(msg))
             this.stompClient.subscribe('/user/queue/messageReaction', (msg) => this.handleReaction(msg))
             this.stompClient.subscribe('/user/queue/typing', (msg) => this.handleTyping(msg))
+            this.stompClient.subscribe('/user/queue/orderStatusChange', (msg) => this.handleOrderStatusChange(msg))
+            this.stompClient.subscribe('/user/queue/orderDeliveryChange', (msg) => this.handleOrderDeliveryChange(msg))
+            this.stompClient.subscribe('/user/queue/newOrder', (msg) => this.handleNewOrder(msg))
         } catch (error) {
             console.error('❌ Error subscribing to topics:', error)
+        }
+    }
+
+    private handleNewOrder(message: IMessage) {
+        try {
+            console.log("handleNewOrder", message)
+        } catch (error) {
+            console.error('error parsing new order', error)
+        }
+    }
+
+    private handleOrderStatusChange(message: IMessage) {
+        try {
+            console.log("handleOrderStatusChange", message)
+            // const body = JSON.parse(message.body) as SocketResponse<Order>
+            // this.orderStatusChangeListeners.forEach(cb => cb(body.data!))
+        } catch (error) {
+            console.error('error parsing order status change', error)
+        }
+    }
+
+    private handleOrderDeliveryChange(message: IMessage) {
+        try {
+            console.log("handleOrderDeliveryChange", message)
+            // const body = JSON.parse(message.body) as SocketResponse<Order>
+            // this.orderDeliveryChangeListeners.forEach(cb => cb(body.data!))
+        } catch (error) {
+            console.error('error parsing order delivery change', error)
         }
     }
 
