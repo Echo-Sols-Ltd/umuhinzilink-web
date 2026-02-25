@@ -261,7 +261,7 @@ export function OfflineIndicator({ className = '' }: OfflineIndicatorProps) {
   if (!showOfflineMessage) return null;
 
   return (
-    <div className={`fixed top-0 left-0 right-0 bg-red-600 text-white text-center py-2 z-50 ${className}`}>
+    <div className={` bg-red-600 text-white text-center py-2 z-50 ${className}`}>
       <p className="text-sm font-medium">
         You're currently offline. Some features may not be available.
       </p>

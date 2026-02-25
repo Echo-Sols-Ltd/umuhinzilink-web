@@ -29,7 +29,7 @@ export interface ChatInterfaceProps {
   className?: string;
 }
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   const { user: currentUser } = useAuth();
   const {
     messages,
@@ -76,18 +76,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
   const handleTyping = useCallback(() => {
     if (!activeChatUser?.id || !currentUser?.id) return;
-    
+
     // Only send typing start if not already typing
     if (!isTypingActive) {
       setIsTyping(true);
       setIsTypingActive(true);
     }
-    
+
     // Clear existing timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-    
+
     // Set timeout to send typing stop event
     typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);

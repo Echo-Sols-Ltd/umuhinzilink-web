@@ -16,7 +16,7 @@ export interface OrderCreationModalProps {
   orderType?: 'buyer' | 'supplier';
 }
 
-export const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
+const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   isOpen,
   onClose,
   product,

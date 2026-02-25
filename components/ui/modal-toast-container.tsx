@@ -11,7 +11,7 @@ const getVariantStyles = (variant: ToastData['variant']) => {
     case 'success':
       return {
         container: 'bg-white rounded-2xl shadow-2xl border border-green-200',
-        icon: <div className="bg-gradient-to-br from-green-400 to-green-600 p-2 rounded-xl shadow-md"><CheckCircle className="w-5 h-5 text-white" /></div>,
+        icon: <div className="bg-linear-to-br from-green-400 to-green-600 p-2 rounded-xl shadow-md"><CheckCircle className="w-5 h-5 text-white" /></div>,
         title: 'text-gray-900 font-semibold',
         description: 'text-gray-600',
         button: 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-md',
@@ -20,7 +20,7 @@ const getVariantStyles = (variant: ToastData['variant']) => {
     case 'error':
       return {
         container: 'bg-white rounded-2xl shadow-2xl border border-red-200',
-        icon: <div className="bg-gradient-to-br from-red-400 to-red-600 p-2 rounded-xl shadow-md"><AlertCircle className="w-5 h-5 text-white" /></div>,
+        icon: <div className="bg-linear-to-br from-red-400 to-red-600 p-2 rounded-xl shadow-md"><AlertCircle className="w-5 h-5 text-white" /></div>,
         title: 'text-gray-900 font-semibold',
         description: 'text-gray-600',
         button: 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-md',
@@ -29,7 +29,7 @@ const getVariantStyles = (variant: ToastData['variant']) => {
     case 'warning':
       return {
         container: 'bg-white rounded-2xl shadow-2xl border border-yellow-200',
-        icon: <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 p-2 rounded-xl shadow-md"><AlertTriangle className="w-5 h-5 text-white" /></div>,
+        icon: <div className="bg-linear-to-br from-yellow-400 to-yellow-600 p-2 rounded-xl shadow-md"><AlertTriangle className="w-5 h-5 text-white" /></div>,
         title: 'text-gray-900 font-semibold',
         description: 'text-gray-600',
         button: 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-md',
@@ -38,7 +38,7 @@ const getVariantStyles = (variant: ToastData['variant']) => {
     case 'loading':
       return {
         container: 'bg-white rounded-2xl shadow-2xl border border-blue-200',
-        icon: <div className="bg-gradient-to-br from-blue-400 to-blue-600 p-2 rounded-xl shadow-md"><Loader2 className="w-5 h-5 text-white animate-spin" /></div>,
+        icon: <div className="bg-linear-to-br from-blue-400 to-blue-600 p-2 rounded-xl shadow-md"><Loader2 className="w-5 h-5 text-white animate-spin" /></div>,
         title: 'text-gray-900 font-semibold',
         description: 'text-gray-600',
         button: 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md',
@@ -47,7 +47,7 @@ const getVariantStyles = (variant: ToastData['variant']) => {
     default:
       return {
         container: 'bg-white rounded-2xl shadow-2xl border border-gray-200',
-        icon: <div className="bg-gradient-to-br from-gray-400 to-gray-600 p-2 rounded-xl shadow-md"><Info className="w-5 h-5 text-white" /></div>,
+        icon: <div className="bg-linear-to-br from-gray-400 to-gray-600 p-2 rounded-xl shadow-md"><Info className="w-5 h-5 text-white" /></div>,
         title: 'text-gray-900 font-semibold',
         description: 'text-gray-600',
         button: 'bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white shadow-md',
@@ -153,7 +153,7 @@ const ModalToastItem: React.FC<ModalToastItemProps> = ({ toast, onRemove }) => {
   );
 };
 
-export const ModalToastContainer: React.FC = () => {
+const ModalToastContainer: React.FC = () => {
   const { toasts, dismiss } = useToast();
   const [mounted, setMounted] = useState(false);
 

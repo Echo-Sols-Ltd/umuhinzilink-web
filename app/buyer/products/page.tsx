@@ -26,7 +26,7 @@ import { useProduct } from '@/contexts/ProductContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChat } from '@/hooks/useChat';
 import { MessageType } from '@/types/message';
-import { ProductOrderInterface } from '@/components/orders/ProductOrderInterface';
+import ProductOrderInterface from '@/components/orders/ProductOrderInterface';
 import { productService } from '@/services/products';
 import { ProductDisplay } from '@/components/products/ProductDisplay';
 import {

@@ -33,7 +33,7 @@ export interface FileUploadState {
   uploadedUrl: string | null;
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({
+const FileUpload: React.FC<FileUploadProps> = ({
   onUploadComplete,
   onUploadError,
   onFileSelect,
@@ -105,7 +105,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
     // Process file
     let processedFile = file;
-    
+
     // Resize image if needed
     if (resizeImage && file.type.startsWith('image/')) {
       try {
@@ -139,7 +139,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         setState(prev => ({ ...prev, progress: progress.percentage }));
       };
 
-      let response;
+      let response: any;
       switch (uploadType) {
         case 'profile':
           response = await uploadService.uploadUserProfile(state.file, onProgress);

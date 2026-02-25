@@ -17,7 +17,7 @@ export interface ProductOrderInterfaceProps {
   setIsPurchasing: (isPurchasing: boolean) => void;
 }
 
-export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
+const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
   product,
   productType,
   onSaveProduct,
@@ -71,7 +71,7 @@ export const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
       <div className={cn('bg-white rounded-lg shadow-lg overflow-hidden', className)}>
         {/* Image Gallery */}
         <div className="relative">
-          <div className="bg-gray-100 bg-black h-[400px] w-[500px]">
+          <div className="bg-black h-[400px] w-[500px]">
             <Image
               src={images[selectedImageIndex]}
               alt={product.name}

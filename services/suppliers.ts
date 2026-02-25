@@ -26,7 +26,7 @@ export interface SupplierDashboard {
   topProducts: SupplierProduct[];
 }
 
-export class SupplierService {
+class SupplierService {
   // User Profile Methods
   async getUserById(id: string): Promise<ApiResponse<Supplier>> {
     return await apiClient.get<ApiResponse<Supplier>>(API_ENDPOINTS.SUPPLIER.BY_ID(id));
