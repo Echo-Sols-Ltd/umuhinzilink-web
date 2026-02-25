@@ -24,7 +24,7 @@ export interface PaymentResponseDTO {
   phoneNumber?: string;
 }
 
-export class PaymentService {
+class PaymentService {
   // Process payment for order
   async processPayment(request: PaymentRequest): Promise<ApiResponse<PaymentResponseDTO>> {
     return await apiClient.post<ApiResponse<PaymentResponseDTO>>(API_ENDPOINTS.PAYMENT.PROCESS, request);

@@ -22,7 +22,7 @@ export interface WalletTransactionDTO {
   createdAt: string;
 }
 
-export class WalletService {
+class WalletService {
   // Get wallet balance
   async getBalance(): Promise<ApiResponse<WalletDTO>> {
     return await apiClient.get<ApiResponse<WalletDTO>>(API_ENDPOINTS.WALLET.BALANCE);

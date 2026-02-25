@@ -15,7 +15,7 @@ export interface FileUploadResponse {
   mimeType: string;
 }
 
-export class UploadService {
+class UploadService {
   // Upload user profile image
   async uploadUserProfile(
     file: File,
@@ -168,7 +168,7 @@ export class UploadService {
       img.onload = () => {
         // Calculate new dimensions
         let { width, height } = img;
-        
+
         if (width > height) {
           if (width > maxWidth) {
             height = (height * maxWidth) / width;
@@ -186,7 +186,7 @@ export class UploadService {
 
         // Draw and compress
         ctx?.drawImage(img, 0, 0, width, height);
-        
+
         canvas.toBlob(
           (blob) => {
             if (blob) {

@@ -45,23 +45,22 @@ interface NavGroup {
 // ─── Navigation config ───────────────────────────────────────────────────────
 function getNavGroups(userType: UserType): NavGroup[] {
     switch (userType) {
+
         case UserType.FARMER:
             return [
                 {
-                    label: 'Core',
+                    label: 'Overview',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/farmer/dashboard' },
-                        { icon: <Package className="w-4.5 h-4.5" />, label: 'Products', href: '/farmer/products' },
-                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Input Request', href: '/farmer/requests' },
-                        { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Orders', href: '/farmer/orders' },
-                        { icon: <Store className="w-4.5 h-4.5" />, label: 'Supplier Orders', href: '/farmer/supplier-orders' },
-                        { icon: <Truck className="w-4.5 h-4.5" />, label: 'Deliveries', href: '/farmer/delivery' },
-                        { icon: <BarChart2 className="w-4.5 h-4.5" />, label: 'Market Analytics', href: '/farmer/market_analysis' },
-                        { icon: <MessageSquare className="w-4.5 h-4.5" />, label: 'AI Tips', href: '/farmer/ai' },
+                        { icon: <Package className="w-4.5 h-4.5" />, label: 'My Products', href: '/farmer/products' },
+                        { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Customer Orders', href: '/farmer/orders' },
+                        { icon: <Store className="w-4.5 h-4.5" />, label: 'Supply Orders', href: '/farmer/supplier-orders' },
+                        { icon: <BarChart2 className="w-4.5 h-4.5" />, label: 'Market Intelligence', href: '/farmer/market_analysis' },
+                        { icon: <MessageSquare className="w-4.5 h-4.5" />, label: 'Advisory Insights', href: '/farmer/ai' },
                     ],
                 },
                 {
-                    label: 'Communicate',
+                    label: 'Communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
@@ -70,9 +69,9 @@ function getNavGroups(userType: UserType): NavGroup[] {
                 {
                     label: 'Account',
                     items: [
-                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/farmer/wallet' },
+                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/farmer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/farmer/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/farmer/settings' },
                     ],
                 },
             ];
@@ -80,29 +79,27 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.BUYER:
             return [
                 {
-                    label: 'Core',
+                    label: 'Overview',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/buyer/dashboard' },
-                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Browse Products', href: '/buyer/products' },
-                        { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'My Purchases', href: '/buyer/purchases' },
-                        { icon: <Truck className="w-4.5 h-4.5" />, label: 'Delivery Tracking', href: '/buyer/delivery' },
-                        { icon: <Heart className="w-4.5 h-4.5" />, label: 'Saved Items', href: '/buyer/saved' },
+                        { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Marketplace', href: '/buyer/products' },
+                        { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'My Orders', href: '/buyer/purchases' },
+                        { icon: <Heart className="w-4.5 h-4.5" />, label: 'Favorites', href: '/buyer/saved' },
                     ],
                 },
                 {
-                    label: 'Communicate',
+                    label: 'Communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
-                        { icon: <Phone className="w-4.5 h-4.5" />, label: 'Contact', href: '/buyer/contact' },
                     ],
                 },
                 {
                     label: 'Account',
                     items: [
-                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/buyer/wallet' },
+                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/buyer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/buyer/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/buyer/settings' },
                     ],
                 },
             ];
@@ -110,16 +107,15 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.SUPPLIER:
             return [
                 {
-                    label: 'Core',
+                    label: 'Operations',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/supplier/dashboard' },
-                        { icon: <Package className="w-4.5 h-4.5" />, label: 'My Inputs', href: '/supplier/products' },
-                        { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Orders', href: '/supplier/orders' },
-                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'My Wallet', href: '/supplier/wallet' },
+                        { icon: <Package className="w-4.5 h-4.5" />, label: 'My Products', href: '/supplier/products' },
+                        { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Farmer Orders', href: '/supplier/orders' },
                     ],
                 },
                 {
-                    label: 'Communicate',
+                    label: 'Communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
@@ -128,8 +124,9 @@ function getNavGroups(userType: UserType): NavGroup[] {
                 {
                     label: 'Account',
                     items: [
+                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/supplier/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/supplier/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/supplier/settings' },
                     ],
                 },
             ];
@@ -137,29 +134,29 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.ADMIN:
             return [
                 {
-                    label: 'Core',
+                    label: 'Administration',
                     items: [
                         { icon: <LayoutDashboard className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/admin/dashboard' },
-                        { icon: <Users className="w-4.5 h-4.5" />, label: 'Users', href: '/admin/users' },
-                        { icon: <Truck className="w-4.5 h-4.5" />, label: 'Orders', href: '/admin/orders' },
-                        { icon: <Sprout className="w-4.5 h-4.5" />, label: 'Products', href: '/admin/products' },
-                        { icon: <BarChart2 className="w-4.5 h-4.5" />, label: 'Analytics', href: '/admin/analytics' },
-                        { icon: <AlertCircle className="w-4.5 h-4.5" />, label: 'Reports', href: '/admin/reports' },
-                        { icon: <Shield className="w-4.5 h-4.5" />, label: 'Security', href: '/admin/security' },
-                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallets', href: '/admin/wallets' },
+                        { icon: <Users className="w-4.5 h-4.5" />, label: 'User Management', href: '/admin/users' },
+                        { icon: <Truck className="w-4.5 h-4.5" />, label: 'Order Management', href: '/admin/orders' },
+                        { icon: <Sprout className="w-4.5 h-4.5" />, label: 'Product Management', href: '/admin/products' },
+                        { icon: <BarChart2 className="w-4.5 h-4.5" />, label: 'Platform Analytics', href: '/admin/analytics' },
+                        { icon: <AlertCircle className="w-4.5 h-4.5" />, label: 'System Reports', href: '/admin/reports' },
+                        { icon: <Shield className="w-4.5 h-4.5" />, label: 'Security Center', href: '/admin/security' },
+                        { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet Management', href: '/admin/wallets' },
                     ],
                 },
                 {
-                    label: 'Communicate',
+                    label: 'Communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
-                        { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
+                        { icon: <Bell className="w-4.5 h-4.5" />, label: 'System Alerts', href: '/notifications' },
                     ],
                 },
                 {
                     label: 'Account',
                     items: [
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/admin/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'System Settings', href: '/admin/settings' },
                     ],
                 },
             ];
@@ -167,25 +164,25 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.GOVERNMENT:
             return [
                 {
-                    label: 'Core',
+                    label: 'Monitoring',
                     items: [
-                        { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/government/dashboard' },
-                        { icon: <Tractor className="w-4.5 h-4.5" />, label: 'Farmers Produce', href: '/government/farmers-produce' },
-                        { icon: <Package className="w-4.5 h-4.5" />, label: 'Suppliers Produce', href: '/government/suppliers-produce' },
+                        { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Overview', href: '/government/dashboard' },
+                        { icon: <Tractor className="w-4.5 h-4.5" />, label: 'Farmer Output', href: '/government/farmers-produce' },
+                        { icon: <Package className="w-4.5 h-4.5" />, label: 'Input Supply Monitoring', href: '/government/suppliers-produce' },
                     ],
                 },
                 {
-                    label: 'Communicate',
+                    label: 'Communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
-                        { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
+                        { icon: <Bell className="w-4.5 h-4.5" />, label: 'Alerts', href: '/notifications' },
                     ],
                 },
                 {
                     label: 'Account',
                     items: [
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/government/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/government/settings' },
                     ],
                 },
             ];

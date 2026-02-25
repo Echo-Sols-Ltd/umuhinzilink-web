@@ -134,7 +134,7 @@ function MyPurchasesComponent() {
     <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.BUYER}
-        activeItem='My Purchase'
+        activeItem='My Orders'
       />
 
       {/* Main Content */}

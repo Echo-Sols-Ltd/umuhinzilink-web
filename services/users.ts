@@ -3,7 +3,7 @@ import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 import { AxiosProgressEvent, CancelToken } from 'axios';
 
-export class UserService {
+class UserService {
   /**
    * Fetch all users (paginated). Each user may now include:
    * - latestMessage: Message | null

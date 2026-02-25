@@ -35,7 +35,7 @@ export interface WalletDashboardProps {
 type FilterType = 'all' | 'deposit' | 'withdrawal' | 'payment';
 type SortType = 'newest' | 'oldest' | 'amount_high' | 'amount_low';
 
-export const WalletDashboard: React.FC<WalletDashboardProps> = ({
+const WalletDashboard: React.FC<WalletDashboardProps> = ({
   wallet,
   transactions,
   loading = false,
@@ -184,7 +184,7 @@ export const WalletDashboard: React.FC<WalletDashboardProps> = ({
   return (
     <div className={cn('space-y-6', className)}>
       {/* Wallet Balance Card */}
-      <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-6 text-white">
+      <div className="bg-linear-to-r from-green-600 to-green-700 rounded-lg p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center space-x-2 mb-2">

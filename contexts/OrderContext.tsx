@@ -8,6 +8,7 @@ import { socketService } from '@/services/socket';
 import { useSocket } from './SocketContext';
 import { OrderChangeResponse, OrderDeliveryChange } from '@/services/websocket';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
+import { useToast } from '@/components/ui/use-toast';
 
 const STORAGE_KEYS = {
   BUYER: 'buyerOrders',
@@ -91,7 +92,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { updateBuyerProduct } = useProduct();
   const socket = useSocket()
-  const { showNotification, isEnabled } = useBrowserNotification();
+  const { isEnabled, shouldUseInAppNotifications, shouldUseBrowserNotifications, showNotification } = useBrowserNotification();
+  const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
@@ -251,16 +253,22 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Show notification for new order
-    if (isEnabled) {
-      showNotification({
-        type: 'order',
-        title: 'New Order Received',
-        body: `Order #${orderChange.orderId} has been placed with status: ${orderChange.status}`,
-        icon: '/icons/order.svg',
-        onClick: () => {
-          // Navigate to orders page
-          window.location.href = '/farmer/orders';
-        },
+    const browserNotificationShown = showNotification({
+      type: 'order',
+      title: 'New Order Received',
+      body: `Order #${orderChange.orderId} has been placed with status: ${orderChange.status}`,
+      icon: '/icons/order.svg',
+      onClick: () => {
+        // Navigate to orders page
+        window.location.href = '/farmer/orders';
+      },
+    });
+    
+    // Only show in-app toast if browser notification wasn't shown
+    if (!browserNotificationShown && shouldUseInAppNotifications) {
+      toast({ 
+        description: `New Order #${orderChange.orderId} received!`,
+        variant: 'default'
       });
     }
 
@@ -362,18 +370,24 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       console.error('Delivery change data is undefined');
       return;
     }
-    console.log(isEnabled)
 
-    if (isEnabled) {
-      showNotification({
-        type: 'delivery',
-        title: 'Delivery Status Updated',
-        body: `Order #${deliveryChange.orderId} delivery status: ${deliveryChange.status}`,
-        icon: '/icons/delivery.svg',
-        onClick: () => {
-          // Navigate to delivery page
-          window.location.href = '/farmer/delivery';
-        },
+    // Show notification for delivery status change
+    const browserNotificationShown = showNotification({
+      type: 'delivery',
+      title: 'Delivery Status Updated',
+      body: `Order #${deliveryChange.orderId} delivery status: ${deliveryChange.status}`,
+      icon: '/icons/delivery.svg',
+      onClick: () => {
+        // Navigate to delivery page
+        window.location.href = '/farmer/delivery';
+      },
+    });
+    
+    // Only show in-app toast if browser notification wasn't shown
+    if (!browserNotificationShown && shouldUseInAppNotifications) {
+      toast({ 
+        description: `Delivery status updated for Order #${deliveryChange.orderId}!`,
+        variant: 'default'
       });
     }
 
@@ -445,7 +459,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(prev =>
       prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
-  }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
+  }, [shouldUseInAppNotifications, showNotification, toast, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
   const cleanupSocketListeners = useCallback(() => {
     if (!socket) return;

@@ -14,7 +14,7 @@ export interface OrderStatusTrackerProps {
   className?: string;
 }
 
-export const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
+const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
   orderStatus,
   deliveryStatus,
   createdAt,

@@ -145,7 +145,7 @@ function MarketAnalysis() {
         {/* Sidebar */}
         <Sidebar
           userType={UserType.FARMER}
-          activeItem='Market Analytics'
+          activeItem='Market Intelligence'
         />
 
 

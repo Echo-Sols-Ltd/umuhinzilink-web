@@ -15,7 +15,7 @@ export interface ChatMessageEdit {
   newContent: string;
 }
 
-export class MessageService {
+class MessageService {
   // Get conversation messages between two users (paginated)
   async getConversation(
     senderId: string,

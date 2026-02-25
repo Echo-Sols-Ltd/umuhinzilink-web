@@ -10,48 +10,48 @@ const getVariantStyles = (variant: ToastData['variant']) => {
   switch (variant) {
     case 'success':
       return {
-        container: 'border-green-200 bg-green-50',
-        icon: <CheckCircle className="w-6 h-6 text-green-600" />,
-        title: 'text-green-800',
-        description: 'text-green-700',
-        button: 'text-green-600 hover:text-green-800 border-green-200 hover:bg-green-100',
-        closeButton: 'text-green-400 hover:text-green-600',
+        container: 'bg-white rounded-2xl shadow-2xl border border-green-200',
+        icon: <div className="bg-linear-to-br from-green-400 to-green-600 p-2 rounded-xl shadow-md"><CheckCircle className="w-5 h-5 text-white" /></div>,
+        title: 'text-gray-900 font-semibold',
+        description: 'text-gray-600',
+        button: 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-md',
+        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
       };
     case 'error':
       return {
-        container: 'border-red-200 bg-red-50',
-        icon: <AlertCircle className="w-6 h-6 text-red-600" />,
-        title: 'text-red-800',
-        description: 'text-red-700',
-        button: 'text-red-600 hover:text-red-800 border-red-200 hover:bg-red-100',
-        closeButton: 'text-red-400 hover:text-red-600',
+        container: 'bg-white rounded-2xl shadow-2xl border border-red-200',
+        icon: <div className="bg-linear-to-br from-red-400 to-red-600 p-2 rounded-xl shadow-md"><AlertCircle className="w-5 h-5 text-white" /></div>,
+        title: 'text-gray-900 font-semibold',
+        description: 'text-gray-600',
+        button: 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-md',
+        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
       };
     case 'warning':
       return {
-        container: 'border-yellow-200 bg-yellow-50',
-        icon: <AlertTriangle className="w-6 h-6 text-yellow-600" />,
-        title: 'text-yellow-800',
-        description: 'text-yellow-700',
-        button: 'text-yellow-600 hover:text-yellow-800 border-yellow-200 hover:bg-yellow-100',
-        closeButton: 'text-yellow-400 hover:text-yellow-600',
+        container: 'bg-white rounded-2xl shadow-2xl border border-yellow-200',
+        icon: <div className="bg-linear-to-br from-yellow-400 to-yellow-600 p-2 rounded-xl shadow-md"><AlertTriangle className="w-5 h-5 text-white" /></div>,
+        title: 'text-gray-900 font-semibold',
+        description: 'text-gray-600',
+        button: 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-md',
+        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
       };
     case 'loading':
       return {
-        container: 'border-blue-200 bg-blue-50',
-        icon: <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />,
-        title: 'text-blue-800',
-        description: 'text-blue-700',
-        button: 'text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-100',
-        closeButton: 'text-blue-400 hover:text-blue-600',
+        container: 'bg-white rounded-2xl shadow-2xl border border-blue-200',
+        icon: <div className="bg-linear-to-br from-blue-400 to-blue-600 p-2 rounded-xl shadow-md"><Loader2 className="w-5 h-5 text-white animate-spin" /></div>,
+        title: 'text-gray-900 font-semibold',
+        description: 'text-gray-600',
+        button: 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md',
+        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
       };
     default:
       return {
-        container: 'border-gray-200 bg-white shadow-lg',
-        icon: <Info className="w-6 h-6 text-blue-600" />,
-        title: 'text-gray-800',
-        description: 'text-gray-700',
-        button: 'text-gray-600 hover:text-gray-800 border-gray-200 hover:bg-gray-100',
-        closeButton: 'text-gray-400 hover:text-gray-600',
+        container: 'bg-white rounded-2xl shadow-2xl border border-gray-200',
+        icon: <div className="bg-linear-to-br from-gray-400 to-gray-600 p-2 rounded-xl shadow-md"><Info className="w-5 h-5 text-white" /></div>,
+        title: 'text-gray-900 font-semibold',
+        description: 'text-gray-600',
+        button: 'bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white shadow-md',
+        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
       };
   }
 };
@@ -85,31 +85,20 @@ const ModalToastItem: React.FC<ModalToastItemProps> = ({ toast, onRemove }) => {
     handleClose();
   }, [toast.action, handleClose]);
 
-  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  }, [handleClose]);
-
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ease-out',
-        isVisible && !isExiting ? 'opacity-100' : 'opacity-0'
+        'transform transition-all duration-300 ease-out',
+        isVisible && !isExiting ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
       )}
-      style={{
-        backgroundColor: isVisible && !isExiting ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0)',
-        backdropFilter: isVisible && !isExiting ? 'blur(4px)' : 'blur(0px)',
-      }}
-      onClick={handleBackdropClick}
     >
       <div
         className={cn(
-          'relative w-full max-w-md transform rounded-lg border p-6 transition-all duration-300 ease-out',
+          'relative w-80 transform p-4 transition-all duration-300 ease-out',
           styles.container,
           isVisible && !isExiting
             ? 'scale-100 translate-y-0'
-            : 'scale-95 translate-y-8'
+            : 'scale-95 translate-y-2'
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -117,7 +106,7 @@ const ModalToastItem: React.FC<ModalToastItemProps> = ({ toast, onRemove }) => {
         <button
           onClick={handleClose}
           className={cn(
-            'absolute right-4 top-4 rounded-full p-1.5 transition-colors duration-200',
+            'absolute right-2 top-2 rounded-full transition-colors duration-200',
             styles.closeButton
           )}
         >
@@ -126,30 +115,30 @@ const ModalToastItem: React.FC<ModalToastItemProps> = ({ toast, onRemove }) => {
         </button>
 
         {/* Content */}
-        <div className="flex items-start space-x-4 pr-10">
+        <div className="flex items-start space-x-3 pr-8">
           {/* Icon */}
-          <div className="flex-shrink-0 mt-0.5">
+          <div className="shrink-0">
             {styles.icon}
           </div>
 
           {/* Text content */}
           <div className="flex-1 min-w-0">
             {toast.title && (
-              <h3 className={cn('text-lg font-semibold mb-2 leading-tight', styles.title)}>
+              <h3 className={cn('text-base font-bold mb-1 leading-tight', styles.title)}>
                 {toast.title}
               </h3>
             )}
-            <p className={cn('text-sm leading-relaxed', styles.description)}>
+            <p className={cn('text-xs leading-relaxed', styles.description)}>
               {toast.description}
             </p>
 
             {/* Action button */}
             {toast.action && (
-              <div className="mt-4 flex justify-end">
+              <div className="mt-3 flex justify-end">
                 <button
                   onClick={handleAction}
                   className={cn(
-                    'inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border transition-colors duration-200',
+                    'inline-flex items-center px-3 py-1 text-xs font-medium rounded-lg transition-all duration-200',
                     styles.button
                   )}
                 >
@@ -164,7 +153,7 @@ const ModalToastItem: React.FC<ModalToastItemProps> = ({ toast, onRemove }) => {
   );
 };
 
-export const ModalToastContainer: React.FC = () => {
+const ModalToastContainer: React.FC = () => {
   const { toasts, dismiss } = useToast();
   const [mounted, setMounted] = useState(false);
 
@@ -177,13 +166,14 @@ export const ModalToastContainer: React.FC = () => {
   }
 
   return createPortal(
-    <div className="modal-toast-container">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end space-y-2 pointer-events-none">
       {toasts.map(toast => (
-        <ModalToastItem
-          key={toast.id}
-          toast={toast}
-          onRemove={dismiss}
-        />
+        <div key={toast.id} className="pointer-events-auto">
+          <ModalToastItem
+            toast={toast}
+            onRemove={dismiss}
+          />
+        </div>
       ))}
     </div>,
     document.body

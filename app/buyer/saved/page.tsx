@@ -97,16 +97,14 @@ function SavedItemsComponent() {
       return true;
     });
 
-  const handleLogout = async () => {
 
-  };
 
   return (
     <div className="flex  h-screen overflow bg-white">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.BUYER}
-        activeItem='Saved Items'
+        activeItem='Favorites'
       />
 
       {/* Main Content */}

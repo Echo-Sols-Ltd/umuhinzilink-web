@@ -33,7 +33,7 @@ export interface OrderManagementDashboardProps {
 type FilterType = 'all' | 'pending' | 'active' | 'completed' | 'cancelled';
 type SortType = 'newest' | 'oldest' | 'amount_high' | 'amount_low';
 
-export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
+const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
   orders,
   userRole,
   onViewOrder,
@@ -352,7 +352,7 @@ export const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> =
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="h-10 w-10 flex-shrink-0">
+                        <div className="h-10 w-10 shrink-0">
                           <Image
                             className="h-10 w-10 rounded-lg object-cover"
                             src={order.product.image || '/placeholder.png'}

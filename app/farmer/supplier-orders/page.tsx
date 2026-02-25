@@ -154,7 +154,7 @@ function FarmerSupplierOrders() {
     <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
-        activeItem='Supplier Orders' />
+        activeItem='Supply Orders' />
 
       <main className="flex-1 h-full bg-white overflow-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">

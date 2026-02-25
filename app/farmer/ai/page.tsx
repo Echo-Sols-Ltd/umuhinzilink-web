@@ -99,7 +99,7 @@ function AiDashboard() {
       {/* Sidebar */}
       <Sidebar
         userType={UserType.FARMER}
-        activeItem='AI Tips' />
+        activeItem='Advisory Insights' />
 
 
       {/* Main Content */}

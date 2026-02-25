@@ -3,7 +3,7 @@ import { ChatUser } from '@/types/chat';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
-export class ChatService {
+class ChatService {
   // Get all chat users with conversation data
   async getAllChatUsers(): Promise<ApiResponse<ChatUser[]>> {
     return await apiClient.get<ApiResponse<ChatUser[]>>(API_ENDPOINTS.CHAT.ALL);

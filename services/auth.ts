@@ -17,7 +17,7 @@ import { API_ENDPOINTS } from './constants';
 /**
  * Service for authentication-related API calls and local storage management.
  */
-export class AuthService {
+class AuthService {
   /**
    * Log in a user and store tokens.
    */

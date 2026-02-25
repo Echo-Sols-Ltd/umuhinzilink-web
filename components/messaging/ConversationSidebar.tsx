@@ -50,7 +50,7 @@ const avatarGradient = (name: string) =>
   AVATAR_PALETTES[Math.abs(name.charCodeAt(0) + (name.charCodeAt(1) || 0)) % AVATAR_PALETTES.length];
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
+const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   className,
   onNewConversation,
 }) => {

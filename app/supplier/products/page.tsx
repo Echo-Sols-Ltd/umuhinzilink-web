@@ -170,7 +170,7 @@ function ProductsPageComponent() {
     <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar
         userType={UserType.SUPPLIER}
-        activeItem='My Inputs'
+        activeItem='My Products'
       />
 
       <main className="flex-1 overflow-auto bg-white/30 relative">
