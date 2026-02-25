@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, act } from 'react';
+import React, { useState, useEffect, useRef, useMemo, act, useCallback } from 'react';
 import {
   Send,
   Paperclip,
@@ -43,16 +43,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     handleEditMessage: editMessage,
     handleDeleteMessage: deleteMessage,
     handleTyping: setIsTyping,
-    handleReplyMessage: replyMessage
+    handleReplyMessage: replyMessage,
+    handleCancelReply: cancelReply,
+    replyTo
   } = useChat()
 
   const [messageText, setMessageText] = useState('');
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
-  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUserOnline, setIsUserOnline] = useState(false);
+  const [isTypingActive, setIsTypingActive] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -68,14 +70,30 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
   // Auto-scroll to bottom when new messages arrive or other user starts typing
   useEffect(() => {
+    console.log(typingUsers)
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [filteredMessages, typingUsers]);
 
-  const handleTyping = () => {
-    if (!isCurrentUserTyping) setIsTyping(true);
-    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(() => setIsTyping(false), 2000);
-  };
+  const handleTyping = useCallback(() => {
+    if (!activeChatUser?.id || !currentUser?.id) return;
+    
+    // Only send typing start if not already typing
+    if (!isTypingActive) {
+      setIsTyping(true);
+      setIsTypingActive(true);
+    }
+    
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    // Set timeout to send typing stop event
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      setIsTypingActive(false);
+    }, 2000);
+  }, [activeChatUser, currentUser, isTypingActive, setIsTyping]);
 
   const handleSendMessage = async () => {
     if (!messageText.trim() && !selectedFile) return;
@@ -116,7 +134,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
       setMessageText('');
       setSelectedFile(null);
-      setReplyingTo(null);
       setIsTyping(false);
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -256,10 +273,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 isOwn ? "-left-24" : "-right-24"
               )}>
                 <div className="flex items-center space-x-1 bg-white border border-gray-100 rounded-full shadow-md p-1.5 translate-y-1">
-                  <button onClick={() => {
-                    setReplyingTo(message);
-                    replyMessage(message)
-                  }} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Reply"><Reply className="w-3.5 h-3.5 text-gray-500" /></button>
+                  <button onClick={() => replyMessage(message)} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Reply"><Reply className="w-3.5 h-3.5 text-gray-500" /></button>
                   <button onClick={() => { setEditingMessageId(message.id); setEditingText(message.content); }} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Edit"><Edit3 className="w-3.5 h-3.5 text-gray-500" /></button>
                   <button onClick={() => handleDeleteMessage(message.id)} className="p-1.5 hover:bg-red-50 rounded-full transition-colors group/del" title="Delete"><Trash2 className="w-3.5 h-3.5 text-gray-500 group-hover/del:text-red-500" /></button>
                 </div>
@@ -349,17 +363,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         </div>
       </div>
 
-      {replyingTo && (
+      {replyTo && (
         <div className="px-4 py-2 bg-blue-50 border-t border-blue-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Reply className="w-4 h-4 text-blue-600" />
               <div className="text-sm">
-                <span className="font-medium text-blue-800">Replying to {replyingTo.sender.names.split(' ')[0]}</span>
-                <p className="text-blue-600 truncate max-w-xs">{replyingTo.content}</p>
+                <span className="font-medium text-blue-800">Replying to {replyTo.sender.names.split(' ')[0]}</span>
+                <p className="text-blue-600 truncate max-w-xs">{replyTo.content}</p>
               </div>
             </div>
-            <button onClick={() => setReplyingTo(null)} className="p-1 hover:bg-blue-100 rounded"><X className="w-4 h-4 text-blue-600" /></button>
+            <button onClick={() => cancelReply()} className="p-1 hover:bg-blue-100 rounded"><X className="w-4 h-4 text-blue-600" /></button>
           </div>
         </div>
       )}

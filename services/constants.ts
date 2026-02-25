@@ -162,7 +162,7 @@ export const HTTP_STATUS = {
 
 export const SOCKET_EVENTS = {
   MESSAGE: {
-    SEND_MESSAGE: '/app/chat.private',
+    SEND_MESSAGE: '/app/chat.sendMessage',
     REPLY_MESSAGE: '/app/chat.sendMessageReply',
     REACT_MESSAGE: '/app/chat.sendMessageReaction',
     EDIT_MESSAGE: '/app/chat.editMessage',

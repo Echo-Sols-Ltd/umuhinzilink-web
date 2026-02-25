@@ -66,7 +66,7 @@ export const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 
   const { user: currentUser } = useAuth();
   const router = useRouter();
-  const { chatUsers ,resetUnreadCountForUser} = useUser();
+  const { chatUsers, resetUnreadCountForUser } = useUser();
 
   const [searchTerm, setSearchTerm] = useState('');
 
