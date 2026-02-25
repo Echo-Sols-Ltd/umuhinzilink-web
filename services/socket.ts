@@ -187,7 +187,12 @@ class SocketService {
     private handleNewOrder(message: IMessage) {
         try {
             const body = JSON.parse(message.body) as SocketResponse<OrderChangeResponse>
-            this.orderNewListeners.forEach(cb => cb(body.data!))
+            // Only call listeners if data exists
+            if (body.data) {
+                this.orderNewListeners.forEach(cb => cb(body.data!))
+            } else {
+                console.warn('New order received but no data provided', body)
+            }
 
         } catch (error) {
             console.error('error parsing new order', error)
@@ -197,7 +202,12 @@ class SocketService {
     private handleOrderStatusChange(message: IMessage) {
         try {
             const body = JSON.parse(message.body) as SocketResponse<OrderChangeResponse>
-            this.orderStatusChangeListeners.forEach(cb => cb(body.data!))
+            // Only call listeners if data exists
+            if (body.data) {
+                this.orderStatusChangeListeners.forEach(cb => cb(body.data!))
+            } else {
+                console.warn('Order status change received but no data provided', body)
+            }
         } catch (error) {
             console.error('error parsing order status change', error)
         }
@@ -206,7 +216,12 @@ class SocketService {
     private handleOrderDeliveryChange(message: IMessage) {
         try {
             const body = JSON.parse(message.body) as SocketResponse<OrderDeliveryChange>
-            this.orderDeliveryChangeListeners.forEach(cb => cb(body.data!))
+            // Only call listeners if data exists
+            if (body.data) {
+                this.orderDeliveryChangeListeners.forEach(cb => cb(body.data!))
+            } else {
+                console.warn('Order delivery change received but no data provided', body)
+            }
         } catch (error) {
             console.error('error parsing order delivery change', error)
         }

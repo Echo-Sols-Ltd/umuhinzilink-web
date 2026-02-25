@@ -7,6 +7,7 @@ import { useProduct } from './ProductContext';
 import { socketService } from '@/services/socket';
 import { useSocket } from './SocketContext';
 import { OrderChangeResponse, OrderDeliveryChange } from '@/services/websocket';
+import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 
 const STORAGE_KEYS = {
   BUYER: 'buyerOrders',
@@ -90,6 +91,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { updateBuyerProduct } = useProduct();
   const socket  = useSocket()
+  const { showNotification, isEnabled } = useBrowserNotification();
 
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
@@ -242,6 +244,26 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const handleNewOrder = (orderChange: OrderChangeResponse) => {
     console.log("this is new order", orderChange);
     
+    // Add null check to prevent undefined errors
+    if (!orderChange) {
+      console.error('Order change data is undefined');
+      return;
+    }
+    
+    // Show notification for new order
+    if (isEnabled) {
+      showNotification({
+        type: 'order',
+        title: 'New Order Received',
+        body: `Order #${orderChange.orderId} has been placed with status: ${orderChange.status}`,
+        icon: '/icons/order.svg',
+        onClick: () => {
+          // Navigate to orders page
+          window.location.href = '/farmer/orders';
+        },
+      });
+    }
+    
     // For new orders, we need to refresh appropriate list since we don't have full order data
     // This is a limitation of the current socket event structure
     // In a real implementation, you might want to fetch the full order or have the socket send complete order data
@@ -254,15 +276,45 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const handleOrderStatusChange = (orderChange: OrderChangeResponse) => {
     console.log("this is order status change", orderChange);
     
+    // Add null check to prevent undefined errors
+    if (!orderChange) {
+      console.error('Order change data is undefined');
+      return;
+    }
+    
+    // Show notification for order status change
+    if (isEnabled) {
+      showNotification({
+        type: 'order',
+        title: 'Order Status Updated',
+        body: `Order #${orderChange.orderId} status changed to: ${orderChange.status}`,
+        icon: '/icons/order.svg',
+        onClick: () => {
+          // Navigate to orders page
+          window.location.href = '/farmer/orders';
+        },
+      });
+    }
+    
     // Update order status across all relevant lists by orderId
     const { orderId, status } = orderChange;
+    
+    // Helper function to update order status
+    const updateOrderStatus = (order: any) => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          status: status,
+          updatedAt: new Date().toISOString(),
+        };
+      }
+      return order;
+    };
     
     // Update farmer orders
     setFarmerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map(order => 
-        order.id === orderId ? { ...order, status } : order
-      );
+      const updated = prev.map(updateOrderStatus);
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
       return updated;
     });
@@ -270,9 +322,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update buyer orders
     setBuyerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map(order => 
-        order.id === orderId ? { ...order, status } : order
-      );
+      const updated = prev.map(updateOrderStatus);
       localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
       return updated;
     });
@@ -280,9 +330,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update supplier orders
     setSupplierOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map(order => 
-        order.id === orderId ? { ...order, status } : order
-      );
+      const updated = prev.map(updateOrderStatus);
       localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
       return updated;
     });
@@ -290,40 +338,74 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update farmer buyer orders
     setFarmerBuyerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map(order => 
-        order.id === orderId ? { ...order, status } : order
-      );
+      const updated = prev.map(updateOrderStatus);
       localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
       return updated;
     });
     
     // Update current orders if they match
     setCurrentFarmerOrder(prev => 
-      prev?.id === orderId ? { ...prev, status } : prev
+      prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
     setCurrentBuyerOrder(prev => 
-      prev?.id === orderId ? { ...prev, status } : prev
+      prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
     setCurrentSupplierOrder(prev => 
-      prev?.id === orderId ? { ...prev, status } : prev
+      prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
     setCurrentFarmerBuyerOrder(prev => 
-      prev?.id === orderId ? { ...prev, status } : prev
+      prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
   };
 
   const handleOrderDeliveryChange = (deliveryChange: OrderDeliveryChange) => {
-    console.log("this is order delivery change", deliveryChange);
+
+    // Add null check to prevent undefined errors
+    if (!deliveryChange) {
+      console.error('Delivery change data is undefined');
+      return;
+    }
+    
+    if (isEnabled) {
+      showNotification({
+        type: 'delivery',
+        title: 'Delivery Status Updated',
+        body: `Order #${deliveryChange.orderId} delivery status: ${deliveryChange.status}`,
+        icon: '/icons/delivery.svg',
+        onClick: () => {
+          // Navigate to delivery page
+          window.location.href = '/farmer/delivery';
+        },
+      });
+    }
     
     // Update order delivery status across all relevant lists by orderId
     const { orderId, status } = deliveryChange;
     
+    // Helper function to update delivery status
+    const updateDeliveryStatus = (order: any) => {
+      if (order.id === orderId) {
+        // Create or update delivery object with proper status
+        const updatedDelivery = {
+          ...order.delivery,
+          status: status, // Use the delivery status from socket event
+          updatedAt: new Date().toISOString(),
+        };
+        
+        return {
+          ...order,
+          delivery: updatedDelivery,
+          // Also update a deliveryStatus field if it exists on the order
+          ...(order.deliveryStatus && { deliveryStatus: status })
+        };
+      }
+      return order;
+    };
+    
     // Update farmer orders delivery status
     setFarmerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map(order => 
-        order.id === orderId ? { ...order, delivery: order.delivery ? { ...order.delivery, status } : { status } as any } : order
-      );
+      const updated = prev.map(updateDeliveryStatus);
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
       return updated;
     });
@@ -331,9 +413,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update buyer orders delivery status
     setBuyerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map(order => 
-        order.id === orderId ? { ...order, delivery: order.delivery ? { ...order.delivery, status } : { status } as any } : order
-      );
+      const updated = prev.map(updateDeliveryStatus);
       localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
       return updated;
     });
@@ -341,9 +421,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update supplier orders delivery status
     setSupplierOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map(order => 
-        order.id === orderId ? { ...order, delivery: order.delivery ? { ...order.delivery, status } : { status } as any } : order
-      );
+      const updated = prev.map(updateDeliveryStatus);
       localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
       return updated;
     });
@@ -351,25 +429,23 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update farmer buyer orders delivery status
     setFarmerBuyerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map(order => 
-        order.id === orderId ? { ...order, delivery: order.delivery ? { ...order.delivery, status } : { status } as any } : order
-      );
+      const updated = prev.map(updateDeliveryStatus);
       localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
       return updated;
     });
     
     // Update current orders if they match
     setCurrentFarmerOrder(prev => 
-      prev?.id === orderId ? { ...prev, delivery: prev.delivery ? { ...prev.delivery, status } : { status } as any } : prev
+      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
     setCurrentBuyerOrder(prev => 
-      prev?.id === orderId ? { ...prev, delivery: prev.delivery ? { ...prev.delivery, status } : { status } as any } : prev
+      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
     setCurrentSupplierOrder(prev => 
-      prev?.id === orderId ? { ...prev, delivery: prev.delivery ? { ...prev.delivery, status } : { status } as any } : prev
+      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
     setCurrentFarmerBuyerOrder(prev => 
-      prev?.id === orderId ? { ...prev, delivery: prev.delivery ? { ...prev.delivery, status } : { status } as any } : prev
+      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
   };
 
