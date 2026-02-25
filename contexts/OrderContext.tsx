@@ -90,7 +90,7 @@ const OrderContext = createContext<OrderContextValue | undefined>(undefined);
 export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { updateBuyerProduct } = useProduct();
-  const socket  = useSocket()
+  const socket = useSocket()
   const { showNotification, isEnabled } = useBrowserNotification();
 
   const [loading, setLoading] = useState(false);
@@ -243,13 +243,13 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   // Socket event handlers
   const handleNewOrder = useCallback((orderChange: OrderChangeResponse) => {
     console.log("this is new order", orderChange);
-    
+
     // Add null check to prevent undefined errors
     if (!orderChange) {
       console.error('Order change data is undefined');
       return;
     }
-    
+
     // Show notification for new order
     if (isEnabled) {
       showNotification({
@@ -263,7 +263,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         },
       });
     }
-    
+
     // For new orders, we need to refresh appropriate list since we don't have full order data
     // This is a limitation of the current socket event structure
     // In a real implementation, you might want to fetch the full order or have the socket send complete order data
@@ -275,13 +275,13 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
   const handleOrderStatusChange = useCallback((orderChange: OrderChangeResponse) => {
     console.log("this is order status change", orderChange);
-    
+
     // Add null check to prevent undefined errors
     if (!orderChange) {
       console.error('Order change data is undefined');
       return;
     }
-    
+
     // Show notification for order status change
     if (isEnabled) {
       showNotification({
@@ -295,10 +295,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         },
       });
     }
-    
+
     // Update order status across all relevant lists by orderId
     const { orderId, status } = orderChange;
-    
+
     // Helper function to update order status
     const updateOrderStatus = (order: any) => {
       if (order.id === orderId) {
@@ -310,7 +310,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       }
       return order;
     };
-    
+
     // Update farmer orders
     setFarmerOrders(prev => {
       if (!prev) return prev;
@@ -318,7 +318,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
       return updated;
     });
-    
+
     // Update buyer orders
     setBuyerOrders(prev => {
       if (!prev) return prev;
@@ -326,7 +326,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
       return updated;
     });
-    
+
     // Update supplier orders
     setSupplierOrders(prev => {
       if (!prev) return prev;
@@ -334,7 +334,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
       return updated;
     });
-    
+
     // Update farmer buyer orders
     setFarmerBuyerOrders(prev => {
       if (!prev) return prev;
@@ -342,29 +342,28 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
       return updated;
     });
-    
+
     // Update current orders if they match
-    setCurrentFarmerOrder(prev => 
+    setCurrentFarmerOrder(prev =>
       prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
-    setCurrentBuyerOrder(prev => 
+    setCurrentBuyerOrder(prev =>
       prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
-    setCurrentSupplierOrder(prev => 
+    setCurrentSupplierOrder(prev =>
       prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
-    setCurrentFarmerBuyerOrder(prev => 
+    setCurrentFarmerBuyerOrder(prev =>
       prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
   }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
-
   const handleOrderDeliveryChange = useCallback((deliveryChange: OrderDeliveryChange) => {
     if (!deliveryChange) {
       console.error('Delivery change data is undefined');
       return;
     }
     console.log(isEnabled)
-    
+
     if (isEnabled) {
       showNotification({
         type: 'delivery',
@@ -377,10 +376,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         },
       });
     }
-    
+
     // Update order delivery status across all relevant lists by orderId
     const { orderId, status } = deliveryChange;
-    
+
     // Helper function to update delivery status
     const updateDeliveryStatus = (order: any) => {
       if (order.id === orderId) {
@@ -390,7 +389,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
           status: status, // Use the delivery status from socket event
           updatedAt: new Date().toISOString(),
         };
-        
+
         return {
           ...order,
           delivery: updatedDelivery,
@@ -400,7 +399,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       }
       return order;
     };
-    
+
     // Update farmer orders delivery status
     setFarmerOrders(prev => {
       if (!prev) return prev;
@@ -408,7 +407,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
       return updated;
     });
-    
+
     // Update buyer orders delivery status
     setBuyerOrders(prev => {
       if (!prev) return prev;
@@ -416,7 +415,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
       return updated;
     });
-    
+
     // Update supplier orders delivery status
     setSupplierOrders(prev => {
       if (!prev) return prev;
@@ -424,7 +423,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
       return updated;
     });
-    
+
     // Update farmer buyer orders delivery status
     setFarmerBuyerOrders(prev => {
       if (!prev) return prev;
@@ -432,18 +431,18 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
       return updated;
     });
-    
+
     // Update current orders if they match
-    setCurrentFarmerOrder(prev => 
+    setCurrentFarmerOrder(prev =>
       prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
-    setCurrentBuyerOrder(prev => 
+    setCurrentBuyerOrder(prev =>
       prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
-    setCurrentSupplierOrder(prev => 
+    setCurrentSupplierOrder(prev =>
       prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
-    setCurrentFarmerBuyerOrder(prev => 
+    setCurrentFarmerBuyerOrder(prev =>
       prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
   }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
@@ -455,15 +454,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     socket.removeOrderDeliveryChangeListener(handleOrderDeliveryChange);
   }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange]);
 
-  useEffect(()=>{
-    if(!socket) return;
-    
+  useEffect(() => {
+    if (!socket) return;
+
     socket.onNewOrder(handleNewOrder);
     socket.onOrderStatusChange(handleOrderStatusChange);
     socket.onOrderDeliveryChange(handleOrderDeliveryChange);
-    
+
     return cleanupSocketListeners;
-  },[socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, cleanupSocketListeners]);
+  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, cleanupSocketListeners]);
 
   // 🔹 Derived Orders
   const pendingBuyerOrders = useMemo(
