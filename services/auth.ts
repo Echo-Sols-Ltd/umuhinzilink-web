@@ -84,7 +84,7 @@ export class AuthService {
    * Request password reset with email
    */
   async requestPasswordReset(email: string): Promise<ApiResponse<void>> {
-    const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email },{timeout: 20000});
+    const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email }, { timeout: 20000 });
     return response;
   }
 
