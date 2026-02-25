@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useNotificationStrategy } from './usePageVisibility';
 
 export type NotificationType = 'message' | 'product' | 'order' | 'delivery';
 
@@ -17,17 +17,20 @@ export interface NotificationData {
 interface UseBrowserNotificationReturn {
   permission: NotificationPermission;
   requestPermission: () => Promise<boolean>;
-  showNotification: (data: NotificationData) => void;
+  showNotification: (data: NotificationData) => boolean;
   isSupported: boolean;
   isEnabled: boolean;
+  canShowBrowserNotifications: boolean;
+  shouldUseInAppNotifications: boolean;
+  shouldUseBrowserNotifications: boolean;
 }
 
 export const useBrowserNotification = (): UseBrowserNotificationReturn => {
   const [permission, setPermission] = useState<NotificationPermission>('default');
-  const { user } = useAuth();
+  const [isEnabled, setIsEnabled] = useState(false);
+  const { shouldUseInAppNotifications, shouldUseBrowserNotifications } = useNotificationStrategy();
 
   const isSupported = typeof window !== 'undefined' && 'Notification' in window;
-  const [isEnabled, setIsEnabled] = useState(false);
 
   // Check current permission status
   useEffect(() => {
@@ -51,7 +54,7 @@ export const useBrowserNotification = (): UseBrowserNotificationReturn => {
     try {
       const result = await Notification.requestPermission();
       setPermission(result);
-      setIsEnabled(result === 'granted'); // Update isEnabled state
+      setIsEnabled(result === 'granted');
       return result === 'granted';
     } catch (error) {
       console.error('Error requesting notification permission:', error);
@@ -59,45 +62,51 @@ export const useBrowserNotification = (): UseBrowserNotificationReturn => {
     }
   }, [isSupported, permission]);
 
-  // Show notification
-  const showNotification = useCallback((data: NotificationData) => {
-    if (!isEnabled) {
-      console.warn('Notifications are not enabled');
-      return;
+  // Show notification with intelligent routing
+  const showNotification = useCallback((data: NotificationData): boolean => {
+    console.log('📱 Showing notification:', data.type, 'Strategy:', shouldUseInAppNotifications ? 'In-App' : 'Browser');
+    
+    // Always show in-app notifications when page is visible
+    if (shouldUseInAppNotifications) {
+      console.log('✅ Showing in-app notification (page is visible)');
+      // Return false to indicate browser notification was not shown
+      return false;
     }
 
-    try {
-      const notification = new Notification(data.title, {
-        body: data.body,
-        icon: data.icon || '/favicon.ico',
-        tag: `${data.type}-${user?.id || 'anonymous'}`,
-        requireInteraction: true,
-        data: data.data,
-      });
+    // Show browser notification when page is hidden
+    if (shouldUseBrowserNotifications && isEnabled) {
+      console.log('🔔 Showing browser notification (page is hidden)');
+      try {
+        const notification = new Notification(data.title, {
+          body: data.body,
+          icon: data.icon || '/favicon.ico',
+          tag: `${data.type}-${Date.now()}`, // Prevent duplicates
+          data: data.data,
+        });
 
-      // Handle click events
-      if (data.onClick) {
-        notification.onclick = () => {
-          data.onClick?.();
-          notification.close();
-        };
-      } else {
-        notification.onclick = () => {
-          window.focus();
-          notification.close();
-        };
+        // Handle click on browser notification
+        if (data.onClick) {
+          notification.onclick = () => {
+            if (data.onClick) {
+              data.onClick();
+            }
+            // Focus the window when notification is clicked
+            if (typeof window !== 'undefined') {
+              window.focus();
+            }
+          };
+        }
+
+        return true; // Browser notification was shown
+      } catch (error) {
+        console.error('Error showing browser notification:', error);
+        return false;
       }
-
-      // Auto-close after 5 seconds
-      setTimeout(() => {
-        notification.close();
-      }, 5000);
-
-      console.log(`Notification shown: ${data.title}`);
-    } catch (error) {
-      console.error('Error showing notification:', error);
     }
-  }, [isEnabled, user?.id]);
+
+    console.log('⚠️ Notification not shown (page hidden but no permission)');
+    return false;
+  }, [shouldUseInAppNotifications, shouldUseBrowserNotifications, isEnabled]);
 
   return {
     permission,
@@ -105,6 +114,9 @@ export const useBrowserNotification = (): UseBrowserNotificationReturn => {
     showNotification,
     isSupported,
     isEnabled,
+    canShowBrowserNotifications: isSupported && isEnabled,
+    shouldUseInAppNotifications,
+    shouldUseBrowserNotifications,
   };
 };
 
