@@ -97,9 +97,7 @@ function SavedItemsComponent() {
       return true;
     });
 
-  const handleLogout = async () => {
 
-  };
 
   return (
     <div className="flex  h-screen overflow bg-white">
