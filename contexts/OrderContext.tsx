@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
+import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
 import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus } from '@/types';
 import type { OrderRequest } from '@/types/request';
@@ -241,7 +241,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Socket event handlers
-  const handleNewOrder = (orderChange: OrderChangeResponse) => {
+  const handleNewOrder = useCallback((orderChange: OrderChangeResponse) => {
     console.log("this is new order", orderChange);
     
     // Add null check to prevent undefined errors
@@ -271,9 +271,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     fetchFarmerOrders();
     fetchSupplierOrders();
     fetchFarmerBuyerOrders();
-  };
+  }, [isEnabled, showNotification, fetchBuyerOrders, fetchFarmerOrders, fetchSupplierOrders, fetchFarmerBuyerOrders]);
 
-  const handleOrderStatusChange = (orderChange: OrderChangeResponse) => {
+  const handleOrderStatusChange = useCallback((orderChange: OrderChangeResponse) => {
     console.log("this is order status change", orderChange);
     
     // Add null check to prevent undefined errors
@@ -356,15 +356,14 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(prev => 
       prev?.id === orderId ? updateOrderStatus(prev) : prev
     );
-  };
+  }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
-  const handleOrderDeliveryChange = (deliveryChange: OrderDeliveryChange) => {
-
-    // Add null check to prevent undefined errors
+  const handleOrderDeliveryChange = useCallback((deliveryChange: OrderDeliveryChange) => {
     if (!deliveryChange) {
       console.error('Delivery change data is undefined');
       return;
     }
+    console.log(isEnabled)
     
     if (isEnabled) {
       showNotification({
@@ -447,14 +446,14 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(prev => 
       prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
-  };
+  }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
-  const cleanupSocketListeners = () => {
+  const cleanupSocketListeners = useCallback(() => {
     if (!socket) return;
     socket.removeNewOrderListener(handleNewOrder);
     socket.removeOrderStatusChangeListener(handleOrderStatusChange);
     socket.removeOrderDeliveryChangeListener(handleOrderDeliveryChange);
-  };
+  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange]);
 
   useEffect(()=>{
     if(!socket) return;
@@ -464,7 +463,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     socket.onOrderDeliveryChange(handleOrderDeliveryChange);
     
     return cleanupSocketListeners;
-  },[socket]);
+  },[socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, cleanupSocketListeners]);
 
   // 🔹 Derived Orders
   const pendingBuyerOrders = useMemo(
