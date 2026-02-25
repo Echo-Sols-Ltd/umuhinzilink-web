@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import { useOrder } from '@/contexts/OrderContext';
+import useOrderAction from '@/hooks/useOrderAction';
 import {
   LayoutGrid,
   FilePlus,
@@ -70,11 +71,13 @@ function Dashboard() {
     farmerBuyerOrders,
     loading: ordersLoading,
     fetchFarmerBuyerOrders,
+  } = useOrder();
+  const {
     acceptFarmerOrder,
     cancelFarmerOrder,
     updateFarmerOrderStatus,
-    mutationLoading: actionLoading,
-  } = useOrder();
+    loading: actionLoading,
+  } = useOrderAction();
   const [logoutPending, setLogoutPending] = useState(false);
 
   // Use context data - all hooks must be called before any early returns

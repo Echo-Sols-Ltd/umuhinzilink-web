@@ -17,6 +17,7 @@ import {
 import { useRouter } from 'next/navigation';
 
 import { useOrder } from '@/contexts/OrderContext';
+import useOrderAction from '@/hooks/useOrderAction';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, SupplierOrder, DeliveryStatus } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
@@ -41,13 +42,15 @@ function OrdersPageComponent() {
     supplierOrders,
     fetchSupplierOrders,
     loading,
-    mutationLoading: actionLoading,
-    acceptSupplierOrder,
-    cancelSupplierOrder,
-    updateSupplierOrderStatus,
     supplierOrdersTotalPages: totalPages,
     supplierOrdersTotalElements: totalElements,
   } = useOrder();
+  const {
+    acceptSupplierOrder,
+    cancelSupplierOrder,
+    updateSupplierOrderStatus,
+    loading: actionLoading,
+  } = useOrderAction();
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<SupplierOrder | null>(null);

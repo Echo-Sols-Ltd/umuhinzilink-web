@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
+import useOrderAction from '@/hooks/useOrderAction';
 
 import {
   Package,
@@ -73,14 +74,16 @@ function FarmerOrders() {
   const {
     farmerOrders,
     loading,
-    mutationLoading: actionLoading,
-    acceptFarmerOrder,
-    cancelFarmerOrder,
-    updateFarmerOrderStatus,
     fetchFarmerOrders,
     farmerOrdersTotalPages: totalPages,
     farmerOrdersTotalElements: totalElements,
   } = useOrder();
+  const {
+    acceptFarmerOrder,
+    cancelFarmerOrder,
+    updateFarmerOrderStatus,
+    loading: actionLoading,
+  } = useOrderAction();
   const [logoutPending, setLogoutPending] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);

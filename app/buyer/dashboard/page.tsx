@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
+import useOrderAction from '@/hooks/useOrderAction';
 import { useProduct } from '@/contexts/ProductContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, UserType } from '@/types';
@@ -46,10 +47,12 @@ function BuyerDashboardComponent() {
     buyerOrders,
     loading: ordersLoading,
     error: ordersError,
+  } = useOrder();
+  const {
     acceptFarmerOrder,
     cancelFarmerOrder,
     updateFarmerOrderStatus,
-  } = useOrder();
+  } = useOrderAction();
   const { buyerProducts, loading: productsLoading, error: productsError } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
   const [showOrderManagement, setShowOrderManagement] = useState(false);

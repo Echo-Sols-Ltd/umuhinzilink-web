@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
+import useOrderAction from '@/hooks/useOrderAction';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, SupplierOrder } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
@@ -16,7 +17,8 @@ function FarmerSupplierOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { supplierOrders, updateSupplierOrderStatus } = useOrder();
+  const { supplierOrders } = useOrder();
+  const { updateSupplierOrderStatus } = useOrderAction();
   const { toast } = useToast();
 
   const [order, setOrder] = useState<SupplierOrder | null>(null);
