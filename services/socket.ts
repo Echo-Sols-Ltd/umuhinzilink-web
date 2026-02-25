@@ -2,6 +2,7 @@ import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
 import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants';
+import { OrderChangeResponse, OrderDeliveryChange } from './websocket';
 
 class SocketService {
     public stompClient: Client
@@ -13,6 +14,9 @@ class SocketService {
     private messageEditionListeners: ((message: Message) => void)[] = []
     private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
+    private orderStatusChangeListeners: ((order: OrderChangeResponse) => void)[] = []
+    private orderDeliveryChangeListeners: ((order: OrderDeliveryChange) => void)[] = []
+    private orderNewListeners: ((order: OrderChangeResponse) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
@@ -182,7 +186,9 @@ class SocketService {
 
     private handleNewOrder(message: IMessage) {
         try {
-            console.log("handleNewOrder", message)
+            const body = JSON.parse(message.body) as SocketResponse<OrderChangeResponse>
+            this.orderNewListeners.forEach(cb => cb(body.data!))
+
         } catch (error) {
             console.error('error parsing new order', error)
         }
@@ -190,9 +196,8 @@ class SocketService {
 
     private handleOrderStatusChange(message: IMessage) {
         try {
-            console.log("handleOrderStatusChange", message)
-            // const body = JSON.parse(message.body) as SocketResponse<Order>
-            // this.orderStatusChangeListeners.forEach(cb => cb(body.data!))
+            const body = JSON.parse(message.body) as SocketResponse<OrderChangeResponse>
+            this.orderStatusChangeListeners.forEach(cb => cb(body.data!))
         } catch (error) {
             console.error('error parsing order status change', error)
         }
@@ -200,9 +205,8 @@ class SocketService {
 
     private handleOrderDeliveryChange(message: IMessage) {
         try {
-            console.log("handleOrderDeliveryChange", message)
-            // const body = JSON.parse(message.body) as SocketResponse<Order>
-            // this.orderDeliveryChangeListeners.forEach(cb => cb(body.data!))
+            const body = JSON.parse(message.body) as SocketResponse<OrderDeliveryChange>
+            this.orderDeliveryChangeListeners.forEach(cb => cb(body.data!))
         } catch (error) {
             console.error('error parsing order delivery change', error)
         }
@@ -286,6 +290,24 @@ class SocketService {
                 this.stompClient.publish(msg)
             }
         }
+    }
+    public onNewOrder(callback: (order: OrderChangeResponse) => void) {
+        this.orderNewListeners.push(callback)
+    }
+    public removeNewOrderListener(callback: (order: OrderChangeResponse) => void) {
+        this.orderNewListeners = this.orderNewListeners.filter(cb => cb !== callback)
+    }
+    public onOrderStatusChange(callback: (order: OrderChangeResponse) => void) {
+        this.orderStatusChangeListeners.push(callback)
+    }
+    public removeOrderStatusChangeListener(callback: (order: OrderChangeResponse) => void) {
+        this.orderStatusChangeListeners = this.orderStatusChangeListeners.filter(cb => cb !== callback)
+    }
+    public onOrderDeliveryChange(callback: (order: OrderDeliveryChange) => void) {
+        this.orderDeliveryChangeListeners.push(callback)
+    }
+    public removeOrderDeliveryChangeListener(callback: (order: OrderDeliveryChange) => void) {
+        this.orderDeliveryChangeListeners = this.orderDeliveryChangeListeners.filter(cb => cb !== callback)
     }
 
     public sendMessage(data: SendMessageRequest) {
