@@ -165,8 +165,9 @@ class SocketService {
 
     private subscribeToPublic() {
         try {
+
             this.stompClient.subscribe('/topic/onlineUsers', (msg) => this.handleOnlineUsers(msg))
-            this.stompClient.subscribe('/topic/messages', (msg) => this.handleMessage(msg))
+            this.stompClient.subscribe('/user/queue/private', (msg) => this.handleMessage(msg))
             this.stompClient.subscribe('/topic/messageDeletion', (msg) => this.handleMessageDeletion(msg))
             this.stompClient.subscribe('/topic/messageEdition', (msg) => this.handleMessageEdition(msg))
             this.stompClient.subscribe('/topic/messageReaction', (msg) => this.handleReaction(msg))
@@ -196,6 +197,7 @@ class SocketService {
 
     private handleMessage(message: IMessage) {
         try {
+
             const body = JSON.parse(message.body) as SocketResponse<Message>
             this.messageListeners.forEach(cb => cb(body.data!))
         } catch (error) {

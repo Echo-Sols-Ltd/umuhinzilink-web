@@ -5,6 +5,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import { useAuth } from '../AuthContext';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { usePolling } from '@/lib/polling';
 
 const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { startFetchingResources } = useAdmin();
@@ -12,10 +13,10 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return; // Still initializing — wait
+    if (loading) return;
 
     if (!user) {
-      router.replace('/auth/login');
+      router.replace('/auth/signin');
       return;
     }
 
@@ -23,8 +24,7 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       router.replace('/unauthorized');
       return;
     }
-
-    startFetchingResources();
+    usePolling(startFetchingResources, 5000, []);
   }, [loading, user, router, startFetchingResources]);
 
   // Show spinner while auth is loading
