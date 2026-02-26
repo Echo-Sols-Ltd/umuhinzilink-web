@@ -14,6 +14,8 @@ import {
   Truck,
   Eye,
   Plus,
+  Loader2,
+  DollarSign,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, SupplierOrder, DeliveryStatus } from '@/types';
@@ -32,6 +34,8 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useWallet } from '@/contexts/WalletContext';
+import { notify } from '@/lib/notify';
 
 const ORDER_STATUS_META: Record<string, { label: string; variant: string }> = {
   PENDING: { label: 'Pending', variant: 'warning' },
@@ -84,6 +88,8 @@ function FarmerSupplierOrders() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
+  const { handleWalletPayment } = useWallet();
 
   const orders = useMemo(() => farmerBuyerOrders || [], [farmerBuyerOrders]);
   const currentUser = user;
@@ -143,9 +149,21 @@ function FarmerSupplierOrders() {
     await updateSupplierOrderStatus(orderId, status);
   };
 
-  const handleViewDetails = (order: SupplierOrder) => {
-    setSelectedOrder(order);
-    setIsDetailsModalOpen(true);
+  const handlePayOrder = async (orderId: string) => {
+    try {
+      setPaymentLoading(orderId);
+      const result = await handleWalletPayment(orderId, `Payment for order #${orderId.slice(-6)}`);
+
+      if (result) {
+        notify.success('Your order has been paid successfully.', 'Payment Successful');
+        // Refresh orders to show updated status
+        await fetchFarmerBuyerOrders(currentPage - 1, ITEMS_PER_PAGE);
+      }
+    } catch (err) {
+      console.error('Payment error:', err);
+    } finally {
+      setPaymentLoading(null);
+    }
   };
 
   const displayName = currentUser?.names || 'Farmer';
@@ -320,6 +338,16 @@ function FarmerSupplierOrders() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2  transition-opacity">
+                            {!order.isPaid && order.status !== 'CANCELLED' && (
+                              <button
+                                onClick={() => handlePayOrder(order.id)}
+                                disabled={paymentLoading === order.id}
+                                className="px-4 py-1.5 bg-green-600 text-white text-[11px] font-semibold rounded-full hover:bg-green-700 transition shadow-sm flex items-center gap-1.5"
+                              >
+                                {paymentLoading === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <DollarSign className="w-3.5 h-3.5" />}
+                                Pay
+                              </button>
+                            )}
                             <button
                               onClick={() => router.push(`/farmer/supplier-orders/${order.id}`)}
                               className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
