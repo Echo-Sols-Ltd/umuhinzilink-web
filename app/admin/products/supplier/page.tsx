@@ -92,7 +92,7 @@ function SupplierProductManagement() {
 
     return (
         <div className="flex h-screen bg-white overflow-hidden">
-            <Sidebar userType={UserType.ADMIN} activeItem="Supplier Products" />
+            <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
 
             <div className="flex-1 flex flex-col overflow-auto">
                 <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
@@ -202,7 +202,7 @@ function SupplierProductManagement() {
                                                 <p className="text-sm text-gray-500">{product.measurementUnit}</p>
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant={getStatusVariant(product.productStatus)}>
+                                                <Badge variant={getStatusVariant(product.productStatus)} className='text-white'>
                                                     {product.productStatus.replace('_', ' ')}
                                                 </Badge>
                                             </TableCell>
