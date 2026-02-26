@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, ShoppingCart, Calculator, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
 import { FarmerProduct, SupplierProduct, PaymentMethod } from '@/types';
-import { cn } from '@/lib/utils';
+import { cn, imageUrl } from '@/lib/utils';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 
@@ -195,7 +195,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
             <div className="flex space-x-4">
               <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0">
                 <Image
-                  src={product?.image || '/placeholder.png'}
+                  src={imageUrl(product?.image) || '/placeholder.png'}
                   alt={product?.name || ''}
                   width={80}
                   height={80}

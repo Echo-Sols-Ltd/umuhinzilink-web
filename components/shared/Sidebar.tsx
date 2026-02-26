@@ -53,6 +53,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/farmer/dashboard' },
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Products', href: '/farmer/products' },
+                        { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Supply Market', href: '/farmer/requests' },
                         { icon: <ShoppingCart className="w-4.5 h-4.5" />, label: 'Customer Orders', href: '/farmer/orders' },
                         { icon: <Store className="w-4.5 h-4.5" />, label: 'Supply Orders', href: '/farmer/supplier-orders' },
                         { icon: <BarChart2 className="w-4.5 h-4.5" />, label: 'Market Intelligence', href: '/farmer/market_analysis' },
