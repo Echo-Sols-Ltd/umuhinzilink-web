@@ -19,7 +19,7 @@ import {
     TrendingUp,
     ShieldCheck
 } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
 import {
     Table,
@@ -42,7 +42,6 @@ export default function AdminWalletsPage() {
     const [pageSize] = useState(20);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
-    const { toast } = useToast()
     const { systemWallet } = useAdmin()
 
     const fetchWallets = async () => {
@@ -60,18 +59,10 @@ export default function AdminWalletsPage() {
                 setTotalPages(response.totalPages || 1);
                 setTotalElements(response.totalElements || response.data.length);
             } else {
-                toast({
-                    title: 'Error',
-                    description: response.message || 'Failed to fetch wallets',
-                    variant: 'error',
-                });
+                notify.error(response.message || 'Failed to fetch wallets', 'Error');
             }
         } catch (error) {
-            toast({
-                title: 'Error',
-                description: 'Failed to fetch wallets',
-                variant: 'error',
-            });
+            notify.error('Failed to fetch wallets', 'Error');
         } finally {
             setLoading(false);
         }

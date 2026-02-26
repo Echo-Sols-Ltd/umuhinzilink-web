@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { ProgressiveImage } from '@/components/ui/progressive-loading';
-import { useToast } from '@/components/ui/use-toast';
+
 import { RwandaCrop, RwandaCropCategory } from '@/types';
 import { FarmerProduct } from '@/types/product';
 import { cn, imageUrl } from '@/lib/utils';

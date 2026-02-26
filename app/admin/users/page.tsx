@@ -30,7 +30,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { AdminPages, User, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { adminService } from '@/services/admin';
 import {
   Table,
@@ -53,7 +53,6 @@ import { imageUrl } from '@/lib/utils';
 
 function UserManagement() {
   const { deleteUser } = useAdmin();
-  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all');
@@ -80,11 +79,7 @@ function UserManagement() {
       setTotalUsers(response.totalElements);
       setCurrentPage(page);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch users',
-        variant: 'error',
-      });
+      notify.error('Failed to fetch users', 'Error');
     } finally {
       setLoading(false);
     }
@@ -115,17 +110,9 @@ function UserManagement() {
     try {
       await adminService.toggleUserStatus(userId, suspend);
       await fetchUsers(currentPage);
-      toast({
-        title: 'Success',
-        description: `User ${suspend ? 'suspended' : 'activated'} successfully`,
-        variant: 'success',
-      });
+      notify.success(`User ${suspend ? 'suspended' : 'activated'} successfully`, 'Success');
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: `Failed to ${suspend ? 'suspend' : 'activate'} user`,
-        variant: 'error',
-      });
+      notify.error(`Failed to ${suspend ? 'suspend' : 'activate'} user`, 'Error');
     } finally {
       setActionLoading(null);
     }
@@ -136,17 +123,9 @@ function UserManagement() {
     try {
       await adminService.updateUserRole(userId, newRole);
       await fetchUsers(currentPage);
-      toast({
-        title: 'Success',
-        description: 'User role updated successfully',
-        variant: 'success',
-      });
+      notify.success('User role updated successfully', 'Success');
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to update user role',
-        variant: 'error',
-      });
+      notify.error('Failed to update user role', 'Error');
     } finally {
       setActionLoading(null);
     }
@@ -162,11 +141,7 @@ function UserManagement() {
       await deleteUser(userId);
       await fetchUsers(currentPage);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete user',
-        variant: 'error',
-      });
+      notify.error('Failed to delete user', 'Error');
     } finally {
       setActionLoading(null);
     }

@@ -19,7 +19,7 @@ import { adminService } from '@/services/admin';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import {
     Table,
     TableBody,
@@ -40,7 +40,7 @@ function SupplierProductManagement() {
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const { toast } = useToast();
+
 
     const getStatusVariant = (status: string) => {
         switch (status) {
@@ -66,17 +66,9 @@ function SupplierProductManagement() {
         try {
             await adminService.moderateProduct(productId, action, '');
             await refreshProducts();
-            toast({
-                title: 'Success',
-                description: `Product ${action}d successfully`,
-                variant: 'success',
-            });
+            notify.success(`Product ${action}d successfully`, 'Success');
         } catch (error) {
-            toast({
-                title: 'Error',
-                description: 'Failed to moderate product',
-                variant: 'error',
-            });
+            notify.error('Failed to moderate product', 'Error');
         } finally {
             setActionLoading(null);
         }
