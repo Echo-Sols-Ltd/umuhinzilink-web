@@ -2,7 +2,7 @@ import { ApiResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
-export interface PaymentRequest {
+interface PaymentRequest {
   orderId: string;
   paymentMethod: 'MOBILE_MONEY' | 'BANK_TRANSFER' | 'WALLET' | 'CASH';
   phoneNumber?: string; // for mobile money
@@ -11,7 +11,7 @@ export interface PaymentRequest {
   notes?: string;
 }
 
-export interface PaymentResponseDTO {
+interface PaymentResponseDTO {
   transactionId: string;
   orderId: string;
   amount: number;

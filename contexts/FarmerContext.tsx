@@ -12,7 +12,7 @@ interface FarmerContextType {
 
 const FarmerContext = createContext<FarmerContextType | null>(null)
 
-export function useFarmer(): FarmerContextType {
+function useFarmer(): FarmerContextType {
   const context = useContext(FarmerContext)
   if (!context) {
     throw new Error('useFarmer must be used within a FarmerProvider')
@@ -26,7 +26,7 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const { fetchFarmerOrders, fetchFarmerBuyerOrders } = useOrder()
   const { fetchFarmerProducts, fetchFarmerBuyerProducts, fetchFarmerStats } = useProduct()
-  const {toast } = useToast()
+  const { toast } = useToast()
   const fetchAllData = useCallback(async (user: User) => {
 
     if (!user) return
@@ -54,7 +54,7 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-  
+
     if (user?.role === 'FARMER') {
       fetchAllData(user)
     }

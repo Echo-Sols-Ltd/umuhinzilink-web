@@ -1,0 +1,143 @@
+Unused files (1)
+eslint.config.mjs
+Unused exports (46)
+MENU_ITEMS                               app/government/components/GovernmentLayout.tsx:33:14
+InteractiveChart               function  components/analytics/InteractiveChart.tsx:67:17     
+badgeVariants                            components/ui/badge.tsx:36:17                       
+CalendarDayButton                        components/ui/calendar.tsx:177:20                   
+CardFooter                               components/ui/card.tsx:55:28                        
+CardDescription                          components/ui/card.tsx:55:51                        
+ProgressBar                    function  components/ui/loading-states.tsx:94:17              
+NetworkStatusIndicator         function  components/ui/loading-states.tsx:121:17             
+StatusMessage                  function  components/ui/loading-states.tsx:157:17             
+PopoverAnchor                            components/ui/popover.tsx:42:51                     
+LazyComponent                  function  components/ui/progressive-loading.tsx:76:17         
+AdaptiveContent                function  components/ui/progressive-loading.tsx:116:17        
+ProgressiveDataLoader          function  components/ui/progressive-loading.tsx:151:17        
+useOfflineSupport              function  components/ui/progressive-loading.tsx:273:17        
+MobileOptimizedCard            function  components/ui/responsive-layout.tsx:116:17          
+ResponsiveGrid                 function  components/ui/responsive-layout.tsx:153:17          
+useResponsive                  function  components/ui/responsive-layout.tsx:263:17          
+SelectGroup                              components/ui/select.tsx:162:3                      
+SelectLabel                              components/ui/select.tsx:164:3                      
+SelectScrollDownButton                   components/ui/select.tsx:165:3                      
+SelectScrollUpButton                     components/ui/select.tsx:166:3                      
+SelectSeparator                          components/ui/select.tsx:167:3                      
+TableFooter                              components/ui/table.tsx:91:41                       
+TableCaption                             components/ui/table.tsx:91:86                       
+useBrowserNotificationContext  function  contexts/BrowserNotificationContext.tsx:105:17      
+useBuyer                                 contexts/BuyerContext.tsx:67:10                     
+useFarmer                      function  contexts/FarmerContext.tsx:15:17                    
+createMessageNotification                hooks/useBrowserNotification.tsx:124:14             
+createProductNotification                hooks/useBrowserNotification.tsx:136:14             
+createOrderNotification                  hooks/useBrowserNotification.tsx:148:14             
+createDeliveryNotification               hooks/useBrowserNotification.tsx:161:14             
+usePageVisibility                        hooks/usePageVisibility.ts:9:14                     
+triggerLoadingBar                        lib/navigation.ts:20:14                             
+RetryError                     class     lib/retry.ts:10:14                                  
+useRetry                       function  lib/retry.ts:140:17                                 
+createTimeoutPromise           function  lib/timeout.ts:28:17                                
+AbortableOperation             class     lib/timeout.ts:58:14                                
+useTimeout                     function  lib/timeout.ts:108:17                               
+DISTRICT_PROVINCE_MAP                    types/enums.ts:127:14                               
+userTypeOptions                          types/enums.ts:205:14                               
+languageOptions                          types/enums.ts:241:14                               
+orderStatusOptions                       types/enums.ts:309:14                               
+paymentMethodOptions                     types/enums.ts:316:14                               
+productCategoryOptions                   types/enums.ts:449:14                               
+productTypeOptions                       types/enums.ts:457:14                               
+cropOptions                              types/product.ts:79:14                              
+Unused exported types (50)
+MenuItem                       type       app/government/components/GovernmentLayout.tsx:26:13
+EnhancedDashboardProps         interface  components/analytics/EnhancedDashboard.tsx:20:18    
+ChartType                      type       components/analytics/InteractiveChart.tsx:34:13     
+InteractiveChartProps          interface  components/analytics/InteractiveChart.tsx:42:18     
+ChatInterfaceProps             interface  components/messaging/ChatInterface.tsx:28:18        
+ConversationSidebarProps       interface  components/messaging/ConversationSidebar.tsx:20:18  
+OrderCreationModalProps        interface  components/orders/OrderCreationModal.tsx:11:18      
+OrderManagementDashboardProps  interface  components/orders/OrderManagementDashboard.tsx:22:18
+OrderStatusTrackerProps        interface  components/orders/OrderStatusTracker.tsx:8:18       
+ProductOrderInterfaceProps     interface  components/orders/ProductOrderInterface.tsx:10:18   
+ProductDisplayProps            interface  components/products/ProductDisplay.tsx:33:18        
+BadgeProps                     interface  components/ui/badge.tsx:28:18                       
+ButtonProps                    interface  components/ui/button.tsx:34:18                      
+FileUploadProps                interface  components/ui/file-upload.tsx:8:18                  
+FileUploadState                interface  components/ui/file-upload.tsx:26:18                 
+PaginationProps                interface  components/ui/pagination.tsx:7:18                   
+WalletDashboardProps           interface  components/wallet/WalletDashboard.tsx:26:18         
+MessageContextValue            interface  contexts/MessageContext.tsx:11:18                   
+OrderContextValue              type       contexts/OrderContext.tsx:20:13                     
+ProfileContextValue            interface  contexts/ProfileContext.tsx:10:18                   
+WalletContextValue             type       contexts/WalletContext.tsx:14:13                    
+NotificationType               type       hooks/useBrowserNotification.tsx:6:13               
+NotificationData               interface  hooks/useBrowserNotification.tsx:8:18               
+ChatMessageReply               interface  services/messages.ts:6:18                           
+ChatMessageEdit                interface  services/messages.ts:13:18                          
+PaymentRequest                 interface  services/payments.ts:5:18                           
+PaymentResponseDTO             interface  services/payments.ts:14:18                          
+SupplierDashboard              interface  services/suppliers.ts:19:18                         
+FileUploadResponse             interface  services/upload.ts:11:18                            
+WalletDepositRequest           interface  services/wallet.ts:5:18                             
+WalletPaymentRequest           interface  services/wallet.ts:10:18                            
+WalletTransactionDTO           interface  services/wallet.ts:15:18                            
+ApiError                       interface  types/api.ts:28:18                                  
+Pageable                       interface  types/api.ts:43:18                                  
+Sort                           interface  types/api.ts:52:18                                  
+AuthState                      interface  types/auth.ts:13:18                                 
+Conversation                   interface  types/chat.ts:3:18                                  
+DashboardStats                 interface  types/dashboard.ts:3:18                             
+RequestProps                   interface  types/dashboard.ts:45:18                            
+ProductionCardProps            interface  types/dashboard.ts:74:18                            
+DashboardActivity              interface  types/dashboard.ts:96:18                            
+StatCardProps                  interface  types/dashboard.ts:112:18                           
+ChartDataPoint                 interface  types/dashboard.ts:128:18                           
+ChartConfig                    interface  types/dashboard.ts:135:18                           
+FormError                      interface  types/navigation.ts:22:18                           
+FormState                      interface  types/navigation.ts:27:18                           
+WalletDepositRequest           interface  types/wallet.ts:13:18                               
+WalletPaymentRequest           interface  types/wallet.ts:18:18                               
+PagedResponse                  interface  types/wallet.ts:65:18                               
+PaginationParams               interface  types/wallet.ts:75:18                               
+Unused exported enum members (42)
+DASHBOARD         FarmerPages      types/enums.ts:2:3  
+PRODUCTS          FarmerPages      types/enums.ts:3:3  
+INPUT_REQUEST     FarmerPages      types/enums.ts:4:3  
+AI_TIPS           FarmerPages      types/enums.ts:5:3  
+MARKET_ANALYTICS  FarmerPages      types/enums.ts:6:3  
+MESSAGES          FarmerPages      types/enums.ts:7:3  
+NOTIFICATIONS     FarmerPages      types/enums.ts:8:3  
+PROFILE           FarmerPages      types/enums.ts:9:3  
+ORDERS            FarmerPages      types/enums.ts:10:3 
+WALLET            FarmerPages      types/enums.ts:11:3 
+SETTINGS          FarmerPages      types/enums.ts:12:3 
+LOGOUT            FarmerPages      types/enums.ts:13:3 
+DASHBOARD         AdminPages       types/enums.ts:16:3 
+USERS             AdminPages       types/enums.ts:17:3 
+ORDERS            AdminPages       types/enums.ts:18:3 
+REPORTS           AdminPages       types/enums.ts:19:3 
+PRODUCTS          AdminPages       types/enums.ts:20:3 
+PROFILE           AdminPages       types/enums.ts:21:3 
+SETTINGS          AdminPages       types/enums.ts:22:3 
+MESSAGES          AdminPages       types/enums.ts:23:3 
+MESSAGES          GovernmentPages  types/enums.ts:33:3 
+DASHBOARD         SupplierPages    types/enums.ts:37:3 
+PRODUCTS          SupplierPages    types/enums.ts:38:3 
+REQUESTS          SupplierPages    types/enums.ts:39:3 
+ORDERS            SupplierPages    types/enums.ts:40:3 
+MESSAGE           SupplierPages    types/enums.ts:41:3 
+PROFILE           SupplierPages    types/enums.ts:42:3 
+CONTACT           SupplierPages    types/enums.ts:43:3 
+SETTINGS          SupplierPages    types/enums.ts:44:3 
+LOGOUT            SupplierPages    types/enums.ts:45:3 
+DASHBOARD         BuyerPages       types/enums.ts:49:3 
+PURCHASES         BuyerPages       types/enums.ts:50:3 
+PRODUCT           BuyerPages       types/enums.ts:51:3 
+SAVED             BuyerPages       types/enums.ts:52:3 
+WALLET            BuyerPages       types/enums.ts:53:3 
+MESSAGE           BuyerPages       types/enums.ts:54:3 
+PROFILE           BuyerPages       types/enums.ts:55:3 
+CONTACT           BuyerPages       types/enums.ts:56:3 
+SETTINGS          BuyerPages       types/enums.ts:57:3 
+LOGOUT            BuyerPages       types/enums.ts:58:3 
+AUDIO             MessageType      types/message.ts:7:3
+VIDEO             MessageType      types/message.ts:9:3

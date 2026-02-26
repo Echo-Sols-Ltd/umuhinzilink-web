@@ -22,14 +22,7 @@ export interface PaginatedResponse<T> {
   last: boolean
 }
 
-/**
- * API error structure.
- */
-export interface ApiError {
-  status: number;
-  message: string;
-  errors?: Record<string, string[]>;
-}
+
 
 /**
  * Generic socket response wrapper.
@@ -40,17 +33,3 @@ export interface SocketResponse<T> {
   error?: string;
 }
 
-export interface Pageable {
-  offset: number;
-  pageNumber: number;
-  pageSize: number;
-  paged: boolean;
-  sort: Sort;
-  unpaged: boolean;
-}
-
-export interface Sort {
-  empty: boolean;
-  sorted: boolean;
-  unsorted: boolean;
-}

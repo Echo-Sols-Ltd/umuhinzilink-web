@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 
-export interface OrderCreationModalProps {
+interface OrderCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
   product?: FarmerProduct | SupplierProduct | null;

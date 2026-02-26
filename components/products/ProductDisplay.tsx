@@ -30,7 +30,7 @@ import ProductCard from './Product';
 import ProductRow from './ProductRow';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export interface ProductDisplayProps {
+interface ProductDisplayProps {
   products: FarmerProduct[];
   loading?: boolean;
   viewMode?: 'grid' | 'list';

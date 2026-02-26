@@ -17,7 +17,7 @@ const STORAGE_KEYS = {
   FARMER_BUYER: 'farmerBuyerOrders',
 };
 
-export type OrderContextValue = {
+type OrderContextValue = {
   loading: boolean;
   error?: string | null;
   buyerOrders: FarmerOrder[] | null;
@@ -263,10 +263,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         window.location.href = '/farmer/orders';
       },
     });
-    
+
     // Only show in-app toast if browser notification wasn't shown
     if (!browserNotificationShown && shouldUseInAppNotifications) {
-      toast({ 
+      toast({
         description: `New Order #${orderChange.orderId} received!`,
         variant: 'default'
       });
@@ -382,10 +382,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         window.location.href = '/farmer/delivery';
       },
     });
-    
+
     // Only show in-app toast if browser notification wasn't shown
     if (!browserNotificationShown && shouldUseInAppNotifications) {
-      toast({ 
+      toast({
         description: `Delivery status updated for Order #${deliveryChange.orderId}!`,
         variant: 'default'
       });

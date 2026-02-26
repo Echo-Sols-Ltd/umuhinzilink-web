@@ -31,7 +31,7 @@ import {
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
 
-export type ChartType = 'line' | 'area' | 'bar' | 'pie';
+type ChartType = 'line' | 'area' | 'bar' | 'pie';
 
 export interface ChartDataPoint {
   name: string;
@@ -39,7 +39,7 @@ export interface ChartDataPoint {
   [key: string]: any;
 }
 
-export interface InteractiveChartProps {
+interface InteractiveChartProps {
   title: string;
   data: ChartDataPoint[];
   type?: ChartType;
@@ -64,7 +64,7 @@ const DEFAULT_COLORS = [
   '#06b6d4', // cyan-500
 ];
 
-export function InteractiveChart({
+function InteractiveChart({
   title,
   data,
   type = 'line',
@@ -356,7 +356,7 @@ export function InteractiveChart({
                   <TrendingDown className="w-4 h-4 text-red-500" />
                 ) : null}
                 <p className={`text-2xl font-semibold ${metrics.trend === 'up' ? 'text-green-500' :
-                    metrics.trend === 'down' ? 'text-red-500' : 'text-gray-900'
+                  metrics.trend === 'down' ? 'text-red-500' : 'text-gray-900'
                   }`}>
                   {metrics.trendPercentage.toFixed(1)}%
                 </p>

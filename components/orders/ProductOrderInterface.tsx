@@ -7,7 +7,7 @@ import { FarmerProduct, SupplierProduct } from '@/types';
 import { cn } from '@/lib/utils';
 import OrderCreationModal from './OrderCreationModal';
 
-export interface ProductOrderInterfaceProps {
+interface ProductOrderInterfaceProps {
   product: FarmerProduct | SupplierProduct;
   productType: 'farmer' | 'supplier';
   onSaveProduct?: (productId: string) => void;

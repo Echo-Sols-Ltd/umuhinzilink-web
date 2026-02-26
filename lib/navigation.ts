@@ -8,7 +8,7 @@ export function useNavigationWithLoading() {
     if (typeof window !== 'undefined' && (window as any).startNavigation) {
       (window as any).startNavigation();
     }
-    
+
     // Navigate
     router.push(href);
   };
@@ -16,8 +16,7 @@ export function useNavigationWithLoading() {
   return { navigate };
 }
 
-// Global function to trigger loading bar for any navigation
-export const triggerLoadingBar = () => {
+const triggerLoadingBar = () => {
   if (typeof window !== 'undefined' && (window as any).startNavigation) {
     (window as any).startNavigation();
   }

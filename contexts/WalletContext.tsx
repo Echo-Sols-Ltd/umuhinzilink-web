@@ -3,7 +3,7 @@ import { walletService } from '@/services/wallet';
 import { paymentService } from '@/services/payments';
 import { WalletDTO, WalletTransactionDTO, PaymentRequest, PaymentResponseDTO } from '@/types/wallet';
 import { useAuth } from './AuthContext';
-import { useToast} from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 const STORAGE_KEYS = {
   WALLET: 'walletData',
@@ -11,7 +11,7 @@ const STORAGE_KEYS = {
   PAYMENT_HISTORY: 'paymentHistory',
 };
 
-export type WalletContextValue = {
+type WalletContextValue = {
   loading: boolean;
   error?: string | null;
   wallet: WalletDTO | null;

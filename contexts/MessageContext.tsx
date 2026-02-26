@@ -8,7 +8,7 @@ import { ChatUser } from '@/types/chat';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 import { useToast } from '@/components/ui/use-toast';
 
-export interface MessageContextValue {
+interface MessageContextValue {
   messages: Message[];
   activeChatUser: ChatUser | null;
   loading: boolean;
@@ -273,7 +273,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   };
 
   const markMessagesAsRead = (userId: string) => {
-   
+
   };
 
 

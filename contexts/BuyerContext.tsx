@@ -64,4 +64,4 @@ function BuyerProvider({ children }: { children: React.ReactNode }) {
   return <BuyerContext.Provider value={value}>{children}</BuyerContext.Provider>;
 }
 
-export { useBuyer, BuyerProvider };
+export { BuyerProvider };

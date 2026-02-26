@@ -17,7 +17,7 @@ import { cn, imageUrl } from '@/lib/utils';
 import { ChatUser } from '@/types/chat';
 import { useChat } from '@/hooks/useChat';
 
-export interface ConversationSidebarProps {
+interface ConversationSidebarProps {
   className?: string;
   onNewConversation?: () => void;
 }
