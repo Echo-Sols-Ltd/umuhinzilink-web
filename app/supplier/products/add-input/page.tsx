@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
@@ -22,7 +22,6 @@ function AddInput() {
   const router = useRouter();
   const { user } = useAuth();
   const supplierActions = useSupplierAction();
-  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     quantity: 0,
@@ -77,30 +76,18 @@ function AddInput() {
     if (submitting) return;
 
     if (!user) {
-      toast({
-        title: 'Authentication Required',
-        description: 'Please sign in again to add input.',
-        variant: 'error',
-      });
+      notify.error('Please sign in again to add input.', 'Authentication Required');
       router.push('/auth/signin');
       return;
     }
 
     if (!formData.name.trim()) {
-      toast({
-        title: 'Missing name',
-        description: 'Provide an input name.',
-        variant: 'error'
-      });
+      notify.error('Provide an input name.', 'Missing name');
       return;
     }
 
     if (!imageFile) {
-      toast({
-        title: 'Missing input photo',
-        description: 'Provide an input photo.',
-        variant: 'error'
-      });
+      notify.error('Provide an input photo.', 'Missing input photo');
       return;
     }
 
@@ -124,21 +111,13 @@ function AddInput() {
 
       await supplierActions.createProduct(productData);
 
-      toast({
-        title: 'Success',
-        description: 'Input added successfully!',
-        variant: 'success',
-      });
+      notify.success('Input added successfully!', 'Success');
 
       router.push('/supplier/products');
     } catch (error) {
       console.error('Error adding input:', error);
       const message = error instanceof Error ? error.message : 'An unknown error occurred.';
-      toast({
-        title: 'Unable to add input',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Unable to add input');
     } finally {
       setSubmitting(false);
     }

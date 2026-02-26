@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
 import { useOrder } from './OrderContext';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 
 
 interface BuyerContextType {
@@ -24,7 +24,6 @@ function useBuyer(): BuyerContextType {
 }
 
 function BuyerProvider({ children }: { children: React.ReactNode }) {
-  const { toast } = useToast();
   const { user } = useAuth();
   const { fetchBuyerProducts } = useProduct();
   const { fetchBuyerOrders } = useOrder();
@@ -41,11 +40,11 @@ function BuyerProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch buyer data';
       setError(message);
-      toast({ title: 'Error', description: message, variant: 'error' });
+      notify.error(message, 'Error');
     } finally {
       setLoading(false);
     }
-  }, [user, fetchBuyerProducts, fetchBuyerOrders, toast]);
+  }, [user, fetchBuyerProducts, fetchBuyerOrders]);
 
   useEffect(() => {
     if (user?.role === 'BUYER') {

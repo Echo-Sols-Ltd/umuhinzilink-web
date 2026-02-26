@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { toast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';

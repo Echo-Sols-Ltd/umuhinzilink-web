@@ -3,7 +3,7 @@ import { User, Message, Reaction, MessageType } from '@/types'
 import { ChatUser } from '@/types/chat'
 import { useAuth } from "@/contexts/AuthContext"
 import { useMessages } from "@/contexts/MessageContext"
-import { useToast } from '@/components/ui/use-toast'
+import { notify } from '@/lib/notify';
 import { messageService } from "@/services/messages"
 
 // Helper function to convert User to ChatUser
@@ -34,7 +34,6 @@ export const useChat = () => {
         onlineUsers,
         typingUsers
     } = useMessages()
-    const { toast } = useToast()
 
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const [showUserInfo, setShowUserInfo] = useState(false)
@@ -53,20 +52,12 @@ export const useChat = () => {
 
         // Business logic validation
         if (!currentUser?.id || !receiver) {
-            toast({
-                title: "Error",
-                description: "Cannot send message - user or chat not selected",
-                variant: "error"
-            });
+            notify.error("Cannot send message - user or chat not selected", "Error");
             return;
         }
 
         if (!content.trim() && !fileName) {
-            toast({
-                title: "Error",
-                description: "Cannot send empty message",
-                variant: "error"
-            });
+            notify.error("Cannot send empty message", "Error");
             return;
         }
 
@@ -92,13 +83,9 @@ export const useChat = () => {
             setReplyTo(null);
         } catch (error) {
             console.error('Failed to send message:', error);
-            toast({
-                title: "Error",
-                description: "Failed to send message",
-                variant: "error"
-            });
+            notify.error("Failed to send message", "Error");
         }
-    }, [currentUser, activeChatUser, replyTo, sendMessageRequest, toast])
+    }, [currentUser, activeChatUser, replyTo, sendMessageRequest])
 
     const handleUserClick = useCallback(async (clickedUser: ChatUser) => {
         setActiveChatUser(clickedUser);
@@ -109,13 +96,9 @@ export const useChat = () => {
             await loadMessages(clickedUser.id);
         } catch (error) {
             console.error('Failed to load messages:', error);
-            toast({
-                title: "Error",
-                description: "Failed to load conversation",
-                variant: "error"
-            });
+            notify.error("Failed to load conversation", "Error");
         }
-    }, [setActiveChatUser, loadMessages, toast])
+    }, [setActiveChatUser, loadMessages])
 
     const handleUserAvatarClick = useCallback((clickedUser: User) => {
         // Business logic: show user info
@@ -142,11 +125,7 @@ export const useChat = () => {
     const handleReactToMessage = useCallback((messageId: string, emoji: string) => {
         // Business logic validation
         if (!currentUser?.id) {
-            toast({
-                title: "Error",
-                description: "Cannot react to message - not logged in",
-                variant: "error"
-            });
+            notify.error("Cannot react to message - not logged in", "Error");
             return;
         }
 
@@ -158,16 +137,12 @@ export const useChat = () => {
 
         // Send through context
         reactToMessageRequest(reactionRequest);
-    }, [currentUser, reactToMessageRequest, toast])
+    }, [currentUser, reactToMessageRequest])
 
     const handleEditMessage = useCallback(async (messageId: string, newContent: string) => {
         // Business logic validation
         if (!newContent.trim()) {
-            toast({
-                title: "Error",
-                description: "Message cannot be empty",
-                variant: "error"
-            });
+            notify.error("Message cannot be empty", "Error");
             return;
         }
 
@@ -182,13 +157,9 @@ export const useChat = () => {
             editMessageRequest(editRequest);
         } catch (error) {
             console.error('Failed to edit message:', error);
-            toast({
-                title: "Error",
-                description: "Failed to edit message",
-                variant: "error"
-            });
+            notify.error("Failed to edit message", "Error");
         }
-    }, [editMessageRequest, toast])
+    }, [editMessageRequest])
 
     const handleDeleteMessage = useCallback(async (messageId: string) => {
         // Business logic: confirm before delete
@@ -201,13 +172,9 @@ export const useChat = () => {
             deleteMessageRequest(messageId);
         } catch (error) {
             console.error('Failed to delete message:', error);
-            toast({
-                title: "Error",
-                description: "Failed to delete message",
-                variant: "error"
-            });
+            notify.error("Failed to delete message", "Error");
         }
-    }, [deleteMessageRequest, toast])
+    }, [deleteMessageRequest])
 
     const handleTyping = useCallback((typing: boolean) => {
         // Business logic validation
@@ -232,10 +199,10 @@ export const useChat = () => {
         ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
     }, [messages, activeChatUser, currentUser])
 
-    const markMessagesAsRead = useCallback(async (id:string) => {
+    const markMessagesAsRead = useCallback(async (id: string) => {
         if (!id) return;
         await messageService.markMessagesAsRead(id);
-        
+
     }, [])
 
     return {

@@ -10,7 +10,7 @@ import { UserType, SupplierOrder } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import { DeliveryStatus } from '@/types/enums';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard, ShoppingCart } from 'lucide-react';
 
 function FarmerSupplierOrderDetailPage() {
@@ -19,7 +19,6 @@ function FarmerSupplierOrderDetailPage() {
   const { user } = useAuth();
   const { supplierOrders } = useOrder();
   const { updateSupplierOrderStatus } = useOrderAction();
-  const { toast } = useToast();
 
   const [order, setOrder] = useState<SupplierOrder | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,11 +42,7 @@ function FarmerSupplierOrderDetailPage() {
         }
       } catch (error) {
         console.error('Failed to fetch order:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load order details",
-          variant: "error"
-        });
+        notify.error("Failed to load order details", "Error");
       } finally {
         setLoading(false);
       }
@@ -56,7 +51,7 @@ function FarmerSupplierOrderDetailPage() {
     if (orderId) {
       fetchOrder();
     }
-  }, [orderId, supplierOrders, toast]);
+  }, [orderId, supplierOrders]);
 
   const handleUpdateDeliveryStatus = async (newStatus: DeliveryStatus) => {
     if (!order) return;
@@ -82,18 +77,10 @@ function FarmerSupplierOrderDetailPage() {
         } : undefined
       } : null);
 
-      toast({
-        title: "Delivery Status Updated",
-        description: `Order delivery status has been updated successfully.`,
-        variant: "success"
-      });
+      notify.success(`Order delivery status has been updated successfully.`, "Delivery Status Updated");
     } catch (error) {
       console.error('Failed to update delivery status:', error);
-      toast({
-        title: "Update Failed",
-        description: "Failed to update delivery status. Please try again.",
-        variant: "error"
-      });
+      notify.error("Failed to update delivery status. Please try again.", "Update Failed");
     } finally {
       setUpdatingStatus(false);
     }
@@ -129,7 +116,7 @@ function FarmerSupplierOrderDetailPage() {
     );
   }
 
-  const supplier = order.buyer; 
+  const supplier = order.buyer;
   const product = order.product;
 
   return (

@@ -7,7 +7,7 @@ import {
   Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useGovernment } from '@/contexts/GovernmentContext';
 import { GovernmentLayout } from '../components/GovernmentLayout';
 import { GovernmentPages } from '@/types';
@@ -36,7 +36,6 @@ const bannerData = [
 function FarmersProducePage() {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [productImageIndices, setProductImageIndices] = useState<Record<string, number>>({});
-  const { toast } = useToast()
   const { farmerProducts: products } = useGovernment();
 
   const handleBannerPrev = () => {
@@ -62,11 +61,7 @@ function FarmersProducePage() {
   };
 
   const handleGetPrice = (productId: string) => {
-    toast({
-      title: 'Price Request',
-      description: 'Price information has been requested for this product.',
-      variant: 'success'
-    });
+    notify.success('Price information has been requested for this product.', 'Price Request');
   };
 
   const currentBanner = bannerData[currentBannerIndex];

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNotificationStrategy } from './usePageVisibility';
+import { notify } from '@/lib/notify';
 
 type NotificationType = 'message' | 'product' | 'order' | 'delivery';
 
@@ -69,6 +70,7 @@ export const useBrowserNotification = (): UseBrowserNotificationReturn => {
     // Always show in-app notifications when page is visible
     if (shouldUseInAppNotifications) {
       console.log('✅ Showing in-app notification (page is visible)');
+      notify.info(data.body, data.title);
       // Return false to indicate browser notification was not shown
       return false;
     }

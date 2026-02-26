@@ -8,14 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
 
 export default function SignUp() {
   const { register } = useAuth();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const { toast } = useToast()
   const [formData, setFormData] = useState<UserRequest>({
     names: '',
     email: '',
@@ -106,7 +105,7 @@ export default function SignUp() {
     e.preventDefault();
     setLoading(true);
     if (!validateForm()) {
-      toast({ title: 'Error', description: 'Fix the errors below', variant: 'error' });
+      notify.error('Fix the errors below', 'Error');
       setLoading(false);
       return;
     }

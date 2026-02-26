@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { governmentService } from '@/services/government';
 import { useAuth } from './AuthContext';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { FarmerProduct, SupplierProduct, User, FarmerOrder } from '@/types';
 
 interface GovernmentContextType {
@@ -54,7 +54,6 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<FarmerOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast()
 
   // Fetch all data
   const fetchAllData = useCallback(async (user: User) => {
@@ -78,11 +77,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     } finally {
       setLoading(false);
     }
@@ -96,11 +91,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh users';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 
@@ -113,11 +104,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 
@@ -130,11 +117,7 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 

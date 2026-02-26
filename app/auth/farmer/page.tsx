@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
 import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, District, RwandaCrop } from '@/types';
@@ -25,7 +25,6 @@ export default function FarmerSignUp() {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string>('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const { toast } = useToast()
 
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
@@ -191,19 +190,11 @@ export default function FarmerSignUp() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: 'File too large',
-          description: 'Profile image must be less than 5MB',
-          variant: 'error',
-        });
+        notify.error('Profile image must be less than 5MB', 'File too large');
         return;
       }
       if (!file.type.startsWith('image/')) {
-        toast({
-          title: 'Invalid file type',
-          description: 'Please select an image file',
-          variant: 'error',
-        });
+        notify.error('Please select an image file', 'Invalid file type');
         return;
       }
       setProfileImage(file);
@@ -226,11 +217,7 @@ export default function FarmerSignUp() {
 
     // Validate form data
     if (!validateForm()) {
-      toast({
-        title: 'Validation Error',
-        description: 'Please fix the errors below and try again.',
-        variant: 'error',
-      });
+      notify.error('Please fix the errors below and try again.', 'Validation Error');
       setLoading(false);
       return;
     }
@@ -244,18 +231,10 @@ export default function FarmerSignUp() {
       // Then register the farmer
       await registerFarmer(farmerData);
 
-      toast({
-        title: 'Success',
-        description: 'Farmer account created successfully!',
-        variant: 'success',
-      });
+      notify.success('Farmer account created successfully!', 'Success');
 
     } catch (error) {
-      toast({
-        title: 'Registration Error',
-        description: 'Failed to create farmer account. Please try again.',
-        variant: 'error',
-      });
+      notify.error('Failed to create farmer account. Please try again.', 'Registration Error');
     } finally {
       setLoading(false);
     }

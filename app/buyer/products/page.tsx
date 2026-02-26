@@ -18,7 +18,7 @@ import {
   ChevronRight,
   MessageSquare,
 } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
 import { BuyerPages, FarmerProduct, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
@@ -55,7 +55,6 @@ const Logo = () => (
 
 function ProductsPageComponent() {
   const router = useRouter();
-  const { toast } = useToast();
   const { user: buyer } = useAuth();
   const { handleUserClick, handleSendMessage } = useChat();
   const { chatUsers } = useUser()
@@ -137,20 +136,12 @@ function ProductsPageComponent() {
 
   const handleContactFarmer = async (product: FarmerProduct) => {
     if (!buyer) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to contact farmers",
-        variant: "error"
-      });
+      notify.error("Please log in to contact farmers", "Authentication Required");
       return;
     }
 
     if (!product.owner) {
-      toast({
-        title: "Farmer Not Available",
-        description: "Unable to find farmer information for this product",
-        variant: "error"
-      });
+      notify.error("Unable to find farmer information for this product", "Farmer Not Available");
       return;
     }
 
@@ -170,21 +161,13 @@ function ProductsPageComponent() {
         product.id
       );
 
-      toast({
-        title: "Message Sent",
-        description: `You can now chat with ${product.owner.names} about ${product.name}`,
-        variant: "success"
-      });
+      notify.success(`You can now chat with ${product.owner.names} about ${product.name}`, "Message Sent");
 
       // Navigate to chat page with specific user ID
       router.push(`/chat/${farmerUser.id}`);
     } catch (error) {
       console.error('Failed to contact farmer:', error);
-      toast({
-        title: "Failed to Send Message",
-        description: "Please try again later",
-        variant: "error"
-      });
+      notify.error("Please try again later", "Failed to Send Message");
     }
   };
 

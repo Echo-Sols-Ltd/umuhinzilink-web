@@ -21,7 +21,7 @@ import { GovernmentPages } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 
 function GovernmentSettings() {
@@ -29,7 +29,6 @@ function GovernmentSettings() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { toast } = useToast()
   // Settings state
   const [settings, setSettings] = useState({
     // Notification Settings
@@ -59,17 +58,9 @@ function GovernmentSettings() {
       // TODO: Implement settings update API call
       // await settingsService.updateSettings(settings);
 
-      toast({
-        title: 'Settings Updated',
-        description: `${section} settings have been successfully updated.`,
-        variant: 'success',
-      });
+      notify.success(`${section} settings have been successfully updated.`, 'Settings Updated');
     } catch (error) {
-      toast({
-        title: 'Update Failed',
-        description: 'Failed to update settings. Please try again.',
-        variant: 'error',
-      });
+      notify.error('Failed to update settings. Please try again.', 'Update Failed');
     } finally {
       setLoading(false);
     }
@@ -77,11 +68,7 @@ function GovernmentSettings() {
 
   const handlePasswordChange = async () => {
     if (settings.newPassword !== settings.confirmPassword) {
-      toast({
-        title: 'Password Mismatch',
-        description: 'New password and confirm password do not match.',
-        variant: 'error',
-      });
+      notify.error('New password and confirm password do not match.', 'Password Mismatch');
       return;
     }
 
@@ -97,17 +84,9 @@ function GovernmentSettings() {
         confirmPassword: '',
       });
 
-      toast({
-        title: 'Password Changed',
-        description: 'Your password has been successfully changed.',
-        variant: 'success',
-      });
+      notify.success('Your password has been successfully changed.', 'Password Changed');
     } catch (error) {
-      toast({
-        title: 'Password Change Failed',
-        description: 'Failed to change password. Please check your current password.',
-        variant: 'error',
-      });
+      notify.error('Failed to change password. Please check your current password.', 'Password Change Failed');
     } finally {
       setLoading(false);
     }

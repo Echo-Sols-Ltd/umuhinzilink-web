@@ -5,7 +5,7 @@ import { useSupplierAction } from '@/hooks/useSupplierAction';
 import { supplierService } from '@/services/suppliers';
 import { useProduct } from './ProductContext';
 import { useOrder } from './OrderContext';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 
 interface SupplierContextType {
   supplier: Supplier | null;
@@ -31,7 +31,6 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
   const [dashboardStats, setDashboardStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast()
   const { user } = useAuth();
   const supplierActions = useSupplierAction();
   const { fetchSupplierProducts, fetchSupplierStats } = useProduct()
@@ -87,11 +86,7 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch farmer data'
       setError(message)
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      })
+      notify.error(message, 'Error');
     } finally {
       setLoading(false)
     }

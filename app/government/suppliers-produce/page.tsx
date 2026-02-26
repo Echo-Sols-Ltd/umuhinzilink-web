@@ -5,7 +5,7 @@ import { GovernmentLayout } from '../components/GovernmentLayout';
 import { GovernmentPages } from '@/types';
 import { Banner, type BannerData } from '../components/Banner';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { Edit } from 'lucide-react';
 import { useGovernment } from '@/contexts/GovernmentContext';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
@@ -33,13 +33,8 @@ const bannerData: BannerData[] = [
 
 function SuppliersProducePage() {
   const { supplierProducts: products, refreshProducts } = useGovernment();
-  const { toast } = useToast()
   const handleSetPrice = (productId: string) => {
-    toast({
-      title: 'Set Price',
-      description: 'Price setting functionality will be implemented here.',
-      variant: 'success'
-    });
+    notify.success('Price setting functionality will be implemented here.', 'Set Price');
   };
 
   return (

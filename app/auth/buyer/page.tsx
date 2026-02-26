@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { BuyerRequest, BuyerType, Province, District } from '@/types';
 import { buyerTypeOptions, provinceOptions, districtOptions } from '@/types/enums';
@@ -17,7 +17,6 @@ import useUserAction from '@/hooks/useUserAction';
 export default function BuyerSignUp() {
   const { registerBuyer, user } = useAuth();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
-  const { toast } = useToast()
   const [buyerData, setBuyerData] = useState<BuyerRequest>({
     userId: user?.id!,
     buyerType: BuyerType.INDIVIDUAL,
@@ -101,8 +100,8 @@ export default function BuyerSignUp() {
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) return toast({ title: 'Invalid file type', description: 'Please select an image file', variant: 'error' });
-    if (file.size > 5 * 1024 * 1024) return toast({ title: 'File too large', description: 'Profile image must be less than 5MB', variant: 'error' });
+    if (!file.type.startsWith('image/')) return notify.error('Please select an image file', 'Invalid file type');
+    if (file.size > 5 * 1024 * 1024) return notify.error('Profile image must be less than 5MB', 'File too large');
 
     setProfileImage(file);
     const reader = new FileReader();
@@ -119,7 +118,7 @@ export default function BuyerSignUp() {
     e.preventDefault();
     setLoading(true);
     if (!validateForm()) {
-      toast({ title: 'Validation Error', description: 'Please fix the errors below and try again.', variant: 'error' });
+      notify.error('Please fix the errors below and try again.', 'Validation Error');
       setLoading(false);
       return;
     }
@@ -127,9 +126,9 @@ export default function BuyerSignUp() {
     try {
       if (profileImage) await uploadFile(profileImage);
       await registerBuyer(buyerData);
-      toast({ title: 'Success', description: 'Buyer account created successfully!', variant: 'success' });
+      notify.success('Buyer account created successfully!', 'Success');
     } catch {
-      toast({ title: 'Registration Error', description: 'Failed to create buyer account. Please try again.', variant: 'error' });
+      notify.error('Failed to create buyer account. Please try again.', 'Registration Error');
     } finally {
       setLoading(false);
     }

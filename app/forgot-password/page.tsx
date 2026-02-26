@@ -7,7 +7,7 @@ import { ArrowLeft, Mail, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { authService } from '@/services/auth';
 
 export default function ForgotPasswordPage() {
@@ -15,7 +15,6 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,17 +24,9 @@ export default function ForgotPasswordPage() {
       await authService.requestPasswordReset(email);
 
       setSubmitted(true);
-      toast({
-        title: 'Reset Code Sent',
-        description: 'Check your email for the 6-digit reset code.',
-        variant: 'success',
-      });
+      notify.success('Check your email for the 6-digit reset code.', 'Reset Code Sent');
     } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message || 'Failed to send reset code. Please try again.',
-        variant: 'error',
-      });
+      notify.error(error.message || 'Failed to send reset code. Please try again.', 'Error');
     } finally {
       setLoading(false);
     }
@@ -51,7 +42,7 @@ export default function ForgotPasswordPage() {
             </div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Check Your Email</h2>
             <p className="text-gray-600 mb-6">
-              We've sent a 6-digit reset code to {email}. 
+              We've sent a 6-digit reset code to {email}.
               <Link href={`/reset-password?email=${encodeURIComponent(email)}`} className="text-green-600 font-semibold hover:text-green-700 block mt-2">
                 Click here to reset your password
               </Link>

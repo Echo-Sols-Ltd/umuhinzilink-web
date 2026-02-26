@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function SignIn() {
@@ -23,19 +23,14 @@ export default function SignIn() {
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({ email: false, password: false });
   const { login, loading } = useAuth();
-  const { toast } = useToast()
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('logout')) {
-      toast({ title: 'Signed Out', description: 'You have been logged out successfully.', variant: 'success' });
+      notify.success('You have been logged out successfully.', 'Signed Out');
     }
     if (urlParams.get('registered')) {
-      toast({
-        title: 'Account Created',
-        description: 'Registration successful. Please sign in to continue.',
-        variant: 'success',
-      });
+      notify.success('Registration successful. Please sign in to continue.', 'Account Created');
     }
   }, []);
 
@@ -85,7 +80,7 @@ export default function SignIn() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
-      toast({ title: 'Error', description: 'Fix the errors below', variant: 'error' });
+      notify.error('Fix the errors below', 'Error');
       return;
     }
     if (rememberMe) {

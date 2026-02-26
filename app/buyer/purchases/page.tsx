@@ -16,7 +16,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, OrderStatus } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
@@ -43,7 +43,6 @@ function MyPurchasesComponent() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
-  const { toast } = useToast()
   const {
     buyerOrders,
     loading: ordersLoading,
@@ -98,11 +97,7 @@ function MyPurchasesComponent() {
       const result = await handleWalletPayment(orderId, `Payment for order #${orderId.slice(-6)}`);
 
       if (result) {
-        toast({
-          title: 'Payment Successful',
-          description: 'Your order has been paid successfully.',
-          variant: 'success',
-        });
+        notify.success('Your order has been paid successfully.', 'Payment Successful');
         // Refresh orders to show updated status
         await fetchBuyerOrders(currentPage - 1, itemsPerPage);
       }

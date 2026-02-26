@@ -16,7 +16,7 @@ import { farmerService } from '@/services/farmers';
 import { buyerService } from '@/services/buyers';
 import { supplierService } from '@/services/suppliers';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 
 // Storage keys for localStorage
 const STORAGE_KEYS = {
@@ -58,7 +58,6 @@ function useAuth(): AuthContextType {
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { toast } = useToast();
 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
@@ -79,11 +78,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setFarmer(res.data);
       }
     } catch {
-      toast({
-        title: 'Fetching farmer failed',
-        description: 'Please try again later',
-        variant: 'error',
-      });
+      notify.error('Please try again later', 'Fetching farmer failed');
     }
   };
 
@@ -100,11 +95,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setBuyer(res.data);
       }
     } catch {
-      toast({
-        title: 'Fetching buyer failed',
-        description: 'Please try again later',
-        variant: 'error',
-      });
+      notify.error('Please try again later', 'Fetching buyer failed');
     }
   };
 
@@ -121,11 +112,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setSupplier(res.data);
       }
     } catch {
-      toast({
-        title: 'Fetching supplier failed',
-        description: 'Please try again later',
-        variant: 'error',
-      });
+      notify.error('Please try again later', 'Fetching supplier failed');
     }
   };
 
@@ -190,11 +177,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setLoading(false);
     } catch {
-      toast({
-        title: 'Loading auth state failed',
-        description: 'Please try again later',
-        variant: 'error',
-      });
+      notify.error('Please try again later', 'Loading auth state failed');
       setLoading(false);
     }
   };
@@ -206,11 +189,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await authService.login(data);
 
       if (!res.success) {
-        toast({
-          title: 'Login Failed',
-          description: res.message,
-          variant: 'error',
-        });
+        notify.error(res.message, 'Login Failed');
         return;
       }
 
@@ -242,11 +221,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         if (route) router.replace(route);
       }
     } catch {
-      toast({
-        title: 'Error logging in',
-        description: 'Please try again',
-        variant: 'error',
-      });
+      notify.error('Please try again', 'Error logging in');
     } finally {
       setLoading(false);
     }
@@ -259,11 +234,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await authService.register(data);
 
       if (!res.success) {
-        toast({
-          title: 'Register Failed',
-          description: res.message,
-          variant: 'error',
-        });
+        notify.error(res.message, 'Register Failed');
         return;
       }
 
@@ -274,11 +245,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         await loadAuthState();
       }
     } catch {
-      toast({
-        title: 'Error registering',
-        description: 'Please try again',
-        variant: 'error',
-      });
+      notify.error('Please try again', 'Error registering');
     } finally {
       setLoading(false);
     }
@@ -291,11 +258,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await authService.registerBuyer(data);
 
       if (!res.success) {
-        toast({
-          title: 'Register Failed',
-          description: res.message,
-          variant: 'error',
-        });
+        notify.error(res.message, 'Register Failed');
         return;
       }
 
@@ -305,11 +268,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         router.replace('/');
       }
     } catch {
-      toast({
-        title: 'Error registering buyer',
-        description: 'Please try again',
-        variant: 'error',
-      });
+      notify.error('Please try again', 'Error registering buyer');
     } finally {
       setLoading(false);
     }
@@ -322,11 +281,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await authService.registerSupplier(data);
 
       if (!res.success) {
-        toast({
-          title: 'Register Failed',
-          description: res.message,
-          variant: 'error',
-        });
+        notify.error(res.message, 'Register Failed');
         return;
       }
 
@@ -336,11 +291,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         router.replace('/');
       }
     } catch {
-      toast({
-        title: 'Error registering supplier',
-        description: 'Please try again',
-        variant: 'error',
-      });
+      notify.error('Please try again', 'Error registering supplier');
     } finally {
       setLoading(false);
     }
@@ -353,11 +304,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await authService.registerFarmer(data);
 
       if (!res.success) {
-        toast({
-          title: 'Register Failed',
-          description: res.message,
-          variant: 'error',
-        });
+        notify.error(res.message, 'Register Failed');
         return;
       }
 
@@ -367,11 +314,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         router.replace('/');
       }
     } catch {
-      toast({
-        title: 'Error registering farmer',
-        description: 'Please try again',
-        variant: 'error',
-      });
+      notify.error('Please try again', 'Error registering farmer');
     } finally {
       setLoading(false);
     }
@@ -384,11 +327,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await authService.verifyOtp(data);
 
       if (!res.success) {
-        toast({
-          title: 'Verify Failed',
-          description: res.message,
-          variant: 'error',
-        });
+        notify.error(res.message, 'Verify Failed');
         return;
       }
 
@@ -399,11 +338,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         await loadAuthState();
       }
     } catch {
-      toast({
-        title: 'Error verifying',
-        description: 'Please try again',
-        variant: 'error',
-      });
+      notify.error('Please try again', 'Error verifying');
     } finally {
       setLoading(false);
     }
@@ -416,18 +351,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await authService.askOtpCode();
 
       if (!res.success) {
-        toast({
-          title: 'Ask OTP Failed',
-          description: res.message,
-          variant: 'error',
-        });
+        notify.error(res.message, 'Ask OTP Failed');
       }
     } catch {
-      toast({
-        title: 'Error asking for OTP',
-        description: 'Please try again',
-        variant: 'error',
-      });
+      notify.error('Please try again', 'Error asking for OTP');
     } finally {
       setLoading(false);
     }
