@@ -121,7 +121,7 @@ function FarmerOrderDetailPage() {
 
   return (
     <div className="flex h-screen bg-white">
-      <Sidebar userType={UserType.FARMER} activeItem='Orders' />
+      <Sidebar userType={UserType.FARMER} activeItem='Customer Orders' />
 
       <main className="flex-1 overflow-auto">
         {/* Header */}

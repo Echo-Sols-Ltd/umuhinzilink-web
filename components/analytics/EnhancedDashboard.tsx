@@ -3,8 +3,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { DateRange } from 'react-day-picker';
 import {
-  TrendingUp,
-  TrendingDown,
   Users,
   ShoppingCart,
   Package,

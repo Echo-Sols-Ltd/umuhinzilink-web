@@ -202,6 +202,12 @@ export function ProductDisplay({
         </div>
       )}
 
+      {products.length === 0 && !loading && (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No products found.</p>
+        </div>
+      )}
+
       {/* Products Grid/List */}
       {!loading && (
         <>
