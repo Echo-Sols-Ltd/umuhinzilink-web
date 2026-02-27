@@ -43,7 +43,7 @@ export default function AdminProductDetailPage() {
     };
 
     fetchProduct();
-  }, [params.id, fetchProductById]);
+  }, [params.id]);
 
   const handleShareProduct = (product: FarmerProduct | SupplierProduct) => {
     if (navigator.share) {
