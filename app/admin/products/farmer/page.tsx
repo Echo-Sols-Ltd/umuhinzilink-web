@@ -33,6 +33,7 @@ import { imageUrl } from '@/lib/utils';
 
 function FarmerProductManagement() {
     const { farmerProducts, refreshProducts } = useAdmin();
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
@@ -209,11 +210,9 @@ function FarmerProductManagement() {
                                             <TableCell className="text-right">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
-                                                        onClick={() => {
-                                                            setSelectedProduct(product);
-                                                            setShowProductModal(true);
-                                                        }}
-                                                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors"
+                                                        onClick={() => router.push(`/admin/products/${product.id}`)}
+                                                        className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        title="View product details"
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </button>

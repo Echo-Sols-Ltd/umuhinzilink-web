@@ -26,7 +26,6 @@ import { useProduct } from '@/contexts/ProductContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChat } from '@/hooks/useChat';
 import { MessageType } from '@/types/message';
-import ProductOrderInterface from '@/components/orders/ProductOrderInterface';
 import { productService } from '@/services/products';
 import { ProductDisplay } from '@/components/products/ProductDisplay';
 import {
@@ -42,7 +41,6 @@ import { Card } from '@/components/ui/card';
 import { ResponsiveLayout, MobileTable, TouchOptimizedButton } from '@/components/ui/responsive-layout';
 import { ProgressiveImage } from '@/components/ui/progressive-loading';
 import { useIsMobile } from '@/hooks/use-mobile';
-import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import { useMessages } from '@/contexts/MessageContext';
 import { useUser } from '@/contexts/UserContext';
 
@@ -60,7 +58,6 @@ function ProductsPageComponent() {
   const { chatUsers } = useUser()
   const { buyerProducts, loading: productsLoading } = useProduct();
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<FarmerProduct | null>(null);
 
   // State for filters and search
   const [search, setSearch] = useState('');
@@ -244,10 +241,12 @@ function ProductsPageComponent() {
             if ('category' in filters) setCategoryFilter(filters.category);
             if ('location' in filters) setLocationFilter(filters.location);
           }}
-          onProductSelect={setSelectedProduct}
+          onProductSelect={(product) => {
+            console.log("It is not being reached")
+            router.push(`/buyer/products/${product.id}`);
+          }}
           onProductPurchase={(product) => {
-            setSelectedProduct(product);
-            setIsPurchasing(true);
+            router.push(`/buyer/products/${product.id}`);
           }}
           onProductContact={handleContactFarmer}
           selectedCategory={categoryFilter}
@@ -256,32 +255,6 @@ function ProductsPageComponent() {
           minPrice={minPrice}
           maxPrice={maxPrice}
         />
-
-        {/* Product Order Interface Modal */}
-        {selectedProduct && !isPurchasing && (
-          <div className='fixed top-0 left-0 w-full h-full z-50 p-4 flex items-center justify-center bg-black/85 overflow-auto'>
-            <ProductOrderInterface
-              product={selectedProduct}
-              productType="farmer"
-              setIsPurchasing={setIsPurchasing}
-            />
-          </div>
-        )}
-
-        {isPurchasing && (
-          <div>
-            {/* Order Creation Modal */}
-            <OrderCreationModal
-              isOpen={isPurchasing}
-              onClose={() => {
-                setIsPurchasing(false)
-                setSelectedProduct(null)
-              }}
-              product={selectedProduct}
-              productType="farmer"
-            />
-          </div>
-        )}
       </div>
     </ResponsiveLayout>
   );

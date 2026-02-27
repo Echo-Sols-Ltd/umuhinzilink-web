@@ -11,6 +11,7 @@ import { ProfileProvider } from '@/contexts/ProfileContext';
 import { SocketProvider } from './SocketContext';
 import { NotificationProvider } from './NotificationContext';
 import { BrowserNotificationProvider } from './BrowserNotificationContext';
+import GlobalOrderModal from '@/components/orders/GlobalOrderModal';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -30,6 +31,7 @@ export function AppProviders({ children }: AppProvidersProps) {
                     <MessageProvider>
                       <ProfileProvider>
                         {children}
+                        <GlobalOrderModal />
                       </ProfileProvider>
                     </MessageProvider>
                   </OrderProvider>

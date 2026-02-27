@@ -217,9 +217,6 @@ export function ProductDisplay({
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onSelect={() => onProductSelect?.(product)}
-                  onPurchase={() => onProductPurchase?.(product)}
-                  onContact={() => onProductContact?.(product)}
                 />
               ))}
             </div>

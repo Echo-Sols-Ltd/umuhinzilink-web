@@ -229,7 +229,6 @@ function FarmerRequestsComponent() {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onPurchase={() => handleBuyClick(product)}
                   />
                 ))}
               </div>

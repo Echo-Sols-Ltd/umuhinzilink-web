@@ -17,6 +17,7 @@ import { buyerService } from '@/services/buyers';
 import { supplierService } from '@/services/suppliers';
 import { useRouter } from 'next/navigation';
 import { notify } from '@/lib/notify';
+import { apiClient } from '@/services/client';
 
 // Storage keys for localStorage
 const STORAGE_KEYS = {
@@ -64,6 +65,29 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [farmer, setFarmer] = useState<Farmer | null>(null);
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [buyer, setBuyer] = useState<Buyer | null>(null);
+
+  useEffect(() => {
+    // Register logout listener to handle token expiry and unauthorized access
+    const handleLogout = () => {
+      // Clear all auth state
+      setUser(null);
+      setFarmer(null);
+      setSupplier(null);
+      setBuyer(null);
+      setLoading(false);
+      
+      // Redirect to login page
+      router.push('/auth/login');
+    };
+
+    // Register the logout callback with apiClient
+    apiClient.onLogout(handleLogout);
+
+    // Cleanup function to remove the listener when component unmounts
+    return () => {
+      apiClient.removeLogoutListener(handleLogout);
+    };
+  }, [router]);
 
   // Fetch farmer profile from API and store in state/localStorage
   const fetchFarmer = async () => {

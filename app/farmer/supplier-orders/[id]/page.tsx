@@ -118,6 +118,7 @@ function FarmerSupplierOrderDetailPage() {
 
   const supplier = order.buyer;
   const product = order.product;
+  const isOwner = order.product.owner === user
 
   return (
     <div className="flex h-screen bg-white">
