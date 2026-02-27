@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, UserType } from '@/types';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { userService } from '@/services/users';
 import { useAuth } from './AuthContext';
 import { ChatUser } from '@/types/chat';
@@ -22,7 +22,6 @@ const UserContext = createContext<UserContextType | null>(null);
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([])
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
@@ -38,11 +37,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
         const res = await userService.getAllUsers();
 
         if (!res.success) {
-          toast({
-            title: 'Server error',
-            description: 'Users cannot be fetched',
-            variant: 'error',
-          });
+          notify.error('Users cannot be fetched', 'Server error');
           return;
         }
 
@@ -50,11 +45,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
           setUsers(res.data);
         }
       } catch {
-        toast({
-          title: 'Server error',
-          description: 'Users cannot be fetched',
-          variant: 'error',
-        });
+        notify.error('Users cannot be fetched', 'Server error');
       } finally {
         setLoading(false);
       }
@@ -67,11 +58,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
         const res = await chatService.getAllChatUsers();
 
         if (!res.success) {
-          toast({
-            title: 'Server error',
-            description: 'Users cannot be fetched',
-            variant: 'error',
-          });
+          notify.error('Users cannot be fetched', 'Server error');
           return;
         }
 
@@ -79,11 +66,7 @@ function UserProvider({ children }: { children: React.ReactNode }) {
           setChatUsers(res.data);
         }
       } catch {
-        toast({
-          title: 'Server error',
-          description: 'Users cannot be fetched',
-          variant: 'error',
-        });
+        notify.error('Users cannot be fetched', 'Server error');
       } finally {
         setLoading(false);
       }

@@ -30,7 +30,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { AdminPages, User, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { adminService } from '@/services/admin';
 import {
   Table,
@@ -53,7 +53,6 @@ import { imageUrl } from '@/lib/utils';
 
 function UserManagement() {
   const { deleteUser } = useAdmin();
-  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all');
@@ -80,11 +79,7 @@ function UserManagement() {
       setTotalUsers(response.totalElements);
       setCurrentPage(page);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch users',
-        variant: 'error',
-      });
+      notify.error('Failed to fetch users', 'Error');
     } finally {
       setLoading(false);
     }
@@ -115,17 +110,9 @@ function UserManagement() {
     try {
       await adminService.toggleUserStatus(userId, suspend);
       await fetchUsers(currentPage);
-      toast({
-        title: 'Success',
-        description: `User ${suspend ? 'suspended' : 'activated'} successfully`,
-        variant: 'success',
-      });
+      notify.success(`User ${suspend ? 'suspended' : 'activated'} successfully`, 'Success');
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: `Failed to ${suspend ? 'suspend' : 'activate'} user`,
-        variant: 'error',
-      });
+      notify.error(`Failed to ${suspend ? 'suspend' : 'activate'} user`, 'Error');
     } finally {
       setActionLoading(null);
     }
@@ -136,17 +123,9 @@ function UserManagement() {
     try {
       await adminService.updateUserRole(userId, newRole);
       await fetchUsers(currentPage);
-      toast({
-        title: 'Success',
-        description: 'User role updated successfully',
-        variant: 'success',
-      });
+      notify.success('User role updated successfully', 'Success');
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to update user role',
-        variant: 'error',
-      });
+      notify.error('Failed to update user role', 'Error');
     } finally {
       setActionLoading(null);
     }
@@ -162,11 +141,7 @@ function UserManagement() {
       await deleteUser(userId);
       await fetchUsers(currentPage);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete user',
-        variant: 'error',
-      });
+      notify.error('Failed to delete user', 'Error');
     } finally {
       setActionLoading(null);
     }
@@ -179,7 +154,7 @@ function UserManagement() {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
-      <Sidebar userType={UserType.ADMIN} activeItem="Users" />
+      <Sidebar userType={UserType.ADMIN} activeItem="User Management" />
 
       <div className="flex-1 flex flex-col overflow-auto">
         <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
@@ -235,27 +210,6 @@ function UserManagement() {
 
         <main className="flex-1 bg-white p-6">
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">User Directory</h2>
-                <p className="text-xs text-gray-500 mt-0.5">Manage and monitor all platform members</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="px-3 py-1 bg-green-50 rounded-full border border-green-100">
-                  <span className="text-xs font-semibold text-green-700">
-                    {totalUsers} Member{totalUsers !== 1 ? 's' : ''}
-                  </span>
-                </div>
-                <button
-                  onClick={() => fetchUsers(currentPage)}
-                  className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
-                  disabled={loading}
-                >
-                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
-            </div>
-
             <Table>
               <TableHeader>
                 <TableRow>
@@ -290,7 +244,7 @@ function UserManagement() {
                     <TableRow key={usersItem.id} className="group">
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl overflow-hidden bg-white border border-gray-100 flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-100 flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
                             {usersItem.avatar ? (
                               <img src={imageUrl(usersItem.avatar)} alt={usersItem.names} className="w-full h-full object-cover" />
                             ) : (
@@ -319,21 +273,7 @@ function UserManagement() {
                       </TableCell>
                       <TableCell>
                         <div className="max-w-[120px]">
-                          <Select
-                            value={usersItem.role}
-                            onValueChange={(newRole) => handleUpdateRole(usersItem.id, newRole)}
-                            disabled={actionLoading === usersItem.id}
-                          >
-                            <SelectTrigger className="h-8 text-[11px] font-semibold uppercase  bg-white/50 rounded-lg">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="FARMER">Farmer</SelectItem>
-                              <SelectItem value="BUYER">Buyer</SelectItem>
-                              <SelectItem value="SUPPLIER">Supplier</SelectItem>
-                              <SelectItem value="ADMIN">Admin</SelectItem>
-                            </SelectContent>
-                          </Select>
+                         {usersItem.role}
                         </div>
                       </TableCell>
                       <TableCell>

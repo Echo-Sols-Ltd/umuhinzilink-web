@@ -18,15 +18,3 @@ export interface SidebarProps {
 }
 
 
-
-export interface FormError {
-  field: string;
-  message: string;
-}
-
-export interface FormState<T> {
-  data: T;
-  errors: FormError[];
-  isSubmitting: boolean;
-  isValid: boolean;
-}

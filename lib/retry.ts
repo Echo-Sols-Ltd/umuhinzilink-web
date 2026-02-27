@@ -7,7 +7,7 @@ export interface RetryOptions {
   onRetry?: (error: any, attempt: number) => void;
 }
 
-export class RetryError extends Error {
+class RetryError extends Error {
   public attempts: number;
   public lastError: any;
 
@@ -48,7 +48,7 @@ export async function withRetry<T>(
 
       if (attempt < maxAttempts) {
         const currentDelay = calculateDelay(delay, attempt, backoff, maxDelay);
-        
+
         if (onRetry) {
           onRetry(error, attempt);
         }
@@ -137,7 +137,7 @@ export const retryConfigs = {
 };
 
 // Hook for using retry in React components
-export function useRetry() {
+function useRetry() {
   const retry = async <T>(
     fn: () => Promise<T>,
     options?: RetryOptions

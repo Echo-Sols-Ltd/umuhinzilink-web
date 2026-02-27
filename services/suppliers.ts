@@ -16,7 +16,7 @@ export interface SupplierProductRequest {
   certification: string;
 }
 
-export interface SupplierDashboard {
+interface SupplierDashboard {
   totalProducts: number;
   activeProducts: number;
   totalOrders: number;

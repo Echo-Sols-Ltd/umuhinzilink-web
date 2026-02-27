@@ -23,14 +23,14 @@ import { toast } from '@/components/ui/use-toast';
 import Sidebar from '@/components/shared/Sidebar';
 import { GovernmentPages, UserType } from '@/types';
 
-export type MenuItem = {
+type MenuItem = {
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   isLogout?: boolean;
 };
 
-export const MENU_ITEMS: MenuItem[] = [
+const MENU_ITEMS: MenuItem[] = [
   { label: 'Dashboard', href: '/government/dashboard', icon: LayoutGrid },
   { label: 'Farmers Produce', href: '/government/farmer/s-produce', icon: Tractor },
   { label: 'Suppliers Produce', href: '/government/suppliers-produce', icon: Package },

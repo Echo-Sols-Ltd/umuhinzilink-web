@@ -7,7 +7,7 @@ import { GovernmentPages } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import GovernmentGuard from '@/contexts/guard/GovernmentGuard';
 import { imageUrl } from '@/lib/utils';
 import { userService } from '@/services/users';
@@ -17,7 +17,6 @@ function GovernmentProfile() {
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const { toast } = useToast()
 
   // Mock user data - replace with actual user data from auth context
   const [profileData, setProfileData] = useState({
@@ -41,17 +40,9 @@ function GovernmentProfile() {
 
       setProfileData({ ...editData });
       setIsEditing(false);
-      toast({
-        title: 'Profile Updated',
-        description: 'Your profile has been successfully updated.',
-        variant: 'success',
-      });
+      notify.success('Your profile has been successfully updated.', 'Profile Updated');
     } catch (error) {
-      toast({
-        title: 'Update Failed',
-        description: 'Failed to update profile. Please try again.',
-        variant: 'error',
-      });
+      notify.error('Failed to update profile. Please try again.', 'Update Failed');
     } finally {
       setLoading(false);
     }
@@ -80,19 +71,11 @@ function GovernmentProfile() {
     try {
       const res = await userService.uploadAvatar(imageFile);
       setProfileData(prev => ({ ...prev, avatar: res.data! }));
-      toast({
-        title: "Image Updated",
-        description: "Profile image uploaded successfully",
-        variant: "success"
-      });
+      notify.success("Profile image uploaded successfully", "Image Updated");
       setImageFile(null);
       setPreviewUrl(null);
     } catch (error) {
-      toast({
-        title: "Upload Failed",
-        description: "Failed to upload image. Please try again.",
-        variant: "error"
-      });
+      notify.error("Failed to upload image. Please try again.", "Upload Failed");
     }
   };
 

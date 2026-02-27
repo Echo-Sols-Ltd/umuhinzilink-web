@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNotificationStrategy } from './usePageVisibility';
+import { notify } from '@/lib/notify';
 
-export type NotificationType = 'message' | 'product' | 'order' | 'delivery';
+type NotificationType = 'message' | 'product' | 'order' | 'delivery';
 
-export interface NotificationData {
+interface NotificationData {
   type: NotificationType;
   title: string;
   body: string;
@@ -65,10 +66,11 @@ export const useBrowserNotification = (): UseBrowserNotificationReturn => {
   // Show notification with intelligent routing
   const showNotification = useCallback((data: NotificationData): boolean => {
     console.log('📱 Showing notification:', data.type, 'Strategy:', shouldUseInAppNotifications ? 'In-App' : 'Browser');
-    
+
     // Always show in-app notifications when page is visible
     if (shouldUseInAppNotifications) {
       console.log('✅ Showing in-app notification (page is visible)');
+      notify.info(data.body, data.title);
       // Return false to indicate browser notification was not shown
       return false;
     }

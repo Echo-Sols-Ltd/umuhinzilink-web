@@ -10,12 +10,12 @@ export interface WalletDTO {
   updatedAt: string;
 }
 
-export interface WalletDepositRequest {
+interface WalletDepositRequest {
   amount: number;
   description?: string;
 }
 
-export interface WalletPaymentRequest {
+interface WalletPaymentRequest {
   orderId: string;
   description?: string;
 }
@@ -29,7 +29,7 @@ export interface WalletTransactionDTO {
   amount: number;
   balanceBefore?: number;
   balanceAfter?: number;
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'PAYMENT' | 'TRANSFER_IN' | 'TRANSFER_OUT'|'INCOME';
+  type: 'DEPOSIT' | 'WITHDRAWAL' | 'PAYMENT' | 'TRANSFER_IN' | 'TRANSFER_OUT' | 'INCOME';
   status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
   description: string;
   orderId?: string;
@@ -62,7 +62,7 @@ export interface PaymentResponseDTO {
 }
 
 // Pagination types for admin endpoints
-export interface PagedResponse<T> {
+interface PagedResponse<T> {
   content: T[];
   pageNumber: number;
   pageSize: number;
@@ -72,7 +72,7 @@ export interface PagedResponse<T> {
   last: boolean;
 }
 
-export interface PaginationParams {
+interface PaginationParams {
   page?: number;
   size?: number;
   sortBy?: string;

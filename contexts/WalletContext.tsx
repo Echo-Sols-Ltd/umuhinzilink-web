@@ -3,7 +3,7 @@ import { walletService } from '@/services/wallet';
 import { paymentService } from '@/services/payments';
 import { WalletDTO, WalletTransactionDTO, PaymentRequest, PaymentResponseDTO } from '@/types/wallet';
 import { useAuth } from './AuthContext';
-import { useToast} from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 
 const STORAGE_KEYS = {
   WALLET: 'walletData',
@@ -11,7 +11,7 @@ const STORAGE_KEYS = {
   PAYMENT_HISTORY: 'paymentHistory',
 };
 
-export type WalletContextValue = {
+type WalletContextValue = {
   loading: boolean;
   error?: string | null;
   wallet: WalletDTO | null;
@@ -46,7 +46,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [wallet, setWallet] = useState<WalletDTO | null>(null);
   const [transactions, setTransactions] = useState<WalletTransactionDTO[]>([]);
   const [paymentHistory, setPaymentHistory] = useState<PaymentResponseDTO[]>([]);
-  const { toast } = useToast()
   // Load cached data on mount
   useEffect(() => {
     const loadCachedData = () => {
@@ -165,11 +164,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       if (!res.success) {
         const errorMessage = res.message || 'Failed to deposit money';
         setError(errorMessage);
-        toast({
-          title: 'Deposit Failed',
-          description: errorMessage,
-          variant: 'error',
-        });
+        notify.error(errorMessage, 'Deposit Failed');
         return null;
       }
 
@@ -189,22 +184,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         const updatedTransactions = [transaction, ...transactions];
         localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(updatedTransactions));
 
-        toast({
-          title: 'Deposit Initiated',
-          description: 'Your deposit request has been submitted successfully.',
-          variant: 'success',
-        });
+        notify.success('Your deposit request has been submitted successfully.', 'Deposit Initiated');
       }
 
       return transaction ?? null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to deposit money';
       setError(errorMessage);
-      toast({
-        title: 'Deposit Failed',
-        description: errorMessage,
-        variant: 'error',
-      });
+      notify.error(errorMessage, 'Deposit Failed');
       return null;
     } finally {
       setLoading(false);
@@ -221,11 +208,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       if (!res.success) {
         const errorMessage = res.message || 'Failed to process payment';
         setError(errorMessage);
-        toast({
-          title: 'Payment Failed',
-          description: errorMessage,
-          variant: 'error',
-        });
+        notify.error(errorMessage, 'Payment Failed');
         return null;
       }
 
@@ -245,22 +228,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         const updatedTransactions = [transaction, ...transactions];
         localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(updatedTransactions));
 
-        toast({
-          title: 'Payment Successful',
-          description: 'Your order has been paid successfully.',
-          variant: 'success',
-        });
+        notify.success('Your order has been paid successfully.', 'Payment Successful');
       }
 
       return transaction ?? null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to process payment';
       setError(errorMessage);
-      toast({
-        title: 'Payment Failed',
-        description: errorMessage,
-        variant: 'error',
-      });
+      notify.error(errorMessage, 'Payment Failed');
       return null;
     } finally {
       setLoading(false);
@@ -277,11 +252,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       if (!res.success) {
         const errorMessage = res.message || 'Failed to process payment';
         setError(errorMessage);
-        toast({
-          title: 'Payment Failed',
-          description: errorMessage,
-          variant: 'error',
-        });
+        notify.error(errorMessage, 'Payment Failed');
         return null;
       }
 
@@ -295,17 +266,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem(STORAGE_KEYS.PAYMENT_HISTORY, JSON.stringify(updatedHistory));
 
         if (payment.status === 'COMPLETED') {
-          toast({
-            title: 'Payment Successful',
-            description: 'Your payment has been processed successfully.',
-            variant: 'success',
-          });
+          notify.success('Your payment has been processed successfully.', 'Payment Successful');
         } else if (payment.status === 'PENDING' || payment.status === 'PROCESSING') {
-          toast({
-            title: 'Payment Processing',
-            description: 'Your payment is being processed. You will receive a confirmation shortly.',
-            variant: 'warning',
-          });
+          notify.warning('Your payment is being processed. You will receive a confirmation shortly.', 'Payment Processing');
         }
       }
 
@@ -313,11 +276,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to process payment';
       setError(errorMessage);
-      toast({
-        title: 'Payment Failed',
-        description: errorMessage,
-        variant: 'error',
-      });
+      notify.error(errorMessage, 'Payment Failed');
       return null;
     } finally {
       setLoading(false);

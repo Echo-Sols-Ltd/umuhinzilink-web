@@ -8,7 +8,7 @@ import { socketService } from '@/services/socket';
 import { useSocket } from './SocketContext';
 import { OrderChangeResponse, OrderDeliveryChange } from '@/services/websocket';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
-import { useToast } from '@/components/ui/use-toast';
+
 
 const STORAGE_KEYS = {
   BUYER: 'buyerOrders',
@@ -17,7 +17,7 @@ const STORAGE_KEYS = {
   FARMER_BUYER: 'farmerBuyerOrders',
 };
 
-export type OrderContextValue = {
+type OrderContextValue = {
   loading: boolean;
   error?: string | null;
   buyerOrders: FarmerOrder[] | null;
@@ -93,7 +93,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { updateBuyerProduct } = useProduct();
   const socket = useSocket()
   const { isEnabled, shouldUseInAppNotifications, shouldUseBrowserNotifications, showNotification } = useBrowserNotification();
-  const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
@@ -263,14 +262,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         window.location.href = '/farmer/orders';
       },
     });
-    
-    // Only show in-app toast if browser notification wasn't shown
-    if (!browserNotificationShown && shouldUseInAppNotifications) {
-      toast({ 
-        description: `New Order #${orderChange.orderId} received!`,
-        variant: 'default'
-      });
-    }
+
+    // Notify triggers in-app notification context automatically from showNotification
 
     // For new orders, we need to refresh appropriate list since we don't have full order data
     // This is a limitation of the current socket event structure
@@ -382,14 +375,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         window.location.href = '/farmer/delivery';
       },
     });
-    
-    // Only show in-app toast if browser notification wasn't shown
-    if (!browserNotificationShown && shouldUseInAppNotifications) {
-      toast({ 
-        description: `Delivery status updated for Order #${deliveryChange.orderId}!`,
-        variant: 'default'
-      });
-    }
+
+    // In-app notifications are automatically shown via showNotification inside useBrowserNotification
 
     // Update order delivery status across all relevant lists by orderId
     const { orderId, status } = deliveryChange;
@@ -459,7 +446,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(prev =>
       prev?.id === orderId ? updateDeliveryStatus(prev) : prev
     );
-  }, [shouldUseInAppNotifications, showNotification, toast, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
+  }, [shouldUseInAppNotifications, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
   const cleanupSocketListeners = useCallback(() => {
     if (!socket) return;

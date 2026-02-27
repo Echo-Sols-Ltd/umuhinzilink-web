@@ -24,7 +24,7 @@ function OrderManagement() {
       {/* Sidebar */}
       <Sidebar
         userType={UserType.ADMIN}
-        activeItem='Orders'
+        activeItem='Order Management'
       />
 
       {/* Main Content */}

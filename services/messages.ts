@@ -3,14 +3,14 @@ import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 import { AxiosProgressEvent, CancelToken } from 'axios';
 
-export interface ChatMessageReply {
+interface ChatMessageReply {
   messageId: string;
   senderId: string;
   receiverId: string;
   content: string;
 }
 
-export interface ChatMessageEdit {
+interface ChatMessageEdit {
   messageId: string;
   newContent: string;
 }

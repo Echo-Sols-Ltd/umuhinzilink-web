@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRequest, UserType } from '@/types';
 import { SupplierRequest, SupplierType, Address, Province, District } from '@/types';
@@ -25,7 +25,6 @@ export default function SupplierSignUp() {
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string>('');
-  const { toast } = useToast()
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
@@ -167,19 +166,11 @@ export default function SupplierSignUp() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: 'File too large',
-          description: 'Profile image must be less than 5MB',
-          variant: 'error',
-        });
+        notify.error('Profile image must be less than 5MB', 'File too large');
         return;
       }
       if (!file.type.startsWith('image/')) {
-        toast({
-          title: 'Invalid file type',
-          description: 'Please select an image file',
-          variant: 'error',
-        });
+        notify.error('Please select an image file', 'Invalid file type');
         return;
       }
       setProfileImage(file);
@@ -202,11 +193,7 @@ export default function SupplierSignUp() {
 
     // Validate form data
     if (!validateForm()) {
-      toast({
-        title: 'Validation Error',
-        description: 'Please fix the errors below and try again.',
-        variant: 'error',
-      });
+      notify.error('Please fix the errors below and try again.', 'Validation Error');
       setLoading(false);
       return;
     }
@@ -220,18 +207,10 @@ export default function SupplierSignUp() {
       // Then register the supplier
       await registerSupplier(supplierData);
 
-      toast({
-        title: 'Success',
-        description: 'Supplier account created successfully!',
-        variant: 'success',
-      });
+      notify.success('Supplier account created successfully!', 'Success');
 
     } catch (error) {
-      toast({
-        title: 'Registration Error',
-        description: 'Failed to create supplier account. Please try again.',
-        variant: 'error',
-      });
+      notify.error('Failed to create supplier account. Please try again.', 'Registration Error');
     } finally {
       setLoading(false);
     }
@@ -332,8 +311,8 @@ export default function SupplierSignUp() {
                   disabled={loading}
                   placeholder="Enter your business name"
                   className={`text-gray-700 font-medium text-sm ${touched.businessName && fieldErrors.businessName
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                     }`}
                   required
                 />
@@ -351,8 +330,8 @@ export default function SupplierSignUp() {
                   onBlur={handleBlur}
                   disabled={loading}
                   className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.supplierType && fieldErrors.supplierType
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                     }`}
                   required
                 >
@@ -383,8 +362,8 @@ export default function SupplierSignUp() {
                   onBlur={handleBlur}
                   disabled={loading}
                   className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                     }`}
                   required
                 >
@@ -409,8 +388,8 @@ export default function SupplierSignUp() {
                   onBlur={handleBlur}
                   disabled={loading}
                   className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:border-green-500 focus:ring-green-500'
                     }`}
                   required
                 >

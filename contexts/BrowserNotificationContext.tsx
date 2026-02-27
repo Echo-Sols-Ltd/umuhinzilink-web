@@ -35,7 +35,7 @@ export function BrowserNotificationProvider({ children }: { children: React.Reac
       const timer = setTimeout(() => {
         setShowPrompt(true);
       }, 3000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [hasAskedBefore, permission, isModalOpen]);
@@ -80,7 +80,7 @@ export function BrowserNotificationProvider({ children }: { children: React.Reac
       }}
     >
       {children}
-      
+
       {/* Permission Modal */}
       <NotificationPermissionModal
         isOpen={isModalOpen}
@@ -88,7 +88,7 @@ export function BrowserNotificationProvider({ children }: { children: React.Reac
         onEnable={handleEnableNotifications}
         onSkip={handleSkip}
       />
-      
+
       {/* Small Prompt */}
       {showPrompt && (
         <div className="fixed bottom-4 left-4 right-4 z-40 md:left-auto md:right-4 md:w-96">
@@ -102,7 +102,7 @@ export function BrowserNotificationProvider({ children }: { children: React.Reac
   );
 }
 
-export function useBrowserNotificationContext() {
+function useBrowserNotificationContext() {
   const context = useContext(BrowserNotificationContext);
   if (context === undefined) {
     throw new Error('useBrowserNotificationContext must be used within a BrowserNotificationProvider');

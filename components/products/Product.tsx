@@ -1,7 +1,7 @@
 import { imageUrl } from "@/lib/utils";
 import { FarmerProduct, MessageType, SupplierProduct } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon, Clock } from "lucide-react";
-import { useToast } from "../ui/use-toast";
+import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChat } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,6 @@ interface ProductCardProps {
 
 
 export default function ProductCard({ product, onSelect, onPurchase, onContact, onEdit }: ProductCardProps) {
-    const { toast } = useToast()
     const { user } = useAuth()
     const { deleteFarmerProduct, deleteSupplierProduct } = useProduct()
     const { handleUserClick, handleSendMessage } = useChat()
@@ -26,20 +25,12 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
 
     const handleContactFarmer = async (product: any) => {
         if (!user) {
-            toast({
-                title: "Authentication Required",
-                description: "Please log in to contact farmers",
-                variant: "error"
-            });
+            notify.error("Please log in to contact farmers", "Authentication Required");
             return;
         }
 
         if (!product.owner) {
-            toast({
-                title: "Information Not Available",
-                description: "Unable to find contact information for this product",
-                variant: "error"
-            });
+            notify.error("Unable to find contact information for this product", "Information Not Available");
             return;
         }
 
@@ -55,20 +46,12 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
                 partnerUser // overrideReceiver: bypasses stale activeChatUser state
             );
 
-            toast({
-                title: "Message Sent",
-                description: `You can now chat with ${product.owner.names} about ${product.name}`,
-                variant: "success"
-            });
+            notify.success(`You can now chat with ${product.owner.names} about ${product.name}`, "Message Sent");
 
             router.push(`/chat/${partnerUser.id}`);
         } catch (error) {
             console.error('Failed to contact owner:', error);
-            toast({
-                title: "Failed to Send Message",
-                description: "Please try again later",
-                variant: "error"
-            });
+            notify.error("Please try again later", "Failed to Send Message");
         }
     };
 
@@ -85,11 +68,7 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
             }
         } catch (error) {
             console.error('Failed to delete product:', error);
-            toast({
-                title: "Delete Failed",
-                description: "Failed to delete product. Please try again.",
-                variant: "error"
-            });
+            notify.error("Failed to delete product. Please try again.", "Delete Failed");
         }
     };
 

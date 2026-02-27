@@ -25,7 +25,7 @@ import { ProductReference } from './ProductReference';
 import { messageService } from '@/services/messages';
 import { toast } from '@/components/ui/use-toast';
 
-export interface ChatInterfaceProps {
+interface ChatInterfaceProps {
   className?: string;
 }
 

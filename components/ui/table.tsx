@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto scrollbar-hide rounded-xl border border-gray-100 bg-white shadow-sm">
+    <div data-slot="table-container" className="relative w-full overflow-x-auto scrollbar-hide">
       <table
         data-slot="table"
         className={cn('w-full caption-bottom text-sm border-collapse', className)}

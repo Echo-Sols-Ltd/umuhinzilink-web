@@ -23,7 +23,7 @@ import {
 import { WalletDTO, WalletTransactionDTO } from '@/types/wallet';
 import { cn } from '@/lib/utils';
 
-export interface WalletDashboardProps {
+interface WalletDashboardProps {
   wallet: WalletDTO | null;
   transactions: WalletTransactionDTO[];
   loading?: boolean;

@@ -25,7 +25,7 @@ export function withTimeout<T>(
   });
 }
 
-export function createTimeoutPromise(timeoutMs: number, message?: string): Promise<never> {
+function createTimeoutPromise(timeoutMs: number, message?: string): Promise<never> {
   return new Promise((_, reject) => {
     setTimeout(() => {
       reject(new TimeoutError(
@@ -55,7 +55,7 @@ export const timeoutConfigs = {
 };
 
 // Utility for creating abortable operations
-export class AbortableOperation {
+class AbortableOperation {
   private abortController: AbortController;
   private timeoutId?: NodeJS.Timeout;
 
@@ -91,21 +91,21 @@ export class AbortableOperation {
       if (this.timeoutId) {
         clearTimeout(this.timeoutId);
       }
-      
+
       if (this.signal.aborted) {
         throw new TimeoutError(
           this.signal.reason || `Operation was aborted`,
           this.timeoutMs || 0
         );
       }
-      
+
       throw error;
     }
   }
 }
 
 // Hook for using timeout in React components
-export function useTimeout() {
+function useTimeout() {
   const withTimeoutHook = <T>(
     promise: Promise<T>,
     timeoutMs: number,

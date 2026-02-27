@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { Notification, NotificationFilter, NotificationType } from '@/types/notification';
 import { notificationService } from '@/services/notification';
 import { useAuth } from './AuthContext';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { PaginatedResponse } from '@/types/api';
 
 interface NotificationContextType {
@@ -32,7 +32,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const { user } = useAuth();
-    const { toast } = useToast();
 
     const fetchNotifications = useCallback(async (filter?: NotificationFilter & { page?: number; size?: number }) => {
         if (!user) return;
@@ -92,11 +91,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 );
             }
         } catch (error) {
-            toast({
-                title: 'Error',
-                description: 'Failed to mark notification as read',
-                variant: 'error',
-            });
+            notify.error('Failed to mark notification as read', 'Error');
         }
     };
 
@@ -105,18 +100,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             const response = await notificationService.markAllAsRead();
             if (response.success) {
                 setNotifications(prev => (Array.isArray(prev) ? prev : []).map(n => ({ ...n, isRead: true })));
-                toast({
-                    title: 'Success',
-                    description: 'All notifications marked as read',
-                    variant: 'success',
-                });
+                notify.success('All notifications marked as read', 'Success');
             }
         } catch (error) {
-            toast({
-                title: 'Error',
-                description: 'Failed to mark all notifications as read',
-                variant: 'error',
-            });
+            notify.error('Failed to mark all notifications as read', 'Error');
         }
     };
 
@@ -127,11 +114,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 setNotifications(prev => (Array.isArray(prev) ? prev : []).filter(n => n.id !== id));
             }
         } catch (error) {
-            toast({
-                title: 'Error',
-                description: 'Failed to delete notification',
-                variant: 'error',
-            });
+            notify.error('Failed to delete notification', 'Error');
         }
     };
 
@@ -140,18 +123,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             const response = await notificationService.deleteAllNotifications();
             if (response.success) {
                 setNotifications([]);
-                toast({
-                    title: 'Success',
-                    description: 'All notifications cleared',
-                    variant: 'success',
-                });
+                notify.success('All notifications cleared', 'Success');
             }
         } catch (error) {
-            toast({
-                title: 'Error',
-                description: 'Failed to clear notifications',
-                variant: 'error',
-            });
+            notify.error('Failed to clear notifications', 'Error');
         }
     };
 

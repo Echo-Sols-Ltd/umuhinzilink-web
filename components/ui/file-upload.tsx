@@ -5,7 +5,7 @@ import { Upload, X, Image as ImageIcon, File, AlertCircle, CheckCircle } from 'l
 import { uploadService, UploadProgress } from '@/services/upload';
 import { cn } from '@/lib/utils';
 
-export interface FileUploadProps {
+interface FileUploadProps {
   onUploadComplete?: (url: string) => void;
   onUploadError?: (error: string) => void;
   onFileSelect?: (file: File) => void;
@@ -23,7 +23,7 @@ export interface FileUploadProps {
   quality?: number;
 }
 
-export interface FileUploadState {
+interface FileUploadState {
   file: File | null;
   preview: string | null;
   uploading: boolean;

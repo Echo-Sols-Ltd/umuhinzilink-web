@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Plus, ArrowLeft } from 'lucide-react';
@@ -17,7 +17,6 @@ function EditInput() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { toast } = useToast();
   const supplierActions = useSupplierAction();
   const { supplierProducts } = useProduct();
   const inputId = params.id as string;
@@ -57,15 +56,11 @@ function EditInput() {
         });
         setLoading(false);
       } else {
-        toast({
-          title: 'Error',
-          description: 'Input not found',
-          variant: 'error',
-        });
+        notify.error('Input not found', 'Error');
         router.push('/supplier/products');
       }
     }
-  }, [inputId, supplierProducts, router, toast]);
+  }, [inputId, supplierProducts, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -91,11 +86,7 @@ function EditInput() {
     if (submitting) return;
 
     if (!user) {
-      toast({
-        title: 'Authentication Required',
-        description: 'Please sign in again to edit input.',
-        variant: 'error',
-      });
+      notify.error('Please sign in again to edit input.', 'Authentication Required');
       router.push('/auth/signin');
       return;
     }
@@ -119,21 +110,13 @@ function EditInput() {
 
       await supplierActions.updateProduct(inputId, productData);
 
-      toast({
-        title: 'Success',
-        description: 'Input updated successfully!',
-        variant: 'success',
-      });
+      notify.success('Input updated successfully!', 'Success');
 
       router.push('/supplier/products');
     } catch (error) {
       console.error('Error updating input:', error);
       const message = error instanceof Error ? error.message : 'An unknown error occurred.';
-      toast({
-        title: 'Unable to update input',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Unable to update input');
     } finally {
       setSubmitting(false);
     }

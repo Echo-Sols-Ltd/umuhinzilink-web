@@ -7,17 +7,17 @@ import { farmerService } from '@/services/farmers';
 import { supplierService } from '@/services/suppliers';
 import { buyerService } from '@/services/buyers';
 
-export interface ProfileContextValue {
+interface ProfileContextValue {
   // Profile data
   profile: User | Farmer | Supplier | Buyer | null;
   loading: boolean;
   error: string | null;
-  
+
   // Role-specific data
   farmerProfile: Farmer | null;
   supplierProfile: Supplier | null;
   buyerProfile: Buyer | null;
-  
+
   // Profile operations
   updateProfile: (data: Partial<User>) => Promise<void>;
   updateFarmerProfile: (data: Partial<Farmer>) => Promise<void>;
@@ -25,7 +25,7 @@ export interface ProfileContextValue {
   updateBuyerProfile: (data: Partial<Buyer>) => Promise<void>;
   uploadAvatar: (file: File) => Promise<string>;
   refreshProfile: () => Promise<void>;
-  
+
   // Role checking
   hasRole: (role: UserType) => boolean;
   getRoleInfo: () => { role: UserType; label: string; permissions: string[] } | null;
@@ -68,7 +68,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             setProfile(farmerData.data || null);
           }
           break;
-          
+
         case UserType.SUPPLIER:
           if (supplier) {
             setSupplierProfile(supplier);
@@ -80,7 +80,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             setProfile(supplierData.data || null);
           }
           break;
-          
+
         case UserType.BUYER:
           if (buyer) {
             setBuyerProfile(buyer);
@@ -92,13 +92,13 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             setProfile(buyerData.data || null);
           }
           break;
-          
+
         case UserType.ADMIN:
         case UserType.GOVERNMENT:
           // For admin and government, use basic user profile
           setProfile(user);
           break;
-          
+
         default:
           setProfile(user);
       }
@@ -118,10 +118,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   // Update basic user profile
   const updateProfile = async (data: Partial<User>) => {
     if (!user) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await userService.updateProfile(user.id, data);
       if (response.success && response.data) {
@@ -140,10 +140,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   // Update farmer-specific profile
   const updateFarmerProfile = async (data: Partial<Farmer>) => {
     if (!farmerProfile) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await farmerService.updateFarmer(farmerProfile.id, data);
       if (response.success && response.data) {
@@ -163,10 +163,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   // Update supplier-specific profile
   const updateSupplierProfile = async (data: Partial<Supplier>) => {
     if (!supplierProfile) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await supplierService.updateSupplier(supplierProfile.id, data);
       if (response.success && response.data) {
@@ -186,10 +186,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   // Update buyer-specific profile
   const updateBuyerProfile = async (data: Partial<Buyer>) => {
     if (!buyerProfile) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await buyerService.updateBuyer(buyerProfile.id, data);
       if (response.success && response.data) {

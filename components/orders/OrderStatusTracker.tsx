@@ -5,7 +5,7 @@ import { CheckCircle, Clock, Truck, Package, XCircle, AlertCircle, DollarSign } 
 import { OrderStatus, DeliveryStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
-export interface OrderStatusTrackerProps {
+interface OrderStatusTrackerProps {
   orderStatus: OrderStatus;
   deliveryStatus?: DeliveryStatus;
   createdAt: string;

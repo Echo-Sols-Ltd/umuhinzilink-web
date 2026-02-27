@@ -48,7 +48,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserType } from '@/types/enums';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useGovernment } from '@/contexts/GovernmentContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { GovernmentPages } from '@/types';
@@ -78,7 +78,6 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
   const { error, handleError, clearError, retry } = useErrorHandler();
-  const { toast } = useToast()
   const {
     users,
     supplierProducts,
@@ -134,11 +133,7 @@ function Dashboard() {
     try {
       clearError();
       await Promise.all([refreshUsers(), refreshProducts(), refreshOrders()]);
-      toast({
-        title: 'Success',
-        description: 'Data refreshed successfully',
-        variant: 'default',
-      });
+      notify.success('Data refreshed successfully', 'Success');
     } catch (err) {
       handleError(err as Error);
     }

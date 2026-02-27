@@ -9,7 +9,7 @@ import Sidebar from '@/components/shared/Sidebar';
 import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { ArrowLeft, Truck, Calendar, Filter, Search, Package } from 'lucide-react';
 
 function FarmerDeliveryPage() {
@@ -18,7 +18,6 @@ function FarmerDeliveryPage() {
   const { user } = useAuth();
   const { farmerOrders } = useOrder();
   const { updateFarmerOrderStatus } = useOrderAction();
-  const { toast } = useToast();
 
   const [orders, setOrders] = useState<FarmerOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,18 +37,10 @@ function FarmerDeliveryPage() {
     try {
       await updateFarmerOrderStatus(orderId, newStatus);
 
-      toast({
-        title: "Delivery Status Updated",
-        description: `Order delivery status has been updated successfully.`,
-        variant: "success"
-      });
+      notify.success(`Order delivery status has been updated successfully.`, "Delivery Status Updated");
     } catch (error) {
       console.error('Failed to update delivery status:', error);
-      toast({
-        title: "Update Failed",
-        description: "Failed to update delivery status. Please try again.",
-        variant: "error"
-      });
+      notify.error("Failed to update delivery status. Please try again.", "Update Failed");
     } finally {
       setUpdatingStatus(null);
     }

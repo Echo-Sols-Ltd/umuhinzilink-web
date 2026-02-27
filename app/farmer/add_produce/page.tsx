@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
@@ -22,7 +22,6 @@ function AddProduce() {
   const router = useRouter();
   const { user } = useAuth();
   const { createFarmerProduct } = useProduct();
-  const { toast } = useToast();
   const [formData, setFormData] = useState<FarmerProductRequest>({
     name: '',
     quantity: 0,
@@ -78,30 +77,18 @@ function AddProduce() {
     if (submitting) return;
 
     if (!user) {
-      toast({
-        title: 'Authentication Required',
-        description: 'Please sign in again to add produce.',
-        variant: 'error',
-      });
+      notify.error('Please sign in again to add produce.', 'Authentication Required');
       router.push('/auth/signin');
       return;
     }
 
     if (!formData.name.trim()) {
-      toast({
-        title: 'Missing name',
-        description: 'Provide a product name.',
-        variant: 'error'
-      });
+      notify.error('Provide a product name.', 'Missing name');
       return;
     }
 
     if (!imageFile) {
-      toast({
-        title: 'Missing product photo',
-        description: 'Provide a product photo.',
-        variant: 'error'
-      });
+      notify.error('Provide a product photo.', 'Missing product photo');
       return;
     }
 
@@ -128,11 +115,7 @@ function AddProduce() {
     } catch (error) {
       console.error('Error adding produce:', error);
       const message = error instanceof Error ? error.message : 'An unknown error occurred.';
-      toast({
-        title: 'Unable to add produce',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Unable to add produce');
     } finally {
       setSubmitting(false);
     }

@@ -9,7 +9,7 @@ import {
 } from '@/types';
 import type { FarmerProductRequest, SupplierProductRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useRouter } from 'next/navigation';
 
 const STORAGE_KEYS = {
@@ -92,7 +92,6 @@ const ProductContext = createContext<ProductContextValue | undefined>(undefined)
 
 export function ProductProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [mutationLoading, setMutationLoading] = useState(false);
@@ -153,7 +152,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   //   loadCachedData();
   // }, []);
 
- 
+
 
   const fetchFarmerProducts = async (page = 0, size = 10) => {
     try {
@@ -331,14 +330,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       payload.image = imgRes.data;
       const res = await productService.createFarmerProduct(payload);
       if (!res?.success || !res.data) {
-        toast({ title: 'Failed to Create product', description: 'Try again later', variant: 'error' });
+        notify.error('Try again later', 'Failed to Create product');
         return;
       }
       addFarmerProduct(res.data);
       router.push('/');
-      toast({ title: 'Product created', description: 'Product created successfully', variant: 'success' });
+      notify.success('Product created successfully', 'Product created');
     } catch {
-      toast({ title: 'Failed to Create product', description: 'Try again later', variant: 'error' });
+      notify.error('Try again later', 'Failed to Create product');
     } finally {
       setMutationLoading(false);
     }
@@ -349,14 +348,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setMutationLoading(true);
       const res = await productService.createSupplierProduct(payload);
       if (!res?.success || !res.data) {
-        toast({ title: 'Failed to Create product', description: 'Try again later', variant: 'error' });
+        notify.error('Try again later', 'Failed to Create product');
         return;
       }
       addSupplierProduct(res.data);
       router.push('/');
-      toast({ title: 'Product created', description: 'Product created successfully', variant: 'success' });
+      notify.success('Product created successfully', 'Product created');
     } catch {
-      toast({ title: 'Failed to Create product', description: 'Try again later', variant: 'error' });
+      notify.error('Try again later', 'Failed to Create product');
     } finally {
       setMutationLoading(false);
     }
@@ -367,14 +366,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setMutationLoading(true);
       const res = await productService.updateFarmerProduct(id, payload);
       if (!res?.success || !res.data) {
-        toast({ title: 'Failed to Edit product', description: 'Try again later', variant: 'error' });
+        notify.error('Try again later', 'Failed to Edit product');
         return;
       }
       updateFarmerProduct(res.data.id, res.data);
-      toast({ title: 'Product edited', description: 'The product was updated successfully', variant: 'success' });
+      notify.success('The product was updated successfully', 'Product edited');
       router.back();
     } catch {
-      toast({ title: 'Failed to Edit product', description: 'Try again later', variant: 'error' });
+      notify.error('Try again later', 'Failed to Edit product');
     } finally {
       setMutationLoading(false);
     }
@@ -385,14 +384,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setMutationLoading(true);
       const res = await productService.updateSupplierProduct(id, payload);
       if (!res?.success || !res.data) {
-        toast({ title: 'Failed to Edit product', description: 'Try again later', variant: 'error' });
+        notify.error('Try again later', 'Failed to Edit product');
         return;
       }
       updateSupplierProduct(res.data.id, res.data);
-      toast({ title: 'Product edited', description: 'Product updated successfully', variant: 'success' });
+      notify.success('Product updated successfully', 'Product edited');
       router.back();
     } catch {
-      toast({ title: 'Failed to Edit product', description: 'Try again later', variant: 'error' });
+      notify.error('Try again later', 'Failed to Edit product');
     } finally {
       setMutationLoading(false);
     }
@@ -403,14 +402,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setMutationLoading(true);
       const res = await productService.deleteFarmerProduct(id);
       if (!res?.success) {
-        toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
+        notify.error('Try again later', 'Failed to delete product');
         return;
       }
       removeFarmerProduct(id);
-      toast({ title: 'Product Deleted Successfully', description: 'Product was deleted', variant: 'success' });
+      notify.success('Product was deleted', 'Product Deleted Successfully');
       router.back();
     } catch {
-      toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
+      notify.error('Try again later', 'Failed to delete product');
     } finally {
       setMutationLoading(false);
     }
@@ -421,14 +420,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setMutationLoading(true);
       const res = await productService.deleteSupplierProduct(id);
       if (!res?.success) {
-        toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
+        notify.error('Try again later', 'Failed to delete product');
         return;
       }
       removeSupplierProduct(id);
-      toast({ title: 'Product deleted successfully', description: 'Product was deleted', variant: 'success' });
+      notify.success('Product was deleted', 'Product deleted successfully');
       router.back();
     } catch {
-      toast({ title: 'Failed to delete product', description: 'Try again later', variant: 'error' });
+      notify.error('Try again later', 'Failed to delete product');
     } finally {
       setMutationLoading(false);
     }

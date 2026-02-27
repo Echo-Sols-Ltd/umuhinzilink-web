@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { ProgressiveImage } from '@/components/ui/progressive-loading';
-import { useToast } from '@/components/ui/use-toast';
+
 import { RwandaCrop, RwandaCropCategory } from '@/types';
 import { FarmerProduct } from '@/types/product';
 import { cn, imageUrl } from '@/lib/utils';
@@ -30,7 +30,7 @@ import ProductCard from './Product';
 import ProductRow from './ProductRow';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export interface ProductDisplayProps {
+interface ProductDisplayProps {
   products: FarmerProduct[];
   loading?: boolean;
   viewMode?: 'grid' | 'list';
@@ -199,6 +199,12 @@ export function ProductDisplay({
               </div>
             )
           ))}
+        </div>
+      )}
+
+      {products.length === 0 && !loading && (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No products found.</p>
         </div>
       )}
 

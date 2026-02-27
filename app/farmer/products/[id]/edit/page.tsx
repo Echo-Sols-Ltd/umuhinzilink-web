@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import Link from 'next/link';
@@ -25,7 +25,6 @@ function EditProduct() {
   const params = useParams();
   const { user } = useAuth();
   const { farmerProducts, saveFarmerProduct: editFarmerProduct } = useProduct();
-  const { toast } = useToast();
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -123,11 +122,7 @@ function EditProduct() {
 
     } catch (error) {
       console.error('Failed to update product:', error);
-      toast({
-        title: "Update Failed",
-        description: "Failed to update product. Please try again.",
-        variant: "error"
-      });
+      notify.error("Failed to update product. Please try again.", "Update Failed");
     } finally {
       setSubmitting(false);
     }

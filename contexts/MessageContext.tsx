@@ -6,9 +6,8 @@ import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
 import { ChatUser } from '@/types/chat';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
-import { useToast } from '@/components/ui/use-toast';
 
-export interface MessageContextValue {
+interface MessageContextValue {
   messages: Message[];
   activeChatUser: ChatUser | null;
   loading: boolean;
@@ -34,7 +33,6 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const socket = useSocket();
   const { shouldUseInAppNotifications, showNotification } = useBrowserNotification();
-  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [activeChatUser, setActiveChatUser] = useState<ChatUser | null>(null);
   const [loading, setLoading] = useState(false);
@@ -91,15 +89,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         },
       });
 
-      // Show in-app toast if browser notification wasn't shown (page is active)
-      if (!browserNotificationShown && shouldUseInAppNotifications) {
-        toast({
-          description: `New message from ${message.sender.names}`,
-          variant: 'default'
-        });
-      }
     }
-  }, [activeChatUser, user?.id, shouldUseInAppNotifications, showNotification, toast]);
+  }, [activeChatUser, user?.id, shouldUseInAppNotifications, showNotification]);
 
   // Handle message editing
   const handleMessageEdited = useCallback((editedMessage: Message) => {
@@ -273,7 +264,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   };
 
   const markMessagesAsRead = (userId: string) => {
-   
+
   };
 
 

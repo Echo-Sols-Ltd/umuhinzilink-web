@@ -19,7 +19,7 @@ import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus } from '@/types
 import { cn } from '@/lib/utils';
 import OrderStatusTracker from './OrderStatusTracker';
 
-export interface OrderManagementDashboardProps {
+interface OrderManagementDashboardProps {
   orders: (FarmerOrder | SupplierOrder)[];
   userRole: 'buyer' | 'farmer' | 'supplier';
   onViewOrder?: (order: FarmerOrder | SupplierOrder) => void;

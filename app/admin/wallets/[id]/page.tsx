@@ -15,7 +15,7 @@ import {
     User,
     ArrowLeft
 } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
 import {
     Table,
@@ -30,7 +30,7 @@ import { Badge } from '@/components/ui/badge';
 export default function WalletDetailPage() {
     const params = useParams();
     const router = useRouter();
-    const { toast } = useToast();
+
     const walletId = params.id as string;
 
     const [wallet, setWallet] = useState<WalletDTO | null>(null);
@@ -54,26 +54,14 @@ export default function WalletDetailPage() {
                     setWallet(foundWallet);
                     await fetchUserTransactions(foundWallet.userId);
                 } else {
-                    toast({
-                        title: 'Error',
-                        description: 'Wallet not found',
-                        variant: 'error',
-                    });
+                    notify.error('Wallet not found', 'Error');
                     router.push('/admin/wallets');
                 }
             } else {
-                toast({
-                    title: 'Error',
-                    description: response.message || 'Failed to fetch wallet details',
-                    variant: 'error',
-                });
+                notify.error(response.message || 'Failed to fetch wallet details', 'Error');
             }
         } catch (error) {
-            toast({
-                title: 'Error',
-                description: 'Failed to fetch wallet details',
-                variant: 'error',
-            });
+            notify.error('Failed to fetch wallet details', 'Error');
         } finally {
             setLoading(false);
         }

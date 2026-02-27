@@ -8,7 +8,7 @@ export interface UploadProgress {
   percentage: number;
 }
 
-export interface FileUploadResponse {
+interface FileUploadResponse {
   url: string;
   filename: string;
   size: number;

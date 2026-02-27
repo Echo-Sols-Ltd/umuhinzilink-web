@@ -22,7 +22,7 @@ function ProductManagement() {
       {/* Sidebar */}
       <Sidebar
         userType={UserType.ADMIN}
-        activeItem='Products'
+        activeItem='Product Management'
       />
 
       {/* Main Content */}

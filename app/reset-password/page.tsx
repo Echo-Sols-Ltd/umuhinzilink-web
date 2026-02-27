@@ -7,7 +7,7 @@ import { ArrowLeft, Mail, Lock, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { authService } from '@/services/auth';
 
 type ResetStep = 'code' | 'password' | 'success';
@@ -25,7 +25,6 @@ function ResetPassword() {
   const [step, setStep] = useState<ResetStep>('code');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { toast } = useToast();
 
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -39,20 +38,12 @@ function ResetPassword() {
     e.preventDefault();
 
     if (!validateEmail(email)) {
-      toast({
-        title: 'Invalid Email',
-        description: 'Please enter a valid email address.',
-        variant: 'error',
-      });
+      notify.error('Please enter a valid email address.', 'Invalid Email');
       return;
     }
 
     if (resetCode.length !== 6) {
-      toast({
-        title: 'Invalid Code',
-        description: 'Reset code must be exactly 6 digits.',
-        variant: 'error',
-      });
+      notify.error('Reset code must be exactly 6 digits.', 'Invalid Code');
       return;
     }
 
@@ -60,17 +51,9 @@ function ResetPassword() {
     try {
       await authService.verifyResetCode(email, resetCode);
       setStep('password');
-      toast({
-        title: 'Code Verified',
-        description: 'Please enter your new password.',
-        variant: 'success',
-      });
+      notify.success('Please enter your new password.', 'Code Verified');
     } catch (error: any) {
-      toast({
-        title: 'Verification Failed',
-        description: error.message || 'Invalid or expired reset code.',
-        variant: 'error',
-      });
+      notify.error(error.message || 'Invalid or expired reset code.', 'Verification Failed');
     } finally {
       setLoading(false);
     }
@@ -80,20 +63,12 @@ function ResetPassword() {
     e.preventDefault();
 
     if (!validatePassword(newPassword)) {
-      toast({
-        title: 'Weak Password',
-        description: 'Password must be at least 8 characters long.',
-        variant: 'error',
-      });
+      notify.error('Password must be at least 8 characters long.', 'Weak Password');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast({
-        title: 'Password Mismatch',
-        description: 'Passwords do not match.',
-        variant: 'error',
-      });
+      notify.error('Passwords do not match.', 'Password Mismatch');
       return;
     }
 
@@ -101,17 +76,9 @@ function ResetPassword() {
     try {
       await authService.resetPassword(email, resetCode, newPassword);
       setStep('success');
-      toast({
-        title: 'Password Reset Successful',
-        description: 'Your password has been reset successfully.',
-        variant: 'success',
-      });
+      notify.success('Your password has been reset successfully.', 'Password Reset Successful');
     } catch (error: any) {
-      toast({
-        title: 'Reset Failed',
-        description: error.message || 'Failed to reset password. Please try again.',
-        variant: 'error',
-      });
+      notify.error(error.message || 'Failed to reset password. Please try again.', 'Reset Failed');
     } finally {
       setLoading(false);
     }

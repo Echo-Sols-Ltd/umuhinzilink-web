@@ -8,7 +8,7 @@ import Sidebar from '@/components/shared/Sidebar';
 import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { ArrowLeft, Truck, Calendar, Package, User, MapPin, CreditCard } from 'lucide-react';
 
 function BuyerOrderDetailPage() {
@@ -16,7 +16,6 @@ function BuyerOrderDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { buyerOrders } = useOrder();
-  const { toast } = useToast();
 
   const [order, setOrder] = useState<FarmerOrder | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,11 +38,7 @@ function BuyerOrderDetailPage() {
         }
       } catch (error) {
         console.error('Failed to fetch order:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load order details",
-          variant: "error"
-        });
+        notify.error("Failed to load order details", "Error");
       } finally {
         setLoading(false);
       }
@@ -52,7 +47,7 @@ function BuyerOrderDetailPage() {
     if (orderId) {
       fetchOrder();
     }
-  }, [orderId, buyerOrders, toast]);
+  }, [orderId, buyerOrders]);
 
   const handleBack = () => {
     router.push('/buyer/purchases');

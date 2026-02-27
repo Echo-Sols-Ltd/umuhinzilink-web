@@ -2,17 +2,17 @@ import { ApiResponse, PaginatedResponse, WalletDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
-export interface WalletDepositRequest {
+interface WalletDepositRequest {
   amount: number;
   description?: string;
 }
 
-export interface WalletPaymentRequest {
+interface WalletPaymentRequest {
   orderId: string;
   description?: string;
 }
 
-export interface WalletTransactionDTO {
+interface WalletTransactionDTO {
   id: string;
   walletId: string;
   amount: number;

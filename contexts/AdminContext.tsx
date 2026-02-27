@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
-import { useToast } from '@/components/ui/use-toast';
+import { notify } from '@/lib/notify';
 import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO, PaginatedResponse, WalletDTO } from '@/types';
 
 interface AdminContextType {
@@ -49,7 +49,6 @@ const AdminContext = createContext<AdminContextType | null>(null);
 
 export function AdminProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [users, setUsers] = useState<PaginatedResponse<User[]> | null>(null);
   const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
   const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
@@ -94,11 +93,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     } finally {
       setLoading(false);
     }
@@ -113,11 +108,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh users';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 
@@ -132,11 +123,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 
@@ -151,11 +138,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 
@@ -164,18 +147,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     try {
       await adminService.deleteUser(userId);
       setUsers(users && users.data ? { ...users, data: users.data.filter(u => u.id !== userId) } : null);
-      toast({
-        title: 'Success',
-        description: 'User deleted successfully',
-        variant: 'success',
-      });
+      notify.success('User deleted successfully', 'Success');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to delete user';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 
@@ -184,18 +159,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       await adminService.deleteProduct(productId);
       setFarmerProducts(farmerProducts.filter(p => p.id !== productId));
       setSupplierProducts(supplierProducts.filter(p => p.id !== productId));
-      toast({
-        title: 'Success',
-        description: 'Product deleted successfully',
-        variant: 'success',
-      });
+      notify.success('Product deleted successfully', 'Success');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to delete product';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 
@@ -204,18 +171,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       await adminService.deleteOrder(orderId);
       setFarmerOrders(farmerOrders.filter(o => o.id !== orderId));
       setSupplierOrders(supplierOrders.filter(o => o.id !== orderId));
-      toast({
-        title: 'Success',
-        description: 'Order deleted successfully',
-        variant: 'success',
-      });
+      notify.success('Order deleted successfully', 'Success');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to delete order';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+      notify.error(message, 'Error');
     }
   };
 

@@ -3,8 +3,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { DateRange } from 'react-day-picker';
 import {
-  TrendingUp,
-  TrendingDown,
   Users,
   ShoppingCart,
   Package,
@@ -17,7 +15,7 @@ import { ChartDataPoint } from './InteractiveChart';
 import { analyticsService, DashboardMetrics, AnalyticsFilters } from '@/services/analytics';
 import { toast } from '@/components/ui/use-toast';
 
-export interface EnhancedDashboardProps {
+interface EnhancedDashboardProps {
   userRole: 'farmer' | 'buyer' | 'supplier' | 'admin' | 'government';
   orders?: any[];
   products?: any[];
