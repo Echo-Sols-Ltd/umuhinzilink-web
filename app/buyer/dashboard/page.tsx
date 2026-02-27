@@ -32,6 +32,7 @@ import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import { FarmerProduct } from '@/types';
 import ProductCard from '@/components/products/Product';
+import { useRouter } from 'next/navigation';
 
 
 const Logo = () => (
@@ -53,6 +54,7 @@ function BuyerDashboardComponent() {
     cancelFarmerOrder,
     updateFarmerOrderStatus,
   } = useOrderAction();
+  const router = useRouter();
   const { buyerProducts, loading: productsLoading, error: productsError } = useProduct();
   const [logoutPending, setLogoutPending] = useState(false);
   const [showOrderManagement, setShowOrderManagement] = useState(false);
@@ -138,8 +140,6 @@ function BuyerDashboardComponent() {
                 recommendedProducts.map(product => <ProductCard
                   key={product.id}
                   product={product}
-                  onSelect={() => { }}
-                  onPurchase={() => { }}
                 />)}
             </div>
           </div>

@@ -274,8 +274,7 @@ function ProductsPageComponent() {
                     {filteredProducts.map((product) => (
                       <ProductCard
                         key={product.id}
-                        product={{ ...product }}
-                        onEdit={handleEdit}
+                        product={product}
                       />
                     ))}
                     {totalPages > 1 && (

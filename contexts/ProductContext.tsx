@@ -42,6 +42,15 @@ type ProductContextValue = {
   fetchFarmerBuyerProducts: (page?: number, size?: number) => Promise<void>;
   fetchFarmerStats: () => Promise<void>;
   fetchSupplierStats: () => Promise<void>;
+  fetchFarmerProductById: (id: string) => Promise<{ product: FarmerProduct | null; type: 'farmer' | null; error: string | null }>;
+  fetchSupplierProductById: (id: string) => Promise<{ product: SupplierProduct | null; type: 'supplier' | null; error: string | null }>;
+  fetchProductById: (id: string) => Promise<{ product: FarmerProduct | SupplierProduct | null; type: 'farmer' | 'supplier' | null; error: string | null }>;
+  // Order modal management
+  showOrderModal: (product: FarmerProduct | SupplierProduct, productType: 'farmer' | 'supplier') => void;
+  hideOrderModal: () => void;
+  isOrderModalOpen: boolean;
+  orderModalProduct: FarmerProduct | SupplierProduct | null;
+  orderModalProductType: 'farmer' | 'supplier' | null;
   farmerProductsTotalPages: number;
   farmerProductsTotalElements: number;
   supplierProductsTotalPages: number;
@@ -127,6 +136,11 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     null
   );
   const [editBuyerProduct, setEditBuyerProduct] = useState<FarmerProduct | null>(null);
+
+  // Order modal state
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [orderModalProduct, setOrderModalProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
+  const [orderModalProductType, setOrderModalProductType] = useState<'farmer' | 'supplier' | null>(null);
 
   // // 🔹 Load cached data
   // useEffect(() => {
@@ -262,6 +276,65 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchFarmerProductById = async (id: string): Promise<{ product: FarmerProduct | null; type: 'farmer' | null; error: string | null }> => {
+    try {
+      setLoading(true);
+      const res = await productService.getFarmerProduct(id);
+      if (res.success && res.data) {
+        return { product: res.data, type: 'farmer', error: null };
+      }
+      return { product: null, type: null, error: 'Product not found' };
+    } catch (err) {
+      return { product: null, type: null, error: err instanceof Error ? err.message : 'Failed to fetch product' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSupplierProductById = async (id: string): Promise<{ product: SupplierProduct | null; type: 'supplier' | null; error: string | null }> => {
+    try {
+      setLoading(true);
+      const res = await productService.getSupplierProduct(id);
+      if (res.success && res.data) {
+        return { product: res.data, type: 'supplier', error: null };
+      }
+      return { product: null, type: null, error: 'Product not found' };
+    } catch (err) {
+      return { product: null, type: null, error: err instanceof Error ? err.message : 'Failed to fetch product' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchProductById = async (id: string): Promise<{ product: FarmerProduct | SupplierProduct | null; type: 'farmer' | 'supplier' | null; error: string | null }> => {
+    // Try farmer product first
+    const farmerResult = await fetchFarmerProductById(id);
+    if (farmerResult.product) {
+      return farmerResult;
+    }
+    
+    // Try supplier product
+    const supplierResult = await fetchSupplierProductById(id);
+    if (supplierResult.product) {
+      return supplierResult;
+    }
+    
+    return { product: null, type: null, error: 'Product not found' };
+  };
+
+  // Order modal management methods
+  const showOrderModal = (product: FarmerProduct | SupplierProduct, productType: 'farmer' | 'supplier') => {
+    setOrderModalProduct(product);
+    setOrderModalProductType(productType);
+    setIsOrderModalOpen(true);
+  };
+
+  const hideOrderModal = () => {
+    setIsOrderModalOpen(false);
+    setOrderModalProduct(null);
+    setOrderModalProductType(null);
   };
 
 
@@ -507,6 +580,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     fetchFarmerBuyerProducts,
     fetchFarmerStats,
     fetchSupplierStats,
+    fetchFarmerProductById,
+    fetchSupplierProductById,
+    fetchProductById,
+    // Order modal management
+    showOrderModal,
+    hideOrderModal,
+    isOrderModalOpen,
+    orderModalProduct,
+    orderModalProductType,
     farmerProductsTotalPages,
     farmerProductsTotalElements,
     supplierProductsTotalPages,

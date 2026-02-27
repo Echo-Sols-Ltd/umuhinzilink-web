@@ -226,9 +226,6 @@ function FarmerProducts() {
                     <ProductCard
                       key={product.id}
                       product={product}
-                      onContact={() => { }}
-                      onPurchase={() => { }}
-                      onSelect={() => { }}
                     />
                   ))}
                 </div>

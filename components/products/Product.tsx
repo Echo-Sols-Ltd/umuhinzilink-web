@@ -1,6 +1,6 @@
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, SupplierProduct } from "@/types";
-import { Heart, MessageSquare, Trash2, UserIcon, Clock } from "lucide-react";
+import { FarmerProduct, MessageType, SupplierProduct, UserType } from "@/types";
+import { Heart, MessageSquare, Trash2, UserIcon, Clock, Eye, Edit } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChat } from "@/hooks/useChat";
@@ -10,16 +10,97 @@ import { useProduct } from "@/contexts/ProductContext";
 
 interface ProductCardProps {
     product: SupplierProduct | FarmerProduct
-    onSelect?: () => void;
-    onPurchase?: () => void;
-    onContact?: () => void;
-    onEdit?: (product: any) => void;
+    // Remove individual callbacks - will be handled internally based on user role
 }
 
+// Role-based action handlers
+const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any, router: any, handlers: any, showOrderModal: any) => {
+    const isProductOwner = user?.id === product.owner?.id;
+    const userRole = user?.role?.toLowerCase();
 
-export default function ProductCard({ product, onSelect, onPurchase, onContact, onEdit }: ProductCardProps) {
+    // Common actions for all authenticated users
+    const commonActions = [];
+
+    // Owner actions
+    if (isProductOwner) {
+        commonActions.push({
+            key: 'edit',
+            label: 'Edit Item',
+            icon: Edit,
+            variant: 'secondary',
+            action: () => {
+                if (handlers.onEdit) handlers.onEdit(product);
+                else router.push(`/${userRole}/products/${product.id}/edit`);
+            }
+        });
+    }
+
+    // Non-owner actions based on user role
+    if (!isProductOwner && user) {
+        switch (userRole) {
+            case 'buyer':
+                commonActions.push({
+                    key: 'view',
+                    label: 'View Details',
+                    icon: Eye,
+                    variant: 'primary',
+                    action: () => router.push(`/buyer/products/${product.id}`)
+                });
+                commonActions.push({
+                    key: 'purchase',
+                    label: 'Buy Now',
+                    icon: null,
+                    variant: 'primary',
+                    action: () => {
+                        const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
+                        showOrderModal(product, productType);
+                    }
+                });
+                break;
+                
+            case 'farmer':
+            case 'supplier':
+                commonActions.push({
+                    key: 'contact',
+                    label: 'Contact',
+                    icon: MessageSquare,
+                    variant: 'outline',
+                    action: () => {
+                        if (handlers.onContact) handlers.onContact();
+                        else handlers.handleContactFarmer(product);
+                    }
+                });
+                break;
+                
+            case 'admin':
+                commonActions.push({
+                    key: 'view',
+                    label: 'Manage',
+                    icon: Eye,
+                    variant: 'secondary',
+                    action: () => router.push(`/admin/products/${product.id}`)
+                });
+                break;
+        }
+    }
+
+    // Unauthenticated users
+    if (!user) {
+        commonActions.push({
+            key: 'view',
+            label: 'View Details',
+            icon: Eye,
+            variant: 'primary',
+            action: () => router.push(`/buyer/products/${product.id}`)
+        });
+    }
+
+    return commonActions;
+};
+
+export default function ProductCard({ product }: ProductCardProps) {
     const { user } = useAuth()
-    const { deleteFarmerProduct, deleteSupplierProduct } = useProduct()
+    const { deleteFarmerProduct, deleteSupplierProduct, showOrderModal } = useProduct()
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
 
@@ -73,10 +154,46 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
     };
 
     const isProductOwner = user?.id === product.owner?.id;
+    
+    // Get role-based actions
+    const actions = getRoleBasedActions(product, user, router, {
+        handleContactFarmer,
+        onPurchase: null,
+        onContact: null,
+        onEdit: null
+    }, showOrderModal);
+
+    // Handle card click - navigate to appropriate detail page
+    const handleCardClick = () => {
+        if (!user) {
+            router.push(`/buyer/products/${product.id}`);
+            return;
+        }
+
+        const userRole = user.role?.toLowerCase();
+        switch (userRole) {
+            case 'buyer':
+                router.push(`/buyer/products/${product.id}`);
+                break;
+            case 'farmer':
+            case 'supplier':
+                if (isProductOwner) {
+                    router.push(`/${userRole}/products/${product.id}/edit`);
+                } else {
+                    router.push(`/buyer/products/${product.id}`);
+                }
+                break;
+            case 'admin':
+                router.push(`/admin/products/${product.id}`);
+                break;
+            default:
+                router.push(`/buyer/products/${product.id}`);
+        }
+    };
 
     return (
         <div
-            onClick={onSelect}
+            onClick={handleCardClick}
             className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-green-100/30 transition-all duration-300 cursor-pointer"
         >
             <div className="relative aspect-square overflow-hidden bg-white">
@@ -87,13 +204,6 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
                 />
 
                 <div className="absolute top-3 right-3 flex flex-col gap-2">
-                    <button
-                        onClick={(e) => { e.stopPropagation(); }}
-                        className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-sm hover:bg-white transition-colors text-gray-400 hover:text-red-500"
-                    >
-                        <Heart className="w-4 h-4" />
-                    </button>
-
                     {isProductOwner && (
                         <button
                             onClick={(e) => {
@@ -137,42 +247,35 @@ export default function ProductCard({ product, onSelect, onPurchase, onContact, 
                     </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Role-based Action Buttons */}
                 <div className="flex items-center gap-2 pt-1">
-                    {isProductOwner ? (
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (onEdit) onEdit(product);
-                                else router.push(`/${product.owner.role.toLowerCase()}/products/${product.id}/edit`);
-                            }}
-                            className="flex-1 bg-green-50 text-green-700 hover:bg-green-600 hover:text-white py-2 rounded-lg text-xs font-semibold uppercase  transition-all duration-300"
-                        >
-                            Edit Item
-                        </button>
-                    ) : (
-                        <>
+                    {actions.map((action, index) => {
+                        const isPrimary = action.variant === 'primary';
+                        const isSecondary = action.variant === 'secondary';
+                        const isOutline = action.variant === 'outline';
+                        
+                        return (
                             <button
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-xs font-semibold uppercase  transition-all duration-300 shadow-lg shadow-green-100"
+                                key={action.key}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    if (onPurchase) onPurchase();
+                                    action.action();
                                 }}
+                                className={`
+                                    ${index === 0 && actions.length > 1 ? 'flex-1' : 'p-2'}
+                                    ${isPrimary ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
+                                    ${isSecondary ? 'bg-green-50 text-green-700 hover:bg-green-600 hover:text-white' : ''}
+                                    ${isOutline ? 'p-2 bg-white text-gray-600 hover:bg-green-50 hover:text-green-600 border border-transparent hover:border-green-100' : ''}
+                                    ${index === 0 && actions.length > 1 ? 'rounded-xl' : 'rounded-lg'}
+                                    text-xs font-semibold uppercase transition-all duration-300
+                                    ${isPrimary ? 'shadow-lg shadow-green-100' : ''}
+                                `}
                             >
-                                Buy Now
+                                {action.icon && <action.icon className="w-4 h-4" />}
+                                {!action.icon && action.label}
                             </button>
-                            <button
-                                className="p-2 bg-white text-gray-600 hover:bg-green-50 hover:text-green-600 rounded-lg transition-all duration-300 border border-transparent hover:border-green-100"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (onContact) onContact();
-                                    else handleContactFarmer(product);
-                                }}
-                            >
-                                <MessageSquare className="w-4 h-4" />
-                            </button>
-                        </>
-                    )}
+                        );
+                    })}
                 </div>
             </div>
         </div>
