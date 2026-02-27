@@ -263,7 +263,7 @@ function FarmerSupplierOrderDetailPage() {
               onUpdateStatus={handleUpdateDeliveryStatus}
               isLoading={updatingStatus}
               orderType="supplier"
-              isOrderOwner={true}
+              isOrderOwner={isOwner}
             />
           </div>
         </div>
