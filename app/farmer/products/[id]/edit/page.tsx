@@ -161,7 +161,7 @@ function EditProduct() {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
-      <Sidebar userType={UserType.FARMER} activeItem='Products' />
+      <Sidebar userType={UserType.FARMER} activeItem='My Products' />
 
       <main className="flex-1 overflow-y-auto">
         <div className="bg-white border-b h-16 flex items-center px-6">
@@ -219,21 +219,14 @@ function EditProduct() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Product Name
               </label>
-              <Select
+              <input
+                type="text"
+                name="name"
                 value={formData.name}
-                onValueChange={(value) => handleSelectChange('name', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a crop" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(RwandaCrop).map((crop) => (
-                    <SelectItem key={crop} value={crop}>
-                      {crop}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                required
+              />
             </div>
 
             {/* Category */}
