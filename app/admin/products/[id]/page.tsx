@@ -20,7 +20,7 @@ export default function AdminProductDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
-  const { fetchProductById, loading } = useProduct();
+  const { fetchProductById, loading, deleteFarmerProduct, deleteSupplierProduct } = useProduct();
   const [product, setProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
   const [productType, setProductType] = useState<'farmer' | 'supplier'>('farmer');
   const [error, setError] = useState<string | null>(null);
@@ -70,27 +70,17 @@ export default function AdminProductDetailPage() {
     }
 
     try {
-      const endpoint = productType === 'farmer' 
-        ? `/api/admin/products/farmer/${product.id}`
-        : `/api/admin/products/supplier/${product.id}`;
-      
-      const response = await fetch(endpoint, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        showToast({
-          description: 'Product deleted successfully',
-          variant: 'default',
-        });
-        router.push(`/admin/products/${productType}`);
+      if (productType === 'farmer') {
+        await deleteFarmerProduct(product.id);
       } else {
-        const data = await response.json();
-        showToast({
-          description: data.message || 'Failed to delete product',
-          variant: 'error',
-        });
+        await deleteSupplierProduct(product.id);
       }
+      
+      showToast({
+        description: 'Product deleted successfully',
+        variant: 'default',
+      });
+      router.push('/admin/products');
     } catch (err) {
       showToast({
         description: 'Failed to delete product',
