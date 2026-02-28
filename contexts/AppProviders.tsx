@@ -11,6 +11,7 @@ import { ProfileProvider } from '@/contexts/ProfileContext';
 import { SocketProvider } from './SocketContext';
 import { NotificationProvider } from './NotificationContext';
 import { BrowserNotificationProvider } from './BrowserNotificationContext';
+import { ThemeProvider } from './ThemeContext';
 import GlobalOrderModal from '@/components/orders/GlobalOrderModal';
 
 interface AppProvidersProps {
@@ -19,29 +20,29 @@ interface AppProvidersProps {
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-
-    <AuthProvider>
-      <BrowserNotificationProvider>
-        <SocketProvider>
-          <UserProvider>
-            <NotificationProvider>
-              <ProductProvider>
-                <WalletProvider>
-                  <OrderProvider>
-                    <MessageProvider>
-                      <ProfileProvider>
-                        {children}
-                        <GlobalOrderModal />
-                      </ProfileProvider>
-                    </MessageProvider>
-                  </OrderProvider>
-                </WalletProvider>
-              </ProductProvider>
-            </NotificationProvider>
-          </UserProvider>
-        </SocketProvider>
-      </BrowserNotificationProvider>
-    </AuthProvider>
-
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserNotificationProvider>
+          <SocketProvider>
+            <UserProvider>
+              <NotificationProvider>
+                <ProductProvider>
+                  <WalletProvider>
+                    <OrderProvider>
+                      <MessageProvider>
+                        <ProfileProvider>
+                          {children}
+                          <GlobalOrderModal />
+                        </ProfileProvider>
+                      </MessageProvider>
+                    </OrderProvider>
+                  </WalletProvider>
+                </ProductProvider>
+              </NotificationProvider>
+            </UserProvider>
+          </SocketProvider>
+        </BrowserNotificationProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

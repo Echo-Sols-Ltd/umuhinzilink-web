@@ -141,7 +141,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                         {buyer.phoneNumber}
                                     </div>
                                 )}
-                                <div className="flex items-start gap-2 text-xs text-gray-600">
+                                <div className="flex items-start gap-2 text-xs text-muted-foreground">
                                     <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                                     <span>
                                         {buyer.address?.district ? `${buyer.address.district}, ` : ''}
@@ -179,23 +179,23 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                                <CreditCard className="w-4 h-4 text-green-600" />
+                                <CreditCard className="w-4 h-4 text-primary" />
                                 Payment Method
                             </h3>
-                            <div className="bg-white rounded-lg p-4">
-                                <p className="text-sm text-gray-700">{order.paymentMethod.replace('_', ' ')}</p>
-                                <p className="text-xs mt-1 font-medium text-gray-500">
+                            <div className="bg-card rounded-lg p-4">
+                                <p className="text-sm text-foreground">{order.paymentMethod.replace('_', ' ')}</p>
+                                <p className="text-xs mt-1 font-medium text-muted-foreground">
                                     Status: {order.isPaid ? 'PAID' : 'UNPAID'}
                                 </p>
                             </div>
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-green-600" />
+                                <Calendar className="w-4 h-4 text-primary" />
                                 Order Date
                             </h3>
-                            <div className="bg-white rounded-lg p-4">
-                                <p className="text-sm text-gray-700">{formatDate(order.createdAt)}</p>
+                            <div className="bg-card rounded-lg p-4">
+                                <p className="text-sm text-foreground">{formatDate(order.createdAt)}</p>
                             </div>
                         </div>
                     </div>
@@ -220,12 +220,12 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-6 border-t bg-white flex items-center justify-end gap-3">
+                <div className="p-6 border-t bg-card flex items-center justify-end gap-3">
                     {onPay && !order.isPaid && status !== 'CANCELLED' && (
                         <button
                             onClick={() => onPay(order)}
                             disabled={loading}
-                            className="px-6 py-2 text-sm font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 shadow-md shadow-orange-200 transition-all flex items-center gap-2 disabled:opacity-50"
+                            className="px-6 py-2 text-sm font-medium text-primary-foreground bg-warning rounded-lg hover:bg-warning/90 shadow-md shadow-warning/20 transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                             {loading ? <Clock className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
                             Pay Now
@@ -233,7 +233,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     )}
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-white shadow-sm transition-all"
+                        className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-lg hover:bg-background shadow-sm transition-all"
                     >
                         Close
                     </button>
@@ -242,7 +242,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <button
                             onClick={() => onCancel(order.id)}
                             disabled={loading}
-                            className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 shadow-sm transition-all disabled:opacity-50"
+                            className="px-4 py-2 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-lg hover:bg-destructive/20 shadow-sm transition-all disabled:opacity-50"
                         >
                             Reject Order
                         </button>
@@ -252,7 +252,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <button
                             onClick={() => onAccept(order.id)}
                             disabled={loading}
-                            className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 shadow-md shadow-green-200 transition-all flex items-center gap-2 disabled:opacity-50"
+                            className="px-6 py-2 text-sm font-medium text-primary-foreground bg-success rounded-lg hover:bg-success/90 shadow-md shadow-success/20 transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                             {loading ? <Clock className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                             Approve Order
