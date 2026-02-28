@@ -33,13 +33,13 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="w-full bg-white shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300 animate-fade-in">
+    <nav className="w-full bg-card shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300 animate-fade-in">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo placeholder */}
         <div className="flex items-center space-x-2">
-          <span className="text-2xl font-extrabold  text-green-600 font-sans">
+          <span className="text-2xl font-extrabold  text-success font-sans">
             Umuhinzi
-            <span className="text-2xl font-extrabold  text-gray-700 font-sans">
+            <span className="text-2xl font-extrabold  text-foreground font-sans">
               Link
             </span>
           </span>
@@ -60,8 +60,8 @@ export default function Navbar() {
               className={
                 `px-3 py-2 rounded-md text-base font-medium  transition-colors duration-200 ` +
                 (activeSection === link.href.replace('#', '')
-                  ? 'bg-green-100 text-green-700 font-semibold'
-                  : 'text-gray-700 hover:text-green-600')
+                  ? 'bg-success/10 text-success font-semibold'
+                  : 'text-foreground hover:text-success')
               }
             >
               {link.name}
@@ -71,7 +71,7 @@ export default function Navbar() {
 
         <Link
           href="/auth/signin"
-          className="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700"
+          className="bg-success text-primary-foreground px-5 py-2 rounded-full hover:bg-success/90"
         >
           Sign in
         </Link>

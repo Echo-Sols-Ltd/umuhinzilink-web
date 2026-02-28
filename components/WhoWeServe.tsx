@@ -122,8 +122,8 @@ export default function WhoWeServe() {
   const data = [
     {
       title: 'Farmers',
-      color: 'bg-green-50',
-      iconColor: 'text-green-600',
+      color: 'bg-success/10',
+      iconColor: 'text-success',
       items: [
         { icon: LucideIcons.Phone, text: 'Mobile OTP & Kinyarwanda support' },
         { icon: LucideIcons.Leaf, text: 'AI-powered agronomy tips' },
@@ -133,8 +133,8 @@ export default function WhoWeServe() {
     },
     {
       title: 'Suppliers',
-      color: 'bg-blue-50',
-      iconColor: 'text-blue-600',
+      color: 'bg-info/10',
+      iconColor: 'text-info',
       items: [
         { icon: LucideIcons.ClipboardList, text: 'List agri-inputs & inventory' },
         { icon: LucideIcons.Users, text: 'Farmer demand matching' },
@@ -144,8 +144,8 @@ export default function WhoWeServe() {
     },
     {
       title: 'Buyers',
-      color: 'bg-orange-50',
-      iconColor: 'text-orange-600',
+      color: 'bg-warning/10',
+      iconColor: 'text-warning',
       items: [
         { icon: LucideIcons.Search, text: 'Browse fresh produce' },
         { icon: LucideIcons.ClipboardList, text: 'Filter by region & price' },
@@ -156,22 +156,22 @@ export default function WhoWeServe() {
   ];
 
   return (
-    <section className="py-12 bg-white">
+    <section className="py-12 bg-card">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-semibold text-gray-900">Who We Serve</h2>
-        <p className="text-center text-gray-600 mt-2">
+        <h2 className="text-center text-2xl font-semibold text-foreground">Who We Serve</h2>
+        <p className="text-center text-muted-foreground mt-2">
           Three interconnected communities driving agricultural growth
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {data.map(group => (
             <div key={group.title} className={`${group.color} rounded-lg shadow-sm p-6`}>
-              <h3 className="text-lg font-semibold text-gray-900">{group.title}</h3>
+              <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
               <ul className="mt-4 space-y-3">
                 {group.items.map((item, idx) => (
                   <li key={idx} className="flex items-start space-x-3">
                     <span className={`${group.iconColor}`}>{item.icon}</span>
-                    <span className="text-gray-700 text-sm">{item.text}</span>
+                    <span className="text-foreground text-sm">{item.text}</span>
                   </li>
                 ))}
               </ul>
