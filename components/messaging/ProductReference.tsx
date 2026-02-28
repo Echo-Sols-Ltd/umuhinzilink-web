@@ -16,9 +16,9 @@ export function ProductReference({ productId, messageContent, compact = false }:
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200">
-        <Package className="w-4 h-4 text-gray-400 animate-pulse" />
-        <span className="text-sm text-gray-500">Loading product...</span>
+      <div className="flex items-center gap-2 p-2 bg-card rounded-lg border border-border">
+        <Package className="w-4 h-4 text-muted-foreground animate-pulse" />
+        <span className="text-sm text-muted-foreground">Loading product...</span>
       </div>
     );
   }
@@ -45,7 +45,7 @@ export function ProductReference({ productId, messageContent, compact = false }:
 
   if (compact) {
     return (
-      <div className="flex flex-col gap-2 p-2 bg-white rounded-lg border border-gray-200">
+      <div className="flex flex-col gap-2 p-2 bg-card rounded-lg border border-border">
         <div className="flex items-center gap-2">
           <ProgressiveImage
             src={imageSrc}
@@ -53,15 +53,15 @@ export function ProductReference({ productId, messageContent, compact = false }:
             className="w-12 h-12 object-cover rounded"
           />
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm text-gray-900 truncate">{productInfo.name}</p>
+            <p className="font-medium text-sm text-foreground truncate">{productInfo.name}</p>
             <p className="text-xs text-gray-500">
               {productInfo.price} RWF/{productInfo.unit} • {productInfo.farmerName}
             </p>
           </div>
-          <MessageSquare className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <MessageSquare className="w-4 h-4 text-muted-foreground shrink-0" />
         </div>
         {messageContent && (
-          <p className="text-sm text-gray-700 mt-1">{messageContent}</p>
+          <p className="text-sm text-foreground mt-1">{messageContent}</p>
         )}
       </div>
     );
@@ -69,9 +69,9 @@ export function ProductReference({ productId, messageContent, compact = false }:
 
   return (
     <div className="space-y-2">
-      <Card className="overflow-hidden border border-gray-200 bg-white">
+      <Card className="overflow-hidden border border-border bg-card">
         <div className="flex">
-          <div className="flex-shrink-0 w-24 h-24">
+          <div className="shrink-0 w-24 h-24">
             <ProgressiveImage
               src={imageSrc}
               alt={productInfo.name}
@@ -79,18 +79,18 @@ export function ProductReference({ productId, messageContent, compact = false }:
             />
           </div>
           <div className="flex-1 p-3">
-            <h4 className="font-semibold text-sm text-gray-900 mb-1">{productInfo.name}</h4>
-            <p className="text-lg font-semibold text-green-600 mb-1">
+            <h4 className="font-semibold text-sm text-foreground mb-1">{productInfo.name}</h4>
+            <p className="text-lg font-semibold text-success mb-1">
               {productInfo.price} RWF/{productInfo.unit}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Sold by {productInfo.farmerName}
             </p>
           </div>
         </div>
       </Card>
       {messageContent && (
-        <p className="text-sm text-gray-700 px-1">{messageContent}</p>
+        <p className="text-sm text-foreground px-1">{messageContent}</p>
       )}
     </div>
   );

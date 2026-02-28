@@ -95,18 +95,18 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   };
 
   return (
-    <div className={cn('flex flex-col h-full bg-white', className)}>
+    <div className={cn('flex flex-col h-full bg-card', className)}>
 
       {/* ── Header ───────────────────────────────────────────── */}
-      <div className="px-4 pt-5 pb-4 border-b border-gray-100">
+      <div className="px-4 pt-5 pb-4 border-b border-border">
         <div className="flex items-center justify-between mb-0.5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-              <MessageCircle className="w-4 h-4 text-green-600" />
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+              <MessageCircle className="w-4 h-4 text-success" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900 ">Messages</h2>
+            <h2 className="text-lg font-semibold text-foreground ">Messages</h2>
             {totalUnread > 0 && (
-              <span className="bg-green-600 text-white text-[10px] font-semibold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-sm shadow-green-200">
+              <span className="bg-success text-primary-foreground text-[10px] font-semibold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-sm shadow-success/20">
                 {totalUnread > 99 ? '99+' : totalUnread}
               </span>
             )}
@@ -115,20 +115,20 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
       </div>
 
       {/* ── Search ───────────────────────────────────────────── */}
-      <div className="px-4 py-3 border-b border-gray-50">
+      <div className="px-4 py-3 border-b border-border/50">
         <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-green-500 transition-colors" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-success transition-colors" />
           <input
             type="text"
             placeholder="Search conversations…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-9 py-2 rounded-lg bg-white border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-all"
+            className="w-full pl-9 pr-9 py-2 rounded-lg bg-card border border-transparent focus:border-success/50 focus:bg-card focus:ring-2 focus:ring-success/20 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -140,14 +140,14 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
       <div className="flex-1 overflow-y-auto">
         {sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center">
-              <Users className="w-7 h-7 text-gray-300" />
+            <div className="w-14 h-14 rounded-2xl bg-card flex items-center justify-center">
+              <Users className="w-7 h-7 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-700">
+              <p className="text-sm font-semibold text-foreground">
                 {searchTerm ? 'No results found' : 'No conversations yet'}
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {searchTerm ? 'Try a different name' : 'Start chatting with someone'}
               </p>
             </div>
@@ -171,15 +171,15 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       'w-full text-left px-4 py-3.5 flex items-center gap-3 transition-all duration-150',
                       'border-l-2',
                       isActive
-                        ? 'bg-green-50 border-green-500'
-                        : 'border-transparent hover:bg-white/80'
+                        ? 'bg-success/10 border-success'
+                        : 'border-transparent hover:bg-card/80'
                     )}
                   >
                     {/* Avatar */}
                     <div className="relative shrink-0">
                       <div className={cn(
                         'w-11 h-11 rounded-full flex items-center justify-center',
-                        'shadow-sm text-white font-semibold bg-green-500',
+                        'shadow-sm text-white font-semibold bg-success',
                         gradient
                       )}>
                         {user.avatar ? <img
@@ -191,7 +191,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                         </div>}
                       </div>
                       {isOnline && (
-                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success border-2 border-card rounded-full" />
                       )}
                     </div>
 
@@ -201,14 +201,14 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       <div className="flex items-center justify-between gap-2">
                         <span className={cn(
                           'text-sm truncate',
-                          hasUnread ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'
+                          hasUnread ? 'font-semibold text-foreground' : 'font-medium text-muted-foreground'
                         )}>
                           {user.names}
                         </span>
                         {user.lastMessage && (
                           <span className={cn(
                             'text-[11px] shrink-0',
-                            hasUnread ? 'text-green-600 font-semibold' : 'text-gray-400'
+                            hasUnread ? 'text-success font-semibold' : 'text-muted-foreground'
                           )}>
                             {formatTime(user.lastMessage.timestamp)}
                           </span>
@@ -219,15 +219,15 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       <div className="flex items-center justify-between gap-2 mt-0.5">
                         <p className={cn(
                           'text-[12px] truncate flex items-center gap-1',
-                          isTyping ? 'text-green-500 font-medium ' :
-                            hasUnread ? 'text-gray-700 font-medium' : 'text-gray-400'
+                          isTyping ? 'text-success font-medium ' :
+                            hasUnread ? 'text-foreground font-medium' : 'text-muted-foreground'
                         )}>
                           {/* Read receipt for own last message */}
                           {!isTyping && ownLast && (
                             <span className="shrink-0">
                               {user.lastMessage?.isRead
-                                ? <CheckCheck className="w-3 h-3 text-blue-500" />
-                                : <Check className="w-3 h-3 text-gray-400" />
+                                ? <CheckCheck className="w-3 h-3 text-info" />
+                                : <Check className="w-3 h-3 text-muted-foreground" />
                               }
                             </span>
                           )}

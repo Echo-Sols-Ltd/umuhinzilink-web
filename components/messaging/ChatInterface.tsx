@@ -195,7 +195,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       <div key={message.id}>
         {showDate && (
           <div className="flex justify-center my-4">
-            <span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">{formatDate(message.timestamp)}</span>
+            <span className="bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full">{formatDate(message.timestamp)}</span>
           </div>
         )}
 
@@ -203,11 +203,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
           <div className={cn(
             'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-lg relative shadow-sm transition-all',
             isOwn
-              ? 'bg-green-600 text-white rounded-tr-none ring-1 ring-inset ring-green-500'
-              : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none'
+              ? 'bg-success text-primary-foreground rounded-tr-none ring-1 ring-inset ring-success'
+              : 'bg-card border border-border text-foreground rounded-tl-none'
           )}>
             {message.replyTo && (
-              <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-green-700 border-green-400 text-green-100' : 'bg-white border-gray-300 text-gray-600')}>
+              <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-success/90 border-success/50 text-primary-foreground' : 'bg-muted border-border text-muted-foreground')}>
                 <div className="font-medium">{message.replyTo.sender?.names ?? 'Unknown'}</div>
                 <div className="truncate">{message.replyTo.content}</div>
               </div>
@@ -219,7 +219,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                   type="text"
                   value={editingText}
                   onChange={(e) => setEditingText(e.target.value)}
-                  className="w-full bg-transparent border-b border-gray-300 focus:outline-none focus:border-gray-500"
+                  className="w-full bg-transparent border-b border-border focus:outline-none focus:border-foreground"
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') handleEditMessage(message.id);
                     else if (e.key === 'Escape') { setEditingMessageId(null); setEditingText(''); }
@@ -227,8 +227,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                   autoFocus
                 />
                 <div className="flex space-x-2">
-                  <button onClick={() => handleEditMessage(message.id)} className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Save</button>
-                  <button onClick={() => { setEditingMessageId(null); setEditingText(''); }} className="text-xs bg-white0 text-white px-2 py-1 rounded hover:bg-gray-600">Cancel</button>
+                  <button onClick={() => handleEditMessage(message.id)} className="text-xs bg-success text-primary-foreground px-2 py-1 rounded hover:bg-success/90">Save</button>
+                  <button onClick={() => { setEditingMessageId(null); setEditingText(''); }} className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded hover:bg-muted/80">Cancel</button>
                 </div>
               </div>
             ) : (
@@ -240,7 +240,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 )}
 
                 {message.type === MessageType.FILE && (
-                  <div className="flex items-center space-x-2 mb-2 p-2 bg-gray-100 rounded">
+                  <div className="flex items-center space-x-2 mb-2 p-2 bg-muted rounded">
                     <File className="w-4 h-4" />
                     <span className="text-sm">{message.fileName}</span>
                     <button className="ml-auto"><Download className="w-4 h-4" /></button>
@@ -262,7 +262,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 )}
 
                 {message.isEdited && (
-                  <div className={cn('text-xs mt-1', isOwn ? 'text-green-200' : 'text-gray-500')}>(edited)</div>
+                  <div className={cn('text-xs mt-1', isOwn ? 'text-success/70' : 'text-muted-foreground')}>(edited)</div>
                 )}
               </>
             )}
@@ -272,15 +272,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 "absolute top-0  transition-all duration-200 z-10",
                 isOwn ? "-left-24" : "-right-24"
               )}>
-                <div className="flex items-center space-x-1 bg-white border border-gray-100 rounded-full shadow-md p-1.5 translate-y-1">
-                  <button onClick={() => replyMessage(message)} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Reply"><Reply className="w-3.5 h-3.5 text-gray-500" /></button>
-                  <button onClick={() => { setEditingMessageId(message.id); setEditingText(message.content); }} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" title="Edit"><Edit3 className="w-3.5 h-3.5 text-gray-500" /></button>
-                  <button onClick={() => handleDeleteMessage(message.id)} className="p-1.5 hover:bg-red-50 rounded-full transition-colors group/del" title="Delete"><Trash2 className="w-3.5 h-3.5 text-gray-500 group-hover/del:text-red-500" /></button>
+                <div className="flex items-center space-x-1 bg-card border border-border rounded-full shadow-md p-1.5 translate-y-1">
+                  <button className="p-1.5 text-muted-foreground hover:text-foreground rounded-full transition-colors">
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+                  <button className="p-1.5 text-muted-foreground hover:text-foreground rounded-full transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             )}
-
-            <div className={cn('text-xs mt-1 flex items-center justify-end space-x-1', isOwn ? 'text-green-200' : 'text-gray-500')}>
+            <div className={cn('text-xs mt-1 flex items-center justify-end space-x-1', isOwn ? 'text-success/70' : 'text-muted-foreground')}>
               <span>{formatTime(message.timestamp)}</span>
               {isOwn && (
                 <div className="flex">
@@ -296,9 +298,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
   if (!activeChatUser) {
     return (
-      <div className={cn('flex-1 flex items-center justify-center bg-white', className)}>
-        <div className="text-center text-gray-500">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4"><Send className="w-8 h-8 text-gray-400" /></div>
+      <div className={cn('flex-1 flex items-center justify-center bg-card', className)}>
+        <div className="text-center text-muted-foreground">
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4"><Send className="w-8 h-8 text-muted-foreground" /></div>
           <h3 className="text-lg font-medium mb-2">No conversation selected</h3>
           <p className="text-sm">Choose a user from the sidebar to start messaging</p>
         </div>
@@ -307,17 +309,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   }
 
   return (
-    <div className={cn('flex flex-col h-full bg-white', className)}>
-      <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-white">
+    <div className={cn('flex flex-col h-full bg-card', className)}>
+      <div className="flex items-center justify-between p-4 border-b border-border bg-card">
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setActiveChatUser(null)}
-            className="p-2 -ml-2 hover:bg-gray-100 rounded-full md:hidden transition-colors"
+            className="p-2 -ml-2 hover:bg-muted rounded-full md:hidden transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-muted-foreground" />
           </button>
           <div className="relative">
-            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+            <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center shadow-sm">
               {activeChatUser.avatar ? <img
                 src={imageUrl(activeChatUser.avatar)}
                 alt={activeChatUser.names}
@@ -326,34 +328,34 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 {activeChatUser.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
               </div>}
             </div>
-            {isUserOnline && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>}
+            {isUserOnline && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-success border-2 border-card rounded-full shadow-sm"></div>}
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">{activeChatUser.names}</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="font-medium text-foreground">{activeChatUser.names}</h3>
+            <p className="text-sm text-muted-foreground">
               {typingUsers.has(activeChatUser.id) ? (
-                <span className="text-green-600 animate-pulse">typing...</span>
+                <span className="text-success animate-pulse">typing...</span>
               ) : (
                 isUserOnline ? 'Online' : 'Offline'
               )}
             </p>
           </div>
         </div>
-        <button className="p-2 hover:bg-gray-100 rounded-full"><MoreVertical className="w-5 h-5 text-gray-600" /></button>
+        <button className="p-2 hover:bg-muted rounded-full"><MoreVertical className="w-5 h-5 text-muted-foreground" /></button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-white/50">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-card/50">
         <div className="flex flex-col min-h-full">
           <div className="flex-1" /> {/* Spacer to push messages to bottom */}
           <div className="space-y-4">
             {filteredMessages.map((message, index) => renderMessage(message, index))}
             {activeChatUser && typingUsers.has(activeChatUser.id) && (
               <div className="flex justify-start animate-in fade-in slide-in-from-left-2 duration-300">
-                <div className="bg-white border border-gray-100 rounded-lg rounded-tl-none px-4 py-3 shadow-sm">
+                <div className="bg-card border border-border rounded-lg rounded-tl-none px-4 py-3 shadow-sm">
                   <div className="flex space-x-1.5">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-success rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-2 h-2 bg-success rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-2 h-2 bg-success rounded-full animate-bounce"></div>
                   </div>
                 </div>
               </div>
@@ -364,37 +366,37 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       </div>
 
       {replyTo && (
-        <div className="px-4 py-2 bg-blue-50 border-t border-blue-200">
+        <div className="px-4 py-2 bg-info/10 border-t border-info/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Reply className="w-4 h-4 text-blue-600" />
+              <Reply className="w-4 h-4 text-info" />
               <div className="text-sm">
-                <span className="font-medium text-blue-800">Replying to {replyTo.sender.names.split(' ')[0]}</span>
-                <p className="text-blue-600 truncate max-w-xs">{replyTo.content}</p>
+                <span className="font-medium text-foreground">Replying to {replyTo.sender.names.split(' ')[0]}</span>
+                <p className="text-info truncate max-w-xs">{replyTo.content}</p>
               </div>
             </div>
-            <button onClick={() => cancelReply()} className="p-1 hover:bg-blue-100 rounded"><X className="w-4 h-4 text-blue-600" /></button>
+            <button onClick={() => cancelReply()} className="p-1 hover:bg-info/20 rounded"><X className="w-4 h-4 text-info" /></button>
           </div>
         </div>
       )}
 
       {selectedFile && (
-        <div className="px-4 py-2 bg-white border-t border-gray-200">
+        <div className="px-4 py-2 bg-card border-t border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              {selectedFile.type.startsWith('image/') ? <ImageIcon className="w-4 h-4 text-gray-600" /> : <File className="w-4 h-4 text-gray-600" />}
-              <span className="text-sm text-gray-700">{selectedFile.name}</span>
+              {selectedFile.type.startsWith('image/') ? <ImageIcon className="w-4 h-4 text-muted-foreground" /> : <File className="w-4 h-4 text-muted-foreground" />}
+              <span className="text-sm text-foreground">{selectedFile.name}</span>
             </div>
-            <button onClick={() => setSelectedFile(null)} className="p-1 hover:bg-gray-200 rounded"><X className="w-4 h-4 text-gray-600" /></button>
+            <button onClick={() => setSelectedFile(null)} className="p-1 hover:bg-muted rounded"><X className="w-4 h-4 text-muted-foreground" /></button>
           </div>
         </div>
       )}
 
-      <div className="p-4 border-t border-gray-100 bg-white">
+      <div className="p-4 border-t border-border bg-card">
         <div className="flex items-end space-x-3 max-w-5xl mx-auto">
           <div className="flex items-center space-x-1 mb-1">
-            <button onClick={() => fileInputRef.current?.click()} className="p-2.5 hover:bg-gray-100 text-gray-500 rounded-full transition-all active:scale-95" title="Attach file"><Paperclip className="w-5 h-5" /></button>
-            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="p-2.5 hover:bg-gray-100 text-gray-500 rounded-full transition-all active:scale-95" title="Add emoji"><Smile className="w-5 h-5" /></button>
+            <button onClick={() => fileInputRef.current?.click()} className="p-2.5 hover:bg-muted text-muted-foreground rounded-full transition-all active:scale-95" title="Attach file"><Paperclip className="w-5 h-5" /></button>
+            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="p-2.5 hover:bg-muted text-muted-foreground rounded-full transition-all active:scale-95" title="Add emoji"><Smile className="w-5 h-5" /></button>
           </div>
           <div className="flex-1 relative">
             <textarea
@@ -408,7 +410,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
               }}
               placeholder="Type your message..."
               rows={1}
-              className="w-full resize-none bg-white border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500/20 focus:bg-white transition-all text-gray-800 placeholder:text-gray-400"
+              className="w-full resize-none bg-card border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-success/20 focus:bg-card transition-all text-foreground placeholder:text-muted-foreground"
               style={{ minHeight: '46px', maxHeight: '150px' }}
             />
           </div>
@@ -418,8 +420,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             className={cn(
               'p-3 rounded-lg transition-all active:scale-95 shadow-md shrink-0 mb-0.5',
               messageText.trim() || selectedFile
-                ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-200'
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
+                ? 'bg-success text-primary-foreground hover:bg-success/90 shadow-success/20'
+                : 'bg-muted text-muted-foreground cursor-not-allowed shadow-none'
             )}
           >
             <Send className="w-5 h-5" />
