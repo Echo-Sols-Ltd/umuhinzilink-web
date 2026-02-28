@@ -191,6 +191,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+
+
   const addFarmerOrder = (data: FarmerOrder) => {
     setBuyerOrders(prev => {
       const updated = prev ? [data, ...prev] : [data];
@@ -241,6 +243,61 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setMutationLoadingState(loading);
   };
 
+
+  // Helper to update socket orders
+  const handleOrderChange = (order: FarmerOrder | SupplierOrder) => {
+    const orderId = order.id
+    const farmerOrder = order as FarmerOrder
+    const supplierOrder = order as SupplierOrder
+
+
+    // Update farmer orders delivery status
+    setFarmerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map((order) => order.id === orderId ? farmerOrder : order);
+      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Update buyer orders delivery status
+    setBuyerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map((order) => order.id === orderId ? farmerOrder : order);
+      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Update supplier orders delivery status
+    setSupplierOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map((order) => order.id === orderId ? supplierOrder : order);
+      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Update farmer buyer orders delivery status
+    setFarmerBuyerOrders(prev => {
+      if (!prev) return prev;
+      const updated = prev.map((order) => order.id === orderId ? supplierOrder : order);
+      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Update current orders if they match
+    setCurrentFarmerOrder(prev =>
+      prev?.id === orderId ? farmerOrder : prev
+    );
+    setCurrentBuyerOrder(prev =>
+      prev?.id === orderId ? farmerOrder : prev
+    );
+    setCurrentSupplierOrder(prev =>
+      prev?.id === orderId ? supplierOrder : prev
+    );
+    setCurrentFarmerBuyerOrder(prev =>
+      prev?.id === orderId ? supplierOrder : prev
+    );
+
+  }
   // Socket event handlers
   const handleNewOrder = useCallback((orderChange: FarmerOrder | SupplierOrder) => {
     console.log("this is new order", orderChange);
@@ -296,68 +353,12 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         },
       });
     }
-
-    // Update order status across all relevant lists by orderId
-    const { id, status } = orderChange;
-
-    // Helper function to update order status
-    const updateOrderStatus = (order: any) => {
-      if (order.id === id) {
-        return {
-          ...order,
-          status: status,
-          updatedAt: new Date().toISOString(),
-        };
-      }
-      return order;
-    };
-
-    // Update farmer orders
-    setFarmerOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map(updateOrderStatus);
-      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update buyer orders
-    setBuyerOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map(updateOrderStatus);
-      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update supplier orders
-    setSupplierOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map(updateOrderStatus);
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update farmer buyer orders
-    setFarmerBuyerOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map(updateOrderStatus);
-      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update current orders if they match
-    setCurrentFarmerOrder(prev =>
-      prev?.id === id ? updateOrderStatus(prev) : prev
-    );
-    setCurrentBuyerOrder(prev =>
-      prev?.id === id ? updateOrderStatus(prev) : prev
-    );
-    setCurrentSupplierOrder(prev =>
-      prev?.id === id ? updateOrderStatus(prev) : prev
-    );
-    setCurrentFarmerBuyerOrder(prev =>
-      prev?.id === id ? updateOrderStatus(prev) : prev
-    );
+    handleOrderChange(orderChange)
   }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
+
+
+
+
   const handleOrderDeliveryChange = useCallback((deliveryChange: FarmerOrder | SupplierOrder) => {
     if (!deliveryChange) {
       console.error('Delivery change data is undefined');
@@ -376,96 +377,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
-    // In-app notifications are automatically shown via showNotification inside useBrowserNotification
+    handleOrderChange(deliveryChange);
 
-    // Update order delivery status across all relevant lists by orderId
-    const { id, status } = deliveryChange;
-
-    // Helper function to update delivery status
-    const updateDeliveryStatus = (order: any) => {
-      if (order.id === id) {
-        // Create or update delivery object with proper status
-        const updatedDelivery = {
-          ...order.delivery,
-          status: status, // Use the delivery status from socket event
-          updatedAt: new Date().toISOString(),
-          // CRITICAL: Update trackingSteps to match the new status
-          trackingSteps: order.delivery?.trackingSteps?.map((step: any) => {
-            // Mark the step with the new status as completed
-            if (step.status === status) {
-              return {
-                ...step,
-                completed: true,
-                completedAt: new Date().toISOString()
-              };
-            }
-            // Keep existing completed steps as completed
-            return step;
-          }) || [{
-            // If no trackingSteps exist, create one for the current status
-            status: status,
-            completed: true,
-            completedAt: new Date().toISOString(),
-            location: 'Updated via socket',
-            notes: 'Delivery status updated automatically'
-          }]
-        };
-
-        return {
-          ...order,
-          delivery: updatedDelivery,
-          // Also update a deliveryStatus field if it exists on the order
-          ...(order.deliveryStatus && { deliveryStatus: status })
-        };
-      }
-      return order;
-    };
-
-    // Update farmer orders delivery status
-    setFarmerOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map(updateDeliveryStatus);
-      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update buyer orders delivery status
-    setBuyerOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map(updateDeliveryStatus);
-      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update supplier orders delivery status
-    setSupplierOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map(updateDeliveryStatus);
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update farmer buyer orders delivery status
-    setFarmerBuyerOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map(updateDeliveryStatus);
-      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update current orders if they match
-    setCurrentFarmerOrder(prev =>
-      prev?.id === id ? updateDeliveryStatus(prev) : prev
-    );
-    setCurrentBuyerOrder(prev =>
-      prev?.id === id ? updateDeliveryStatus(prev) : prev
-    );
-    setCurrentSupplierOrder(prev =>
-      prev?.id === id ? updateDeliveryStatus(prev) : prev
-    );
-    setCurrentFarmerBuyerOrder(prev =>
-      prev?.id === id ? updateDeliveryStatus(prev) : prev
-    );
   }, [shouldUseInAppNotifications, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
   const cleanupSocketListeners = useCallback(() => {
