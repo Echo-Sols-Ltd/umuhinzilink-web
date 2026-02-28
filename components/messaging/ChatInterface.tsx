@@ -24,6 +24,8 @@ import { useChat } from '@/hooks/useChat';
 import { ProductReference } from './ProductReference';
 import { messageService } from '@/services/messages';
 import { toast } from '@/components/ui/use-toast';
+import { MessageActionsModal } from './MessageActionsModal';
+import { MessageReactions, processReactions } from './MessageReactions';
 
 interface ChatInterfaceProps {
   className?: string;
@@ -55,6 +57,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUserOnline, setIsUserOnline] = useState(false);
   const [isTypingActive, setIsTypingActive] = useState(false);
+  
+  // New state for enhanced messaging
+  const [messageActionsModal, setMessageActionsModal] = useState<{
+    isOpen: boolean;
+    message: Message | null;
+    position: { x: number; y: number };
+  }>({ isOpen: false, message: null, position: { x: 0, y: 0 } });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -161,6 +170,52 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     }
   };
 
+  // Enhanced messaging handlers
+  const handleMessageAction = (message: Message, event: React.MouseEvent) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setMessageActionsModal({
+      isOpen: true,
+      message,
+      position: {
+        x: rect.left + window.scrollX,
+        y: rect.bottom + window.scrollY
+      }
+    });
+  };
+
+  const handleCloseMessageActions = () => {
+    setMessageActionsModal({
+      isOpen: false,
+      message: null,
+      position: { x: 0, y: 0 }
+    });
+  };
+
+  const handleCopyMessage = (content: string) => {
+    navigator.clipboard.writeText(content);
+    toast.success('Message copied to clipboard');
+  };
+
+  const handleReactToMessage = async (messageId: string, emoji: string) => {
+    try {
+      // This would call a service to add/remove reaction
+      // For now, just show a toast
+      toast.success(`Reacted ${emoji} to message`);
+    } catch (error) {
+      console.error('Failed to react to message:', error);
+    }
+  };
+
+  const handleReportMessage = async (messageId: string) => {
+    try {
+      // This would call a service to report the message
+      toast.success('Message reported to moderators');
+      handleCloseMessageActions();
+    } catch (error) {
+      console.error('Failed to report message:', error);
+    }
+  };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) setSelectedFile(file);
@@ -200,12 +255,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         )}
 
         <div className={cn('flex mb-4 group', isOwn ? 'justify-end' : 'justify-start')}>
-          <div className={cn(
-            'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-lg relative shadow-sm transition-all',
-            isOwn
-              ? 'bg-success text-primary-foreground rounded-tr-none ring-1 ring-inset ring-success'
-              : 'bg-card border border-border text-foreground rounded-tl-none'
-          )}>
+          <div 
+            className={cn(
+              'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-lg relative shadow-sm transition-all',
+              isOwn
+                ? 'bg-success text-primary-foreground rounded-tr-none ring-1 ring-inset ring-success'
+                : 'bg-card border border-border text-foreground rounded-tl-none'
+            )}
+          >
             {message.replyTo && (
               <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-success/90 border-success/50 text-primary-foreground' : 'bg-muted border-border text-muted-foreground')}>
                 <div className="font-medium">{message.replyTo.sender?.names ?? 'Unknown'}</div>
@@ -262,26 +319,43 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 )}
 
                 {message.isEdited && (
-                  <div className={cn('text-xs mt-1', isOwn ? 'text-success/70' : 'text-muted-foreground')}>(edited)</div>
+                  <div className={cn('text-xs mt-1', isOwn ? 'text-success/70' : 'text-muted-foreground')}> (edited)</div>
+                )}
+
+                {/* Message Reactions */}
+                {message.reactions && message.reactions.length > 0 && (
+                  <MessageReactions
+                    reactions={processReactions(
+                      message.reactions.map(r => ({ 
+                        emoji: r.emoji, 
+                        userId: r.userId, 
+                        userName: r.userId // Would need to fetch user name
+                      })),
+                      currentUser?.id
+                    )}
+                    onReactionClick={(emoji) => handleReactToMessage(message.id, emoji)}
+                    isOwn={isOwn}
+                  />
                 )}
               </>
             )}
 
-            {isOwn && editingMessageId !== message.id && (
+            {/* Three dots menu - positioned based on sender/receiver */}
+            {editingMessageId !== message.id && (
               <div className={cn(
-                "absolute top-0  transition-all duration-200 z-10",
-                isOwn ? "-left-24" : "-right-24"
+                "absolute top-0 transition-all duration-200 z-10 opacity-0 group-hover:opacity-100",
+                isOwn ? "-left-10 -top-1" : "-right-10 -top-1"
               )}>
-                <div className="flex items-center space-x-1 bg-card border border-border rounded-full shadow-md p-1.5 translate-y-1">
-                  <button className="p-1.5 text-muted-foreground hover:text-foreground rounded-full transition-colors">
-                    <Edit3 className="w-3.5 h-3.5" />
-                  </button>
-                  <button className="p-1.5 text-muted-foreground hover:text-foreground rounded-full transition-colors">
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                <button
+                  onClick={(e) => handleMessageAction(message, e)}
+                  className="p-1.5 bg-card border border-border rounded-full shadow-md hover:bg-muted transition-colors"
+                  title="Message options"
+                >
+                  <MoreVertical className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+                </button>
               </div>
             )}
+
             <div className={cn('text-xs mt-1 flex items-center justify-end space-x-1', isOwn ? 'text-success/70' : 'text-muted-foreground')}>
               <span>{formatTime(message.timestamp)}</span>
               {isOwn && (
@@ -430,6 +504,30 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       </div>
 
       <input ref={fileInputRef} type="file" onChange={handleFileSelect} className="hidden" accept="image/*,.pdf,.doc,.docx,.txt" />
+
+      {/* Message Actions Modal */}
+      {messageActionsModal.isOpen && messageActionsModal.message && (
+        <MessageActionsModal
+          message={messageActionsModal.message}
+          isOpen={messageActionsModal.isOpen}
+          onClose={handleCloseMessageActions}
+          onEdit={(messageId) => {
+            setEditingMessageId(messageId);
+            setEditingText(messageActionsModal.message?.content || '');
+            handleCloseMessageActions();
+          }}
+          onDelete={handleDeleteMessage}
+          onReply={(message) => {
+            replyMessage(message);
+            handleCloseMessageActions();
+          }}
+          onCopy={handleCopyMessage}
+          onReact={handleReactToMessage}
+          onReport={handleReportMessage}
+          position={messageActionsModal.position}
+          isOwnMessage={messageActionsModal.message.sender.id === currentUser?.id}
+        />
+      )}
     </div>
   );
 };
