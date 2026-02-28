@@ -55,10 +55,10 @@ function BuyerOrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
         <main className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-success"></div>
         </main>
       </div>
     );
@@ -66,7 +66,7 @@ function BuyerOrderDetailPage() {
 
   if (!order) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -83,57 +83,57 @@ function BuyerOrderDetailPage() {
   const farmer = order.product.owner;
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
 
       <main className="flex-1 overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div className="flex items-center space-x-4">
             <button
               onClick={handleBack}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Purchases</span>
             </button>
             <div className="h-8 w-px bg-gray-300"></div>
-            <h1 className="text-xl font-semibold text-gray-900">Order Details</h1>
-            <span className="text-sm text-gray-500">#{order.id.slice(0, 8)}</span>
+            <h1 className="text-xl font-semibold text-foreground">Order Details</h1>
+            <span className="text-sm text-muted-foreground">#{order.id.slice(0, 8)}</span>
           </div>
         </header>
 
         <div className="p-6 space-y-6">
           {/* Order Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <div className="bg-card rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Package className="w-5 h-5 text-blue-600" />
+                <div className="p-2 bg-info/10 rounded-lg">
+                  <Package className="w-5 h-5 text-info" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Product</p>
-                  <p className="font-semibold text-gray-900">{product.name}</p>
+                  <p className="text-sm text-muted-foreground">Product</p>
+                  <p className="font-semibold text-foreground">{product.name}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <div className="bg-card rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <User className="w-5 h-5 text-green-600" />
+                <div className="p-2 bg-success/10 rounded-lg">
+                  <User className="w-5 h-5 text-success" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Farmer</p>
-                  <p className="font-semibold text-gray-900">{farmer.names}</p>
+                  <p className="text-sm text-muted-foreground">Farmer</p>
+                  <p className="font-semibold text-foreground">{farmer.names}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <div className="bg-card rounded-lg p-4 border border-gray-200">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <CreditCard className="w-5 h-5 text-orange-600" />
+                <div className="p-2 bg-warning/10 rounded-lg">
+                  <CreditCard className="w-5 h-5 text-warning" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Total Amount</p>

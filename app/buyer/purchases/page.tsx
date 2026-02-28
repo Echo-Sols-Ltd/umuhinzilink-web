@@ -126,7 +126,7 @@ function MyPurchasesComponent() {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         userType={UserType.BUYER}
         activeItem='My Orders'
@@ -135,25 +135,25 @@ function MyPurchasesComponent() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">My Purchases</h1>
-            <p className="text-xs text-gray-500">Track your orders and manage your purchases</p>
+            <h1 className="text-xl font-semibold text-foreground">My Purchases</h1>
+            <p className="text-xs text-muted-foreground">Track your orders and manage your purchases</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search orders..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success w-full"
               />
             </div>
             <button
               onClick={() => fetchBuyerOrders(currentPage - 1, itemsPerPage)}
-              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors"
               disabled={ordersLoading}
             >
               <RefreshCw className={`w-4 h-4 ${ordersLoading ? 'animate-spin' : ''}`} />
@@ -162,50 +162,50 @@ function MyPurchasesComponent() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 bg-white p-6 space-y-6">
+        <main className="flex-1 bg-background p-6 space-y-6">
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-card p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">Total Purchases</p>
-                  <h2 className="text-2xl font-semibold text-gray-900">{stats.total}</h2>
+                  <p className="text-muted-foreground text-sm">Total Purchases</p>
+                  <h2 className="text-2xl font-semibold text-foreground">{stats.total}</h2>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <ShoppingBag className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+                  <ShoppingBag className="w-6 h-6 text-info" />
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-card p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">Completed Orders</p>
-                  <h2 className="text-2xl font-semibold text-gray-900">{stats.completed}</h2>
+                  <p className="text-muted-foreground text-sm">Completed Orders</p>
+                  <h2 className="text-2xl font-semibold text-foreground">{stats.completed}</h2>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-success" />
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-card p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">In Progress</p>
-                  <h2 className="text-2xl font-semibold text-gray-900">{stats.inProgress}</h2>
+                  <p className="text-muted-foreground text-sm">In Progress</p>
+                  <h2 className="text-2xl font-semibold text-foreground">{stats.inProgress}</h2>
                 </div>
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-yellow-600" />
+                <div className="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-warning" />
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-card p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">Total Spent</p>
-                  <h2 className="text-2xl font-semibold text-gray-900">{stats.totalSpent.toLocaleString()} RWF</h2>
+                  <p className="text-muted-foreground text-sm">Total Spent</p>
+                  <h2 className="text-2xl font-semibold text-foreground">{stats.totalSpent.toLocaleString()} RWF</h2>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-purple/10 rounded-lg flex items-center justify-center">
                   <DollarSign className="w-6 h-6 text-purple-600" />
                 </div>
               </div>
@@ -226,8 +226,8 @@ function MyPurchasesComponent() {
                   key={option.id}
                   onClick={() => setFilterStatus(option.id)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === option.id
-                    ? 'bg-green-600 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-success text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-muted'
                     }`}
                 >
                   {option.label}
@@ -236,33 +236,33 @@ function MyPurchasesComponent() {
             </div>
             <div className="flex gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Search orders..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-white border border-gray-300 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
+                  className="bg-card border border-border rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-success focus:border-transparent w-64"
                 />
               </div>
               <div className="relative">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none bg-white border border-gray-300 text-gray-700 rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 hover:bg-white transition-colors w-40 cursor-pointer"
+                  className="appearance-none bg-card border border-border text-foreground rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-success hover:bg-card transition-colors w-40 cursor-pointer"
                 >
                   <option value="all">All Crops</option>
                   {categories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 pointer-events-none" />
               </div>
             </div>
           </div>
 
           {/* Orders Table */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -298,7 +298,7 @@ function MyPurchasesComponent() {
                 ) : filteredOrders.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="py-20 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-500">
+                      <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <ShoppingBag className="w-12 h-12 mb-4 opacity-20" />
                         <p className="text-lg font-medium">No orders found</p>
                         <p className="text-sm">
@@ -323,32 +323,32 @@ function MyPurchasesComponent() {
 
                     return (
                       <TableRow key={order.id}>
-                        <TableCell className="font-semibold text-gray-900 leading-none">
-                          <span className="text-gray-400 font-normal mr-1">#</span>
+                        <TableCell className="font-semibold text-foreground leading-none">
+                          <span className="text-muted-foreground font-normal mr-1">#</span>
                           {order.id.slice(-6).toUpperCase()}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center border border-green-100">
-                              <span className="text-green-700 text-xs font-semibold shrink-0">
+                            <div className="w-9 h-9 bg-success/10 rounded-lg flex items-center justify-center border border-success/20">
+                              <span className="text-success text-xs font-semibold shrink-0">
                                 {productName.charAt(0)}
                               </span>
                             </div>
                             <div>
-                              <div className="font-medium text-gray-900">{productName}</div>
-                              <div className="text-[10px] text-gray-400 uppercase ">Product</div>
+                              <div className="font-medium text-foreground">{productName}</div>
+                              <div className="text-[10px] text-muted-foreground uppercase ">Product</div>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="text-gray-900 font-medium">{farmerName}</span>
-                            <span className="text-[10px] text-gray-400">Merchant</span>
+                            <span className="text-foreground font-medium">{farmerName}</span>
+                            <span className="text-[10px] text-muted-foreground">Merchant</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-gray-600">{quantity}</TableCell>
-                        <TableCell className="font-semibold text-gray-900">{price}</TableCell>
-                        <TableCell className="text-gray-500">{date}</TableCell>
+                        <TableCell className="text-muted-foreground">{quantity}</TableCell>
+                        <TableCell className="font-semibold text-foreground">{price}</TableCell>
+                        <TableCell className="text-muted-foreground">{date}</TableCell>
                         <TableCell>
                           <Badge variant={getStatusVariant(order.status) as any} className="font-medium text-[10px] uppercase  px-2.5 py-0.5">
                             {order.status.replace('_', ' ')}
@@ -368,7 +368,7 @@ function MyPurchasesComponent() {
                             )}
                             <button
                               onClick={() => router.push(`/buyer/orders/${order.id}`)}
-                              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                              className="p-2 text-muted-foreground hover:text-info hover:bg-info/10 rounded-lg transition-all"
                               title="View Details"
                             >
                               <Eye className="w-4 h-4" />
@@ -376,7 +376,7 @@ function MyPurchasesComponent() {
                             {order.delivery && (
                               <button
                                 onClick={() => router.push('/buyer/delivery')}
-                                className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                                className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all"
                                 title="Track Delivery"
                               >
                                 <Truck className="w-4 h-4" />
@@ -395,14 +395,14 @@ function MyPurchasesComponent() {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-between items-center mt-6">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Showing {Math.min(filteredOrders.length, (currentPage - 1) * itemsPerPage + 1)} to {Math.min(filteredOrders.length, currentPage * itemsPerPage)} of {totalElements} results
               </p>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+                  className="p-2 text-muted-foreground hover:text-muted-foreground transition-colors disabled:opacity-50"
                 >
                   &lt;
                 </button>
@@ -411,7 +411,7 @@ function MyPurchasesComponent() {
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
-                    className={`${currentPage === i + 1 ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-gray-100'} px-3 py-1.5 rounded-md text-sm font-medium transition-colors`}
+                    className={`${currentPage === i + 1 ? 'bg-success text-primary-foreground' : 'text-muted-foreground hover:bg-muted'} px-3 py-1.5 rounded-md text-sm font-medium transition-colors`}
                   >
                     {i + 1}
                   </button>
@@ -420,7 +420,7 @@ function MyPurchasesComponent() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+                  className="p-2 text-muted-foreground hover:text-muted-foreground transition-colors disabled:opacity-50"
                 >
                   &gt;
                 </button>
@@ -430,38 +430,38 @@ function MyPurchasesComponent() {
 
           {/* Order Status Tracker Modal */}
           {selectedOrder && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+              <div className="bg-card rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-xl font-semibold text-foreground">
                       Order #{selectedOrder.id.slice(-6)} - Status Tracking
                     </h2>
                     <button
                       onClick={() => setSelectedOrder(null)}
-                      className="text-gray-400 hover:text-gray-600"
+                      className="text-muted-foreground hover:text-foreground"
                     >
                       <X className="w-6 h-6" />
                     </button>
                   </div>
 
                   {/* Order Details */}
-                  <div className="mb-6 p-4 bg-white rounded-lg">
+                  <div className="mb-6 p-4 bg-card rounded-lg">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="text-gray-600">Product:</span>
+                        <span className="text-muted-foreground">Product:</span>
                         <span className="ml-2 font-medium">{selectedOrder.product?.name}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">Farmer:</span>
+                        <span className="text-muted-foreground">Farmer:</span>
                         <span className="ml-2 font-medium">{selectedOrder.product?.farmer?.user?.names}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">Quantity:</span>
+                        <span className="text-muted-foreground">Quantity:</span>
                         <span className="ml-2 font-medium">{selectedOrder.quantity} {selectedOrder.product?.measurementUnit}</span>
                       </div>
                       <div>
-                        <span className="text-gray-600">Total:</span>
+                        <span className="text-muted-foreground">Total:</span>
                         <span className="ml-2 font-medium">{(selectedOrder.totalPrice || 0).toLocaleString()} RWF</span>
                       </div>
                     </div>
