@@ -104,13 +104,13 @@ export default function WalletDetailPage() {
 
     if (loading) {
         return (
-            <div className="flex h-screen bg-white overflow-hidden">
+            <div className="flex h-screen bg-background overflow-hidden">
                 <Sidebar userType={UserType.ADMIN} activeItem="Wallets" />
-                <main className="flex-1 overflow-auto bg-white/30">
+                <main className="flex-1 overflow-auto bg-background">
                     <div className="p-8 max-w-7xl mx-auto">
                         <div className="flex flex-col items-center justify-center py-20 gap-4">
-                            <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-                            <p className="font-semibold text-gray-400 text-xs uppercase ">Loading wallet details...</p>
+                            <Loader2 className="w-8 h-8 animate-spin text-success" />
+                            <p className="font-semibold text-muted-foreground text-xs uppercase">Loading wallet details...</p>
                         </div>
                     </div>
                 </main>
@@ -120,12 +120,12 @@ export default function WalletDetailPage() {
 
     if (!wallet) {
         return (
-            <div className="flex h-screen bg-white overflow-hidden">
+            <div className="flex h-screen bg-background overflow-hidden">
                 <Sidebar userType={UserType.ADMIN} activeItem="Wallets" />
-                <main className="flex-1 overflow-auto bg-white/30">
+                <main className="flex-1 overflow-auto bg-background">
                     <div className="p-8 max-w-7xl mx-auto">
                         <div className="text-center">
-                            <p className="text-gray-400 font-semibold  uppercase text-xs ">Wallet not found</p>
+                            <p className="text-muted-foreground font-semibold uppercase text-xs">Wallet not found</p>
                         </div>
                     </div>
                 </main>
@@ -134,27 +134,27 @@ export default function WalletDetailPage() {
     }
 
     return (
-        <div className="flex h-screen bg-white overflow-hidden">
+        <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={UserType.ADMIN} activeItem="Wallets" />
 
-            <main className="flex-1 overflow-auto bg-white/30">
+            <main className="flex-1 overflow-auto bg-background">
                 <div className="p-8 max-w-7xl mx-auto space-y-8">
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={() => router.push('/admin/wallets')}
-                                className="p-3 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                                className="p-3 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all"
                             >
                                 <ArrowLeft className="w-5 h-5" />
                             </button>
                             <div className="flex items-center gap-5">
-                                <div className="w-14 h-14 bg-green-600 rounded-lg flex items-center justify-center text-white shadow-xl shadow-green-100">
+                                <div className="w-14 h-14 bg-success rounded-lg flex items-center justify-center text-white shadow-xl">
                                     <Wallet className="w-7 h-7" />
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl font-semibold text-gray-900 uppercase">Ledger Summary</h1>
-                                    <p className="text-xs text-gray-500 font-semibold uppercase mt-1">Wallet ID: {wallet.id}</p>
+                                    <h1 className="text-2xl font-semibold text-foreground uppercase">Ledger Summary</h1>
+                                    <p className="text-xs text-muted-foreground font-semibold uppercase mt-1">Wallet ID: {wallet.id}</p>
                                 </div>
                             </div>
                         </div>
@@ -162,72 +162,72 @@ export default function WalletDetailPage() {
 
                     {/* Detailed Info Grid */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm space-y-1">
-                            <p className="text-[10px] uppercase font-semibold text-gray-400 ">Account Holder</p>
-                            <p className="font-semibold text-gray-900 text-lg">{wallet.userName}</p>
-                            <p className="text-sm text-gray-500 font-medium">{wallet.userEmail}</p>
+                        <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">
+                            <p className="text-[10px] uppercase font-semibold text-muted-foreground">Account Holder</p>
+                            <p className="font-semibold text-foreground text-lg">{wallet.userName}</p>
+                            <p className="text-sm text-muted-foreground font-medium">{wallet.userEmail}</p>
                         </div>
-                        <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm space-y-1">
-                            <p className="text-[10px] uppercase font-semibold text-gray-400 ">Available Balance</p>
-                            <p className="font-semibold text-green-600 text-2xl">
+                        <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">
+                            <p className="text-[10px] text-muted-foreground font-semibold uppercase">Available Balance</p>
+                            <p className="font-semibold text-success text-2xl">
                                 RWF {wallet.balance.toLocaleString()}
                             </p>
-                            <p className="text-[10px] text-gray-400 font-semibold uppercase ">Currency: {wallet.currency}</p>
+                            <p className="text-[10px] text-muted-foreground font-semibold uppercase">Currency: {wallet.currency}</p>
                         </div>
-                        <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm space-y-1">
-                            <p className="text-[10px] uppercase font-semibold text-gray-400 ">Account Status</p>
+                        <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">
+                            <p className="text-[10px] text-muted-foreground font-semibold uppercase">Account Status</p>
                             <Badge variant={wallet.active ? 'success' : 'destructive'} className="font-semibold text-[10px] px-3 py-1 rounded-full uppercase ">
                                 {wallet.active ? 'Active' : 'Restricted'}
                             </Badge>
                         </div>
-                        <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm space-y-1">
-                            <p className="text-[10px] uppercase font-semibold text-gray-400 ">Member Since</p>
-                            <p className="font-semibold text-gray-900">{new Date(wallet.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                        <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">
+                            <p className="text-[10px] text-muted-foreground font-semibold uppercase">Member Since</p>
+                            <p className="font-semibold text-foreground">{new Date(wallet.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                         </div>
                     </div>
 
                     {/* Transaction History Section */}
-                    <div className="bg-white rounded-lg border border-gray-100 shadow-sm">
-                        <div className="p-8 border-b border-gray-100">
+                    <div className="bg-card rounded-lg border border-border shadow-sm">
+                        <div className="p-8 border-b border-border">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-3">
-                                    <History className="w-5 h-5 text-gray-400" />
+                                <h3 className="text-xl font-semibold text-foreground flex items-center gap-3">
+                                    <History className="w-5 h-5 text-muted-foreground" />
                                     Transaction Audit
                                 </h3>
-                                <span className="text-xs font-semibold text-gray-400 uppercase ">Recent {userTransactions.length} Activities</span>
+                                <span className="text-xs font-semibold text-muted-foreground uppercase ">Recent {userTransactions.length} Activities</span>
                             </div>
                         </div>
 
                         <div className="p-8">
                             {loadingTransactions ? (
                                 <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                    <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-                                    <p className="font-semibold text-gray-400 text-xs uppercase ">Decrypting Ledger...</p>
+                                    <Loader2 className="w-8 h-8 animate-spin text-success" />
+                                    <p className="font-semibold text-muted-foreground text-xs uppercase">Decrypting Ledger...</p>
                                 </div>
                             ) : userTransactions.length > 0 ? (
-                                <div className="bg-white/50 rounded-lg border border-gray-100 overflow-hidden">
+                                <div className="bg-card/50 rounded-lg border border-border overflow-hidden">
                                     <Table>
                                         <TableHeader>
                                             <TableRow className="border-none">
-                                                <TableHead className="text-sm font-semibold uppercase text-gray-400 py-4 pl-6">Type</TableHead>
-                                                <TableHead className="text-sm font-semibold uppercase text-gray-400 py-4">Status</TableHead>
-                                                <TableHead className="text-sm font-semibold uppercase text-gray-400 py-4 text-right">Amount</TableHead>
-                                                <TableHead className="text-sm font-semibold uppercase text-gray-400 py-4 pr-6">Date</TableHead>
+                                                <TableHead className="text-sm font-semibold uppercase text-muted-foreground py-4 pl-6">Type</TableHead>
+                                                <TableHead className="text-sm font-semibold uppercase text-muted-foreground py-4">Status</TableHead>
+                                                <TableHead className="text-sm font-semibold uppercase text-muted-foreground py-4 text-right">Amount</TableHead>
+                                                <TableHead className="text-sm font-semibold uppercase text-muted-foreground py-4 pr-6">Date</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
                                             {userTransactions.map((tx) => (
-                                                <TableRow key={tx.id} className="hover:bg-white transition-colors border-gray-50">
+                                                <TableRow key={tx.id} className="hover:bg-card transition-colors border-border">
                                                     <TableCell className="pl-6 py-4">
                                                         <div className="flex items-center gap-3">
                                                             {tx.type === 'DEPOSIT' || tx.type === 'TRANSFER_IN' ? (
-                                                                <div className="p-2 bg-green-50 rounded-lg text-green-600"><ArrowDownLeft className="w-4 h-4" /></div>
+                                                                <div className="p-2 bg-success/10 rounded-lg text-success"><ArrowDownLeft className="w-4 h-4" /></div>
                                                             ) : (
-                                                                <div className="p-2 bg-orange-50 rounded-lg text-orange-600"><ArrowUpRight className="w-4 h-4" /></div>
+                                                                <div className="p-2 bg-warning/10 rounded-lg text-warning"><ArrowUpRight className="w-4 h-4" /></div>
                                                             )}
                                                             <div className="flex flex-col">
-                                                                <span className="font-semibold text-xs text-gray-900 uppercase ">{tx.type}</span>
-                                                                <span className="text-xs text-gray-400 font-medium line-clamp-1 max-w-[200px]">{tx.description}</span>
+                                                                <span className="font-semibold text-xs text-foreground uppercase">{tx.type}</span>
+                                                                <span className="text-xs text-muted-foreground font-medium line-clamp-1 max-w-[200px]">{tx.description}</span>
                                                             </div>
                                                         </div>
                                                     </TableCell>
@@ -236,11 +236,11 @@ export default function WalletDetailPage() {
                                                             {tx.status}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell className="text-right font-semibold text-gray-900 text-sm ">
+                                                    <TableCell className="text-right font-semibold text-foreground text-sm ">
                                                         {(tx.type === 'DEPOSIT' || tx.type === 'TRANSFER_IN' || tx.type === 'INCOME' ? '+' : '-')} RWF {tx.amount.toLocaleString()}
                                                     </TableCell>
                                                     <TableCell className="pr-6 text-right">
-                                                        <span className="text-xs font-semibold text-gray-400">{new Date(tx.createdAt).toLocaleDateString()}</span>
+                                                        <span className="text-xs font-semibold text-muted-foreground">{new Date(tx.createdAt).toLocaleDateString()}</span>
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -248,8 +248,8 @@ export default function WalletDetailPage() {
                                     </Table>
                                 </div>
                             ) : (
-                                <div className="py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
-                                    <p className="text-gray-400 font-semibold  uppercase text-xs ">No transaction history found for this account</p>
+                                <div className="py-20 text-center bg-card rounded-3xl border border-dashed border-border">
+                                    <p className="text-muted-foreground font-semibold uppercase text-xs">No transaction history found for this account</p>
                                 </div>
                             )}
                         </div>

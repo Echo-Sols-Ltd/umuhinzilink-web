@@ -73,7 +73,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/farmer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/farmer/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -101,7 +101,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/buyer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/buyer/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -128,7 +128,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/supplier/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/supplier/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -158,7 +158,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                 {
                     label: 'Account',
                     items: [
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'System Settings', href: '/admin/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -184,7 +184,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     label: 'Account',
                     items: [
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/government/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];

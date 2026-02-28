@@ -157,7 +157,7 @@ export default function AdminProductDetailPage() {
   };
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
       
       <main className="flex-1 overflow-auto">

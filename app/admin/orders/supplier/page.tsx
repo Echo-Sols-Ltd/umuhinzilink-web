@@ -27,6 +27,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 
 function SupplierOrderManagement() {
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const { supplierOrders: orders } = useAdmin();
 
@@ -134,7 +135,11 @@ function SupplierOrderManagement() {
                                             </TableCell>
                                             <TableCell className="text-right pr-8">
                                                 <div className="flex items-center justify-end gap-2 transition-all transform translate-x-4 group-hover:translate-x-0">
-                                                    <button className="p-3 text-muted-foreground hover:text-info hover:bg-info/10 rounded-2xl transition-all" title="View Audit">
+                                                    <button 
+                                                        onClick={() => router.push(`/admin/orders/${order.id}`)}
+                                                        className="p-3 text-muted-foreground hover:text-info hover:bg-info/10 rounded-2xl transition-all" 
+                                                        title="View order details"
+                                                    >
                                                         <Eye className="w-5 h-5" />
                                                     </button>
                                                     <button className="p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-2xl transition-all" title="Flag Transaction">

@@ -97,84 +97,76 @@ function GovernmentSettings() {
       <div className="p-6 max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-1">Manage your government portal preferences and security</p>
+          <h1 className="text-2xl font-semibold text-foreground">Settings</h1>
+          <p className="text-muted-foreground mt-1">Manage your government portal preferences and security</p>
         </div>
 
         <div className="space-y-6">
           {/* Notification Settings */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="bg-card rounded-lg shadow-sm border border-border">
             <div className="p-6">
               <div className="flex items-center mb-4">
-                <Bell className="w-5 h-5 text-green-600 mr-3" />
-                <h2 className="text-lg font-semibold text-gray-900">Notification Preferences</h2>
+                <Bell className="w-5 h-5 text-success mr-3" />
+                <h2 className="text-lg font-semibold text-foreground">Notification Preferences</h2>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-900">Email Notifications</Label>
-                    <p className="text-sm text-gray-600">Receive updates via email</p>
+                    <Label className="text-foreground">Email Notifications</Label>
+                    <p className="text-sm text-muted-foreground">Receive updates via email</p>
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, emailNotifications: !settings.emailNotifications })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.emailNotifications ? 'bg-green-600' : 'bg-gray-200'
-                      }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.emailNotifications ? 'bg-success' : 'bg-muted'}`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.emailNotifications ? 'translate-x-6' : 'translate-x-1'
-                        }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${settings.emailNotifications ? 'translate-x-6' : 'translate-x-1'}`}
                     />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-900">Push Notifications</Label>
-                    <p className="text-sm text-gray-600">Browser push notifications</p>
+                    <Label className="text-foreground">Push Notifications</Label>
+                    <p className="text-sm text-muted-foreground">Browser push notifications</p>
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, pushNotifications: !settings.pushNotifications })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.pushNotifications ? 'bg-green-600' : 'bg-gray-200'
-                      }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.pushNotifications ? 'bg-success' : 'bg-muted'}`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.pushNotifications ? 'translate-x-6' : 'translate-x-1'
-                        }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${settings.pushNotifications ? 'translate-x-6' : 'translate-x-1'}`}
                     />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-900">SMS Alerts</Label>
-                    <p className="text-sm text-gray-600">Critical alerts via SMS</p>
+                    <Label className="text-foreground">SMS Alerts</Label>
+                    <p className="text-sm text-muted-foreground">Critical alerts via SMS</p>
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, smsAlerts: !settings.smsAlerts })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.smsAlerts ? 'bg-green-600' : 'bg-gray-200'
-                      }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.smsAlerts ? 'bg-success' : 'bg-muted'}`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.smsAlerts ? 'translate-x-6' : 'translate-x-1'
-                        }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${settings.smsAlerts ? 'translate-x-6' : 'translate-x-1'}`}
                     />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-900">Weekly Reports</Label>
-                    <p className="text-sm text-gray-600">Summary of agricultural activities</p>
+                    <Label className="text-foreground">Weekly Reports</Label>
+                    <p className="text-sm text-muted-foreground">Summary of agricultural activities</p>
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, weeklyReports: !settings.weeklyReports })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.weeklyReports ? 'bg-green-600' : 'bg-gray-200'
-                      }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.weeklyReports ? 'bg-success' : 'bg-muted'}`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.weeklyReports ? 'translate-x-6' : 'translate-x-1'
-                        }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${settings.weeklyReports ? 'translate-x-6' : 'translate-x-1'}`}
                     />
                   </button>
                 </div>
@@ -184,7 +176,7 @@ function GovernmentSettings() {
                 <Button
                   onClick={() => handleSaveSettings('Notification')}
                   disabled={loading}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-success hover:bg-success/90 text-white"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   Save Notification Settings
@@ -194,37 +186,35 @@ function GovernmentSettings() {
           </div>
 
           {/* Security Settings */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="bg-card rounded-lg shadow-sm border border-border">
             <div className="p-6">
               <div className="flex items-center mb-4">
-                <Shield className="w-5 h-5 text-green-600 mr-3" />
-                <h2 className="text-lg font-semibold text-gray-900">Security Settings</h2>
+                <Shield className="w-5 h-5 text-success mr-3" />
+                <h2 className="text-lg font-semibold text-foreground">Security Settings</h2>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-900">Two-Factor Authentication</Label>
-                    <p className="text-sm text-gray-600">Add an extra layer of security</p>
+                    <Label className="text-foreground">Two-Factor Authentication</Label>
+                    <p className="text-sm text-muted-foreground">Add an extra layer of security</p>
                   </div>
                   <button
                     onClick={() => setSettings({ ...settings, twoFactorAuth: !settings.twoFactorAuth })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.twoFactorAuth ? 'bg-green-600' : 'bg-gray-200'
-                      }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.twoFactorAuth ? 'bg-success' : 'bg-muted'}`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.twoFactorAuth ? 'translate-x-6' : 'translate-x-1'
-                        }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${settings.twoFactorAuth ? 'translate-x-6' : 'translate-x-1'}`}
                     />
                   </button>
                 </div>
 
                 <div>
-                  <Label className="text-gray-900">Session Timeout (minutes)</Label>
+                  <Label className="text-primary">Session Timeout (minutes)</Label>
                   <select
                     value={settings.sessionTimeout}
                     onChange={(e) => setSettings({ ...settings, sessionTimeout: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-success focus:border-success"
                   >
                     <option value="15">15 minutes</option>
                     <option value="30">30 minutes</option>
@@ -238,7 +228,7 @@ function GovernmentSettings() {
                 <Button
                   onClick={() => handleSaveSettings('Security')}
                   disabled={loading}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-success hover:bg-success/90 text-white"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   Save Security Settings
@@ -248,16 +238,16 @@ function GovernmentSettings() {
           </div>
 
           {/* Password Change */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="bg-card rounded-lg shadow-sm border border-border">
             <div className="p-6">
               <div className="flex items-center mb-4">
-                <Lock className="w-5 h-5 text-green-600 mr-3" />
-                <h2 className="text-lg font-semibold text-gray-900">Change Password</h2>
+                <Lock className="w-5 h-5 text-success mr-3" />
+                <h2 className="text-lg font-semibold text-primary">Change Password</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <Label className="text-gray-900">Current Password</Label>
+                  <Label className="text-primary">Current Password</Label>
                   <div className="relative mt-1">
                     <Input
                       type={showCurrentPassword ? 'text' : 'password'}
@@ -268,7 +258,7 @@ function GovernmentSettings() {
                     <button
                       type="button"
                       onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-primary"
                     >
                       {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -276,7 +266,7 @@ function GovernmentSettings() {
                 </div>
 
                 <div>
-                  <Label className="text-gray-900">New Password</Label>
+                  <Label className="text-primary">New Password</Label>
                   <div className="relative mt-1">
                     <Input
                       type={showNewPassword ? 'text' : 'password'}
@@ -287,7 +277,7 @@ function GovernmentSettings() {
                     <button
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-primary"
                     >
                       {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -295,7 +285,7 @@ function GovernmentSettings() {
                 </div>
 
                 <div>
-                  <Label className="text-gray-900">Confirm New Password</Label>
+                  <Label className="text-primary">Confirm New Password</Label>
                   <div className="relative mt-1">
                     <Input
                       type={showConfirmPassword ? 'text' : 'password'}
@@ -306,7 +296,7 @@ function GovernmentSettings() {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -318,7 +308,7 @@ function GovernmentSettings() {
                 <Button
                   onClick={handlePasswordChange}
                   disabled={loading}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-success hover:bg-success/90 text-white"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Change Password
