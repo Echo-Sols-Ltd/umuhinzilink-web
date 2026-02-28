@@ -129,10 +129,10 @@ function Dashboard() {
   // Show loading state while checking authentication
   if (authLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-green-600 mx-auto mb-4" />
-          <p className="text-gray-800">Loading dashboard...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-foreground">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -144,27 +144,27 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Dashboard' />
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <header className="bg-white border-b flex items-center justify-between p-6 shadow-sm">
+        <header className="bg-card border-b flex items-center justify-between p-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Farmer Dashboard</h1>
-            <p className="text-xs text-gray-500">Manage your farm products and connect with buyers</p>
+            <h1 className="text-xl font-semibold text-foreground">Farmer Dashboard</h1>
+            <p className="text-xs text-muted-foreground">Manage your farm products and connect with buyers</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 type="text"
-                className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                className="pl-10 pr-4 py-2 w-full rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary"
                 placeholder="Search products or orders..."
               />
             </div>
-            <button className="bg-green-600 text-white px-4 cursor-pointer py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors"
+            <button className="bg-primary text-primary-foreground px-4 cursor-pointer py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-primary/90 transition-colors"
               onClick={() => router.push('/farmer/add_produce')}
             >
               <FilePlus className="w-4 h-4" /> Add Product
@@ -172,7 +172,7 @@ function Dashboard() {
           </div>
         </header>
 
-        <main className="flex-1 bg-white p-6 space-y-6">    
+        <main className="flex-1 bg-card p-6 space-y-6">    
 
           {/* Enhanced Analytics Dashboard */}
           <EnhancedDashboard
@@ -186,45 +186,45 @@ function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/farmer/products"
-              className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-card rounded-lg p-6 border border-border shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                  <Package className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                  <Package className="w-6 h-6 text-success" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Manage Products</h3>
-                  <p className="text-sm text-gray-600">Add, edit, or remove products</p>
+                  <h3 className="font-semibold text-foreground">Manage Products</h3>
+                  <p className="text-sm text-muted-foreground">Add, edit, or remove products</p>
                 </div>
               </div>
             </Link>
 
             <Link
               href="/farmer/orders"
-              className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-card rounded-lg p-6 border border-border shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <ShoppingCart className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
+                  <ShoppingCart className="w-6 h-6 text-info" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">View Orders</h3>
-                  <p className="text-sm text-gray-600">Track and manage orders</p>
+                  <h3 className="font-semibold text-foreground">View Orders</h3>
+                  <p className="text-sm text-muted-foreground">Track and manage orders</p>
                 </div>
               </div>
             </Link>
 
             <Link
               href="/farmer/supplier-orders"
-              className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-card rounded-lg p-6 border border-border shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
-                  <LayoutGrid className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                  <LayoutGrid className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Supplier Orders</h3>
-                  <p className="text-sm text-gray-600">Manage input requests</p>
+                  <h3 className="font-semibold text-foreground">Supplier Orders</h3>
+                  <p className="text-sm text-muted-foreground">Manage input requests</p>
                 </div>
               </div>
             </Link>
