@@ -11,6 +11,7 @@ import { useSupplierAction } from '@/hooks/useSupplierAction';
 import { useProduct } from '@/contexts/ProductContext';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import Sidebar from '@/components/shared/Sidebar';
+import { uploadService } from '@/services/upload';
 import {
   Select,
   SelectContent,
@@ -44,6 +45,7 @@ function EditInput() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Load input data
   useEffect(() => {
@@ -100,6 +102,7 @@ function EditInput() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
@@ -122,6 +125,25 @@ function EditInput() {
     setSubmitting(true);
 
     try {
+      let finalImageUrl = formData.imageUrl;
+
+      // Upload new image if one was selected
+      if (selectedFile) {
+        try {
+          const uploadResponse = await uploadService.uploadGenericFile(selectedFile);
+          if (uploadResponse.success && uploadResponse.data) {
+            finalImageUrl = uploadResponse.data;
+          } else {
+            throw new Error('Image upload failed');
+          }
+        } catch (uploadError) {
+          console.error('Image upload error:', uploadError);
+          notify.error('Failed to upload image. Please try again.', 'Upload Error');
+          setSubmitting(false);
+          return;
+        }
+      }
+
       const productData = {
         name: formData.name,
         category: formData.category,
@@ -132,7 +154,7 @@ function EditInput() {
         location: formData.location,
         isNegotiable: formData.isNegotiable,
         certification: formData.certification,
-        image: formData.imageUrl || '/placeholder.png',
+        image: finalImageUrl || '/placeholder.png',
         harvestDate: new Date().toISOString(),
       };
 
