@@ -6,19 +6,19 @@ const AboutUmuhinzinLink: React.FC = () => {
     <section className="flex flex-col md:flex-row items-center justify-center max-w-full mx-auto px-6 md:px-12 py-12 gap-36 bg-background">
       {/* Left side*/}
       <div className="relative flex-shrink-0">
-        <div className="w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full overflow-hidden">
+        <div className="w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full overflow-hidden shadow-2xl ring-4 ring-success/20 hover:ring-success/40 transition-all duration-300 transform hover:scale-105">
           <img
             src="/about1.png"
             alt="Smiling woman holding fresh vegetables"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
           />
         </div>
 
-        <div className="absolute bottom-0 left-0 transform translate-x-[-25%] translate-y-[25%] w-[200px] h-[200px] md:w-[230px] md:h-[230px] rounded-full overflow-hidden border-4 border-card shadow-lg bg-card">
+        <div className="absolute bottom-0 left-0 transform translate-x-[-25%] translate-y-[25%] w-[200px] h-[200px] md:w-[230px] md:h-[230px] rounded-full overflow-hidden border-4 border-success/30 shadow-2xl bg-card hover:border-success/50 transition-all duration-300 hover:scale-110">
           <img
             src="/about2.png"
             alt="Basket with fresh tomatoes"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
           />
         </div>
       </div>
