@@ -87,19 +87,19 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
 
   if (!profile) {
     return (
-      <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-6 flex items-center justify-center text-gray-500">
+      <div className="bg-background border-border rounded-lg shadow-sm p-6 flex items-center justify-center text-muted-foreground">
         <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading profile...
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl bg-white rounded-lg shadow-sm border p-6">
+    <div className="max-w-4xl bg-card rounded-lg shadow-sm border p-6">
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full overflow-hidden bg-success/10 flex items-center justify-center">
               {previewUrl || profile.avatar ? (
                 <img
                   src={imageUrl(previewUrl || profile.avatar)}
@@ -107,10 +107,10 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <Shield className="w-10 h-10 text-green-600" />
+                <Shield className="w-10 h-10 text-success" />
               )}
             </div>
-            <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 cursor-pointer hover:bg-green-600 transition-colors">
+            <label className="absolute bottom-0 right-0 bg-success text-primary-foreground rounded-full p-1 cursor-pointer hover:bg-success/90 transition-colors">
               <input
                 type="file"
                 accept="image/*"
@@ -134,8 +134,8 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
               )}
             </h2>
             <p className="text-gray-600">System Administrator</p>
-            <div className="flex items-center mt-2 text-sm text-gray-500">
-              <Settings className="w-4 h-4 mr-1" />
+            <div className="flex items-center mt-2 text-sm text-muted-foreground">
+              <Settings className="w-4 h-4 text-muted-foreground" />
               Full System Access
             </div>
           </div>
@@ -185,7 +185,7 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
                 />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">New Profile Image</p>
+                <p className="text-sm font-medium text-foreground">System Administrator</p>
                 <p className="text-xs text-gray-500">{imageFile.name}</p>
               </div>
             </div>

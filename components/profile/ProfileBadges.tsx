@@ -125,30 +125,30 @@ function ProfileBadgesComponent() {
   const getCategoryColor = (category: Badge['category']) => {
     switch (category) {
       case 'achievement':
-        return 'bg-yellow-50 border-yellow-200';
+        return 'bg-warning/10 border-warning';
       case 'verification':
-        return 'bg-blue-50 border-blue-200';
+        return 'bg-info/10 border-info';
       case 'quality':
         return 'bg-purple-50 border-purple-200';
       case 'community':
-        return 'bg-red-50 border-red-200';
+        return 'bg-destructive/10 border-destructive';
       case 'milestone':
-        return 'bg-orange-50 border-orange-200';
+        return 'bg-warning/10 border-warning';
       default:
-        return 'bg-gray-50 border-gray-200';
+        return 'bg-muted border-border';
     }
   };
 
   const getVerificationLevelIcon = (level: VerificationStatus['verificationLevel']) => {
     switch (level) {
       case 'basic':
-        return <Shield className="w-5 h-5 text-gray-500" />;
+        return <Shield className="w-5 h-5 text-muted-foreground" />;
       case 'standard':
-        return <Shield className="w-5 h-5 text-blue-500" />;
+        return <Shield className="w-5 h-5 text-info" />;
       case 'premium':
-        return <Crown className="w-5 h-5 text-amber-500" />;
+        return <Crown className="w-5 h-5 text-warning" />;
       default:
-        return <Shield className="w-5 h-5 text-gray-400" />;
+        return <Shield className="w-5 h-5 text-muted-foreground" />;
     }
   };
 
@@ -164,10 +164,10 @@ function ProfileBadgesComponent() {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="h-6 bg-muted rounded w-1/4 mb-4"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+              <div key={i} className="h-32 bg-muted rounded"></div>
             ))}
           </div>
         </div>
@@ -183,16 +183,16 @@ function ProfileBadgesComponent() {
       {/* Verification Status */}
       {verification && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Verification Status</h3>
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Verification Status</h3>
+          <div className="bg-card border-border rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 {getVerificationLevelIcon(verification.verificationLevel)}
                 <div>
-                  <p className="font-medium text-gray-900 capitalize">
+                  <p className="font-medium text-foreground capitalize">
                     {verification.verificationLevel} Verification
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {verification.isVerified ? 'Verified Account' : 'Verification Pending'}
                   </p>
                 </div>
@@ -208,24 +208,24 @@ function ProfileBadgesComponent() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-2">Verified Fields</p>
+                <p className="text-sm font-medium text-foreground mb-2">Verified Fields</p>
                 <div className="space-y-1">
                   {verification.verifiedFields.map((field, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span className="text-sm text-gray-600">{field}</span>
+                      <CheckCircle className="w-4 h-4 text-success" />
+                      <span className="text-sm text-muted-foreground">{field}</span>
                     </div>
                   ))}
                 </div>
               </div>
               {verification.pendingVerifications.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">Pending Verification</p>
+                  <p className="text-sm font-medium text-foreground mb-2">Pending Verification</p>
                   <div className="space-y-1">
                     {verification.pendingVerifications.map((field, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-yellow-500 rounded-full"></div>
-                        <span className="text-sm text-gray-600">{field}</span>
+                        <div className="w-4 h-4 border-2 border-warning rounded-full"></div>
+                        <span className="text-sm text-muted-foreground">{field}</span>
                       </div>
                     ))}
                   </div>
@@ -238,7 +238,7 @@ function ProfileBadgesComponent() {
 
       {/* Earned Badges */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           Earned Badges ({earnedBadges.length})
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -249,12 +249,12 @@ function ProfileBadgesComponent() {
             >
               <div className="flex items-center justify-between mb-2">
                 {badge.icon}
-                <Medal className="w-4 h-4 text-yellow-500" />
+                <Medal className="w-4 h-4 text-warning" />
               </div>
-              <h4 className="font-medium text-gray-900 text-sm mb-1">{badge.name}</h4>
-              <p className="text-xs text-gray-600 mb-2">{badge.description}</p>
+              <h4 className="font-medium text-foreground text-sm mb-1">{badge.name}</h4>
+              <p className="text-xs text-muted-foreground mb-2">{badge.description}</p>
               {badge.earnedDate && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Earned: {formatDate(badge.earnedDate)}
                 </p>
               )}
@@ -266,32 +266,32 @@ function ProfileBadgesComponent() {
       {/* Available Badges */}
       {availableBadges.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Available Badges ({availableBadges.length})
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {availableBadges.map((badge) => (
               <div 
                 key={badge.id} 
-                className="border border-gray-200 rounded-lg p-4 bg-gray-50 opacity-75"
+                className="border border-border rounded-lg p-4 bg-muted opacity-75"
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="opacity-50">{badge.icon}</div>
-                  <div className="w-4 h-4 border-2 border-gray-400 rounded-full"></div>
+                  <div className="w-4 h-4 border-2 border-muted-foreground rounded-full"></div>
                 </div>
-                <h4 className="font-medium text-gray-700 text-sm mb-1">{badge.name}</h4>
-                <p className="text-xs text-gray-500 mb-2">{badge.description}</p>
+                <h4 className="font-medium text-foreground text-sm mb-1">{badge.name}</h4>
+                <p className="text-xs text-muted-foreground mb-2">{badge.description}</p>
                 {badge.progress !== undefined && badge.maxProgress !== undefined && (
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-600">Progress</span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-muted-foreground">Progress</span>
+                      <span className="text-xs text-muted-foreground">
                         {badge.progress}/{badge.maxProgress}
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
+                    <div className="w-full bg-muted rounded-full h-1.5">
                       <div 
-                        className="bg-blue-600 h-1.5 rounded-full" 
+                        className="bg-info h-1.5 rounded-full" 
                         style={{ width: `${(badge.progress / badge.maxProgress) * 100}%` }}
                       ></div>
                     </div>
@@ -305,27 +305,27 @@ function ProfileBadgesComponent() {
 
       {/* Badge Categories Legend */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Badge Categories</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Badge Categories</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <div className="flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-yellow-500" />
-            <span className="text-sm text-gray-700">Achievement</span>
+            <Trophy className="w-4 h-4 text-warning" />
+            <span className="text-sm text-foreground">Achievement</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-blue-500" />
-            <span className="text-sm text-gray-700">Verification</span>
+            <CheckCircle className="w-4 h-4 text-info" />
+            <span className="text-sm text-foreground">Verification</span>
           </div>
           <div className="flex items-center gap-2">
             <Star className="w-4 h-4 text-purple-500" />
-            <span className="text-sm text-gray-700">Quality</span>
+            <span className="text-sm text-foreground">Quality</span>
           </div>
           <div className="flex items-center gap-2">
-            <Heart className="w-4 h-4 text-red-500" />
-            <span className="text-sm text-gray-700">Community</span>
+            <Heart className="w-4 h-4 text-destructive" />
+            <span className="text-sm text-foreground">Community</span>
           </div>
           <div className="flex items-center gap-2">
-            <Target className="w-4 h-4 text-orange-500" />
-            <span className="text-sm text-gray-700">Milestone</span>
+            <Target className="w-4 h-4 text-warning" />
+            <span className="text-sm text-foreground">Milestone</span>
           </div>
         </div>
       </div>

@@ -27,11 +27,11 @@ import { imageUrl } from '@/lib/utils';
 import { userService } from '@/services/users';
 
 const inputClass =
-  'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
+  'w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success focus:border-transparent transition';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
-    <span className="text-green-700">Umuhinzi</span>
+    <span className="text-success">Umuhinzi</span>
     <span className="text-foreground">Link</span>
   </span>
 );
@@ -139,7 +139,7 @@ function BuyerProfileComponent() {
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full overflow-hidden bg-success/10 flex items-center justify-center">
                   {previewUrl || profile.avatar ? (
                     <img
                       src={previewUrl || imageUrl(profile.avatar)}
@@ -199,7 +199,7 @@ function BuyerProfileComponent() {
                     </button>
                     <button
                       onClick={handleImageUpload}
-                      className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                      className="px-3 py-1 text-sm bg-success text-primary-foreground rounded-md hover:bg-success/600"
                     >
                       Upload
                     </button>
