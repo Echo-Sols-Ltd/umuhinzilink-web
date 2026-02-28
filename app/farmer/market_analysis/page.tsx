@@ -57,7 +57,7 @@ const topBuyers = [
     cropInterest: 'Maize',
     offerPrice: '450 RWF/kg',
     icon: '🏢',
-    color: 'bg-blue-100',
+    color: 'bg-info/10',
   },
   {
     name: 'Rwanda Export Co.',
@@ -65,7 +65,7 @@ const topBuyers = [
     cropInterest: 'Beans',
     offerPrice: '800 RWF/kg',
     icon: '🌱',
-    color: 'bg-green-100',
+    color: 'bg-success/10',
   },
   {
     name: 'Fresh Produce Ltd.',
@@ -73,7 +73,7 @@ const topBuyers = [
     cropInterest: 'Bananas',
     offerPrice: '300 RWF/kg',
     icon: '🍌',
-    color: 'bg-orange-100',
+    color: 'bg-warning/10',
   },
 ];
 
@@ -83,8 +83,8 @@ const demandOverview = [
     status: 'High Demand',
     change: '+25%',
     color: 'green',
-    bgColor: 'bg-green-50',
-    textColor: 'text-green-700',
+    bgColor: 'bg-success/10',
+    textColor: 'text-success',
     icon: ArrowUp,
   },
   {
@@ -92,8 +92,8 @@ const demandOverview = [
     status: 'Trending',
     change: '+12%',
     color: 'yellow',
-    bgColor: 'bg-yellow-50',
-    textColor: 'text-yellow-700',
+    bgColor: 'bg-warning/10',
+    textColor: 'text-warning',
     icon: TrendingUp,
   },
   {
@@ -101,8 +101,8 @@ const demandOverview = [
     status: 'Low Demand',
     change: '-8%',
     color: 'red',
-    bgColor: 'bg-red-50',
-    textColor: 'text-red-700',
+    bgColor: 'bg-destructive/10',
+    textColor: 'text-destructive',
     icon: ArrowDown,
   },
 ];
@@ -190,29 +190,29 @@ function MarketAnalysis() {
                 <AreaChart data={priceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.3} />
-                      <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
+                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis
                     dataKey="month"
-                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={v => `${(v / 1000).toFixed(0)}K`}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#10b981',
+                      backgroundColor: 'hsl(var(--primary))',
                       border: 'none',
                       borderRadius: '6px',
-                      color: '#fff',
+                      color: 'hsl(var(--primary-foreground))',
                       padding: '6px 10px',
                     }}
                     formatter={(value) => [`${value?.toLocaleString() || '0'}`, 'Price']}
@@ -220,11 +220,11 @@ function MarketAnalysis() {
                   <Area
                     type="monotone"
                     dataKey="price"
-                    stroke="#10b981"
+                    stroke="hsl(var(--primary))"
                     strokeWidth={2}
                     fill="url(#colorPrice)"
-                    dot={{ r: 4, fill: '#10b981' }}
-                    activeDot={{ r: 5, fill: '#10b981' }}
+                    dot={{ r: 4, fill: 'hsl(var(--primary))' }}
+                    activeDot={{ r: 5, fill: 'hsl(var(--primary))' }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
