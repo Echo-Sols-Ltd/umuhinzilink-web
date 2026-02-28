@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import { FarmerProduct, SupplierProduct } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface ProductDetailProps {
   product: FarmerProduct | SupplierProduct;
@@ -37,12 +38,25 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   className,
 }) => {
   const { user } = useAuth();
+  const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
   const isOutOfStock = product.quantity === 0;
   const isLowStock = product.quantity > 0 && product.quantity <= 10;
   const isOwner = user?.id === product.owner.id;
+
+  // 🚀 Chat with Product Owner functionality
+  const handleChatWithOwner = () => {
+    if (!user) {
+      // Redirect to login if not authenticated
+      router.push('/login');
+      return;
+    }
+
+    // Navigate to chat with the product owner
+    router.push(`/chat/${product.owner.id}`);
+  };
 
   const getStockStatus = () => {
     if (isOutOfStock) {
@@ -255,6 +269,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleChatWithOwner}
+                    className="flex-1"
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Chat with Owner
                   </Button>
                 </div>
               )}

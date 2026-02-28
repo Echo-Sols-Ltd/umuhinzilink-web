@@ -282,7 +282,7 @@ function InteractiveChart({
     <Card className={className}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-gray-900">{title}</CardTitle>
+          <CardTitle className="text-lg font-semibold text-foreground">{title}</CardTitle>
           <div className="flex items-center gap-2">
             {showDateFilter && (
               <>
@@ -331,37 +331,37 @@ function InteractiveChart({
         {showMetrics && metrics && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <div className="text-center">
-              <p className="text-2xl font-semibold text-gray-900">
+              <p className="text-2xl font-semibold text-foreground">
                 {(metrics.total || 0).toLocaleString()}
               </p>
-              <p className="text-xs text-gray-500">Total</p>
+              <p className="text-xs text-muted-foreground">Total</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-semibold text-gray-900">
+              <p className="text-2xl font-semibold text-foreground">
                 {Math.round(metrics.average || 0).toLocaleString()}
               </p>
-              <p className="text-xs text-gray-500">Average</p>
+              <p className="text-xs text-muted-foreground">Average</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-semibold text-gray-900">
+              <p className="text-2xl font-semibold text-foreground">
                 {(metrics.max || 0).toLocaleString()}
               </p>
-              <p className="text-xs text-gray-500">Peak</p>
+              <p className="text-xs text-muted-foreground">Peak</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
                 {metrics.trend === 'up' ? (
-                  <TrendingUp className="w-4 h-4 text-green-500" />
+                  <TrendingUp className="w-4 h-4 text-success" />
                 ) : metrics.trend === 'down' ? (
-                  <TrendingDown className="w-4 h-4 text-red-500" />
+                  <TrendingDown className="w-4 h-4 text-destructive" />
                 ) : null}
-                <p className={`text-2xl font-semibold ${metrics.trend === 'up' ? 'text-green-500' :
-                  metrics.trend === 'down' ? 'text-red-500' : 'text-gray-900'
+                <p className={`text-2xl font-semibold ${metrics.trend === 'up' ? 'text-success' :
+                  metrics.trend === 'down' ? 'text-destructive' : 'text-foreground'
                   }`}>
                   {metrics.trendPercentage.toFixed(1)}%
                 </p>
               </div>
-              <p className="text-xs text-gray-500">Trend</p>
+              <p className="text-xs text-muted-foreground">Trend</p>
             </div>
           </div>
         )}

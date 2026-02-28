@@ -30,6 +30,6 @@ export interface PaginatedResponse<T> {
 export interface SocketResponse<T> {
   success: boolean;
   data?: T;
-  error?: string;
+  message: string;
 }
 

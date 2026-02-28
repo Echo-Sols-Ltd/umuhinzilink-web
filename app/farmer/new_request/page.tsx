@@ -36,20 +36,20 @@ function NewRequest() {
   };
 
   return (
-    <div className="min-h-screen bg-white py-10 px-4 flex items-center justify-center">
-      <div className="w-full max-w-lg bg-white p-6 rounded-lg shadow-md border">
-        <h1 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+    <div className="min-h-screen bg-background py-10 px-4 flex items-center justify-center">
+      <div className="w-full max-w-lg bg-card p-6 rounded-lg shadow-md border border-border">
+        <h1 className="text-2xl font-semibold mb-6 text-foreground text-center">
           Request Agri-Inputs on Credit
         </h1>
-        <p className="text-gray-500 text-center mb-6">
+        <p className="text-muted-foreground text-center mb-6">
           Fill in the details below to request agricultural inputs from suppliers.
         </p>
 
         {/* Success/Error Messages */}
         {successMsg && (
-          <div className="bg-green-100 text-green-700 p-3 rounded mb-4">{successMsg}</div>
+          <div className="bg-success/10 text-success p-3 rounded mb-4 border border-success/20">{successMsg}</div>
         )}
-        {errorMsg && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{errorMsg}</div>}
+        {errorMsg && <div className="bg-destructive/10 text-destructive p-3 rounded mb-4 border border-destructive/20">{errorMsg}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <Input
@@ -78,12 +78,12 @@ function NewRequest() {
           />
 
           <div>
-            <label className="block mb-1 font-medium text-gray-700">Payment Type</label>
+            <label className="block mb-1 font-medium text-foreground">Payment Type</label>
             <select
               name="paymentType"
               value={formData.paymentType}
               onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-border bg-card px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-success focus:border-success"
             >
               <option value="credit">Credit</option>
               <option value="cash">Cash</option>
@@ -93,7 +93,7 @@ function NewRequest() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-md text-white font-medium transition-colors ${loading ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+            className={`w-full py-3 rounded-md text-primary-foreground font-medium transition-colors ${loading ? 'bg-success/50 cursor-not-allowed' : 'bg-success hover:bg-success/90'
               }`}
           >
             {loading ? 'Submitting...' : 'Submit Request'}
@@ -119,10 +119,10 @@ function Input({
 }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
-      <label className="block mb-1 font-medium text-gray-700">{label}</label>
+      <label className="block mb-1 font-medium text-foreground">{label}</label>
       <input
         {...props}
-        className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+        className="w-full border border-border bg-card px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-success focus:border-success"
       />
     </div>
   );

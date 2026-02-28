@@ -275,8 +275,8 @@ export function EnhancedDashboard({
   if (loading && !metrics) {
     return (
       <div className="flex items-center justify-center p-6">
-        <RefreshCw className="w-8 h-8 animate-spin text-green-600" />
-        <span className="ml-2 text-gray-600">Loading dashboard...</span>
+        <RefreshCw className="w-8 h-8 animate-spin text-success" />
+        <span className="ml-2 text-muted-foreground">Loading dashboard...</span>
       </div>
     );
   }
@@ -286,9 +286,9 @@ export function EnhancedDashboard({
       {/* Header Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl font-semibold text-gray-900 ">Market Analytics</h2>
+          <h2 className="text-xl font-semibold text-foreground ">Market Analytics</h2>
           {error && (
-            <Badge variant="secondary" className="text-[10px] font-semibold bg-amber-50 text-amber-600 border-none uppercase ">
+            <Badge variant="secondary" className="text-[10px] font-semibold bg-warning/10 text-warning border-none uppercase ">
               Offline Cache
             </Badge>
           )}
@@ -298,17 +298,17 @@ export function EnhancedDashboard({
       {/* Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {metricCards.map((card, index) => (
-          <Card key={index} className="border-gray-100 shadow-sm rounded-2xl group hover:border-green-100 transition-colors">
+          <Card key={index} className="border-border shadow-sm rounded-2xl group hover:border-success/20 transition-colors">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase  mb-1">{card.title}</p>
-                  <p className="text-2xl font-semibold text-gray-900 ">{card.value}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase  mb-1">{card.title}</p>
+                  <p className="text-2xl font-semibold text-foreground ">{card.value}</p>
                   {card.description && (
-                    <p className="text-[10px] font-medium text-gray-400 mt-1 uppercase ">{card.description}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground mt-1 uppercase ">{card.description}</p>
                   )}
                 </div>
-                <div className="w-10 h-10 bg-white/50 rounded-xl flex items-center justify-center text-green-600 group-hover:bg-green-50 transition-colors">
+                <div className="w-10 h-10 bg-card/50 rounded-xl flex items-center justify-center text-success group-hover:bg-success/10 transition-colors">
                   {React.cloneElement(card.icon as React.ReactElement<any>, { className: 'w-5 h-5' })}
                 </div>
               </div>

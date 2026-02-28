@@ -124,8 +124,8 @@ const priceData = [
 
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
-    <span className="text-green-700">Umuhinzi</span>
-    <span className="text-black">Link</span>
+    <span className="text-success">Umuhinzi</span>
+    <span className="text-foreground">Link</span>
   </span>
 );
 

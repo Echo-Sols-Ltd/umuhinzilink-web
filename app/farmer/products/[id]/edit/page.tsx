@@ -6,7 +6,7 @@ import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import Link from 'next/link';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Package, DollarSign, MapPin, ImageIcon, Eye, Info, Upload, Check } from 'lucide-react';
 import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { productService } from '@/services/products';
@@ -130,7 +130,7 @@ function EditProduct() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         <Sidebar userType={UserType.FARMER} activeItem='Products' />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin" />
@@ -141,15 +141,15 @@ function EditProduct() {
 
   if (!product) {
     return (
-      <div className="flex h-screen bg-white overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         <Sidebar userType={UserType.FARMER} activeItem='Products' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Product Not Found</h2>
-            <p className="text-gray-600 mb-4">The product you're looking for doesn't exist.</p>
+            <h2 className="text-2xl font-semibold text-foreground mb-2">Product Not Found</h2>
+            <p className="text-muted-foreground mb-4">The product you're looking for doesn't exist.</p>
             <Link
               href="/farmer/products"
-              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+              className="bg-success text-primary-foreground px-4 py-2 rounded-lg hover:bg-success/90"
             >
               Back to Products
             </Link>
@@ -160,255 +160,456 @@ function EditProduct() {
   }
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserType.FARMER} activeItem='My Products' />
-
-      <main className="flex-1 overflow-y-auto">
-        <div className="bg-white border-b h-16 flex items-center px-6">
-          <Link
-            href="/farmer/products"
-            className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Products
-          </Link>
-          <h1 className="text-xl font-semibold text-gray-900">Edit Product</h1>
-        </div>
-
-        <div className="p-6">
-          <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
-            {/* Product Image */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Product Image
-              </label>
-              <div className="flex items-center space-x-4">
-                <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
-                  {previewUrl ? (
-                    <img
-                      src={previewUrl}
-                      alt="Product preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <img
-                        src={imageUrl(product.image)}
-                        alt="Product image"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Upload a new image (optional)
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Product Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Product Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
-
-            {/* Category */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => handleSelectChange('category', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(RwandaCropCategory).map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="Describe your product..."
-              />
-            </div>
-
-            {/* Quantity and Price */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Quantity
-                </label>
-                <input
-                  type="number"
-                  name="quantity"
-                  value={formData.quantity}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="0"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Unit Price (RWF)
-                </label>
-                <input
-                  type="number"
-                  name="unitPrice"
-                  value={formData.unitPrice}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="0"
-                />
-              </div>
-            </div>
-
-            {/* Measurement Unit */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Measurement Unit
-              </label>
-              <Select
-                value={formData.measurementUnit}
-                onValueChange={(value) => handleSelectChange('measurementUnit', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select unit" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(MeasurementUnit).map((unit) => (
-                    <SelectItem key={unit} value={unit}>
-                      {unit}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Location */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Location
-              </label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="e.g., Kigali, Northern Province"
-              />
-            </div>
-
-            {/* Harvest Date */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Harvest Date
-              </label>
-              <input
-                type="date"
-                name="harvestDate"
-                value={new Date(formData.harvestDate).toLocaleDateString()}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            {/* Certification */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Certification
-              </label>
-              <Select
-                value={formData.certification}
-                onValueChange={(value) => handleSelectChange('certification', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select certification" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(CertificationType).map((cert) => (
-                    <SelectItem key={cert} value={cert}>
-                      {cert}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Is Negotiable */}
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="isNegotiable"
-                checked={formData.isNegotiable}
-                onChange={(e) => handleSelectChange('isNegotiable', e.target.checked)}
-                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-              />
-              <label htmlFor="isNegotiable" className="ml-2 block text-sm text-gray-700">
-                Price is negotiable
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <div className="flex justify-end space-x-4">
+      
+      <main className="flex-1 overflow-hidden">
+        {/* Header */}
+        <div className="bg-card border-b border-border py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
               <Link
                 href="/farmer/products"
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-white"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                Cancel
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Products</span>
               </Link>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  'Update Product'
-                )}
-              </button>
+              <div className="h-6 w-px bg-border"></div>
+              <div>
+                <h1 className="text-2xl font-semibold text-foreground">Edit Product</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Update your product information and details
+                </p>
+              </div>
             </div>
-          </form>
+            
+            {/* Progress Indicator */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-success"></div>
+                <div className="w-2 h-2 rounded-full bg-muted"></div>
+                <div className="w-2 h-2 rounded-full bg-muted"></div>
+              </div>
+              <span className="text-sm text-muted-foreground">Step 1 of 3</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Form Section */}
+              <div className="lg:col-span-2 h-screen overflow-auto pb-40">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Basic Information */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                        <Package className="w-5 h-5 text-success" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Basic Information</h2>
+                        <p className="text-sm text-muted-foreground">Essential details about your produce</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Product Name <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="e.g., Fresh Avocados"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Category <span className="text-destructive">*</span>
+                        </label>
+                        <Select value={formData.category} onValueChange={(value) => handleSelectChange('category', value)}>
+                          <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(RwandaCropCategory).map((category) => (
+                              <SelectItem key={category} value={category}>
+                                {category.replace(/_/g, ' ')}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Description <span className="text-destructive">*</span>
+                      </label>
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        rows={4}
+                        placeholder="Add details buyers should know about this produce. Include quality, variety, growing methods, etc."
+                        className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Pricing & Quantity */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-info/10 rounded-lg flex items-center justify-center">
+                        <DollarSign className="w-5 h-5 text-info" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Pricing & Quantity</h2>
+                        <p className="text-sm text-muted-foreground">Set your price and available quantity</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Quantity <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          name="quantity"
+                          value={formData.quantity}
+                          onChange={handleChange}
+                          placeholder="e.g., 500"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Measurement Unit <span className="text-destructive">*</span>
+                        </label>
+                        <Select value={formData.measurementUnit} onValueChange={(value) => handleSelectChange('measurementUnit', value)}>
+                          <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
+                            <SelectValue placeholder="Select unit" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(MeasurementUnit).map((unit) => (
+                              <SelectItem key={unit} value={unit}>
+                                {unit}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Unit Price (RWF) <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          name="unitPrice"
+                          value={formData.unitPrice}
+                          onChange={handleChange}
+                          placeholder="e.g., 1200"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          id="isNegotiable"
+                          checked={formData.isNegotiable}
+                          onChange={(e) => handleSelectChange('isNegotiable', e.target.checked)}
+                          className="w-4 h-4 text-success focus:ring-success border-border rounded"
+                        />
+                        <div>
+                          <span className="text-sm font-medium text-foreground">Price is negotiable</span>
+                          <p className="text-xs text-muted-foreground">Allow buyers to negotiate the price</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Location & Timing */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                        <MapPin className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Location & Timing</h2>
+                        <p className="text-sm text-muted-foreground">Where and when your produce is available</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Location <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="location"
+                          value={formData.location}
+                          onChange={handleChange}
+                          placeholder="e.g., Kigali, Gasabo District"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Harvest Date <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          name="harvestDate"
+                          value={new Date(formData.harvestDate).toLocaleDateString()}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Certification
+                      </label>
+                      <Select value={formData.certification} onValueChange={(value) => handleSelectChange('certification', value)}>
+                        <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
+                          <SelectValue placeholder="Select certification (optional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(CertificationType).map((cert) => (
+                            <SelectItem key={cert} value={cert}>
+                              {cert.replace(/_/g, ' ')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Image Upload */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                        <ImageIcon className="w-5 h-5 text-warning" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Product Image</h2>
+                        <p className="text-sm text-muted-foreground">Update the photo for your produce</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-center">
+                        <div className="w-32 h-32 border-2 border-dashed border-border rounded-lg overflow-hidden">
+                          {previewUrl ? (
+                            <img
+                              src={previewUrl}
+                              alt="Product preview"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                              <img
+                                src={imageUrl(product.image)}
+                                alt="Product image"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="text-center">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                          id="image-upload"
+                        />
+                        <label
+                          htmlFor="image-upload"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg cursor-pointer transition-colors"
+                        >
+                          <Upload className="w-4 h-4" />
+                          Update Image
+                        </label>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          JPG, PNG or GIF. Max size 5MB
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-between pt-6 border-t border-border">
+                    <Link
+                      href="/farmer/products"
+                      className="px-6 py-3 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Cancel
+                    </Link>
+                    
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        className="px-6 py-3 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        Save as Draft
+                      </button>
+                      
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-success hover:bg-success/90 text-primary-foreground font-semibold rounded-lg disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Updating...
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-4 h-4" />
+                            Update Product
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              {/* Preview Section */}
+              <div className="lg:col-span-1 h-screen overflow-auto pb-40">
+                <div className="sticky top-6 space-y-6">
+                  {/* Live Preview */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                        <Eye className="w-5 h-5 text-success" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Live Preview</h2>
+                        <p className="text-sm text-muted-foreground">How buyers will see your product</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {/* Product Image */}
+                      <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                        {previewUrl ? (
+                          <img
+                            src={previewUrl}
+                            alt="Product preview"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img
+                            src={imageUrl(product.image)}
+                            alt="Product image"
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+
+                      {/* Product Details */}
+                      <div className="space-y-3">
+                        <div>
+                          <h3 className="font-semibold text-foreground text-lg">
+                            {formData.name || 'Product Name'}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {formData.description || 'Product description will appear here...'}
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Price:</span>
+                            <p className="font-semibold text-foreground">
+                              {formData.unitPrice ? `RWF ${formData.unitPrice}` : '—'}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Available:</span>
+                            <p className="font-semibold text-foreground">
+                              {formData.quantity
+                                ? `${formData.quantity} ${formData.measurementUnit || ''}`
+                                : '—'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Location:</span>
+                            <span className="font-medium text-foreground">{formData.location || '—'}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Harvested:</span>
+                            <span className="font-medium text-foreground">
+                              {formData.harvestDate ? new Date(formData.harvestDate).toLocaleDateString() : '—'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Negotiable:</span>
+                            <span className="font-medium text-foreground">
+                              {formData.isNegotiable ? 'Yes' : 'No'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {formData.certification !== CertificationType.NONE && (
+                          <div className="inline-flex items-center gap-1 px-2 py-1 bg-success/10 text-success rounded-full text-xs">
+                            <Check className="w-3 h-3" />
+                            {formData.certification.replace(/_/g, ' ')}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tips */}
+                  <div className="bg-info/10 border border-info/20 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 text-info mt-0.5" />
+                      <div className="text-sm">
+                        <h4 className="font-semibold text-foreground mb-2">Pro Tips</h4>
+                        <ul className="text-info space-y-1">
+                          <li>• Use high-quality photos for better visibility</li>
+                          <li>• Include detailed descriptions for buyer confidence</li>
+                          <li>• Set competitive prices based on market rates</li>
+                          <li>• Specify exact harvest dates for freshness</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>

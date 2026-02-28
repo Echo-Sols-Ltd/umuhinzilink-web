@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, useState, ReactNode, useCallback, useEffect } from 'react';
 import { productService } from '@/services/products';
 import {
   FarmerProductionStat,
@@ -9,6 +9,7 @@ import {
 } from '@/types';
 import type { FarmerProductRequest, SupplierProductRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
+import { useSocket } from './SocketContext';
 import { notify } from '@/lib/notify';
 import { useRouter } from 'next/navigation';
 
@@ -102,6 +103,7 @@ const ProductContext = createContext<ProductContextValue | undefined>(undefined)
 export function ProductProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
+  const socket = useSocket();
   const [loading, setLoading] = useState(false);
   const [mutationLoading, setMutationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -141,6 +143,103 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [orderModalProduct, setOrderModalProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
   const [orderModalProductType, setOrderModalProductType] = useState<'farmer' | 'supplier' | null>(null);
+
+  const handleProductChange = (data: FarmerProduct | SupplierProduct) => {
+    const productId = data.id
+    const farmerData = data as FarmerProduct
+    const supplierData = data as SupplierProduct
+
+    setFarmerProducts(prev => {
+      if (!prev) return [];
+      return prev.map(p => p.id === productId ? { ...p, ...farmerData } : p);
+    });
+    setBuyerProducts(prev => {
+      if (!prev) return [];
+      return prev.map(p => p.id === productId ? { ...p, ...farmerData } : p);
+    });
+    setSupplierProducts(prev => {
+      if (!prev) return [];
+      return prev.map(p => p.id === productId ? { ...p, ...supplierData } : p);
+    });
+    setFarmerBuyerProducts(prev => {
+      if (!prev) return [];
+      return prev.map(p => p.id === productId ? { ...p, ...supplierData } : p);
+    });
+
+    // Update current products if they match
+    setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
+    setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
+    setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
+    setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
+    setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+    setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+    setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+    setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+
+  }
+
+  // Socket event handlers for real-time product updates
+  const handleProductUpdate = useCallback((productData: FarmerProduct | SupplierProduct) => {
+    if (!productData) return;
+
+    handleProductChange(productData);
+  }, []);
+
+  const handleProductStatusChange = useCallback((productData: FarmerProduct | SupplierProduct) => {
+    if (!productData) return;
+
+    handleProductChange(productData);
+  }, []);
+
+  const handleProductDeletion = useCallback((productData: FarmerProduct | SupplierProduct) => {
+    if (!productData) return;
+    const productId = productData.id
+
+
+    setFarmerProducts(prev => {
+      if (!prev) return [];
+      return prev?.filter(p => p.id !== productData.id);
+    });
+    setBuyerProducts(prev => {
+      if (!prev) return [];
+      return prev?.filter(p => p.id !== productData.id);
+    });
+    setSupplierProducts(prev => {
+      if (!prev) return [];
+      return prev?.filter(p => p.id !== productId);
+    });
+    setFarmerBuyerProducts(prev => {
+      if (!prev) return [];
+      return prev?.filter(p => p.id !== productId);
+    });
+
+    // Clear current products if they match
+    if (currentFarmerProduct?.id === productId) setCurrentFarmerProduct(null);
+    if (currentBuyerProduct?.id === productId) setCurrentBuyerProduct(null);
+
+    // Clear current products if they match
+    if (currentSupplierProduct?.id === productId) setCurrentSupplierProduct(null);
+    if (currentFarmerBuyerProduct?.id === productId) setCurrentFarmerBuyerProduct(null);
+
+  }, [currentFarmerProduct, currentBuyerProduct, currentSupplierProduct, currentFarmerBuyerProduct]);
+
+  // Setup socket listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    // Note: These would need to be implemented in the backend socket service
+    // For now, we'll add the structure for future implementation
+    // socket.onProductUpdate?.(handleProductUpdate);
+    // socket.onProductStatusChange?.(handleProductStatusChange);
+    // socket.onProductDeletion?.(handleProductDeletion);
+
+    return () => {
+      // Cleanup listeners
+      // socket.removeProductUpdateListener?.(handleProductUpdate);
+      // socket.removeProductStatusChangeListener?.(handleProductStatusChange);
+      // socket.removeProductDeletionListener?.(handleProductDeletion);
+    };
+  }, [socket, handleProductUpdate, handleProductStatusChange, handleProductDeletion]);
 
   // // 🔹 Load cached data
   // useEffect(() => {
@@ -314,13 +413,13 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     if (farmerResult.product) {
       return farmerResult;
     }
-    
+
     // Try supplier product
     const supplierResult = await fetchSupplierProductById(id);
     if (supplierResult.product) {
       return supplierResult;
     }
-    
+
     return { product: null, type: null, error: 'Product not found' };
   };
 

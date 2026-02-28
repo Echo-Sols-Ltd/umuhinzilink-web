@@ -15,25 +15,46 @@ function BuyerOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { buyerOrders } = useOrder();
+  const { 
+    buyerOrders, 
+    currentBuyerOrder, 
+    setCurrentBuyerOrder,
+    fetchBuyerOrders 
+  } = useOrder();
 
-  const [order, setOrder] = useState<FarmerOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const orderId = params.id as string;
 
   useEffect(() => {
-    const fetchOrder = async () => {
+    const loadOrder = async () => {
+      setLoading(true);
+      
       try {
-        // Find order in the existing buyerOrders
-        const foundOrder = buyerOrders?.find(o => o.id === orderId) || null;
+        // Step 1: Check if order is already in context lists
+        let foundOrder = buyerOrders?.find(o => o.id === orderId);
+        
+        // Step 2: Check if it's the current context order
+        if (!foundOrder && currentBuyerOrder?.id === orderId) {
+          foundOrder = currentBuyerOrder;
+        }
+        
         if (foundOrder) {
-          setOrder(foundOrder);
+          // ✅ Found in context - use immediately
+          setCurrentBuyerOrder(foundOrder);
+          setLoading(false);
         } else {
-          // Fallback to API call if not found in context
+          // ❌ Not in context - fetch from server
           const { orderService } = await import('@/services/orders');
           const response = await orderService.getFarmerOrderById(orderId);
+          
           if (response.success && response.data) {
-            setOrder(response.data);
+            // Store in context for future use and real-time updates
+            setCurrentBuyerOrder(response.data);
+            
+            // Refresh the list to include this order for future navigation
+            fetchBuyerOrders();
+          } else {
+            notify.error("Order not found", "Error");
           }
         }
       } catch (error) {
@@ -45,9 +66,9 @@ function BuyerOrderDetailPage() {
     };
 
     if (orderId) {
-      fetchOrder();
+      loadOrder();
     }
-  }, [orderId, buyerOrders]);
+  }, [orderId, buyerOrders, currentBuyerOrder, setCurrentBuyerOrder, fetchBuyerOrders]);
 
   const handleBack = () => {
     router.push('/buyer/purchases');
@@ -64,7 +85,7 @@ function BuyerOrderDetailPage() {
     );
   }
 
-  if (!order) {
+  if (!currentBuyerOrder) {
     return (
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
@@ -79,8 +100,8 @@ function BuyerOrderDetailPage() {
     );
   }
 
-  const product = order.product;
-  const farmer = order.product.owner;
+  const buyer = currentBuyerOrder.buyer;
+  const product = currentBuyerOrder.product;
 
   return (
     <div className="flex h-screen bg-background">
@@ -99,7 +120,7 @@ function BuyerOrderDetailPage() {
             </button>
             <div className="h-8 w-px bg-border"></div>
             <h1 className="text-xl font-semibold text-foreground">Order Details</h1>
-            <span className="text-sm text-muted-foreground">#{order.id.slice(0, 8)}</span>
+            <span className="text-sm text-muted-foreground">#{currentBuyerOrder.id.slice(0, 8)}</span>
           </div>
         </header>
 
@@ -125,7 +146,7 @@ function BuyerOrderDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Farmer</p>
-                  <p className="font-semibold text-foreground">{farmer.names}</p>
+                  <p className="font-semibold text-foreground">{currentBuyerOrder.product.owner.names || 'N/A'}</p>
                 </div>
               </div>
             </div>
@@ -137,7 +158,7 @@ function BuyerOrderDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total Amount</p>
-                  <p className="font-semibold text-foreground">RWF {order.totalPrice.toLocaleString()}</p>
+                  <p className="font-semibold text-foreground">RWF {currentBuyerOrder.totalPrice.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -145,35 +166,29 @@ function BuyerOrderDetailPage() {
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Farmer Information */}
+            {/* Buyer Information */}
             <div className="bg-card rounded-lg p-6 border-border">
               <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
-                <User className="w-5 h-5 mr-2 text-success" />
-                Farmer Information
+                <User className="w-5 h-5 mr-2 text-info" />
+                Buyer Information
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-foreground">Name</label>
-                  <p className="text-foreground">{farmer.names}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Name</label>
+                  <p className="text-foreground">{buyer.names}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Email</label>
-                  <p className="text-foreground">{farmer.email}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Email</label>
+                  <p className="text-foreground">{buyer.email}</p>
                 </div>
-                {farmer.phoneNumber && (
-                  <div>
-                    <label className="text-sm font-medium text-foreground">Phone</label>
-                    <p className="text-foreground">{farmer.phoneNumber}</p>
-                  </div>
-                )}
-                {farmer.address && (
-                  <div>
-                    <label className="text-sm font-medium text-foreground">Location</label>
-                    <p className="text-foreground">
-                      {farmer.address.district}, {farmer.address.province}
-                    </p>
-                  </div>
-                )}
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                  <p className="text-foreground">{buyer.phoneNumber || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Location</label>
+                  <p className="text-foreground">{buyer.address ? `${buyer.address.district}, ${buyer.address.province}` : 'N/A'}</p>
+                </div>
               </div>
             </div>
 
@@ -190,24 +205,24 @@ function BuyerOrderDetailPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground">Quantity</label>
-                  <p className="text-foreground">{order.quantity} {product.measurementUnit}</p>
+                  <p className="text-foreground">{currentBuyerOrder.quantity} {product.measurementUnit}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Unit Price</label>
-                  <p className="text-foreground">RWF {product.unitPrice?.toLocaleString()}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Unit Price</label>
+                  <p className="text-foreground">RWF {(currentBuyerOrder.totalPrice / currentBuyerOrder.quantity).toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Total Price</label>
-                  <p className="text-lg font-semibold text-success">RWF {order.totalPrice.toLocaleString()}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Total Price</label>
+                  <p className="text-lg font-semibold text-success">RWF {currentBuyerOrder.totalPrice.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Payment Method</label>
-                  <p className="text-foreground">{order.paymentMethod.replace('_', ' ')}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Payment Method</label>
+                  <p className="text-foreground">{currentBuyerOrder.paymentMethod.replace('_', ' ')}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Payment Status</label>
-                  <p className={`font-medium ${order.isPaid ? 'text-success' : 'text-destructive'}`}>
-                    {order.isPaid ? 'PAID' : 'UNPAID'}
+                  <label className="text-sm font-medium text-muted-foreground">Payment Status</label>
+                  <p className={`font-medium ${currentBuyerOrder.isPaid ? 'text-success' : 'text-destructive'}`}>
+                    {currentBuyerOrder.isPaid ? 'PAID' : 'UNPAID'}
                   </p>
                 </div>
               </div>
@@ -220,13 +235,13 @@ function BuyerOrderDetailPage() {
               <Calendar className="w-5 h-5 mr-2 text-success" />
               Delivery Tracking
             </h2>
-            {order.delivery ? (
+            {currentBuyerOrder.delivery ? (
               <DeliveryTracker
-                delivery={order.delivery}
-                onUpdateStatus={() => { }} // Buyers cannot update status
+                delivery={currentBuyerOrder.delivery}
+                onUpdateStatus={() => {}} // Buyer cannot update delivery status
                 isLoading={false}
                 orderType="buyer"
-                isOrderOwner={false} // Buyers are never order owners for delivery updates
+                isOrderOwner={false}
               />
             ) : (
               <div className="bg-card rounded-lg p-6 text-center">
