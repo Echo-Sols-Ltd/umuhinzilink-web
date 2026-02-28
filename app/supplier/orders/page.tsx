@@ -113,21 +113,21 @@ function OrdersPageComponent() {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserType.SUPPLIER} activeItem="Farmer Orders" />
 
-      <main className="flex-1 h-full overflow-auto bg-white/30">
+      <main className="flex-1 h-full overflow-auto bg-background/30">
         <div className="p-8 max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900 ">Order Management</h1>
-              <p className="text-sm text-gray-500 mt-1 font-medium ">Monitor and process incoming requests from farmers across regions</p>
+              <h1 className="text-2xl font-semibold text-foreground ">Order Management</h1>
+              <p className="text-sm text-muted-foreground mt-1 font-medium ">Monitor and process incoming requests from farmers across regions</p>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => fetchSupplierOrders()}
-                className="flex items-center gap-2 px-4 py-2 bg-white text-gray-600 rounded-lg font-semibold text-xs uppercase  hover:bg-white border border-gray-100 shadow-sm transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-card text-muted-foreground rounded-lg font-semibold text-xs uppercase  hover:bg-card border border-border shadow-sm transition-all"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
                 Refresh List
@@ -137,20 +137,20 @@ function OrdersPageComponent() {
 
           {/* Stats Summary */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard title="Total Orders" value={stats.total} icon={<ShoppingCart />} color="bg-gray-800" />
-            <StatCard title="Pending" value={stats.pending} icon={<Clock />} color="bg-orange-600" />
-            <StatCard title="In Progress" value={stats.active} icon={<Package />} color="bg-indigo-800" />
-            <StatCard title="Completed" value={stats.completed} icon={<CheckCircle />} color="bg-emerald-800" />
+            <StatCard title="Total Orders" value={stats.total} icon={<ShoppingCart />} color="bg-muted" />
+            <StatCard title="Pending" value={stats.pending} icon={<Clock />} color="bg-warning" />
+            <StatCard title="In Progress" value={stats.active} icon={<Package />} color="bg-info" />
+            <StatCard title="Completed" value={stats.completed} icon={<CheckCircle />} color="bg-success" />
           </div>
 
           {/* Orders Table */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-green-50 rounded-lg">
-                  <Package className="w-5 h-5 text-green-600" />
+                <div className="p-2 bg-success/10 rounded-lg">
+                  <Package className="w-5 h-5 text-success" />
                 </div>
-                <h2 className="text-lg font-semibold text-gray-800">Recent Orders</h2>
+                <h2 className="text-lg font-semibold text-foreground">Recent Orders</h2>
               </div>
               <div className="flex gap-2">
                 {['All', 'Pending', 'Active', 'Completed'].map((tab) => (
@@ -158,8 +158,8 @@ function OrdersPageComponent() {
                     key={tab}
                     onClick={() => setStatusFilter(tab.toLowerCase())}
                     className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${statusFilter === tab.toLowerCase()
-                      ? 'bg-green-600 text-white shadow-md shadow-green-100'
-                      : 'text-gray-500 hover:bg-white'
+                      ? 'bg-success text-white shadow-md shadow-success/20'
+                      : 'text-muted-foreground hover:bg-card'
                       }`}
                   >
                     {tab}
@@ -169,14 +169,14 @@ function OrdersPageComponent() {
             </div>
 
             <Table>
-              <TableHeader className="bg-white/50">
+              <TableHeader className="bg-card/50">
                 <TableRow className="hover:bg-transparent border-0">
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Order ID</TableHead>
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Farmer</TableHead>
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Input Item</TableHead>
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-center">Value</TableHead>
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-center">Status</TableHead>
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-right">Action</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Order ID</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Farmer</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Input Item</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-center">Value</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-center">Status</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -203,33 +203,33 @@ function OrdersPageComponent() {
                   </TableRow>
                 ) : (
                   filteredOrders.map((order) => (
-                    <TableRow key={order.id} className="group transition-colors hover:bg-white/50">
+                    <TableRow key={order.id} className="group transition-colors hover:bg-card/50">
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-semibold text-gray-900 leading-tight">#{order.id.slice(0, 8).toUpperCase()}</span>
-                          <span className="text-[10px] uppercase  font-semibold text-gray-400 mt-0.5">
+                          <span className="font-semibold text-foreground leading-tight">#{order.id.slice(0, 8).toUpperCase()}</span>
+                          <span className="text-[10px] uppercase  font-semibold text-muted-foreground mt-0.5">
                             {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-600 border border-green-100 shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center text-success border border-success/20 shrink-0">
                             <User className="w-4 h-4" />
                           </div>
-                          <span className="font-semibold text-gray-700">{order.buyer?.names || 'Individual Farmer'}</span>
+                          <span className="font-semibold text-foreground">{order.buyer?.names || 'Individual Farmer'}</span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-semibold text-gray-900">{order.product?.name || 'Agri-Input'}</span>
-                          <span className="text-[11px] text-gray-500 font-medium">
+                          <span className="font-semibold text-foreground">{order.product?.name || 'Agri-Input'}</span>
+                          <span className="text-[11px] text-muted-foreground font-medium">
                             {order.quantity} {order.product?.measurementUnit || 'units'}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-foreground">
                           RWF {order.totalPrice.toLocaleString()}
                         </span>
                       </TableCell>
@@ -251,7 +251,7 @@ function OrdersPageComponent() {
                           )}
                           <button
                             onClick={() => router.push(`/supplier/orders/${order.id}`)}
-                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            className="p-2 text-muted-foreground hover:text-info hover:bg-info/10 rounded-lg transition-all"
                             title="View Order Details"
                           >
                             <Eye className="w-4 h-4" />
@@ -295,13 +295,13 @@ function OrdersPageComponent() {
 
 function StatCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-5 transition-all hover:shadow-xl hover:shadow-green-100/20 group">
+    <div className="bg-card p-6 rounded-xl shadow-sm border border-border flex items-center gap-5 transition-all hover:shadow-xl hover:shadow-success/20 group">
       <div className={`p-3.5 rounded-lg ${color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
         {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-6 h-6' })}
       </div>
       <div>
-        <p className="text-xs font-semibold text-gray-400 uppercase  leading-none mb-1.5">{title}</p>
-        <p className="text-2xl font-semibold text-gray-900 leading-none">{value.toLocaleString()}</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase  leading-none mb-1.5">{title}</p>
+        <p className="text-2xl font-semibold text-foreground leading-none">{value.toLocaleString()}</p>
       </div>
     </div>
   );

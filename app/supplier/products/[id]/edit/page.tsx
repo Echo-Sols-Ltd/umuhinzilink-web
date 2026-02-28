@@ -124,13 +124,13 @@ function EditInput() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         <Sidebar userType={UserType.SUPPLIER} activeItem="My Inputs" />
-        <main className="flex-1 overflow-auto bg-white/30">
+        <main className="flex-1 overflow-auto bg-background/30">
           <div className="p-8 max-w-7xl mx-auto">
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-              <p className="font-semibold text-gray-400 text-xs uppercase ">Loading input details...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-success"></div>
+              <p className="font-semibold text-muted-foreground text-xs uppercase ">Loading input details...</p>
             </div>
           </div>
         </main>
@@ -139,49 +139,49 @@ function EditInput() {
   }
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserType.SUPPLIER} activeItem="My Inputs" />
 
-      <main className="flex-1 overflow-auto bg-white/30">
+      <main className="flex-1 overflow-auto bg-background/30">
         <div className="p-8 max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
               <Link
                 href="/supplier/products"
-                className="p-3 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                className="p-3 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900">Edit Input</h1>
-                <p className="text-sm text-gray-500 mt-1">Update your agricultural input details</p>
+                <h1 className="text-2xl font-semibold text-foreground">Edit Input</h1>
+                <p className="text-sm text-muted-foreground mt-1">Update your agricultural input details</p>
               </div>
             </div>
           </div>
 
           {/* Modal-style Form Container */}
           <div className="flex items-center justify-center ">
-            <div className="bg-white p-8 rounded-2xl shadow-2xl w-full ">
+            <div className="bg-card p-8 rounded-2xl shadow-2xl w-full ">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Edit Input</h2>
+                <h2 className="text-xl font-semibold text-foreground">Edit Input</h2>
                 <Link
                   href="/supplier/products"
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-muted rounded-full transition-colors"
                 >
-                  <Plus className="w-5 h-5 text-gray-400 rotate-45" />
+                  <Plus className="w-5 h-5 text-muted-foreground rotate-45" />
                 </Link>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Product Details</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase  ml-1">Product Details</label>
                   <select
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all"
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-success/20 focus:border-success outline-none transition-all"
                   >
                     <option value="">Select Product Type</option>
                     {Object.values(ProductType).map(type => (
@@ -194,7 +194,7 @@ function EditInput() {
                     value={formData.category}
                     onChange={handleChange}
                     required
-                    className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all"
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-success/20 focus:border-success outline-none transition-all"
                   >
                     <option value="">Select Category</option>
                     {Object.values(ProductCategory).map(category => (
@@ -208,13 +208,13 @@ function EditInput() {
                     value={formData.description}
                     onChange={handleChange}
                     required
-                    className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all min-h-[100px]"
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-success/20 focus:border-success outline-none transition-all min-h-[100px]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Price (RWF)</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase  ml-1">Price (RWF)</label>
                     <input
                       type="number"
                       name="unitPrice"
@@ -222,17 +222,17 @@ function EditInput() {
                       value={formData.unitPrice}
                       onChange={handleChange}
                       required
-                      className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Measurement</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase  ml-1">Measurement</label>
                     <select
                       name="measurementUnit"
                       value={formData.measurementUnit}
                       onChange={handleChange}
                       required
-                      className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm"
                     >
                       <option value="">Unit</option>
                       {Object.values(MeasurementUnit).map(unit => (
@@ -244,7 +244,7 @@ function EditInput() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Stock Quantity</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase  ml-1">Stock Quantity</label>
                     <input
                       type="number"
                       name="quantity"
@@ -252,17 +252,17 @@ function EditInput() {
                       value={formData.quantity}
                       onChange={handleChange}
                       required
-                      className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Certification</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase  ml-1">Certification</label>
                     <select
                       name="certification"
                       value={formData.certification}
                       onChange={handleChange}
                       required
-                      className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm"
                     >
                       <option value="">None</option>
                       {Object.values(CertificationType).map(cert => (
@@ -273,7 +273,7 @@ function EditInput() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Location</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase  ml-1">Location</label>
                   <input
                     type="text"
                     name="location"
@@ -281,25 +281,25 @@ function EditInput() {
                     value={formData.location}
                     onChange={handleChange}
                     required
-                    className="w-full bg-white border border-gray-100 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all"
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-success/20 focus:border-success outline-none transition-all"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm text-gray-700">
+                  <label className="flex items-center gap-2 text-sm text-muted-foreground">
                     <input
                       type="checkbox"
                       name="isNegotiable"
                       checked={formData.isNegotiable}
                       onChange={handleToggle}
-                      className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                      className="rounded border-border text-success focus:ring-success"
                     />
                     Negotiable price
                   </label>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-semibold text-gray-400 uppercase  ml-1">Product Media</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase  ml-1">Product Media</label>
                   <FileUpload
                     onUploadComplete={handleImageUpload}
                     uploadType="generic"
@@ -312,14 +312,14 @@ function EditInput() {
                 <div className="flex items-center gap-4 pt-4">
                   <Link
                     href="/supplier/products"
-                    className="flex-1 px-6 py-3 rounded-lg border border-gray-100 font-semibold text-xs uppercase  text-gray-500 hover:bg-white transition-all text-center"
+                    className="flex-1 px-6 py-3 rounded-lg border border-border font-semibold text-xs uppercase  text-muted-foreground hover:bg-card transition-all text-center"
                   >
                     Cancel
                   </Link>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex-1 px-6 py-3 rounded-lg bg-green-600 text-white font-semibold text-xs uppercase  hover:bg-green-700 disabled:opacity-50 transition-all shadow-lg shadow-green-100"
+                    className="flex-1 px-6 py-3 rounded-lg bg-success text-white font-semibold text-xs uppercase  hover:bg-success/90 disabled:opacity-50 transition-all shadow-lg shadow-success/20"
                   >
                     {submitting ? 'Processing...' : 'Update Listing'}
                   </button>

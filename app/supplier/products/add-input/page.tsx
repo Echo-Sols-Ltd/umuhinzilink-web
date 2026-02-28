@@ -124,24 +124,24 @@ function AddInput() {
   };
 
   return (
-    <div className='flex h-screen bg-white overflow-hidden'>
+    <div className='flex h-screen bg-background overflow-hidden'>
       <Sidebar
         userType={UserType.SUPPLIER}
         activeItem='My Inputs'
       />
-      <div className="h-screen bg-white">
+      <div className="h-screen bg-background">
 
         <div className="mx-auto max-w-5xl py-10 px-4 h-full overflow-auto">
           <div className="mb-6 flex items-center justify-between ">
             <div>
-              <h1 className="text-3xl font-semibold text-gray-900">Add New Input</h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <h1 className="text-3xl font-semibold text-foreground">Add New Input</h1>
+              <p className="text-sm text-muted-foreground mt-1">
                 List agricultural inputs to make them available for farmers.
               </p>
             </div>
             <Link
               href="/supplier/products"
-              className="text-sm text-green-600 hover:text-green-700"
+              className="text-sm text-success hover:text-success/80"
             >
               Back to Inputs
             </Link>
@@ -150,22 +150,22 @@ function AddInput() {
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <form
               onSubmit={handleSubmit}
-              className="xl:col-span-2 bg-white rounded-lg shadow-sm border p-6 space-y-4"
+              className="xl:col-span-2 bg-card rounded-lg shadow-sm border p-6 space-y-4"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Input Name</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Input Name</label>
                   <input
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="e.g. Organic Fertilizer"
                     required
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Category</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Category</label>
                   <Select value={formData.category} onValueChange={(value) => handleSelectChange('category', value)}>
                     <SelectTrigger className="mt-1 w-full">
                       <SelectValue placeholder="Select a category" />
@@ -180,7 +180,7 @@ function AddInput() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Quantity</label>
                   <input
                     type="number"
                     min="0"
@@ -189,11 +189,11 @@ function AddInput() {
                     onChange={handleChange}
                     placeholder="e.g. 500"
                     required
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Measurement Unit</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Measurement Unit</label>
                   <Select value={formData.measurementUnit} onValueChange={(value) => handleSelectChange('measurementUnit', value)}>
                     <SelectTrigger className="mt-1 w-full">
                       <SelectValue placeholder="Select a unit" />
@@ -208,7 +208,7 @@ function AddInput() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Unit Price (RWF)</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Unit Price (RWF)</label>
                   <input
                     type="number"
                     min="0"
@@ -217,11 +217,11 @@ function AddInput() {
                     onChange={handleChange}
                     placeholder="e.g. 1200"
                     required
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Location</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Location</label>
                   <input
                     type="text"
                     name="location"
@@ -229,11 +229,11 @@ function AddInput() {
                     onChange={handleChange}
                     placeholder="e.g. Kigali, Gasabo"
                     required
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Certification</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Certification</label>
                   <Select value={formData.certification} onValueChange={(value) => handleSelectChange('certification', value)}>
                     <SelectTrigger className="mt-1 w-full">
                       <SelectValue placeholder="Select certification" />
@@ -247,50 +247,50 @@ function AddInput() {
                     </SelectContent>
                   </Select>
                 </div>
-                <label className="flex items-center gap-2 text-sm text-gray-700">
+                <label className="flex items-center gap-2 text-sm text-muted-foreground">
                   <input
                     type="checkbox"
                     checked={formData.isNegotiable}
                     onChange={handleToggle}
-                    className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    className="rounded border-border text-success focus:ring-success"
                   />
                   Negotiable price
                 </label>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <label className="block text-sm font-medium text-muted-foreground">Description</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   rows={4}
                   placeholder="Add details farmers should know about this input."
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Upload Image</label>
+                <label className="block text-sm font-medium text-muted-foreground">Upload Image</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="mt-1 w-full text-sm text-gray-600"
+                  className="mt-1 w-full text-sm text-muted-foreground"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
                 <Link
                   href="/supplier/products"
-                  className="text-sm text-gray-600 hover:text-gray-800"
+                  className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Cancel
                 </Link>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 bg-success hover:bg-success/90 text-white font-semibold py-2 px-4 rounded-md disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   Save Input
@@ -298,12 +298,12 @@ function AddInput() {
               </div>
             </form>
 
-            <aside className="bg-white rounded-lg shadow-sm border p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">Preview</h2>
-              <p className="text-sm text-gray-500">
+            <aside className="bg-card rounded-lg shadow-sm border p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-foreground">Preview</h2>
+              <p className="text-sm text-muted-foreground">
                 This is how your input will appear to farmers once published.
               </p>
-              <div className="border border-dashed border-gray-200 rounded-lg p-4 text-center">
+              <div className="border border-dashed border-border rounded-lg p-4 text-center">
                 {previewUrl ? (
                   <img
                     src={previewUrl}
@@ -311,23 +311,23 @@ function AddInput() {
                     className="w-full h-48 object-cover rounded-md"
                   />
                 ) : (
-                  <div className="text-sm text-gray-400">Upload an image to preview it here.</div>
+                  <div className="text-sm text-muted-foreground">Upload an image to preview it here.</div>
                 )}
               </div>
-              <div className="space-y-2 text-sm text-gray-600">
+              <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex justify-between">
                   <span>Input</span>
-                  <span className="font-medium text-gray-900">{formData.name || '—'}</span>
+                  <span className="font-medium text-foreground">{formData.name || '—'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Unit price</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-foreground">
                     {formData.unitPrice ? `RWF ${formData.unitPrice}` : '—'}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Quantity</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-foreground">
                     {formData.quantity
                       ? `${formData.quantity} ${formData.measurementUnit || ''}`
                       : '—'}
@@ -335,13 +335,13 @@ function AddInput() {
                 </div>
                 <div className="flex justify-between">
                   <span>Negotiable</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-foreground">
                     {formData.isNegotiable ? 'Yes' : 'No'}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Location</span>
-                  <span className="font-medium text-gray-900">{formData.location || '—'}</span>
+                  <span className="font-medium text-foreground">{formData.location || '—'}</span>
                 </div>
               </div>
             </aside>

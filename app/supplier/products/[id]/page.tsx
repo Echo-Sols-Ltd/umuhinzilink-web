@@ -93,12 +93,12 @@ export default function SupplierProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.SUPPLIER} activeItem="My Products" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading product...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading product...</p>
           </div>
         </main>
       </div>
@@ -107,15 +107,15 @@ export default function SupplierProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.SUPPLIER} activeItem="My Products" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h1>
-            <p className="text-gray-600 mb-4">{error || 'This product could not be found.'}</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
+            <p className="text-muted-foreground mb-4">{error || 'This product could not be found.'}</p>
             <button
               onClick={() => router.back()}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="px-4 py-2 bg-success text-white rounded-lg hover:bg-success/90 transition-colors"
             >
               Go Back
             </button>
@@ -126,7 +126,7 @@ export default function SupplierProductDetailPage() {
   }
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar userType={UserType.SUPPLIER} activeItem="My Products" />
       
       <main className="flex-1 overflow-auto">
