@@ -135,35 +135,35 @@ export default function BuyerSignUp() {
   };
 
   return (
-    <div className="w-full h-screen bg-white flex items-center">
-      <div className="w-full overflow-scroll h-full bg-white rounded-lg  p-6 sm:p-6 z-20 relative py-20">
-        <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">Create Your Buyer Account</h1>
+    <div className="w-full h-screen bg-background flex items-center">
+      <div className="w-full overflow-scroll h-full bg-card rounded-lg  p-6 sm:p-6 z-20 relative py-20">
+        <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">Create Your Buyer Account</h1>
 
         <div className="flex gap-4 justify-center mb-6">
           {socialLinks.map((linkItem, idx) => (
-            <Link key={idx} href={linkItem.link} target="_blank" className="p-3 text-gray-700 transition border border-gray-100 rounded-md hover:bg-gray-100">{linkItem.icon}</Link>
+            <Link key={idx} href={linkItem.link} target="_blank" className="p-3 text-muted-foreground transition border border-border rounded-md hover:bg-muted">{linkItem.icon}</Link>
           ))}
         </div>
 
-        <p className="text-center text-gray-400 text-sm mb-6">Or fill in your details below</p>
+        <p className="text-center text-muted-foreground text-sm mb-6">Or fill in your details below</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* Profile Image */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Image</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Profile Image</h2>
             <div className="flex items-center space-x-6">
               <div className="relative">
                 {profilePreview ? (
                   <div className="relative">
-                    <Image src={profilePreview} alt="Profile preview" width={120} height={120} className="w-30 h-30 rounded-full object-cover border-4 border-gray-200" />
-                    <button type="button" onClick={removeProfileImage} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors">
+                    <Image src={profilePreview} alt="Profile preview" width={120} height={120} className="w-30 h-30 rounded-full object-cover border-4 border-border" />
+                    <button type="button" onClick={removeProfileImage} className="absolute -top-2 -right-2 bg-destructive text-primary-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
-                  <div className="w-30 h-30 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
-                    <Upload className="w-8 h-8 text-gray-400" />
+                  <div className="w-30 h-30 rounded-full bg-muted border-4 border-muted flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-muted-foreground" />
                   </div>
                 )}
               </div>
@@ -174,11 +174,11 @@ export default function BuyerSignUp() {
 
           {/* Buyer Info */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Buyer Information</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Buyer Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="buyerType" className="text-gray-700 font-medium text-sm">Buyer Type</Label>
-                <select id="buyerType" name="buyerType" value={buyerData.buyerType} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.buyerType && fieldErrors.buyerType ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-green-500 focus:ring-green-500'}`} required>
+                <Label htmlFor="buyerType" className="text-foreground font-medium text-sm">Buyer Type</Label>
+                <select id="buyerType" name="buyerType" value={buyerData.buyerType} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.buyerType && fieldErrors.buyerType ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
                   <option value="">Select buyer type</option>
                   {buyerTypeOptions.map(option => <option key={option.value} value={option.value}>{option.label.replace(/_/g, ' ')}</option>)}
                 </select>
@@ -188,18 +188,18 @@ export default function BuyerSignUp() {
 
           {/* Location */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Location</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Business Location</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="province" className="text-gray-700 font-medium text-sm">Province</Label>
-                <select id="province" name="province" value={buyerData.address.province} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-green-500 focus:ring-green-500'}`} required>
+                <Label htmlFor="province" className="text-foreground font-medium text-sm">Province</Label>
+                <select id="province" name="province" value={buyerData.address.province} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
                   <option value="">Select province</option>
                   {provinceOptions.map(option => <option key={option.value} value={option.value}>{option.label.replace(/_/g, ' ')}</option>)}
                 </select>
               </div>
               <div>
-                <Label htmlFor="district" className="text-gray-700 font-medium text-sm">District</Label>
-                <select id="district" name="district" value={buyerData.address.district} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-green-500 focus:ring-green-500'}`} required>
+                <Label htmlFor="district" className="text-foreground font-medium text-sm">District</Label>
+                <select id="district" name="district" value={buyerData.address.district} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
                   <option value="">Select district</option>
                   {districtOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
                 </select>
@@ -209,7 +209,7 @@ export default function BuyerSignUp() {
 
           {/* Submit */}
           <div className="space-y-4">
-            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm" disabled={loading || uploadLoading}>
+            <Button type="submit" className="w-full bg-success hover:bg-success/90 text-primary-foreground font-medium text-sm" disabled={loading || uploadLoading}>
               {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
             </Button>
           </div>

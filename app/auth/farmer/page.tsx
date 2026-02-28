@@ -257,11 +257,11 @@ export default function FarmerSignUp() {
 
 
   return (
-    <div className="w-full h-screen bg-white flex  items-center">
+    <div className="w-full h-screen bg-background flex  items-center">
 
 
-      <div className="w-full h-full bg-white shadow-lg rounded-lg p-6 sm:p-6 overflow-scroll z-20 relative">
-        <h1 className="text-center text-gray-800 font-extrabold text-xl sm:text-2xl mb-4">
+      <div className="w-full h-full bg-card shadow-lg rounded-lg p-6 sm:p-6 overflow-scroll z-20 relative">
+        <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">
           Create Your Farmer Account
         </h1>
 
@@ -271,39 +271,39 @@ export default function FarmerSignUp() {
               key={idx}
               href={linkItem.link}
               target="_blank"
-              className="p-3 text-gray-700 transition border border-gray-100 rounded-md hover:bg-gray-100"
+              className="p-3 text-muted-foreground transition border border-border rounded-md hover:bg-muted"
             >
               {linkItem.icon}
             </a>
           ))}
         </div>
 
-        <p className="text-center text-gray-400 text-sm mb-6">Or fill in your details below</p>
+        <p className="text-center text-muted-foreground text-sm mb-6">Or fill in your details below</p>
 
         <form className="space-y-6">
 
           {/* Profile Image Section */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Image</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Profile Image</h2>
             <div className="flex items-center space-x-6">
-              <div className="relative w-24 h-24 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center overflow-hidden">
+              <div className="relative w-24 h-24 rounded-full bg-muted border-2 border-border flex items-center justify-center overflow-hidden">
                 {profilePreview ? (
                   <img src={profilePreview} alt="Profile Preview" className="w-full h-full object-cover" />
                 ) : (
-                  <Upload className="w-8 h-8 text-gray-400" />
+                  <Upload className="w-8 h-8 text-muted-foreground" />
                 )}
                 {profilePreview && (
                   <button
                     type="button"
                     onClick={removeProfileImage}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-sm hover:bg-red-600 transition-colors"
+                    className="absolute -top-1 -right-1 bg-destructive text-primary-foreground rounded-full p-1 shadow-sm hover:bg-destructive/90 transition-colors"
                   >
                     <X size={14} />
                   </button>
                 )}
               </div>
               <div className="flex-1">
-                <Label className="text-gray-700 font-medium text-sm mb-2 block">Upload Profile Image</Label>
+                <Label className="text-foreground font-medium text-sm mb-2 block">Upload Profile Image</Label>
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -319,22 +319,22 @@ export default function FarmerSignUp() {
                 >
                   {profilePreview ? 'Change Image' : 'Choose Image'}
                 </Button>
-                <p className="text-xs text-gray-500">JPG, PNG, GIF up to 5MB</p>
+                <p className="text-xs text-muted-foreground">JPG, PNG, GIF up to 5MB</p>
               </div>
             </div>
           </div>
 
           {/* Farm Information */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Farm Information</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Farm Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-gray-700 font-medium text-sm">Farm Size</Label>
+                <Label className="text-foreground font-medium text-sm">Farm Size</Label>
                 <select
                   name="farmSize"
                   value={farmerData.farmSize}
                   onChange={handleFarmerInputChange}
-                  className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2"
+                  className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
                 >
                   <option value="">Select farm size</option>
                   {farmSizeOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
@@ -342,12 +342,12 @@ export default function FarmerSignUp() {
                 {touched.farmSize && fieldErrors.farmSize && <p className="text-red-500 text-xs mt-1">{fieldErrors.farmSize}</p>}
               </div>
               <div>
-                <Label className="text-gray-700 font-medium text-sm">Farming Experience</Label>
+                <Label className="text-foreground font-medium text-sm">Farming Experience</Label>
                 <select
                   name="experienceLevel"
                   value={farmerData.experienceLevel}
                   onChange={handleFarmerInputChange}
-                  className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2"
+                  className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
                 >
                   <option value="">Select experience level</option>
                   {experienceLevelOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
@@ -359,15 +359,15 @@ export default function FarmerSignUp() {
 
           {/* Location */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Farm Location</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Farm Location</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-gray-700 font-medium text-sm">Province</Label>
+                <Label className="text-foreground font-medium text-sm">Province</Label>
                 <select
                   name="province"
                   value={farmerData.address.province}
                   onChange={handleFarmerInputChange}
-                  className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2"
+                  className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
                 >
                   <option value="">Select province</option>
                   {provinceOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
@@ -375,12 +375,12 @@ export default function FarmerSignUp() {
                 {touched.province && fieldErrors.province && <p className="text-red-500 text-xs mt-1">{fieldErrors.province}</p>}
               </div>
               <div>
-                <Label className="text-gray-700 font-medium text-sm">District</Label>
+                <Label className="text-foreground font-medium text-sm">District</Label>
                 <select
                   name="district"
                   value={farmerData.address.district}
                   onChange={handleFarmerInputChange}
-                  className="w-full text-gray-700 font-medium text-sm border rounded-md px-3 py-2"
+                  className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
                 >
                   <option value="">Select district</option>
                   {districtOptions.map(option => <option key={option} value={option}>{option}</option>)}
@@ -392,7 +392,7 @@ export default function FarmerSignUp() {
 
           {/* Crops */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Crops You Grow</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Crops You Grow</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {commonCrops.map(crop => (
                 <div key={crop} className="flex items-center space-x-2">
@@ -400,9 +400,9 @@ export default function FarmerSignUp() {
                     type="checkbox"
                     checked={farmerData.crops.includes(crop as RwandaCrop)}
                     onChange={(e) => handleCropChange(crop as RwandaCrop, e.target.checked)}
-                    className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    className="rounded border-border text-success focus:ring-success"
                   />
-                  <Label className="text-sm text-gray-700">{crop.replace(/_/g, ' ')}</Label>
+                  <Label className="text-sm text-foreground">{crop.replace(/_/g, ' ')}</Label>
                 </div>
               ))}
             </div>

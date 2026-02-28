@@ -114,13 +114,13 @@ export default function SignUp() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col sm:flex-row bg-white overflow-hidden">
+    <div className="w-full h-screen flex flex-col sm:flex-row bg-background overflow-hidden">
       {/* LEFT – Form */}
-      <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white overflow-auto">
+      <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-card overflow-auto">
         <div className="w-full max-w-md flex flex-col justify-center">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Create Account</h1>
-            <p className="text-gray-500 text-sm sm:text-base mt-1">Sign up using social or form</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">Create Account</h1>
+            <p className="text-muted-foreground text-sm sm:text-base mt-1">Sign up using social or form</p>
           </div>
 
           <div className="flex justify-center gap-3 mb-6">
@@ -129,7 +129,7 @@ export default function SignUp() {
                 key={i}
                 href={item.link}
                 target="_blank"
-                className="w-11 h-11 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-green-50 hover:text-green-600 transition"
+                className="w-11 h-11 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-success/10 hover:text-success transition"
               >
                 {item.icon}
               </Link>
@@ -137,9 +137,9 @@ export default function SignUp() {
           </div>
 
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-400">OR</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted-foreground">OR</span>
+            <div className="flex-1 h-px bg-border" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -200,9 +200,9 @@ export default function SignUp() {
                       id={type.value}
                       checked={formData.role === type.value}
                       onCheckedChange={() => setFormData(prev => ({ ...prev, role: type.value }))}
-                      className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-200"
+                      className="data-[state=checked]:bg-success data-[state=unchecked]:bg-muted"
                     />
-                    <span className="text-gray-700 text-sm">{type.label}</span>
+                    <span className="text-foreground text-sm">{type.label}</span>
                   </div>
                 ))}
               </div>
@@ -221,7 +221,7 @@ export default function SignUp() {
                 disabled={loading}
                 className={`mt-1 pr-10 ${touched.password && fieldErrors.password ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
               />
-              <button type="button" className="absolute right-3 top-9 text-gray-400 hover:text-gray-600" onClick={() => setShowPassword(v => !v)}>
+              <button type="button" className="absolute right-3 top-9 text-muted-foreground hover:text-foreground" onClick={() => setShowPassword(v => !v)}>
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
               {touched.password && fieldErrors.password && <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>}
@@ -229,18 +229,18 @@ export default function SignUp() {
 
             {/* Agree Terms */}
             <div className="flex items-center gap-2">
-              <Switch checked={agreeToTerms} onCheckedChange={setAgreeToTerms} className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-200" />
-              <Label className="text-sm text-gray-700">I agree to the terms & conditions</Label>
+              <Switch checked={agreeToTerms} onCheckedChange={setAgreeToTerms} className="data-[state=checked]:bg-success data-[state=unchecked]:bg-muted" />
+              <Label className="text-sm text-foreground">I agree to the terms & conditions</Label>
             </div>
 
             {/* Submit */}
-            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={loading}>
+            <Button type="submit" className="w-full bg-success hover:bg-success/90" disabled={loading}>
               {loading ? 'Creating Account…' : 'Sign Up'}
             </Button>
 
-            <p className="text-sm text-center text-gray-600">
+            <p className="text-sm text-center text-muted-foreground">
               Already have an account?{' '}
-              <Link href="/auth/signin" className="text-green-600 font-semibold">Sign in</Link>
+              <Link href="/auth/signin" className="text-success font-semibold">Sign in</Link>
             </p>
           </form>
         </div>
