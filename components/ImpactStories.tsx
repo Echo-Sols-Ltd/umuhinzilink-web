@@ -58,7 +58,7 @@ export default function ImpactStories() {
   ];
 
   return (
-    <section className="py-20 bg-card">
+    <section className="py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-center text-2xl font-semibold text-foreground">Impact & Success Stories</h2>
         <p className="text-center text-muted-foreground mt-2">

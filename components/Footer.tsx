@@ -4,7 +4,7 @@ import { Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-foreground text-muted-foreground py-20">
+    <footer className="bg-background text-muted-foreground py-20">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Logo and  Description */}
         <div>
@@ -40,15 +40,15 @@ export default function Footer() {
         <div>
           <p className="font-semibold text-primary-foreground ">Contact Info</p>
           <ul className="mt-2 space-y-2">
-            <li className="flex items-center gap-2 ">
+            <li className="flex items-center gap-2 text-muted-foreground">
               <PhoneIcon className="w-5 h-5" />
               +250 793 373 953
             </li>
-            <li className="flex items-center gap-2">
+            <li className="flex items-center gap-2 text-muted-foreground">
               <Mail className="w-5 h-5" />
               iamshemaleandre@gmail.com
             </li>
-            <li className="flex items-center gap-2">
+            <li className="flex items-center gap-2 text-muted-foreground">
               <MapPinIcon className="w-5 h-5" /> Kigali, Rwanda
             </li>
           </ul>

@@ -156,7 +156,7 @@ export default function WhoWeServe() {
   ];
 
   return (
-    <section className="py-12 bg-card">
+    <section className="py-12 bg-background">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-center text-2xl font-semibold text-foreground">Who We Serve</h2>
         <p className="text-center text-muted-foreground mt-2">

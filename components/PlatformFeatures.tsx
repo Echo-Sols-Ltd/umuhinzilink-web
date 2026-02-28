@@ -65,7 +65,7 @@ export default function PlatformFeatures() {
   ];
 
   return (
-    <section className="py-12 bg-success/10">
+    <section className="py-12 bg-background">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-center text-2xl font-semibold text-foreground">Platform Features</h2>
         <p className="text-center text-muted-foreground mt-2">Comprehensive tools for modern agriculture</p>

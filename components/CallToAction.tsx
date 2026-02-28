@@ -8,7 +8,7 @@ export default function CallToAction() {
   ];
 
   return (
-    <section className="bg-success/20 py-20 text-primary-foreground text-center">
+    <section className="bg-background py-20 text-foreground text-center">
       <h2 className="text-2xl font-semibold">Ready to Transform Your Farming?</h2>
       <p className="mt-2">
         Join thousands of farmers already using UmuhinziLink to grow their business

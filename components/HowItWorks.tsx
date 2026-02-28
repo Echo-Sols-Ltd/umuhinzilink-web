@@ -31,7 +31,7 @@ const steps: Step[] = [
 
 const HowItWorks: FC = () => {
   return (
-    <section className="py-16 bg-card">
+    <section className="py-16 bg-background">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-center text-2xl font-semibold text-foreground">How UmuhinziLink Works</h2>
         <p className="text-center text-muted-foreground mt-2">

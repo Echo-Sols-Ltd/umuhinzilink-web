@@ -3,7 +3,7 @@ import { CheckIcon } from 'lucide-react';
 
 const AboutUmuhinzinLink: React.FC = () => {
   return (
-    <section className="flex flex-col md:flex-row items-center justify-center max-w-full mx-auto px-6 md:px-12 py-12 gap-36 bg-success/10">
+    <section className="flex flex-col md:flex-row items-center justify-center max-w-full mx-auto px-6 md:px-12 py-12 gap-36 bg-background">
       {/* Left side*/}
       <div className="relative flex-shrink-0">
         <div className="w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full overflow-hidden">
