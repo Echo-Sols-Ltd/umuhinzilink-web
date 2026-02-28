@@ -15,28 +15,72 @@ export default function SupplierProductDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
-  const { fetchSupplierProductById, loading } = useProduct();
-  const [product, setProduct] = useState<SupplierProduct | null>(null);
+  const { 
+    supplierProducts, 
+    currentSupplierProduct, 
+    setCurrentSupplierProduct,
+    fetchSupplierProducts,
+    loading: contextLoading
+  } = useProduct();
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const productId = params.id as string;
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      if (!params.id) return;
+    const loadProduct = async () => {
+      setLoading(true);
+      setError(null);
       
       try {
-        const result = await fetchSupplierProductById(params.id as string);
-        if (result.product) {
-          setProduct(result.product);
+        // Step 1: Check if product is already in context lists
+        let foundProduct = supplierProducts?.find(p => p.id === productId);
+        
+        // Step 2: Check if it's the current context product
+        if (!foundProduct && currentSupplierProduct?.id === productId) {
+          foundProduct = currentSupplierProduct;
+        }
+        
+        if (foundProduct) {
+          // ✅ Found in context - use immediately
+          setCurrentSupplierProduct(foundProduct);
+          setLoading(false);
         } else {
-          setError(result.error || 'Product not found');
+          // ❌ Not in context - fetch from server
+          const { productService } = await import('@/services/products');
+          const response = await productService.getSupplierProduct(productId);
+          
+          if (response.success && response.data) {
+            // Store in context for future use and real-time updates
+            setCurrentSupplierProduct(response.data);
+            
+            // Refresh the list to include this product for future navigation
+            fetchSupplierProducts();
+          } else {
+            setError('Product not found');
+            showToast({
+              title: "Error",
+              description: "Failed to load product details",
+              variant: "default"
+            });
+          }
         }
       } catch (err) {
+        console.error('Failed to fetch product:', err);
         setError('Failed to load product');
+        showToast({
+          title: "Error", 
+          description: "Failed to load product details",
+          variant: "default"
+        });
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProduct();
-  }, [params.id, fetchSupplierProductById]);
+    if (productId) {
+      loadProduct();
+    }
+  }, [productId, supplierProducts, currentSupplierProduct, setCurrentSupplierProduct, fetchSupplierProducts, showToast]);
 
   const handleShareProduct = (product: FarmerProduct | SupplierProduct) => {
     if (navigator.share) {
@@ -105,17 +149,17 @@ export default function SupplierProductDetailPage() {
     );
   }
 
-  if (error || !product) {
+  if (error || !currentSupplierProduct) {
     return (
       <div className="flex h-screen bg-background">
-        <Sidebar userType={UserType.SUPPLIER} activeItem="My Products" />
+        <Sidebar userType={UserType.SUPPLIER} activeItem="My Inputs" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
             <p className="text-muted-foreground mb-4">{error || 'This product could not be found.'}</p>
             <button
               onClick={() => router.back()}
-              className="px-4 py-2 bg-success text-white rounded-lg hover:bg-success/90 transition-colors"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             >
               Go Back
             </button>
@@ -127,11 +171,11 @@ export default function SupplierProductDetailPage() {
 
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar userType={UserType.SUPPLIER} activeItem="My Products" />
+      <Sidebar userType={UserType.SUPPLIER} activeItem="My Inputs" />
       
       <main className="flex-1 overflow-auto">
         <ProductDetail
-          product={product}
+          product={currentSupplierProduct}
           productType="supplier"
           onShareProduct={handleShareProduct}
           onEditProduct={handleEditProduct}

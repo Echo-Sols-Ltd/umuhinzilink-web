@@ -389,6 +389,26 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
           ...order.delivery,
           status: status, // Use the delivery status from socket event
           updatedAt: new Date().toISOString(),
+          // CRITICAL: Update trackingSteps to match the new status
+          trackingSteps: order.delivery?.trackingSteps?.map((step: any) => {
+            // Mark the step with the new status as completed
+            if (step.status === status) {
+              return {
+                ...step,
+                completed: true,
+                completedAt: new Date().toISOString()
+              };
+            }
+            // Keep existing completed steps as completed
+            return step;
+          }) || [{
+            // If no trackingSteps exist, create one for the current status
+            status: status,
+            completed: true,
+            completedAt: new Date().toISOString(),
+            location: 'Updated via socket',
+            notes: 'Delivery status updated automatically'
+          }]
         };
 
         return {

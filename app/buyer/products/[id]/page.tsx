@@ -15,31 +15,134 @@ export default function BuyerProductDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
-  const { fetchProductById, loading, showOrderModal } = useProduct();
-  const [product, setProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
+  const { 
+    farmerProducts,
+    supplierProducts,
+    buyerProducts,
+    currentFarmerProduct,
+    currentSupplierProduct,
+    currentBuyerProduct,
+    setCurrentFarmerProduct,
+    setCurrentSupplierProduct,
+    setCurrentBuyerProduct,
+    fetchFarmerProducts,
+    fetchSupplierProducts,
+    fetchBuyerProducts,
+    loading: contextLoading,
+    showOrderModal
+  } = useProduct();
+  const [loading, setLoading] = useState(true);
   const [productType, setProductType] = useState<'farmer' | 'supplier'>('farmer');
   const [error, setError] = useState<string | null>(null);
   const [savedProducts, setSavedProducts] = useState<Set<string>>(new Set());
+  const productId = params.id as string;
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      if (!params.id) return;
+    const loadProduct = async () => {
+      setLoading(true);
+      setError(null);
       
       try {
-        const result = await fetchProductById(params.id as string);
-        if (result.product && result.type) {
-          setProduct(result.product);
-          setProductType(result.type);
+        // Step 1: Check all product types in context
+        let foundProduct = null;
+        let foundType = null;
+
+        // Check farmer products
+        foundProduct = farmerProducts?.find(p => p.id === productId);
+        if (foundProduct) {
+          foundType = 'farmer';
+          setCurrentFarmerProduct(foundProduct);
+        }
+
+        // Check supplier products
+        if (!foundProduct) {
+          foundProduct = supplierProducts?.find(p => p.id === productId);
+          if (foundProduct) {
+            foundType = 'supplier';
+            setCurrentSupplierProduct(foundProduct);
+          }
+        }
+
+        // Check buyer products
+        if (!foundProduct) {
+          foundProduct = buyerProducts?.find(p => p.id === productId);
+          if (foundProduct) {
+            foundType = 'farmer'; // Buyer products are FarmerProduct type
+            setCurrentBuyerProduct(foundProduct);
+          }
+        }
+
+        // Check current context products
+        if (!foundProduct) {
+          if (currentFarmerProduct?.id === productId) {
+            foundProduct = currentFarmerProduct;
+            foundType = 'farmer';
+          } else if (currentSupplierProduct?.id === productId) {
+            foundProduct = currentSupplierProduct;
+            foundType = 'supplier';
+          } else if (currentBuyerProduct?.id === productId) {
+            foundProduct = currentBuyerProduct;
+            foundType = 'farmer';
+          }
+        }
+
+        if (foundProduct) {
+          // ✅ Found in context - use immediately
+          setProductType(foundType as 'farmer' | 'supplier');
+          setLoading(false);
         } else {
-          setError(result.error || 'Product not found');
+          // ❌ Not in context - fetch from server
+          const { productService } = await import('@/services/products');
+          
+          try {
+            const response = await productService.getFarmerProduct(productId);
+            if (response.success && response.data) {
+              setCurrentFarmerProduct(response.data);
+              setProductType('farmer');
+              fetchFarmerProducts();
+            }
+          } catch (e) {
+            try {
+              const response = await productService.getSupplierProduct(productId);
+              if (response.success && response.data) {
+                setCurrentSupplierProduct(response.data);
+                setProductType('supplier');
+                fetchSupplierProducts();
+              }
+            } catch (e2) {
+              throw new Error('Product not found');
+            }
+          }
         }
       } catch (err) {
+        console.error('Failed to fetch product:', err);
         setError('Failed to load product');
+        showToast({
+          title: "Error",
+          description: "Failed to load product details",
+          variant: "default"
+        });
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProduct();
-  }, [params.id]);
+    if (productId) {
+      loadProduct();
+    }
+  }, [productId, farmerProducts, supplierProducts, buyerProducts, currentFarmerProduct, currentSupplierProduct, currentBuyerProduct, setCurrentFarmerProduct, setCurrentSupplierProduct, setCurrentBuyerProduct, fetchFarmerProducts, fetchSupplierProducts, fetchBuyerProducts, showToast]);
+
+  // Get current product based on type
+  const getCurrentProduct = () => {
+    switch (productType) {
+      case 'farmer':
+        return currentFarmerProduct || currentBuyerProduct;
+      case 'supplier':
+        return currentSupplierProduct;
+      default:
+        return null;
+    }
+  };
 
   useEffect(() => {
     // Load saved products
@@ -89,6 +192,8 @@ export default function BuyerProductDetailPage() {
     showOrderModal(product, productType);
   };
 
+  const currentProduct = getCurrentProduct();
+
   if (loading) {
     return (
       <div className="flex h-screen bg-background">
@@ -103,7 +208,7 @@ export default function BuyerProductDetailPage() {
     );
   }
 
-  if (error || !product) {
+  if (error || !currentProduct) {
     return (
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.BUYER} activeItem="Marketplace" />
@@ -129,12 +234,12 @@ export default function BuyerProductDetailPage() {
       
       <main className="flex-1 overflow-auto">
         <ProductDetail
-          product={product}
+          product={currentProduct}
           productType={productType}
           onSaveProduct={handleSaveProduct}
           onShareProduct={handleShareProduct}
           onPurchaseProduct={handlePurchaseProduct}
-          isSaved={savedProducts.has(product.id)}
+          isSaved={savedProducts.has(currentProduct.id)}
           showActions={true}
         />
       </main>

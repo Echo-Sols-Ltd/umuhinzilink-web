@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
@@ -35,29 +36,45 @@ const Logo = () => (
 function GlobalChatComponent() {
   const params = useParams();
   const { user } = useAuth();
+  const { users, currentUser, setCurrentUser } = useUser();
   const router = useRouter();
-  const { activeChatUser, setActiveChatUser,loadMessages } = useMessages();
+  const { activeChatUser, setActiveChatUser, loadMessages } = useMessages();
   const chatId = params.id as string;
-
 
   useEffect(() => {
     if (chatId && user) {
-      // Fetch user details by ID and set as active chat
-      const fetchUserAndSetChat = async () => {
-        try {
-          const response = await userService.getUserById(chatId);
-          if (response.success && response.data) {
-            setActiveChatUser(userToChatUser(response.data));
-           await loadMessages(chatId);
+      // Step 1: Check if user is already in context
+      let foundUser = users?.find(u => u.id === chatId);
+      
+      // Step 2: Check if it's the current context user
+      if (!foundUser && currentUser?.id === chatId) {
+        foundUser = currentUser;
+      }
+      
+      if (foundUser) {
+        // ✅ Found in context - use immediately
+        setActiveChatUser(userToChatUser(foundUser));
+        setCurrentUser(foundUser);
+        loadMessages(chatId);
+      } else {
+        // ❌ Not in context - fetch from server
+        const fetchUserAndSetChat = async () => {
+          try {
+            const response = await userService.getUserById(chatId);
+            if (response.success && response.data) {
+              setActiveChatUser(userToChatUser(response.data));
+              setCurrentUser(response.data);
+              await loadMessages(chatId);
+            }
+          } catch (error) {
+            console.error('Failed to fetch user:', error);
           }
-        } catch (error) {
-          console.error('Failed to fetch user:', error);
-        }
-      };
+        };
 
-      fetchUserAndSetChat();
+        fetchUserAndSetChat();
+      }
     }
-  }, [chatId, user, setActiveChatUser]);
+  }, [chatId, user, users, currentUser, setActiveChatUser, setCurrentUser, loadMessages]);
 
   if (!user) {
     return (

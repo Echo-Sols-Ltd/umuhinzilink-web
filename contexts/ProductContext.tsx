@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, useState, ReactNode, useCallback, useEffect } from 'react';
 import { productService } from '@/services/products';
 import {
   FarmerProductionStat,
@@ -9,6 +9,7 @@ import {
 } from '@/types';
 import type { FarmerProductRequest, SupplierProductRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
+import { useSocket } from './SocketContext';
 import { notify } from '@/lib/notify';
 import { useRouter } from 'next/navigation';
 
@@ -102,6 +103,7 @@ const ProductContext = createContext<ProductContextValue | undefined>(undefined)
 export function ProductProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
+  const socket = useSocket();
   const [loading, setLoading] = useState(false);
   const [mutationLoading, setMutationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -141,6 +143,98 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [orderModalProduct, setOrderModalProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
   const [orderModalProductType, setOrderModalProductType] = useState<'farmer' | 'supplier' | null>(null);
+
+  // Socket event handlers for real-time product updates
+  const handleProductUpdate = useCallback((productData: any) => {
+    if (!productData) return;
+    
+    const { productId, productType, ...updates } = productData;
+    
+    // Update product lists
+    if (productType === 'farmer') {
+      setFarmerProducts(prev => prev?.map(p => p.id === productId ? { ...p, ...updates } : p));
+      setBuyerProducts(prev => prev?.map(p => p.id === productId ? { ...p, ...updates } : p));
+      
+      // Update current products if they match
+      setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
+      setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
+      setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
+      setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
+    } else if (productType === 'supplier') {
+      setSupplierProducts(prev => prev?.map(p => p.id === productId ? { ...p, ...updates } : p));
+      setFarmerBuyerProducts(prev => prev?.map(p => p.id === productId ? { ...p, ...updates } : p));
+      
+      // Update current products if they match
+      setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
+      setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
+      setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
+      setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
+    }
+  }, []);
+
+  const handleProductStatusChange = useCallback((productData: any) => {
+    if (!productData) return;
+    
+    const { productId, productType, status } = productData;
+    
+    // Update product status in lists
+    if (productType === 'farmer') {
+      setFarmerProducts(prev => prev?.map(p => p.id === productId ? { ...p, productStatus: status } : p));
+      setBuyerProducts(prev => prev?.map(p => p.id === productId ? { ...p, productStatus: status } : p));
+      
+      // Update current products if they match
+      setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, productStatus: status } : prev);
+      setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, productStatus: status } : prev);
+    } else if (productType === 'supplier') {
+      setSupplierProducts(prev => prev?.map(p => p.id === productId ? { ...p, productStatus: status } : p));
+      setFarmerBuyerProducts(prev => prev?.map(p => p.id === productId ? { ...p, productStatus: status } : p));
+      
+      // Update current products if they match
+      setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, productStatus: status } : prev);
+      setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, productStatus: status } : prev);
+    }
+  }, []);
+
+  const handleProductDeletion = useCallback((productData: any) => {
+    if (!productData) return;
+    
+    const { productId, productType } = productData;
+    
+    // Remove from lists
+    if (productType === 'farmer') {
+      setFarmerProducts(prev => prev?.filter(p => p.id !== productId));
+      setBuyerProducts(prev => prev?.filter(p => p.id !== productId));
+      
+      // Clear current products if they match
+      if (currentFarmerProduct?.id === productId) setCurrentFarmerProduct(null);
+      if (currentBuyerProduct?.id === productId) setCurrentBuyerProduct(null);
+    } else if (productType === 'supplier') {
+      setSupplierProducts(prev => prev?.filter(p => p.id !== productId));
+      setFarmerBuyerProducts(prev => prev?.filter(p => p.id !== productId));
+      
+      // Clear current products if they match
+      if (currentSupplierProduct?.id === productId) setCurrentSupplierProduct(null);
+      if (currentFarmerBuyerProduct?.id === productId) setCurrentFarmerBuyerProduct(null);
+    }
+  }, [currentFarmerProduct, currentBuyerProduct, currentSupplierProduct, currentFarmerBuyerProduct]);
+
+  // Setup socket listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    // Note: These would need to be implemented in the backend socket service
+    // For now, we'll add the structure for future implementation
+    // socket.onProductUpdate?.(handleProductUpdate);
+    // socket.onProductStatusChange?.(handleProductStatusChange);
+    // socket.onProductDeletion?.(handleProductDeletion);
+
+    return () => {
+      // Cleanup listeners
+      // socket.removeProductUpdateListener?.(handleProductUpdate);
+      // socket.removeProductStatusChangeListener?.(handleProductStatusChange);
+      // socket.removeProductDeletionListener?.(handleProductDeletion);
+    };
+  }, [socket, handleProductUpdate, handleProductStatusChange, handleProductDeletion]);
 
   // // 🔹 Load cached data
   // useEffect(() => {
