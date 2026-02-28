@@ -28,7 +28,7 @@ const userToChatUser = (user: any): ChatUser => ({
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
-    <span className="text-black">Link</span>
+    <span className="text-foreground">Link</span>
   </span>
 );
 
@@ -64,14 +64,14 @@ function GlobalChatComponent() {
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <h1 className="text-2xl font-semibold mb-4">Authentication Required</h1>
-          <p className="text-gray-600">Please log in to access chat.</p>
+          <p className="text-muted-foreground">Please log in to access chat.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <div className={cn("hidden md:block shrink-0")}>
           <Sidebar

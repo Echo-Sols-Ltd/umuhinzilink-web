@@ -77,7 +77,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       
       // Redirect to login page
-      router.push('/auth/login');
+      router.push('/auth/signin');
     };
 
     // Register the logout callback with apiClient
