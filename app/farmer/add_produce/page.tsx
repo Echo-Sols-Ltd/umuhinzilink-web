@@ -148,11 +148,11 @@ function AddProduce() {
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <form
               onSubmit={handleSubmit}
-              className="xl:col-span-2 bg-white rounded-lg shadow-sm border p-6 space-y-4"
+              className="xl:col-span-2 bg-card rounded-lg shadow-sm border border-border p-6 space-y-4"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Product Name</label>
                   <input
                     name="name"
                     value={formData.name}
@@ -163,7 +163,7 @@ function AddProduce() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Category</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Category</label>
                   <Select value={formData.category} onValueChange={(value) => handleSelectChange('category', value)}>
                     <SelectTrigger className="mt-1 w-full">
                       <SelectValue placeholder="Select a category" />
@@ -178,7 +178,7 @@ function AddProduce() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Quantity</label>
                   <input
                     type="number"
                     min="0"
@@ -191,7 +191,7 @@ function AddProduce() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Measurement Unit</label>
+                  <label className="block text-sm font-medium text-muted-foreground">Measurement Unit</label>
                   <Select value={formData.measurementUnit} onValueChange={(value) => handleSelectChange('measurementUnit', value)}>
                     <SelectTrigger className="mt-1 w-full">
                       <SelectValue placeholder="Select a unit" />

@@ -126,7 +126,7 @@ export default function FarmerProductDetailPage() {
   }
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar userType={UserType.FARMER} activeItem="My Products" />
       
       <main className="flex-1 overflow-auto">

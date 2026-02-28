@@ -373,7 +373,7 @@ function FarmerSupplierOrders() {
               </TableBody>
             </Table>
             {totalPages > 1 && (
-              <div className="p-4 border-t border-gray-100">
+              <div className="p-4 border-t border-border">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}

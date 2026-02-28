@@ -280,7 +280,7 @@ function FarmerOrders() {
 
                     return (
                       <TableRow key={order.id}>
-                        <TableCell className="font-semibold text-gray-900">
+                        <TableCell className="font-semibold text-foreground">
                           <span className="text-muted-foreground font-normal mr-0.5">#</span>
                           {order.id.slice(0, 4).toUpperCase()}
                         </TableCell>
@@ -352,7 +352,7 @@ function FarmerOrders() {
               </TableBody>
             </Table>
             {totalPages > 1 && (
-              <div className="p-4 border-t border-gray-100">
+              <div className="p-4 border-t border-border">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}

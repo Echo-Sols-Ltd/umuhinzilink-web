@@ -20,7 +20,7 @@ import { imageUrl } from '@/lib/utils';
 import { userService } from '@/services/users';
 
 const inputClass =
-  'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition';
+  'w-full px-3 py-2 border border-border bg-card rounded-md focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition';
 
 type FarmerProfile = {
   id: string;

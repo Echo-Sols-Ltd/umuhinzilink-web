@@ -130,7 +130,7 @@ function EditProduct() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         <Sidebar userType={UserType.FARMER} activeItem='Products' />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin" />
@@ -141,15 +141,15 @@ function EditProduct() {
 
   if (!product) {
     return (
-      <div className="flex h-screen bg-white overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         <Sidebar userType={UserType.FARMER} activeItem='Products' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Product Not Found</h2>
-            <p className="text-gray-600 mb-4">The product you're looking for doesn't exist.</p>
+            <h2 className="text-2xl font-semibold text-foreground mb-2">Product Not Found</h2>
+            <p className="text-muted-foreground mb-4">The product you're looking for doesn't exist.</p>
             <Link
               href="/farmer/products"
-              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+              className="bg-success text-primary-foreground px-4 py-2 rounded-lg hover:bg-success/90"
             >
               Back to Products
             </Link>
@@ -164,26 +164,26 @@ function EditProduct() {
       <Sidebar userType={UserType.FARMER} activeItem='My Products' />
 
       <main className="flex-1 overflow-y-auto">
-        <div className="bg-white border-b h-16 flex items-center px-6">
+        <div className="bg-card border-b h-16 flex items-center px-6">
           <Link
             href="/farmer/products"
-            className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
+            className="flex items-center text-muted-foreground hover:text-foreground mr-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Products
           </Link>
-          <h1 className="text-xl font-semibold text-gray-900">Edit Product</h1>
+          <h1 className="text-xl font-semibold text-foreground">Edit Product</h1>
         </div>
 
         <div className="p-6">
           <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
             {/* Product Image */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Product Image
               </label>
               <div className="flex items-center space-x-4">
-                <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
+                <div className="w-32 h-32 border-2 border-dashed border-border rounded-lg overflow-hidden">
                   {previewUrl ? (
                     <img
                       src={previewUrl}
@@ -191,7 +191,7 @@ function EditProduct() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                       <img
                         src={imageUrl(product.image)}
                         alt="Product image"
@@ -205,9 +205,9 @@ function EditProduct() {
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                    className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-success/10 file:text-success hover:file:bg-success/20"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Upload a new image (optional)
                   </p>
                 </div>
@@ -216,7 +216,7 @@ function EditProduct() {
 
             {/* Product Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Product Name
               </label>
               <input
@@ -224,14 +224,14 @@ function EditProduct() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success"
                 required
               />
             </div>
 
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Category
               </label>
               <Select
@@ -253,7 +253,7 @@ function EditProduct() {
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Description
               </label>
               <textarea
@@ -261,7 +261,7 @@ function EditProduct() {
                 value={formData.description}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success"
                 placeholder="Describe your product..."
               />
             </div>
@@ -269,7 +269,7 @@ function EditProduct() {
             {/* Quantity and Price */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Quantity
                 </label>
                 <input
@@ -278,12 +278,12 @@ function EditProduct() {
                   value={formData.quantity}
                   onChange={handleChange}
                   min="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success"
                   placeholder="0"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Unit Price (RWF)
                 </label>
                 <input
@@ -292,7 +292,7 @@ function EditProduct() {
                   value={formData.unitPrice}
                   onChange={handleChange}
                   min="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success"
                   placeholder="0"
                 />
               </div>
@@ -300,7 +300,7 @@ function EditProduct() {
 
             {/* Measurement Unit */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Measurement Unit
               </label>
               <Select
@@ -322,7 +322,7 @@ function EditProduct() {
 
             {/* Location */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Location
               </label>
               <input
@@ -330,14 +330,14 @@ function EditProduct() {
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success"
                 placeholder="e.g., Kigali, Northern Province"
               />
             </div>
 
             {/* Harvest Date */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Harvest Date
               </label>
               <input
@@ -345,13 +345,13 @@ function EditProduct() {
                 name="harvestDate"
                 value={new Date(formData.harvestDate).toLocaleDateString()}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success"
               />
             </div>
 
             {/* Certification */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Certification
               </label>
               <Select
@@ -378,9 +378,9 @@ function EditProduct() {
                 id="isNegotiable"
                 checked={formData.isNegotiable}
                 onChange={(e) => handleSelectChange('isNegotiable', e.target.checked)}
-                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                className="h-4 w-4 text-success focus:ring-success border-border rounded"
               />
-              <label htmlFor="isNegotiable" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="isNegotiable" className="ml-2 block text-sm text-foreground">
                 Price is negotiable
               </label>
             </div>
@@ -389,14 +389,14 @@ function EditProduct() {
             <div className="flex justify-end space-x-4">
               <Link
                 href="/farmer/products"
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-white"
+                className="px-4 py-2 border border-border bg-card rounded-lg text-foreground hover:bg-muted"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                className="px-4 py-2 bg-success text-primary-foreground rounded-lg hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               >
                 {submitting ? (
                   <>
