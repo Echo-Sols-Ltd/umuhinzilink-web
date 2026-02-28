@@ -76,7 +76,7 @@ const products = [
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
-    <span className="text-black">Link</span>
+    <span className="text-foreground">Link</span>
   </span>
 );
 
@@ -100,7 +100,7 @@ function SavedItemsComponent() {
 
 
   return (
-    <div className="flex  h-screen overflow bg-white">
+    <div className="flex  h-screen overflow bg-background">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.BUYER}
@@ -110,10 +110,10 @@ function SavedItemsComponent() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full overflow-auto">
         {/* Sort Bar */}
-        <div className="bg-white border-b px-6 py-4 flex justify-end items-center">
-          <label className="text-sm text-gray-500 mr-2">Sort by:</label>
+        <div className="bg-card border-b px-6 py-4 flex justify-end items-center">
+          <label className="text-sm text-muted-foreground mr-2">Sort by:</label>
           <select
-            className="border border-gray-300 rounded-lg py-2 px-3 text-sm"
+            className="border border-border rounded-lg py-2 px-3 text-sm"
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
           >
@@ -127,20 +127,20 @@ function SavedItemsComponent() {
         <main className="flex-1 overflow-auto p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map(p => (
-              <div key={p.name} className="bg-white rounded-lg shadow-sm border overflow-hidden">
+              <div key={p.name} className="bg-card rounded-lg shadow-sm border overflow-hidden">
                 <div className="relative">
                   <img src={p.image} alt={p.name} className="h-48 w-full object-cover" />
-                  <button className="absolute top-3 right-3 bg-white p-1 rounded-full shadow">
-                    <Heart className="w-5 h-5 text-red-500" />
+                  <button className="absolute top-3 right-3 bg-card p-1 rounded-full shadow">
+                    <Heart className="w-5 h-5 text-destructive" />
                   </button>
                 </div>
                 <div className="p-4">
                   <div className="flex justify-between items-center">
-                    <h3 className="font-semibold text-lg text-gray-900">{p.name}</h3>
-                    <p className="text-green-600 font-semibold text-sm">{p.price}</p>
+                    <h3 className="font-semibold text-lg text-foreground">{p.name}</h3>
+                    <p className="text-success font-semibold text-sm">{p.price}</p>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">Available: {p.available}</p>
-                  <div className="flex items-center text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">Available: {p.available}</p>
+                  <div className="flex items-center text-sm text-muted-foreground mt-1">
                     <UserIcon className="w-4 h-4 mr-1" /> {p.farmer}
                     <span className="mx-1">•</span>
                     {p.location}
@@ -148,14 +148,14 @@ function SavedItemsComponent() {
 
                   {/* Action Buttons */}
                   <div className="mt-3 flex items-center gap-2">
-                    <button className="bg-green-600 text-white px-4 py-2 rounded text-sm flex-1">
+                    <button className="bg-success text-primary-foreground px-4 py-2 rounded text-sm flex-1">
                       Buy Now
                     </button>
-                    <button className="border border-gray-300 p-2 rounded">
-                      <MessageSquare className="w-4 h-4 text-black" />
+                    <button className="border border-border p-2 rounded">
+                      <MessageSquare className="w-4 h-4 text-foreground" />
                     </button>
-                    <button className="border border-red-300 p-2 rounded">
-                      <Trash2 className="w-4 h-4 text-red-500" />
+                    <button className="border border-destructive p-2 rounded">
+                      <Trash2 className="w-4 h-4 text-destructive" />
                     </button>
                   </div>
                 </div>
