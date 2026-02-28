@@ -126,27 +126,27 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'text-green-600 bg-green-100';
+        return 'text-success bg-success/10';
       case 'active':
-        return 'text-blue-600 bg-blue-100';
+        return 'text-info bg-info/10';
       case 'error':
-        return 'text-red-600 bg-red-100';
+        return 'text-destructive bg-destructive/10';
       default:
-        return 'text-gray-400 bg-gray-100';
+        return 'text-muted-foreground bg-muted';
     }
   };
 
   const getConnectorColor = (currentStatus: string, nextStatus?: string) => {
     if (currentStatus === 'completed') {
-      return nextStatus === 'completed' || nextStatus === 'active' ? 'bg-green-300' : 'bg-gray-200';
+      return nextStatus === 'completed' || nextStatus === 'active' ? 'bg-success/30' : 'bg-border';
     }
     if (currentStatus === 'active') {
-      return 'bg-blue-300';
+      return 'bg-info/30';
     }
     if (currentStatus === 'error') {
-      return 'bg-red-300';
+      return 'bg-destructive/30';
     }
-    return 'bg-gray-200';
+    return 'bg-border';
   };
 
   const formatTimestamp = (timestamp?: string) => {
@@ -191,16 +191,16 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
                     <div>
                       <p className={cn(
                         'text-sm font-medium',
-                        step.status === 'completed' ? 'text-gray-900' :
-                          step.status === 'active' ? 'text-blue-900' :
-                            step.status === 'error' ? 'text-red-900' : 'text-gray-500'
+                        step.status === 'completed' ? 'text-foreground' :
+                          step.status === 'active' ? 'text-info' :
+                            step.status === 'error' ? 'text-destructive' : 'text-muted-foreground'
                       )}>
                         {step.label}
                       </p>
-                      <p className="text-sm text-gray-500">{step.description}</p>
+                      <p className="text-sm text-muted-foreground">{step.description}</p>
                     </div>
                     {step.timestamp && (
-                      <div className="whitespace-nowrap text-right text-sm text-gray-500">
+                      <div className="whitespace-nowrap text-right text-sm text-muted-foreground">
                         <time dateTime={step.timestamp}>
                           {formatTimestamp(step.timestamp)}
                         </time>
@@ -215,22 +215,22 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       </div>
 
       {/* Overall Status Badge */}
-      <div className="mt-6 flex items-center justify-between p-4 bg-white rounded-lg">
+      <div className="mt-6 flex items-center justify-between p-4 bg-card rounded-lg">
         <div className="flex items-center space-x-2">
           <div className={cn(
             'w-3 h-3 rounded-full',
-            orderStatus === OrderStatus.COMPLETED ? 'bg-green-500' :
-              orderStatus === OrderStatus.ACTIVE ? 'bg-blue-500' :
-                orderStatus === OrderStatus.CANCELLED ? 'bg-red-500' : 'bg-yellow-500'
+            orderStatus === OrderStatus.COMPLETED ? 'bg-success' :
+              orderStatus === OrderStatus.ACTIVE ? 'bg-info' :
+                orderStatus === OrderStatus.CANCELLED ? 'bg-destructive' : 'bg-warning'
           )} />
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm font-medium text-foreground">
             Current Status: {orderStatus.replace('_', ' ')}
           </span>
         </div>
         {deliveryStatus && (
           <div className="flex items-center space-x-2">
-            <Truck className="w-4 h-4 text-gray-500" />
-            <span className="text-sm text-gray-600">
+            <Truck className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
               {deliveryStatus.replace('_', ' ')}
             </span>
           </div>
@@ -239,10 +239,10 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
 
       {/* Estimated Delivery */}
       {deliveryDate && deliveryStatus !== DeliveryStatus.DELIVERED && (
-        <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+        <div className="mt-3 p-3 bg-info/10 rounded-lg">
           <div className="flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-medium text-blue-900">
+            <AlertCircle className="w-4 h-4 text-info" />
+            <span className="text-sm font-medium text-foreground">
               Estimated Delivery: {formatTimestamp(deliveryDate)}
             </span>
           </div>

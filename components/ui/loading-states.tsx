@@ -31,10 +31,10 @@ export function LoadingOverlay({ isLoading, message = 'Loading...', children }: 
     <div className="relative">
       {children}
       {isLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-background bg-opacity-75 flex items-center justify-center z-10">
           <div className="flex flex-col items-center space-y-2">
-            <LoadingSpinner size="lg" className="text-green-600" />
-            <p className="text-sm text-gray-600">{message}</p>
+            <LoadingSpinner size="lg" className="text-primary" />
+            <p className="text-sm text-muted-foreground">{message}</p>
           </div>
         </div>
       )}
@@ -53,7 +53,7 @@ export function Skeleton({ className = '', lines = 1 }: SkeletonProps) {
       {Array.from({ length: lines }).map((_, index) => (
         <div
           key={index}
-          className={`bg-gray-200 rounded ${className} ${
+          className={`bg-muted rounded ${className} ${
             index > 0 ? 'mt-2' : ''
           }`}
           style={{ height: '1rem' }}
@@ -70,16 +70,16 @@ interface CardSkeletonProps {
 
 export function CardSkeleton({ showImage = true, lines = 3 }: CardSkeletonProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-4 animate-pulse">
+    <div className="bg-card rounded-lg shadow-sm border p-4 animate-pulse">
       {showImage && (
-        <div className="w-full h-48 bg-gray-200 rounded-lg mb-4" />
+        <div className="w-full h-48 bg-muted rounded-lg mb-4" />
       )}
       <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-3/4" />
+        <div className="h-4 bg-muted rounded w-3/4" />
         {Array.from({ length: lines - 1 }).map((_, index) => (
-          <div key={index} className="h-3 bg-gray-200 rounded w-full" />
+          <div key={index} className="h-3 bg-muted rounded w-full" />
         ))}
-        <div className="h-3 bg-gray-200 rounded w-1/2" />
+        <div className="h-3 bg-muted rounded w-1/2" />
       </div>
     </div>
   );
@@ -97,14 +97,14 @@ export function ProgressBar({ progress, className = '', showPercentage = true }:
   return (
     <div className={`w-full ${className}`}>
       <div className="flex justify-between items-center mb-1">
-        <span className="text-sm text-gray-600">Progress</span>
+        <span className="text-sm text-muted-foreground">Progress</span>
         {showPercentage && (
-          <span className="text-sm text-gray-600">{Math.round(clampedProgress)}%</span>
+          <span className="text-sm text-muted-foreground">{Math.round(clampedProgress)}%</span>
         )}
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2">
+      <div className="w-full bg-muted rounded-full h-2">
         <div
-          className="bg-green-600 h-2 rounded-full transition-all duration-300 ease-out"
+          className="bg-primary h-2 rounded-full transition-all duration-300 ease-out"
           style={{ width: `${clampedProgress}%` }}
         />
       </div>
@@ -130,8 +130,8 @@ export function NetworkStatusIndicator({
   return (
     <div className={`flex items-center space-x-2 p-2 rounded-lg ${
       !isOnline 
-        ? 'bg-red-100 text-red-800' 
-        : 'bg-yellow-100 text-yellow-800'
+        ? 'bg-destructive/10 text-destructive border-destructive/20' 
+        : 'bg-warning/10 text-warning border-warning/20'
     } ${className}`}>
       {!isOnline ? (
         <>
@@ -156,10 +156,10 @@ interface StatusMessageProps {
 
 export function StatusMessage({ type, message, className = '' }: StatusMessageProps) {
   const styles = {
-    success: 'bg-green-100 text-green-800 border-green-200',
-    error: 'bg-red-100 text-red-800 border-red-200',
-    warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    info: 'bg-blue-100 text-blue-800 border-blue-200',
+    success: 'bg-success/10 text-success border-success/20',
+    error: 'bg-destructive/10 text-destructive border-destructive/20',
+    warning: 'bg-warning/10 text-warning border-warning/20',
+    info: 'bg-info/10 text-info border-info/20',
   };
 
   const icons = {
@@ -200,18 +200,18 @@ export function EmptyState({
   return (
     <div className={`text-center py-12 ${className}`}>
       {icon && (
-        <div className="w-16 h-16 text-gray-300 mx-auto mb-4">
+        <div className="w-16 h-16 text-muted-foreground mx-auto mb-4">
           {icon}
         </div>
       )}
-      <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
+      <h3 className="text-lg font-medium text-foreground mb-2">{title}</h3>
       {description && (
-        <p className="text-gray-500 mb-6 max-w-sm mx-auto">{description}</p>
+        <p className="text-muted-foreground mb-6 max-w-sm mx-auto">{description}</p>
       )}
       {action && (
         <button
           onClick={action.onClick}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
         >
           {action.label}
         </button>

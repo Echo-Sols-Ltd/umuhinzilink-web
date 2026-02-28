@@ -74,36 +74,36 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
+            <div className="bg-card rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
                 {/* Header */}
-                <div className="p-6 border-b flex items-center justify-between bg-white/50">
+                <div className="p-6 border-b flex items-center justify-between bg-card/50">
                     <div>
                         <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-xl font-semibold text-gray-900">Order Details</h2>
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold uppercase  ${status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-                                status === 'ACTIVE' || status === 'PENDING_PAYMENT' ? 'bg-blue-100 text-blue-700' :
-                                    status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
-                                        'bg-gray-100 text-gray-700'
+                            <h2 className="text-xl font-semibold text-foreground">Order Details</h2>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold uppercase  ${status === 'PENDING' ? 'bg-warning/10 text-warning' :
+                                status === 'ACTIVE' || status === 'PENDING_PAYMENT' ? 'bg-info/10 text-info' :
+                                    status === 'COMPLETED' ? 'bg-success/10 text-success' :
+                                        'bg-muted text-muted-foreground'
                                 }`}>
                                 {order.status}
                             </span>
                         </div>
-                        <p className="text-sm text-gray-500">#{order.id}</p>
+                        <p className="text-sm text-muted-foreground">#{order.id}</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                        className="p-2 hover:bg-accent rounded-full transition-colors"
                     >
-                        <X className="w-5 h-5 text-gray-500" />
+                        <X className="w-5 h-5 text-muted-foreground" />
                     </button>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-8">
                     {/* Order Status Tracker */}
-                    <div className="bg-white rounded-lg border p-6 shadow-sm">
-                        <h3 className="text-sm font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-green-600" />
+                    <div className="bg-card rounded-lg border p-6 shadow-sm">
+                        <h3 className="text-sm font-semibold text-foreground mb-6 flex items-center gap-2">
+                            <Truck className="w-4 h-4 text-primary" />
                             Order Status
                         </h3>
                         <OrderStatusTracker
@@ -125,18 +125,18 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Buyer Info */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                <User className="w-4 h-4 text-green-600" />
+                            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                                <User className="w-4 h-4 text-primary" />
                                 Customer Information
                             </h3>
-                            <div className="bg-white rounded-lg p-4 space-y-3">
-                                <p className="text-sm font-medium text-gray-900">{buyer.names || 'N/A'}</p>
-                                <div className="flex items-center gap-2 text-xs text-gray-600">
+                            <div className="bg-card rounded-lg p-4 space-y-3">
+                                <p className="text-sm font-medium text-foreground">{buyer.names || 'N/A'}</p>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <Mail className="w-3.5 h-3.5" />
                                     {buyer.email}
                                 </div>
                                 {buyer.phoneNumber && (
-                                    <div className="flex items-center gap-2 text-xs text-gray-600">
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                         <Phone className="w-3.5 h-3.5" />
                                         {buyer.phoneNumber}
                                     </div>
@@ -153,23 +153,23 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
                         {/* Product Info */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                <Package className="w-4 h-4 text-green-600" />
+                            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                                <Package className="w-4 h-4 text-primary" />
                                 Product Details
                             </h3>
-                            <div className="bg-white rounded-lg p-4 space-y-3">
-                                <p className="text-sm font-medium text-gray-900">{product.name}</p>
-                                <div className="flex justify-between text-xs text-gray-600">
+                            <div className="bg-card rounded-lg p-4 space-y-3">
+                                <p className="text-sm font-medium text-foreground">{product.name}</p>
+                                <div className="flex justify-between text-xs text-muted-foreground">
                                     <span>Quantity:</span>
                                     <span className="font-semibold">{order.quantity} {product.measurementUnit}</span>
                                 </div>
-                                <div className="flex justify-between text-xs text-gray-600">
+                                <div className="flex justify-between text-xs text-muted-foreground">
                                     <span>Unit Price:</span>
                                     <span>RWF {product.unitPrice?.toLocaleString()}</span>
                                 </div>
-                                <div className="flex justify-between text-sm font-semibold text-gray-900 pt-2 border-t border-gray-200">
+                                <div className="flex justify-between text-sm font-semibold text-foreground pt-2 border-t border-border">
                                     <span>Total Price:</span>
-                                    <span className="text-green-600">RWF {order.totalPrice.toLocaleString()}</span>
+                                    <span className="text-success">RWF {order.totalPrice.toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -178,7 +178,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     {/* Payment & Date */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                                 <CreditCard className="w-4 h-4 text-green-600" />
                                 Payment Method
                             </h3>
@@ -190,7 +190,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                                 <Calendar className="w-4 h-4 text-green-600" />
                                 Order Date
                             </h3>
@@ -203,8 +203,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     {/* Delivery Tracking Section */}
                     {status !== 'PENDING' && status !== 'CANCELLED' && (
                         <div className="space-y-4">
-                            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                <Truck className="w-4 h-4 text-green-600" />
+                            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                                <Truck className="w-4 h-4 text-primary" />
                                 Delivery Tracking
                             </h3>
                             <DeliveryTracker

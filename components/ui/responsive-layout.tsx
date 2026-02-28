@@ -40,10 +40,10 @@ export function ResponsiveLayout({
   };
 
   return (
-    <div className={`flex flex-col h-screen bg-white ${className}`}>
+    <div className={`flex flex-col h-screen bg-background ${className}`}>
       {/* Mobile Header */}
       {isMobile && (
-        <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div className="lg:hidden bg-background border-b border-border px-4 py-3 flex items-center justify-between">
           <Button
             variant="ghost"
             size="sm"
@@ -58,7 +58,7 @@ export function ResponsiveLayout({
 
       <div className="flex flex-1 min-h-0">
         {/* Desktop Sidebar */}
-        <aside className={`hidden lg:flex lg:flex-col ${sidebarWidth} bg-white border-r border-gray-200`}>
+        <aside className={`hidden lg:flex lg:flex-col ${sidebarWidth} bg-background border-r border-border`}>
           {sidebar}
         </aside>
 
@@ -69,9 +69,9 @@ export function ResponsiveLayout({
               className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
-            <aside className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-50 lg:hidden">
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+            <aside className="fixed inset-y-0 left-0 w-64 bg-background border-r border-border z-50 lg:hidden">
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <h2 className="text-lg font-semibold text-foreground">Menu</h2>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -92,7 +92,7 @@ export function ResponsiveLayout({
         <main className="flex-1 overflow-auto">
           {/* Desktop Header */}
           {!isMobile && header && (
-            <div className="bg-white border-b border-gray-200">
+            <div className="bg-background border-b border-border">
               {header}
             </div>
           )}
@@ -120,10 +120,10 @@ export function MobileOptimizedCard({
   actions,
 }: MobileOptimizedCardProps) {
   return (
-    <div className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}>
-      <div className="p-4 border-b border-gray-200">
+    <div className={`bg-card rounded-lg shadow-sm border border-border ${className}`}>
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900 truncate">{title}</h3>
+          <h3 className="text-lg font-semibold text-foreground truncate">{title}</h3>
           {actions && (
             <div className="flex items-center space-x-2 ml-4">
               {actions}
@@ -192,8 +192,8 @@ export function MobileTable({
     <>
       {/* Desktop Table */}
       <div className={`hidden md:block overflow-x-auto ${className}`}>
-        <table className="w-full text-sm text-left text-gray-500">
-          <thead className="text-xs text-gray-700 uppercase bg-white">
+        <table className="w-full text-sm text-left text-muted-foreground">
+          <thead className="text-xs text-muted-foreground uppercase bg-background">
             <tr>
               {headers.map((header, index) => (
                 <th key={index} scope="col" className="px-4 py-3">
@@ -236,10 +236,10 @@ export function TouchOptimizedButton({
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantClasses = {
-    primary: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500',
-    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-    outline: 'border border-gray-300 text-gray-700 hover:bg-white focus:ring-gray-500',
-    ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary',
+    outline: 'border border-border text-foreground hover:bg-background focus:ring-border',
+    ghost: 'text-foreground hover:bg-accent focus:ring-border',
   };
 
   const sizeClasses = {

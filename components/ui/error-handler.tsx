@@ -102,18 +102,18 @@ export function ErrorDisplay({
 
   const colorClasses = {
     red: {
-      bg: 'bg-red-50',
-      border: 'border-red-200',
-      text: 'text-red-800',
-      icon: 'text-red-600',
-      button: 'bg-red-600 hover:bg-red-700',
+      bg: 'bg-destructive/10',
+      border: 'border-destructive/20',
+      text: 'text-destructive',
+      icon: 'text-destructive',
+      button: 'bg-destructive hover:bg-destructive/90',
     },
     yellow: {
-      bg: 'bg-yellow-50',
-      border: 'border-yellow-200',
-      text: 'text-yellow-800',
-      icon: 'text-yellow-600',
-      button: 'bg-yellow-600 hover:bg-yellow-700',
+      bg: 'bg-warning/10',
+      border: 'border-warning/20',
+      text: 'text-warning',
+      icon: 'text-warning',
+      button: 'bg-warning hover:bg-warning/90',
     },
   };
 
@@ -152,14 +152,14 @@ export function ErrorDisplay({
   if (variant === 'modal') {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div className="bg-card rounded-lg shadow-xl max-w-md w-full p-6">
           <div className="flex items-center space-x-3 mb-4">
             <div className={`w-10 h-10 ${colors.bg} rounded-full flex items-center justify-center`}>
               <Icon className={`w-5 h-5 ${colors.icon}`} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">{config.title}</h3>
+            <h3 className="text-lg font-semibold text-foreground">{config.title}</h3>
           </div>
-          <p className="text-gray-600 mb-6">{config.message}</p>
+          <p className="text-muted-foreground mb-6">{config.message}</p>
           <div className="flex space-x-3">
             {config.showRetry && onRetry && (
               <button
@@ -173,7 +173,7 @@ export function ErrorDisplay({
             {onDismiss && (
               <button
                 onClick={onDismiss}
-                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                className="flex-1 bg-secondary text-secondary-foreground px-4 py-2 rounded-lg hover:bg-secondary/90 transition-colors"
               >
                 Close
               </button>
