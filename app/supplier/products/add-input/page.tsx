@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft, Package, DollarSign, MapPin, ImageIcon, Eye, Info, Upload, Check, Truck } from 'lucide-react';
 import { CertificationType, MeasurementUnit, ProductCategory, UserType } from '@/types';
 import { useSupplierAction } from '@/hooks/useSupplierAction';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
@@ -129,225 +129,429 @@ function AddInput() {
         userType={UserType.SUPPLIER}
         activeItem='My Inputs'
       />
-      <div className="h-screen bg-background">
-
-        <div className="mx-auto max-w-5xl py-10 px-4 h-full overflow-auto">
-          <div className="mb-6 flex items-center justify-between ">
-            <div>
-              <h1 className="text-3xl font-semibold text-foreground">Add New Input</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                List agricultural inputs to make them available for farmers.
-              </p>
+      
+      <main className="flex-1 overflow-hidden">
+        {/* Header */}
+        <div className="bg-card border-b border-border px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="h-6 w-px bg-border"></div>
+              <div>
+                <h1 className="text-2xl font-semibold text-foreground">Add New Input</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  List agricultural inputs to make them available for farmers
+                </p>
+              </div>
             </div>
-            <Link
-              href="/supplier/products"
-              className="text-sm text-success hover:text-success/80"
-            >
-              Back to Inputs
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <form
-              onSubmit={handleSubmit}
-              className="xl:col-span-2 bg-card rounded-lg shadow-sm border p-6 space-y-4"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground">Input Name</label>
-                  <input
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="e.g. Organic Fertilizer"
-                    required
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground">Category</label>
-                  <Select value={formData.category} onValueChange={(value) => handleSelectChange('category', value)}>
-                    <SelectTrigger className="mt-1 w-full">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(ProductCategory).map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category.replace(/_/g, ' ')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground">Quantity</label>
-                  <input
-                    type="number"
-                    min="0"
-                    name="quantity"
-                    value={formData.quantity}
-                    onChange={handleChange}
-                    placeholder="e.g. 500"
-                    required
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground">Measurement Unit</label>
-                  <Select value={formData.measurementUnit} onValueChange={(value) => handleSelectChange('measurementUnit', value)}>
-                    <SelectTrigger className="mt-1 w-full">
-                      <SelectValue placeholder="Select a unit" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(MeasurementUnit).map((unit) => (
-                        <SelectItem key={unit} value={unit}>
-                          {unit}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground">Unit Price (RWF)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    name="unitPrice"
-                    value={formData.unitPrice}
-                    onChange={handleChange}
-                    placeholder="e.g. 1200"
-                    required
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground">Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    placeholder="e.g. Kigali, Gasabo"
-                    required
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground">Certification</label>
-                  <Select value={formData.certification} onValueChange={(value) => handleSelectChange('certification', value)}>
-                    <SelectTrigger className="mt-1 w-full">
-                      <SelectValue placeholder="Select certification" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(CertificationType).map((cert) => (
-                        <SelectItem key={cert} value={cert}>
-                          {cert.replace(/_/g, ' ')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <input
-                    type="checkbox"
-                    checked={formData.isNegotiable}
-                    onChange={handleToggle}
-                    className="rounded border-border text-success focus:ring-success"
-                  />
-                  Negotiable price
-                </label>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground">Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  rows={4}
-                  placeholder="Add details farmers should know about this input."
-                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:ring-success focus:border-success"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground">Upload Image</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="mt-1 w-full text-sm text-muted-foreground"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-                <Link
-                  href="/supplier/products"
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  Cancel
-                </Link>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="inline-flex items-center gap-2 bg-success hover:bg-success/90 text-white font-semibold py-2 px-4 rounded-md disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Save Input
-                </button>
-              </div>
-            </form>
-
-            <aside className="bg-card rounded-lg shadow-sm border p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-foreground">Preview</h2>
-              <p className="text-sm text-muted-foreground">
-                This is how your input will appear to farmers once published.
-              </p>
-              <div className="border border-dashed border-border rounded-lg p-4 text-center">
-                {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="w-full h-48 object-cover rounded-md"
-                  />
-                ) : (
-                  <div className="text-sm text-muted-foreground">Upload an image to preview it here.</div>
-                )}
-              </div>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex justify-between">
-                  <span>Input</span>
-                  <span className="font-medium text-foreground">{formData.name || '—'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Unit price</span>
-                  <span className="font-medium text-foreground">
-                    {formData.unitPrice ? `RWF ${formData.unitPrice}` : '—'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Quantity</span>
-                  <span className="font-medium text-foreground">
-                    {formData.quantity
-                      ? `${formData.quantity} ${formData.measurementUnit || ''}`
-                      : '—'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Negotiable</span>
-                  <span className="font-medium text-foreground">
-                    {formData.isNegotiable ? 'Yes' : 'No'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Location</span>
-                  <span className="font-medium text-foreground">{formData.location || '—'}</span>
-                </div>
-              </div>
-            </aside>
+            
           </div>
         </div>
-      </div>
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Form Section */}
+              <div className="lg:col-span-2 h-screen overflow-auto pb-40">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Basic Information */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                        <Package className="w-5 h-5 text-success" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Basic Information</h2>
+                        <p className="text-sm text-muted-foreground">Essential details about your agricultural input</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Input Name <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="e.g., Organic Fertilizer"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Category <span className="text-destructive">*</span>
+                        </label>
+                        <Select value={formData.category} onValueChange={(value) => handleSelectChange('category', value)}>
+                          <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(ProductCategory).map((category) => (
+                              <SelectItem key={category} value={category}>
+                                {category.replace(/_/g, ' ')}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Description <span className="text-destructive">*</span>
+                      </label>
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                        rows={4}
+                        placeholder="Add details farmers should know about this input. Include composition, usage instructions, benefits, etc."
+                        className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Pricing & Quantity */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-info/10 rounded-lg flex items-center justify-center">
+                        <DollarSign className="w-5 h-5 text-info" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Pricing & Quantity</h2>
+                        <p className="text-sm text-muted-foreground">Set your price and available quantity</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Quantity <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          name="quantity"
+                          value={formData.quantity}
+                          onChange={handleChange}
+                          placeholder="e.g., 1000"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Measurement Unit <span className="text-destructive">*</span>
+                        </label>
+                        <Select value={formData.measurementUnit} onValueChange={(value) => handleSelectChange('measurementUnit', value)}>
+                          <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
+                            <SelectValue placeholder="Select unit" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(MeasurementUnit).map((unit) => (
+                              <SelectItem key={unit} value={unit}>
+                                {unit}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Unit Price (RWF) <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          name="unitPrice"
+                          value={formData.unitPrice}
+                          onChange={handleChange}
+                          placeholder="e.g., 5000"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.isNegotiable}
+                          onChange={handleToggle}
+                          className="w-4 h-4 text-success focus:ring-success border-border rounded"
+                        />
+                        <div>
+                          <span className="text-sm font-medium text-foreground">Price is negotiable</span>
+                          <p className="text-xs text-muted-foreground">Allow farmers to negotiate the price</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Location & Availability */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                        <MapPin className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Location & Availability</h2>
+                        <p className="text-sm text-muted-foreground">Where your input is available for delivery</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Location <span className="text-destructive">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="location"
+                          value={formData.location}
+                          onChange={handleChange}
+                          placeholder="e.g., Kigali, Rwanda"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Certification
+                        </label>
+                        <Select value={formData.certification} onValueChange={(value) => handleSelectChange('certification', value)}>
+                          <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
+                            <SelectValue placeholder="Select certification (optional)" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(CertificationType).map((cert) => (
+                              <SelectItem key={cert} value={cert}>
+                                {cert.replace(/_/g, ' ')}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Image Upload */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                        <ImageIcon className="w-5 h-5 text-warning" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Product Image</h2>
+                        <p className="text-sm text-muted-foreground">Add a photo to showcase your agricultural input</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-center">
+                        <div className="w-32 h-32 border-2 border-dashed border-border rounded-lg overflow-hidden">
+                          {previewUrl ? (
+                            <img
+                              src={previewUrl}
+                              alt="Product preview"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                              <ImageIcon className="w-8 h-8" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="text-center">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                          id="image-upload"
+                        />
+                        <label
+                          htmlFor="image-upload"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg cursor-pointer transition-colors"
+                        >
+                          <Upload className="w-4 h-4" />
+                          Choose Image
+                        </label>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          JPG, PNG or GIF. Max size 5MB
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-between pt-6 border-t border-border">
+                    <Link
+                      href="/supplier/products"
+                      className="px-6 py-3 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Cancel
+                    </Link>
+                    
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        className="px-6 py-3 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        Save as Draft
+                      </button>
+                      
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-success hover:bg-success/90 text-primary-foreground font-semibold rounded-lg disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Publishing...
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-4 h-4" />
+                            Publish Input
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              {/* Preview Section */}
+              <div className="lg:col-span-1 h-screen overflow-auto pb-40">
+                <div className="sticky top-6 space-y-6">
+                  {/* Live Preview */}
+                  <div className="bg-card rounded-xl border border-border p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                        <Eye className="w-5 h-5 text-success" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">Live Preview</h2>
+                        <p className="text-sm text-muted-foreground">How farmers will see your input</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {/* Product Image */}
+                      <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                        {previewUrl ? (
+                          <img
+                            src={previewUrl}
+                            alt="Product preview"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                            <div className="text-center">
+                              <ImageIcon className="w-12 h-12 mx-auto mb-2" />
+                              <p className="text-sm">Product image will appear here</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Product Details */}
+                      <div className="space-y-3">
+                        <div>
+                          <h3 className="font-semibold text-foreground text-lg">
+                            {formData.name || 'Input Name'}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {formData.description || 'Input description will appear here...'}
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Price:</span>
+                            <p className="font-semibold text-foreground">
+                              {formData.unitPrice ? `RWF ${formData.unitPrice}` : '—'}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Available:</span>
+                            <p className="font-semibold text-foreground">
+                              {formData.quantity
+                                ? `${formData.quantity} ${formData.measurementUnit || ''}`
+                                : '—'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Location:</span>
+                            <span className="font-medium text-foreground">{formData.location || '—'}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Negotiable:</span>
+                            <span className="font-medium text-foreground">
+                              {formData.isNegotiable ? 'Yes' : 'No'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {formData.certification !== CertificationType.NONE && (
+                          <div className="inline-flex items-center gap-1 px-2 py-1 bg-success/10 text-success rounded-full text-xs">
+                            <Check className="w-3 h-3" />
+                            {formData.certification.replace(/_/g, ' ')}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tips */}
+                  <div className="bg-info/10 border border-info/20 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 text-info mt-0.5" />
+                      <div className="text-sm">
+                        <h4 className="font-semibold text-foreground mb-2">Pro Tips</h4>
+                        <ul className="text-info space-y-1">
+                          <li>• Use high-quality photos for better visibility</li>
+                          <li>• Include detailed usage instructions</li>
+                          <li>• Set competitive prices based on market rates</li>
+                          <li>• Specify exact quantities and measurements</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Delivery Info */}
+                  <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <Truck className="w-5 h-5 text-accent mt-0.5" />
+                      <div className="text-sm">
+                        <h4 className="font-semibold text-foreground mb-2">Delivery Information</h4>
+                        <p className="text-accent">
+                          Farmers will contact you directly for delivery arrangements once they place orders.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
