@@ -26,7 +26,7 @@ function WalletPageComponent() {
     <div className="flex h-screen bg-background">
       <Sidebar
         userType={UserType.BUYER}
-        activeItem='My Wallet'
+        activeItem='Wallet'
       />
 
       {/* Main Content */}
