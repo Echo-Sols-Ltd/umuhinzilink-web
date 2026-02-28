@@ -218,7 +218,7 @@ export default function BuyerSignUp() {
 
       {/* Hero Section */}
       <div className="relative w-full h-full flex flex-col justify-center items-center text-center">
-        <Image src="/Image.png" alt="background" fill className="absolute right-0 top-0 object-cover w-full h-full" />
+        <Image src="/Image.png" alt="background" fill className="absolute right-0 top-0 object-cover w-full h-full dark:brightness-50 dark:contrast-110 transition-all duration-300" />
         <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">Buyer Registration</h1>
         <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">Join our agricultural marketplace and connect with farmers directly</p>
       </div>

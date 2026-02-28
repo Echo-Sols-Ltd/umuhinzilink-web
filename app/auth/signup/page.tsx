@@ -248,7 +248,7 @@ export default function SignUp() {
 
       {/* RIGHT – Hero */}
       <div className="w-full sm:w-1/2 relative flex flex-col justify-center items-center text-center h-64 sm:h-auto">
-        <Image src="/Image.png" alt="background" fill className="absolute object-cover" />
+        <Image src="/Image.png" alt="background" fill className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300" />
         <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">Welcome!</h1>
         <p className="text-white z-10 mt-2 text-sm sm:text-base px-6 sm:px-0">
           Use these awesome forms to login or create a new <br /> account in your project for free

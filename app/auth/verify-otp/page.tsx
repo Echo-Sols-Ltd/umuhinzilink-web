@@ -187,7 +187,7 @@ export default function VerifyPage() {
                     src="/Image.png"
                     alt="Mountain road"
                     fill
-                    className="object-cover object-center scale-105"
+                    className="object-cover object-center scale-105 dark:brightness-50 dark:contrast-110 transition-all duration-300"
                     priority
                     quality={100}
                 />

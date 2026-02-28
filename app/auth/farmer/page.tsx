@@ -429,7 +429,7 @@ export default function FarmerSignUp() {
           src="/Image.png"
           alt="background"
           fill
-          className="absolute right-0 top-0 object-cover w-full h-full"
+          className="absolute right-0 top-0 object-cover w-full h-full dark:brightness-50 dark:contrast-110 transition-all duration-300"
         />
 
         <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">

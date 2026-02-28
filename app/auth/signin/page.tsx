@@ -201,7 +201,7 @@ export default function SignIn() {
           src="/Image.png"
           alt="background"
           fill
-          className="absolute object-cover"
+          className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300"
         />
         <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">
           Welcome Back!
