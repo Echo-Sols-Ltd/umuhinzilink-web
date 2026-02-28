@@ -11,7 +11,7 @@ import { useWallet } from '@/contexts/WalletContext';
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
-    <span className="text-black">Link</span>
+    <span className="text-foreground">Link</span>
   </span>
 );
 
@@ -23,7 +23,7 @@ function WalletPageComponent() {
   };
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar
         userType={UserType.BUYER}
         activeItem='My Wallet'
@@ -36,8 +36,8 @@ function WalletPageComponent() {
           <div className="flex items-center space-x-3">
             <Wallet className="w-8 h-8 text-green-600" />
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900">My Wallet</h1>
-              <p className="text-gray-600">Manage your wallet balance and transactions</p>
+              <h1 className="text-2xl font-semibold text-foreground">My Wallet</h1>
+              <p className="text-muted-foreground">Manage your wallet balance and transactions</p>
             </div>
           </div>
         </div>
