@@ -150,26 +150,26 @@ function MarketAnalysis() {
 
 
         {/* Main Content */}
-        <main className="flex-1 h-screen p-6 space-y-6 bg-white overflow-auto">
+        <main className="flex-1 h-screen p-6 space-y-6 bg-background overflow-auto">
           {/* Filters */}
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-500" />
-              <span className="font-medium text-gray-700">Filters:</span>
+              <Filter className="w-4 h-4 text-muted-foreground" />
+              <span className="font-medium text-foreground">Filters:</span>
             </div>
-            <select className="border border-gray-300 rounded-lg py-2 px- text-sm bg-white text-gray-700 cursor-pointer">
+            <select className="border border-border rounded-lg py-2 px-3 text-sm bg-card text-foreground cursor-pointer">
               <option>All Crops</option>
               <option>Maize</option>
               <option>Beans</option>
               <option>Bananas</option>
             </select>
-            <select className="border border-gray-300 rounded-lg py-2 px-3 text-sm bg-white text-gray-700 cursor-pointer">
+            <select className="border border-border rounded-lg py-2 px-3 text-sm bg-card text-foreground cursor-pointer">
               <option>All Regions</option>
               <option>Kigali City</option>
               <option>Huye District</option>
               <option>Musanze District</option>
             </select>
-            <select className="border border-gray-300 rounded-lg py-2 px-3 text-sm bg-white text-gray-700 cursor-pointer">
+            <select className="border border-border rounded-lg py-2 px-3 text-sm bg-card text-foreground cursor-pointer">
               <option>Last 30 Days</option>
               <option>Last 7 Days</option>
               <option>Last 90 Days</option>
@@ -177,10 +177,10 @@ function MarketAnalysis() {
           </div>
 
           {/* Price Trends */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Price Trends</h2>
-              <div className="flex items-center gap-2 text-sm text-green-600 font-medium">
+              <h2 className="text-lg font-semibold text-foreground">Price Trends</h2>
+              <div className="flex items-center gap-2 text-sm text-success font-medium">
                 <ArrowUp className="w-4 h-4" />
                 <span>+12% this month</span>
               </div>
@@ -234,10 +234,10 @@ function MarketAnalysis() {
           {/* Top Buyers and Demand Overview */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Top Buyers */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Top Buyers</h2>
+            <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-6">Top Buyers</h2>
               <div className="space-y-4">
-                <div className="grid grid-cols-4 gap-4 text-sm font-medium text-gray-500 border-b pb-2">
+                <div className="grid grid-cols-4 gap-4 text-sm font-medium text-muted-foreground border-b pb-2">
                   <span>Buyer</span>
                   <span>Location</span>
                   <span>Crop Interest</span>
@@ -246,7 +246,7 @@ function MarketAnalysis() {
                 {topBuyers.map(buyer => (
                   <div
                     key={buyer.name}
-                    className="grid grid-cols-4 gap-4  items-center py-3 border-b border-gray-900 last:border-b-0"
+                    className="grid grid-cols-4 gap-4  items-center py-3 border-b border-border last:border-b-0"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -254,21 +254,21 @@ function MarketAnalysis() {
                       >
                         <ShoppingCart className="w-4 h-4 text-white" />
                       </div>
-                      <span className="font-medium text-gray-900">{buyer.name}</span>
+                      <span className="font-medium text-foreground">{buyer.name}</span>
                     </div>
-                    <span className="text-gray-600">{buyer.location}</span>
-                    <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
+                    <span className="text-muted-foreground">{buyer.location}</span>
+                    <span className="px-2 py-1 bg-warning/10 text-warning rounded text-xs font-medium">
                       {buyer.cropInterest}
                     </span>
-                    <span className="font-semibold text-green-600">{buyer.offerPrice}</span>
+                    <span className="font-semibold text-success">{buyer.offerPrice}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Demand Overview */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Demand Overview</h2>
+            <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-6">Demand Overview</h2>
               <div className="space-y-4">
                 {demandOverview.map(item => (
                   <div
@@ -276,21 +276,21 @@ function MarketAnalysis() {
                     className={`flex items-center justify-between p-4 rounded-lg ${item.bgColor}`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-full bg-white shadow-sm">
+                      <div className="p-2 rounded-full bg-card shadow-sm">
                         <item.icon className={`w-4 h-4 ${item.textColor}`} />
                       </div>
                       <div>
-                        <div className="font-semibold text-gray-900">{item.status}</div>
-                        <div className="text-sm text-gray-600">{item.crop}</div>
+                        <div className="font-semibold text-foreground">{item.status}</div>
+                        <div className="text-sm text-muted-foreground">{item.crop}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`font-semibold ${item.textColor}`}>{item.change}</span>
-                      {item.color === 'green' && <ArrowUp className="w-4 h-4 text-green-600" />}
+                      {item.color === 'green' && <ArrowUp className="w-4 h-4 text-success" />}
                       {item.color === 'yellow' && (
-                        <TrendingUp className="w-4 h-4 text-yellow-600" />
+                        <TrendingUp className="w-4 h-4 text-warning" />
                       )}
-                      {item.color === 'red' && <ArrowDown className="w-4 h-4 text-red-600" />}
+                      {item.color === 'red' && <ArrowDown className="w-4 h-4 text-destructive" />}
                     </div>
                   </div>
                 ))}
@@ -299,37 +299,37 @@ function MarketAnalysis() {
           </div>
 
           {/* AI Recommendations */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-6">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
-                <Lightbulb className="w-4 h-4 text-blue-600" />
+              <div className="w-6 h-6 bg-info/10 rounded flex items-center justify-center">
+                <Lightbulb className="w-4 h-4 text-info" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-900">AI Recommendations</h2>
+              <h2 className="text-lg font-semibold text-foreground">AI Recommendations</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-4 bg-info/10 rounded-lg border border-info/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-blue-600" />
-                  <span className="font-semibold text-blue-900">Best Time to Sell</span>
+                  <TrendingUp className="w-4 h-4 text-info" />
+                  <span className="font-semibold text-foreground">Best Time to Sell</span>
                 </div>
-                <p className="text-sm text-blue-800 mb-3">
+                <p className="text-sm text-muted-foreground mb-3">
                   Based on current trends, the optimal selling window for your maize is in the next
                   2-3 weeks.
                 </p>
-                <div className="flex items-center gap-2 text-xs text-blue-600">
+                <div className="flex items-center gap-2 text-xs text-info">
                   <Star className="w-3 h-3" />
                   <span>Confidence: 85%</span>
                 </div>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="p-4 bg-success/10 rounded-lg border border-success/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <MapPin className="w-4 h-4 text-green-600" />
-                  <span className="font-semibold text-green-900">Best Market</span>
+                  <MapPin className="w-4 h-4 text-success" />
+                  <span className="font-semibold text-foreground">Best Market</span>
                 </div>
-                <p className="text-sm text-green-800 mb-3">
+                <p className="text-sm text-muted-foreground mb-3">
                   Kigali Agro Market offers the highest prices for maize currently at 450 RWF/kg.
                 </p>
-                <div className="flex items-center gap-2 text-xs text-green-600">
+                <div className="flex items-center gap-2 text-xs text-success">
                   <MapPin className="w-3 h-3" />
                   <span>Distance: 25km from you</span>
                 </div>

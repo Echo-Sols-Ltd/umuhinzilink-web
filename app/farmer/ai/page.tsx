@@ -75,10 +75,10 @@ const tips = [
 
 const Logo = () => (
   <div className="flex items-center px-6 py-4">
-    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center mr-3">
-      <Leaf className="w-5 h-5 text-green-600" />
+    <div className="w-8 h-8 bg-card rounded-lg flex items-center justify-center mr-3">
+      <Leaf className="w-5 h-5 text-success" />
     </div>
-    <span className="font-semibold text-xl text-white">UmuhinziLink</span>
+    <span className="font-semibold text-xl text-foreground">UmuhinziLink</span>
   </div>
 );
 
@@ -95,7 +95,7 @@ function AiDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.FARMER}
@@ -103,10 +103,10 @@ function AiDashboard() {
 
 
       {/* Main Content */}
-      <main className="flex-1  h-screen bg-white">
+      <main className="flex-1  h-screen bg-background">
         <div className="p-6 h-full overflow-y-auto">
           {/* Weather Alert */}
-          <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-6 mb-8 text-white flex items-center justify-between">
+          <div className="bg-gradient-to-r from-primary to-primary/90 rounded-lg p-6 mb-8 text-primary-foreground flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <AlertTriangle className="w-6 h-6" />
               <div>
@@ -127,10 +127,10 @@ function AiDashboard() {
             {/* Left Content */}
             <div className="flex-1 h-full">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">Suggested AI Tips</h2>
+                <h2 className="text-lg font-semibold text-foreground">Suggested AI Tips</h2>
                 <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  <span className="text-sm text-gray-600">Ask AI Assistant</span>
+                  <span className="w-2 h-2 bg-success rounded-full"></span>
+                  <span className="text-sm text-muted-foreground">Ask AI Assistant</span>
                 </div>
               </div>
 
@@ -139,29 +139,29 @@ function AiDashboard() {
                 {tips.map((tip, index) => (
                   <div
                     key={index}
-                    className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 flex items-start space-x-4"
+                    className="bg-card rounded-lg shadow-sm border border-border p-6 flex items-start space-x-4"
                   >
-                    <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden shrink-0">
                       <img src={tip.image} alt={tip.title} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-2">{tip.title}</h3>
-                      <p className="text-sm text-gray-600 mb-3">{tip.description}</p>
+                      <h3 className="font-semibold text-foreground mb-2">{tip.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-3">{tip.description}</p>
                       <div className="flex items-center justify-between">
                         <div className="flex space-x-2">
                           {tip.tags.map((tag, i) => (
                             <span
                               key={i}
-                              className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded"
+                              className="text-xs px-2 py-1 bg-info/10 text-info rounded"
                             >
                               {tag}
                             </span>
                           ))}
                         </div>
-                        <span className="text-xs text-gray-500">{tip.views} views</span>
+                        <span className="text-xs text-muted-foreground">{tip.views} views</span>
                       </div>
                     </div>
-                    <button className="text-gray-400 hover:text-gray-600">
+                    <button className="text-muted-foreground hover:text-foreground">
                       <svg
                         className="w-5 h-5"
                         fill="none"
@@ -183,23 +183,23 @@ function AiDashboard() {
 
             {/* Right Sidebar - AI Assistant */}
             <div className="w-80">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+              <div className="bg-card rounded-lg shadow-sm border border-border p-6">
                 <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="font-semibold text-gray-900">Ask AI Assistant</span>
+                  <span className="w-2 h-2 bg-success rounded-full"></span>
+                  <span className="font-semibold text-foreground">Ask AI Assistant</span>
                 </div>
 
                 <div className="space-y-4 mb-4 max-h-64 overflow-y-auto">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-muted-foreground">
                     Hi! I&apos;m your AI farming assistant. Ask me anything about farming, crops, or
                     agricultural best practices.
                   </div>
-                  <div className="bg-white rounded-lg p-3">
-                    <div className="text-xs text-gray-500 mb-1">You</div>
+                  <div className="bg-card rounded-lg p-3">
+                    <div className="text-xs text-muted-foreground mb-1">You</div>
                     <div className="text-sm">How do I prepare soil for maize planting?</div>
                   </div>
-                  <div className="bg-green-50 rounded-lg p-3">
-                    <div className="text-xs text-gray-500 mb-1">AI Assistant</div>
+                  <div className="bg-success/10 rounded-lg p-3">
+                    <div className="text-xs text-muted-foreground mb-1">AI Assistant</div>
                     <div className="text-sm">
                       For maize planting, start by testing your soil pH (should be 6.0-7.0). Clear
                       weeds, till the soil to 20-25cm depth, and add organic matter like compost.
