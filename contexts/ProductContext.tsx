@@ -144,78 +144,83 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [orderModalProduct, setOrderModalProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
   const [orderModalProductType, setOrderModalProductType] = useState<'farmer' | 'supplier' | null>(null);
 
+  const handleProductChange = (data: FarmerProduct | SupplierProduct) => {
+    const productId = data.id
+    const farmerData = data as FarmerProduct
+    const supplierData = data as SupplierProduct
+
+    setFarmerProducts(prev => {
+      if (!prev) return [];
+      return prev.map(p => p.id === productId ? { ...p, ...farmerData } : p);
+    });
+    setBuyerProducts(prev => {
+      if (!prev) return [];
+      return prev.map(p => p.id === productId ? { ...p, ...farmerData } : p);
+    });
+    setSupplierProducts(prev => {
+      if (!prev) return [];
+      return prev.map(p => p.id === productId ? { ...p, ...supplierData } : p);
+    });
+    setFarmerBuyerProducts(prev => {
+      if (!prev) return [];
+      return prev.map(p => p.id === productId ? { ...p, ...supplierData } : p);
+    });
+
+    // Update current products if they match
+    setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
+    setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
+    setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
+    setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
+    setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+    setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+    setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+    setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+
+  }
+
   // Socket event handlers for real-time product updates
-  const handleProductUpdate = useCallback((productData: any) => {
+  const handleProductUpdate = useCallback((productData: FarmerProduct | SupplierProduct) => {
     if (!productData) return;
-    
-    const { productId, productType, ...updates } = productData;
-    
-    // Update product lists
-    if (productType === 'farmer') {
-      setFarmerProducts(prev => prev?.map(p => p.id === productId ? { ...p, ...updates } : p));
-      setBuyerProducts(prev => prev?.map(p => p.id === productId ? { ...p, ...updates } : p));
-      
-      // Update current products if they match
-      setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
-      setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
-      setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
-      setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
-    } else if (productType === 'supplier') {
-      setSupplierProducts(prev => prev?.map(p => p.id === productId ? { ...p, ...updates } : p));
-      setFarmerBuyerProducts(prev => prev?.map(p => p.id === productId ? { ...p, ...updates } : p));
-      
-      // Update current products if they match
-      setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
-      setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
-      setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
-      setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...updates } : prev);
-    }
+
+    handleProductChange(productData);
   }, []);
 
-  const handleProductStatusChange = useCallback((productData: any) => {
+  const handleProductStatusChange = useCallback((productData: FarmerProduct | SupplierProduct) => {
     if (!productData) return;
-    
-    const { productId, productType, status } = productData;
-    
-    // Update product status in lists
-    if (productType === 'farmer') {
-      setFarmerProducts(prev => prev?.map(p => p.id === productId ? { ...p, productStatus: status } : p));
-      setBuyerProducts(prev => prev?.map(p => p.id === productId ? { ...p, productStatus: status } : p));
-      
-      // Update current products if they match
-      setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, productStatus: status } : prev);
-      setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, productStatus: status } : prev);
-    } else if (productType === 'supplier') {
-      setSupplierProducts(prev => prev?.map(p => p.id === productId ? { ...p, productStatus: status } : p));
-      setFarmerBuyerProducts(prev => prev?.map(p => p.id === productId ? { ...p, productStatus: status } : p));
-      
-      // Update current products if they match
-      setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, productStatus: status } : prev);
-      setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, productStatus: status } : prev);
-    }
+
+    handleProductChange(productData);
   }, []);
 
-  const handleProductDeletion = useCallback((productData: any) => {
+  const handleProductDeletion = useCallback((productData: FarmerProduct | SupplierProduct) => {
     if (!productData) return;
-    
-    const { productId, productType } = productData;
-    
-    // Remove from lists
-    if (productType === 'farmer') {
-      setFarmerProducts(prev => prev?.filter(p => p.id !== productId));
-      setBuyerProducts(prev => prev?.filter(p => p.id !== productId));
-      
-      // Clear current products if they match
-      if (currentFarmerProduct?.id === productId) setCurrentFarmerProduct(null);
-      if (currentBuyerProduct?.id === productId) setCurrentBuyerProduct(null);
-    } else if (productType === 'supplier') {
-      setSupplierProducts(prev => prev?.filter(p => p.id !== productId));
-      setFarmerBuyerProducts(prev => prev?.filter(p => p.id !== productId));
-      
-      // Clear current products if they match
-      if (currentSupplierProduct?.id === productId) setCurrentSupplierProduct(null);
-      if (currentFarmerBuyerProduct?.id === productId) setCurrentFarmerBuyerProduct(null);
-    }
+    const productId = productData.id
+
+
+    setFarmerProducts(prev => {
+      if (!prev) return [];
+      return prev?.filter(p => p.id !== productData.id);
+    });
+    setBuyerProducts(prev => {
+      if (!prev) return [];
+      return prev?.filter(p => p.id !== productData.id);
+    });
+    setSupplierProducts(prev => {
+      if (!prev) return [];
+      return prev?.filter(p => p.id !== productId);
+    });
+    setFarmerBuyerProducts(prev => {
+      if (!prev) return [];
+      return prev?.filter(p => p.id !== productId);
+    });
+
+    // Clear current products if they match
+    if (currentFarmerProduct?.id === productId) setCurrentFarmerProduct(null);
+    if (currentBuyerProduct?.id === productId) setCurrentBuyerProduct(null);
+
+    // Clear current products if they match
+    if (currentSupplierProduct?.id === productId) setCurrentSupplierProduct(null);
+    if (currentFarmerBuyerProduct?.id === productId) setCurrentFarmerBuyerProduct(null);
+
   }, [currentFarmerProduct, currentBuyerProduct, currentSupplierProduct, currentFarmerBuyerProduct]);
 
   // Setup socket listeners
@@ -408,13 +413,13 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     if (farmerResult.product) {
       return farmerResult;
     }
-    
+
     // Try supplier product
     const supplierResult = await fetchSupplierProductById(id);
     if (supplierResult.product) {
       return supplierResult;
     }
-    
+
     return { product: null, type: null, error: 'Product not found' };
   };
 
