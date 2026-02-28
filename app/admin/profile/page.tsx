@@ -17,7 +17,7 @@ function AdminProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className='text-green-600 animate-spin' size={50} />
+        <Loader2 className='text-success animate-spin' size={50} />
       </div>
     );
   }
@@ -28,21 +28,21 @@ function AdminProfilePage() {
   }
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Profile'
       />
 
-      <main className="flex-1 h-full bg-white overflow-auto">
+      <main className="flex-1 h-full bg-background overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center px-6 shadow-sm justify-between">
+        <header className="bg-card border-b h-16 flex items-center px-6 shadow-sm justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Admin Profile</h1>
-            <p className="text-xs text-gray-500">Manage your administrator account</p>
+            <h1 className="text-xl font-semibold text-foreground">Admin Profile</h1>
+            <p className="text-xs text-muted-foreground">Manage your administrator account</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+            <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-success/10 text-success">
               Administrator
             </span>
           </div>

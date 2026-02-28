@@ -138,26 +138,26 @@ function SecurityPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'success':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-success" />;
       case 'failed':
-        return <Ban className="w-4 h-4 text-red-500" />;
+        return <Ban className="w-4 h-4 text-destructive" />;
       case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+        return <AlertTriangle className="w-4 h-4 text-warning" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
+        return <Clock className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'success':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success/10 text-success';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return 'bg-destructive/10 text-destructive';
       case 'warning':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning/10 text-warning';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -177,68 +177,68 @@ function SecurityPage() {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Security'
       />
       <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Security Center</h1>
-            <p className="text-xs text-gray-500">Monitor and manage platform security</p>
+            <h1 className="text-xl font-semibold text-foreground">Security Center</h1>
+            <p className="text-xs text-muted-foreground">Monitor and manage platform security</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+            <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
               <Shield className="w-4 h-4" />
             </button>
           </div>
         </header>
 
-        <main className="flex-1 bg-white p-6 space-y-6">
+        <main className="flex-1 bg-background p-6 space-y-6">
           {/* Security Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Logs</p>
-                  <p className="text-2xl font-semibold text-gray-900">{securityMetrics.totalLogs}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Total Logs</p>
+                  <p className="text-2xl font-semibold text-foreground">{securityMetrics.totalLogs}</p>
                 </div>
-                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-info rounded-lg flex items-center justify-center">
                   <Activity className="w-5 h-5 text-white" />
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Failed Attempts</p>
-                  <p className="text-2xl font-semibold text-gray-900">{securityMetrics.failedAttempts}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Failed Attempts</p>
+                  <p className="text-2xl font-semibold text-foreground">{securityMetrics.failedAttempts}</p>
                 </div>
-                <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-destructive rounded-lg flex items-center justify-center">
                   <Ban className="w-5 h-5 text-white" />
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Warnings</p>
-                  <p className="text-2xl font-semibold text-gray-900">{securityMetrics.warnings}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Warnings</p>
+                  <p className="text-2xl font-semibold text-foreground">{securityMetrics.warnings}</p>
                 </div>
-                <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-warning rounded-lg flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5 text-white" />
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Settings</p>
-                  <p className="text-2xl font-semibold text-gray-900">{securityMetrics.activeSettings}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Active Settings</p>
+                  <p className="text-2xl font-semibold text-foreground">{securityMetrics.activeSettings}</p>
                 </div>
-                <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-success rounded-lg flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5 text-white" />
                 </div>
               </div>
@@ -246,24 +246,23 @@ function SecurityPage() {
           </div>
 
           {/* Security Settings */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Security Settings</h2>
+          <div className="bg-card rounded-lg border border-border shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Security Settings</h2>
             <div className="space-y-4">
               {securitySettings.map((setting) => (
-                <div key={setting.id} className="flex items-center justify-between p-4 bg-white rounded-lg">
+                <div key={setting.id} className="flex items-center justify-between p-4 bg-card rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                      <Shield className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-success" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{setting.name}</p>
-                      <p className="text-sm text-gray-500">{setting.description}</p>
+                      <p className="font-medium text-foreground">{setting.name}</p>
+                      <p className="text-sm text-muted-foreground">{setting.description}</p>
                     </div>
                   </div>
                   <button
                     onClick={() => toggleSetting(setting.id)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${setting.enabled ? 'bg-green-600' : 'bg-gray-200'
-                      }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${setting.enabled ? 'bg-success' : 'bg-muted'}`}
                   >
                     <span
                       className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${setting.enabled ? 'translate-x-6' : 'translate-x-1'
@@ -276,26 +275,26 @@ function SecurityPage() {
           </div>
 
           {/* Security Logs */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Security Logs</h2>
+          <div className="bg-card rounded-lg border border-border shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Recent Security Logs</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-white border-b border-gray-200">
+                <thead className="bg-card border-b border-border">
                   <tr>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Timestamp</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Action</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">User</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">IP Address</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">Status</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">Timestamp</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">Action</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">User</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">IP Address</th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-border">
                   {securityLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-white">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.timestamp}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.action}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.user}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.ip}</td>
+                    <tr key={log.id} className="hover:bg-card">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{log.timestamp}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{log.action}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{log.user}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{log.ip}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(log.status)}`}>
                           {getStatusIcon(log.status)}

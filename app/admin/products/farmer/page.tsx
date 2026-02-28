@@ -92,40 +92,40 @@ function FarmerProductManagement() {
     };
 
     return (
-        <div className="flex h-screen bg-white overflow-hidden">
+        <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
 
             <div className="flex-1 flex flex-col overflow-auto">
-                <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+                <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">Farmer Products</h1>
-                        <p className="text-xs text-gray-500">Moderate and oversee all farmer-listed produce</p>
+                        <h1 className="text-xl font-semibold text-foreground">Farmer Products</h1>
+                        <p className="text-xs text-muted-foreground">Moderate and oversee all farmer-listed produce</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
                             <Filter className="w-4 h-4" />
                         </button>
                     </div>
                 </header>
 
-                <main className="flex-1 bg-white p-6 space-y-6">
+                <main className="flex-1 bg-background p-6 space-y-6">
                     {/* Search and Filters */}
                     <div className="flex items-center justify-between gap-4">
                         <div className="relative flex-1 max-w-md">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                             <input
                                 type="text"
                                 placeholder="Search products or farmers..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                                className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
                             />
                         </div>
                         <div className="flex gap-2">
                             <select
                                 value={categoryFilter}
                                 onChange={(e) => setCategoryFilter(e.target.value)}
-                                className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                                className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
                             >
                                 <option value="all">All Categories</option>
                                 <option value="vegetables">Vegetables</option>
@@ -135,7 +135,7 @@ function FarmerProductManagement() {
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
-                                className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                                className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
                             >
                                 <option value="all">All Status</option>
                                 <option value="IN_STOCK">In Stock</option>
@@ -146,7 +146,7 @@ function FarmerProductManagement() {
                     </div>
 
                     {/* Products Table */}
-                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -163,7 +163,7 @@ function FarmerProductManagement() {
                                 {filteredProducts.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={7} className="text-center py-8">
-                                            <div className="flex flex-col items-center text-gray-500">
+                                            <div className="flex flex-col items-center text-muted-foreground">
                                                 <Package className="w-8 h-8 mb-2" />
                                                 <p>No products found</p>
                                             </div>
@@ -174,33 +174,33 @@ function FarmerProductManagement() {
                                         <TableRow key={product.id}>
                                             <TableCell>
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                                    <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
                                                         {product.image ? (
                                                             <img src={imageUrl(product.image)} alt={product.name} className="w-full h-full object-cover rounded-lg" />
                                                         ) : (
-                                                            <Package className="w-5 h-5 text-gray-400" />
+                                                            <Package className="w-5 h-5 text-muted-foreground" />
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <p className="font-medium text-gray-900">{product.name}</p>
-                                                        <p className="text-sm text-gray-500">{product.description}</p>
+                                                        <p className="font-medium text-foreground">{product.name}</p>
+                                                        <p className="text-sm text-muted-foreground">{product.description}</p>
                                                     </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <p className="font-medium text-gray-900">{product.owner?.names}</p>
-                                                <p className="text-sm text-gray-500">{product.owner?.email}</p>
+                                                <p className="font-medium text-foreground">{product.owner?.names}</p>
+                                                <p className="text-sm text-muted-foreground">{product.owner?.email}</p>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant="outline">{product.category}</Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <p className="font-medium text-gray-900">{(product as any).price || 0} RWF</p>
-                                                <p className="text-sm text-gray-500">per {product.measurementUnit}</p>
+                                                <p className="font-medium text-foreground">{(product as any).price || 0} RWF</p>
+                                                <p className="text-sm text-muted-foreground">per {product.measurementUnit}</p>
                                             </TableCell>
                                             <TableCell>
-                                                <p className="font-medium text-gray-900">{product.quantity}</p>
-                                                <p className="text-sm text-gray-500">{product.measurementUnit}</p>
+                                                <p className="font-medium text-foreground">{product.quantity}</p>
+                                                <p className="text-sm text-muted-foreground">{product.measurementUnit}</p>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant={getStatusVariant(product.productStatus)} className='text-white'>
@@ -211,7 +211,7 @@ function FarmerProductManagement() {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => router.push(`/admin/products/${product.id}`)}
-                                                        className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        className="p-2 text-info hover:text-info/90 hover:bg-info/10 rounded-lg transition-colors"
                                                         title="View product details"
                                                     >
                                                         <Eye className="w-4 h-4" />
@@ -219,14 +219,14 @@ function FarmerProductManagement() {
                                                     <button
                                                         onClick={() => handleModerateProduct(product.id, 'approve')}
                                                         disabled={actionLoading === product.id}
-                                                        className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+                                                        className="p-2 text-success hover:text-success/90 hover:bg-success/10 rounded-lg transition-colors disabled:opacity-50"
                                                     >
                                                         <ThumbsUp className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeleteProduct(product.id)}
                                                         disabled={actionLoading === product.id}
-                                                        className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                                                        className="p-2 text-destructive hover:text-destructive/90 hover:bg-destructive/10 rounded-lg transition-colors disabled:opacity-50"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
@@ -242,16 +242,16 @@ function FarmerProductManagement() {
                     {/* Product Details Modal */}
                     {showProductModal && selectedProduct && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+                            <div className="bg-card rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
                                 <div className="p-6">
                                     <div className="flex items-center justify-between mb-6">
-                                        <h2 className="text-xl font-semibold text-gray-900">Product Details</h2>
+                                        <h2 className="text-xl font-semibold text-foreground">Product Details</h2>
                                         <button
                                             onClick={() => {
                                                 setShowProductModal(false);
                                                 setSelectedProduct(null);
                                             }}
-                                            className="text-gray-400 hover:text-gray-600"
+                                            className="text-muted-foreground hover:text-foreground"
                                         >
                                             <X className="w-6 h-6" />
                                         </button>
@@ -259,25 +259,25 @@ function FarmerProductManagement() {
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <p className="text-sm text-gray-600">Name</p>
-                                                <p className="font-medium text-gray-900">{selectedProduct.name}</p>
+                                                <p className="text-sm text-muted-foreground">Name</p>
+                                                <p className="font-medium text-foreground">{selectedProduct.name}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-gray-600">Category</p>
-                                                <p className="font-medium text-gray-900">{selectedProduct.category}</p>
+                                                <p className="text-sm text-muted-foreground">Category</p>
+                                                <p className="font-medium text-foreground">{selectedProduct.category}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-gray-600">Price</p>
-                                                <p className="font-medium text-gray-900">{selectedProduct.price} RWF</p>
+                                                <p className="text-sm text-muted-foreground">Price</p>
+                                                <p className="font-medium text-foreground">{selectedProduct.price} RWF</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-gray-600">Stock</p>
-                                                <p className="font-medium text-gray-900">{selectedProduct.quantity} {selectedProduct.measurementUnit}</p>
+                                                <p className="text-sm text-muted-foreground">Stock</p>
+                                                <p className="font-medium text-foreground">{selectedProduct.quantity} {selectedProduct.measurementUnit}</p>
                                             </div>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-600">Description</p>
-                                            <p className="text-gray-900">{selectedProduct.description}</p>
+                                            <p className="text-sm text-muted-foreground">Description</p>
+                                            <p className="text-foreground">{selectedProduct.description}</p>
                                         </div>
                                     </div>
                                 </div>
