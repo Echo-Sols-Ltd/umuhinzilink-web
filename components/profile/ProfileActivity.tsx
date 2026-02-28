@@ -85,15 +85,15 @@ function ProfileActivityComponent() {
   const getActivityIcon = (type: ActivityData['type']) => {
     switch (type) {
       case 'login':
-        return <Activity className="w-4 h-4 text-blue-500" />;
+        return <Activity className="w-4 h-4 text-info" />;
       case 'profile_update':
-        return <Download className="w-4 h-4 text-green-500" />;
+        return <Download className="w-4 h-4 text-success" />;
       case 'order':
-        return <ShoppingBag className="w-4 h-4 text-purple-500" />;
+        return <ShoppingBag className="w-4 h-4 text-warning" />;
       case 'message':
-        return <MessageSquare className="w-4 h-4 text-orange-500" />;
+        return <MessageSquare className="w-4 h-4 text-orange-600" />;
       case 'review':
-        return <Star className="w-4 h-4 text-yellow-500" />;
+        return <Star className="w-4 h-4 text-warning" />;
       case 'achievement':
         return <Award className="w-4 h-4 text-destructive" />;
       default:
@@ -169,10 +169,10 @@ function ProfileActivityComponent() {
                 <p className="text-sm font-medium text-warning">Messages</p>
                 <p className="text-xl font-bold text-warning">{analytics.totalMessages}</p>
               </div>
-              <MessageSquare className="w-8 h-8 text-purple-500" />
+              <MessageSquare className="w-8 h-8 text-warning" />
             </div>
             <div className="mt-2">
-              <p className="text-xs text-purple-500">Excellent response time</p>
+              <p className="text-xs text-warning">Excellent response time</p>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ function ProfileActivityComponent() {
                 <p className="text-sm font-medium text-warning">Orders</p>
                 <p className="text-2xl font-bold text-warning">{analytics.totalOrders.toLocaleString()}</p>
               </div>
-              <Star className="w-8 h-8 text-yellow-500" />
+              <Star className="w-8 h-8 text-warning" />
             </div>
             <div className="mt-2">
               <div className="flex items-center gap-1">

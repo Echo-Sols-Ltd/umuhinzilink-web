@@ -36,7 +36,7 @@ function ProfileBadgesComponent() {
         id: 'top_farmer',
         name: 'Top Farmer',
         description: 'Recognized as top performer for exceptional quality and service',
-        icon: <Trophy className="w-6 h-6 text-yellow-500" />,
+        icon: <Trophy className="w-6 h-6 text-warning" />,
         category: 'achievement',
         earned: true,
         earnedDate: '2024-01-15'
@@ -45,7 +45,7 @@ function ProfileBadgesComponent() {
         id: 'verified_seller',
         name: 'Verified Seller',
         description: 'Identity and business information verified by UmuhinziLink',
-        icon: <CheckCircle className="w-6 h-6 text-blue-500" />,
+        icon: <CheckCircle className="w-6 h-6 text-info" />,
         category: 'verification',
         earned: true,
         earnedDate: '2023-12-01'
@@ -54,7 +54,7 @@ function ProfileBadgesComponent() {
         id: 'quality_excellence',
         name: 'Quality Excellence',
         description: 'Maintained 5-star rating for 6 consecutive months',
-        icon: <Star className="w-6 h-6 text-purple-500" />,
+        icon: <Star className="w-6 h-6 text-warning" />,
         category: 'quality',
         earned: true,
         earnedDate: '2024-01-10'
@@ -63,7 +63,7 @@ function ProfileBadgesComponent() {
         id: 'community_hero',
         name: 'Community Hero',
         description: 'Helped 10+ new farmers get started on the platform',
-        icon: <Heart className="w-6 h-6 text-red-500" />,
+        icon: <Heart className="w-6 h-6 text-destructive" />,
         category: 'community',
         earned: true,
         earnedDate: '2023-11-20'
@@ -72,7 +72,7 @@ function ProfileBadgesComponent() {
         id: 'organic_certified',
         name: 'Organic Certified',
         description: 'Official organic farming certification verified',
-        icon: <Leaf className="w-6 h-6 text-green-500" />,
+        icon: <Leaf className="w-6 h-6 text-success" />,
         category: 'verification',
         earned: false,
         progress: 75,
@@ -82,7 +82,7 @@ function ProfileBadgesComponent() {
         id: 'hundred_orders',
         name: 'Century Club',
         description: 'Completed 100 successful orders',
-        icon: <Target className="w-6 h-6 text-orange-500" />,
+        icon: <Target className="w-6 h-6 text-orange-600" />,
         category: 'milestone',
         earned: false,
         progress: 85,
@@ -92,7 +92,7 @@ function ProfileBadgesComponent() {
         id: 'super_responder',
         name: 'Super Responder',
         description: '95%+ response rate for 3 months straight',
-        icon: <Zap className="w-6 h-6 text-indigo-500" />,
+        icon: <Zap className="w-6 h-6 text-indigo-600" />,
         category: 'achievement',
         earned: false,
         progress: 92,
@@ -102,7 +102,7 @@ function ProfileBadgesComponent() {
         id: 'premium_member',
         name: 'Premium Member',
         description: 'Upgraded to premium membership with exclusive benefits',
-        icon: <Crown className="w-6 h-6 text-amber-500" />,
+        icon: <Crown className="w-6 h-6 text-amber-600" />,
         category: 'milestone',
         earned: false
       }
@@ -129,7 +129,7 @@ function ProfileBadgesComponent() {
       case 'verification':
         return 'bg-info/10 border-info';
       case 'quality':
-        return 'bg-purple-50 border-purple-200';
+        return 'bg-warning/10 border-warning';
       case 'community':
         return 'bg-destructive/10 border-destructive';
       case 'milestone':
@@ -199,8 +199,8 @@ function ProfileBadgesComponent() {
               </div>
               <div className={`px-3 py-1 rounded-full text-xs font-medium ${
                 verification.isVerified 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-yellow-100 text-yellow-800'
+                  ? 'bg-success/10 text-success' 
+                  : 'bg-warning/10 text-warning'
               }`}>
                 {verification.isVerified ? 'Verified' : 'In Progress'}
               </div>
@@ -316,7 +316,7 @@ function ProfileBadgesComponent() {
             <span className="text-sm text-foreground">Verification</span>
           </div>
           <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 text-purple-500" />
+            <Star className="w-4 h-4 text-warning" />
             <span className="text-sm text-foreground">Quality</span>
           </div>
           <div className="flex items-center gap-2">

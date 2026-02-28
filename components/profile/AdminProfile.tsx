@@ -121,19 +121,19 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
             </label>
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-foreground">
               {isEditing ? (
                 <input
                   type="text"
                   value={editData.names || ''}
                   onChange={(e) => handleChange('names', e.target.value)}
-                  className="text-xl font-semibold bg-transparent border-b border-gray-300 focus:border-green-500 outline-none"
+                  className="text-xl font-semibold bg-transparent border-b border-border focus:border-green-500 outline-none"
                 />
               ) : (
                 profile.names
               )}
             </h2>
-            <p className="text-gray-600">System Administrator</p>
+            <p className="text-muted-foreground">System Administrator</p>
             <div className="flex items-center mt-2 text-sm text-muted-foreground">
               <Settings className="w-4 h-4 text-muted-foreground" />
               Full System Access
@@ -142,14 +142,14 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             Last updated: {profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString() : '—'}
           </div>
           {isEditing ? (
             <div className="flex gap-2">
               <button
                 onClick={handleCancel}
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-300"
+                className="bg-muted text-muted-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-muted"
               >
                 <X className="w-4 h-4" /> Cancel
               </button>
@@ -174,7 +174,7 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
 
       {/* Image Upload Section */}
       {imageFile && (
-        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+        <div className="bg-card border border-border rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-lg overflow-hidden">
@@ -186,7 +186,7 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
               </div>
               <div>
                 <p className="text-sm font-medium text-foreground">System Administrator</p>
-                <p className="text-xs text-gray-500">{imageFile.name}</p>
+                <p className="text-xs text-muted-foreground">{imageFile.name}</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -195,14 +195,14 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
                   setImageFile(null);
                   setPreviewUrl(null);
                 }}
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-white"
+                className="px-3 py-1 text-sm border border-border rounded-md hover:bg-card"
               >
                 Cancel
               </button>
               <button
                 onClick={handleImageUpload}
                 disabled={loading}
-                className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-success text-white rounded-md hover:bg-success/90 disabled:opacity-50"
               >
                 {loading ? 'Uploading...' : 'Upload'}
               </button>
@@ -215,7 +215,7 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-muted-foreground flex items-center">
               <Mail className="w-4 h-4 mr-2" />
               Email Address
             </label>
@@ -224,15 +224,15 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
                 type="email"
                 value={editData.email || ''}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             ) : (
-              <p className="text-gray-900 mt-1">{profile.email}</p>
+              <p className="text-foreground mt-1">{profile.email}</p>
             )}
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-muted-foreground flex items-center">
               <Phone className="w-4 h-4 mr-2" />
               Phone Number
             </label>
@@ -241,15 +241,15 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
                 type="tel"
                 value={editData.phoneNumber || ''}
                 onChange={(e) => handleChange('phoneNumber', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             ) : (
-              <p className="text-gray-900 mt-1">{profile.phoneNumber}</p>
+              <p className="text-foreground mt-1">{profile.phoneNumber}</p>
             )}
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-muted-foreground flex items-center">
               <MapPin className="w-4 h-4 mr-2" />
               Location
             </label>
@@ -258,35 +258,35 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
                 type="text"
                 value={editData.address?.province || ''}
                 onChange={(e) => handleChange('address', { ...profile.address, province: e.target.value })}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             ) : (
-              <p className="text-gray-900 mt-1">{profile.address?.province || '—'}</p>
+              <p className="text-foreground mt-1">{profile.address?.province || '—'}</p>
             )}
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-muted-foreground flex items-center">
               <Shield className="w-4 h-4 mr-2" />
               Role
             </label>
-            <p className="text-gray-900 mt-1">System Administrator</p>
+            <p className="text-foreground mt-1">System Administrator</p>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-muted-foreground flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
               Member Since
             </label>
-            <p className="text-gray-900 mt-1">{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}</p>
+            <p className="text-foreground mt-1">{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}</p>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">Account Status</label>
+            <label className="text-sm font-medium text-muted-foreground">Account Status</label>
             <div className="mt-1">
-              <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+              <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-success/10 text-success">
                 {profile.verified ? 'Verified Admin' : 'Active'}
               </span>
             </div>
@@ -295,74 +295,74 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
       </div>
 
       {/* Admin-specific section */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Administrative Privileges</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Administrative Privileges</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <User className="w-5 h-5 text-green-600" />
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <User className="w-5 h-5 text-success" />
             <div>
-              <p className="font-medium text-gray-900">User Management</p>
-              <p className="text-sm text-gray-600">Manage all user accounts</p>
+              <p className="font-medium text-foreground">User Management</p>
+              <p className="text-sm text-muted-foreground">Manage all user accounts</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <Settings className="w-5 h-5 text-green-600" />
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <Settings className="w-5 h-5 text-success" />
             <div>
-              <p className="font-medium text-gray-900">System Settings</p>
-              <p className="text-sm text-gray-600">Configure system parameters</p>
+              <p className="font-medium text-foreground">System Settings</p>
+              <p className="text-sm text-muted-foreground">Configure system parameters</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <Shield className="w-5 h-5 text-green-600" />
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <Shield className="w-5 h-5 text-success" />
             <div>
-              <p className="font-medium text-gray-900">Security Control</p>
-              <p className="text-sm text-gray-600">Oversee security measures</p>
+              <p className="font-medium text-foreground">Security Control</p>
+              <p className="text-sm text-muted-foreground">Oversee security measures</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* System Statistics */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">System Statistics</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">System Statistics</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="bg-muted/50 p-4 rounded-lg border border-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-600">Total Users</p>
-                <p className="text-2xl font-bold text-blue-900">2,847</p>
+                <p className="text-sm font-medium text-info">Total Users</p>
+                <p className="text-2xl font-bold text-info">2,847</p>
               </div>
-              <User className="w-8 h-8 text-blue-500" />
+              <User className="w-8 h-8 text-info" />
             </div>
-            <p className="text-xs text-blue-600 mt-2">+12% from last month</p>
+            <p className="text-xs text-info mt-2">+12% from last month</p>
           </div>
-          <div className="bg-green-50 p-4 rounded-lg">
+          <div className="bg-muted/50 p-4 rounded-lg border border-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-600">Active Farmers</p>
-                <p className="text-2xl font-bold text-green-900">1,234</p>
+                <p className="text-sm font-medium text-success">Active Farmers</p>
+                <p className="text-2xl font-bold text-success">1,234</p>
               </div>
-              <Settings className="w-8 h-8 text-green-500" />
+              <Settings className="w-8 h-8 text-success" />
             </div>
-            <p className="text-xs text-green-600 mt-2">+8% from last month</p>
+            <p className="text-xs text-success mt-2">+8% from last month</p>
           </div>
-          <div className="bg-purple-50 p-4 rounded-lg">
+          <div className="bg-muted/50 p-4 rounded-lg border border-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-600">Total Orders</p>
-                <p className="text-2xl font-bold text-purple-900">8,456</p>
+                <p className="text-sm font-medium text-warning">Total Orders</p>
+                <p className="text-2xl font-bold text-warning">8,456</p>
               </div>
-              <Shield className="w-8 h-8 text-purple-500" />
+              <Shield className="w-8 h-8 text-warning" />
             </div>
-            <p className="text-xs text-purple-600 mt-2">+23% from last month</p>
+            <p className="text-xs text-warning mt-2">+23% from last month</p>
           </div>
-          <div className="bg-orange-50 p-4 rounded-lg">
+          <div className="bg-muted/50 p-4 rounded-lg border border-border">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-orange-600">Revenue</p>
-                <p className="text-2xl font-bold text-orange-900">RWF 45M</p>
+                <p className="text-2xl font-bold text-orange-600">RWF 45M</p>
               </div>
-              <Calendar className="w-8 h-8 text-orange-500" />
+              <Calendar className="w-8 h-8 text-orange-600" />
             </div>
             <p className="text-xs text-orange-600 mt-2">+18% from last month</p>
           </div>
@@ -370,91 +370,91 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
       </div>
 
       {/* System Health */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">System Health</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">System Health</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Server Status</span>
-                <span className="text-sm text-green-600">Online</span>
+                <span className="text-sm font-medium text-muted-foreground">Server Status</span>
+                <span className="text-sm text-success">Online</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div className="bg-green-600 h-2 rounded-full" style={{ width: '98%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Database Performance</span>
-                <span className="text-sm text-green-600">Optimal</span>
+                <span className="text-sm font-medium text-muted-foreground">Database Performance</span>
+                <span className="text-sm text-success">Optimal</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div className="bg-green-600 h-2 rounded-full" style={{ width: '95%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">API Response Time</span>
-                <span className="text-sm text-green-600">120ms</span>
+                <span className="text-sm font-medium text-muted-foreground">API Response Time</span>
+                <span className="text-sm text-success">120ms</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div className="bg-green-600 h-2 rounded-full" style={{ width: '88%' }}></div>
               </div>
             </div>
           </div>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <div>
-                <p className="font-medium text-gray-900">Last Backup</p>
-                <p className="text-sm text-gray-600">2 hours ago</p>
+                <p className="font-medium text-foreground">Last Backup</p>
+                <p className="text-sm text-muted-foreground">2 hours ago</p>
               </div>
-              <span className="text-green-600 text-sm">Success</span>
+              <span className="text-success text-sm">Success</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <div>
-                <p className="font-medium text-gray-900">Security Scan</p>
-                <p className="text-sm text-gray-600">Daily at 2:00 AM</p>
+                <p className="font-medium text-foreground">Security Scan</p>
+                <p className="text-sm text-muted-foreground">Daily at 2:00 AM</p>
               </div>
-              <span className="text-green-600 text-sm">Pass</span>
+              <span className="text-success text-sm">Pass</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <div>
-                <p className="font-medium text-gray-900">System Updates</p>
-                <p className="text-sm text-gray-600">Version 2.4.1</p>
+                <p className="font-medium text-foreground">System Updates</p>
+                <p className="text-sm text-muted-foreground">Version 2.4.1</p>
               </div>
-              <span className="text-blue-600 text-sm">Up to date</span>
+              <span className="text-info text-sm">Up to date</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent System Activity</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Recent System Activity</h3>
         <div className="space-y-3">
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <div className="w-2 h-2 bg-success rounded-full"></div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">New user registration spike detected</p>
-              <p className="text-xs text-gray-600">45 new farmers registered in the last 24 hours</p>
+              <p className="text-sm font-medium text-foreground">New user registration spike detected</p>
+              <p className="text-xs text-muted-foreground">45 new farmers registered in the last 24 hours</p>
             </div>
-            <span className="text-xs text-gray-500">2 hours ago</span>
+            <span className="text-xs text-muted-foreground">2 hours ago</span>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <div className="w-2 h-2 bg-info rounded-full"></div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Database optimization completed</p>
-              <p className="text-xs text-gray-600">Query performance improved by 23%</p>
+              <p className="text-sm font-medium text-foreground">Database optimization completed</p>
+              <p className="text-xs text-muted-foreground">Query performance improved by 23%</p>
             </div>
-            <span className="text-xs text-gray-500">5 hours ago</span>
+            <span className="text-xs text-muted-foreground">5 hours ago</span>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Payment gateway maintenance scheduled</p>
-              <p className="text-xs text-gray-600">Scheduled for Sunday 2:00 AM - 4:00 AM</p>
+              <p className="text-sm font-medium text-foreground">Payment gateway maintenance scheduled</p>
+              <p className="text-xs text-muted-foreground">Scheduled for Sunday 2:00 AM - 4:00 AM</p>
             </div>
-            <span className="text-xs text-gray-500">1 day ago</span>
+            <span className="text-xs text-muted-foreground">1 day ago</span>
           </div>
         </div>
       </div>

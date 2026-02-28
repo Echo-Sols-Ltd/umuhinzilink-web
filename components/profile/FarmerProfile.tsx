@@ -448,7 +448,7 @@ function FarmerProfileComponent({ profile }: FarmerProfileProps) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-lg font-semibold text-gray-900 mb-3">{title}</h2>
+      <h2 className="text-lg font-semibold text-foreground mb-3">{title}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
     </div>
   );
@@ -469,18 +469,18 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium text-foreground mb-1">{label}</label>
       {isEditing ? (
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success focus:border-transparent transition"
         />
       ) : (
-        <div className="flex items-center gap-2 text-gray-900 bg-white border border-gray-200 rounded-md px-3 py-2 min-h-10">
+        <div className="flex items-center gap-2 text-foreground bg-card border border-border rounded-md px-3 py-2 min-h-10">
           {icon}
-          <span>{value || <span className="text-gray-400">Not provided</span>}</span>
+          <span>{value || <span className="text-muted-foreground">Not provided</span>}</span>
         </div>
       )}
     </div>

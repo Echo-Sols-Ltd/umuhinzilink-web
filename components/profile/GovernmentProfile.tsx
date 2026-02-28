@@ -87,14 +87,14 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
 
   if (!profile) {
     return (
-      <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-6 flex items-center justify-center text-gray-500">
+      <div className="bg-background border-border rounded-lg shadow-sm p-6 flex items-center justify-center text-muted-foreground">
         <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading profile...
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl bg-white rounded-lg shadow-sm border p-6">
+    <div className="max-w-4xl bg-card rounded-lg shadow-sm border p-6">
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
@@ -107,10 +107,10 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-10 h-10 text-green-600" />
+                <User className="w-10 h-10 text-success" />
               )}
             </div>
-            <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 cursor-pointer hover:bg-green-600 transition-colors">
+            <label className="absolute bottom-0 right-0 bg-success text-primary-foreground rounded-full p-1 cursor-pointer hover:bg-success/90 transition-colors">
               <input
                 type="file"
                 accept="image/*"
@@ -121,20 +121,20 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
             </label>
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-foreground">
               {isEditing ? (
                 <input
                   type="text"
                   value={editData.names || ''}
                   onChange={(e) => handleChange('names', e.target.value)}
-                  className="text-xl font-semibold bg-transparent border-b border-gray-300 focus:border-green-500 outline-none"
+                  className="text-xl font-semibold bg-transparent border-b border-border focus:border-success outline-none"
                 />
               ) : (
                 profile.names
               )}
             </h2>
-            <p className="text-gray-600">Government Official</p>
-            <div className="flex items-center mt-2 text-sm text-gray-500">
+            <p className="text-muted-foreground">Government Official</p>
+            <div className="flex items-center mt-2 text-sm text-muted-foreground">
               <Shield className="w-4 h-4 mr-1" />
               Government Official
             </div>
@@ -142,21 +142,21 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             Last updated: {profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString() : '—'}
           </div>
           {isEditing ? (
             <div className="flex gap-2">
               <button
                 onClick={handleCancel}
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-300"
+                className="bg-muted text-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-muted"
               >
                 <X className="w-4 h-4" /> Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 disabled:opacity-50"
+                className="bg-success text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-success/600 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" /> {loading ? 'Saving...' : 'Save Changes'}
               </button>
@@ -174,7 +174,7 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
 
       {/* Image Upload Section */}
       {imageFile && (
-        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+        <div className="bg-card border-border rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-lg overflow-hidden">
@@ -185,8 +185,8 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                 />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">New Profile Image</p>
-                <p className="text-xs text-gray-500">{imageFile.name}</p>
+                <p className="text-sm font-medium text-foreground">New Profile Image</p>
+                <p className="text-xs text-muted-foreground">{imageFile.name}</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -195,14 +195,14 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                   setImageFile(null);
                   setPreviewUrl(null);
                 }}
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-white"
+                className="px-3 py-1 text-sm border border-border rounded-md hover:bg-card"
               >
                 Cancel
               </button>
               <button
                 onClick={handleImageUpload}
                 disabled={loading}
-                className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-success text-white rounded-md hover:bg-success/90 disabled:opacity-50"
               >
                 {loading ? 'Uploading...' : 'Upload'}
               </button>
@@ -215,7 +215,7 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-foreground flex items-center">
               <Mail className="w-4 h-4 mr-2" />
               Email Address
             </label>
@@ -224,15 +224,15 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                 type="email"
                 value={editData.email || ''}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
               />
             ) : (
-              <p className="text-gray-900 mt-1">{profile.email}</p>
+              <p className="text-foreground mt-1">{profile.email}</p>
             )}
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-foreground flex items-center">
               <Phone className="w-4 h-4 mr-2" />
               Phone Number
             </label>
@@ -241,15 +241,15 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                 type="tel"
                 value={editData.phoneNumber || ''}
                 onChange={(e) => handleChange('phoneNumber', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
               />
             ) : (
-              <p className="text-gray-900 mt-1">{profile.phoneNumber}</p>
+              <p className="text-foreground mt-1">{profile.phoneNumber}</p>
             )}
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-foreground flex items-center">
               <MapPin className="w-4 h-4 mr-2" />
               Location
             </label>
@@ -258,17 +258,17 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                 type="text"
                 value={editData.address?.province || ''}
                 onChange={(e) => handleChange('address', { ...profile.address, province: e.target.value })}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
               />
             ) : (
-              <p className="text-gray-900 mt-1">{profile.address?.province || '—'}</p>
+              <p className="text-foreground mt-1">{profile.address?.province || '—'}</p>
             )}
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-foreground flex items-center">
               <User className="w-4 h-4 mr-2" />
               Department
             </label>
@@ -277,25 +277,25 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                 type="text"
                 value={editData.department || ''}
                 onChange={(e) => handleChange('department', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
               />
             ) : (
-              <p className="text-gray-900 mt-1">{profile.department || 'Ministry of Agriculture'}</p>
+              <p className="text-foreground mt-1">{profile.department || 'Ministry of Agriculture'}</p>
             )}
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center">
+            <label className="text-sm font-medium text-foreground flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
               Join Date
             </label>
-            <p className="text-gray-900 mt-1">{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}</p>
+            <p className="text-foreground mt-1">{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}</p>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">Account Status</label>
+            <label className="text-sm font-medium text-foreground">Account Status</label>
             <div className="mt-1">
-              <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+              <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-success/10 text-success">
                 {profile.verified ? 'Verified' : 'Active'}
               </span>
             </div>
@@ -304,12 +304,12 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
       </div>
 
       {/* Government-specific sections */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Government Information</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Government Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-gray-700 flex items-center">
+              <label className="text-sm font-medium text-foreground flex items-center">
                 <Shield className="w-4 h-4 mr-2" />
                 Employee ID
               </label>
@@ -318,34 +318,34 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                   type="text"
                   value={editData.employeeId || ''}
                   onChange={(e) => handleChange('employeeId', e.target.value)}
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
                 />
               ) : (
-                <p className="text-gray-900 mt-1">{profile.employeeId || '—'}</p>
+                <p className="text-foreground mt-1">{profile.employeeId || '—'}</p>
               )}
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Position Title</label>
+              <label className="text-sm font-medium text-foreground">Position Title</label>
               {isEditing ? (
                 <input
                   type="text"
                   value={editData.position || ''}
                   onChange={(e) => handleChange('position', e.target.value)}
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
                 />
               ) : (
-                <p className="text-gray-900 mt-1">{profile.position || 'Agricultural Inspector'}</p>
+                <p className="text-foreground mt-1">{profile.position || 'Agricultural Inspector'}</p>
               )}
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Security Clearance</label>
+              <label className="text-sm font-medium text-foreground">Security Clearance</label>
               {isEditing ? (
                 <select
                   value={editData.securityClearance || ''}
                   onChange={(e) => handleChange('securityClearance', e.target.value)}
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
                 >
                   <option value="">Select clearance level</option>
                   <option value="Level 1">Level 1</option>
@@ -353,51 +353,51 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
                   <option value="Level 3">Level 3</option>
                 </select>
               ) : (
-                <p className="text-gray-900 mt-1">{profile.securityClearance || '—'}</p>
+                <p className="text-foreground mt-1">{profile.securityClearance || '—'}</p>
               )}
             </div>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Office Location</label>
+              <label className="text-sm font-medium text-foreground">Office Location</label>
               {isEditing ? (
                 <input
                   type="text"
                   value={editData.officeLocation || ''}
                   onChange={(e) => handleChange('officeLocation', e.target.value)}
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
                 />
               ) : (
-                <p className="text-gray-900 mt-1">{profile.officeLocation || '—'}</p>
+                <p className="text-foreground mt-1">{profile.officeLocation || '—'}</p>
               )}
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Supervisor</label>
+              <label className="text-sm font-medium text-foreground">Supervisor</label>
               {isEditing ? (
                 <input
                   type="text"
                   value={editData.supervisor || ''}
                   onChange={(e) => handleChange('supervisor', e.target.value)}
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
                 />
               ) : (
-                <p className="text-gray-900 mt-1">{profile.supervisor || '—'}</p>
+                <p className="text-foreground mt-1">{profile.supervisor || '—'}</p>
               )}
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Jurisdiction</label>
+              <label className="text-sm font-medium text-foreground">Jurisdiction</label>
               {isEditing ? (
                 <input
                   type="text"
                   value={editData.jurisdiction || ''}
                   onChange={(e) => handleChange('jurisdiction', e.target.value)}
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success"
                 />
               ) : (
-                <p className="text-gray-900 mt-1">{profile.jurisdiction || 'National'}</p>
+                <p className="text-foreground mt-1">{profile.jurisdiction || 'National'}</p>
               )}
             </div>
           </div>
@@ -405,28 +405,28 @@ function GovernmentProfileComponent({ profile }: GovernmentProfileProps) {
       </div>
 
       {/* Regulatory Authority */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Regulatory Authority</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Regulatory Authority</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <Shield className="w-5 h-5 text-green-600" />
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <Shield className="w-5 h-5 text-success" />
             <div>
-              <p className="font-medium text-gray-900">Inspection Authority</p>
-              <p className="text-sm text-gray-600">Farm inspections</p>
+              <p className="font-medium text-foreground">Inspection Authority</p>
+              <p className="text-sm text-muted-foreground">Farm inspections</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <User className="w-5 h-5 text-green-600" />
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <User className="w-5 h-5 text-success" />
             <div>
-              <p className="font-medium text-gray-900">Certification Power</p>
-              <p className="text-sm text-gray-600">Issue certifications</p>
+              <p className="font-medium text-foreground">Certification Power</p>
+              <p className="text-sm text-muted-foreground">Issue certifications</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <Calendar className="w-5 h-5 text-green-600" />
+          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+            <Calendar className="w-5 h-5 text-success" />
             <div>
-              <p className="font-medium text-gray-900">Reporting Access</p>
-              <p className="text-sm text-gray-600">Generate reports</p>
+              <p className="font-medium text-foreground">Reporting Access</p>
+              <p className="text-sm text-muted-foreground">Generate reports</p>
             </div>
           </div>
         </div>
