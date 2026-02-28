@@ -84,12 +84,12 @@ export default function VerifyPage() {
     return (
         <div className="flex h-screen">
             {/* Left side - Form */}
-            <div className="flex flex-2 flex-col justify-between p-6 bg-white">
+            <div className="flex flex-2 flex-col justify-between p-6 bg-card">
                 <div className="flex flex-col flex-1 max-w-md mx-auto w-full">
                     {/* Go back button */}
                     <button
                         onClick={() => loadAuthState()}
-                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -108,13 +108,13 @@ export default function VerifyPage() {
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+                        <h1 className="text-3xl font-semibold text-foreground mb-2">
                             Verify Your Email
                         </h1>
-                        <p className="text-gray-500 mb-2">
+                        <p className="text-muted-foreground mb-2">
                             Enter the 4-digit code we sent to your email.
                         </p>
-                        <p className="text-green-600 text-sm mb-8">
+                        <p className="text-success text-sm mb-8">
                             {user?.email}
                         </p>
 
@@ -132,7 +132,7 @@ export default function VerifyPage() {
                                         onChange={(e) => handleChange(index, e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(index, e)}
                                         onPaste={handlePaste}
-                                        className={`w-12 h-14 text-center text-xl font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent text-gray-900 ${error ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-12 h-14 text-center text-xl font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-transparent text-foreground ${error ? 'border-destructive' : 'border-border'
                                             }`}
                                     />
                                 ))}
@@ -141,16 +141,16 @@ export default function VerifyPage() {
 
                             {/* Resend link */}
                             <div className="text-center mb-6">
-                                <span className="text-sm text-gray-600">Didn't receive code? </span>
+                                <span className="text-sm text-muted-foreground">Didn't receive code? </span>
                                 {timer > 0 ? (
-                                    <span className="text-sm text-green-600">
+                                    <span className="text-sm text-success">
                                         Resend in {formatTime(timer)}
                                     </span>
                                 ) : (
                                     <button
                                         type="button"
                                         onClick={handleResend}
-                                        className="text-sm text-green-600 hover:text-green-700 font-medium"
+                                        className="text-sm text-success hover:text-success/80 font-medium"
                                     >
                                         Resend
                                     </button>
@@ -159,16 +159,16 @@ export default function VerifyPage() {
 
                             <button
                                 type="submit"
-                                className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                                className="w-full bg-success text-primary-foreground py-3 rounded-lg font-medium hover:bg-success/90 transition-colors"
                             >
                                 Continue
                             </button>
                         </form>
 
                         {/* Sign in link */}
-                        <p className="mt-6 text-sm text-gray-600">
+                        <p className="mt-6 text-sm text-muted-foreground">
                             Have an account?{' '}
-                            <div onClick={() => handleSignin()} className="text-green-600 cursor-pointer hover:text-green-700 font-medium">
+                            <div onClick={() => handleSignin()} className="text-success cursor-pointer hover:text-success/80 font-medium">
                                 Sign In
                             </div>
                         </p>
@@ -176,7 +176,7 @@ export default function VerifyPage() {
                 </div>
 
                 {/* Footer */}
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                     © Dreamize 2025
                 </div>
             </div>
@@ -187,7 +187,7 @@ export default function VerifyPage() {
                     src="/Image.png"
                     alt="Mountain road"
                     fill
-                    className="object-cover object-center scale-105"
+                    className="object-cover object-center scale-105 dark:brightness-50 dark:contrast-110 transition-all duration-300"
                     priority
                     quality={100}
                 />

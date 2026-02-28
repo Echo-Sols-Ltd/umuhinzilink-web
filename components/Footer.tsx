@@ -4,11 +4,11 @@ import { Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-20">
+    <footer className="bg-background text-muted-foreground py-20">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Logo and  Description */}
         <div>
-          <p className="font-semibold text-white">🌱 UmuhinziLink</p>
+          <p className="font-semibold text-primary-foreground">🌱 UmuhinziLink</p>
           <p className="mt-2 text-sm">
             Empowering Rwandan farmers through digital agriculture and AI-powered solutions.
           </p>
@@ -16,7 +16,7 @@ export default function Footer() {
 
         {/* About */}
         <div>
-          <p className="font-semibold text-white ">About</p>
+          <p className="font-semibold text-primary-foreground ">About</p>
           <ul className="mt-2 space-y-1 cursor-pointer">
             <li>Our Mission</li>
             <li>Team</li>
@@ -27,7 +27,7 @@ export default function Footer() {
 
         {/* Support */}
         <div>
-          <p className="font-semibold text-white">Support</p>
+          <p className="font-semibold text-primary-foreground">Support</p>
           <ul className="mt-2 space-y-1  cursor-pointer">
             <li>Help Center</li>
             <li>Contact Us</li>
@@ -38,31 +38,31 @@ export default function Footer() {
 
         {/* Contact Info */}
         <div>
-          <p className="font-semibold text-white ">Contact Info</p>
+          <p className="font-semibold text-primary-foreground ">Contact Info</p>
           <ul className="mt-2 space-y-2">
-            <li className="flex items-center gap-2 ">
+            <li className="flex items-center gap-2 text-muted-foreground">
               <PhoneIcon className="w-5 h-5" />
               +250 793 373 953
             </li>
-            <li className="flex items-center gap-2">
+            <li className="flex items-center gap-2 text-muted-foreground">
               <Mail className="w-5 h-5" />
               iamshemaleandre@gmail.com
             </li>
-            <li className="flex items-center gap-2">
+            <li className="flex items-center gap-2 text-muted-foreground">
               <MapPinIcon className="w-5 h-5" /> Kigali, Rwanda
             </li>
           </ul>
           <div className="flex gap-2 mt-3">
-            <button className="px-3 py-1 bg-gray-800 rounded text-sm cursor-pointer">
+            <button className="px-3 py-1 bg-muted rounded text-sm cursor-pointer">
               English
             </button>
-            <button className="px-3 py-1 bg-green-600 rounded text-sm text-white  cursor-pointer">
+            <button className="px-3 py-1 bg-success rounded text-sm text-primary-foreground cursor-pointer">
               Kinyarwanda
             </button>
           </div>
         </div>
       </div>
-      <p className="text-center text-xs text-gray-500 mt-6">
+      <p className="text-center text-xs text-muted-foreground mt-6">
         © 2025 UmuhinziLink. All rights reserved. Built for Rwandan farmers with ❤️
       </p>
     </footer>

@@ -113,56 +113,56 @@ function SystemSettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Settings'
       />
       <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">System Settings</h1>
-            <p className="text-xs text-gray-500">Configure platform-wide settings and preferences</p>
+            <h1 className="text-xl font-semibold text-foreground">System Settings</h1>
+            <p className="text-xs text-muted-foreground">Configure platform-wide settings and preferences</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+            <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
               <Settings className="w-4 h-4" />
             </button>
           </div>
         </header>
 
-        <main className="flex-1 bg-white p-6 space-y-6">
+        <main className="flex-1 bg-background p-6 space-y-6">
           {/* General Settings */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">General Settings</h2>
+          <div className="bg-card rounded-lg border border-border shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">General Settings</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Site Name</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Site Name</label>
                 <input
                   type="text"
                   value={settings.siteName}
                   onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-success"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Contact Email</label>
                 <input
                   type="email"
                   value={settings.contactEmail}
                   onChange={(e) => setSettings({ ...settings, contactEmail: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-success"
                 />
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Site Description</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Site Description</label>
               <textarea
                 value={settings.siteDescription}
                 onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-success"
               />
             </div>
           </div>
@@ -172,7 +172,7 @@ function SystemSettingsPage() {
             <button
               onClick={handleSave}
               disabled={saveStatus === 'saving'}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-2 bg-success text-white rounded-lg hover:bg-success/90 disabled:opacity-50 flex items-center gap-2"
             >
               {saveStatus === 'saving' ? (
                 <>

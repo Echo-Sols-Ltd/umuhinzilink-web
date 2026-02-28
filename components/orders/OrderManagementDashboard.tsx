@@ -98,30 +98,30 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
   const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.PENDING:
-        return <Clock className="w-4 h-4 text-yellow-500" />;
+        return <Clock className="w-4 h-4 text-warning" />;
       case OrderStatus.ACTIVE:
-        return <Truck className="w-4 h-4 text-blue-500" />;
+        return <Truck className="w-4 h-4 text-info" />;
       case OrderStatus.COMPLETED:
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-success" />;
       case OrderStatus.CANCELLED:
-        return <XCircle className="w-4 h-4 text-red-500" />;
+        return <XCircle className="w-4 h-4 text-destructive" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
+        return <Clock className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
       case OrderStatus.PENDING:
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning/10 text-warning';
       case OrderStatus.ACTIVE:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-info/10 text-info';
       case OrderStatus.COMPLETED:
-        return 'bg-green-100 text-green-800';
+        return 'bg-success/10 text-success';
       case OrderStatus.CANCELLED:
-        return 'bg-red-100 text-red-800';
+        return 'bg-destructive/10 text-destructive';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -155,7 +155,7 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
   if (loading) {
     return (
       <div className={cn('flex items-center justify-center py-12', className)}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -164,93 +164,93 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
     <div className={cn('space-y-6', className)}>
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Orders</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.total}</p>
+              <p className="text-sm text-muted-foreground">Total Orders</p>
+              <p className="text-2xl font-semibold text-foreground">{stats.total}</p>
             </div>
-            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-gray-600" />
+            <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-muted-foreground" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-2xl font-semibold text-yellow-600">{stats.pending}</p>
+              <p className="text-sm text-muted-foreground">Pending</p>
+              <p className="text-2xl font-semibold text-warning">{stats.pending}</p>
             </div>
-            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-              <Clock className="w-5 h-5 text-yellow-600" />
+            <div className="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
+              <Clock className="w-5 h-5 text-warning" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Active</p>
-              <p className="text-2xl font-semibold text-blue-600">{stats.active}</p>
+              <p className="text-sm text-muted-foreground">Active</p>
+              <p className="text-2xl font-semibold text-info">{stats.active}</p>
             </div>
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <Truck className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-info/10 rounded-full flex items-center justify-center">
+              <Truck className="w-5 h-5 text-info" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Completed</p>
-              <p className="text-2xl font-semibold text-green-600">{stats.completed}</p>
+              <p className="text-sm text-muted-foreground">Completed</p>
+              <p className="text-2xl font-semibold text-success">{stats.completed}</p>
             </div>
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-success" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Value</p>
-              <p className="text-2xl font-semibold text-green-600">{formatCurrency(stats.totalValue)}</p>
+              <p className="text-sm text-muted-foreground">Total Value</p>
+              <p className="text-2xl font-semibold text-success">{formatCurrency(stats.totalValue)}</p>
             </div>
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
+              <DollarSign className="w-5 h-5 text-success" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white p-4 rounded-lg border">
+      <div className="bg-card p-4 rounded-lg border">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <input
               type="text"
               placeholder="Search orders..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
           {/* Filter Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-white"
+            className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-background"
           >
             <Filter className="w-4 h-4" />
             <span>Filters</span>
           </button>
 
           {/* Export */}
-          <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          <button className="flex items-center space-x-2 px-4 py-2 bg-success text-success-foreground rounded-lg hover:bg-success/90">
             <Download className="w-4 h-4" />
             <span>Export</span>
           </button>
@@ -260,11 +260,11 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
         {showFilters && (
           <div className="mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Status</label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FilterType)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="all">All Orders</option>
                 <option value="pending">Pending</option>
@@ -275,11 +275,11 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Sort By</label>
               <select
                 value={sortType}
                 onChange={(e) => setSortType(e.target.value as SortType)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -292,12 +292,12 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
       </div>
 
       {/* Orders List */}
-      <div className="bg-white rounded-lg border overflow-hidden">
+      <div className="bg-card rounded-lg border overflow-hidden">
         {filteredAndSortedOrders.length === 0 ? (
           <div className="text-center py-12">
-            <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
-            <p className="text-gray-500">
+            <Calendar className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No orders found</h3>
+            <p className="text-muted-foreground">
               {searchTerm || filterType !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Orders will appear here when they are created'}
@@ -306,47 +306,47 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-white">
+              <thead className="bg-card">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
                     Order
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
                     {userRole === 'buyer' ? 'Seller' : 'Customer'}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
                     Product
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
                     Amount
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase ">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-card divide-y divide-border">
                 {filteredAndSortedOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-white">
+                  <tr key={order.id} className="hover:bg-accent">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-foreground">
                         #{order.id.slice(-8)}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         Qty: {order.quantity}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-foreground">
                         {order.buyer.names}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {order.buyer.email}
                       </div>
                     </td>
@@ -362,20 +362,20 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
                           />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {order.product.name}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-muted-foreground">
                             {formatCurrency(order.product.unitPrice)} per {order.product.measurementUnit}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-sm font-semibold text-foreground">
                         {formatCurrency(order.totalPrice)}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {order.paymentMethod.replace('_', ' ')}
                       </div>
                     </td>

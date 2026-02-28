@@ -169,25 +169,25 @@ function FarmerSupplierOrders() {
   const displayName = currentUser?.names || 'Farmer';
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Supply Orders' />
 
-      <main className="flex-1 h-full bg-white overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+      <main className="flex-1 h-full bg-background overflow-auto">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Supplier Orders</h1>
-            <p className="text-xs text-gray-500">Orders placed with suppliers for {displayName.split(' ')[0]}</p>
+            <h1 className="text-xl font-semibold text-foreground">Supplier Orders</h1>
+            <p className="text-xs text-muted-foreground">Orders placed with suppliers for {displayName.split(' ')[0]}</p>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsCreationModalOpen(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-primary/90 transition"
             >
               <Plus className="w-4 h-4" /> Request Input
             </button>
-            <button className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-orange-600 transition">
+            <button className="bg-info text-info-foreground px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-info/90 transition">
               <Download className="w-4 h-4" /> Export
             </button>
           </div>
@@ -209,24 +209,24 @@ function FarmerSupplierOrders() {
               title="Paid"
               value={formatNumber(metrics.paid)}
               caption="Orders fully paid"
-              accent="text-green-600"
+              accent="text-success"
             />
             <SummaryCard
               title="Pending"
               value={formatNumber(metrics.pending)}
               caption="Awaiting fulfilment"
-              accent="text-yellow-600"
+              accent="text-warning"
             />
           </section>
 
-          <section className="bg-white border border-gray-100 rounded-lg shadow-sm p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <section className="bg-card border border-border rounded-lg shadow-sm p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex flex-wrap items-center gap-3">
-              <label className="flex items-center gap-2 text-sm text-gray-600">
+              <label className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>Status</span>
                 <select
                   value={statusFilter}
                   onChange={event => setStatusFilter(event.target.value)}
-                  className="pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                  className="pl-3 pr-8 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 >
                   <option value="all">All</option>
                   <option value="PENDING">Pending</option>
@@ -239,7 +239,7 @@ function FarmerSupplierOrders() {
               {statusFilter !== 'all' && (
                 <button
                   onClick={() => setStatusFilter('all')}
-                  className="text-sm text-red-500 flex items-center gap-1"
+                  className="text-sm text-destructive flex items-center gap-1"
                 >
                   <span>Clear filter</span>
                 </button>
@@ -247,7 +247,7 @@ function FarmerSupplierOrders() {
             </div>
           </section>
 
-          <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <section className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -278,7 +278,7 @@ function FarmerSupplierOrders() {
                 ) : filteredOrders.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="py-20 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-400">
+                      <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <ShoppingCart className="w-12 h-12 mb-4 opacity-20" />
                         <p className="text-lg font-medium">No supplier orders found</p>
                         <p className="text-sm">Create your first request to get started</p>
@@ -300,35 +300,35 @@ function FarmerSupplierOrders() {
 
                     return (
                       <TableRow key={order.id}>
-                        <TableCell className="font-semibold text-gray-900">
-                          <span className="text-gray-400 font-normal mr-0.5">#</span>
+                        <TableCell className="font-semibold text-foreground">
+                          <span className="text-muted-foreground font-normal mr-0.5">#</span>
                           {order.id.slice(0, 4).toUpperCase()}
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="font-medium text-gray-900 truncate max-w-[150px]">
+                            <span className="font-medium text-foreground truncate max-w-[150px]">
                               {'Supplier'}
                             </span>
-                            <span className="text-[10px] text-gray-400 truncate max-w-[150px]">
+                            <span className="text-[10px] text-muted-foreground truncate max-w-[150px]">
                               {'Supplier Address'}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-gray-500">{formatDate(order.createdAt)}</TableCell>
+                        <TableCell className="text-muted-foreground">{formatDate(order.createdAt)}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-blue-50 rounded flex items-center justify-center border border-blue-100 shrink-0">
-                              <Package className="w-4 h-4 text-blue-600" />
+                            <div className="w-8 h-8 bg-info/10 rounded flex items-center justify-center border border-info/20 shrink-0">
+                              <Package className="w-4 h-4 text-info" />
                             </div>
-                            <span className="font-medium text-gray-900">{order.product?.name || '—'}</span>
+                            <span className="font-medium text-foreground">{order.product?.name || '—'}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-gray-600">
+                        <TableCell className="text-muted-foreground">
                           {quantity
                             ? `${formatNumber(quantity)} ${order.product?.measurementUnit || ''}`
                             : '—'}
                         </TableCell>
-                        <TableCell className="font-semibold text-gray-900">
+                        <TableCell className="font-semibold text-foreground">
                           {formatNumber(amount)} RWF
                         </TableCell>
                         <TableCell>
@@ -342,7 +342,7 @@ function FarmerSupplierOrders() {
                               <button
                                 onClick={() => handlePayOrder(order.id)}
                                 disabled={paymentLoading === order.id}
-                                className="px-4 py-1.5 bg-green-600 text-white text-[11px] font-semibold rounded-full hover:bg-green-700 transition shadow-sm flex items-center gap-1.5"
+                                className="px-4 py-1.5 bg-primary text-primary-foreground text-[11px] font-semibold rounded-full hover:bg-primary/90 transition shadow-sm flex items-center gap-1.5"
                               >
                                 {paymentLoading === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <DollarSign className="w-3.5 h-3.5" />}
                                 Pay
@@ -350,7 +350,7 @@ function FarmerSupplierOrders() {
                             )}
                             <button
                               onClick={() => router.push(`/farmer/supplier-orders/${order.id}`)}
-                              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                              className="p-2 text-muted-foreground hover:text-info hover:bg-info/10 rounded-lg transition-all"
                               title="View Order Details"
                             >
                               <Eye className="w-4 h-4" />
@@ -358,7 +358,7 @@ function FarmerSupplierOrders() {
                             {order.delivery && statusKey !== 'PENDING' && statusKey !== 'CANCELLED' && (
                               <button
                                 onClick={() => router.push('/farmer/delivery')}
-                                className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all"
+                                className="p-2 text-muted-foreground hover:text-warning hover:bg-warning/10 rounded-lg transition-all"
                                 title="Tracking Details"
                               >
                                 <Truck className="w-4 h-4" />
@@ -417,10 +417,10 @@ type SummaryCardProps = {
 
 function SummaryCard({ title, value, caption, accent }: SummaryCardProps) {
   return (
-    <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-4 flex flex-col gap-1">
-      <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-2xl font-semibold text-gray-900">{value}</p>
-      <p className={`text-xs ${accent ?? 'text-gray-400'}`}>{caption}</p>
+    <div className="bg-card border border-border rounded-lg shadow-sm p-4 flex flex-col gap-1">
+      <p className="text-sm text-muted-foreground">{title}</p>
+      <p className="text-2xl font-bold text-foreground" style={accent ? { color: accent } : {}}>{value}</p>
+      <p className={`text-xs ${accent ?? 'text-muted-foreground'}`}>{caption}</p>
     </div>
   );
 }

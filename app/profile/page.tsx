@@ -18,8 +18,8 @@ import AdminProfileComponent from '@/components/profile/AdminProfile';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
-    <span className="text-green-700">Umuhinzi</span>
-    <span className="text-black">Link</span>
+    <span className="text-success">Umuhinzi</span>
+    <span className="text-foreground">Link</span>
   </span>
 );
 
@@ -33,7 +33,7 @@ function GlobalProfileComponent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className='text-green-600 animate-spin' size={50} />
+        <Loader2 className='text-success animate-spin' size={50} />
       </div>
     );
   }
@@ -47,10 +47,10 @@ function GlobalProfileComponent() {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <div className="text-red-600 mb-4">Error loading profile: {error}</div>
+          <div className="text-destructive mb-4">Error loading profile: {error}</div>
           <button 
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            className="px-4 py-2 bg-success text-white rounded hover:bg-success/90"
           >
             Retry
           </button>
@@ -62,7 +62,7 @@ function GlobalProfileComponent() {
   const roleInfo = getRoleInfo();
 
   return (
-    <div className="flex flex-col h-screen bg-white overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <div className={cn("hidden md:block shrink-0")}>
           <Sidebar
@@ -72,18 +72,18 @@ function GlobalProfileComponent() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 h-full bg-white overflow-auto">
+        <main className="flex-1 h-full bg-background overflow-auto">
           {/* Header */}
-          <header className="bg-white border-b h-16 flex items-center px-6 shadow-sm justify-between">
+          <header className="bg-card border-b h-16 flex items-center px-6 shadow-sm justify-between">
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">Profile</h1>
-              <p className="text-xs text-gray-500">
+              <h1 className="text-xl font-semibold text-foreground">Profile</h1>
+              <p className="text-xs text-muted-foreground">
                 Manage your {roleInfo?.label.toLowerCase() || 'user'} details
               </p>
             </div>
             {roleInfo && (
               <div className="flex items-center gap-2">
-                <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-success/10 text-success">
                   {roleInfo.label}
                 </span>
               </div>

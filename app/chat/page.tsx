@@ -14,7 +14,7 @@ import { Loader2 } from 'lucide-react';
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
-    <span className="text-black">Link</span>
+    <span className="text-foreground">Link</span>
   </span>
 );
 
@@ -27,13 +27,13 @@ function GlobalChatListComponent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className='text-green-600 animate-spin' size={50} />
+          <p className="text-muted-foreground">Please log in to access chat.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <div className={cn("hidden md:block shrink-0")}>
           <Sidebar

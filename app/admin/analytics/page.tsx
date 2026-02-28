@@ -113,7 +113,7 @@ function RevenueAnalytics() {
   if (!analytics) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-success"></div>
       </div>
     );
   }
@@ -154,43 +154,43 @@ function RevenueAnalytics() {
   ];
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         userType={UserType.ADMIN}
         activeItem='Analytics'
       />
       <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Analytics Dashboard</h1>
-            <p className="text-xs text-gray-500">Revenue insights and platform metrics</p>
+            <h1 className="text-xl font-semibold text-foreground">Analytics Dashboard</h1>
+            <p className="text-xs text-muted-foreground">Revenue insights and platform metrics</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+            <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
               <Download className="w-4 h-4" />
             </button>
-            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+            <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
               <Filter className="w-4 h-4" />
             </button>
           </div>
         </header>
 
-        <main className="flex-1 bg-white p-6 space-y-6">
+        <main className="flex-1 bg-background p-6 space-y-6">
           {/* Time Range Selector */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <select
                 value={timeRange}
                 onChange={e => setTimeRange(e.target.value)}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
               >
                 <option value="week">Last Week</option>
                 <option value="month">Last Month</option>
                 <option value="quarter">Last Quarter</option>
                 <option value="year">Last Year</option>
               </select>
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2">
+              <button className="bg-success text-white px-4 py-2 rounded-lg hover:bg-success/90 flex items-center space-x-2">
                 <Download className="w-4 h-4" />
                 <span>Export</span>
               </button>
@@ -202,11 +202,11 @@ function RevenueAnalytics() {
             {statCards.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <div key={index} className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                <div key={index} className="bg-card rounded-lg p-4 border border-border shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                      <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+                      <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+                      <p className="text-2xl font-semibold text-foreground">{stat.value}</p>
                     </div>
                     <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center`}>
                       <Icon className="w-5 h-5 text-white" />
@@ -214,14 +214,14 @@ function RevenueAnalytics() {
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     {stat.changeType === 'positive' ? (
-                      <TrendingUp className="w-4 h-4 text-green-600" />
+                      <TrendingUp className="w-4 h-4 text-success" />
                     ) : (
-                      <TrendingDown className="w-4 h-4 text-red-600" />
+                      <TrendingDown className="w-4 h-4 text-destructive" />
                     )}
-                    <span className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+                    <span className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-success' : 'text-destructive'}`}>
                       {stat.change}
                     </span>
-                    <span className="text-xs text-gray-500">vs last period</span>
+                    <span className="text-xs text-muted-foreground">vs last period</span>
                   </div>
                 </div>
               );
@@ -231,9 +231,9 @@ function RevenueAnalytics() {
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Revenue Chart */}
-            <div className="bg-white rounded-lg shadow-sm p-6 border">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h2>
-              <div className="h-64 flex items-center justify-center bg-white rounded-lg">
+            <div className="bg-card rounded-lg shadow-sm p-6 border">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Revenue Trend</h2>
+              <div className="h-64 flex items-center justify-center bg-card rounded-lg">
                 <div className="text-center">
                   <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                   <p className="text-gray-500">Revenue chart visualization</p>
@@ -243,9 +243,9 @@ function RevenueAnalytics() {
             </div>
 
             {/* Orders Chart */}
-            <div className="bg-white rounded-lg shadow-sm p-6 border">
+            <div className="bg-card rounded-lg shadow-sm p-6 border">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Orders Trend</h2>
-              <div className="h-64 flex items-center justify-center bg-white rounded-lg">
+              <div className="h-64 flex items-center justify-center bg-card rounded-lg">
                 <div className="text-center">
                   <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                   <p className="text-gray-500">Orders chart visualization</p>
@@ -258,25 +258,25 @@ function RevenueAnalytics() {
           {/* Top Products and Farmers */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Top Products */}
-            <div className="bg-white rounded-lg shadow-sm p-6 border">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Products</h2>
+            <div className="bg-card rounded-lg shadow-sm p-6 border">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Top Products</h2>
               <div className="space-y-4">
                 {analytics.topProducts.map((product, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 bg-white rounded-lg"
+                    className="flex items-center justify-between p-3 bg-card rounded-lg"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm font-medium text-green-800">
+                      <div className="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center text-sm font-medium text-success">
                         {index + 1}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{product.name}</p>
-                        <p className="text-sm text-gray-500">{product.orders} orders</p>
+                        <p className="font-medium text-foreground">{product.name}</p>
+                        <p className="text-sm text-muted-foreground">{product.orders} orders</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-gray-900">${product.revenue.toLocaleString()}</p>
+                      <p className="font-medium text-foreground">${product.revenue.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
@@ -284,26 +284,26 @@ function RevenueAnalytics() {
             </div>
 
             {/* Top Farmers */}
-            <div className="bg-white rounded-lg shadow-sm p-6 border">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Farmers</h2>
+            <div className="bg-card rounded-lg shadow-sm p-6 border">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Top Farmers</h2>
               <div className="space-y-4">
                 {analytics.topFarmers.map((farmer, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 bg-white rounded-lg"
+                    className="flex items-center justify-between p-3 bg-card rounded-lg"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-800">
+                      <div className="w-8 h-8 bg-info/10 rounded-full flex items-center justify-center text-sm font-medium text-info">
                         {index + 1}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{farmer.name}</p>
-                        <p className="text-sm text-gray-500">{farmer.products} products</p>
+                        <p className="font-medium text-foreground">{farmer.name}</p>
+                        <p className="text-sm text-muted-foreground">{farmer.products} products</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-gray-900">${farmer.revenue.toLocaleString()}</p>
-                      <p className="text-sm text-gray-500">{farmer.orders} orders</p>
+                      <p className="font-medium text-foreground">${farmer.revenue.toLocaleString()}</p>
+                      <p className="text-sm text-muted-foreground">{farmer.orders} orders</p>
                     </div>
                   </div>
                 ))}
@@ -312,45 +312,45 @@ function RevenueAnalytics() {
           </div>
 
           {/* Monthly Data Table */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Monthly Performance</h2>
+          <div className="bg-card rounded-lg shadow-sm p-6 border">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Monthly Performance</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-white border-b border-gray-200">
+                <thead className="bg-card border-b border-border">
                   <tr>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
                       MONTH
                     </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
                       REVENUE
                     </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
                       ORDERS
                     </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
                       NEW USERS
                     </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600 text-sm">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
                       AVG ORDER VALUE
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-border">
                   {analytics.monthlyData.map((month, index) => (
-                    <tr key={index} className="hover:bg-white">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <tr key={index} className="hover:bg-card">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
                         {month.month}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         ${(month.revenue || 0).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {(month.orders || 0).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {(month.users || 0).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         ${(month.revenue / month.orders).toFixed(2)}
                       </td>
                     </tr>

@@ -40,17 +40,17 @@ function BuyerDeliveryPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING': return 'bg-yellow-100 text-yellow-700';
-      case 'ACTIVE': return 'bg-blue-100 text-blue-700';
-      case 'COMPLETED': return 'bg-green-100 text-green-700';
-      case 'CANCELLED': return 'bg-red-100 text-red-700';
-      default: return 'bg-gray-100 text-gray-700';
+      case 'PENDING': return 'bg-warning/10 text-warning';
+      case 'ACTIVE': return 'bg-info/10 text-info';
+      case 'COMPLETED': return 'bg-success/10 text-success';
+      case 'CANCELLED': return 'bg-destructive/10 text-destructive';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
@@ -60,12 +60,12 @@ function BuyerDeliveryPage() {
   }
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
 
       <main className="flex-1 overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
-          <h1 className="text-xl font-semibold text-gray-900 flex items-center">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
+          <h1 className="text-xl font-semibold text-foreground flex items-center">
             <Package className="w-5 h-5 mr-2 text-green-600" />
             My Orders & Delivery
           </h1>
@@ -73,28 +73,28 @@ function BuyerDeliveryPage() {
 
         <div className="p-6 space-y-6">
           {/* Filters */}
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <div className="bg-card rounded-lg p-4 border border-border">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <input
                     type="text"
                     placeholder="Search orders..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500 w-full"
+                    className="pl-10 pr-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success w-full"
                   />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center space-x-2">
-                  <Filter className="w-4 h-4 text-gray-400" />
+                  <Filter className="w-4 h-4 text-muted-foreground" />
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500 px-3 py-2"
+                    className="border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success px-3 py-2"
                   >
                     <option value="all">All Status</option>
                     <option value="PENDING">Pending</option>
@@ -110,10 +110,10 @@ function BuyerDeliveryPage() {
           {/* Orders Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredOrders.length === 0 ? (
-              <div className="col-span-full bg-white rounded-lg p-6 text-center border border-gray-200">
-                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Orders Found</h3>
-                <p className="text-gray-600">
+              <div className="col-span-full bg-card rounded-lg p-6 text-center border border-border">
+                <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">No Orders Found</h3>
+                <p className="text-muted-foreground">
                   {searchTerm || statusFilter !== 'all'
                     ? 'No orders match your filters.'
                     : 'No orders available.'}
@@ -121,17 +121,17 @@ function BuyerDeliveryPage() {
               </div>
             ) : (
               filteredOrders.map(order => (
-                <div key={order.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <div key={order.id} className="bg-card rounded-lg border border-border overflow-hidden">
                   {/* Order Header */}
-                  <div className="p-4 border-b border-gray-100 bg-white">
+                  <div className="p-4 border-b border-border bg-card">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-semibold text-gray-900">#{order.id.slice(0, 8)}</h3>
+                        <h3 className="font-semibold text-foreground">#{order.id.slice(0, 8)}</h3>
                         <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                           {order.status.replace('_', ' ')}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </div>
                     </div>
@@ -142,19 +142,19 @@ function BuyerDeliveryPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Farmer Info */}
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">Farmer</h4>
-                        <p className="text-sm text-gray-700">{order.product.owner?.names}</p>
-                        <p className="text-xs text-gray-500">{order.product.owner?.email}</p>
+                        <h4 className="font-medium text-foreground mb-2">Farmer</h4>
+                        <p className="text-sm text-muted-foreground">{order.product.owner?.names}</p>
+                        <p className="text-xs text-muted-foreground">{order.product.owner?.email}</p>
                       </div>
 
                       {/* Product Info */}
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-2">Product</h4>
-                        <p className="text-sm text-gray-700">{order.product.name}</p>
-                        <p className="text-xs text-gray-500">
+                        <h4 className="font-medium text-foreground mb-2">Product</h4>
+                        <p className="text-sm text-muted-foreground">{order.product.name}</p>
+                        <p className="text-xs text-muted-foreground">
                           {order.quantity} {order.product.measurementUnit} × RWF {order.product.unitPrice?.toLocaleString()}
                         </p>
-                        <p className="text-sm font-semibold text-green-600">
+                        <p className="text-sm font-semibold text-success">
                           Total: RWF {order.totalPrice.toLocaleString()}
                         </p>
                       </div>
@@ -162,9 +162,9 @@ function BuyerDeliveryPage() {
 
                     {/* Delivery Tracking */}
                     {order.status !== 'PENDING' && order.status !== 'CANCELLED' ? (
-                      <div className="border-t border-gray-100 pt-4">
+                      <div className="border-t border-border pt-4">
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-medium text-gray-900 flex items-center">
+                          <h4 className="font-medium text-foreground flex items-center">
                             <Calendar className="w-4 h-4 mr-2 text-green-600" />
                             Delivery Tracking
                           </h4>
@@ -184,17 +184,17 @@ function BuyerDeliveryPage() {
                             isOrderOwner={false} // Buyers are never order owners for delivery updates
                           />
                         ) : (
-                          <div className="bg-white rounded-lg p-4 text-center">
-                            <Calendar className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                            <p className="text-sm text-gray-600">Delivery tracking not yet available</p>
+                          <div className="bg-card rounded-lg p-4 text-center">
+                            <Calendar className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-sm text-muted-foreground">Delivery tracking not yet available</p>
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="border-t border-gray-100 pt-4">
-                        <div className="bg-white rounded-lg p-4 text-center">
-                          <Calendar className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                          <p className="text-sm text-gray-600">
+                      <div className="border-t border-border pt-4">
+                        <div className="bg-card rounded-lg p-4 text-center">
+                          <Calendar className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">
                             {order.status === 'CANCELLED' ? 'Delivery is cancelled' : 'Waiting for order approval'}
                           </p>
                         </div>

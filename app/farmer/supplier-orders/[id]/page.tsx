@@ -92,10 +92,10 @@ function FarmerSupplierOrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.FARMER} activeItem='Supplier Orders' />
         <main className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </main>
       </div>
     );
@@ -103,13 +103,13 @@ function FarmerSupplierOrderDetailPage() {
 
   if (!order) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.FARMER} activeItem='Supply Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Order Not Found</h2>
-            <p className="text-gray-600">The order you're looking for doesn't exist.</p>
+            <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-foreground mb-2">Order Not Found</h2>
+            <p className="text-muted-foreground">The order you're looking for doesn't exist.</p>
           </div>
         </main>
       </div>
@@ -121,61 +121,61 @@ function FarmerSupplierOrderDetailPage() {
   const isOwner = order.product.owner === user
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar userType={UserType.FARMER} activeItem='Supply Orders' />
 
       <main className="flex-1 overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div className="flex items-center space-x-4">
             <button
               onClick={handleBack}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Supplier Orders</span>
             </button>
-            <div className="h-8 w-px bg-gray-300"></div>
-            <h1 className="text-xl font-semibold text-gray-900">Order Details</h1>
-            <span className="text-sm text-gray-500">#{order.id.slice(0, 8)}</span>
+            <div className="h-8 w-px bg-border"></div>
+            <h1 className="text-xl font-semibold text-foreground">Order Details</h1>
+            <span className="text-sm text-muted-foreground">#{order.id.slice(0, 8)}</span>
           </div>
         </header>
 
         <div className="p-6 space-y-6">
           {/* Order Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <div className="bg-card rounded-lg p-4 border border-border">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Package className="w-5 h-5 text-blue-600" />
+                <div className="p-2 bg-info/10 rounded-lg">
+                  <Package className="w-5 h-5 text-info" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Input Item</p>
-                  <p className="font-semibold text-gray-900">{product.name}</p>
+                  <p className="text-sm text-muted-foreground">Input Item</p>
+                  <p className="font-semibold text-foreground">{product.name}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <div className="bg-card rounded-lg p-4 border border-border">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <User className="w-5 h-5 text-green-600" />
+                <div className="p-2 bg-success/10 rounded-lg">
+                  <User className="w-5 h-5 text-success" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Supplier</p>
-                  <p className="font-semibold text-gray-900">{supplier.names}</p>
+                  <p className="text-sm text-muted-foreground">Supplier</p>
+                  <p className="font-semibold text-foreground">{supplier.names}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <div className="bg-card rounded-lg p-4 border border-border">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <CreditCard className="w-5 h-5 text-orange-600" />
+                <div className="p-2 bg-warning/10 rounded-lg">
+                  <CreditCard className="w-5 h-5 text-warning" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Total Amount</p>
-                  <p className="font-semibold text-gray-900">RWF {order.totalPrice.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">Total Amount</p>
+                  <p className="font-semibold text-foreground">RWF {order.totalPrice.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -184,30 +184,30 @@ function FarmerSupplierOrderDetailPage() {
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Supplier Information */}
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <User className="w-5 h-5 mr-2 text-green-600" />
+            <div className="bg-card rounded-lg p-6 border border-border">
+              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                <User className="w-5 h-5 mr-2 text-success" />
                 Supplier Information
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Name</label>
-                  <p className="text-gray-900">{supplier.names}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Name</label>
+                  <p className="text-foreground">{supplier.names}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Email</label>
-                  <p className="text-gray-900">{supplier.email}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Email</label>
+                  <p className="text-foreground">{supplier.email}</p>
                 </div>
                 {supplier.phoneNumber && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Phone</label>
-                    <p className="text-gray-900">{supplier.phoneNumber}</p>
+                    <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                    <p className="text-foreground">{supplier.phoneNumber}</p>
                   </div>
                 )}
                 {supplier.address && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Supplier Address</label>
-                    <p className="text-gray-900">
+                    <label className="text-sm font-medium text-muted-foreground">Supplier Address</label>
+                    <p className="text-foreground">
                       {supplier.address.district}, {supplier.address.province}
                     </p>
                   </div>
@@ -216,35 +216,35 @@ function FarmerSupplierOrderDetailPage() {
             </div>
 
             {/* Input Item Information */}
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Package className="w-5 h-5 mr-2 text-green-600" />
+            <div className="bg-card rounded-lg p-6 border border-border">
+              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                <Package className="w-5 h-5 mr-2 text-success" />
                 Input Item Details
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Input Name</label>
-                  <p className="text-gray-900">{product.name}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Input Name</label>
+                  <p className="text-foreground">{product.name}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Quantity</label>
-                  <p className="text-gray-900">{order.quantity} {product.measurementUnit}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Quantity</label>
+                  <p className="text-foreground">{order.quantity} {product.measurementUnit}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Unit Price</label>
-                  <p className="text-gray-900">RWF {product.unitPrice?.toLocaleString()}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Unit Price</label>
+                  <p className="text-foreground">RWF {product.unitPrice?.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Total Price</label>
-                  <p className="text-lg font-semibold text-green-600">RWF {order.totalPrice.toLocaleString()}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Total Price</label>
+                  <p className="text-lg font-semibold text-success">RWF {order.totalPrice.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Payment Method</label>
-                  <p className="text-gray-900">{order.paymentMethod.replace('_', ' ')}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Payment Method</label>
+                  <p className="text-foreground">{order.paymentMethod.replace('_', ' ')}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Payment Status</label>
-                  <p className={`font-medium ${order.isPaid ? 'text-green-600' : 'text-red-600'}`}>
+                  <label className="text-sm font-medium text-muted-foreground">Payment Status</label>
+                  <p className={`font-medium ${order.isPaid ? 'text-success' : 'text-destructive'}`}>
                     {order.isPaid ? 'PAID' : 'UNPAID'}
                   </p>
                 </div>
@@ -253,9 +253,9 @@ function FarmerSupplierOrderDetailPage() {
           </div>
 
           {/* Delivery Tracking Section */}
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <Calendar className="w-5 h-5 mr-2 text-green-600" />
+          <div className="bg-card rounded-lg p-6 border border-border">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-success" />
               Delivery Tracking
             </h2>
             <DeliveryTracker
@@ -263,7 +263,7 @@ function FarmerSupplierOrderDetailPage() {
               onUpdateStatus={handleUpdateDeliveryStatus}
               isLoading={updatingStatus}
               orderType="supplier"
-              isOrderOwner={true}
+              isOrderOwner={isOwner}
             />
           </div>
         </div>

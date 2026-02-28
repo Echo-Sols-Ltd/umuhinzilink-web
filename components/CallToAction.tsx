@@ -2,13 +2,13 @@
 
 export default function CallToAction() {
   const buttons = [
-    { text: 'Get Started - Farmers', color: 'bg-white text-green-600', icon: UsersIcon },
-    { text: 'Join as Business', color: 'bg-white text-green-600', icon: BriefcaseIcon },
-    { text: 'SMS: *123*456#', color: 'bg-white text-green-600', icon: MessageSquareIcon },
+    { text: 'Get Started - Farmers', color: 'bg-card text-success', icon: UsersIcon },
+    { text: 'Join as Business', color: 'bg-card text-success', icon: BriefcaseIcon },
+    { text: 'SMS: *123*456#', color: 'bg-card text-success', icon: MessageSquareIcon },
   ];
 
   return (
-    <section className="bg-green-600 py-20 text-white text-center">
+    <section className="bg-background py-20 text-foreground text-center">
       <h2 className="text-2xl font-semibold">Ready to Transform Your Farming?</h2>
       <p className="mt-2">
         Join thousands of farmers already using UmuhinziLink to grow their business

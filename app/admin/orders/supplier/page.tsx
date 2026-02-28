@@ -27,6 +27,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 
 function SupplierOrderManagement() {
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const { supplierOrders: orders } = useAdmin();
 
@@ -47,29 +48,29 @@ function SupplierOrderManagement() {
     });
 
     return (
-        <div className="flex h-screen bg-white overflow-hidden">
+        <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={UserType.ADMIN} activeItem="Order Management" />
 
             <div className="flex-1 flex flex-col overflow-auto">
                 {/* Header */}
-                <header className="bg-white border-b h-16 flex items-center justify-between p-6 shadow-sm">
+                <header className="bg-card border-b h-16 flex items-center justify-between p-6 shadow-sm">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">Supplier Orders</h1>
-                        <p className="text-xs text-gray-500">Monitor and manage supplier-to-farmer transactions</p>
+                        <h1 className="text-xl font-semibold text-foreground">Supplier Orders</h1>
+                        <p className="text-xs text-muted-foreground">Monitor and manage supplier-to-farmer transactions</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                        <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
                             <Filter className="w-4 h-4" />
                         </button>
                     </div>
                 </header>
 
-                <main className="flex-1 bg-white space-y-6">
+                <main className="flex-1 bg-background space-y-6">
                     {/* Table Container */}
                     <div className="overflow-hidden">
                         <Table className='rounded-none border-0'>
                             <TableHeader>
-                                <TableRow className="bg-white/30">
+                                <TableRow className="bg-card/30">
                                     <TableHead className="py-6 pl-8 font-semibold">SETTLEMENT INFO</TableHead>
                                     <TableHead className="font-semibold">PARTICIPANTS</TableHead>
                                     <TableHead className="font-semibold">EXECUTION DATE</TableHead>
@@ -92,35 +93,35 @@ function SupplierOrderManagement() {
                                         <TableRow key={order.id} className="group hover:bg-white/50 transition-all">
                                             <TableCell className="py-5 pl-8">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] font-semibold text-blue-600 uppercase  mb-1">SUP-REF: {order.id.slice(0, 8)}</span>
-                                                    <span className="font-semibold text-gray-900 text-base leading-tight ">
+                                                    <span className="text-[10px] font-semibold text-info uppercase  mb-1">SUP-REF: {order.id.slice(0, 8)}</span>
+                                                    <span className="text-foreground text-base leading-tight ">
                                                         RWF {order.totalPrice.toLocaleString()}
                                                     </span>
-                                                    <span className="text-[11px] text-gray-400 font-semibold">Bulk Input Purchase</span>
+                                                    <span className="text-[11px] text-muted-foreground font-medium">Bulk Input Purchase</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-6">
                                                     <div className="flex flex-col">
-                                                        <span className="text-[10px] font-semibold text-gray-400 uppercase ">Sender (Buyer)</span>
-                                                        <span className="text-sm text-gray-800 flex items-center gap-1.5">
-                                                            <User className="w-3.5 h-3.5 text-green-500" />
+                                                        <span className="text-[10px] font-semibold text-muted-foreground uppercase ">Sender (Buyer)</span>
+                                                        <span className="text-sm text-foreground flex items-center gap-1.5">
+                                                            <User className="w-3.5 h-3.5 text-success" />
                                                             {order.buyer.names}
                                                         </span>
                                                     </div>
-                                                    <div className="w-4 h-px bg-gray-200" />
+                                                    <div className="w-4 h-px bg-border" />
                                                     <div className="flex flex-col">
-                                                        <span className="text-[10px] font-semibold text-gray-400 uppercase ">Receiver (Supplier)</span>
-                                                        <span className="text-sm text-gray-800 flex items-center gap-1.5">
-                                                            <User className="w-3.5 h-3.5 text-orange-500" />
+                                                        <span className="text-[10px] font-semibold text-muted-foreground uppercase ">Receiver (Supplier)</span>
+                                                        <span className="text-sm text-foreground flex items-center gap-1.5">
+                                                            <User className="w-3.5 h-3.5 text-warning" />
                                                             {order.product.owner?.names}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-2  text-gray-600 text-sm">
-                                                    <Calendar className="w-4 h-4 text-gray-400" />
+                                                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                                                    <Calendar className="w-4 h-4 text-muted-foreground" />
                                                     {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                                                 </div>
                                             </TableCell>
@@ -134,10 +135,14 @@ function SupplierOrderManagement() {
                                             </TableCell>
                                             <TableCell className="text-right pr-8">
                                                 <div className="flex items-center justify-end gap-2 transition-all transform translate-x-4 group-hover:translate-x-0">
-                                                    <button className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all" title="View Audit">
+                                                    <button 
+                                                        onClick={() => router.push(`/admin/orders/${order.id}`)}
+                                                        className="p-3 text-muted-foreground hover:text-info hover:bg-info/10 rounded-2xl transition-all" 
+                                                        title="View order details"
+                                                    >
                                                         <Eye className="w-5 h-5" />
                                                     </button>
-                                                    <button className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all" title="Flag Transaction">
+                                                    <button className="p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-2xl transition-all" title="Flag Transaction">
                                                         <Trash2 className="w-5 h-5" />
                                                     </button>
                                                 </div>

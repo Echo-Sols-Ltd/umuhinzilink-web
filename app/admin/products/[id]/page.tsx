@@ -91,12 +91,12 @@ export default function AdminProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading product...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading product...</p>
           </div>
         </main>
       </div>
@@ -105,15 +105,15 @@ export default function AdminProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className="flex h-screen bg-white">
+      <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h1>
-            <p className="text-gray-600 mb-4">{error || 'This product could not be found.'}</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
+            <p className="text-muted-foreground mb-4">{error || 'This product could not be found.'}</p>
             <button
               onClick={() => router.back()}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="px-4 py-2 bg-success text-white rounded-lg hover:bg-success/90 transition-colors"
             >
               Go Back
             </button>
@@ -127,14 +127,14 @@ export default function AdminProductDetailPage() {
     switch (product.productStatus) {
       case ProductStatus.IN_STOCK:
         return (
-          <Badge variant="default" className="bg-green-100 text-green-800">
+          <Badge variant="default" className="bg-success/10 text-success">
             <CheckCircle className="w-3 h-3 mr-1" />
             In Stock
           </Badge>
         );
       case ProductStatus.LOW_STOCK:
         return (
-          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+          <Badge variant="secondary" className="bg-warning/10 text-warning">
             <AlertTriangle className="w-3 h-3 mr-1" />
             Low Stock
           </Badge>
@@ -157,7 +157,7 @@ export default function AdminProductDetailPage() {
   };
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
       
       <main className="flex-1 overflow-auto">
@@ -179,7 +179,7 @@ export default function AdminProductDetailPage() {
             <CardContent className="space-y-4">
               <div className="flex gap-3">
                 {/* Admin actions for product management */}
-                <Button onClick={handleDeleteProduct} variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                <Button onClick={handleDeleteProduct} variant="outline" className="text-destructive border-destructive hover:bg-destructive/10">
                   Delete Product
                 </Button>
               </div>
@@ -188,19 +188,19 @@ export default function AdminProductDetailPage() {
               
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-600">Product ID:</span>
+                  <span className="text-muted-foreground">Product ID:</span>
                   <p className="font-medium">{product.id}</p>
                 </div>
                 <div>
-                  <span className="text-gray-600">Owner ID:</span>
+                  <span className="text-muted-foreground">Owner ID:</span>
                   <p className="font-medium">{product.owner.id}</p>
                 </div>
                 <div>
-                  <span className="text-gray-600">Created:</span>
+                  <span className="text-muted-foreground">Created:</span>
                   <p className="font-medium">{new Date((product as any).createdAt || '').toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <span className="text-gray-600">Last Updated:</span>
+                  <span className="text-muted-foreground">Last Updated:</span>
                   <p className="font-medium">{new Date((product as any).updatedAt || '').toLocaleDateString()}</p>
                 </div>
               </div>

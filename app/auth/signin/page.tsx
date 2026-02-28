@@ -91,13 +91,13 @@ export default function SignIn() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col sm:flex-row bg-white overflow-hidden">
+    <div className="w-full h-screen flex flex-col sm:flex-row bg-background overflow-hidden">
       {/* LEFT – Form Section */}
-      <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white">
+      <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-card">
         <div className="w-full max-w-md flex flex-col justify-center">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Welcome Back</h1>
-            <p className="text-gray-500 text-sm sm:text-base mt-1">Sign in to your account</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">Welcome Back</h1>
+            <p className="text-muted-foreground text-sm sm:text-base mt-1">Sign in to your account</p>
           </div>
 
           <div className="flex justify-center gap-3 mb-6">
@@ -106,7 +106,7 @@ export default function SignIn() {
                 key={i}
                 href={item.link}
                 target="_blank"
-                className="w-11 h-11 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-green-50 hover:text-green-600 transition"
+                className="w-11 h-11 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-success/10 hover:text-success transition"
               >
                 {item.icon}
               </Link>
@@ -114,9 +114,9 @@ export default function SignIn() {
           </div>
 
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-400">OR</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted-foreground">OR</span>
+            <div className="flex-1 h-px bg-border" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -158,7 +158,7 @@ export default function SignIn() {
               <button
                 type="button"
                 onClick={() => setShowPassword(v => !v)}
-                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-9 text-muted-foreground hover:text-foreground"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -170,9 +170,9 @@ export default function SignIn() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Switch checked={rememberMe} onCheckedChange={setRememberMe} />
-                <span className="text-sm text-gray-600">Remember me</span>
+                <span className="text-sm text-muted-foreground">Remember me</span>
               </div>
-              <Link href="/forgot-password" className="text-sm text-green-600 hover:underline">
+              <Link href="/forgot-password" className="text-sm text-success hover:underline">
                 Forgot?
               </Link>
             </div>
@@ -180,14 +180,14 @@ export default function SignIn() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-green-600 hover:bg-green-700"
+              className="w-full bg-success hover:bg-success/90"
             >
               {loading ? 'Signing in…' : 'Sign In'}
             </Button>
 
-            <p className="text-sm text-center text-gray-600">
+            <p className="text-sm text-center text-muted-foreground">
               No account?{' '}
-              <Link href="/auth/signup" className="text-green-600 font-semibold">
+              <Link href="/auth/signup" className="text-success font-semibold">
                 Sign up
               </Link>
             </p>
@@ -201,7 +201,7 @@ export default function SignIn() {
           src="/Image.png"
           alt="background"
           fill
-          className="absolute object-cover"
+          className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300"
         />
         <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">
           Welcome Back!

@@ -31,6 +31,7 @@ import {
     ChevronRight,
     Store,
 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProps, SidebarItem, UserType } from '@/types';
@@ -72,7 +73,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/farmer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/farmer/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -100,7 +101,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/buyer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/buyer/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -127,7 +128,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/supplier/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/supplier/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -157,7 +158,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                 {
                     label: 'Account',
                     items: [
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'System Settings', href: '/admin/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -183,7 +184,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     label: 'Account',
                     items: [
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Account Settings', href: '/government/settings' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
                     ],
                 },
             ];
@@ -243,7 +244,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 aria-label="Open navigation"
-                className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl shadow-lg transition-colors"
+                className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-foreground hover:bg-accent text-background rounded-xl shadow-lg transition-colors"
             >
                 <Menu className="w-5 h-5" />
             </button>
@@ -261,7 +262,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 className={`
                     fixed lg:static inset-y-0 left-0 z-50 w-64
                     flex flex-col h-screen
-                    bg-white text-black
+                    bg-background text-foreground
                     shadow-lg
                     transform transition-transform duration-300 ease-in-out
                     lg:transform-none
@@ -272,13 +273,13 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 {/* Mobile close */}
                 <button
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="lg:hidden absolute top-4 right-4 text-gray-500 hover:text-white transition-colors p-1"
+                    className="lg:hidden absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors p-1"
                 >
                     <X className="w-5 h-5" />
                 </button>
 
                 {/* ── Logo / Brand ─────────────────────────────────── */}
-                <div className="px-5 py-5 border-b border-white/5">
+                <div className="px-5 py-5 border-b border-border">
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-green-900/40 shrink-0">
                             <img
@@ -287,7 +288,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                 className="w-10 h-10 object-cover" />
                         </div>
                         <div className="min-w-0">
-                            <p className="font-semibold text-[15px] text-black leading-tight ">UmuhinziLink</p>
+                            <p className="font-semibold text-[15px] text-foreground leading-tight ">UmuhinziLink</p>
                             {/* Role badge */}
                             <span className={`inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase  ${badge.bg} ${badge.text}`}>
                                 <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
@@ -302,7 +303,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                     {navGroups.map((group, gi) => (
                         <div key={gi}>
                             {group.label && (
-                                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase  text-gray-500 select-none">
+                                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase  text-muted-foreground select-none">
                                     {group.label}
                                 </p>
                             )}
@@ -317,21 +318,21 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                                     group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm
                                                     transition-all duration-150 relative
                                                     ${isActive
-                                                        ? 'bg-green-600 text-white font-semibold'
-                                                        : 'text-gray-900 hover:text-green-600 hover:bg-green-600/10 font-medium'
+                                                        ? 'bg-primary text-primary-foreground font-semibold'
+                                                        : 'text-foreground hover:text-primary hover:bg-primary/10 font-medium'
                                                     }
                                                 `}
                                             >
                                                 {/* Active left bar */}
                                                 {isActive && (
-                                                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-white rounded-r-full" />
+                                                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-primary-foreground rounded-r-full" />
                                                 )}
-                                                <span className={`shrink-0 transition-colors ${isActive ? 'text-white' : 'text-gray-900 group-hover:text-green-600'}`}>
+                                                <span className={`shrink-0 transition-colors ${isActive ? 'text-primary-foreground' : 'text-foreground group-hover:text-primary'}`}>
                                                     {item.icon}
                                                 </span>
                                                 <span className="truncate">{item.label}</span>
                                                 {isActive && (
-                                                    <ChevronRight className="w-3.5 h-3.5 ml-auto text-white" />
+                                                    <ChevronRight className="w-3.5 h-3.5 ml-auto text-primary-foreground" />
                                                 )}
                                             </button>
                                         </li>
@@ -343,11 +344,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 </nav>
 
                 {/* ── User profile footer ───────────────────────────── */}
-                <div className="shrink-0 border-t border-white/5 px-4 py-4">
+                <div className="shrink-0 border-t border-border px-4 py-4">
                     <div className="flex items-center gap-3">
                         {/* Avatar */}
                         <div className="relative shrink-0">
-                            <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center text-xs font-semibold text-white shadow-md">
+                            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shadow-md">
                                 {user?.avatar ? <img
                                     src={imageUrl(user?.avatar)}
                                     alt="Avatar"
@@ -355,17 +356,18 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                 /> : <User className="w-4 h-4" />}
                             </div>
                             {/* Online dot */}
-                            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 border-2 border-white rounded-full" />
+                            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success border-2 border-background rounded-full" />
                         </div>
 
                         {/* Name / Email */}
                         <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold text-gray-900 truncate leading-tight">{userName}</p>
-                            <p className="text-[11px] text-gray-500 truncate leading-tight mt-0.5">{userEmail}</p>
+                            <p className="text-[13px] font-semibold text-foreground truncate leading-tight">{userName}</p>
+                            <p className="text-[11px] text-muted-foreground truncate leading-tight mt-0.5">{userEmail}</p>
                         </div>
 
                         {/* Actions */}
                         <div className="flex items-center gap-0.5 shrink-0">
+                            <ThemeToggle />
                             <button
                                 onClick={() => navigate(
                                     currentUserType === UserType.FARMER ? '/farmer/settings' :
@@ -375,14 +377,14 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                                     '/settings'
                                 )}
                                 title="Settings"
-                                className="p-1.5 text-gray-500 hover:text-white hover:bg-white/8 rounded-lg transition-all"
+                                className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
                             >
                                 <Settings className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={handleLogout}
                                 title="Sign out"
-                                className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                                className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
                             >
                                 <LogOut className="w-4 h-4" />
                             </button>

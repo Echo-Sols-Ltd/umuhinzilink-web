@@ -10,48 +10,48 @@ const getVariantStyles = (variant: ToastData['variant']) => {
   switch (variant) {
     case 'success':
       return {
-        container: 'bg-white rounded-2xl shadow-2xl border border-green-200',
-        icon: <div className="bg-linear-to-br from-green-400 to-green-600 p-2 rounded-xl shadow-md"><CheckCircle className="w-5 h-5 text-white" /></div>,
-        title: 'text-gray-900 font-semibold',
-        description: 'text-gray-600',
-        button: 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-md',
-        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
+        container: 'bg-card rounded-2xl shadow-2xl border border-success/20',
+        icon: <div className="bg-gradient-to-br from-success to-success/80 p-2 rounded-xl shadow-md"><CheckCircle className="w-5 h-5 text-success-foreground" /></div>,
+        title: 'text-foreground font-semibold',
+        description: 'text-muted-foreground',
+        button: 'bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success text-success-foreground shadow-md',
+        closeButton: 'text-muted-foreground hover:text-foreground p-2 hover:bg-accent rounded-xl',
       };
     case 'error':
       return {
-        container: 'bg-white rounded-2xl shadow-2xl border border-red-200',
-        icon: <div className="bg-linear-to-br from-red-400 to-red-600 p-2 rounded-xl shadow-md"><AlertCircle className="w-5 h-5 text-white" /></div>,
-        title: 'text-gray-900 font-semibold',
-        description: 'text-gray-600',
-        button: 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-md',
-        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
+        container: 'bg-card rounded-2xl shadow-2xl border border-destructive/20',
+        icon: <div className="bg-gradient-to-br from-destructive to-destructive/80 p-2 rounded-xl shadow-md"><AlertCircle className="w-5 h-5 text-destructive-foreground" /></div>,
+        title: 'text-foreground font-semibold',
+        description: 'text-muted-foreground',
+        button: 'bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive text-destructive-foreground shadow-md',
+        closeButton: 'text-muted-foreground hover:text-foreground p-2 hover:bg-accent rounded-xl',
       };
     case 'warning':
       return {
-        container: 'bg-white rounded-2xl shadow-2xl border border-yellow-200',
-        icon: <div className="bg-linear-to-br from-yellow-400 to-yellow-600 p-2 rounded-xl shadow-md"><AlertTriangle className="w-5 h-5 text-white" /></div>,
-        title: 'text-gray-900 font-semibold',
-        description: 'text-gray-600',
-        button: 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-md',
-        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
+        container: 'bg-card rounded-2xl shadow-2xl border border-warning/20',
+        icon: <div className="bg-gradient-to-br from-warning to-warning/80 p-2 rounded-xl shadow-md"><AlertTriangle className="w-5 h-5 text-warning-foreground" /></div>,
+        title: 'text-foreground font-semibold',
+        description: 'text-muted-foreground',
+        button: 'bg-gradient-to-r from-warning to-warning/80 hover:from-warning/90 hover:to-warning text-warning-foreground shadow-md',
+        closeButton: 'text-muted-foreground hover:text-foreground p-2 hover:bg-accent rounded-xl',
       };
     case 'loading':
       return {
-        container: 'bg-white rounded-2xl shadow-2xl border border-blue-200',
-        icon: <div className="bg-linear-to-br from-blue-400 to-blue-600 p-2 rounded-xl shadow-md"><Loader2 className="w-5 h-5 text-white animate-spin" /></div>,
-        title: 'text-gray-900 font-semibold',
-        description: 'text-gray-600',
-        button: 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md',
-        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
+        container: 'bg-card rounded-2xl shadow-2xl border border-info/20',
+        icon: <div className="bg-gradient-to-br from-info to-info/80 p-2 rounded-xl shadow-md"><Loader2 className="w-5 h-5 text-info-foreground animate-spin" /></div>,
+        title: 'text-foreground font-semibold',
+        description: 'text-muted-foreground',
+        button: 'bg-gradient-to-r from-info to-info/80 hover:from-info/90 hover:to-info text-info-foreground shadow-md',
+        closeButton: 'text-muted-foreground hover:text-foreground p-2 hover:bg-accent rounded-xl',
       };
     default:
       return {
-        container: 'bg-white rounded-2xl shadow-2xl border border-gray-200',
-        icon: <div className="bg-linear-to-br from-gray-400 to-gray-600 p-2 rounded-xl shadow-md"><Info className="w-5 h-5 text-white" /></div>,
-        title: 'text-gray-900 font-semibold',
-        description: 'text-gray-600',
-        button: 'bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white shadow-md',
-        closeButton: 'text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-xl',
+        container: 'bg-card rounded-2xl shadow-2xl border border-border',
+        icon: <div className="bg-gradient-to-br from-muted to-muted/80 p-2 rounded-xl shadow-md"><Info className="w-5 h-5 text-muted-foreground" /></div>,
+        title: 'text-foreground font-semibold',
+        description: 'text-muted-foreground',
+        button: 'bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary text-secondary-foreground shadow-md',
+        closeButton: 'text-muted-foreground hover:text-foreground p-2 hover:bg-accent rounded-xl',
       };
   }
 };

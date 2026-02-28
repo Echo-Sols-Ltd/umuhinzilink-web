@@ -85,19 +85,19 @@ function ProfileActivityComponent() {
   const getActivityIcon = (type: ActivityData['type']) => {
     switch (type) {
       case 'login':
-        return <Activity className="w-4 h-4 text-blue-500" />;
+        return <Activity className="w-4 h-4 text-info" />;
       case 'profile_update':
-        return <Download className="w-4 h-4 text-green-500" />;
+        return <Download className="w-4 h-4 text-success" />;
       case 'order':
-        return <ShoppingBag className="w-4 h-4 text-purple-500" />;
+        return <ShoppingBag className="w-4 h-4 text-warning" />;
       case 'message':
-        return <MessageSquare className="w-4 h-4 text-orange-500" />;
+        return <MessageSquare className="w-4 h-4 text-orange-600" />;
       case 'review':
-        return <Star className="w-4 h-4 text-yellow-500" />;
+        return <Star className="w-4 h-4 text-warning" />;
       case 'achievement':
-        return <Award className="w-4 h-4 text-red-500" />;
+        return <Award className="w-4 h-4 text-destructive" />;
       default:
-        return <Activity className="w-4 h-4 text-gray-500" />;
+        return <Activity className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -110,10 +110,10 @@ function ProfileActivityComponent() {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="h-6 bg-muted rounded w-1/4 mb-4"></div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+              <div key={i} className="h-24 bg-muted rounded"></div>
             ))}
           </div>
         </div>
@@ -127,31 +127,31 @@ function ProfileActivityComponent() {
     <div className="space-y-6">
       {/* Analytics Overview */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Analytics</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Profile Analytics</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-600">Profile Views</p>
-                <p className="text-2xl font-bold text-blue-900">{analytics.totalViews.toLocaleString()}</p>
+                <p className="text-sm font-medium text-info">Profile Views</p>
+                <p className="text-2xl font-bold text-info">{analytics.totalViews.toLocaleString()}</p>
               </div>
-              <Eye className="w-8 h-8 text-blue-500" />
+              <Eye className="w-8 h-8 text-info" />
             </div>
             <div className="mt-2">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-green-500" />
-                <span className="text-xs text-green-600">+12% this month</span>
+                <TrendingUp className="w-4 h-4 text-success" />
+                <span className="text-xs text-success">+12% this month</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-green-50 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-600">Profile Completion</p>
-                <p className="text-2xl font-bold text-green-900">{analytics.profileCompletion}%</p>
+                <p className="text-sm font-medium text-success">Messages</p>
+                <p className="text-2xl font-bold text-success">{analytics.totalMessages.toLocaleString()}</p>
               </div>
-              <Activity className="w-8 h-8 text-green-500" />
+              <Activity className="w-8 h-8 text-success" />
             </div>
             <div className="mt-2">
               <div className="w-full bg-green-200 rounded-full h-2">
@@ -163,33 +163,33 @@ function ProfileActivityComponent() {
             </div>
           </div>
 
-          <div className="bg-purple-50 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-600">Response Rate</p>
-                <p className="text-2xl font-bold text-purple-900">{analytics.responseRate}%</p>
+                <p className="text-sm font-medium text-warning">Messages</p>
+                <p className="text-xl font-bold text-warning">{analytics.totalMessages}</p>
               </div>
-              <MessageSquare className="w-8 h-8 text-purple-500" />
+              <MessageSquare className="w-8 h-8 text-warning" />
             </div>
             <div className="mt-2">
-              <p className="text-xs text-purple-600">Excellent response time</p>
+              <p className="text-xs text-warning">Excellent response time</p>
             </div>
           </div>
 
-          <div className="bg-yellow-50 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-yellow-600">Average Rating</p>
-                <p className="text-2xl font-bold text-yellow-900">{analytics.averageRating}</p>
+                <p className="text-sm font-medium text-warning">Orders</p>
+                <p className="text-2xl font-bold text-warning">{analytics.totalOrders.toLocaleString()}</p>
               </div>
-              <Star className="w-8 h-8 text-yellow-500" />
+              <Star className="w-8 h-8 text-warning" />
             </div>
             <div className="mt-2">
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star 
                     key={star} 
-                    className={`w-3 h-3 ${star <= Math.floor(analytics.averageRating) ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} 
+                    className={`w-3 h-3 ${star <= Math.floor(analytics.averageRating) ? 'text-warning fill-current' : 'text-muted-foreground'}`} 
                   />
                 ))}
               </div>
@@ -200,32 +200,32 @@ function ProfileActivityComponent() {
 
       {/* Activity Statistics */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Activity Statistics</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Activity Statistics</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center gap-3">
-              <ShoppingBag className="w-6 h-6 text-purple-600" />
+              <ShoppingBag className="w-4 h-4 text-warning" />
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                <p className="text-xl font-bold text-gray-900">{analytics.totalOrders}</p>
+                <p className="text-sm font-medium text-foreground">Total Orders</p>
+                <p className="text-xl font-bold text-foreground">{analytics.totalOrders}</p>
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center gap-3">
-              <MessageSquare className="w-6 h-6 text-orange-600" />
+              <MessageSquare className="w-4 h-4 text-warning" />
               <div>
-                <p className="text-sm font-medium text-gray-600">Messages</p>
-                <p className="text-xl font-bold text-gray-900">{analytics.totalMessages}</p>
+                <p className="text-sm font-medium text-foreground">Messages</p>
+                <p className="text-xl font-bold text-foreground">{analytics.totalMessages}</p>
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center gap-3">
-              <Calendar className="w-6 h-6 text-blue-600" />
+              <Calendar className="w-4 h-4 text-info" />
               <div>
-                <p className="text-sm font-medium text-gray-600">Member Since</p>
-                <p className="text-sm font-bold text-gray-900">{analytics.joinDate}</p>
+                <p className="text-sm font-medium text-foreground">Member Since</p>
+                <p className="text-sm font-bold text-foreground">{analytics.joinDate}</p>
               </div>
             </div>
           </div>
@@ -234,19 +234,19 @@ function ProfileActivityComponent() {
 
       {/* Recent Activity */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Recent Activity</h3>
         <div className="space-y-3">
           {activities.map((activity, index) => (
-            <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+            <div key={index} className="flex items-start gap-3 p-3 bg-muted rounded-lg">
               <div className="mt-1">
                 {getActivityIcon(activity.type)}
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                  <span className="text-xs text-gray-500">{formatDate(activity.date)}</span>
+                  <p className="text-sm font-medium text-foreground">{activity.action}</p>
+                  <span className="text-xs text-muted-foreground">{formatDate(activity.date)}</span>
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{activity.details}</p>
+                <p className="text-sm text-muted-foreground mt-1">{activity.details}</p>
               </div>
             </div>
           ))}
@@ -255,25 +255,21 @@ function ProfileActivityComponent() {
 
       {/* Performance Insights */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Insights</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Performance Insights</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-              <h4 className="font-medium text-green-900">Strong Performance</h4>
+              <TrendingUp className="w-5 h-5 text-success" />
+              <h4 className="font-medium text-success">Strong Performance</h4>
             </div>
-            <p className="text-sm text-green-800">
-              Your profile has a 92% response rate and 4.8-star rating, placing you in the top 10% of performers.
-            </p>
+            <p className="text-sm text-success">Your profile has a 92% response rate and 4.8-star rating, placing you in the top 10% of performers.</p>
           </div>
-          <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+          <div className="bg-card p-4 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Award className="w-5 h-5 text-blue-600" />
-              <h4 className="font-medium text-blue-900">Achievement Unlocked</h4>
+              <Award className="w-5 h-5 text-info" />
+              <h4 className="font-medium text-info">Achievement Unlocked</h4>
             </div>
-            <p className="text-sm text-blue-800">
-              You've been recognized as Top Farmer of the Month. Keep up the excellent work!
-            </p>
+            <p className="text-sm text-info">You've been recognized as Top Farmer of the Month. Keep up the excellent work!</p>
           </div>
         </div>
       </div>

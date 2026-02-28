@@ -31,21 +31,21 @@ const steps: Step[] = [
 
 const HowItWorks: FC = () => {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-background">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-semibold text-gray-900">How UmuhinziLink Works</h2>
-        <p className="text-center text-gray-600 mt-2">
+        <h2 className="text-center text-2xl font-semibold text-foreground">How UmuhinziLink Works</h2>
+        <p className="text-center text-muted-foreground mt-2">
           Simple steps to transform your farming business
         </p>
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map(step => (
             <div key={step.number} className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-lg font-semibold mx-auto">
+              <div className="w-12 h-12 rounded-full bg-success text-primary-foreground flex items-center justify-center text-lg font-semibold mx-auto">
                 {step.number}
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">{step.title}</h3>
-              <p className="mt-2 text-sm text-gray-600">{step.description}</p>
+              <h3 className="mt-4 text-lg font-semibold text-foreground">{step.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{step.description}</p>
             </div>
           ))}
         </div>

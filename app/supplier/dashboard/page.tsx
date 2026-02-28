@@ -70,7 +70,7 @@ function DashboardComponent() {
   const supplierInitials = supplierName.split(' ').map(n => n[0]).join('').toUpperCase();
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         userType={UserType.SUPPLIER}
@@ -80,20 +80,20 @@ function DashboardComponent() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="bg-white border-b flex items-center justify-between p-6 shadow-sm">
+        <header className="bg-card border-b flex items-center justify-between p-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Supplier Dashboard</h1>
-            <p className="text-xs text-gray-500">Manage your agricultural inputs and connect with farmers</p>
+            <h1 className="text-xl font-semibold text-foreground">Supplier Dashboard</h1>
+            <p className="text-xs text-muted-foreground">Manage your agricultural inputs and connect with farmers</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors">
+            <button className="bg-success text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-success/90 transition-colors">
               <FilePlus className="w-4 h-4" /> Add Product
             </button>
           </div>
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 bg-white p-6 space-y-6">
+        <main className="flex-1 bg-background p-6 space-y-6">
 
           {/* Enhanced Analytics Dashboard */}
           <EnhancedDashboard
@@ -104,15 +104,15 @@ function DashboardComponent() {
           />
 
           {/* Recent Orders Section */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-50 flex items-center justify-between bg-white">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-border flex items-center justify-between bg-card">
               <div>
-                <h2 className="text-sm font-semibold text-gray-900 uppercase border-l-4 border-green-500 pl-3">Incoming Orders</h2>
-                <p className="text-[10px] text-gray-400 font-medium mt-1 ml-4 uppercase ">Latest requests from farmers</p>
+                <h2 className="text-sm font-semibold text-foreground uppercase border-l-4 border-success pl-3">Incoming Orders</h2>
+                <p className="text-[10px] text-muted-foreground font-medium mt-1 ml-4 uppercase ">Latest requests from farmers</p>
               </div>
               <Link
                 href="/supplier/orders"
-                className="text-[10px] font-semibold text-green-600 hover:text-green-700 uppercase  bg-green-50 px-3 py-1.5 rounded-lg transition-colors"
+                className="text-[10px] font-semibold text-success hover:text-success/80 uppercase  bg-success/10 px-3 py-1.5 rounded-lg transition-colors"
               >
                 View Registry
               </Link>
@@ -121,69 +121,69 @@ function DashboardComponent() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-white/50">
-                    <th className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Order Reference</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Customer</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase ">Product details</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-center">Total Value</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-center">Status</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-gray-400 uppercase  text-right">Date</th>
+                  <tr className="bg-card/50">
+                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Order Reference</th>
+                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Customer</th>
+                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Product details</th>
+                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-center">Total Value</th>
+                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-center">Status</th>
+                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-right">Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-border">
                   {ordersLoading ? (
                     [1, 2, 3].map((i) => (
                       <tr key={i}>
-                        <td colSpan={6} className="py-4 px-6"><div className="h-4 bg-gray-100 rounded animate-pulse w-full"></div></td>
+                        <td colSpan={6} className="py-4 px-6"><div className="h-4 bg-muted rounded animate-pulse w-full"></div></td>
                       </tr>
                     ))
                   ) : supplierOrders?.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-12 text-center">
                         <div className="flex flex-col items-center justify-center space-y-2 opacity-40">
-                          <ShoppingCart className="w-8 h-8 text-gray-300" />
-                          <p className="text-xs font-semibold text-gray-400 uppercase ">No orders found</p>
+                          <ShoppingCart className="w-8 h-8 text-muted-foreground" />
+                          <p className="text-xs font-semibold text-muted-foreground uppercase ">No orders found</p>
                         </div>
                       </td>
                     </tr>
                   ) : (
                     supplierOrders?.slice(0, 5).map((order) => (
-                      <tr key={order.id} className="group hover:bg-white/50 transition-colors cursor-pointer"
+                      <tr key={order.id} className="group hover:bg-card/50 transition-colors cursor-pointer"
                         onClick={() => router.push(`/supplier/orders/${order.id}`)}>
-                        <td className="py-4 px-6 text-xs font-semibold text-gray-900 font-mono ">
+                        <td className="py-4 px-6 text-xs font-semibold text-foreground font-mono ">
                           #{order.id.slice(0, 8).toUpperCase()}
                         </td>
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center text-[10px] font-semibold text-green-700">
+                            <div className="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center text-[10px] font-semibold text-success">
                               {order.buyer.names.split(' ').map(n => n[0]).join('')}
                             </div>
                             <div>
-                              <p className="text-xs font-semibold text-gray-900 leading-none">{order.buyer.names}</p>
-                              <p className="text-[10px] text-gray-400 mt-1">{order.buyer.phoneNumber}</p>
+                              <p className="text-xs font-semibold text-foreground leading-none">{order.buyer.names}</p>
+                              <p className="text-[10px] text-muted-foreground mt-1">{order.buyer.phoneNumber}</p>
                             </div>
                           </div>
                         </td>
                         <td className="py-4 px-6">
                           <div>
-                            <p className="text-xs font-semibold text-gray-900 leading-none">{order.product.name}</p>
-                            <p className="text-[10px] text-gray-400 mt-1 uppercase ">{order.quantity} {order.product.measurementUnit}</p>
+                            <p className="text-xs font-semibold text-foreground leading-none">{order.product.name}</p>
+                            <p className="text-[10px] text-muted-foreground mt-1 uppercase ">{order.quantity} {order.product.measurementUnit}</p>
                           </div>
                         </td>
                         <td className="py-4 px-6 text-center">
-                          <span className="text-xs font-extrabold text-green-700">
+                          <span className="text-xs font-extrabold text-success">
                             {Number(order.totalPrice).toLocaleString()} RWF
                           </span>
                         </td>
                         <td className="py-4 px-6 text-center">
-                          <Badge variant="outline" className={`text-[10px] font-semibold uppercase  px-2 py-0.5 rounded-md border-0 ring-1 ring-inset ${order.status === 'PENDING' ? 'bg-amber-50 text-amber-600 ring-amber-100' :
-                            order.status === 'COMPLETED' ? 'bg-green-50 text-green-600 ring-green-100' :
-                              'bg-white text-gray-600 ring-gray-100'
+                          <Badge variant="outline" className={`text-[10px] font-semibold uppercase  px-2 py-0.5 rounded-md border-0 ring-1 ring-inset ${order.status === 'PENDING' ? 'bg-warning/10 text-warning ring-warning/20' :
+                            order.status === 'COMPLETED' ? 'bg-success/10 text-success ring-success/20' :
+                              'bg-card text-muted-foreground ring-border'
                             }`}>
                             {order.status}
                           </Badge>
                         </td>
-                        <td className="py-4 px-6 text-right text-[10px] font-semibold text-gray-400 uppercase">
+                        <td className="py-4 px-6 text-right text-[10px] font-semibold text-muted-foreground uppercase">
                           {format(new Date(order.createdAt), 'MMM dd, yyyy')}
                         </td>
                       </tr>

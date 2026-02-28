@@ -75,7 +75,7 @@ const iconBgClass: Record<NotificationType | string, string> = {
 
 function NotificationIcon({ type }: { type: NotificationType }) {
     const meta = TYPE_META[type] ?? TYPE_META.INFO;
-    const bg = iconBgClass[type] ?? 'bg-white text-gray-500';
+    const bg = iconBgClass[type] ?? 'bg-card text-muted-foreground';
     return (
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${bg}`}>
             {meta.icon}
@@ -139,7 +139,7 @@ export default function NotificationsPage() {
     if (!user) return null;
 
     return (
-        <div className="flex h-screen bg-white overflow-hidden">
+        <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={user.role as UserType} activeItem="Notifications" />
 
             <main className="flex-1 overflow-auto">
@@ -152,8 +152,8 @@ export default function NotificationsPage() {
                                 <Bell className="w-5 h-5 text-green-600" />
                             </div>
                             <div>
-                                <h1 className="text-xl font-semibold text-gray-900 leading-tight">Notifications</h1>
-                                <p className="text-xs text-gray-500 mt-0.5">
+                                <h1 className="text-xl font-semibold text-foreground leading-tight">Notifications</h1>
+                                <p className="text-xs text-muted-foreground mt-0.5">
                                     {unreadCount > 0
                                         ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`
                                         : "You're all caught up!"}
@@ -165,14 +165,14 @@ export default function NotificationsPage() {
                                 onClick={() => load(activeTab, page)}
                                 disabled={loading}
                                 title="Refresh"
-                                className="p-2 text-gray-400 hover:text-gray-700 hover:bg-white rounded-lg border border-gray-200 transition-all disabled:opacity-50"
+                                className="p-2 text-muted-foreground hover:text-foreground hover:bg-card rounded-lg border border-border transition-all disabled:opacity-50"
                             >
                                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                             </button>
                             <button
                                 onClick={markAllAsRead}
                                 disabled={loading || unreadCount === 0}
-                                className="px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-white text-xs font-semibold text-gray-600 transition-all disabled:opacity-40 shadow-sm"
+                                className="px-4 py-2 bg-card border border-border rounded-xl hover:bg-card text-xs font-semibold text-muted-foreground transition-all disabled:opacity-40 shadow-sm"
                             >
                                 <span className="flex items-center gap-1.5">
                                     <Check className="w-3.5 h-3.5" />
@@ -183,9 +183,9 @@ export default function NotificationsPage() {
                     </div>
 
                     {/* ── Tab strip ────────────────────────────────────────── */}
-                    <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+                    <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
                         {/* Tabs */}
-                        <div className="flex items-center gap-0 overflow-x-auto border-b border-gray-100 px-4 scrollbar-hide">
+                        <div className="flex items-center gap-0 overflow-x-auto border-b border-border px-4 scrollbar-hide">
                             {TABS.map(tab => (
                                 <button
                                     key={tab.value}
@@ -193,14 +193,14 @@ export default function NotificationsPage() {
                                     className={`
                                         relative shrink-0 px-4 py-3.5 text-xs font-semibold transition-colors
                                         ${activeTab === tab.value
-                                            ? 'text-green-700 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-green-600 after:rounded-t'
-                                            : 'text-gray-500 hover:text-gray-800'
+                                            ? 'text-success after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-success after:rounded-t'
+                                            : 'text-muted-foreground hover:text-foreground'
                                         }
                                     `}
                                 >
                                     {tab.label}
                                     {tab.value === 'UNREAD' && unreadCount > 0 && (
-                                        <span className="ml-1.5 bg-green-600 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
+                                        <span className="ml-1.5 bg-success text-primary-foreground text-[9px] font-semibold px-1.5 py-0.5 rounded-full">
                                             {unreadCount > 99 ? '99+' : unreadCount}
                                         </span>
                                     )}
@@ -209,18 +209,18 @@ export default function NotificationsPage() {
                         </div>
 
                         {/* Search bar */}
-                        <div className="px-4 py-3 border-b border-gray-50">
+                        <div className="px-4 py-3 border-b border-border/50">
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <input
                                     type="text"
                                     placeholder="Search notifications…"
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
-                                    className="w-full pl-9 pr-8 py-2 bg-white rounded-lg text-sm text-gray-800 placeholder:text-gray-400 border border-transparent focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 outline-none transition-all"
+                                    className="w-full pl-9 pr-8 py-2 bg-card rounded-lg text-sm text-foreground placeholder:text-muted-foreground border border-transparent focus:border-success/50 focus:bg-card focus:ring-2 focus:ring-success/20 outline-none transition-all"
                                 />
                                 {searchTerm && (
-                                    <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                                         <X className="w-3.5 h-3.5" />
                                     </button>
                                 )}
@@ -228,7 +228,7 @@ export default function NotificationsPage() {
                         </div>
 
                         {/* ── List ──────────────────────────────────────────── */}
-                        <div className="divide-y divide-gray-50">
+                        <div className="divide-y divide-border/50">
                             {loading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <div key={i} className="flex items-start gap-4 p-4">
@@ -242,13 +242,13 @@ export default function NotificationsPage() {
                                 ))
                             ) : visible.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-                                    <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4">
-                                        <Bell className="w-8 h-8 text-gray-200" />
+                                    <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mb-4">
+                                        <Bell className="w-8 h-8 text-muted-foreground" />
                                     </div>
-                                    <p className="text-sm font-semibold text-gray-700">
+                                    <p className="text-sm font-semibold text-foreground">
                                         {searchTerm ? 'No results found' : activeTab === 'UNREAD' ? 'No unread notifications' : 'No notifications yet'}
                                     </p>
-                                    <p className="text-xs text-gray-400 mt-1">
+                                    <p className="text-xs text-muted-foreground mt-1">
                                         {searchTerm ? 'Try a different search term' : 'Check back later'}
                                     </p>
                                 </div>
@@ -259,7 +259,7 @@ export default function NotificationsPage() {
                                     return (
                                         <div
                                             key={n.id}
-                                            className={`group relative flex gap-3.5 px-4 py-4 transition-colors ${n.isRead ? 'hover:bg-white/60' : 'bg-green-50/40 hover:bg-green-50/60'
+                                            className={`group relative flex gap-3.5 px-4 py-4 transition-colors ${n.isRead ? 'hover:bg-card/60' : 'bg-success/10 hover:bg-success/20'
                                                 }`}
                                         >
                                             {/* Unread dot */}
@@ -276,21 +276,21 @@ export default function NotificationsPage() {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-start justify-between gap-2 flex-wrap">
                                                     <div className="flex items-center gap-2 flex-wrap">
-                                                        <span className={`text-sm font-semibold ${n.isRead ? 'text-gray-700' : 'text-gray-900'}`}>
+                                                        <span className={`text-sm ${n.isRead ? 'text-muted-foreground' : 'text-foreground'}`}>
                                                             {n.title}
                                                         </span>
                                                         <span className={`inline-flex items-center border text-[10px] font-semibold uppercase  px-2 py-0.5 rounded-full ${meta.badge}`}>
                                                             {n.type.replace('_', ' ')}
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center gap-1 text-[11px] text-gray-400 shrink-0">
+                                                    <div className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
                                                         <Clock className="w-3 h-3" />
                                                         <span title={format(new Date(n.timestamp), 'PPpp')}>
                                                             {formatDistanceToNow(new Date(n.timestamp), { addSuffix: true })}
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <p className={`text-sm mt-0.5 leading-relaxed ${n.isRead ? 'text-gray-500' : 'text-gray-600'}`}>
+                                                <p className={`text-sm mt-0.5 leading-relaxed ${n.isRead ? 'text-muted-foreground' : 'text-foreground'}`}>
                                                     {n.message}
                                                 </p>
                                             </div>
@@ -301,7 +301,7 @@ export default function NotificationsPage() {
                                                     <button
                                                         onClick={() => markAsRead(n.id)}
                                                         title="Mark as read"
-                                                        className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                                                        className="text-muted-foreground hover:text-foreground transition-colors bg-success/10 rounded-lg transition-colors"
                                                     >
                                                         <Check className="w-4 h-4" />
                                                     </button>
@@ -309,7 +309,7 @@ export default function NotificationsPage() {
                                                 <button
                                                     onClick={() => deleteNotification(n.id)}
                                                     title="Delete"
-                                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                                    className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>

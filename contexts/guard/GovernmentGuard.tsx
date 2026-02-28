@@ -30,10 +30,10 @@ const GovernmentGuard: React.FC<{ children: React.ReactNode }> = ({ children }) 
   // Show spinner while auth is loading
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 animate-spin text-green-600" />
-          <p className="text-sm text-gray-500 font-medium">Loading your session...</p>
+          <Loader2 className="w-10 h-10 animate-spin text-success" />
+          <p className="text-sm text-muted-foreground font-medium">Loading your session...</p>
         </div>
       </div>
     );

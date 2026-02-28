@@ -58,17 +58,17 @@ export default function ImpactStories() {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-semibold text-gray-900">Impact & Success Stories</h2>
-        <p className="text-center text-gray-600 mt-2">
+        <h2 className="text-center text-2xl font-semibold text-foreground">Impact & Success Stories</h2>
+        <p className="text-center text-muted-foreground mt-2">
           Real farmers, real results from our Nyagatare pilot
         </p>
 
         {/* Testimonials */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {testimonials.map((t, i) => (
-            <div key={i} className="bg-white shadow-md rounded-lg p-4">
+            <div key={i} className="bg-card shadow-md rounded-lg p-4">
               {/* Profile */}
               <div className="flex items-center mb-3">
                 <img
@@ -77,12 +77,12 @@ export default function ImpactStories() {
                   className="w-12 h-12 rounded-full object-cover mr-3"
                 />
                 <div>
-                  <p className="font-semibold text-gray-900">{t.name}</p>
-                  <p className="text-gray-500 text-xs">{t.role}</p>
+                  <p className="font-semibold text-foreground">{t.name}</p>
+                  <p className="text-muted-foreground text-xs">{t.role}</p>
                 </div>
               </div>
               {/* Quote */}
-              <p className="text-gray-800 text-sm ">“{t.quote}”</p>
+              <p className="text-foreground text-sm ">"{t.quote}"</p>
             </div>
           ))}
         </div>
@@ -91,8 +91,8 @@ export default function ImpactStories() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-8">
           {metrics.map((m, i) => (
             <div key={i} className="flex flex-col items-center">
-              <p className="text-lg font-semibold mt-2 text-green-600 ">{m.value}</p>
-              <p className="text-gray-600 text-sm">{m.label}</p>
+              <p className="text-lg font-semibold mt-2 text-success ">{m.value}</p>
+              <p className="text-muted-foreground text-sm">{m.label}</p>
             </div>
           ))}
         </div>

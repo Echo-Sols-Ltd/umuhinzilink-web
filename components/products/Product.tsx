@@ -194,9 +194,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     return (
         <div
             onClick={handleCardClick}
-            className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-green-100/30 transition-all duration-300 cursor-pointer"
+            className="group bg-card rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 cursor-pointer"
         >
-            <div className="relative aspect-square overflow-hidden bg-white">
+            <div className="relative aspect-square overflow-hidden bg-background">
                 <img
                     src={imageUrl(product.image!)}
                     alt={product.name}
@@ -210,7 +210,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                                 e.stopPropagation();
                                 handleDeleteProduct(product.id, product.name);
                             }}
-                            className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-sm hover:bg-white transition-colors text-gray-400 hover:text-red-500"
+                            className="bg-card/90 backdrop-blur-sm p-2 rounded-lg shadow-sm hover:bg-card transition-colors text-muted-foreground hover:text-destructive"
                             title="Delete product"
                         >
                             <Trash2 className="w-4 h-4" />
@@ -219,7 +219,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
 
                 <div className="absolute top-3 left-3">
-                    <span className={`px-2 py-0.5 text-[10px] font-semibold uppercase  rounded-md bg-white/90 backdrop-blur-sm shadow-sm ${product.productStatus === 'IN_STOCK' ? 'text-green-600' : 'text-amber-600'
+                    <span className={`px-2 py-0.5 text-[10px] font-semibold uppercase  rounded-md bg-card/90 backdrop-blur-sm shadow-sm ${product.productStatus === 'IN_STOCK' ? 'text-success' : 'text-warning'
                         }`}>
                         {product.productStatus?.replace('_', ' ') || 'Available'}
                     </span>
@@ -228,21 +228,21 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <div className="p-4">
                 <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-green-600 transition-colors uppercase text-sm ">{product.name}</h3>
+                    <h3 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors uppercase text-sm ">{product.name}</h3>
                 </div>
 
                 <div className="flex items-baseline gap-1 mb-3">
-                    <span className="text-lg font-extrabold text-green-700">{Number(product.unitPrice).toLocaleString()}</span>
-                    <span className="text-[10px] font-semibold text-gray-400 uppercase">RWF / {product.measurementUnit || 'unit'}</span>
+                    <span className="text-lg font-extrabold text-primary">{Number(product.unitPrice).toLocaleString()}</span>
+                    <span className="text-[10px] font-semibold text-muted-foreground uppercase">RWF / {product.measurementUnit || 'unit'}</span>
                 </div>
 
                 <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-[11px] font-medium text-gray-500">
-                        <UserIcon className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+                    <div className="flex items-center text-[11px] font-medium text-muted-foreground">
+                        <UserIcon className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
                         <span className="truncate">{product.owner?.names || 'Unknown'}</span>
                     </div>
-                    <div className="flex items-center text-[11px] font-medium text-gray-500">
-                        <Clock className="w-3.5 h-3.5 mr-1.5 text-gray-400" />
+                    <div className="flex items-center text-[11px] font-medium text-muted-foreground">
+                        <Clock className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
                         <span>Qty: {product.quantity}</span>
                     </div>
                 </div>
@@ -263,12 +263,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                                 }}
                                 className={`
                                     ${index === 0 && actions.length > 1 ? 'flex-1' : 'p-2'}
-                                    ${isPrimary ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
-                                    ${isSecondary ? 'bg-green-50 text-green-700 hover:bg-green-600 hover:text-white' : ''}
-                                    ${isOutline ? 'p-2 bg-white text-gray-600 hover:bg-green-50 hover:text-green-600 border border-transparent hover:border-green-100' : ''}
+                                    ${isPrimary ? 'bg-primary hover:bg-primary/90 text-primary-foreground' : ''}
+                                    ${isSecondary ? 'bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground' : ''}
+                                    ${isOutline ? 'p-2 bg-card text-muted-foreground hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20' : ''}
                                     ${index === 0 && actions.length > 1 ? 'rounded-xl' : 'rounded-lg'}
                                     text-xs font-semibold uppercase transition-all duration-300
-                                    ${isPrimary ? 'shadow-lg shadow-green-100' : ''}
+                                    ${isPrimary ? 'shadow-lg shadow-primary/20' : ''}
                                 `}
                             >
                                 {action.icon && <action.icon className="w-4 h-4" />}

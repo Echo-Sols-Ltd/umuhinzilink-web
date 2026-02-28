@@ -100,37 +100,37 @@ function FarmerProfileComponent() {
   const lastName = restNames.join(' ');
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         userType={UserType.FARMER}
         activeItem='Profile'
       />
 
-      <main className="flex-1 h-full bg-white overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center px-6 shadow-sm justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">Profile</h1>
-          <p className="text-xs text-gray-500">Manage your farmer details</p>
+      <main className="flex-1 h-full bg-background overflow-auto">
+        <header className="bg-card border-b h-16 flex items-center px-6 shadow-sm justify-between">
+          <h1 className="text-xl font-semibold text-foreground">Profile</h1>
+          <p className="text-xs text-muted-foreground">Manage your farmer details</p>
         </header>
 
         <div className="p-6">
           {loading ? (
-            <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-6 flex items-center justify-center text-gray-500">
+            <div className="bg-card border border-border rounded-lg shadow-sm p-6 flex items-center justify-center text-muted-foreground">
               <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading profile...
             </div>
           ) : error ? (
-            <div className="bg-white border border-red-200 rounded-lg shadow-sm p-6 text-red-600">
+            <div className="bg-card border border-destructive/20 rounded-lg shadow-sm p-6 text-destructive">
               {error}
             </div>
           ) : !profile ? (
-            <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-6 text-center text-gray-500">
+            <div className="bg-card border border-border rounded-lg shadow-sm p-6 text-center text-muted-foreground">
               Profile data is not available right now.
             </div>
           ) : (
-            <section className="max-w-4xl bg-white rounded-lg shadow-sm border p-6">
+            <section className="max-w-4xl bg-card rounded-lg shadow-sm border border-border p-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-full overflow-hidden bg-success/10 flex items-center justify-center">
                       {previewUrl || profile?.avatar ? (
                         <img
                           src={imageUrl(previewUrl || profile?.avatar)}
@@ -138,10 +138,10 @@ function FarmerProfileComponent() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <User className="w-10 h-10 text-green-600" />
+                        <User className="w-10 h-10 text-success" />
                       )}
                     </div>
-                    <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 cursor-pointer hover:bg-green-600 transition-colors">
+                    <label className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-1 cursor-pointer hover:bg-primary/90 transition-colors">
                       <input
                         type="file"
                         accept="image/*"
@@ -154,21 +154,21 @@ function FarmerProfileComponent() {
                     </label>
                   </div>
                   <div>
-                    <h1 className="text-2xl font-semibold text-gray-900">{displayName}</h1>
-                    <p className="text-gray-500">Registered Farmer</p>
+                    <h1 className="text-2xl font-semibold text-foreground">{displayName}</h1>
+                    <p className="text-muted-foreground">Registered Farmer</p>
                     {profile.farmSize && (
-                      <p className="text-xs text-gray-400">Farm size: {profile.farmSize}</p>
+                      <p className="text-xs text-muted-foreground">Farm size: {profile.farmSize}</p>
                     )}
                   </div>
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                   Last updated: {formatDate(profile.updatedAt || profile.createdAt)}
                 </div>
               </div>
 
               {/* Image Upload Section */}
               {imageFile && (
-                <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+                <div className="bg-card border border-border rounded-lg p-4 mb-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 rounded-lg overflow-hidden">
@@ -179,8 +179,8 @@ function FarmerProfileComponent() {
                         />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">New Profile Image</p>
-                        <p className="text-xs text-gray-500">{imageFile.name}</p>
+                        <p className="text-sm font-medium text-foreground">New Profile Image</p>
+                        <p className="text-xs text-muted-foreground">{imageFile.name}</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -189,13 +189,13 @@ function FarmerProfileComponent() {
                           setImageFile(null);
                           setPreviewUrl(null);
                         }}
-                        className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-white"
+                        className="px-3 py-1 text-sm border border-border rounded-md hover:bg-card"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleImageUpload}
-                        className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                        className="px-3 py-1 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
                       >
                         Upload
                       </button>
@@ -209,12 +209,12 @@ function FarmerProfileComponent() {
                   <Field
                     label="First Name"
                     value={firstName}
-                    icon={<User className="w-4 h-4 text-gray-500" />}
+                    icon={<User className="w-4 h-4 text-muted-foreground" />}
                   />
                   <Field
                     label="Last Name"
                     value={lastName || '—'}
-                    icon={<User className="w-4 h-4 text-gray-500" />}
+                    icon={<User className="w-4 h-4 text-muted-foreground" />}
                   />
                 </Section>
 
@@ -222,12 +222,12 @@ function FarmerProfileComponent() {
                   <Field
                     label="Phone Number"
                     value={profile.phoneNumber || '—'}
-                    icon={<Phone className="w-4 h-4 text-gray-500" />}
+                    icon={<Phone className="w-4 h-4 text-muted-foreground" />}
                   />
                   <Field
                     label="Email"
                     value={profile.email || '—'}
-                    icon={<Mail className="w-4 h-4 text-gray-500" />}
+                    icon={<Mail className="w-4 h-4 text-muted-foreground" />}
                   />
                 </Section>
 
@@ -235,12 +235,12 @@ function FarmerProfileComponent() {
                   <Field
                     label="District"
                     value={profile.address?.district || '—'}
-                    icon={<MapPin className="w-4 h-4 text-gray-500" />}
+                    icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
                   />
                   <Field
                     label="Province"
                     value={profile.address?.province || '—'}
-                    icon={<MapPin className="w-4 h-4 text-gray-500" />}
+                    icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
                   />
                 </Section>
 
@@ -283,7 +283,7 @@ function formatDate(value?: string) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-lg font-semibold text-gray-900 mb-3">{title}</h2>
+      <h2 className="text-lg font-semibold text-foreground mb-3">{title}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
     </div>
   );
@@ -293,13 +293,13 @@ function Field({ label, value, icon }: { label: string; value: string; icon?: Re
   const content = value ? (
     <span>{value}</span>
   ) : (
-    <span className="text-gray-400">Not provided</span>
+    <span className="text-muted-foreground">Not provided</span>
   );
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      <div className="flex items-center gap-2 text-gray-900 bg-white border border-gray-200 rounded-md px-3 py-2 min-h-10">
+      <label className="block text-sm font-medium text-muted-foreground mb-1">{label}</label>
+      <div className="flex items-center gap-2 text-foreground bg-card border border-border rounded-md px-3 py-2 min-h-10">
         {icon}
         {content}
       </div>

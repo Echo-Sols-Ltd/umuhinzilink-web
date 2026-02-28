@@ -153,29 +153,29 @@ function UserManagement() {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserType.ADMIN} activeItem="User Management" />
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">User Management</h1>
-            <p className="text-xs text-gray-500">Manage and monitor all platform members</p>
+            <h1 className="text-xl font-semibold text-foreground">User Management</h1>
+            <p className="text-xs text-muted-foreground">Manage and monitor all platform members</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
               />
             </div>
             <div className="flex gap-2">
               <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger className="w-32 rounded-lg border border-gray-300">
+                <SelectTrigger className="w-32 rounded-lg border border-border">
                   <SelectValue placeholder="All Roles" />
                 </SelectTrigger>
                 <SelectContent>
@@ -188,7 +188,7 @@ function UserManagement() {
               </Select>
 
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-32 rounded-lg border border-gray-300">
+                <SelectTrigger className="w-32 rounded-lg border border-border">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -200,7 +200,7 @@ function UserManagement() {
             </div>
             <button
               onClick={() => fetchUsers(currentPage)}
-              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors"
               disabled={loading}
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -208,8 +208,8 @@ function UserManagement() {
           </div>
         </header>
 
-        <main className="flex-1 bg-white p-6">
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <main className="flex-1 bg-background p-6">
+          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -244,18 +244,18 @@ function UserManagement() {
                     <TableRow key={usersItem.id} className="group">
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-100 flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-card border border-border flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
                             {usersItem.avatar ? (
                               <img src={imageUrl(usersItem.avatar)} alt={usersItem.names} className="w-full h-full object-cover" />
                             ) : (
-                              <div className="w-full h-full bg-linear-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white text-xs font-semibold">
+                              <div className="w-full h-full bg-linear-to-br from-success to-emerald-600 flex items-center justify-center text-white text-xs font-semibold">
                                 {usersItem.names.charAt(0).toUpperCase()}
                               </div>
                             )}
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-semibold text-gray-900 leading-tight">{usersItem.names}</span>
-                            <span className="text-[11px] text-gray-400">{usersItem.email}</span>
+                            <span className="font-semibold text-foreground leading-tight">{usersItem.names}</span>
+                            <span className="text-[11px] text-muted-foreground">{usersItem.email}</span>
                           </div>
                         </div>
                       </TableCell>
@@ -278,15 +278,15 @@ function UserManagement() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="text-sm text-gray-700 font-medium">{usersItem.phoneNumber || '—'}</span>
-                          <span className="text-[10px] text-gray-400 uppercase ">Primary Contact</span>
+                          <span className="text-sm text-foreground font-medium">{usersItem.phoneNumber || '—'}</span>
+                          <span className="text-[10px] text-muted-foreground uppercase ">Primary Contact</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1 transition-all">
                           <button
                             onClick={() => handleViewUser(usersItem)}
-                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            className="p-2 text-muted-foreground hover:text-info hover:bg-info/10 rounded-lg transition-all"
                             title="Quick View"
                           >
                             <Eye className="w-4 h-4" />
@@ -295,8 +295,8 @@ function UserManagement() {
                             onClick={() => handleSuspendUser(usersItem.id, !(usersItem as any).suspended)}
                             disabled={actionLoading === usersItem.id}
                             className={`p-2 rounded-lg transition-all ${(usersItem as any).suspended
-                              ? 'text-gray-400 hover:text-green-600 hover:bg-green-50'
-                              : 'text-gray-400 hover:text-orange-600 hover:bg-orange-50'
+                              ? 'text-muted-foreground hover:text-success hover:bg-success/10'
+                              : 'text-muted-foreground hover:text-warning hover:bg-warning/10'
                               }`}
                           >
                             {actionLoading === usersItem.id ? (
@@ -310,7 +310,7 @@ function UserManagement() {
                           <button
                             onClick={() => handleDeleteUser(usersItem.id)}
                             disabled={actionLoading === usersItem.id}
-                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                            className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -321,7 +321,7 @@ function UserManagement() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} className="py-24 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-400">
+                      <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <Users className="w-16 h-16 mb-4 opacity-10" />
                         <p className="text-lg font-medium">No users match your criteria</p>
                       </div>
@@ -332,15 +332,15 @@ function UserManagement() {
             </Table>
 
             {totalPages > 0 && (
-              <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-white">
-                <div className="text-sm text-gray-500 font-medium">
-                  Page <span className="text-gray-900">{currentPage + 1}</span> of <span className="text-gray-900">{totalPages}</span>
+              <div className="p-4 border-t border-border flex items-center justify-between bg-card">
+                <div className="text-sm text-muted-foreground font-medium">
+                  Page <span className="text-foreground">{currentPage + 1}</span> of <span className="text-foreground">{totalPages}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
                     disabled={currentPage === 0 || loading}
-                    className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                    className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
@@ -353,7 +353,7 @@ function UserManagement() {
 
                       if (!showPage) {
                         if ((pageNum === 1 && currentPage > 2) || (pageNum === totalPages - 2 && currentPage < totalPages - 3)) {
-                          return <span key={pageNum} className="px-2 text-gray-300">...</span>;
+                          return <span key={pageNum} className="px-2 text-muted-foreground">...</span>;
                         }
                         return null;
                       }
@@ -364,8 +364,8 @@ function UserManagement() {
                           onClick={() => setCurrentPage(pageNum)}
                           disabled={loading}
                           className={`min-w-[32px] h-8 text-xs font-semibold rounded-lg transition-all ${pageNum === currentPage
-                            ? 'bg-green-600 text-white shadow-sm'
-                            : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
+                            ? 'bg-success text-white shadow-sm'
+                            : 'text-muted-foreground hover:text-success hover:bg-success/10'
                             }`}
                         >
                           {pageNum + 1}
@@ -376,7 +376,7 @@ function UserManagement() {
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
                     disabled={currentPage >= totalPages - 1 || loading}
-                    className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                    className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -389,8 +389,8 @@ function UserManagement() {
 
       {showUserModal && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-100">
-            <div className="relative h-24 bg-linear-to-r from-green-500 to-emerald-600">
+          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-border">
+            <div className="relative h-24 bg-linear-to-r from-success to-emerald-600">
               <button
                 onClick={() => setShowUserModal(false)}
                 className="absolute top-4 right-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all"
@@ -401,12 +401,12 @@ function UserManagement() {
 
             <div className="px-8 pb-8">
               <div className="relative -mt-12 mb-6">
-                <div className="w-24 h-24 rounded-2xl bg-white p-1 shadow-lg">
-                  <div className="w-full h-full rounded-xl overflow-hidden bg-white flex items-center justify-center border border-gray-100">
+                <div className="w-24 h-24 rounded-2xl bg-card p-1 shadow-lg">
+                  <div className="w-full h-full rounded-xl overflow-hidden bg-card flex items-center justify-center border border-border">
                     {selectedUser.avatar ? (
                       <img src={imageUrl(selectedUser.avatar)} alt={selectedUser.names} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-green-500 flex items-center justify-center text-white text-2xl font-semibold">
+                      <div className="w-full h-full bg-success flex items-center justify-center text-white text-2xl font-semibold">
                         {selectedUser.names.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -416,18 +416,18 @@ function UserManagement() {
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-semibold text-gray-900 leading-tight">{selectedUser.names}</h3>
-                  <p className="text-gray-500 font-medium">{selectedUser.email}</p>
+                  <h3 className="text-2xl font-semibold text-foreground leading-tight">{selectedUser.names}</h3>
+                  <p className="text-muted-foreground font-medium">{selectedUser.email}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-white rounded-xl border border-gray-100">
-                    <p className="text-[10px] uppercase  font-semibold text-gray-400 mb-1">Phone</p>
-                    <p className="text-sm font-semibold text-gray-700">{selectedUser.phoneNumber || 'Not linked'}</p>
+                  <div className="p-3 bg-card rounded-xl border border-border">
+                    <p className="text-[10px] uppercase  font-semibold text-muted-foreground mb-1">Phone</p>
+                    <p className="text-sm font-semibold text-foreground">{selectedUser.phoneNumber || 'Not linked'}</p>
                   </div>
-                  <div className="p-3 bg-white rounded-xl border border-gray-100">
-                    <p className="text-[10px] uppercase  font-semibold text-gray-400 mb-1">Joined</p>
-                    <p className="text-sm font-semibold text-gray-700">{new Date(selectedUser.createdAt).toLocaleDateString()}</p>
+                  <div className="p-3 bg-card rounded-xl border border-border">
+                    <p className="text-[10px] uppercase  font-semibold text-muted-foreground mb-1">Joined</p>
+                    <p className="text-sm font-semibold text-foreground">{new Date(selectedUser.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
 
@@ -440,19 +440,19 @@ function UserManagement() {
                   )}
                 </div>
 
-                <div className="pt-4 border-t border-gray-100 flex gap-3">
+                <div className="pt-4 border-t border-border flex gap-3">
                   <button
                     onClick={() => handleSuspendUser(selectedUser.id, !(selectedUser as any).suspended)}
                     className={`flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all ${(selectedUser as any).suspended
-                      ? 'bg-green-600 text-white hover:bg-green-700 shadow-md shadow-green-200'
-                      : 'bg-orange-600 text-white hover:bg-orange-700 shadow-md shadow-orange-200'
+                      ? 'bg-success text-white hover:bg-success/90 shadow-md shadow-success/20'
+                      : 'bg-warning text-white hover:bg-warning/90 shadow-md shadow-warning/20'
                       }`}
                   >
                     {(selectedUser as any).suspended ? 'Reactivate Account' : 'Suspend Account'}
                   </button>
                   <button
                     onClick={() => setShowUserModal(false)}
-                    className="px-6 py-2.5 bg-gray-100 text-gray-600 font-semibold text-sm rounded-xl hover:bg-gray-200 transition-all"
+                    className="px-6 py-2.5 bg-muted text-muted-foreground font-semibold text-sm rounded-xl hover:bg-muted/80 transition-all"
                   >
                     Close
                   </button>

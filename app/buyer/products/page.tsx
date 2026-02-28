@@ -47,7 +47,7 @@ import { useUser } from '@/contexts/UserContext';
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
     <span className="text-green-700">Umuhinzi</span>
-    <span className="text-black">Link</span>
+    <span className="text-foreground">Link</span>
   </span>
 );
 
@@ -183,10 +183,10 @@ function ProductsPageComponent() {
   };
 
   const header = (
-    <div className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
+    <div className="bg-card shadow-sm border-b border-border px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-semibold text-gray-900">Browse Products</h1>
+          <h1 className="text-2xl font-semibold text-foreground">Browse Products</h1>
           <div className="flex items-center space-x-2">
             <Button
               variant={viewMode === 'grid' ? 'default' : 'outline'}
@@ -205,9 +205,9 @@ function ProductsPageComponent() {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <span>Rwanda's Largest Agricultural Marketplace</span>
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+            <div className="w-2 h-2 bg-success rounded-full mr-2" />
             <span className="font-medium">Verified Farmers</span>
           </div>
           <Button variant="outline" size="sm">

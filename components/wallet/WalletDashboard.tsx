@@ -114,35 +114,35 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
   }, [transactions]);
 
   const getTransactionIcon = (type: string, status: string) => {
-    if (status === 'PENDING') return <Clock className="w-4 h-4 text-yellow-500" />;
-    if (status === 'FAILED' || status === 'CANCELLED') return <XCircle className="w-4 h-4 text-red-500" />;
+    if (status === 'PENDING') return <Clock className="w-4 h-4 text-warning" />;
+    if (status === 'FAILED' || status === 'CANCELLED') return <XCircle className="w-4 h-4 text-destructive" />;
 
     switch (type) {
       case 'DEPOSIT':
       case 'TRANSFER_IN':
-        return <ArrowDownLeft className="w-4 h-4 text-green-500" />;
+        return <ArrowDownLeft className="w-4 h-4 text-success" />;
       case 'PAYMENT':
       case 'TRANSFER_OUT':
-        return <ArrowUpRight className="w-4 h-4 text-blue-500" />;
+        return <ArrowUpRight className="w-4 h-4 text-info" />;
       case 'WITHDRAWAL':
-        return <ArrowUpRight className="w-4 h-4 text-red-500" />;
+        return <ArrowUpRight className="w-4 h-4 text-destructive" />;
       default:
-        return <CheckCircle className="w-4 h-4 text-gray-500" />;
+        return <CheckCircle className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success/10 text-success';
       case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning/10 text-warning';
       case 'FAILED':
-        return 'bg-red-100 text-red-800';
+        return 'bg-destructive/10 text-destructive';
       case 'CANCELLED':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -212,61 +212,61 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Deposits</p>
-              <p className="text-xl font-semibold text-green-600">{formatCurrency(stats.totalDeposits)}</p>
+              <p className="text-sm text-muted-foreground">Total Deposits</p>
+              <p className="text-xl font-semibold text-success">{formatCurrency(stats.totalDeposits)}</p>
             </div>
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-success" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Payments</p>
-              <p className="text-xl font-semibold text-blue-600">{formatCurrency(stats.totalPayments)}</p>
+              <p className="text-sm text-muted-foreground">Total Payments</p>
+              <p className="text-xl font-semibold text-info">{formatCurrency(stats.totalPayments)}</p>
             </div>
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-info/10 rounded-full flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-info" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Withdrawals</p>
-              <p className="text-xl font-semibold text-red-600">{formatCurrency(stats.totalWithdrawals)}</p>
+              <p className="text-sm text-muted-foreground">Withdrawals</p>
+              <p className="text-xl font-semibold text-destructive">{formatCurrency(stats.totalWithdrawals)}</p>
             </div>
-            <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-              <TrendingDown className="w-5 h-5 text-red-600" />
+            <div className="w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center">
+              <TrendingDown className="w-5 h-5 text-destructive" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-card p-4 rounded-lg border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-xl font-semibold text-yellow-600">{stats.pendingTransactions}</p>
+              <p className="text-sm text-muted-foreground">Pending</p>
+              <p className="text-xl font-semibold text-warning">{stats.pendingTransactions}</p>
             </div>
-            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-              <Clock className="w-5 h-5 text-yellow-600" />
+            <div className="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
+              <Clock className="w-5 h-5 text-warning" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white">
+      <div className="bg-card">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <input
               type="text"
               placeholder="Search transactions..."
@@ -279,14 +279,14 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
           {/* Filter Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-white"
+            className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-card"
           >
             <Filter className="w-4 h-4" />
             <span>Filters</span>
           </button>
 
           {/* Export */}
-          <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          <button className="flex items-center space-x-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">
             <Download className="w-4 h-4" />
             <span>Export</span>
           </button>
@@ -296,11 +296,11 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
         {showFilters && (
           <div className="mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Transaction Type</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-2">Transaction Type</label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FilterType)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="all">All Transactions</option>
                 <option value="deposit">Deposits</option>
@@ -310,11 +310,11 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-2">Sort By</label>
               <select
                 value={sortType}
                 onChange={(e) => setSortType(e.target.value as SortType)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -327,36 +327,36 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
       </div>
 
       {/* Transaction History */}
-      <div className="bg-white rounded-lg border overflow-hidden">
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
         <div className="p-4 border-b">
           <div className="flex items-center space-x-2">
-            <History className="w-5 h-5 text-gray-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Transaction History</h3>
+            <History className="w-5 h-5 text-muted-foreground" />
+            <h3 className="text-lg font-semibold text-foreground">Transaction History</h3>
           </div>
         </div>
 
         {filteredAndSortedTransactions.length === 0 ? (
           <div className="text-center py-12">
-            <History className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions found</h3>
-            <p className="text-gray-500">
+            <History className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No transactions found</h3>
+            <p className="text-muted-foreground">
               {searchTerm || filterType !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Your transaction history will appear here'}
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-border">
             {filteredAndSortedTransactions.map((transaction) => (
-              <div key={transaction.id} className="p-4 hover:bg-white">
+              <div key={transaction.id} className="p-4 hover:bg-card">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     {getTransactionIcon(transaction.type, transaction.status)}
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-foreground">
                         {transaction.description || `${transaction.type.toLowerCase()} transaction`}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {formatDate(transaction.createdAt)} • ID: {transaction.id.slice(-8)}
                       </p>
                     </div>
@@ -364,7 +364,7 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                   <div className="text-right">
                     <p className={cn(
                       'text-sm font-semibold',
-                      (transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_IN') ? 'text-green-600' : 'text-red-600'
+                      (transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_IN') ? 'text-success' : 'text-destructive'
                     )}>
                       {(transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_IN') ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
                     </p>
@@ -384,14 +384,14 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
 
       {/* Deposit Modal */}
       {showDepositModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md m-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card rounded-lg shadow-xl w-full max-w-md m-4">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Add Money to Wallet</h3>
+                <h3 className="text-lg font-semibold text-foreground">Add Money to Wallet</h3>
                 <button
                   onClick={() => setShowDepositModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <XCircle className="w-6 h-6" />
                 </button>
@@ -399,11 +399,11 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Amount ({wallet?.currency || 'USD'})
                   </label>
                   <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <input
                       type="number"
                       value={depositAmount}
@@ -411,13 +411,13 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                       placeholder="0.00"
                       min="0"
                       step="0.01"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Description (Optional)
                   </label>
                   <input
@@ -425,7 +425,7 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                     value={depositDescription}
                     onChange={(e) => setDepositDescription(e.target.value)}
                     placeholder="Add a note for this deposit"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
@@ -445,14 +445,14 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                 <div className="flex space-x-3 pt-4">
                   <button
                     onClick={() => setShowDepositModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors"
+                    className="flex-1 px-4 py-2 border border-border text-muted-foreground rounded-lg hover:bg-card transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleDeposit}
                     disabled={!depositAmount || parseFloat(depositAmount) <= 0}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Add Money
                   </button>

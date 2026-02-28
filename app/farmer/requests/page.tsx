@@ -129,73 +129,73 @@ function FarmerRequestsComponent() {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserType.FARMER} activeItem="Supply Market" />
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6 shadow-sm">
+        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Farm Input Center</h1>
-            <p className="text-xs text-gray-500">Purchase seeds, fertilizers and tools from verified suppliers</p>
+            <h1 className="text-xl font-semibold text-foreground">Farm Input Center</h1>
+            <p className="text-xs text-muted-foreground">Purchase seeds, fertilizers and tools from verified suppliers</p>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => { fetchFarmerBuyerProducts(0, 100); fetchFarmerBuyerOrders(0, ORDERS_PER_PAGE); setOrdersPage(1); }}
-              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
             >
               <RefreshCw className={`w-4 h-4 ${productsLoading || ordersLoading ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </header>
 
-        <main className="flex-1 bg-white p-6 space-y-6">
+        <main className="flex-1 bg-card p-6 space-y-6">
 
           {/* Metrics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">My Orders</p>
-                  <p className="text-2xl font-semibold text-gray-900">{stats.total}</p>
+                  <p className="text-sm font-medium text-muted-foreground">My Orders</p>
+                  <p className="text-2xl font-semibold text-foreground">{stats.total}</p>
                 </div>
-                <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                  <ShoppingCart className="w-5 h-5 text-green-600" />
+                <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                  <ShoppingCart className="w-5 h-5 text-success" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-2xl font-semibold text-gray-900">{stats.pending}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Pending</p>
+                  <p className="text-2xl font-semibold text-foreground">{stats.pending}</p>
                 </div>
-                <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-amber-600" />
+                <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-warning" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">In Delivery</p>
-                  <p className="text-2xl font-semibold text-gray-900">{stats.active}</p>
+                  <p className="text-sm font-medium text-muted-foreground">In Delivery</p>
+                  <p className="text-2xl font-semibold text-foreground">{stats.active}</p>
                 </div>
-                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <Package className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 bg-info/10 rounded-lg flex items-center justify-center">
+                  <Package className="w-5 h-5 text-info" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Successful</p>
-                  <p className="text-2xl font-semibold text-gray-900">{stats.completed}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Successful</p>
+                  <p className="text-2xl font-semibold text-foreground">{stats.completed}</p>
                 </div>
-                <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-purple-600" />
+                <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-accent" />
                 </div>
               </div>
             </div>
@@ -204,14 +204,14 @@ function FarmerRequestsComponent() {
           {/* Product Grid */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Premium Inputs</h2>
-              <span className="text-xs text-gray-500 uppercase ">Available Now</span>
+              <h2 className="text-lg font-semibold text-foreground">Premium Inputs</h2>
+              <span className="text-xs text-muted-foreground uppercase ">Available Now</span>
             </div>
 
             {productsLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 space-y-4">
+                  <div key={i} className="bg-card rounded-2xl border border-border p-4 space-y-4">
                     <Skeleton className="aspect-square rounded-xl" />
                     <Skeleton className="h-4 w-3/4" />
                     <Skeleton className="h-8 w-full rounded-lg" />
@@ -219,9 +219,9 @@ function FarmerRequestsComponent() {
                 ))}
               </div>
             ) : products.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-                <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-                <p className="text-gray-500 font-medium">No verified inputs currently listed.</p>
+              <div className="bg-card rounded-2xl border border-border p-12 text-center">
+                <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground font-medium">No verified inputs currently listed.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -258,13 +258,13 @@ function FarmerRequestsComponent() {
 
 function HighlightCard({ title, value, icon, color }: { title: string; value: number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-5 transition-all hover:scale-[1.02] hover:shadow-md cursor-default">
+    <div className="bg-card p-6 rounded-2xl shadow-sm border border-border flex items-center gap-5 transition-all hover:scale-[1.02] hover:shadow-md cursor-default">
       <div className={`p-3 rounded-xl bg-linear-to-br ${color} text-white shadow-lg`}>
         {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-6 h-6' })}
       </div>
       <div>
-        <p className="text-xs font-semibold text-gray-400 uppercase  leading-none mb-1.5">{title}</p>
-        <p className="text-2xl font-semibold text-gray-900 leading-none">{value}</p>
+        <p className="text-xs font-semibold text-muted-foreground uppercase  leading-none mb-1.5">{title}</p>
+        <p className="text-2xl font-semibold text-foreground leading-none">{value}</p>
       </div>
     </div>
   );

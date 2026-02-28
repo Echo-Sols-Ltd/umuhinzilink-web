@@ -12,7 +12,7 @@ function WalletPage() {
     const { wallet, transactions, loading, handleDeposit } = useWallet();
 
     return (
-        <div className="flex h-screen bg-white">
+        <div className="flex h-screen bg-background">
             <Sidebar
                 userType={UserType.FARMER}
                 activeItem='Wallet'
@@ -23,10 +23,10 @@ function WalletPage() {
                 {/* Header */}
                 <div className="mb-6">
                     <div className="flex items-center space-x-3">
-                        <Wallet className="w-8 h-8 text-green-600" />
+                        <Wallet className="w-8 h-8 text-success" />
                         <div>
-                            <h1 className="text-2xl font-semibold text-gray-900">My Wallet</h1>
-                            <p className="text-gray-600">Manage your earnings, balance and transactions</p>
+                            <h1 className="text-2xl font-semibold text-foreground">My Wallet</h1>
+                            <p className="text-muted-foreground">Manage your earnings, balance and transactions</p>
                         </div>
                     </div>
                 </div>

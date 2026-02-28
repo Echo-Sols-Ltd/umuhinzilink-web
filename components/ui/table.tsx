@@ -16,7 +16,7 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
 }
 
 function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
-  return <thead data-slot="table-header" className={cn('bg-white/50 border-b border-gray-100', className)} {...props} />;
+  return <thead data-slot="table-header" className={cn('bg-background/50 border-b border-border', className)} {...props} />;
 }
 
 function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
@@ -33,7 +33,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn('bg-white/50 border-t border-gray-100 font-medium [&>tr]:last:border-b-0', className)}
+      className={cn('bg-background/50 border-t border-border font-medium [&>tr]:last:border-b-0', className)}
       {...props}
     />
   );
@@ -44,7 +44,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
     <tr
       data-slot="table-row"
       className={cn(
-        'group hover:bg-green-50/30 border-b border-gray-100 transition-colors duration-200',
+        'group hover:bg-primary/5 border-b border-border transition-colors duration-200',
         className
       )}
       {...props}
@@ -57,7 +57,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
     <th
       data-slot="table-head"
       className={cn(
-        'h-12 px-6 text-left align-middle font-semibold text-gray-500 uppercase  text-[11px] whitespace-nowrap',
+        'h-12 px-6 text-left align-middle font-semibold text-muted-foreground uppercase  text-[11px] whitespace-nowrap',
         className
       )}
       {...props}
@@ -70,7 +70,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
     <td
       data-slot="table-cell"
       className={cn(
-        'p-6 align-middle whitespace-nowrap text-gray-700 transition-all duration-200',
+        'p-6 align-middle whitespace-nowrap text-foreground transition-all duration-200',
         className
       )}
       {...props}
@@ -82,7 +82,7 @@ function TableCaption({ className, ...props }: React.ComponentProps<'caption'>) 
   return (
     <caption
       data-slot="table-caption"
-      className={cn('text-gray-500 mt-4 text-sm px-6 pb-4', className)}
+      className={cn('text-muted-foreground mt-4 text-sm px-6 pb-4', className)}
       {...props}
     />
   );

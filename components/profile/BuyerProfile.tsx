@@ -88,7 +88,7 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
 
   if (!profile) {
     return (
-      <div className="bg-white border border-gray-100 rounded-lg shadow-sm p-6 flex items-center justify-center text-gray-500">
+      <div className="bg-background border-border rounded-lg shadow-sm p-6 flex items-center justify-center text-muted-foreground">
         <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading profile...
       </div>
     );
@@ -99,12 +99,12 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
   const lastName = restNames.join(' ');
 
   return (
-    <div className="max-w-4xl bg-white rounded-lg shadow-sm border p-6">
+    <div className="max-w-4xl bg-card rounded-lg shadow-sm border p-6">
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-20 h-20 rounded-full overflow-hidden bg-green-100 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full overflow-hidden bg-success/10 flex items-center justify-center">
               {previewUrl || profile.user?.avatar ? (
                 <img
                   src={imageUrl(previewUrl || profile.user?.avatar)}
@@ -112,10 +112,10 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-10 h-10 text-green-600" />
+                <User className="w-10 h-10 text-success" />
               )}
             </div>
-            <label className="absolute bottom-0 right-0 bg-green-500 text-white rounded-full p-1 cursor-pointer hover:bg-green-600 transition-colors">
+            <label className="absolute bottom-0 right-0 bg-success text-primary-foreground rounded-full p-1 cursor-pointer hover:bg-success/90 transition-colors">
               <input
                 type="file"
                 accept="image/*"
@@ -128,14 +128,14 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
             </label>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{displayName}</h1>
-            <p className="text-gray-500">Buyer</p>
-            <p className="text-sm text-gray-600">{profile.buyerType}</p>
+            <h1 className="text-2xl font-semibold text-foreground">{displayName}</h1>
+            <p className="text-muted-foreground">Buyer</p>
+            <p className="text-sm text-muted-foreground">{profile.buyerType}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             Last updated: {profile.user?.updatedAt ? new Date(profile.user.updatedAt).toLocaleDateString() : '—'}
           </div>
           {isEditing ? (
@@ -143,13 +143,13 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 disabled:opacity-50"
+                className="bg-success text-primary-foreground rounded-md hover:bg-success/600 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" /> {loading ? 'Saving...' : 'Save'}
               </button>
               <button
                 onClick={handleCancel}
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-300"
+                className="bg-muted text-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-muted"
               >
                 <X className="w-4 h-4" /> Cancel
               </button>
@@ -167,7 +167,7 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
 
       {/* Image Upload Section */}
       {imageFile && (
-        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+        <div className="bg-card border-border rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-lg overflow-hidden">
@@ -178,8 +178,8 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
                 />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">New Profile Image</p>
-                <p className="text-xs text-gray-500">{imageFile.name}</p>
+                <p className="text-sm font-medium text-foreground">New Profile Image</p>
+                <p className="text-xs text-muted-foreground">{imageFile.name}</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -188,14 +188,14 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
                   setImageFile(null);
                   setPreviewUrl(null);
                 }}
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-white"
+                className="px-3 py-1 text-sm border border-border rounded-md hover:bg-card"
               >
                 Cancel
               </button>
               <button
                 onClick={handleImageUpload}
                 disabled={loading}
-                className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-success text-primary-foreground rounded-md hover:bg-success/600 disabled:opacity-50"
               >
                 {loading ? 'Uploading...' : 'Upload'}
               </button>
@@ -224,14 +224,14 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
           <Field
             label="Phone Number"
             value={profile.user?.phoneNumber || '—'}
-            icon={<Phone className="w-4 h-4 text-gray-500" />}
+            icon={<Phone className="w-4 h-4 text-muted-foreground" />}
             isEditing={isEditing}
             onChange={(value) => handleChange('user', { ...profile.user, phoneNumber: value })}
           />
           <Field
             label="Email"
             value={profile.user?.email || '—'}
-            icon={<Mail className="w-4 h-4 text-gray-500" />}
+            icon={<Mail className="w-4 h-4 text-muted-foreground" />}
             isEditing={isEditing}
             onChange={(value) => handleChange('user', { ...profile.user, email: value })}
           />
@@ -241,7 +241,7 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
           <Field
             label="District"
             value={profile.user?.address?.district || '—'}
-            icon={<MapPin className="w-4 h-4 text-gray-500" />}
+            icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
             isEditing={isEditing}
             onChange={(value) => handleChange('user', { 
               ...profile.user, 
@@ -251,7 +251,7 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
           <Field
             label="Province"
             value={profile.user?.address?.province || '—'}
-            icon={<MapPin className="w-4 h-4 text-gray-500" />}
+            icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
             isEditing={isEditing}
             onChange={(value) => handleChange('user', { 
               ...profile.user, 
@@ -398,7 +398,7 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-lg font-semibold text-gray-900 mb-3">{title}</h2>
+      <h2 className="text-lg font-semibold text-foreground mb-3">{title}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
     </div>
   );
@@ -419,18 +419,18 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium text-foreground mb-1">{label}</label>
       {isEditing && onChange ? (
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-success focus:border-transparent transition"
         />
       ) : (
-        <div className="flex items-center gap-2 text-gray-900 bg-white border border-gray-200 rounded-md px-3 py-2 min-h-10">
+        <div className="flex items-center gap-2 text-foreground bg-card border border-border rounded-md px-3 py-2 min-h-10">
           {icon}
-          <span>{value || <span className="text-gray-400">Not provided</span>}</span>
+          <span>{value || <span className="text-muted-foreground">Not provided</span>}</span>
         </div>
       )}
     </div>

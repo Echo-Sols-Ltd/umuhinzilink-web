@@ -24,8 +24,8 @@ export default function Home() {
     }
   }, [user])
   return (
-    <div className='bg-white overflow-hidden h-screen'>
-      <main className="bg-white overflow-auto h-full">
+    <div className='bg-background overflow-hidden h-screen'>
+      <main className="bg-background overflow-auto h-full">
         <Navbar />
         <section id="home" className="section-fade-up section-delay-1">
           <Hero />
