@@ -356,7 +356,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
               </div>
             )}
 
-            <div className={cn('text-xs mt-1 flex items-center justify-end space-x-1', isOwn ? 'text-success/70' : 'text-muted-foreground')}>
+            <div className={cn('text-xs mt-1 flex items-center justify-end space-x-1', isOwn ? 'text-background' : 'text-muted-foreground')}>
               <span>{formatTime(message.timestamp)}</span>
               {isOwn && (
                 <div className="flex">
