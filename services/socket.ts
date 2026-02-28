@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
-import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping } from '@/types'
+import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping, FarmerOrder, SupplierOrder } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants';
 import { OrderChangeResponse, OrderDeliveryChange } from './websocket';
 
@@ -14,9 +14,9 @@ class SocketService {
     private messageEditionListeners: ((message: Message) => void)[] = []
     private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
-    private orderStatusChangeListeners: ((order: OrderChangeResponse) => void)[] = []
-    private orderDeliveryChangeListeners: ((order: OrderDeliveryChange) => void)[] = []
-    private orderNewListeners: ((order: OrderChangeResponse) => void)[] = []
+    private orderStatusChangeListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
+    private orderDeliveryChangeListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
+    private orderNewListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
@@ -186,7 +186,7 @@ class SocketService {
 
     private handleNewOrder(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<OrderChangeResponse>
+            const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
             // Only call listeners if data exists
             if (body.data) {
                 this.orderNewListeners.forEach(cb => cb(body.data!))
@@ -201,7 +201,7 @@ class SocketService {
 
     private handleOrderStatusChange(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<OrderChangeResponse>
+            const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
             // Only call listeners if data exists
             if (body.data) {
                 this.orderStatusChangeListeners.forEach(cb => cb(body.data!))
@@ -215,7 +215,7 @@ class SocketService {
 
     private handleOrderDeliveryChange(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<OrderDeliveryChange>
+            const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
             // Only call listeners if data exists
             if (body.data) {
                 this.orderDeliveryChangeListeners.forEach(cb => cb(body.data!))
@@ -306,22 +306,22 @@ class SocketService {
             }
         }
     }
-    public onNewOrder(callback: (order: OrderChangeResponse) => void) {
+    public onNewOrder(callback: (order: FarmerOrder|SupplierOrder) => void) {
         this.orderNewListeners.push(callback)
     }
-    public removeNewOrderListener(callback: (order: OrderChangeResponse) => void) {
+    public removeNewOrderListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
         this.orderNewListeners = this.orderNewListeners.filter(cb => cb !== callback)
     }
-    public onOrderStatusChange(callback: (order: OrderChangeResponse) => void) {
+    public onOrderStatusChange(callback: (order: FarmerOrder|SupplierOrder) => void) {
         this.orderStatusChangeListeners.push(callback)
     }
-    public removeOrderStatusChangeListener(callback: (order: OrderChangeResponse) => void) {
+    public removeOrderStatusChangeListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
         this.orderStatusChangeListeners = this.orderStatusChangeListeners.filter(cb => cb !== callback)
     }
-    public onOrderDeliveryChange(callback: (order: OrderDeliveryChange) => void) {
+    public onOrderDeliveryChange(callback: (order: FarmerOrder|SupplierOrder) => void) {
         this.orderDeliveryChangeListeners.push(callback)
     }
-    public removeOrderDeliveryChangeListener(callback: (order: OrderDeliveryChange) => void) {
+    public removeOrderDeliveryChangeListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
         this.orderDeliveryChangeListeners = this.orderDeliveryChangeListeners.filter(cb => cb !== callback)
     }
 

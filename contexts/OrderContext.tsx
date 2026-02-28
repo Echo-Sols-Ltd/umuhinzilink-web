@@ -242,7 +242,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Socket event handlers
-  const handleNewOrder = useCallback((orderChange: OrderChangeResponse) => {
+  const handleNewOrder = useCallback((orderChange: FarmerOrder | SupplierOrder) => {
     console.log("this is new order", orderChange);
 
     // Add null check to prevent undefined errors
@@ -255,7 +255,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const browserNotificationShown = showNotification({
       type: 'order',
       title: 'New Order Received',
-      body: `Order #${orderChange.orderId} has been placed with status: ${orderChange.status}`,
+      body: `Order #${orderChange.id} has been placed with status: ${orderChange.status}`,
       icon: '/icons/order.svg',
       onClick: () => {
         // Navigate to orders page
@@ -274,7 +274,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     fetchFarmerBuyerOrders();
   }, [isEnabled, showNotification, fetchBuyerOrders, fetchFarmerOrders, fetchSupplierOrders, fetchFarmerBuyerOrders]);
 
-  const handleOrderStatusChange = useCallback((orderChange: OrderChangeResponse) => {
+  const handleOrderStatusChange = useCallback((orderChange: FarmerOrder | SupplierOrder) => {
     console.log("this is order status change", orderChange);
 
     // Add null check to prevent undefined errors
@@ -288,7 +288,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       showNotification({
         type: 'order',
         title: 'Order Status Updated',
-        body: `Order #${orderChange.orderId} status changed to: ${orderChange.status}`,
+        body: `Order #${orderChange.id} status changed to: ${orderChange.status}`,
         icon: '/icons/order.svg',
         onClick: () => {
           // Navigate to orders page
@@ -298,11 +298,11 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Update order status across all relevant lists by orderId
-    const { orderId, status } = orderChange;
+    const { id, status } = orderChange;
 
     // Helper function to update order status
     const updateOrderStatus = (order: any) => {
-      if (order.id === orderId) {
+      if (order.id === id) {
         return {
           ...order,
           status: status,
@@ -346,19 +346,19 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
     // Update current orders if they match
     setCurrentFarmerOrder(prev =>
-      prev?.id === orderId ? updateOrderStatus(prev) : prev
+      prev?.id === id ? updateOrderStatus(prev) : prev
     );
     setCurrentBuyerOrder(prev =>
-      prev?.id === orderId ? updateOrderStatus(prev) : prev
+      prev?.id === id ? updateOrderStatus(prev) : prev
     );
     setCurrentSupplierOrder(prev =>
-      prev?.id === orderId ? updateOrderStatus(prev) : prev
+      prev?.id === id ? updateOrderStatus(prev) : prev
     );
     setCurrentFarmerBuyerOrder(prev =>
-      prev?.id === orderId ? updateOrderStatus(prev) : prev
+      prev?.id === id ? updateOrderStatus(prev) : prev
     );
   }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
-  const handleOrderDeliveryChange = useCallback((deliveryChange: OrderDeliveryChange) => {
+  const handleOrderDeliveryChange = useCallback((deliveryChange: FarmerOrder | SupplierOrder) => {
     if (!deliveryChange) {
       console.error('Delivery change data is undefined');
       return;
@@ -368,7 +368,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const browserNotificationShown = showNotification({
       type: 'delivery',
       title: 'Delivery Status Updated',
-      body: `Order #${deliveryChange.orderId} delivery status: ${deliveryChange.status}`,
+      body: `Order #${deliveryChange.id} delivery status: ${deliveryChange.status}`,
       icon: '/icons/delivery.svg',
       onClick: () => {
         // Navigate to delivery page
@@ -379,11 +379,11 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // In-app notifications are automatically shown via showNotification inside useBrowserNotification
 
     // Update order delivery status across all relevant lists by orderId
-    const { orderId, status } = deliveryChange;
+    const { id, status } = deliveryChange;
 
     // Helper function to update delivery status
     const updateDeliveryStatus = (order: any) => {
-      if (order.id === orderId) {
+      if (order.id === id) {
         // Create or update delivery object with proper status
         const updatedDelivery = {
           ...order.delivery,
@@ -455,16 +455,16 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
     // Update current orders if they match
     setCurrentFarmerOrder(prev =>
-      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
+      prev?.id === id ? updateDeliveryStatus(prev) : prev
     );
     setCurrentBuyerOrder(prev =>
-      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
+      prev?.id === id ? updateDeliveryStatus(prev) : prev
     );
     setCurrentSupplierOrder(prev =>
-      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
+      prev?.id === id ? updateDeliveryStatus(prev) : prev
     );
     setCurrentFarmerBuyerOrder(prev =>
-      prev?.id === orderId ? updateDeliveryStatus(prev) : prev
+      prev?.id === id ? updateDeliveryStatus(prev) : prev
     );
   }, [shouldUseInAppNotifications, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 

@@ -74,7 +74,7 @@ function GlobalChatComponent() {
         fetchUserAndSetChat();
       }
     }
-  }, [chatId, user, users, currentUser, setActiveChatUser, setCurrentUser, loadMessages]);
+  }, [chatId, user?.id, users, currentUser?.id]);
 
   if (!user) {
     return (
