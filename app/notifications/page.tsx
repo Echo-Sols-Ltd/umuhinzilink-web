@@ -24,7 +24,7 @@ import Sidebar from '@/components/shared/Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotification } from '@/hooks/useNotification';
 import { UserType } from '@/types';
-import { NotificationType } from '@/types/notification';
+import { NotificationType, Notification } from '@/types/notification';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -85,7 +85,7 @@ function NotificationIcon({ type }: { type: NotificationType }) {
 export default function NotificationsPage() {
     const { user } = useAuth();
     const {
-        notifications,
+        notifications: allNotifications,
         unreadCount,
         totalElements,
         totalPages,
@@ -96,23 +96,38 @@ export default function NotificationsPage() {
         markAsRead,
         markAllAsRead,
         deleteNotification,
+        productNotifications,
+        orderNotifications,
+        warningNotifications,
+        errorNotifications,
+        successNotifications,
+        infoNotifications,
+        systemNotifications,
+        messageNotifications,
+        unreadNotifications
     } = useNotification();
 
     const [activeTab, setActiveTab] = useState<TabValue>('ALL');
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(0);
+    const [notifications, setNotifications] = useState<Notification[]>(allNotifications)
 
     // ── Load data when tab or page changes ────────────────────────────────────
     const load = useCallback(async (tab: TabValue, p: number) => {
-        const params = { page: p, size: PAGE_SIZE };
-        if (tab === 'ALL' || tab === 'UNREAD') {
-            await fetchAll(params);
-        } else {
-            await fetchByType(tab as NotificationType, params);
-        }
-    }, [fetchAll, fetchByType]);
+        if (tab === NotificationType.ERROR) setNotifications(errorNotifications)
+        if (tab === NotificationType.WARNING) setNotifications(warningNotifications)
+        if (tab === NotificationType.INFO) setNotifications(infoNotifications)
+        if (tab === NotificationType.SUCCESS) setNotifications(successNotifications)
+        if (tab === NotificationType.MESSAGE) setNotifications(messageNotifications)
+        if (tab === NotificationType.SYSTEM) setNotifications(systemNotifications)
+        if (tab === NotificationType.PRODUCT) setNotifications(productNotifications)
+        if (tab === NotificationType.ORDER) setNotifications(orderNotifications)
+        if (tab === 'ALL') setNotifications(allNotifications)
+        if (tab === 'UNREAD') setNotifications(unreadNotifications)
+    }, [activeTab]);
 
     useEffect(() => {
+
         load(activeTab, page);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, page]);

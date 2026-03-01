@@ -29,7 +29,7 @@ interface NotificationContextType {
     infoNotifications: Notification[]
     systemNotifications: Notification[]
     messageNotifications: Notification[]
-    unreadMessages: Notification[]
+    unreadNotifications: Notification[]
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -156,7 +156,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const infoNotifications = notifications.filter(n => n.type === NotificationType.INFO)
     const systemNotifications = notifications.filter(n => n.type === NotificationType.SYSTEM)
     const messageNotifications = notifications.filter(n => n.type === NotificationType.MESSAGE)
-    const unreadMessages = notifications.filter(n => n.isRead === false)
+    const unreadNotifications = notifications.filter(n => n.isRead === false)
 
     return (
         <NotificationContext.Provider
@@ -182,7 +182,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 infoNotifications,
                 systemNotifications,
                 messageNotifications,
-                unreadMessages,
+                unreadNotifications,
             }}
         >
             {children}
