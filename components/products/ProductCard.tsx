@@ -41,23 +41,25 @@ const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any
             case 'buyer':
                 commonActions.push({
                     key: 'view',
-                    label: 'View Details',
-                    icon: Eye,
-                    variant: 'primary',
-                    action: () => router.push(`/buyer/products/${product.id}`)
-                });
-                commonActions.push({
-                    key: 'purchase',
                     label: 'Buy Now',
-                    icon: null,
+                    icon: Eye,
                     variant: 'primary',
                     action: () => {
                         const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
                         showOrderModal(product, productType);
                     }
                 });
+                commonActions.push({
+                    key: 'purchase',
+                    label: 'Negotiate',
+                    icon: MessageSquare,
+                    variant: 'primary',
+                    action: () => {
+                        handlers.handleContactFarmer(product)
+                    }
+                });
                 break;
-                
+
             case 'farmer':
             case 'supplier':
                 commonActions.push({
@@ -71,7 +73,7 @@ const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any
                     }
                 });
                 break;
-                
+
             case 'admin':
                 commonActions.push({
                     key: 'view',
@@ -154,7 +156,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     const isProductOwner = user?.id === product.owner?.id;
-    
+
     // Get role-based actions
     const actions = getRoleBasedActions(product, user, router, {
         handleContactFarmer,
@@ -253,7 +255,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         const isPrimary = action.variant === 'primary';
                         const isSecondary = action.variant === 'secondary';
                         const isOutline = action.variant === 'outline';
-                        
+
                         return (
                             <button
                                 key={action.key}
@@ -261,8 +263,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                                     e.stopPropagation();
                                     action.action();
                                 }}
-                                className={`
-                                    ${index === 0 && actions.length > 1 ? 'flex-1' : 'p-2'}
+                                className={`flex gap-x-2 cursor-pointer
+                                    ${index === 0 && actions.length > 1 ? 'flex-1 p-2 items-center justify-center' : 'p-2'}
                                     ${isPrimary ? 'bg-primary hover:bg-primary/90 text-primary-foreground' : ''}
                                     ${isSecondary ? 'bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground' : ''}
                                     ${isOutline ? 'p-2 bg-card text-muted-foreground hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20' : ''}
@@ -272,7 +274,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                                 `}
                             >
                                 {action.icon && <action.icon className="w-4 h-4" />}
-                                {!action.icon && action.label}
+                                {action.label}
                             </button>
                         );
                     })}

@@ -33,7 +33,7 @@ import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import { ProductCategory, ProductType, MeasurementUnit, CertificationType } from '@/types/enums';
 import { useProduct } from '@/contexts/ProductContext';
-import ProductCard from '@/components/products/Product';
+import ProductCard from '@/components/products/ProductCard';
 import { Pagination } from '@/components/ui/pagination';
 
 const ITEMS_PER_PAGE = 12;

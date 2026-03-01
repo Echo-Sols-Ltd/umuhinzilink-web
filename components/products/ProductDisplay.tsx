@@ -26,7 +26,7 @@ import { RwandaCrop, RwandaCropCategory } from '@/types';
 import { FarmerProduct } from '@/types/product';
 import { cn, imageUrl } from '@/lib/utils';
 import { ResponsiveLayout, MobileTable, TouchOptimizedButton } from '@/components/ui/responsive-layout';
-import ProductCard from './Product';
+import ProductCard from './ProductCard';
 import ProductRow from './ProductRow';
 import { Skeleton } from '@/components/ui/skeleton';
 

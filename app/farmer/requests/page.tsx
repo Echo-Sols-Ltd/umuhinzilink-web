@@ -33,7 +33,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Pagination } from '@/components/ui/pagination';
-import ProductCard from '@/components/products/Product';
+import ProductCard from '@/components/products/ProductCard';
 
 const ORDERS_PER_PAGE = 10;
 
