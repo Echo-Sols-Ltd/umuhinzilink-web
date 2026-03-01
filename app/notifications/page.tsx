@@ -42,35 +42,33 @@ const TABS: { value: TabValue; label: string }[] = [
     { value: NotificationType.MESSAGE, label: 'Messages' },
     { value: NotificationType.WARNING, label: 'Warnings' },
     { value: NotificationType.ERROR, label: 'Errors' },
-    { value: NotificationType.SYSTEM_INFO, label: 'System' },
+    { value: NotificationType.SYSTEM, label: 'System' },
     { value: NotificationType.INFO, label: 'Info' },
+    { value: NotificationType.PRODUCT, label: 'Products' },
+    { value: NotificationType.ORDER, label: 'Orders' }
 ];
 
 // ─── Icon / colour helpers ────────────────────────────────────────────────────
 const TYPE_META: Record<NotificationType, { icon: React.ReactNode; dot: string; badge: string }> = {
     [NotificationType.SUCCESS]: { icon: <CheckCircle className="w-5 h-5" />, dot: 'bg-emerald-500', badge: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
     [NotificationType.ERROR]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-red-500', badge: 'text-red-700 bg-red-50 border-red-200' },
-    [NotificationType.SYSTEM_ERROR]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-red-500', badge: 'text-red-700 bg-red-50 border-red-200' },
+    [NotificationType.SYSTEM]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-red-500', badge: 'text-red-700 bg-red-50 border-red-200' },
     [NotificationType.WARNING]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-amber-500', badge: 'text-amber-700 bg-amber-50 border-amber-200' },
-    [NotificationType.SYSTEM_WARNING]: { icon: <ShieldAlert className="w-5 h-5" />, dot: 'bg-amber-500', badge: 'text-amber-700 bg-amber-50 border-amber-200' },
     [NotificationType.INFO]: { icon: <Info className="w-5 h-5" />, dot: 'bg-blue-500', badge: 'text-blue-700 bg-blue-50 border-blue-200' },
-    [NotificationType.SYSTEM_INFO]: { icon: <Cpu className="w-5 h-5" />, dot: 'bg-blue-500', badge: 'text-blue-700 bg-blue-50 border-blue-200' },
     [NotificationType.MESSAGE]: { icon: <MessageSquare className="w-5 h-5" />, dot: 'bg-violet-500', badge: 'text-violet-700 bg-violet-50 border-violet-200' },
-    [NotificationType.USER_UPDATE]: { icon: <User className="w-5 h-5" />, dot: 'bg-teal-500', badge: 'text-teal-700 bg-teal-50 border-teal-200' },
-    [NotificationType.GROUP_UPDATE]: { icon: <Users className="w-5 h-5" />, dot: 'bg-sky-500', badge: 'text-sky-700 bg-sky-50 border-sky-200' },
+    [NotificationType.PRODUCT]: { icon: <User className="w-5 h-5" />, dot: 'bg-teal-500', badge: 'text-teal-700 bg-teal-50 border-teal-200' },
+    [NotificationType.ORDER]: { icon: <Users className="w-5 h-5" />, dot: 'bg-sky-500', badge: 'text-sky-700 bg-sky-50 border-sky-200' },
 };
 
 const iconBgClass: Record<NotificationType | string, string> = {
     [NotificationType.SUCCESS]: 'bg-emerald-50 text-emerald-600',
     [NotificationType.ERROR]: 'bg-red-50 text-red-600',
-    [NotificationType.SYSTEM_ERROR]: 'bg-red-50 text-red-600',
     [NotificationType.WARNING]: 'bg-amber-50 text-amber-600',
-    [NotificationType.SYSTEM_WARNING]: 'bg-amber-50 text-amber-600',
     [NotificationType.INFO]: 'bg-blue-50 text-blue-600',
-    [NotificationType.SYSTEM_INFO]: 'bg-blue-50 text-blue-600',
+    [NotificationType.SYSTEM]: 'bg-blue-50 text-blue-600',
     [NotificationType.MESSAGE]: 'bg-violet-50 text-violet-600',
-    [NotificationType.USER_UPDATE]: 'bg-teal-50 text-teal-600',
-    [NotificationType.GROUP_UPDATE]: 'bg-sky-50 text-sky-600',
+    [NotificationType.PRODUCT]: 'bg-teal-50 text-teal-600',
+    [NotificationType.ORDER]: 'bg-sky-50 text-sky-600',
 };
 
 function NotificationIcon({ type }: { type: NotificationType }) {
