@@ -4,15 +4,26 @@ import { ProgressiveImage } from '@/components/ui/progressive-loading';
 import { MessageSquare, Package, AlertCircle } from 'lucide-react';
 import { useProductById } from '@/hooks/useProductById';
 import { imageUrl } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProductReferenceProps {
   productId: string;
   messageContent?: string;
   compact?: boolean;
+  isMessageOwner: boolean
 }
 
-export function ProductReference({ productId, messageContent, compact = false }: ProductReferenceProps) {
+export function ProductReference({ productId, messageContent, compact = false, isMessageOwner }: ProductReferenceProps) {
   const { product, loading, error } = useProductById(productId);
+  const router = useRouter()
+  const { user } = useAuth()
+
+  const handleProductClick = () => {
+    if (!user) return
+    const userRole = user.role.toLowerCase()
+    router.push(`/${userRole}/products/${productId}`)
+  }
 
   if (loading) {
     return (
@@ -68,7 +79,8 @@ export function ProductReference({ productId, messageContent, compact = false }:
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 cursor-pointer"
+      onClick={handleProductClick}>
       <Card className="overflow-hidden border border-border bg-card">
         <div className="flex">
           <div className="shrink-0 w-24 h-24">
@@ -90,7 +102,7 @@ export function ProductReference({ productId, messageContent, compact = false }:
         </div>
       </Card>
       {messageContent && (
-        <p className="text-sm text-background px-1">{messageContent}</p>
+        <p className={`text-sm  px-1 ${isMessageOwner ? 'text-background' : 'text-foreground'}`}>{messageContent}</p>
       )}
     </div>
   );

@@ -63,9 +63,9 @@ export default function MessageComponent({ messages,
             <div className={cn('flex mb-4 group', isOwn ? 'justify-end' : 'justify-start')}>
                 <div
                     className={cn(
-                        'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-lg relative shadow-sm transition-all',
+                        'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-lg relative transition-all',
                         isOwn
-                            ? 'bg-success text-primary-foreground rounded-tr-none ring-1 ring-inset ring-success'
+                            ? 'bg-primary text-primary-foreground rounded-tr-none ring-1 ring-inset ring-success'
                             : 'bg-card border border-border text-foreground rounded-tl-none'
                     )}
                 >
@@ -116,6 +116,7 @@ export default function MessageComponent({ messages,
                                         productId={message.productRef}
                                         messageContent={message.content}
                                         compact={false}
+                                        isMessageOwner={isOwn}
                                     />
                                 </div>
                             )}
