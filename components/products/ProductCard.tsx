@@ -49,7 +49,7 @@ const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any
                         showOrderModal(product, productType);
                     }
                 });
-                commonActions.push({
+                product.isNegotiable && commonActions.push({
                     key: 'purchase',
                     label: 'Negotiate',
                     icon: MessageSquare,

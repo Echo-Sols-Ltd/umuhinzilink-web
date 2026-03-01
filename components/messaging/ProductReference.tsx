@@ -61,7 +61,7 @@ export function ProductReference({ productId, messageContent, compact = false }:
           <MessageSquare className="w-4 h-4 text-muted-foreground shrink-0" />
         </div>
         {messageContent && (
-          <p className="text-sm text-foreground mt-1">{messageContent}</p>
+          <p className="text-sm text-background mt-1">{messageContent}</p>
         )}
       </div>
     );
@@ -90,7 +90,7 @@ export function ProductReference({ productId, messageContent, compact = false }:
         </div>
       </Card>
       {messageContent && (
-        <p className="text-sm text-foreground px-1">{messageContent}</p>
+        <p className="text-sm text-background px-1">{messageContent}</p>
       )}
     </div>
   );
