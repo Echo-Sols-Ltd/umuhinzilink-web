@@ -247,7 +247,6 @@ function ProductsPageComponent() {
             if ('location' in filters) setLocationFilter(filters.location);
           }}
           onProductSelect={(product) => {
-            console.log("It is not being reached")
             router.push(`/buyer/products/${product.id}`);
           }}
           onProductPurchase={(product) => {

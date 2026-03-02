@@ -18,7 +18,6 @@ export default function Home() {
   const { user } = useAuth()
 
   useEffect(() => {
-    console.log(user)
     if (user && user.verified) {
       router.replace('/')
     }
