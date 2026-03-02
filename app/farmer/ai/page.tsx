@@ -103,8 +103,8 @@ function AiDashboard() {
 
 
       {/* Main Content */}
-      <main className="flex-1  h-screen bg-background">
-        <div className="p-6 h-full overflow-y-auto">
+      <main className="flex-1  h-screen bg-background overflow-hidden">
+        <div className="p-6 ">
           {/* Weather Alert */}
           <div className="bg-gradient-to-r from-primary to-primary/90 rounded-lg p-6 mb-8 text-primary-foreground flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -123,9 +123,9 @@ function AiDashboard() {
             </div>
           </div>
 
-          <div className="flex gap-6 h-full">
+          <div className="flex gap-6 h-screen overflow-hidden">
             {/* Left Content */}
-            <div className="flex-1 h-full">
+            <div className="flex-1 h-full overflow-auto">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-semibold text-foreground">Suggested AI Tips</h2>
                 <div className="flex items-center space-x-2">
@@ -182,14 +182,14 @@ function AiDashboard() {
             </div>
 
             {/* Right Sidebar - AI Assistant */}
-            <div className="w-80">
+            <div className="w-80 items-center ">
               <div className="bg-card rounded-lg shadow-sm border border-border p-6">
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="w-2 h-2 bg-success rounded-full"></span>
                   <span className="font-semibold text-foreground">Ask AI Assistant</span>
                 </div>
 
-                <div className="space-y-4 mb-4 max-h-64 overflow-y-auto">
+                <div className="space-y-4 mb-4 h-full flex-1 overflow-y-auto">
                   <div className="text-sm text-muted-foreground">
                     Hi! I&apos;m your AI farming assistant. Ask me anything about farming, crops, or
                     agricultural best practices.
