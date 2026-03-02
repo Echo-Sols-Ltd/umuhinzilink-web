@@ -1,4 +1,5 @@
 // Import dependencies
+import { UserType } from ".";
 import type { User } from "./user"
 
 export enum MessageType {
@@ -25,7 +26,12 @@ export interface Message {
   replyTo?: Message;
   fileName?: string;
   reactions?: Reaction[];
-  productRef?: string;
+  productRef?: ProductRef;
+}
+
+export interface ProductRef {
+  productId: string
+  productType: UserType
 }
 
 export interface Reaction {

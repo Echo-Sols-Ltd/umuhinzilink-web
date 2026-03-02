@@ -1,5 +1,5 @@
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, SupplierProduct, UserType } from "@/types";
+import { FarmerProduct, MessageType, SupplierProduct, User, UserType } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon, Clock, Eye, Edit } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,9 +14,16 @@ interface ProductCardProps {
 }
 
 // Role-based action handlers
-const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any, router: any, handlers: any, showOrderModal: any) => {
+const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: User | null, router: any, handlers: any, showOrderModal: any) => {
+    if (!user) return
+    const isFarmer = user.role === UserType.FARMER
     const isProductOwner = user?.id === product.owner?.id;
     const userRole = user?.role?.toLowerCase();
+    const productType = product.owner.role
+    const isSupplierProduct = productType === UserType.SUPPLIER
+    const isFarmerBuyer = isSupplierProduct && isFarmer
+    const isBuyer = user.role === UserType.BUYER
+    const isProductBuyer = isBuyer || isFarmerBuyer
 
     // Common actions for all authenticated users
     const commonActions = [];
@@ -34,6 +41,9 @@ const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any
             }
         });
     }
+
+
+    console.log(userRole)
 
     // Non-owner actions based on user role
     if (!isProductOwner && user) {
@@ -61,6 +71,26 @@ const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any
                 break;
 
             case 'farmer':
+                commonActions.push({
+                    key: 'view',
+                    label: 'Buy Now',
+                    icon: Eye,
+                    variant: 'primary',
+                    action: () => {
+                        const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
+                        showOrderModal(product, productType);
+                    }
+                });
+                product.isNegotiable && commonActions.push({
+                    key: 'purchase',
+                    label: 'Negotiate',
+                    icon: MessageSquare,
+                    variant: 'primary',
+                    action: () => {
+                        handlers.handleContactFarmer(product)
+                    }
+                });
+                break;
             case 'supplier':
                 commonActions.push({
                     key: 'contact',
@@ -192,6 +222,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 router.push(`/buyer/products/${product.id}`);
         }
     };
+    if (!actions) return
 
     return (
         <div
