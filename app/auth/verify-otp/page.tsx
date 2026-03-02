@@ -63,7 +63,6 @@ export default function VerifyPage() {
             return;
         }
         await verifyOtp(otpValue)
-        console.log('OTP:', otpValue);
     };
 
     const handleResend = async () => {

@@ -31,17 +31,7 @@ function WalletPageComponent() {
 
       {/* Main Content */}
       <main className="flex-1 p-6 overflow-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center space-x-3">
-            <Wallet className="w-8 h-8 text-green-600" />
-            <div>
-              <h1 className="text-2xl font-semibold text-foreground">My Wallet</h1>
-              <p className="text-muted-foreground">Manage your wallet balance and transactions</p>
-            </div>
-          </div>
-        </div>
-
+       
         {/* Wallet Dashboard */}
         <WalletDashboard
           wallet={wallet}

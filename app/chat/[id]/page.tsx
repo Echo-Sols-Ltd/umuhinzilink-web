@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { User, UserType } from '@/types';
 import { ChatUser } from '@/types/chat';
 import ConversationSidebar from '@/components/messaging/ConversationSidebar';
 import ChatInterface from '@/components/messaging/ChatInterface';
@@ -16,14 +16,14 @@ import { userService } from '@/services/users';
 import { Message } from '@/types/message';
 
 // Helper function to convert User to ChatUser
-const userToChatUser = (user: any): ChatUser => ({
+const userToChatUser = (user: User): ChatUser => ({
   id: user.id,
   names: user.names,
   email: user.email,
   avatar: user.avatar,
-  unreadMessage: 0, // Default values, will be updated by context
+  unreadMessage: 0, 
   totalMessage: 0,
-  lastMessage: {} as Message, // Will be populated by context
+  lastMessage: {} as Message, 
 });
 
 const Logo = () => (

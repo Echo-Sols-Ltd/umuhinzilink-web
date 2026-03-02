@@ -17,7 +17,7 @@ import {
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
-import ProductCard from '@/components/products/Product';
+import ProductCard from '@/components/products/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Pagination } from '@/components/ui/pagination';
 import {

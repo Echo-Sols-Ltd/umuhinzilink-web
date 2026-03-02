@@ -26,6 +26,7 @@ import { messageService } from '@/services/messages';
 import { toast } from '@/components/ui/use-toast';
 import { MessageActionsModal } from './MessageActionsModal';
 import { MessageReactions, processReactions } from './MessageReactions';
+import MessageComponent from './MessageComponent';
 
 interface ChatInterfaceProps {
   className?: string;
@@ -57,7 +58,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUserOnline, setIsUserOnline] = useState(false);
   const [isTypingActive, setIsTypingActive] = useState(false);
-  
+
   // New state for enhanced messaging
   const [messageActionsModal, setMessageActionsModal] = useState<{
     isOpen: boolean;
@@ -221,154 +222,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
     if (file) setSelectedFile(file);
   };
 
-  const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  };
-
-  const formatDate = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (date.toDateString() === today.toDateString()) return 'Today';
-    else if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
-    else return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined });
-  };
 
   useEffect(() => {
     setIsUserOnline(onlineUsers.has(activeChatUser?.id || ''));
   }, [onlineUsers.size, activeChatUser?.id]); // Use size and id to prevent unnecessary re-renders
 
-  const renderMessage = (message: Message, index: number) => {
-    const isOwn = message.sender.id === currentUser?.id;
-    const showDate = index === 0 ||
-      new Date(message.timestamp).toDateString() !==
-      new Date(filteredMessages[index - 1]?.timestamp || '').toDateString();
 
-    return (
-      <div key={message.id}>
-        {showDate && (
-          <div className="flex justify-center my-4">
-            <span className="bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full">{formatDate(message.timestamp)}</span>
-          </div>
-        )}
-
-        <div className={cn('flex mb-4 group', isOwn ? 'justify-end' : 'justify-start')}>
-          <div 
-            className={cn(
-              'max-w-[85%] lg:max-w-md px-4 py-2.5 rounded-lg relative shadow-sm transition-all',
-              isOwn
-                ? 'bg-success text-primary-foreground rounded-tr-none ring-1 ring-inset ring-success'
-                : 'bg-card border border-border text-foreground rounded-tl-none'
-            )}
-          >
-            {message.replyTo && (
-              <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-success/90 border-success/50 text-primary-foreground' : 'bg-muted border-border text-muted-foreground')}>
-                <div className="font-medium">{message.replyTo.sender?.names ?? 'Unknown'}</div>
-                <div className="truncate">{message.replyTo.content}</div>
-              </div>
-            )}
-
-            {editingMessageId === message.id ? (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={editingText}
-                  onChange={(e) => setEditingText(e.target.value)}
-                  className="w-full bg-transparent border-b border-border focus:outline-none focus:border-foreground"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') handleEditMessage(message.id);
-                    else if (e.key === 'Escape') { setEditingMessageId(null); setEditingText(''); }
-                  }}
-                  autoFocus
-                />
-                <div className="flex space-x-2">
-                  <button onClick={() => handleEditMessage(message.id)} className="text-xs bg-success text-primary-foreground px-2 py-1 rounded hover:bg-success/90">Save</button>
-                  <button onClick={() => { setEditingMessageId(null); setEditingText(''); }} className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded hover:bg-muted/80">Cancel</button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {message.type === MessageType.IMAGE && (
-                  <div className="mb-2">
-                    <Image src={imageUrl(message.fileName || '')} alt="Shared image" width={200} height={200} className="rounded-lg max-w-full h-auto" />
-                  </div>
-                )}
-
-                {message.type === MessageType.FILE && (
-                  <div className="flex items-center space-x-2 mb-2 p-2 bg-muted rounded">
-                    <File className="w-4 h-4" />
-                    <span className="text-sm">{message.fileName}</span>
-                    <button className="ml-auto"><Download className="w-4 h-4" /></button>
-                  </div>
-                )}
-
-                {message.type === MessageType.PRODUCT && message.productRef && (
-                  <div className="mb-2">
-                    <ProductReference
-                      productId={message.productRef}
-                      messageContent={message.content}
-                      compact={false}
-                    />
-                  </div>
-                )}
-
-                {message.type === MessageType.TEXT && (
-                  <div className="whitespace-pre-wrap wrap-break-word leading-relaxed">{message.content}</div>
-                )}
-
-                {message.isEdited && (
-                  <div className={cn('text-xs mt-1', isOwn ? 'text-success/70' : 'text-muted-foreground')}> (edited)</div>
-                )}
-
-                {/* Message Reactions */}
-                {message.reactions && message.reactions.length > 0 && (
-                  <MessageReactions
-                    reactions={processReactions(
-                      message.reactions.map(r => ({ 
-                        emoji: r.emoji, 
-                        userId: r.userId, 
-                        userName: r.userId // Would need to fetch user name
-                      })),
-                      currentUser?.id
-                    )}
-                    onReactionClick={(emoji) => handleReactToMessage(message.id, emoji)}
-                    isOwn={isOwn}
-                  />
-                )}
-              </>
-            )}
-
-            {/* Three dots menu - positioned based on sender/receiver */}
-            {editingMessageId !== message.id && (
-              <div className={cn(
-                "absolute top-0 transition-all duration-200 z-10 opacity-0 group-hover:opacity-100",
-                isOwn ? "-left-10 -top-1" : "-right-10 -top-1"
-              )}>
-                <button
-                  onClick={(e) => handleMessageAction(message, e)}
-                  className="p-1.5 bg-card border border-border rounded-full shadow-md hover:bg-muted transition-colors"
-                  title="Message options"
-                >
-                  <MoreVertical className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
-                </button>
-              </div>
-            )}
-
-            <div className={cn('text-xs mt-1 flex items-center justify-end space-x-1', isOwn ? 'text-background' : 'text-muted-foreground')}>
-              <span>{formatTime(message.timestamp)}</span>
-              {isOwn && (
-                <div className="flex">
-                  {message.isRead ? <CheckCheck className="w-3 h-3" /> : <Check className="w-3 h-3" />}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   if (!activeChatUser) {
     return (
@@ -384,7 +243,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
   return (
     <div className={cn('flex flex-col h-full bg-card', className)}>
-      <div className="flex items-center justify-between p-4 border-b border-border bg-card">
+      <div className="flex items-center justify-between p-4 bg-card">
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setActiveChatUser(null)}
@@ -422,7 +281,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         <div className="flex flex-col min-h-full">
           <div className="flex-1" /> {/* Spacer to push messages to bottom */}
           <div className="space-y-4">
-            {filteredMessages.map((message, index) => renderMessage(message, index))}
+            {filteredMessages.map((message, index) => <MessageComponent
+              message={message}
+              index={index}
+              messages={filteredMessages}
+              handleEditMessage={handleEditMessage}
+              handleMessageAction={handleMessageAction}
+              handleReactToMessage={handleReactToMessage}
+              setEditingMessageId={setEditingMessageId}
+              editingMessageId={editingMessageId}
+              setEditingText={setEditingText}
+              editingText={editingText}
+              currentUser={currentUser}
+            />)}
             {activeChatUser && typingUsers.has(activeChatUser.id) && (
               <div className="flex justify-start animate-in fade-in slide-in-from-left-2 duration-300">
                 <div className="bg-card border border-border rounded-lg rounded-tl-none px-4 py-3 shadow-sm">
@@ -466,7 +337,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
         </div>
       )}
 
-      <div className="p-4 border-t border-border bg-card">
+      <div className="p-2 border-t border-border bg-card">
         <div className="flex items-end space-x-3 max-w-5xl mx-auto">
           <div className="flex items-center space-x-1 mb-1">
             <button onClick={() => fileInputRef.current?.click()} className="p-2.5 hover:bg-muted text-muted-foreground rounded-full transition-all active:scale-95" title="Attach file"><Paperclip className="w-5 h-5" /></button>

@@ -229,7 +229,7 @@ export default function BuyerProductDetailPage() {
   }
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-background">
       <Sidebar userType={UserType.BUYER} activeItem="Marketplace" />
       
       <main className="flex-1 overflow-auto">

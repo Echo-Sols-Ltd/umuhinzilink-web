@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
-import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus } from '@/types';
+import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus, UserType } from '@/types';
 import type { OrderRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
@@ -300,8 +300,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   }
   // Socket event handlers
   const handleNewOrder = useCallback((orderChange: FarmerOrder | SupplierOrder) => {
-    console.log("this is new order", orderChange);
-
     // Add null check to prevent undefined errors
     if (!orderChange) {
       console.error('Order change data is undefined');
@@ -309,11 +307,11 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Show notification for new order
-    const browserNotificationShown = showNotification({
+    showNotification({
       type: 'order',
       title: 'New Order Received',
-      body: `Order #${orderChange.id} has been placed with status: ${orderChange.status}`,
-      icon: '/icons/order.svg',
+      body: `${orderChange.buyer.names} wants ${orderChange.quantity} of ${orderChange.product.name}`,
+      icon: orderChange.product.image,
       onClick: () => {
         // Navigate to orders page
         window.location.href = '/farmer/orders';
@@ -332,8 +330,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   }, [isEnabled, showNotification, fetchBuyerOrders, fetchFarmerOrders, fetchSupplierOrders, fetchFarmerBuyerOrders]);
 
   const handleOrderStatusChange = useCallback((orderChange: FarmerOrder | SupplierOrder) => {
-    console.log("this is order status change", orderChange);
-
     // Add null check to prevent undefined errors
     if (!orderChange) {
       console.error('Order change data is undefined');
@@ -345,7 +341,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       showNotification({
         type: 'order',
         title: 'Order Status Updated',
-        body: `Order #${orderChange.id} status changed to: ${orderChange.status}`,
+        body: `Your order of ${orderChange.product.name} was updated.`,
         icon: '/icons/order.svg',
         onClick: () => {
           // Navigate to orders page
@@ -366,10 +362,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Show notification for delivery status change
-    const browserNotificationShown = showNotification({
+    showNotification({
       type: 'delivery',
       title: 'Delivery Status Updated',
-      body: `Order #${deliveryChange.id} delivery status: ${deliveryChange.status}`,
+      body: `Your order delivery was updated`,
       icon: '/icons/delivery.svg',
       onClick: () => {
         // Navigate to delivery page

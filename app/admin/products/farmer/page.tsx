@@ -17,7 +17,7 @@ import {
 import { useAdmin } from '@/contexts/AdminContext';
 import { adminService } from '@/services/admin';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { FarmerProduct, SupplierProduct, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { notify } from '@/lib/notify';
 import {
@@ -38,7 +38,7 @@ function FarmerProductManagement() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [actionLoading, setActionLoading] = useState<string | null>(null);
-    const [selectedProduct, setSelectedProduct] = useState<any>(null);
+    const [selectedProduct, setSelectedProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -268,7 +268,7 @@ function FarmerProductManagement() {
                                             </div>
                                             <div>
                                                 <p className="text-sm text-muted-foreground">Price</p>
-                                                <p className="font-medium text-foreground">{selectedProduct.price} RWF</p>
+                                                <p className="font-medium text-foreground">{selectedProduct.unitPrice} RWF</p>
                                             </div>
                                             <div>
                                                 <p className="text-sm text-muted-foreground">Stock</p>

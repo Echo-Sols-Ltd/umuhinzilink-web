@@ -213,6 +213,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 isLoading={loading}
                                 orderType={orderType}
                                 isOrderOwner={isOrderOwner}
+                                isPaid={order.isPaid}
                             />
                         </div>
                     )}

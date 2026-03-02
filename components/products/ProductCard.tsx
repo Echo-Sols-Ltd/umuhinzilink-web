@@ -1,5 +1,5 @@
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, SupplierProduct, UserType } from "@/types";
+import { FarmerProduct, MessageType, ProductRef, SupplierProduct, User, UserType } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon, Clock, Eye, Edit } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +7,7 @@ import { useChat } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useProduct } from "@/contexts/ProductContext";
+import { ChatUser } from "@/types/chat";
 
 interface ProductCardProps {
     product: SupplierProduct | FarmerProduct
@@ -14,9 +15,16 @@ interface ProductCardProps {
 }
 
 // Role-based action handlers
-const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any, router: any, handlers: any, showOrderModal: any) => {
+const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: User | null, router: any, handlers: any, showOrderModal: any) => {
+    if (!user) return
+    const isFarmer = user.role === UserType.FARMER
     const isProductOwner = user?.id === product.owner?.id;
     const userRole = user?.role?.toLowerCase();
+    const productType = product.owner.role
+    const isSupplierProduct = productType === UserType.SUPPLIER
+    const isFarmerBuyer = isSupplierProduct && isFarmer
+    const isBuyer = user.role === UserType.BUYER
+    const isProductBuyer = isBuyer || isFarmerBuyer
 
     // Common actions for all authenticated users
     const commonActions = [];
@@ -35,30 +43,55 @@ const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any
         });
     }
 
+
+    console.log(userRole)
+
     // Non-owner actions based on user role
     if (!isProductOwner && user) {
         switch (userRole) {
             case 'buyer':
                 commonActions.push({
                     key: 'view',
-                    label: 'View Details',
-                    icon: Eye,
-                    variant: 'primary',
-                    action: () => router.push(`/buyer/products/${product.id}`)
-                });
-                commonActions.push({
-                    key: 'purchase',
                     label: 'Buy Now',
-                    icon: null,
+                    icon: Eye,
                     variant: 'primary',
                     action: () => {
                         const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
                         showOrderModal(product, productType);
                     }
                 });
+                product.isNegotiable && commonActions.push({
+                    key: 'purchase',
+                    label: 'Negotiate',
+                    icon: MessageSquare,
+                    variant: 'primary',
+                    action: () => {
+                        handlers.handleContactFarmer(product)
+                    }
+                });
                 break;
-                
+
             case 'farmer':
+                commonActions.push({
+                    key: 'view',
+                    label: 'Buy Now',
+                    icon: Eye,
+                    variant: 'primary',
+                    action: () => {
+                        const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
+                        showOrderModal(product, productType);
+                    }
+                });
+                product.isNegotiable && commonActions.push({
+                    key: 'purchase',
+                    label: 'Negotiate',
+                    icon: MessageSquare,
+                    variant: 'primary',
+                    action: () => {
+                        handlers.handleContactFarmer(product)
+                    }
+                });
+                break;
             case 'supplier':
                 commonActions.push({
                     key: 'contact',
@@ -71,7 +104,7 @@ const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: any
                     }
                 });
                 break;
-                
+
             case 'admin':
                 commonActions.push({
                     key: 'view',
@@ -104,7 +137,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
 
-    const handleContactFarmer = async (product: any) => {
+    const handleContactFarmer = async (product: FarmerProduct | SupplierProduct) => {
         if (!user) {
             notify.error("Please log in to contact farmers", "Authentication Required");
             return;
@@ -116,14 +149,19 @@ export default function ProductCard({ product }: ProductCardProps) {
         }
 
         try {
-            const partnerUser = product.owner;
+            const partnerUser = product.owner as unknown as ChatUser;
             handleUserClick(partnerUser);
+
+            const productRef: ProductRef = {
+                productId: product.id,
+                productType: product.owner.role
+            }
 
             await handleSendMessage(
                 `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
                 MessageType.PRODUCT,
                 product.owner.names,
-                product.id,
+                productRef,
                 partnerUser // overrideReceiver: bypasses stale activeChatUser state
             );
 
@@ -154,7 +192,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     const isProductOwner = user?.id === product.owner?.id;
-    
+
     // Get role-based actions
     const actions = getRoleBasedActions(product, user, router, {
         handleContactFarmer,
@@ -190,6 +228,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 router.push(`/buyer/products/${product.id}`);
         }
     };
+    if (!actions) return
 
     return (
         <div
@@ -253,7 +292,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         const isPrimary = action.variant === 'primary';
                         const isSecondary = action.variant === 'secondary';
                         const isOutline = action.variant === 'outline';
-                        
+
                         return (
                             <button
                                 key={action.key}
@@ -261,8 +300,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                                     e.stopPropagation();
                                     action.action();
                                 }}
-                                className={`
-                                    ${index === 0 && actions.length > 1 ? 'flex-1' : 'p-2'}
+                                className={`flex gap-x-2 cursor-pointer
+                                    ${index === 0 && actions.length > 1 ? 'flex-1 p-2 items-center justify-center' : 'p-2'}
                                     ${isPrimary ? 'bg-primary hover:bg-primary/90 text-primary-foreground' : ''}
                                     ${isSecondary ? 'bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground' : ''}
                                     ${isOutline ? 'p-2 bg-card text-muted-foreground hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20' : ''}
@@ -272,7 +311,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                                 `}
                             >
                                 {action.icon && <action.icon className="w-4 h-4" />}
-                                {!action.icon && action.label}
+                                {action.label}
                             </button>
                         );
                     })}

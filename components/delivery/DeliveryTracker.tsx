@@ -9,7 +9,7 @@ interface DeliveryTrackerProps {
   delivery: Delivery | undefined;
   onUpdateStatus: (newStatus: DeliveryStatus) => void;
   isLoading?: boolean;
-  // New props for ownership checking
+  isPaid: boolean
   orderType?: 'farmer' | 'supplier' | 'buyer'; // Who owns this order view
   isOrderOwner?: boolean; // Is the current user the owner of the order
 }
@@ -69,6 +69,7 @@ export default function DeliveryTracker({
   delivery,
   onUpdateStatus,
   isLoading = false,
+  isPaid,
   orderType = 'farmer',
   isOrderOwner = false
 }: DeliveryTrackerProps) {
@@ -152,8 +153,9 @@ export default function DeliveryTracker({
         </div>
 
         {/* Update Delivery Button */}
-        {nextStatus && !isLoading && canUpdateStatus && (
+        {nextStatus && isPaid && !isLoading && canUpdateStatus && (
           <button
+            disabled={!isPaid}
             onClick={() => handleUpdateStatus(nextStatus.status)}
             className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm flex items-center space-x-2"
           >

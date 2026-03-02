@@ -1,5 +1,5 @@
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, SupplierProduct } from "@/types";
+import { FarmerProduct, MessageType, ProductRef, SupplierProduct } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,11 +35,16 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
         try {
             const farmerUser = product.owner;
             handleUserClick(userToChatUser(farmerUser));
+
+            const productRef: ProductRef = {
+                productId: product.id,
+                productType: product.owner.role
+            }
             await handleSendMessage(
                 `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
                 MessageType.PRODUCT,
                 product.owner.names,
-                product.id
+                productRef
             );
 
             notify.success(`You can now chat with ${product.owner.names} about ${product.name}`, "Message Sent");
@@ -67,20 +72,17 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
     const isProductOwner = user?.id === product.owner.id
 
     return (
-        <div key={product.name} className="flex bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
+        <div key={product.name} className="flex bg-card rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
             <div className="relative w-48 shrink-0">
                 <img
                     src={imageUrl(product.image!)}
                     alt={product.name}
                     className="h-full w-full object-cover" />
-                <button className="absolute top-3 right-3 bg-white p-1 rounded-full shadow">
-                    <Heart className="w-5 h-5 text-red-500" />
-                </button>
             </div>
             <div className="p-4 flex flex-col justify-between w-full">
                 <div>
                     <div className="flex justify-between items-start">
-                        <h3 className="font-semibold text-lg text-gray-900">{product.name}</h3>
+                        <h3 className="font-semibold text-lg text-foreground">{product.name}</h3>
                         <p className="text-green-600 font-semibold text-lg">{product.unitPrice} RWF / {product.measurementUnit}</p>
                     </div>
                     <p className="text-sm text-gray-500 mt-1">Available: {product.quantity} {product.measurementUnit}</p>
@@ -111,17 +113,17 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                             </button>
                         </>
                     ) : (<>
-                        <button className="border border-gray-300 hover:bg-white transition-colors p-2.5 rounded-lg flex items-center justify-center"
+                        <button className="border border-border hover:bg-primary transition-colors p-2.5 rounded-lg flex items-center justify-center"
                             onClick={(e: any) => {
                                 e.stopPropagation();
                                 handleContactFarmer(product as FarmerProduct)
                             }}>
                             <MessageSquare className="w-4 h-4 text-gray-600" />
                         </button>
-                        <button className="border border-red-200 hover:bg-red-50 transition-colors p-2.5 rounded-lg flex items-center justify-center">
+                        <button className="border border-border hover:bg-red-50 transition-colors p-2.5 rounded-lg flex items-center justify-center">
                             <Heart className="w-4 h-4 text-red-500" />
                         </button>
-                        <button className="bg-green-600 hover:bg-green-700 transition-colors text-white px-6 py-2.5 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2"
+                        <button className="bg-primary hover:bg-green-700 transition-colors text-foreground px-6 py-2.5 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2"
                             onClick={(e: any) => {
                                 e.stopPropagation();
                                 onPurchase();

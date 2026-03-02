@@ -31,7 +31,7 @@ import OrderManagementDashboard from '@/components/orders/OrderManagementDashboa
 import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import { FarmerProduct } from '@/types';
-import ProductCard from '@/components/products/Product';
+import ProductCard from '@/components/products/ProductCard';
 import { useRouter } from 'next/navigation';
 
 

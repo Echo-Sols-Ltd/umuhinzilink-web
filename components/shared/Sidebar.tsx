@@ -262,7 +262,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                 className={`
                     fixed lg:static inset-y-0 left-0 z-50 w-64
                     flex flex-col h-screen
-                    bg-background text-foreground
+                    bg-card text-foreground
                     shadow-lg
                     transform transition-transform duration-300 ease-in-out
                     lg:transform-none

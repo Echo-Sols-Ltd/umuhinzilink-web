@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { NotificationPermissionModal, NotificationPrompt } from '@/components/notifications/NotificationPermissionModal';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
+import { useAuth } from './AuthContext';
 
 interface BrowserNotificationContextType {
   showPermissionModal: () => void;
@@ -19,6 +20,7 @@ export function BrowserNotificationProvider({ children }: { children: React.Reac
   const [showPrompt, setShowPrompt] = useState(false);
   const [hasAskedBefore, setHasAskedBefore] = useState(false);
   const { permission, requestPermission, isEnabled } = useBrowserNotification();
+  const { user } = useAuth()
 
   // Check if user has been asked before
   useEffect(() => {
@@ -30,7 +32,7 @@ export function BrowserNotificationProvider({ children }: { children: React.Reac
 
   // Show prompt on first visit if permission is default
   useEffect(() => {
-    if (!hasAskedBefore && permission === 'default' && !isModalOpen) {
+    if (!hasAskedBefore && permission === 'default' && !isModalOpen && user) {
       // Show prompt after 3 seconds of user being on the site
       const timer = setTimeout(() => {
         setShowPrompt(true);
@@ -38,7 +40,7 @@ export function BrowserNotificationProvider({ children }: { children: React.Reac
 
       return () => clearTimeout(timer);
     }
-  }, [hasAskedBefore, permission, isModalOpen]);
+  }, [hasAskedBefore, permission, isModalOpen, user]);
 
   const showPermissionModal = () => {
     setIsModalOpen(true);

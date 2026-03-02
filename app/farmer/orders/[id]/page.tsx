@@ -12,16 +12,17 @@ import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import { DeliveryStatus } from '@/types/enums';
 import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard } from 'lucide-react';
+import { orderService } from '@/services/orders';
 
 function FarmerOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { 
-    farmerOrders, 
-    currentFarmerOrder, 
+  const {
+    farmerOrders,
+    currentFarmerOrder,
     setCurrentFarmerOrder,
-    fetchFarmerOrders 
+    fetchFarmerOrders
   } = useOrder();
   const { updateFarmerOrderStatus } = useOrderAction();
 
@@ -32,30 +33,25 @@ function FarmerOrderDetailPage() {
   useEffect(() => {
     const loadOrder = async () => {
       setLoading(true);
-      
+
       try {
         // Step 1: Check if order is already in context lists
         let foundOrder = farmerOrders?.find(o => o.id === orderId);
-        
+
         // Step 2: Check if it's the current context order
         if (!foundOrder && currentFarmerOrder?.id === orderId) {
           foundOrder = currentFarmerOrder;
         }
-        
+
         if (foundOrder) {
-          // ✅ Found in context - use immediately
+
           setCurrentFarmerOrder(foundOrder);
           setLoading(false);
         } else {
-          // ❌ Not in context - fetch from server
-          const { orderService } = await import('@/services/orders');
           const response = await orderService.getFarmerOrderById(orderId);
-          
+
           if (response.success && response.data) {
-            // Store in context for future use and real-time updates
             setCurrentFarmerOrder(response.data);
-            
-            // Refresh the list to include this order for future navigation
             fetchFarmerOrders();
           } else {
             notify.error("Order not found", "Error");
@@ -80,10 +76,6 @@ function FarmerOrderDetailPage() {
     setUpdatingStatus(true);
     try {
       await updateFarmerOrderStatus(currentFarmerOrder.id, newStatus);
-
-      // Context will automatically update via socket events
-      // No need to manually update local state
-      notify.success(`Order delivery status has been updated successfully.`, "Delivery Status Updated");
     } catch (error) {
       console.error('Failed to update delivery status:', error);
       notify.error("Failed to update delivery status. Please try again.", "Update Failed");
@@ -269,6 +261,7 @@ function FarmerOrderDetailPage() {
               isLoading={updatingStatus}
               orderType="farmer"
               isOrderOwner={true}
+              isPaid={currentFarmerOrder.isPaid}
             />
           </div>
         </div>

@@ -98,7 +98,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     <div className={cn('flex flex-col h-full bg-card', className)}>
 
       {/* ── Header ───────────────────────────────────────────── */}
-      <div className="px-4 pt-5 pb-4 border-b border-border">
+      <div className="px-4 pt-5 pb-4 ">
         <div className="flex items-center justify-between mb-0.5">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
@@ -179,7 +179,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                     <div className="relative shrink-0">
                       <div className={cn(
                         'w-11 h-11 rounded-full flex items-center justify-center',
-                        'shadow-sm text-white font-semibold bg-success',
+                        'shadow-sm text-white font-semibold bg-primary',
                         gradient
                       )}>
                         {user.avatar ? <img

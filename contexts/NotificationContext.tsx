@@ -21,6 +21,15 @@ interface NotificationContextType {
     markAllAsRead: () => Promise<void>;
     deleteNotification: (id: string) => Promise<void>;
     clearAll: () => Promise<void>;
+    productNotifications: Notification[]
+    orderNotifications: Notification[]
+    warningNotifications: Notification[]
+    errorNotifications: Notification[]
+    successNotifications: Notification[]
+    infoNotifications: Notification[]
+    systemNotifications: Notification[]
+    messageNotifications: Notification[]
+    unreadNotifications: Notification[]
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -40,10 +49,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             const response = await notificationService.getNotifications(filter);
             if (response.success && response.data) {
                 // Support both direct array and nested paginated data structures
-                const data = response.data as any;
+                const data = response.data || [];
 
-                if (Array.isArray(data)) {
-                    const normalizedNotifications = data.map((n: any) => ({
+                if (data) {
+                    const normalizedNotifications = data.map((n) => ({
                         ...n,
                         id: String(n.id)
                     }));
@@ -53,18 +62,18 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                     setCurrentPage(0);
                 } else {
                     // Handle PaginatedResponse
-                    const rawNotifications = Array.isArray(data.data) ? data.data : [];
-                    const normalizedNotifications = rawNotifications.map((n: any) => ({
-                        ...n,
-                        id: String(n.id)
-                    }));
-                    setNotifications(normalizedNotifications);
+                    // const rawNotifications = data ? data : [];
+                    // const normalizedNotifications = rawNotifications.map((n) => ({
+                    //     ...n,
+                    //     id: String(n.id)
+                    // }));
+                    // setNotifications(normalizedNotifications);
 
-                    // Use totalElements/totalPages if they exist in the response
-                    const paginated = response as unknown as PaginatedResponse<Notification[]>;
-                    setTotalElements(paginated.totalElements || rawNotifications.length);
-                    setTotalPages(paginated.totalPages || 1);
-                    setCurrentPage(paginated.pageNumber || 0);
+                    // // Use totalElements/totalPages if they exist in the response
+                    // const paginated = response as unknown as PaginatedResponse<Notification[]>;
+                    // setTotalElements(paginated.totalElements || rawNotifications.length);
+                    // setTotalPages(paginated.totalPages || 1);
+                    // setCurrentPage(paginated.pageNumber || 0);
                 }
             }
         } catch (error) {
@@ -139,6 +148,15 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }, [user, fetchNotifications]);
 
     const unreadCount = (Array.isArray(notifications) ? notifications : []).filter(n => n && !n.isRead).length;
+    const productNotifications = notifications.filter(n => n.type === NotificationType.PRODUCT)
+    const orderNotifications = notifications.filter(n => n.type === NotificationType.ORDER)
+    const warningNotifications = notifications.filter(n => n.type === NotificationType.WARNING)
+    const errorNotifications = notifications.filter(n => n.type === NotificationType.ERROR)
+    const successNotifications = notifications.filter(n => n.type === NotificationType.SUCCESS)
+    const infoNotifications = notifications.filter(n => n.type === NotificationType.INFO)
+    const systemNotifications = notifications.filter(n => n.type === NotificationType.SYSTEM)
+    const messageNotifications = notifications.filter(n => n.type === NotificationType.MESSAGE)
+    const unreadNotifications = notifications.filter(n => n.isRead === false)
 
     return (
         <NotificationContext.Provider
@@ -156,6 +174,15 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 markAllAsRead,
                 deleteNotification,
                 clearAll,
+                productNotifications,
+                orderNotifications,
+                warningNotifications,
+                errorNotifications,
+                successNotifications,
+                infoNotifications,
+                systemNotifications,
+                messageNotifications,
+                unreadNotifications,
             }}
         >
             {children}

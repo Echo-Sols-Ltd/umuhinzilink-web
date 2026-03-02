@@ -242,6 +242,7 @@ function BuyerOrderDetailPage() {
                 isLoading={false}
                 orderType="buyer"
                 isOrderOwner={false}
+                isPaid={currentBuyerOrder.isPaid}
               />
             ) : (
               <div className="bg-card rounded-lg p-6 text-center">
