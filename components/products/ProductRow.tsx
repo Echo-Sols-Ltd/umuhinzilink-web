@@ -1,5 +1,5 @@
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, SupplierProduct } from "@/types";
+import { FarmerProduct, MessageType, ProductRef, SupplierProduct } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,11 +35,16 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
         try {
             const farmerUser = product.owner;
             handleUserClick(userToChatUser(farmerUser));
+
+            const productRef: ProductRef = {
+                productId: product.id,
+                productType: product.owner.role
+            }
             await handleSendMessage(
                 `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
                 MessageType.PRODUCT,
                 product.owner.names,
-                product.id
+                productRef
             );
 
             notify.success(`You can now chat with ${product.owner.names} about ${product.name}`, "Message Sent");

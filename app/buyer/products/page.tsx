@@ -25,7 +25,7 @@ import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChat } from '@/hooks/useChat';
-import { MessageType } from '@/types/message';
+import { MessageType, ProductRef } from '@/types/message';
 import { productService } from '@/services/products';
 import { ProductDisplay } from '@/components/products/ProductDisplay';
 import {
@@ -150,12 +150,17 @@ function ProductsPageComponent() {
       // Switch to chat with the farmer
       handleUserClick(chatUser!);
 
+      const productRef: ProductRef = {
+        productId: product.id,
+        productType: product.owner.role
+      }
+
       // Send product reference message
       await handleSendMessage(
         `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
         MessageType.PRODUCT,
         product.owner.names,
-        product.id
+        productRef
       );
 
       notify.success(`You can now chat with ${product.owner.names} about ${product.name}`, "Message Sent");
