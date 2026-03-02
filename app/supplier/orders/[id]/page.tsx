@@ -269,6 +269,7 @@ function SupplierOrderDetailPage() {
               isLoading={updatingStatus}
               orderType="supplier"
               isOrderOwner={true}
+              isPaid={currentSupplierOrder.isPaid}
             />
           </div>
         </div>

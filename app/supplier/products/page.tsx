@@ -192,34 +192,6 @@ function ProductsPageComponent() {
             </div>
           </div>
 
-          {/* Banner */}
-          <div className="bg-success rounded-2xl p-8 text-white relative overflow-hidden shadow-xl shadow-success/20">
-            <div className="relative z-10 max-w-2xl">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-2 py-1 bg-white/20 backdrop-blur-md rounded text-[10px] font-semibold uppercase ">Supplier Portal</span>
-                <span className="text-xs font-medium text-success/80">
-                  {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                </span>
-              </div>
-              <h2 className="text-3xl font-extrabold mb-2 ">Expand your reach to thousands of farmers.</h2>
-              <p className="text-success/90 text-sm mb-6 max-w-lg leading-relaxed font-medium">
-                Keep your inventory updated to help farmers find the best seeds, fertilizers, and tools for their season.
-              </p>
-              <div className="flex items-center gap-6">
-                <div>
-                  <p className="text-2xl font-semibold">{supplierProducts?.length || 0}</p>
-                  <p className="text-[10px] font-semibold text-success/70 uppercase  mt-1">Total Items</p>
-                </div>
-                <div className="w-px h-10 bg-white/20"></div>
-                <div>
-                  <p className="text-2xl font-semibold text-white">Rwanda</p>
-                  <p className="text-[10px] font-semibold text-success/70 uppercase  mt-1">Market Reach</p>
-                </div>
-              </div>
-            </div>
-            <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-success/30 rounded-full blur-2xl translate-y-1/2"></div>
-          </div>
 
           {/* Search */}
           <div className="bg-card p-2 rounded-xl border border-border shadow-sm">
