@@ -49,10 +49,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             const response = await notificationService.getNotifications(filter);
             if (response.success && response.data) {
                 // Support both direct array and nested paginated data structures
-                const data = response.data as any;
+                const data = response.data || [];
 
-                if (Array.isArray(data)) {
-                    const normalizedNotifications = data.map((n: any) => ({
+                if (data) {
+                    const normalizedNotifications = data.map((n) => ({
                         ...n,
                         id: String(n.id)
                     }));
@@ -62,18 +62,18 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                     setCurrentPage(0);
                 } else {
                     // Handle PaginatedResponse
-                    const rawNotifications = Array.isArray(data.data) ? data.data : [];
-                    const normalizedNotifications = rawNotifications.map((n: any) => ({
-                        ...n,
-                        id: String(n.id)
-                    }));
-                    setNotifications(normalizedNotifications);
+                    // const rawNotifications = data ? data : [];
+                    // const normalizedNotifications = rawNotifications.map((n) => ({
+                    //     ...n,
+                    //     id: String(n.id)
+                    // }));
+                    // setNotifications(normalizedNotifications);
 
-                    // Use totalElements/totalPages if they exist in the response
-                    const paginated = response as unknown as PaginatedResponse<Notification[]>;
-                    setTotalElements(paginated.totalElements || rawNotifications.length);
-                    setTotalPages(paginated.totalPages || 1);
-                    setCurrentPage(paginated.pageNumber || 0);
+                    // // Use totalElements/totalPages if they exist in the response
+                    // const paginated = response as unknown as PaginatedResponse<Notification[]>;
+                    // setTotalElements(paginated.totalElements || rawNotifications.length);
+                    // setTotalPages(paginated.totalPages || 1);
+                    // setCurrentPage(paginated.pageNumber || 0);
                 }
             }
         } catch (error) {

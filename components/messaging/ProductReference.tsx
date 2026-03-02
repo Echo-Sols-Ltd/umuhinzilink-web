@@ -6,23 +6,24 @@ import { useProductById } from '@/hooks/useProductById';
 import { imageUrl } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { ProductRef } from '@/types';
 
 interface ProductReferenceProps {
-  productId: string;
+  productRef: ProductRef;
   messageContent?: string;
   compact?: boolean;
   isMessageOwner: boolean
 }
 
-export function ProductReference({ productId, messageContent, compact = false, isMessageOwner }: ProductReferenceProps) {
-  const { product, loading, error } = useProductById(productId);
+export function ProductReference({ productRef, messageContent, compact = false, isMessageOwner }: ProductReferenceProps) {
+  const { product, loading, error } = useProductById(productRef);
   const router = useRouter()
   const { user } = useAuth()
 
   const handleProductClick = () => {
     if (!user) return
     const userRole = user.role.toLowerCase()
-    router.push(`/${userRole}/products/${productId}`)
+    router.push(`/${userRole}/products/${productRef.productId}`)
   }
 
   if (loading) {

@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
-import { User, Message, Reaction, MessageType } from '@/types'
+import { User, Message, Reaction, MessageType, ProductRef } from '@/types'
 import { ChatUser } from '@/types/chat'
 import { useAuth } from "@/contexts/AuthContext"
 import { useMessages } from "@/contexts/MessageContext"
@@ -44,7 +44,7 @@ export const useChat = () => {
         content: string,
         type: MessageType = MessageType.TEXT,
         fileName?: string,
-        productRef?: any,
+        productRef?: ProductRef,
         overrideReceiver?: { id: string } // allows bypassing stale activeChatUser closure
     ) => {
         // Use overrideReceiver (fresh value from caller) or fall back to context state

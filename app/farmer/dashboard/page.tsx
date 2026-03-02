@@ -85,7 +85,6 @@ function Dashboard() {
   const profile = farmer;
   const rawProducts = useMemo(() => farmerProducts || [], [farmerProducts]);
   const rawOrders = useMemo(() => farmerOrders || [], [farmerOrders]);
-  const rawRequests = useMemo(() => [] as any[], []);
 
   const farmerId = profile?.id || currentUser?.id || null;
 

@@ -57,7 +57,7 @@ function UserManagement() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<User|null>(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 

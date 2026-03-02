@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { FarmerOrder, SupplierOrder, UserType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -27,12 +27,12 @@ export default function AdminOrderDetailPage() {
     const params = useParams();
     const router = useRouter();
     const { user } = useAuth();
-    const { 
-        farmerOrders, 
-        buyerOrders, 
+    const {
+        farmerOrders,
+        buyerOrders,
         supplierOrders,
         currentFarmerOrder,
-        currentBuyerOrder, 
+        currentBuyerOrder,
         currentSupplierOrder,
         setCurrentFarmerOrder,
         setCurrentBuyerOrder,
@@ -53,7 +53,7 @@ export default function AdminOrderDetailPage() {
 
             setLoading(true);
             setError(null);
-            
+
             try {
                 // Step 1: Check all order types in context
                 let foundOrder = null;
@@ -106,7 +106,7 @@ export default function AdminOrderDetailPage() {
                     // ❌ Not in context - fetch from server
                     // Try different endpoints based on order type
                     let response = null;
-                    
+
                     try {
                         const { orderService } = await import('@/services/orders');
                         response = await orderService.getFarmerOrderById(orderId);
@@ -160,7 +160,7 @@ export default function AdminOrderDetailPage() {
         }
     };
 
-    const handleShareOrder = (order: any) => {
+    const handleShareOrder = (order: FarmerOrder | SupplierOrder) => {
         if (navigator.share) {
             navigator.share({
                 title: `Order ${order.id}`,
@@ -250,7 +250,7 @@ export default function AdminOrderDetailPage() {
     return (
         <div className="flex h-screen bg-background">
             <Sidebar userType={UserType.GOVERNMENT} activeItem="Orders" />
-            
+
             <main className="flex-1 overflow-auto">
                 {/* Header */}
                 <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">

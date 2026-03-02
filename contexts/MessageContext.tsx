@@ -188,8 +188,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   // Raw data operations only
   const sendMessageRequest = (request: SendMessageRequest) => {
     if (socket) {
-      console.log('Sending message:', request)
-
+   
       // --- Optimistic UI logic ---
       if (user && activeChatUser) {
         const temporaryId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;

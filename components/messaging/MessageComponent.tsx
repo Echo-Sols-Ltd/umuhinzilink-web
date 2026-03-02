@@ -113,7 +113,7 @@ export default function MessageComponent({ messages,
                             {message.type === MessageType.PRODUCT && message.productRef && (
                                 <div className="mb-2">
                                     <ProductReference
-                                        productId={message.productRef}
+                                        productRef={message.productRef}
                                         messageContent={message.content}
                                         compact={false}
                                         isMessageOwner={isOwn}

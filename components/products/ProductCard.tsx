@@ -1,5 +1,5 @@
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, SupplierProduct, User, UserType } from "@/types";
+import { FarmerProduct, MessageType, ProductRef, SupplierProduct, User, UserType } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon, Clock, Eye, Edit } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +7,7 @@ import { useChat } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useProduct } from "@/contexts/ProductContext";
+import { ChatUser } from "@/types/chat";
 
 interface ProductCardProps {
     product: SupplierProduct | FarmerProduct
@@ -136,7 +137,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
 
-    const handleContactFarmer = async (product: any) => {
+    const handleContactFarmer = async (product: FarmerProduct | SupplierProduct) => {
         if (!user) {
             notify.error("Please log in to contact farmers", "Authentication Required");
             return;
@@ -148,14 +149,19 @@ export default function ProductCard({ product }: ProductCardProps) {
         }
 
         try {
-            const partnerUser = product.owner;
+            const partnerUser = product.owner as unknown as ChatUser;
             handleUserClick(partnerUser);
+
+            const productRef: ProductRef = {
+                productId: product.id,
+                productType: product.owner.role
+            }
 
             await handleSendMessage(
                 `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
                 MessageType.PRODUCT,
                 product.owner.names,
-                product.id,
+                productRef,
                 partnerUser // overrideReceiver: bypasses stale activeChatUser state
             );
 

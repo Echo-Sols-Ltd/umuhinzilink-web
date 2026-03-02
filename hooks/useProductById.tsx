@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import { FarmerProduct, SupplierProduct } from '@/types/product';
 import { productService } from '@/services/products';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserType } from '@/types';
+import { ProductRef, UserType } from '@/types';
 
-export function useProductById(productId: string | null) {
+export function useProductById(productRef: ProductRef | null) {
   const [product, setProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!productId) {
+    if (!productRef) {
       setProduct(null);
       setError(null);
       return;
@@ -21,31 +21,31 @@ export function useProductById(productId: string | null) {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Use different endpoint based on user role
-        if (user?.role === UserType.FARMER) {
+        if (productRef.productType === UserType.FARMER) {
           // Farmer uses farmer-specific endpoint
-          const farmerResponse = await productService.getFarmerProduct(productId);
+          const farmerResponse = await productService.getFarmerProduct(productRef.productId);
           if (farmerResponse.success && farmerResponse.data) {
             setProduct(farmerResponse.data);
             return;
           }
-        } else if (user?.role === UserType.SUPPLIER) {
+        } else if (productRef.productType === UserType.SUPPLIER) {
           // Supplier uses supplier-specific endpoint
-          const supplierResponse = await productService.getSupplierProduct(productId);
+          const supplierResponse = await productService.getSupplierProduct(productRef.productId);
           if (supplierResponse.success && supplierResponse.data) {
             setProduct(supplierResponse.data);
             return;
           }
         } else {
           // Buyer or other roles - try both endpoints
-          const farmerResponse = await productService.getFarmerProduct(productId);
+          const farmerResponse = await productService.getFarmerProduct(productRef.productId);
           if (farmerResponse.success && farmerResponse.data) {
             setProduct(farmerResponse.data);
             return;
           }
 
-          const supplierResponse = await productService.getSupplierProduct(productId);
+          const supplierResponse = await productService.getSupplierProduct(productRef.productId);
           if (supplierResponse.success && supplierResponse.data) {
             setProduct(supplierResponse.data);
             return;
@@ -62,7 +62,7 @@ export function useProductById(productId: string | null) {
     };
 
     fetchProduct();
-  }, [productId, user?.role]);
+  }, [productRef, user?.role]);
 
   return { product, loading, error };
 }

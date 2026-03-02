@@ -54,7 +54,7 @@ export interface SendMessageRequest {
   type: MessageType;
   fileName?: string;
   replyToId?: string;
-  productRef?: string;
+  productRef?: ProductRef;
 }
 
 export interface EditMessageRequest {

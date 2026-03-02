@@ -105,10 +105,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       }
 
       const transactionData = res.data;
-      console.log("those are transactions ", transactionData)
-      const transactionList = Array.isArray(transactionData)
-        ? transactionData
-        : (transactionData as any)?.content || [];
+      const transactionList = transactionData ? transactionData : [];
 
       setTransactions(transactionList);
       localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactionList));
