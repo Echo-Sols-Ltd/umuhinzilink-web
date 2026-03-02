@@ -261,6 +261,7 @@ function FarmerOrderDetailPage() {
               isLoading={updatingStatus}
               orderType="farmer"
               isOrderOwner={true}
+              isPaid={currentFarmerOrder.isPaid}
             />
           </div>
         </div>

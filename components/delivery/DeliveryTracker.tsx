@@ -153,7 +153,7 @@ export default function DeliveryTracker({
         </div>
 
         {/* Update Delivery Button */}
-        {nextStatus && !isLoading && canUpdateStatus && (
+        {nextStatus && isPaid && !isLoading && canUpdateStatus && (
           <button
             disabled={!isPaid}
             onClick={() => handleUpdateStatus(nextStatus.status)}
