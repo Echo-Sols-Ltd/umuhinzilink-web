@@ -1,208 +1,56 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import {
-  CheckCircle,
-  LayoutGrid,
-  FilePlus,
-  ShoppingCart,
-  User,
-  Phone,
-  Settings,
-  LogOut,
-  Mail,
-  Users,
-  TrendingUp,
-  Search,
-  ChevronDown,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSupplier } from '@/contexts/SupplierContext';
+import { UserType } from '@/types';
+import SupplierDashboard from '@/components/dashboard/supplier/SupplierDashboard';
 import Sidebar from '@/components/shared/Sidebar';
-import { SupplierPages, UserType } from '@/types';
-import SupplierGuard from '@/contexts/guard/SupplierGuard';
-import { useOrder } from '@/contexts/OrderContext';
-import { EnhancedDashboard } from '@/components/analytics/EnhancedDashboard';
-import { Badge } from '@/components/ui/badge';
-import { format } from 'date-fns';
 
-const Logo = () => (
-  <div className="flex items-center gap-2 py-2">
-    <span className="font-extrabold text-xl ">
-      <span className="text-white">Umuhinzi</span>
-      <span className="text-white">Link</span>
-    </span>
-  </div>
-);
-
-function DashboardComponent() {
-  const router = useRouter()
+export default function SupplierDashboardPage() {
   const { user } = useAuth();
-  const { supplier, dashboardStats } = useSupplier();
-  const { supplierOrders, loading: ordersLoading, fetchSupplierOrders } = useOrder();
 
-  useEffect(() => {
-    fetchSupplierOrders();
-  }, []);
-
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  ];
-
-
-  // Default values when data is loading or unavailable
-  const stats = dashboardStats || {
-    totalProducts: 0,
-    activeProducts: 0,
-    totalOrders: 0,
-    pendingOrders: 0,
-    totalRevenue: 0,
-    monthlyRevenue: [],
-    topProducts: []
-  };
-
-  const supplierName = supplier?.user?.names || user?.names || 'Supplier';
-  const supplierInitials = supplierName.split(' ').map(n => n[0]).join('').toUpperCase();
+  if (!user || user.role !== UserType.SUPPLIER) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold mb-4">Access Denied</h1>
+          <p className="text-muted-foreground">This dashboard is only available to suppliers.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar
-        userType={UserType.SUPPLIER}
-        activeItem='Dashboard'
-      />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-auto">
-        {/* Header */}
-        <header className="bg-card border-b flex items-center justify-between p-6 shadow-sm">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">Supplier Dashboard</h1>
-            <p className="text-xs text-muted-foreground">Manage your agricultural inputs and connect with farmers</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="bg-success text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-success/90 transition-colors">
-              <FilePlus className="w-4 h-4" /> Add Product
-            </button>
-          </div>
-        </header>
-
-        {/* Main Content Area */}
-        <main className="flex-1 bg-background p-6 space-y-6">
-
-          {/* Enhanced Analytics Dashboard */}
-          <EnhancedDashboard
-            userRole="supplier"
-            orders={[]} // Will be populated from supplier context
-            products={stats.topProducts || []}
-            className="mb-8"
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="hidden md:block shrink-0">
+          <Sidebar
+            userType={UserType.SUPPLIER}
+            activeItem="Dashboard"
           />
+        </div>
 
-          {/* Recent Orders Section */}
-          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-border flex items-center justify-between bg-card">
-              <div>
-                <h2 className="text-sm font-semibold text-foreground uppercase border-l-4 border-success pl-3">Incoming Orders</h2>
-                <p className="text-[10px] text-muted-foreground font-medium mt-1 ml-4 uppercase ">Latest requests from farmers</p>
+        <main className="flex-1 overflow-y-auto">
+          <div className="container mx-auto px-6 py-8">
+            <div className="mb-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-foreground mb-2">
+                    Supplier Dashboard
+                  </h1>
+                  <p className="text-muted-foreground">
+                    Monitor deliveries, track performance, and manage logistics
+                  </p>
+                </div>
               </div>
-              <Link
-                href="/supplier/orders"
-                className="text-[10px] font-semibold text-success hover:text-success/80 uppercase  bg-success/10 px-3 py-1.5 rounded-lg transition-colors"
-              >
-                View Registry
-              </Link>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-card/50">
-                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Order Reference</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Customer</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Product details</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-center">Total Value</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-center">Status</th>
-                    <th className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-right">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {ordersLoading ? (
-                    [1, 2, 3].map((i) => (
-                      <tr key={i}>
-                        <td colSpan={6} className="py-4 px-6"><div className="h-4 bg-muted rounded animate-pulse w-full"></div></td>
-                      </tr>
-                    ))
-                  ) : supplierOrders?.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-12 text-center">
-                        <div className="flex flex-col items-center justify-center space-y-2 opacity-40">
-                          <ShoppingCart className="w-8 h-8 text-muted-foreground" />
-                          <p className="text-xs font-semibold text-muted-foreground uppercase ">No orders found</p>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    supplierOrders?.slice(0, 5).map((order) => (
-                      <tr key={order.id} className="group hover:bg-card/50 transition-colors cursor-pointer"
-                        onClick={() => router.push(`/supplier/orders/${order.id}`)}>
-                        <td className="py-4 px-6 text-xs font-semibold text-foreground font-mono ">
-                          #{order.id.slice(0, 8).toUpperCase()}
-                        </td>
-                        <td className="py-4 px-6">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center text-[10px] font-semibold text-success">
-                              {order.buyer.names.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div>
-                              <p className="text-xs font-semibold text-foreground leading-none">{order.buyer.names}</p>
-                              <p className="text-[10px] text-muted-foreground mt-1">{order.buyer.phoneNumber}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-6">
-                          <div>
-                            <p className="text-xs font-semibold text-foreground leading-none">{order.product.name}</p>
-                            <p className="text-[10px] text-muted-foreground mt-1 uppercase ">{order.quantity} {order.product.measurementUnit}</p>
-                          </div>
-                        </td>
-                        <td className="py-4 px-6 text-center">
-                          <span className="text-xs font-extrabold text-success">
-                            {Number(order.totalPrice).toLocaleString()} RWF
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-center">
-                          <Badge variant="outline" className={`text-[10px] font-semibold uppercase  px-2 py-0.5 rounded-md border-0 ring-1 ring-inset ${order.status === 'PENDING' ? 'bg-warning/10 text-warning ring-warning/20' :
-                            order.status === 'COMPLETED' ? 'bg-success/10 text-success ring-success/20' :
-                              'bg-card text-muted-foreground ring-border'
-                            }`}>
-                            {order.status}
-                          </Badge>
-                        </td>
-                        <td className="py-4 px-6 text-right text-[10px] font-semibold text-muted-foreground uppercase">
-                          {format(new Date(order.createdAt), 'MMM dd, yyyy')}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+            <div className="min-h-screen">
+              <SupplierDashboard />
             </div>
           </div>
         </main>
       </div>
     </div>
-  );
-}
-
-export default function SupplierDashboardPage() {
-  return (
-    <SupplierGuard>
-      <DashboardComponent />
-    </SupplierGuard>
   );
 }
