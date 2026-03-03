@@ -51,7 +51,6 @@ function EditProduct() {
 
     if (foundProduct) {
       setProduct(foundProduct);
-      console.log(foundProduct)
       setFormData({
         name: foundProduct.name,
         quantity: foundProduct.quantity,

@@ -15,7 +15,7 @@ import MetricCard from '../common/MetricCard';
 import DashboardChart from '../common/DashboardChart';
 import DashboardGrid, { DashboardSection } from '../common/DashboardGrid';
 import { GovernmentDashboardData } from '@/types/dashboard';
-import { dashboardService } from '@/lib/dashboard-mock';
+import { dashboardService } from '@/services/dashboardService';
 
 export default function GovernmentDashboard() {
   const [dashboardData, setDashboardData] = useState<GovernmentDashboardData | null>(null);

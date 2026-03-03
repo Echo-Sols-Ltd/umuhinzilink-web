@@ -14,7 +14,7 @@ import MetricCard from '../common/MetricCard';
 import DashboardChart from '../common/DashboardChart';
 import DashboardGrid, { DashboardSection } from '../common/DashboardGrid';
 import { FarmerDashboardData } from '@/types/dashboard';
-import { dashboardService } from '@/lib/dashboard-mock';
+import { dashboardService } from '@/services/dashboardService';
 
 export default function FarmerDashboard() {
   const [dashboardData, setDashboardData] = useState<FarmerDashboardData | null>(null);

@@ -43,6 +43,8 @@ export const API_ENDPOINTS = {
     FARMER_STATS: '/dashboard/farmer',
     SUPPLIER_STATS: '/dashboard/supplier',
     BUYER_STATS: '/dashboard/buyer',
+    ADMIN_STATS: '/dashboard/admin',
+    GOVERNMENT_STATS: '/dashboard/government'
   },
   PRODUCT: {
     CREATE_FARMER: '/products/farmer',
@@ -140,7 +142,7 @@ export const API_ENDPOINTS = {
   MESSAGES: {
     CONVERSATION: (senderId: string, receiverId: string) => `/messages/all/${senderId}/${receiverId}`,
     BY_ID: (conversationId: string) => `/messages/${conversationId}`,
-    MARK_READ:(conversionId:string)=>`/messages/read/${conversionId}`
+    MARK_READ: (conversionId: string) => `/messages/read/${conversionId}`
   },
   CHAT: {
     ALL: '/chat/users',

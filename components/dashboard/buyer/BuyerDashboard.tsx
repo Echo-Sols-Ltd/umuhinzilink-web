@@ -13,21 +13,26 @@ import MetricCard from '../common/MetricCard';
 import DashboardChart from '../common/DashboardChart';
 import DashboardGrid, { DashboardSection } from '../common/DashboardGrid';
 import { BuyerDashboardData } from '@/types/dashboard';
-import { dashboardService } from '@/lib/dashboard-mock';
+import { dashboardService } from '@/services/dashboardService';
 
 export default function BuyerDashboard() {
   const [dashboardData, setDashboardData] = useState<BuyerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const response = await dashboardService.getBuyerDashboard();
         if (response.success) {
           setDashboardData(response.data);
+        } else {
+          setError(response.message || 'Failed to load dashboard data');
         }
-      } catch (error) {
-        console.error('Failed to fetch buyer dashboard data:', error);
+      } catch (err) {
+        setError('Failed to load dashboard data');
       } finally {
         setLoading(false);
       }
@@ -38,14 +43,23 @@ export default function BuyerDashboard() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-card rounded-xl p-6 border border-border animate-pulse">
-              <div className="h-4 bg-muted rounded w-3/4 mb-4"></div>
-              <div className="h-8 bg-muted rounded w-1/2"></div>
-            </div>
-          ))}
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -54,7 +68,7 @@ export default function BuyerDashboard() {
   if (!dashboardData) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Failed to load dashboard data</p>
+        <p className="text-muted-foreground">No dashboard data available</p>
       </div>
     );
   }
