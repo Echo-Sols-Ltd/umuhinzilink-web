@@ -8,4 +8,5 @@ export * from './request';
 export * from './enums';
 export * from './message';
 export * from './wallet';
-export * from './navigation'
+export * from './navigation';
+export * from './dashboard';
