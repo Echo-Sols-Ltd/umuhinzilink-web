@@ -159,8 +159,8 @@ export function ProductDisplay({
 
       {/* Loading State */}
       {loading && (
-        <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8" : "space-y-4"}>
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-6" : "space-y-4"}>
+          {Array.from({ length: 10 }).map((_, i) => (
             viewMode === 'grid' ? (
               <div key={`skeleton-grid-${i}`} className="bg-white rounded-lg shadow-sm border overflow-hidden">
                 <Skeleton className="h-48 w-full rounded-none bg-gray-200" />
@@ -212,7 +212,7 @@ export function ProductDisplay({
       {!loading && (
         <>
           {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
               {products.map((product) => (
                 <ProductCard
                   key={product.id}

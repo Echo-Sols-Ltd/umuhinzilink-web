@@ -84,7 +84,7 @@ function AiDashboard() {
       <main className="flex-1  h-screen bg-background overflow-hidden">
         <div className="p-6 ">
           {/* Weather Alert */}
-          <div className="bg-gradient-to-r from-primary to-primary/90 rounded-lg p-6 mb-8 text-primary-foreground flex items-center justify-between">
+          <div className="bg-linear-to-r from-primary to-primary/90 rounded-lg p-6 mb-8 text-primary-foreground flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <AlertTriangle className="w-6 h-6" />
               <div>
