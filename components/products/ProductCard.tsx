@@ -1,150 +1,42 @@
+import React from "react";
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, ProductRef, SupplierProduct, User, UserType } from "@/types";
-import { Heart, MessageSquare, Trash2, UserIcon, Clock, Eye, Edit } from "lucide-react";
+import { FarmerProduct, MessageType, ProductRef, SupplierProduct, UserType } from "@/types";
+import { Heart, MapPin, Calendar, Package, User as UserIcon, CheckCircle2, ShoppingCart, Trash2, Edit } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChat } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useProduct } from "@/contexts/ProductContext";
 import { ChatUser } from "@/types/chat";
 
 interface ProductCardProps {
-    product: SupplierProduct | FarmerProduct
-    // Remove individual callbacks - will be handled internally based on user role
+    product: SupplierProduct | FarmerProduct;
 }
 
-// Role-based action handlers
-const getRoleBasedActions = (product: SupplierProduct | FarmerProduct, user: User | null, router: any, handlers: any, showOrderModal: any) => {
-    if (!user) return
-    const isFarmer = user.role === UserType.FARMER
-    const isProductOwner = user?.id === product.owner?.id;
-    const userRole = user?.role?.toLowerCase();
-    const productType = product.owner.role
-    const isSupplierProduct = productType === UserType.SUPPLIER
-    const isFarmerBuyer = isSupplierProduct && isFarmer
-    const isBuyer = user.role === UserType.BUYER
-    const isProductBuyer = isBuyer || isFarmerBuyer
-
-    // Common actions for all authenticated users
-    const commonActions = [];
-
-    // Owner actions
-    if (isProductOwner) {
-        commonActions.push({
-            key: 'edit',
-            label: 'Edit Item',
-            icon: Edit,
-            variant: 'secondary',
-            action: () => {
-                if (handlers.onEdit) handlers.onEdit(product);
-                else router.push(`/${userRole}/products/${product.id}/edit`);
-            }
-        });
-    }
-
-
-    console.log(userRole)
-
-    // Non-owner actions based on user role
-    if (!isProductOwner && user) {
-        switch (userRole) {
-            case 'buyer':
-                commonActions.push({
-                    key: 'view',
-                    label: 'Buy Now',
-                    icon: Eye,
-                    variant: 'primary',
-                    action: () => {
-                        const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
-                        showOrderModal(product, productType);
-                    }
-                });
-                product.isNegotiable && commonActions.push({
-                    key: 'purchase',
-                    label: 'Negotiate',
-                    icon: MessageSquare,
-                    variant: 'primary',
-                    action: () => {
-                        handlers.handleContactFarmer(product)
-                    }
-                });
-                break;
-
-            case 'farmer':
-                commonActions.push({
-                    key: 'view',
-                    label: 'Buy Now',
-                    icon: Eye,
-                    variant: 'primary',
-                    action: () => {
-                        const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
-                        showOrderModal(product, productType);
-                    }
-                });
-                product.isNegotiable && commonActions.push({
-                    key: 'purchase',
-                    label: 'Negotiate',
-                    icon: MessageSquare,
-                    variant: 'primary',
-                    action: () => {
-                        handlers.handleContactFarmer(product)
-                    }
-                });
-                break;
-            case 'supplier':
-                commonActions.push({
-                    key: 'contact',
-                    label: 'Contact',
-                    icon: MessageSquare,
-                    variant: 'outline',
-                    action: () => {
-                        if (handlers.onContact) handlers.onContact();
-                        else handlers.handleContactFarmer(product);
-                    }
-                });
-                break;
-
-            case 'admin':
-                commonActions.push({
-                    key: 'view',
-                    label: 'Manage',
-                    icon: Eye,
-                    variant: 'secondary',
-                    action: () => router.push(`/admin/products/${product.id}`)
-                });
-                break;
-        }
-    }
-
-    // Unauthenticated users
-    if (!user) {
-        commonActions.push({
-            key: 'view',
-            label: 'View Details',
-            icon: Eye,
-            variant: 'primary',
-            action: () => router.push(`/buyer/products/${product.id}`)
-        });
-    }
-
-    return commonActions;
-};
-
 export default function ProductCard({ product }: ProductCardProps) {
-    const { user } = useAuth()
-    const { deleteFarmerProduct, deleteSupplierProduct, showOrderModal } = useProduct()
-    const { handleUserClick, handleSendMessage } = useChat()
-    const router = useRouter()
+    const { user } = useAuth();
+    const { deleteFarmerProduct, deleteSupplierProduct, showOrderModal } = useProduct();
+    const { handleUserClick, handleSendMessage } = useChat();
+    const router = useRouter();
 
-    const handleContactFarmer = async (product: FarmerProduct | SupplierProduct) => {
+    const isProductOwner = user?.id === product.owner?.id;
+    const isAvailable = product.productStatus === 'IN_STOCK';
+    const isLowStock = product.productStatus === 'LOW_STOCK';
+    const isCertified = product.certification && product.certification !== 'NONE';
+
+    // Normalizing harvest date
+    const harvestDateValue = product.harvestDate instanceof Date
+        ? product.harvestDate
+        : product.harvestDate ? new Date(product.harvestDate) : null;
+
+    const formattedDate = harvestDateValue && !isNaN(harvestDateValue.getTime())
+        ? harvestDateValue.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : 'N/A';
+
+    const handleSendMessageToOwner = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!user) {
-            notify.error("Please log in to contact farmers", "Authentication Required");
-            return;
-        }
-
-        if (!product.owner) {
-            notify.error("Unable to find contact information for this product", "Information Not Available");
+            notify.error("Please log in to contact owner", "Authentication Required");
             return;
         }
 
@@ -155,166 +47,190 @@ export default function ProductCard({ product }: ProductCardProps) {
             const productRef: ProductRef = {
                 productId: product.id,
                 productType: product.owner.role
-            }
+            };
 
             await handleSendMessage(
-                `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
+                `Hi! I'm interested in your ${product.name}. Could you provide more details?`,
                 MessageType.PRODUCT,
                 product.owner.names,
                 productRef,
-                partnerUser // overrideReceiver: bypasses stale activeChatUser state
+                partnerUser
             );
 
-            notify.success(`You can now chat with ${product.owner.names} about ${product.name}`, "Message Sent");
-
+            notify.success(`Chat started with ${product.owner.names}`, "Message Sent");
             router.push(`/chat/${partnerUser.id}`);
         } catch (error) {
             console.error('Failed to contact owner:', error);
-            notify.error("Please try again later", "Failed to Send Message");
+            notify.error("Please try again later", "Error");
         }
     };
 
-    const handleDeleteProduct = async (productId: string, productName: string) => {
-        if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
-            return;
-        }
+    const handleDeleteProduct = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!confirm(`Are you sure you want to delete "${product.name}"?`)) return;
 
         try {
-            if (product.owner.role === 'FARMER') {
-                await deleteFarmerProduct(productId);
-            } else {
-                await deleteSupplierProduct(productId);
-            }
+            if (product.owner.role === 'FARMER') await deleteFarmerProduct(product.id);
+            else await deleteSupplierProduct(product.id);
+            notify.success("Product removed successfully");
         } catch (error) {
-            console.error('Failed to delete product:', error);
-            notify.error("Failed to delete product. Please try again.", "Delete Failed");
+            notify.error("Failed to delete product");
         }
     };
 
-    const isProductOwner = user?.id === product.owner?.id;
-
-    // Get role-based actions
-    const actions = getRoleBasedActions(product, user, router, {
-        handleContactFarmer,
-        onPurchase: null,
-        onContact: null,
-        onEdit: null
-    }, showOrderModal);
-
-    // Handle card click - navigate to appropriate detail page
     const handleCardClick = () => {
-        if (!user) {
+        if (!user || (!isProductOwner)) {
             router.push(`/buyer/products/${product.id}`);
             return;
         }
-
-        const userRole = user.role?.toLowerCase();
-        switch (userRole) {
-            case 'buyer':
-                router.push(`/buyer/products/${product.id}`);
-                break;
-            case 'farmer':
-            case 'supplier':
-                if (isProductOwner) {
-                    router.push(`/${userRole}/products/${product.id}/edit`);
-                } else {
-                    router.push(`/buyer/products/${product.id}`);
-                }
-                break;
-            case 'admin':
-                router.push(`/admin/products/${product.id}`);
-                break;
-            default:
-                router.push(`/buyer/products/${product.id}`);
+        if (isProductOwner) {
+            router.push(`/${user.role.toLowerCase()}/products/${product.id}/edit`);
         }
     };
-    if (!actions) return
+
+    const handleSave = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        notify.success(`${product.name} saved to favorites`, "Saved");
+    };
+
+    const handleAction = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (isProductOwner) {
+            router.push(`/${user?.role?.toLowerCase()}/products/${product.id}/edit`);
+        } else {
+            const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
+            showOrderModal(product, productType);
+        }
+    }
 
     return (
         <div
             onClick={handleCardClick}
-            className="group bg-card rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 cursor-pointer"
+            className="group relative bg-card rounded-[24px] border border-border shadow-sm hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 cursor-pointer flex flex-col h-full overflow-hidden w-full max-w-sm mx-auto"
         >
-            <div className="relative aspect-square overflow-hidden bg-background">
+            {/* Top Section – Product Image */}
+            <div className="relative aspect-[4/3] overflow-hidden">
                 <img
-                    src={imageUrl(product.image!)}
+                    src={imageUrl(product.image || (product as any).images?.[0])}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
 
-                <div className="absolute top-3 right-3 flex flex-col gap-2">
-                    {isProductOwner && (
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteProduct(product.id, product.name);
-                            }}
-                            className="bg-card/90 backdrop-blur-sm p-2 rounded-lg shadow-sm hover:bg-card transition-colors text-muted-foreground hover:text-destructive"
-                            title="Delete product"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                        </button>
+                {/* Image Overlay Gradient */}
+                <div className="absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                {/* Status Badge Top-Left */}
+                <div className="absolute top-5 left-5">
+                    <span className={`px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest backdrop-blur-md shadow-sm border ${isAvailable ? 'bg-success/90 text-success-foreground border-success/20' :
+                            isLowStock ? 'bg-warning/90 text-warning-foreground border-warning/20' :
+                                'bg-destructive/90 text-destructive-foreground border-destructive/20'
+                        }`}>
+                        {isAvailable ? 'Available' : isLowStock ? 'Low Stock' : 'Out of Stock'}
+                    </span>
+                </div>
+
+                {/* Optional Badge Top-Right */}
+                <div className="absolute top-5 right-5 flex flex-col gap-2 items-end">
+                    {isCertified && (
+                        <span className="flex items-center gap-1.5 px-3 py-1.5 bg-card/95 backdrop-blur-sm text-primary rounded-full text-[10px] font-extrabold shadow-sm border border-primary/10">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            CERTIFIED
+                        </span>
+                    )}
+                    {product.isNegotiable && (
+                        <span className="px-3 py-1.5 bg-card/95 backdrop-blur-sm text-accent rounded-full text-[10px] font-extrabold shadow-sm border border-accent/10">
+                            NEGOTIABLE
+                        </span>
                     )}
                 </div>
 
-                <div className="absolute top-3 left-3">
-                    <span className={`px-2 py-0.5 text-[10px] font-semibold uppercase  rounded-md bg-card/90 backdrop-blur-sm shadow-sm ${product.productStatus === 'IN_STOCK' ? 'text-success' : 'text-warning'
-                        }`}>
-                        {product.productStatus?.replace('_', ' ') || 'Available'}
-                    </span>
-                </div>
+                {/* Owner Actions Overlay */}
+                {isProductOwner && (
+                    <div className="absolute bottom-5 right-5 flex gap-2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <button
+                            onClick={handleDeleteProduct}
+                            className="p-2.5 bg-destructive/10 hover:bg-destructive text-destructive hover:text-white rounded-xl shadow-lg backdrop-blur-md transition-all duration-300"
+                        >
+                            <Trash2 className="w-5 h-5" />
+                        </button>
+                    </div>
+                )}
             </div>
 
-            <div className="p-4">
-                <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors uppercase text-sm ">{product.name}</h3>
-                </div>
-
-                <div className="flex items-baseline gap-1 mb-3">
-                    <span className="text-lg font-extrabold text-primary">{Number(product.unitPrice).toLocaleString()}</span>
-                    <span className="text-[10px] font-semibold text-muted-foreground uppercase">RWF / {product.measurementUnit || 'unit'}</span>
-                </div>
-
-                <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-[11px] font-medium text-muted-foreground">
-                        <UserIcon className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
-                        <span className="truncate">{product.owner?.names || 'Unknown'}</span>
-                    </div>
-                    <div className="flex items-center text-[11px] font-medium text-muted-foreground">
-                        <Clock className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
-                        <span>Qty: {product.quantity}</span>
+            {/* Middle Section – Product Info */}
+            <div className="p-6 flex-1 flex flex-col">
+                <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-xl font-extrabold text-foreground group-hover:text-primary transition-colors line-clamp-1 truncate uppercase tracking-tight">
+                        {product.name}
+                    </h3>
+                    <div className="bg-muted px-3 py-1 rounded-full shrink-0">
+                        <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest">
+                            {product.category?.replace(/_/g, ' ')}
+                        </span>
                     </div>
                 </div>
 
-                {/* Role-based Action Buttons */}
-                <div className="flex items-center gap-2 pt-1">
-                    {actions.map((action, index) => {
-                        const isPrimary = action.variant === 'primary';
-                        const isSecondary = action.variant === 'secondary';
-                        const isOutline = action.variant === 'outline';
+                <div className="flex items-baseline gap-1.5 mb-4">
+                    <span className="text-2xl font-black text-primary">
+                        RWF {Number(product.unitPrice).toLocaleString()}
+                    </span>
+                    <span className="text-xs font-bold text-muted-foreground">/ {product.measurementUnit}</span>
+                </div>
 
-                        return (
-                            <button
-                                key={action.key}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    action.action();
-                                }}
-                                className={`flex gap-x-2 cursor-pointer
-                                    ${index === 0 && actions.length > 1 ? 'flex-1 p-2 items-center justify-center' : 'p-2'}
-                                    ${isPrimary ? 'bg-primary hover:bg-primary/90 text-primary-foreground' : ''}
-                                    ${isSecondary ? 'bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground' : ''}
-                                    ${isOutline ? 'p-2 bg-card text-muted-foreground hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20' : ''}
-                                    ${index === 0 && actions.length > 1 ? 'rounded-xl' : 'rounded-lg'}
-                                    text-xs font-semibold uppercase transition-all duration-300
-                                    ${isPrimary ? 'shadow-lg shadow-primary/20' : ''}
-                                `}
-                            >
-                                {action.icon && <action.icon className="w-4 h-4" />}
-                                {action.label}
-                            </button>
-                        );
-                    })}
+                <p className="text-[13px] text-muted-foreground line-clamp-2 mb-5 h-10 leading-relaxed font-medium">
+                    {product.description || "Premium agricultural product sourced sustainably and ready for delivery to your location."}
+                </p>
+
+                <div className="flex items-center gap-4 text-muted-foreground mb-6">
+                    <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-xl border border-border/50">
+                        <MapPin className="w-4 h-4 text-primary" />
+                        <span className="text-[11px] font-bold truncate max-w-[140px] uppercase tracking-wide">{product.location || 'Rwanda'}</span>
+                    </div>
+                </div>
+
+                {/* Metadata Row */}
+                <div className="flex items-center justify-between py-4 border-y border-border/50 text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground mb-6">
+                    <div className="flex items-center gap-2">
+                        <Package className="w-4 h-4 text-primary/60" />
+                        <span>STOCK: {product.quantity}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-primary/60" />
+                        <span>{formattedDate}</span>
+                    </div>
+                </div>
+
+                {/* Footer Section – Seller & Action */}
+                <div className="mt-auto flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 group/seller cursor-pointer">
+                        <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center overflow-hidden ring-2 ring-transparent group-hover/seller:ring-primary/20 transition-all">
+                            {product.owner?.avatar ? (
+                                <img src={imageUrl(product.owner.avatar)} className="w-full h-full object-cover" />
+                            ) : (
+                                <UserIcon className="w-6 h-6 text-muted-foreground" />
+                            )}
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-xs font-extrabold text-foreground line-clamp-1">{product.owner?.names?.split(' ')[0] || 'Seller'}</span>
+                            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">{product.owner?.role?.toLowerCase()}</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                        <button
+                            onClick={handleSave}
+                            className="p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-2xl transition-all duration-300 active:scale-90"
+                        >
+                            <Heart className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={handleAction}
+                            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-2xl text-[11px] font-extrabold uppercase tracking-widest shadow-xl shadow-primary/20 hover:shadow-primary/40 active:scale-95 transition-all duration-300"
+                        >
+                            {isProductOwner ? <Edit className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
+                            {isProductOwner ? 'Edit' : 'View'}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

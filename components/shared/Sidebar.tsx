@@ -158,7 +158,8 @@ function getNavGroups(userType: UserType): NavGroup[] {
                 {
                     label: 'Account',
                     items: [
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
+                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/admin/profile' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/admin/settings' },
                     ],
                 },
             ];
@@ -183,8 +184,8 @@ function getNavGroups(userType: UserType): NavGroup[] {
                 {
                     label: 'Account',
                     items: [
-                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
-                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/settings' },
+                        { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/government/profile' },
+                        { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/government/settings' },
                     ],
                 },
             ];
@@ -374,7 +375,8 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                         currentUserType === UserType.BUYER ? '/buyer/settings' :
                                             currentUserType === UserType.SUPPLIER ? '/supplier/settings' :
                                                 currentUserType === UserType.ADMIN ? '/admin/settings' :
-                                                    '/settings'
+                                                    currentUserType === UserType.GOVERNMENT ? '/government/settings' :
+                                                        '/settings'
                                 )}
                                 title="Settings"
                                 className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"

@@ -103,7 +103,7 @@ export default function FarmerDashboard() {
       <div>
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/seller/products/add" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+          <Link href="/farmer/add_produce" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
                 <Plus className="w-5 h-5 text-primary" />
@@ -112,7 +112,7 @@ export default function FarmerDashboard() {
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
           </Link>
-          <Link href="/seller/payments" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+          <Link href="/farmer/wallet" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
                 <CreditCard className="w-5 h-5 text-green-600" />
@@ -121,7 +121,7 @@ export default function FarmerDashboard() {
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
           </Link>
-          <Link href="/seller/inventory" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+          <Link href="/farmer/products" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
                 <Archive className="w-5 h-5 text-blue-600" />
@@ -137,7 +137,7 @@ export default function FarmerDashboard() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Recent Orders</h2>
-          <Link href="/seller/orders" className="text-sm text-primary hover:underline">
+          <Link href="/farmer/orders" className="text-sm text-primary hover:underline">
             View All
           </Link>
         </div>

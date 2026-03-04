@@ -134,7 +134,7 @@ export default function BuyerDashboard() {
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
-            <Link href="/marketplace" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+            <Link href="/buyer/products" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
                   <Search className="w-5 h-5 text-green-600" />

@@ -2,20 +2,10 @@
 
 import React, { useState } from 'react';
 import {
-  LayoutGrid,
-  MessageSquare,
-  Settings,
   AlertTriangle,
-  FilePlus,
-  BarChart2,
-  ShoppingCart,
-  User,
-  Mail,
-  Bell,
-  Package,
-  Leaf,
+  Lightbulb,
   Send,
-  LogOut,
+  Leaf,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -24,19 +14,7 @@ import Sidebar from '@/components/shared/Sidebar';
 import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
-const menuItems = [
-  { label: 'Dashboard', href: '/farmer/dashboard', icon: LayoutGrid },
-  { label: 'Products', href: '/farmer/products', icon: Package },
-  { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Messages', href: '/chat', icon: Mail },
-  { label: 'Notifications', href: '/farmer/notifications', icon: Bell },
-  { label: 'Profile', href: '/farmer/profile', icon: User },
-  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-  { label: 'Settings', href: '/farmer/settings', icon: Settings },
-  { label: 'Logout', href: '#', icon: LogOut, isLogout: true },
-];
+
 
 const tips = [
   {

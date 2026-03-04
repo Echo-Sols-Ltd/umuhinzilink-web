@@ -133,7 +133,7 @@ export default function SupplierDashboard() {
                         {' '}in stock (Min: {item.minThreshold})
                       </p>
                     </div>
-                    <Link href={`/supplier/inventory/restock/${item.id}`} className="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md font-medium transition-colors">
+                    <Link href={`/supplier/products/restock/${item.id}`} className="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md font-medium transition-colors">
                       Restock
                     </Link>
                   </div>
@@ -145,8 +145,8 @@ export default function SupplierDashboard() {
                 </div>
               )}
 
-              <Link href="/supplier/inventory" className="text-sm text-primary hover:underline mt-2 text-center py-2 flex items-center justify-center gap-1">
-                Manage Inventory
+              <Link href="/supplier/products" className="text-sm text-primary hover:underline mt-2 text-center py-2 flex items-center justify-center gap-1">
+                Manage Products
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
