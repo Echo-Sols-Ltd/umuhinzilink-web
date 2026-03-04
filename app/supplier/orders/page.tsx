@@ -6,13 +6,10 @@ import {
   Package,
   ShoppingCart,
   User,
-  Search,
   Eye,
   Loader2,
   Clock,
   RefreshCw,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -122,7 +119,7 @@ function OrdersPageComponent() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <h1 className="text-2xl font-semibold text-foreground ">Order Management</h1>
-              <p className="text-sm text-muted-foreground mt-1 font-medium ">Monitor and process incoming requests from farmers across regions</p>
+              <p className="text-sm text-muted-foreground mt-1 font-medium ">Process and manage orders from farmers for your agricultural inputs</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -173,10 +170,10 @@ function OrdersPageComponent() {
                 <TableRow className="hover:bg-transparent border-0">
                   <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Order ID</TableHead>
                   <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Farmer</TableHead>
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Input Item</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Product</TableHead>
                   <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-center">Value</TableHead>
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-center">Status</TableHead>
-                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-right">Action</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase ">Status</TableHead>
+                  <TableHead className="py-4 px-6 font-semibold text-[11px] text-muted-foreground uppercase  text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -206,9 +203,9 @@ function OrdersPageComponent() {
                     <TableRow key={order.id} className="group transition-colors hover:bg-card/50">
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-semibold text-foreground leading-tight">#{order.id.slice(0, 8).toUpperCase()}</span>
+                          <span className="font-semibold text-foreground leading-tight">#{(order.id || '').slice(0, 8).toUpperCase()}</span>
                           <span className="text-[10px] uppercase  font-semibold text-muted-foreground mt-0.5">
-                            {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'No date'}
                           </span>
                         </div>
                       </TableCell>
@@ -217,20 +214,25 @@ function OrdersPageComponent() {
                           <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center text-success border border-success/20 shrink-0">
                             <User className="w-4 h-4" />
                           </div>
-                          <span className="font-semibold text-foreground">{order.buyer?.names || 'Individual Farmer'}</span>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-foreground">{order.buyer?.names || 'Farmer'}</span>
+                            <span className="text-[10px] text-muted-foreground font-medium">
+                              {order.buyer?.email || 'No email'}
+                            </span>
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-semibold text-foreground">{order.product?.name || 'Agri-Input'}</span>
+                          <span className="font-semibold text-foreground">{order.product?.name || 'Product'}</span>
                           <span className="text-[11px] text-muted-foreground font-medium">
-                            {order.quantity} {order.product?.measurementUnit || 'units'}
+                            {Number(order.quantity || 0).toLocaleString()} {order.product?.measurementUnit || 'units'}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <span className="font-semibold text-foreground">
-                          RWF {order.totalPrice.toLocaleString()}
+                          RWF {Number(order.totalPrice || 0).toLocaleString()}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -244,7 +246,7 @@ function OrdersPageComponent() {
                             <button
                               onClick={() => handleAcceptOrder(order.id)}
                               disabled={actionLoading}
-                              className="px-3 py-1.5 bg-green-600 text-white text-[11px] font-semibold rounded-lg hover:bg-green-700 shadow-sm shadow-green-100 disabled:opacity-50 transition-all"
+                              className="px-3 py-1.5 bg-green-600 text-white text-[11px] font-semibold rounded-lg hover:bg-green-700  disabled:opacity-50 transition-all"
                             >
                               Approve
                             </button>

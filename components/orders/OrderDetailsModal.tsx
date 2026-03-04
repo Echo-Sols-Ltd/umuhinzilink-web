@@ -14,7 +14,8 @@ import {
     Clock,
     ExternalLink,
     Mail,
-    Phone
+    Phone,
+    ThumbsUp
 } from 'lucide-react';
 import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus, deliveryStatusOptions } from '@/types';
 import OrderStatusTracker from './OrderStatusTracker';
@@ -30,6 +31,7 @@ interface OrderDetailsModalProps {
     onCancel?: (id: string) => Promise<void>;
     onUpdateStatus?: (id: string, status: DeliveryStatus) => Promise<void>;
     onPay?: (order: any) => Promise<void>;
+    onMarkSatisfaction?: (id: string) => Promise<void>;
     loading?: boolean;
 }
 
@@ -41,6 +43,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     onCancel,
     onUpdateStatus,
     onPay,
+    onMarkSatisfaction,
     loading = false,
 }) => {
     const { user } = useAuth();
@@ -61,6 +64,13 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     const isActionable = status === 'PENDING';
     const buyer = order.buyer;
     const product = order.product;
+
+    // Satisfaction logic
+    const isBuyer = user?.role === UserType.BUYER;
+    const isDelivered = order.delivery?.trackingSteps?.some(
+        step => step.status === 'DELIVERED' && step.completed
+    ) || false;
+    const canMarkSatisfaction = isBuyer && isDelivered && !order.isBuyerSatisfied;
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -121,6 +131,38 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             updatedAt={order.updatedAt}
                         />
                     </div>
+
+                    {/* Satisfaction Status */}
+                    {isDelivered && (
+                        <div className="bg-card rounded-lg border p-6 shadow-sm">
+                            <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                                <ThumbsUp className="w-4 h-4 text-primary" />
+                                Delivery Satisfaction
+                            </h3>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-muted-foreground">
+                                        {order.isBuyerSatisfied 
+                                            ? 'Buyer has confirmed safe delivery' 
+                                            : 'Waiting for buyer to confirm safe delivery'
+                                        }
+                                    </p>
+                                    {order.isBuyerSatisfied && (
+                                        <p className="text-xs text-green-600 mt-1">
+                                            ✓ Confirmed on {order.updatedAt ? formatDate(order.updatedAt) : 'Unknown date'}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                    order.isBuyerSatisfied 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : 'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                    {order.isBuyerSatisfied ? 'Satisfied' : 'Pending'}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Buyer Info */}
@@ -232,6 +274,18 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             Pay Now
                         </button>
                     )}
+                    
+                    {canMarkSatisfaction && onMarkSatisfaction && (
+                        <button
+                            onClick={() => onMarkSatisfaction(order.id)}
+                            disabled={loading}
+                            className="px-6 py-2 text-sm font-medium text-primary-foreground bg-success rounded-lg hover:bg-success/90 shadow-md shadow-success/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {loading ? <Clock className="w-4 h-4 animate-spin" /> : <ThumbsUp className="w-4 h-4" />}
+                            Confirm Safe Delivery
+                        </button>
+                    )}
+                    
                     <button
                         onClick={onClose}
                         className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-lg hover:bg-background shadow-sm transition-all"

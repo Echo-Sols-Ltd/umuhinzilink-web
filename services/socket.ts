@@ -17,6 +17,7 @@ class SocketService {
     private orderStatusChangeListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
     private orderDeliveryChangeListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
     private orderNewListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
+    private orderSatisfactionListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
@@ -179,6 +180,7 @@ class SocketService {
             this.stompClient.subscribe('/user/queue/orderStatusChange', (msg) => this.handleOrderStatusChange(msg))
             this.stompClient.subscribe('/user/queue/orderDeliveryChange', (msg) => this.handleOrderDeliveryChange(msg))
             this.stompClient.subscribe('/user/queue/newOrder', (msg) => this.handleNewOrder(msg))
+            this.stompClient.subscribe('/user/queue/orderSatisfaction', (msg) => this.handleOrderSatisfaction(msg))
         } catch (error) {
             console.error('❌ Error subscribing to topics:', error)
         }
@@ -224,6 +226,20 @@ class SocketService {
             }
         } catch (error) {
             console.error('error parsing order delivery change', error)
+        }
+    }
+
+    private handleOrderSatisfaction(message: IMessage) {
+        try {
+            const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
+            // Only call listeners if data exists
+            if (body.data) {
+                this.orderSatisfactionListeners.forEach(cb => cb(body.data!))
+            } else {
+                console.warn('Order satisfaction received but no data provided', body)
+            }
+        } catch (error) {
+            console.error('error parsing order satisfaction', error)
         }
     }
 
@@ -323,6 +339,12 @@ class SocketService {
     }
     public removeOrderDeliveryChangeListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
         this.orderDeliveryChangeListeners = this.orderDeliveryChangeListeners.filter(cb => cb !== callback)
+    }
+    public onOrderSatisfaction(callback: (order: FarmerOrder|SupplierOrder) => void) {
+        this.orderSatisfactionListeners.push(callback)
+    }
+    public removeOrderSatisfactionListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
+        this.orderSatisfactionListeners = this.orderSatisfactionListeners.filter(cb => cb !== callback)
     }
 
     public sendMessage(data: SendMessageRequest) {

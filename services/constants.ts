@@ -84,6 +84,8 @@ export const API_ENDPOINTS = {
     FARMER_ALL: '/orders/farmer/all',
     UPDATE_FARMER_STATUS: (id: string) => `/orders/farmer/${id}/status`,
     UPDATE_SUPPLIER_STATUS: (id: string) => `/orders/supplier/${id}/status`,
+    SATISFACTION_FARMER: (id: string) => `/orders/farmer/${id}/satisfaction`,
+    SATISFACTION_SUPPLIER: (id: string) => `/orders/supplier/${id}/satisfaction`,
   },
   ADMIN: {
     USERS: '/admin/users',

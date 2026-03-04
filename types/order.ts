@@ -26,6 +26,7 @@ export interface FarmerOrder {
   status: OrderStatus;
   delivery?: Delivery;
   paymentMethod: PaymentMethod;
+  isBuyerSatisfied?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -41,6 +42,7 @@ export interface SupplierOrder {
   delivery?: Delivery;
   paymentMethod: PaymentMethod;
   deliveryDate?: string;
+  isBuyerSatisfied?: boolean;
   createdAt: string;
   updatedAt: string;
 }
