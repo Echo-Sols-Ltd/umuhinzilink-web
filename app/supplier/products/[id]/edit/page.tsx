@@ -191,7 +191,7 @@ function EditInput() {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserType.SUPPLIER} activeItem="My Inputs" />
-      
+
       <main className="flex-1 overflow-hidden">
         {/* Header */}
         <div className="bg-card border-b border-border py-4">
@@ -232,20 +232,16 @@ function EditInput() {
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Input Name <span className="text-destructive">*</span>
                         </label>
-                        <Select value={formData.name} onValueChange={(value) => handleSelectChange('name', value)}>
-                          <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
-                            <SelectValue placeholder="Select input type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(ProductType).map((type) => (
-                              <SelectItem key={type} value={type}>
-                                {type.replace(/_/g, ' ')}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <input
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="Fertlizers"
+                          required
+                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
+                        />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Category <span className="text-destructive">*</span>
@@ -308,7 +304,7 @@ function EditInput() {
                           className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Measurement Unit <span className="text-destructive">*</span>
@@ -326,7 +322,7 @@ function EditInput() {
                           </SelectContent>
                         </Select>
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Unit Price (RWF) <span className="text-destructive">*</span>
@@ -387,7 +383,7 @@ function EditInput() {
                           className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Certification
@@ -436,7 +432,7 @@ function EditInput() {
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="text-center">
                         <input
                           type="file"
@@ -467,7 +463,7 @@ function EditInput() {
                     >
                       Cancel
                     </Link>
-                    
+
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
@@ -475,7 +471,7 @@ function EditInput() {
                       >
                         Save as Draft
                       </button>
-                      
+
                       <button
                         type="submit"
                         disabled={submitting}
