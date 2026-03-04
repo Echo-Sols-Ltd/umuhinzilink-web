@@ -1,22 +1,26 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { 
-  Users, 
-  Activity, 
-  TrendingUp, 
+import {
+  Users,
+  TrendingUp,
   DollarSign,
   AlertTriangle,
-  Monitor,
-  MessageSquare,
-  ShoppingCart
+  ShoppingCart,
+  CheckCircle,
+  Clock,
+  Briefcase,
+  Store,
+  UserCheck,
+  Activity
 } from 'lucide-react';
 import MetricCard from '../common/MetricCard';
-import DashboardChart from '../common/DashboardChart';
-import DashboardGrid, { DashboardSection } from '../common/DashboardGrid';
+import { DashboardSection } from '../common/DashboardGrid';
 import { AdminDashboardData } from '@/types/dashboard';
 import { dashboardService } from '@/services/dashboardService';
+import DashboardChart from '../common/DashboardChart';
 
+// Ensure Activity is available
 export default function AdminDashboard() {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -61,123 +65,91 @@ export default function AdminDashboard() {
     );
   }
 
+  // Fallbacks if data is missing during API migration
+  const fallbackChartData = {
+    userGrowthTrend: dashboardData.userGrowthTrend || dashboardData.userGrowth,
+    revenueTrend: dashboardData.revenueTrend || dashboardData.revenueByUserType
+  };
+
   return (
     <div className="space-y-8">
-      {/* Key Metrics */}
-      <DashboardSection title="Platform Overview" cols={4}>
+      {/* Section 1: Ecosystem Overview */}
+      <DashboardSection title="Ecosystem Overview" cols={4}>
         <MetricCard
           title="Total Users"
           value={dashboardData.totalUsers}
           icon={<Users className="w-5 h-5 text-primary" />}
-          change={dashboardData.monthlyGrowth}
-          changeType="increase"
         />
         <MetricCard
-          title="Active Sessions"
-          value={dashboardData.activeSessions}
-          icon={<Activity className="w-5 h-5 text-green-500" />}
+          title="Total Farmers"
+          value={dashboardData.totalFarmers || 0}
+          icon={<Briefcase className="w-5 h-5 text-green-500" />}
         />
         <MetricCard
-          title="Platform Revenue"
-          value={dashboardData.platformRevenue}
-          format="currency"
-          icon={<DollarSign className="w-5 h-5 text-blue-500" />}
+          title="Total Buyers"
+          value={dashboardData.totalBuyers || 0}
+          icon={<ShoppingCart className="w-5 h-5 text-blue-500" />}
         />
         <MetricCard
-          title="System Health"
-          value={dashboardData.systemHealth}
-          format="percentage"
-          icon={<Monitor className="w-5 h-5 text-teal-500" />}
+          title="Total Suppliers"
+          value={dashboardData.totalSuppliers || 0}
+          icon={<Store className="w-5 h-5 text-orange-500" />}
         />
       </DashboardSection>
 
-      {/* User Analytics */}
-      <DashboardSection title="User Analytics" cols={2}>
-        <DashboardChart 
-          config={dashboardData.userGrowth} 
-          height={300}
-        />
-        <DashboardChart 
-          config={dashboardData.revenueByUserType} 
-          height={300}
-        />
-      </DashboardSection>
-
-      {/* System Monitoring */}
-      <DashboardSection title="System Monitoring" cols={2}>
-        <DashboardChart 
-          config={dashboardData.systemHealthMetrics} 
-          height={300}
-        />
-        <DashboardChart 
-          config={dashboardData.userActivity} 
-          height={300}
-        />
-      </DashboardSection>
-
-      {/* Platform Metrics */}
-      <DashboardSection title="Platform Metrics" cols={4}>
+      {/* Section 2: Platform Performance */}
+      <DashboardSection title="Platform Performance" cols={4}>
         <MetricCard
-          title="New Registrations"
-          value={dashboardData.newRegistrations}
-          icon={<Users className="w-5 h-5 text-purple-500" />}
+          title="Total Orders"
+          value={dashboardData.totalOrders || 0}
+          icon={<ShoppingCart className="w-5 h-5 text-blue-500" />}
         />
         <MetricCard
           title="Transaction Volume"
           value={dashboardData.transactionVolume}
           format="currency"
+          icon={<Activity className="w-5 h-5 text-purple-500" />}
+        />
+        <MetricCard
+          title="Platform Revenue"
+          value={dashboardData.platformRevenue}
+          format="currency"
           icon={<DollarSign className="w-5 h-5 text-green-500" />}
+        />
+        <MetricCard
+          title="New Registrations (30d)"
+          value={dashboardData.newRegistrationsLast30Days || dashboardData.newRegistrations || 0}
+          icon={<TrendingUp className="w-5 h-5 text-teal-500" />}
+        />
+      </DashboardSection>
+
+      {/* Section 3: Engagement and Operational Health */}
+      <DashboardSection title="Engagement & Operations" cols={2}>
+        <MetricCard
+          title="Active Users (Last 7 Days)"
+          value={dashboardData.activeUsersLast7Days || dashboardData.activeSessions || 0}
+          icon={<UserCheck className="w-5 h-5 text-indigo-500" />}
         />
         <MetricCard
           title="Open Support Tickets"
           value={dashboardData.openSupportTickets}
-          icon={<AlertTriangle className="w-5 h-5 text-orange-500" />}
-        />
-        <MetricCard
-          title="Monthly Growth"
-          value={dashboardData.monthlyGrowth}
-          format="percentage"
-          icon={<TrendingUp className="w-5 h-5 text-indigo-500" />}
+          icon={<AlertTriangle className={`w-5 h-5 ${dashboardData.openSupportTickets > 10 ? 'text-red-500' : 'text-green-500'}`} />}
         />
       </DashboardSection>
 
-      {/* Order Status Distribution */}
-      <DashboardSection title="Order Status Distribution" cols={1}>
-        <DashboardChart 
-          config={dashboardData.orderStatusDistribution} 
-          height={400}
-        />
-      </DashboardSection>
-
-      {/* System Alerts */}
-      <DashboardSection title="System Alerts" cols={3}>
-        <div className="bg-card rounded-xl p-6 border border-border">
-          <div className="flex items-center gap-3 mb-4">
-            <AlertTriangle className="w-5 h-5 text-orange-500" />
-            <h3 className="font-semibold">Support Tickets</h3>
-          </div>
-          <p className="text-3xl font-bold text-foreground">{dashboardData.openSupportTickets}</p>
-          <p className="text-sm text-muted-foreground mt-2">Open tickets</p>
-        </div>
-        
-        <div className="bg-card rounded-xl p-6 border border-border">
-          <div className="flex items-center gap-3 mb-4">
-            <Users className="w-5 h-5 text-blue-500" />
-            <h3 className="font-semibold">Active Sessions</h3>
-          </div>
-          <p className="text-3xl font-bold text-foreground">{dashboardData.activeSessions}</p>
-          <p className="text-sm text-muted-foreground mt-2">Currently online</p>
-        </div>
-        
-        <div className="bg-card rounded-xl p-6 border border-border">
-          <div className="flex items-center gap-3 mb-4">
-            <MessageSquare className="w-5 h-5 text-green-500" />
-            <h3 className="font-semibold">System Health</h3>
-          </div>
-          <p className="text-3xl font-bold text-foreground">{dashboardData.systemHealth}%</p>
-          <p className="text-sm text-muted-foreground mt-2">System status</p>
-        </div>
-      </DashboardSection>
+      {/* Section 4: Charts */}
+      {fallbackChartData.userGrowthTrend && fallbackChartData.revenueTrend && (
+        <DashboardSection title="Platform Trends" cols={2}>
+          <DashboardChart
+            config={fallbackChartData.userGrowthTrend}
+            height={300}
+          />
+          <DashboardChart
+            config={fallbackChartData.revenueTrend}
+            height={300}
+          />
+        </DashboardSection>
+      )}
     </div>
   );
 }

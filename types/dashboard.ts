@@ -41,23 +41,27 @@ export interface NotificationResponse {
   notifications: Notification[];
 }
 
+export interface BuyerRecentOrder {
+  id: string;
+  status: 'Processing' | 'Shipped' | 'Delivered' | string;
+  amount: number;
+  date: string;
+}
+
 // Buyer Dashboard Types
 export interface BuyerDashboardData {
   totalOrders: number;
   activeOrders: number;
   pendingOrders: number;
   completedOrders: number;
-  savedProducts: number;
   totalSpent: number;
-  averageOrderValue: number;
   walletBalance: number;
-  lastOrderDate: string;
+  savedProducts: number;
   unreadMessages: number;
   unreadNotifications: number;
-  spendingTrend: ChartConfig;
-  categoryDistribution: ChartConfig;
-  orderStatusChart: ChartConfig;
-  monthlyActivity: ChartConfig;
+  lastOrderDate: string;
+  recentOrders?: BuyerRecentOrder[];
+  [key: string]: any;
 }
 
 export interface BuyerDashboardResponse {
@@ -67,25 +71,20 @@ export interface BuyerDashboardResponse {
 }
 
 // Farmer Dashboard Types
+export interface FarmerRecentOrder {
+  id: string;
+  buyer: string;
+  status: 'Pending' | 'Active' | 'Completed' | 'Cancelled' | 'Processing';
+  amount: number;
+  date: string;
+}
+
 export interface FarmerDashboardData {
+  totalEarnings: number;
+  pendingOrders: number;
   totalOrders: number;
-  orderIncreaseRate: number;
-  totalProducts: number;
-  productIncreaseRate: number;
-  activeOrders: number;
-  totalIncome: number;
-  incomeIncreaseRate: number;
-  newMessages: number;
-  totalSuppliers: number;
-  totalBuyers: number;
-  averageOrderValue: number;
   lowStockProducts: number;
-  customerRating: number;
-  lastOrderDate: string;
-  revenueOrdersTrend: ChartConfig;
-  productPerformance: ChartConfig;
-  orderDistribution: ChartConfig;
-  monthlyGrowth: ChartConfig;
+  recentOrders: FarmerRecentOrder[];
 }
 
 export interface FarmerDashboardResponse {
@@ -95,24 +94,31 @@ export interface FarmerDashboardResponse {
 }
 
 // Supplier Dashboard Types
+export interface SupplierRecentOrder {
+  id: string;
+  farmer: string;
+  product: string;
+  quantity: string;
+  status: 'Pending' | 'Delivered' | 'In Transit' | 'Cancelled' | string;
+  deliveryDate: string;
+}
+
+export interface SupplierLowStockProduct {
+  id: string;
+  name: string;
+  currentStock: number;
+  minThreshold: number;
+}
+
 export interface SupplierDashboardData {
-  totalOrders: number;
-  orderIncreaseRate: number;
-  totalProducts: number;
-  productIncreaseRate: number;
+  totalRevenue: number;
   activeOrders: number;
-  totalIncome: number;
-  incomeIncreaseRate: number;
-  newMessages: number;
-  totalFarmers: number;
-  totalBuyers: number;
+  lowStockProducts: number;
   onTimeDeliveryRate: number;
-  averageOrderValue: number;
-  qualityScore: number;
-  deliveryPerformance: ChartConfig;
-  farmerGrowth: ChartConfig;
-  regionalDistribution: ChartConfig;
-  revenueByRegion: ChartConfig;
+  recentOrders?: SupplierRecentOrder[];
+  lowStockItems?: SupplierLowStockProduct[];
+  revenueTrend?: ChartConfig;
+  [key: string]: any;
 }
 
 export interface SupplierDashboardResponse {
@@ -124,18 +130,18 @@ export interface SupplierDashboardResponse {
 // Admin Dashboard Types
 export interface AdminDashboardData {
   totalUsers: number;
-  activeSessions: number;
-  platformRevenue: number;
-  monthlyGrowth: number;
-  systemHealth: number;
-  openSupportTickets: number;
-  newRegistrations: number;
+  totalFarmers: number;
+  totalBuyers: number;
+  totalSuppliers: number;
+  totalOrders: number;
   transactionVolume: number;
-  userGrowth: ChartConfig;
-  revenueByUserType: ChartConfig;
-  systemHealthMetrics: ChartConfig;
-  userActivity: ChartConfig;
-  orderStatusDistribution: ChartConfig;
+  platformRevenue: number;
+  newRegistrationsLast30Days: number;
+  activeUsersLast7Days: number;
+  openSupportTickets: number;
+  userGrowthTrend: ChartConfig;
+  revenueTrend: ChartConfig;
+  [key: string]: any;
 }
 
 export interface AdminDashboardResponse {
@@ -168,7 +174,7 @@ export interface GovernmentDashboardResponse {
 }
 
 // Union type for all dashboard responses
-export type DashboardResponse = 
+export type DashboardResponse =
   | BuyerDashboardResponse
   | FarmerDashboardResponse
   | SupplierDashboardResponse
@@ -176,7 +182,7 @@ export type DashboardResponse =
   | GovernmentDashboardResponse;
 
 // Union type for all dashboard data
-export type DashboardData = 
+export type DashboardData =
   | BuyerDashboardData
   | FarmerDashboardData
   | SupplierDashboardData
