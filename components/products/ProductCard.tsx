@@ -1,11 +1,12 @@
 import React from "react";
 import { imageUrl } from "@/lib/utils";
 import { FarmerProduct, MessageType, ProductRef, SupplierProduct } from "@/types";
-import { Heart, MapPin, Package, CheckCircle2, ShoppingCart, ArrowRight, Edit } from "lucide-react";
+import { MapPin, Package, CheckCircle2, ShoppingCart, ArrowRight, Edit, MessageSquare } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useProduct } from "@/contexts/ProductContext";
+import { useChat, userToChatUser } from "@/hooks/useChat";
 
 interface ProductCardProps {
     product: SupplierProduct | FarmerProduct;
@@ -15,6 +16,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, featured = false }: ProductCardProps) {
     const { user } = useAuth();
     const { showOrderModal } = useProduct();
+    const { handleUserClick, handleSendMessage } = useChat();
     const router = useRouter();
 
     const isProductOwner = user?.id === product.owner?.id;
@@ -40,10 +42,46 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
         if (isProductOwner) {
             router.push(`/${user?.role?.toLowerCase()}/products/${product.id}/edit`);
         } else {
-            const productType = product.owner.role === 'FARMER' ? 'farmer' : 'supplier';
-            showOrderModal(product, productType);
+            router.push(`/buyer/products/${product.id}`);
         }
     }
+
+    const handleNegotiate = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!user) {
+            notify.error("Please log in to negotiate", "Authentication Required");
+            return;
+        }
+
+        if (!product.owner) {
+            notify.error("Unable to find producer information", "Unavailable");
+            return;
+        }
+
+        try {
+            const owner = product.owner;
+            handleUserClick(userToChatUser(owner));
+
+            const productRef: ProductRef = {
+                productId: product.id,
+                productType: owner.role
+            };
+
+            await handleSendMessage(
+                `Hi! I'm interested in your ${product.name}. Let's discuss a deal!`,
+                MessageType.PRODUCT,
+                undefined,
+                productRef,
+                owner
+            );
+
+            notify.success(`Redirecting to chat with ${owner.names}`, "Inquiry Sent");
+            router.push(`/chat/${owner.id}`);
+        } catch (error) {
+            console.error('Failed to initiate negotiation:', error);
+            notify.error("Could not start conversation", "Error");
+        }
+    };
 
     return (
         <div
@@ -109,22 +147,35 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
-                        <button
-                            onClick={handleSave}
-                            className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl transition-all active:scale-90"
-                        >
-                            <Heart className="w-4.5 h-4.5" />
-                        </button>
-                        <button
-                            onClick={handleAction}
-                            className="flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground h-10 w-10 sm:w-auto sm:px-4 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95"
-                        >
-                            {isProductOwner ? <Edit className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
-                            <span className="hidden sm:inline-block ml-2 text-[10px] font-black uppercase tracking-widest">
-                                {isProductOwner ? 'Edit' : 'View'}
-                            </span>
-                        </button>
+                    <div className="flex items-center gap-2">
+                        {isProductOwner ? (
+                            <button
+                                onClick={handleAction}
+                                className="flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground h-10 px-4 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95"
+                            >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span className="ml-2 text-[10px] font-black uppercase tracking-widest">Edit</span>
+                            </button>
+                        ) : (
+                            <>
+                                {product.isNegotiable && (
+                                    <button
+                                        onClick={handleNegotiate}
+                                        className="flex items-center justify-center bg-muted hover:bg-muted/80 text-foreground h-10 px-3 rounded-xl transition-all active:scale-95"
+                                    >
+                                        <MessageSquare className="w-3.5 h-3.5 text-primary" />
+                                        <span className="ml-1.5 text-[9px] font-black uppercase tracking-tight">Negotiate</span>
+                                    </button>
+                                )}
+                                <button
+                                    onClick={handleAction}
+                                    className="flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground h-10 px-4 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95"
+                                >
+                                    <ShoppingCart className="w-3.5 h-3.5" />
+                                    <span className="ml-2 text-[10px] font-black uppercase tracking-widest">Buy Now</span>
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
