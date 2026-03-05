@@ -16,11 +16,13 @@ import {
   Plus,
   Loader2,
   DollarSign,
+  ThumbsUp,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType, SupplierOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';
 import { Pagination } from '@/components/ui/pagination';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
@@ -75,6 +77,8 @@ function FarmerSupplierOrders() {
     fetchFarmerBuyerOrders,
     farmerBuyerOrdersTotalPages: totalPages,
     farmerBuyerOrdersTotalElements: totalElements,
+    markSupplierOrderSatisfaction,
+    setMutationLoading,
   } = useOrder();
   const {
     acceptSupplierOrder,
@@ -89,6 +93,9 @@ function FarmerSupplierOrders() {
   const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
+  const [satisfactionModalOpen, setSatisfactionModalOpen] = useState(false);
+  const [selectedOrderForSatisfaction, setSelectedOrderForSatisfaction] = useState<SupplierOrder | null>(null);
+  const [satisfactionLoading, setSatisfactionLoading] = useState<string | null>(null);
   const { handleWalletPayment } = useWallet();
 
   const orders = useMemo(() => farmerBuyerOrders || [], [farmerBuyerOrders]);
@@ -163,6 +170,36 @@ function FarmerSupplierOrders() {
       console.error('Payment error:', err);
     } finally {
       setPaymentLoading(null);
+    }
+  };
+
+  const handleSatisfactionClick = (order: SupplierOrder) => {
+    setSelectedOrderForSatisfaction(order);
+    setSatisfactionModalOpen(true);
+  };
+
+  const handleSatisfactionConfirm = async () => {
+    if (!selectedOrderForSatisfaction) return;
+    
+    try {
+      setSatisfactionLoading(selectedOrderForSatisfaction.id);
+      setMutationLoading(true);
+
+      await markSupplierOrderSatisfaction(selectedOrderForSatisfaction.id);
+
+      notify.success('Thank you for confirming safe delivery!', 'Satisfaction Confirmed');
+      
+      setSatisfactionModalOpen(false);
+      setSelectedOrderForSatisfaction(null);
+      
+      // Refresh orders to show updated satisfaction status
+      await fetchFarmerBuyerOrders(currentPage - 1, ITEMS_PER_PAGE);
+    } catch (error) {
+      console.error('Satisfaction confirmation error:', error);
+      notify.error('Failed to confirm satisfaction. Please try again.', 'Error');
+    } finally {
+      setSatisfactionLoading(null);
+      setMutationLoading(false);
     }
   };
 
@@ -258,7 +295,8 @@ function FarmerSupplierOrders() {
                   <TableHead>QUANTITY</TableHead>
                   <TableHead>AMOUNT</TableHead>
                   <TableHead>STATUS</TableHead>
-                  <TableHead className="text-right">ACTION</TableHead>
+                  <TableHead>DELIVERY</TableHead>
+                  <TableHead className="text-right">ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -277,7 +315,7 @@ function FarmerSupplierOrders() {
                   ))
                 ) : filteredOrders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="py-20 text-center">
+                    <TableCell colSpan={9} className="py-20 text-center">
                       <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <ShoppingCart className="w-12 h-12 mb-4 opacity-20" />
                         <p className="text-lg font-medium">No supplier orders found</p>
@@ -336,6 +374,31 @@ function FarmerSupplierOrders() {
                             {statusMeta.label}
                           </Badge>
                         </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {order.delivery ? (
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                order.delivery?.trackingSteps?.some(step => step.status === 'DELIVERED' && step.completed)
+                                  ? 'bg-green-100 text-green-800' 
+                                  : 'bg-yellow-100 text-yellow-800'
+                              }`}>
+                                {order.delivery?.trackingSteps?.some(step => step.status === 'DELIVERED' && step.completed) 
+                                  ? 'Delivered' 
+                                  : 'Not Delivered'
+                                }
+                              </span>
+                            ) : (
+                              <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                No Delivery
+                              </span>
+                            )}
+                            {order.isBuyerSatisfied && (
+                              <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                ✓ Satisfied
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2  transition-opacity">
                             {!order.isPaid && order.status !== 'CANCELLED' && (
@@ -346,6 +409,17 @@ function FarmerSupplierOrders() {
                               >
                                 {paymentLoading === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <DollarSign className="w-3.5 h-3.5" />}
                                 Pay
+                              </button>
+                            )}
+                            {order.delivery?.trackingSteps?.some(step => step.status === 'DELIVERED' && step.completed) && !order.isBuyerSatisfied && (
+                              <button
+                                onClick={() => handleSatisfactionClick(order)}
+                                disabled={satisfactionLoading === order.id}
+                                className="px-4 py-1.5 bg-blue-600 text-white text-[11px] font-semibold rounded-full hover:bg-blue-700 transition shadow-sm flex items-center gap-1.5"
+                                title="Confirm Safe Delivery"
+                              >
+                                {satisfactionLoading === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <ThumbsUp className="w-3.5 h-3.5" />}
+                                Confirm
                               </button>
                             )}
                             <button
@@ -397,6 +471,18 @@ function FarmerSupplierOrders() {
         onCancel={handleCancelOrder}
         onUpdateStatus={handleUpdateStatus}
         loading={actionLoading}
+      />
+
+      {/* Satisfaction Confirmation Modal */}
+      <SatisfactionConfirmationModal
+        order={selectedOrderForSatisfaction}
+        isOpen={satisfactionModalOpen}
+        onClose={() => {
+          setSatisfactionModalOpen(false);
+          setSelectedOrderForSatisfaction(null);
+        }}
+        onConfirm={handleSatisfactionConfirm}
+        loading={satisfactionLoading !== null}
       />
 
       <OrderCreationModal

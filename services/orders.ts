@@ -75,6 +75,18 @@ class OrderService {
       status
     );
   }
+
+  async markFarmerOrderSatisfaction(id: string): Promise<ApiResponse<FarmerOrder>> {
+    return await apiClient.post<ApiResponse<FarmerOrder>>(
+      API_ENDPOINTS.ORDER.SATISFACTION_FARMER(id)
+    );
+  }
+
+  async markSupplierOrderSatisfaction(id: string): Promise<ApiResponse<SupplierOrder>> {
+    return await apiClient.post<ApiResponse<SupplierOrder>>(
+      API_ENDPOINTS.ORDER.SATISFACTION_SUPPLIER(id)
+    );
+  }
 }
 
 export const orderService = new OrderService();

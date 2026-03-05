@@ -13,67 +13,67 @@
 
 :root {
   /* Base */
-  --background: oklch(0.985 0.008 150);
-  --foreground: oklch(0.23 0.02 165);
+  --background: #F7F9F8;
+  --foreground: #1A2421;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.23 0.02 165);
+  --card: #FFFFFF;
+  --card-foreground: #1A2421;
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.23 0.02 165);
+  --popover: #FFFFFF;
+  --popover-foreground: #1A2421;
 
-  /* 🌱 Primary — confident AgriTech green */
-  --primary: oklch(0.68 0.23 148);
-  --primary-foreground: oklch(0.99 0.01 120);
+  /* 🌱 Primary — Confident AgriTech Green */
+  --primary: #1F7A4D;
+  --primary-foreground: #FFFFFF;
 
-  /* 🌊 Secondary — tech trust teal */
-  --secondary: oklch(0.58 0.14 200);
-  --secondary-foreground: oklch(0.99 0.01 120);
+  /* 🌊 Secondary — Tech Trust Teal */
+  --secondary: #3D8B7A;
+  --secondary-foreground: #FFFFFF;
 
   /* Neutral system */
-  --muted: oklch(0.95 0.01 150);
-  --muted-foreground: oklch(0.52 0.03 160);
+  --muted: #F1F4F3;
+  --muted-foreground: #5E6D68;
 
-  /* 🌾 Accent — energetic market amber */
-  --accent: oklch(0.82 0.18 85);
-  --accent-foreground: oklch(0.20 0.02 165);
+  /* 🌾 Accent — Energetic Market Amber */
+  --accent: #C48A3A;
+  --accent-foreground: #FFFFFF;
 
   /* Status colors */
-  --destructive: oklch(0.63 0.25 29);
-  --destructive-foreground: oklch(0.99 0.01 120);
+  --destructive: #E04F5F;
+  --destructive-foreground: #FFFFFF;
 
-  --warning: oklch(0.88 0.19 92);
-  --warning-foreground: oklch(0.20 0.02 165);
+  --warning: #F59E0B;
+  --warning-foreground: #FFFFFF;
 
-  --success: oklch(0.72 0.23 150);
-  --success-foreground: oklch(0.99 0.01 120);
+  --success: #0E9F6E;
+  --success-foreground: #FFFFFF;
 
-  --info: oklch(0.64 0.15 230);
-  --info-foreground: oklch(0.99 0.01 120);
+  --info: #3B82F6;
+  --info-foreground: #FFFFFF;
 
   /* Surfaces */
-  --border: oklch(0.90 0.01 155);
-  --input: oklch(0.92 0.01 155);
-  --ring: oklch(0.68 0.23 148);
+  --border: #E2E8E5;
+  --input: #E2E8E5;
+  --ring: #1F7A4D;
 
-  /* Charts — clear data hierarchy */
-  --chart-1: oklch(0.68 0.23 148);  /* growth */
-  --chart-2: oklch(0.58 0.14 200);  /* supply */
-  --chart-3: oklch(0.82 0.18 85);   /* revenue */
-  --chart-4: oklch(0.63 0.25 29);   /* risk */
-  --chart-5: oklch(0.75 0.16 60);   /* trend */
+  /* Charts */
+  --chart-1: #1F7A4D;
+  --chart-2: #3D8B7A;
+  --chart-3: #0E9F6E; /* Revenue */
+  --chart-4: #E04F5F;
+  --chart-5: #C48A3A;
 
-  --radius: 0.75rem;
+  --radius: 1rem;
 
   /* Sidebar */
-  --sidebar: oklch(0.97 0.01 150);
-  --sidebar-foreground: oklch(0.25 0.02 165);
-  --sidebar-primary: oklch(0.68 0.23 148);
-  --sidebar-primary-foreground: oklch(0.99 0.01 120);
-  --sidebar-accent: oklch(0.92 0.015 150);
-  --sidebar-accent-foreground: oklch(0.25 0.02 165);
-  --sidebar-border: oklch(0.90 0.01 155);
-  --sidebar-ring: oklch(0.68 0.23 148);
+  --sidebar: #F1F4F3;
+  --sidebar-foreground: #1A2421;
+  --sidebar-primary: #1F7A4D;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E2E8E5;
+  --sidebar-accent-foreground: #1F7A4D;
+  --sidebar-border: #E2E8E5;
+  --sidebar-ring: #1F7A4D;
 }
 
 
@@ -82,51 +82,51 @@
 ========================= */
 
 .dark {
-  --background: oklch(0.16 0.02 170);
-  --foreground: oklch(0.96 0.02 130);
+  --background: #0F1A17;
+  --foreground: #E5E9E8;
 
-  --card: oklch(0.20 0.02 170);
-  --card-foreground: oklch(0.96 0.02 130);
+  --card: #1B2E29;
+  --card-foreground: #E5E9E8;
 
-  --popover: oklch(0.20 0.02 170);
-  --popover-foreground: oklch(0.96 0.02 130);
+  --popover: #1B2E29;
+  --popover-foreground: #E5E9E8;
 
-  --primary: oklch(64.074% 0.18749 147.411);
-  --primary-foreground: oklch(0.16 0.02 170);
+  --primary: #2FA36B;
+  --primary-foreground: #FFFFFF;
 
-  --secondary: oklch(0.66 0.17 200);
-  --secondary-foreground: oklch(0.96 0.02 130);
+  --secondary: #4A9C8D;
+  --secondary-foreground: #FFFFFF;
 
-  --muted: oklch(0.30 0.02 170);
-  --muted-foreground: oklch(0.72 0.03 155);
+  --muted: #152420;
+  --muted-foreground: #8B9A95;
 
-  --accent: oklch(0.86 0.20 85);
-  --accent-foreground: oklch(0.16 0.02 170);
+  --accent: #D4A24C;
+  --accent-foreground: #FFFFFF;
 
-  --destructive: oklch(0.72 0.25 29);
-  --destructive-foreground: oklch(0.96 0.02 130);
+  --destructive: #FF5A6B;
+  --destructive-foreground: #FFFFFF;
 
-  --warning: oklch(0.90 0.20 92);
-  --warning-foreground: oklch(0.16 0.02 170);
+  --warning: #FBBF24;
+  --warning-foreground: #1B2E29;
 
-  --success: oklch(83.038% 0.24093 147.855);
-  --success-foreground: oklch(0.16 0.02 170);
+  --success: #3FCF8E; /* Revenue */
+  --success-foreground: #1B2E29;
 
-  --info: oklch(0.75 0.17 230);
-  --info-foreground: oklch(0.16 0.02 170);
+  --info: #60A5FA;
+  --info-foreground: #1B2E29;
 
-  --border: oklch(0.30 0.02 170);
-  --input: oklch(0.30 0.02 170);
-  --ring: oklch(0.78 0.24 148);
+  --border: #263D38;
+  --input: #263D38;
+  --ring: #2FA36B;
 
-  --sidebar: oklch(0.13 0.02 170);
-  --sidebar-foreground: oklch(0.96 0.02 130);
-  --sidebar-primary: oklch(0.78 0.24 148);
-  --sidebar-primary-foreground: oklch(0.16 0.02 170);
-  --sidebar-accent: oklch(0.26 0.02 170);
-  --sidebar-accent-foreground: oklch(0.96 0.02 130);
-  --sidebar-border: oklch(0.26 0.02 170);
-  --sidebar-ring: oklch(0.78 0.24 148);
+  --sidebar: #0D1614;
+  --sidebar-foreground: #E5E9E8;
+  --sidebar-primary: #2FA36B;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #263D38;
+  --sidebar-accent-foreground: #2FA36B;
+  --sidebar-border: #263D38;
+  --sidebar-ring: #2FA36B;
 }
 
 

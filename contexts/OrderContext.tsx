@@ -45,6 +45,10 @@ type OrderContextValue = {
   editFarmerBuyerOrder: (data: SupplierOrder) => void;
   editSupplierOrder: (data: SupplierOrder) => void;
 
+  // Satisfaction methods
+  markFarmerOrderSatisfaction: (id: string) => Promise<void>;
+  markSupplierOrderSatisfaction: (id: string) => Promise<void>;
+
   // State management functions
   setMutationLoading: (loading: boolean) => void;
 
@@ -239,6 +243,96 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(data);
   };
 
+  const markFarmerOrderSatisfaction = async (id: string) => {
+    try {
+      setMutationLoadingState(true);
+      const response = await orderService.markFarmerOrderSatisfaction(id);
+      
+      if (response.success && response.data) {
+        // Update all relevant order lists with the satisfaction data
+        const updatedOrder = response.data;
+        
+        // Update farmer orders
+        setFarmerOrders(prev => {
+          if (!prev) return prev;
+          const updated = prev.map(order => 
+            order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
+          );
+          localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
+          return updated;
+        });
+
+        // Update buyer orders
+        setBuyerOrders(prev => {
+          if (!prev) return prev;
+          const updated = prev.map(order => 
+            order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
+          );
+          localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
+          return updated;
+        });
+
+        // Update current order if it matches
+        setCurrentFarmerOrder(prev => 
+          prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
+        );
+        setCurrentBuyerOrder(prev => 
+          prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
+        );
+      }
+    } catch (error) {
+      console.error('Error marking farmer order satisfaction:', error);
+      throw error;
+    } finally {
+      setMutationLoadingState(false);
+    }
+  };
+
+  const markSupplierOrderSatisfaction = async (id: string) => {
+    try {
+      setMutationLoadingState(true);
+      const response = await orderService.markSupplierOrderSatisfaction(id);
+      
+      if (response.success && response.data) {
+        // Update all relevant order lists with the satisfaction data
+        const updatedOrder = response.data;
+        
+        // Update supplier orders
+        setSupplierOrders(prev => {
+          if (!prev) return prev;
+          const updated = prev.map(order => 
+            order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
+          );
+          localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
+          return updated;
+        });
+
+        // Update farmer buyer orders
+        setFarmerBuyerOrders(prev => {
+          if (!prev) return prev;
+          const updated = prev.map(order => 
+            order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
+          );
+          localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
+          return updated;
+        });
+
+        // Update current order if it matches
+        setCurrentSupplierOrder(prev => 
+          prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
+        );
+        setCurrentFarmerBuyerOrder(prev => 
+          prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
+        );
+      }
+    } catch (error) {
+      console.error('Error marking supplier order satisfaction:', error);
+      throw error;
+    } finally {
+      setMutationLoadingState(false);
+    }
+  };
+
   const setMutationLoading = (loading: boolean) => {
     setMutationLoadingState(loading);
   };
@@ -377,12 +471,37 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
   }, [shouldUseInAppNotifications, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
+  const handleOrderSatisfaction = useCallback((satisfactionChange: FarmerOrder | SupplierOrder) => {
+    if (!satisfactionChange) {
+      console.error('Satisfaction change data is undefined');
+      return;
+    }
+
+    // Show notification for seller when buyer confirms satisfaction
+    if (user?.role !== UserType.BUYER && satisfactionChange.isBuyerSatisfied) {
+      showNotification({
+        type: 'order',
+        title: 'Order Delivered Safely',
+        body: `${satisfactionChange.buyer.names} confirmed safe delivery of ${satisfactionChange.product.name}`,
+        icon: satisfactionChange.product.image,
+        onClick: () => {
+          // Navigate to orders page
+          window.location.href = user?.role === UserType.FARMER ? '/farmer/orders' : '/supplier/orders';
+        },
+      });
+    }
+
+    handleOrderChange(satisfactionChange);
+
+  }, [user, showNotification, handleOrderChange]);
+
   const cleanupSocketListeners = useCallback(() => {
     if (!socket) return;
     socket.removeNewOrderListener(handleNewOrder);
     socket.removeOrderStatusChangeListener(handleOrderStatusChange);
     socket.removeOrderDeliveryChangeListener(handleOrderDeliveryChange);
-  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange]);
+    socket.removeOrderSatisfactionListener(handleOrderSatisfaction);
+  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, handleOrderSatisfaction]);
 
   useEffect(() => {
     if (!socket) return;
@@ -390,9 +509,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     socket.onNewOrder(handleNewOrder);
     socket.onOrderStatusChange(handleOrderStatusChange);
     socket.onOrderDeliveryChange(handleOrderDeliveryChange);
+    socket.onOrderSatisfaction(handleOrderSatisfaction);
 
     return cleanupSocketListeners;
-  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, cleanupSocketListeners]);
+  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, handleOrderSatisfaction, cleanupSocketListeners]);
 
   // 🔹 Derived Orders
   const pendingBuyerOrders = useMemo(
@@ -484,6 +604,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     editFarmerOrder,
     editSupplierOrder,
     editFarmerBuyerOrder,
+    markFarmerOrderSatisfaction,
+    markSupplierOrderSatisfaction,
     setMutationLoading,
     mutationLoading: mutationLoadingState,
     fetchBuyerOrders,

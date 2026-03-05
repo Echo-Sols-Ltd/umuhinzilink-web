@@ -18,6 +18,7 @@ import Sidebar from '@/components/shared/Sidebar';
 import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';
 import { Pagination } from '@/components/ui/pagination';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import {
@@ -77,6 +78,8 @@ function FarmerOrders() {
     fetchFarmerOrders,
     farmerOrdersTotalPages: totalPages,
     farmerOrdersTotalElements: totalElements,
+    markFarmerOrderSatisfaction,
+    setMutationLoading,
   } = useOrder();
   const {
     acceptFarmerOrder,
@@ -89,6 +92,9 @@ function FarmerOrders() {
   const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [satisfactionModalOpen, setSatisfactionModalOpen] = useState(false);
+  const [selectedOrderForSatisfaction, setSelectedOrderForSatisfaction] = useState<FarmerOrder | null>(null);
+  const [satisfactionLoading, setSatisfactionLoading] = useState<string | null>(null);
 
   const orders = useMemo(() => farmerOrders || [], [farmerOrders]);
   const currentUser = user;
@@ -146,6 +152,37 @@ function FarmerOrders() {
 
   const handleUpdateStatus = async (orderId: string, status: DeliveryStatus) => {
     await updateFarmerOrderStatus(orderId, status);
+  };
+
+  const handleSatisfactionClick = (order: FarmerOrder) => {
+    setSelectedOrderForSatisfaction(order);
+    setSatisfactionModalOpen(true);
+  };
+
+  const handleSatisfactionConfirm = async () => {
+    if (!selectedOrderForSatisfaction) return;
+    
+    try {
+      setSatisfactionLoading(selectedOrderForSatisfaction.id);
+      setMutationLoading(true);
+
+      await markFarmerOrderSatisfaction(selectedOrderForSatisfaction.id);
+
+      // Show success message (this is for farmer view, so we're confirming on behalf of buyer)
+      alert('Buyer has confirmed safe delivery successfully!');
+      
+      setSatisfactionModalOpen(false);
+      setSelectedOrderForSatisfaction(null);
+      
+      // Refresh orders to show updated satisfaction status
+      await fetchFarmerOrders(currentPage - 1, ITEMS_PER_PAGE);
+    } catch (error) {
+      console.error('Satisfaction confirmation error:', error);
+      alert('Failed to confirm satisfaction. Please try again.');
+    } finally {
+      setSatisfactionLoading(null);
+      setMutationLoading(false);
+    }
   };
 
   const handleViewDetails = (order: FarmerOrder) => {
@@ -376,6 +413,18 @@ function FarmerOrders() {
         onCancel={handleCancelOrder}
         onUpdateStatus={handleUpdateStatus}
         loading={actionLoading}
+      />
+
+      {/* Satisfaction Confirmation Modal */}
+      <SatisfactionConfirmationModal
+        order={selectedOrderForSatisfaction}
+        isOpen={satisfactionModalOpen}
+        onClose={() => {
+          setSatisfactionModalOpen(false);
+          setSelectedOrderForSatisfaction(null);
+        }}
+        onConfirm={handleSatisfactionConfirm}
+        loading={satisfactionLoading !== null}
       />
     </div>
   );

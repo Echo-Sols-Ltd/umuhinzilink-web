@@ -2,15 +2,6 @@
 import React, { useState } from 'react';
 
 import {
-  LayoutGrid,
-  FilePlus,
-  BarChart2,
-  MessageSquare,
-  ShoppingCart,
-  User,
-  Phone,
-  Settings,
-  LogOut,
   Filter,
   TrendingUp,
   ArrowUp,
@@ -20,6 +11,7 @@ import {
   Star,
   CheckCircle,
   Mail,
+  ShoppingCart,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -36,19 +28,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { FarmerPages, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 
-const menuItems = [
-  { label: 'Dashboard', href: '/farmer/dashboard', icon: CheckCircle },
-  { label: 'My Products', href: '/farmer/products', icon: LayoutGrid },
-  { label: 'Input Request', href: '/farmer/requests', icon: FilePlus },
-  { label: 'AI Tips', href: '/farmer/ai', icon: MessageSquare },
-  { label: 'Market Analytics', href: '/farmer/market_analysis', icon: BarChart2 },
-  { label: 'Message', href: '/chat', icon: Mail },
-  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-  { label: 'Profile', href: '/farmer/profile', icon: User },
-  { label: 'Contact', href: '/farmercontact', icon: Phone },
-  { label: 'Settings', href: '/farmer/settings', icon: Settings },
-  { label: 'Logout', href: '/logout', icon: LogOut },
-];
+
 
 const topBuyers = [
   {

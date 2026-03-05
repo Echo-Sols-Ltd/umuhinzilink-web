@@ -201,8 +201,8 @@ function FarmerProducts() {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {Array.from({ length: 4 }).map((_, i) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-8">
+                {Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="bg-card rounded-xl border border-border p-4 space-y-4 shadow-sm">
                     <Skeleton className="aspect-square rounded-lg" />
                     <div className="space-y-2">
@@ -221,7 +221,7 @@ function FarmerProducts() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-8">
                   {filteredProducts.map(product => (
                     <ProductCard
                       key={product.id}

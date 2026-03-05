@@ -4,14 +4,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  LayoutGrid,
-  FilePlus,
-  ShoppingCart,
-  MessageSquare,
-  Settings,
-  LogOut,
-  CheckCircle,
-  User,
 } from 'lucide-react';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import Sidebar from '@/components/shared/Sidebar';
@@ -24,17 +16,7 @@ const Logo = () => (
   </span>
 );
 
-const menuItems = [
-  { label: 'Dashboard', href: '/farmer/dashboard', icon: CheckCircle },
-  { label: 'My Produce', href: '/farmer/products', icon: LayoutGrid },
-  { label: 'Requests', href: '/farmer/requests', icon: FilePlus },
-  { label: 'Orders', href: '/farmer/orders', icon: ShoppingCart },
-  { label: 'Messages', href: '/messages', icon: MessageSquare },
-  { label: 'Profile', href: '/farmer/profile', icon: User },
-  { label: 'Contact', href: '/farmercontact', icon: Mail },
-  { label: 'Settings', href: '/farmer/settings', icon: Settings },
-  { label: 'Logout', href: '/logout', icon: LogOut },
-];
+
 
 function ContactPage() {
   return (
@@ -51,7 +33,7 @@ function ContactPage() {
         />
 
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-6">
+        <main className="flex-1 p-6">
           <h1 className="text-2xl font-semibold text-gray-800 mb-6">Contact Us</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

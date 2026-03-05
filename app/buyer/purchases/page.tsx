@@ -14,6 +14,7 @@ import {
   X,
   Truck,
   MoreHorizontal,
+  ThumbsUp,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { notify } from '@/lib/notify';
@@ -33,6 +34,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';
 
 function MyPurchasesComponent() {
   const router = useRouter();
@@ -43,12 +45,18 @@ function MyPurchasesComponent() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
+  const [satisfactionModalOpen, setSatisfactionModalOpen] = useState(false);
+  const [selectedOrderForSatisfaction, setSelectedOrderForSatisfaction] = useState<any>(null);
+  const [satisfactionLoading, setSatisfactionLoading] = useState<string | null>(null);
   const {
     buyerOrders,
     loading: ordersLoading,
     fetchBuyerOrders,
     buyerOrdersTotalPages: totalPages,
     buyerOrdersTotalElements: totalElements,
+    markFarmerOrderSatisfaction,
+    markSupplierOrderSatisfaction,
+    setMutationLoading,
   } = useOrder();
   const { handleWalletPayment } = useWallet();
 
@@ -105,6 +113,42 @@ function MyPurchasesComponent() {
       console.error('Payment error:', err);
     } finally {
       setPaymentLoading(null);
+    }
+  };
+
+  const handleSatisfactionClick = (order: any) => {
+    setSelectedOrderForSatisfaction(order);
+    setSatisfactionModalOpen(true);
+  };
+
+  const handleSatisfactionConfirm = async () => {
+    if (!selectedOrderForSatisfaction) return;
+    
+    try {
+      setSatisfactionLoading(selectedOrderForSatisfaction.id);
+      setMutationLoading(true);
+
+      // Determine order type and call appropriate method
+      if ('product' in selectedOrderForSatisfaction && 'owner' in selectedOrderForSatisfaction.product) {
+        // This is a FarmerOrder (product has owner)
+        await markFarmerOrderSatisfaction(selectedOrderForSatisfaction.id);
+      } else {
+        // This is a SupplierOrder
+        await markSupplierOrderSatisfaction(selectedOrderForSatisfaction.id);
+      }
+
+      notify.success('Thank you for confirming safe delivery!', 'Satisfaction Confirmed');
+      setSatisfactionModalOpen(false);
+      setSelectedOrderForSatisfaction(null);
+      
+      // Refresh orders to show updated satisfaction status
+      await fetchBuyerOrders(currentPage - 1, itemsPerPage);
+    } catch (error) {
+      console.error('Satisfaction confirmation error:', error);
+      notify.error('Failed to confirm satisfaction. Please try again.', 'Error');
+    } finally {
+      setSatisfactionLoading(null);
+      setMutationLoading(false);
     }
   };
 
@@ -366,6 +410,17 @@ function MyPurchasesComponent() {
                                 Pay
                               </button>
                             )}
+                            {order.delivery?.trackingSteps?.some(step => step.status === 'DELIVERED' && step.completed) && !order.isBuyerSatisfied && (
+                              <button
+                                onClick={() => handleSatisfactionClick(order)}
+                                disabled={satisfactionLoading === order.id}
+                                className="px-4 py-1.5 bg-blue-600 text-white text-[11px] font-semibold rounded-full hover:bg-blue-700 transition shadow-sm flex items-center gap-1.5"
+                                title="Confirm Safe Delivery"
+                              >
+                                {satisfactionLoading === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <ThumbsUp className="w-3.5 h-3.5" />}
+                                Confirm
+                              </button>
+                            )}
                             <button
                               onClick={() => router.push(`/buyer/orders/${order.id}`)}
                               className="p-2 text-muted-foreground hover:text-info hover:bg-info/10 rounded-lg transition-all"
@@ -480,6 +535,18 @@ function MyPurchasesComponent() {
           )}
         </main>
       </div>
+
+      {/* Satisfaction Confirmation Modal */}
+      <SatisfactionConfirmationModal
+        order={selectedOrderForSatisfaction}
+        isOpen={satisfactionModalOpen}
+        onClose={() => {
+          setSatisfactionModalOpen(false);
+          setSelectedOrderForSatisfaction(null);
+        }}
+        onConfirm={handleSatisfactionConfirm}
+        loading={satisfactionLoading !== null}
+      />
     </div>
   );
 }
