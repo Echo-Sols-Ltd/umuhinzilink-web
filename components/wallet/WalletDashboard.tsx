@@ -183,23 +183,53 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
 
   return (
     <div>
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <div className='flex space-x-3'>
-            <Wallet className="w-8 h-8 text-success" />
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-success/10 rounded-lg">
+              <Wallet className="w-8 h-8 text-success" />
+            </div>
             <div>
-              <h1 className="text-2xl font-semibold text-foreground">My Wallet</h1>
-              <p className="text-muted-foreground">Manage your earnings, balance and transactions</p>
+              <h1 className="text-2xl font-bold text-foreground">My Wallet</h1>
+              <p className="text-sm text-muted-foreground">Manage your finances and track transactions</p>
             </div>
           </div>
-          <div className="text-right justify-end items-end">
-            <button
-              onClick={() => setShowDepositModal(true)}
-              className="bg-green-500/80 hover:bg-opacity-30 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              <span > Add Money</span>
-            </button>
+        </div>
+
+        {/* Balance Hero Card */}
+        <div className="relative overflow-hidden bg-linear-to-br from-green-600 to-green-800 rounded-2xl p-8 text-white shadow-lg border border-green-500/20">
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-48 h-48 bg-black/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <div className="space-y-1">
+              <p className="text-green-50/80 text-sm font-medium uppercase tracking-wider">Current Balance</p>
+              <div className="flex items-baseline gap-2">
+                <h2 className="text-xl md:text-2xl font-extrabold tracking-tight">
+                  {formatCurrency(wallet?.balance || 0)}
+                </h2>
+                <span className="text-green-100/60 text-lg font-medium">{wallet?.currency || 'USD'}</span>
+              </div>
+              <div className="flex items-center gap-3 pt-2">
+                <span className="flex items-center gap-1 text-xs bg-white/10 px-2 py-0.5 rounded-full border border-white/20 backdrop-blur-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
+                  Active
+                </span>
+                <span className="text-xs font-mono text-green-50/60">
+                  ID: {wallet?.id ? `****${wallet.id.slice(-8)}` : 'N/A'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => setShowDepositModal(true)}
+                className="flex items-center justify-center gap-2 px-6 py-2 bg-white text-green-700 font-semibold rounded-xl hover:bg-green-50 transition-all transform active:scale-95 shadow-md"
+              >
+                <Plus className="w-5 h-5" />
+                Add Money
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -207,55 +237,46 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
       <div className={cn('space-y-6', className)}>
 
 
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-card p-4 rounded-lg border border-border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Deposits</p>
-                <p className="text-xl font-semibold text-success">{formatCurrency(stats.totalDeposits)}</p>
-              </div>
-              <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-success" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card p-4 rounded-lg border border-border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Payments</p>
-                <p className="text-xl font-semibold text-info">{formatCurrency(stats.totalPayments)}</p>
-              </div>
-              <div className="w-10 h-10 bg-info/10 rounded-full flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-info" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card p-4 rounded-lg border border-border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Withdrawals</p>
-                <p className="text-xl font-semibold text-destructive">{formatCurrency(stats.totalWithdrawals)}</p>
-              </div>
-              <div className="w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center">
-                <TrendingDown className="w-5 h-5 text-destructive" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card p-4 rounded-lg border border-border">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Pending</p>
-                <p className="text-xl font-semibold text-warning">{stats.pendingTransactions}</p>
-              </div>
-              <div className="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
-                <Clock className="w-5 h-5 text-warning" />
+        {/* Statistics Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: 'Total Deposits', value: stats.totalDeposits, icon: TrendingUp, color: 'success' },
+            { label: 'Total Payments', value: stats.totalPayments, icon: CreditCard, color: 'info' },
+            { label: 'Withdrawals', value: stats.totalWithdrawals, icon: TrendingDown, color: 'destructive' },
+            { label: 'Pending', value: stats.pendingTransactions, icon: Clock, color: 'warning', isCount: true }
+          ].map((item, idx) => (
+            <div key={idx} className="bg-card p-6 rounded-2xl border border-border hover:border-foreground/10 hover:shadow-sm transition-all group">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{item.label}</p>
+                  <p className={cn(
+                    "text-2xl font-bold",
+                    item.color === 'success' ? 'text-success' :
+                      item.color === 'info' ? 'text-info' :
+                        item.color === 'destructive' ? 'text-destructive' :
+                          'text-warning'
+                  )}>
+                    {item.isCount ? item.value : formatCurrency(item.value as number)}
+                  </p>
+                </div>
+                <div className={cn(
+                  "w-12 h-12 rounded-xl flex items-center justify-center transition-colors",
+                  item.color === 'success' ? 'bg-success/10 group-hover:bg-success/20' :
+                    item.color === 'info' ? 'bg-info/10 group-hover:bg-info/20' :
+                      item.color === 'destructive' ? 'bg-destructive/10 group-hover:bg-destructive/20' :
+                        'bg-warning/10 group-hover:bg-warning/20'
+                )}>
+                  <item.icon className={cn(
+                    "w-6 h-6",
+                    item.color === 'success' ? 'text-success' :
+                      item.color === 'info' ? 'text-info' :
+                        item.color === 'destructive' ? 'text-destructive' :
+                          'text-warning'
+                  )} />
+                </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
 
         {/* Filters and Search */}

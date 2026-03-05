@@ -256,8 +256,6 @@ function ProductsPageComponent() {
           selectedCategory={categoryFilter}
           selectedLocation={locationFilter}
           search={search}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
         />
       </div>
     </ResponsiveLayout>

@@ -120,12 +120,12 @@ export default function BuyerDashboard() {
         />
       </DashboardSection>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="gap-8">
         {/* Section 2: Quick Access */}
-        <div className="lg:col-span-1 space-y-4">
+        <div className="space-y-4">
           <h2 className="text-lg font-semibold">Quick Access</h2>
-          <div className="flex flex-col gap-4">
-            <Link href="/buyer/orders" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+          <div className="flex gap-4">
+            <Link href="/buyer/purchases" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
                   <Package className="w-5 h-5 text-blue-600" />
@@ -134,7 +134,7 @@ export default function BuyerDashboard() {
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
-            <Link href="/buyer/products" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+            <Link href="/buyer/products" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
                   <Search className="w-5 h-5 text-green-600" />
@@ -143,7 +143,7 @@ export default function BuyerDashboard() {
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
-            <Link href="/buyer/saved" className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+            <Link href="/buyer/saved" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-pink-500/10 rounded-lg group-hover:bg-pink-500/20 transition-colors">
                   <Heart className="w-5 h-5 text-pink-600" />
@@ -171,55 +171,6 @@ export default function BuyerDashboard() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Section 3: Recent Orders */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Recent Orders</h2>
-            <Link href="/buyer/orders" className="text-sm text-primary hover:underline">
-              View All
-            </Link>
-          </div>
-          <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
-                  <tr>
-                    <th className="px-6 py-4 font-medium">Order ID</th>
-                    <th className="px-6 py-4 font-medium">Status</th>
-                    <th className="px-6 py-4 font-medium">Amount</th>
-                    <th className="px-6 py-4 font-medium">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {recentOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4 font-medium text-foreground">{order.id}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-medium">
-                        {new Intl.NumberFormat('rw-RW', { style: 'currency', currency: 'RWF' }).format(order.amount)}
-                      </td>
-                      <td className="px-6 py-4 text-muted-foreground">
-                        {new Date(order.date).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  ))}
-                  {recentOrders.length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
-                        No recent orders found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
       </div>
     </div>
