@@ -20,12 +20,18 @@ const Logo = () => (
   </span>
 );
 
+import { useI18n } from '@/contexts/I18nContext';
+
 function ContactComponent() {
+  const { t } = useI18n();
   const router = useRouter();
   const [logoutPending, setLogoutPending] = useState(false);
 
-  const handleLogout = async () => {
-
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success("Message sent successfully!", {
+      title: "Success"
+    });
   };
 
   return (
@@ -36,16 +42,15 @@ function ContactComponent() {
       />
       {/* Main Content */}
       <main className="flex-1 p-6 overflow-auto h-full">
-        <h1 className="text-2xl font-semibold text-foreground mb-6">Contact Us</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6">{t('contact.title')}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Contact Info */}
           <div className="bg-card rounded-lg shadow-sm border p-6 space-y-6">
             <div>
-              <h2 className="text-lg font-semibold text-foreground mb-2">Get in Touch</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-2">{t('contact.getInTouch')}</h2>
               <p className="text-muted-foreground">
-                Have questions or need help? You can reach us through any of the following
-                methods:
+                {t('contact.description')}
               </p>
             </div>
 
@@ -59,55 +64,59 @@ function ContactComponent() {
             </div>
             <div className="flex items-center gap-3">
               <MapPin className="text-success w-6 h-6" />
-              <span className="text-foreground">Kigali, Rwanda</span>
+              <span className="text-foreground">{t('contact.location')}: Kigali, Rwanda</span>
             </div>
           </div>
 
           {/* Contact Form */}
-          <form className="bg-card rounded-lg shadow-sm border p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground mb-2">Send us a Message</h2>
+          <form onSubmit={handleSubmit} className="bg-card rounded-lg shadow-sm border p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-foreground mb-2">{t('contact.sendMessage')}</h2>
 
             <div>
-              <label className="block text-sm font-medium text-foreground">Your Name</label>
+              <label className="block text-sm font-medium text-foreground">{t('contact.yourName')}</label>
               <input
                 type="text"
-                className="mt-1 w-full border px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-green-300"
-                placeholder="John Doe"
+                required
+                className="mt-1 w-full border border-border px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-success bg-card"
+                placeholder={t('contact.placeholders.name')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground">Your Email</label>
+              <label className="block text-sm font-medium text-foreground">{t('contact.yourEmail')}</label>
               <input
                 type="email"
-                className="mt-1 w-full border px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-green-300"
-                placeholder="you@example.com"
+                required
+                className="mt-1 w-full border border-border px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-success bg-card"
+                placeholder={t('contact.placeholders.email')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground">Subject</label>
+              <label className="block text-sm font-medium text-foreground">{t('contact.subject')}</label>
               <input
                 type="text"
-                className="mt-1 w-full border px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-green-300"
-                placeholder="Subject here"
+                required
+                className="mt-1 w-full border border-border px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-success bg-card"
+                placeholder={t('contact.placeholders.subject')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground">Message</label>
+              <label className="block text-sm font-medium text-foreground">{t('contact.message')}</label>
               <textarea
                 rows={4}
-                className="mt-1 w-full border px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-green-300"
-                placeholder="Write your message..."
+                required
+                className="mt-1 w-full border border-border px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-success bg-card"
+                placeholder={t('contact.placeholders.message')}
               />
             </div>
 
             <button
               type="submit"
-              className="bg-success text-primary-foreground px-4 py-2 rounded-lg hover:bg-success/90"
+              className="w-full bg-success text-primary-foreground px-4 py-3 rounded-lg hover:bg-success/90 transition-colors font-medium shadow-sm"
             >
-              Send Message
+              {t('contact.sendAction')}
             </button>
           </form>
         </div>

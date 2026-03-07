@@ -114,7 +114,6 @@ export const useChat = () => {
     const handleReplyMessage = useCallback((message: Message) => {
         // Business logic: set reply target
         setReplyTo(message);
-        console.log(replyTo)
     }, [])
 
     const handleCancelReply = useCallback(() => {

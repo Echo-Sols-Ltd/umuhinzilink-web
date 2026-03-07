@@ -27,6 +27,7 @@ import { toast } from '@/components/ui/use-toast';
 import { MessageActionsModal } from './MessageActionsModal';
 import { MessageReactions, processReactions } from './MessageReactions';
 import MessageComponent from './MessageComponent';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface ChatInterfaceProps {
   className?: string;
@@ -34,6 +35,7 @@ interface ChatInterfaceProps {
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   const { user: currentUser } = useAuth();
+  const { t } = useI18n();
   const {
     messages,
     activeChatUser,
@@ -80,7 +82,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
 
   // Auto-scroll to bottom when new messages arrive or other user starts typing
   useEffect(() => {
-    console.log(typingUsers)
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [filteredMessages, typingUsers]);
 
@@ -162,7 +163,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
   };
 
   const handleDeleteMessage = async (messageId: string) => {
-    if (window.confirm('Are you sure you want to delete this message?')) {
+    if (window.confirm(t('chat.confirmDelete'))) {
       try {
         await deleteMessage(messageId);
       } catch (error) {
@@ -234,8 +235,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       <div className={cn('flex-1 flex items-center justify-center bg-card', className)}>
         <div className="text-center text-muted-foreground">
           <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4"><Send className="w-8 h-8 text-muted-foreground" /></div>
-          <h3 className="text-lg font-medium mb-2">No conversation selected</h3>
-          <p className="text-sm">Choose a user from the sidebar to start messaging</p>
+          <h3 className="text-lg font-medium mb-2">{t('chat.noConversationSelected')}</h3>
+          <p className="text-sm">{t('chat.chooseFromSidebar')}</p>
         </div>
       </div>
     );
@@ -267,9 +268,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             <h3 className="font-medium text-foreground">{activeChatUser.names}</h3>
             <p className="text-sm text-muted-foreground">
               {typingUsers.has(activeChatUser.id) ? (
-                <span className="text-success animate-pulse">typing...</span>
+                <span className="text-success animate-pulse">{t('chat.typingDots')}</span>
               ) : (
-                isUserOnline ? 'Online' : 'Offline'
+                isUserOnline ? t('chat.online') : t('chat.offline')
               )}
             </p>
           </div>
@@ -316,7 +317,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             <div className="flex items-center space-x-2">
               <Reply className="w-4 h-4 text-info" />
               <div className="text-sm">
-                <span className="font-medium text-foreground">Replying to {replyTo.sender.names.split(' ')[0]}</span>
+                <span className="font-medium text-foreground">{t('chat.replyingTo')} {replyTo.sender.names.split(' ')[0]}</span>
                 <p className="text-info truncate max-w-xs">{replyTo.content}</p>
               </div>
             </div>
@@ -340,8 +341,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
       <div className="p-2 border-t border-border bg-card">
         <div className="flex items-end space-x-3 max-w-5xl mx-auto">
           <div className="flex items-center space-x-1 mb-1">
-            <button onClick={() => fileInputRef.current?.click()} className="p-2.5 hover:bg-muted text-muted-foreground rounded-full transition-all active:scale-95" title="Attach file"><Paperclip className="w-5 h-5" /></button>
-            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="p-2.5 hover:bg-muted text-muted-foreground rounded-full transition-all active:scale-95" title="Add emoji"><Smile className="w-5 h-5" /></button>
+            <button onClick={() => fileInputRef.current?.click()} className="p-2.5 hover:bg-muted text-muted-foreground rounded-full transition-all active:scale-95" title={t('chat.attachFile')}><Paperclip className="w-5 h-5" /></button>
+            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="p-2.5 hover:bg-muted text-muted-foreground rounded-full transition-all active:scale-95" title={t('chat.addEmoji')}><Smile className="w-5 h-5" /></button>
           </div>
           <div className="flex-1 relative">
             <textarea
@@ -353,7 +354,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                   handleSendMessage();
                 }
               }}
-              placeholder="Type your message..."
+              placeholder={t('chat.messagePlaceholder')}
               rows={1}
               className="w-full resize-none bg-card border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-success/20 focus:bg-card transition-all text-foreground placeholder:text-muted-foreground"
               style={{ minHeight: '46px', maxHeight: '150px' }}

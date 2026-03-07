@@ -28,12 +28,6 @@ export const usePageVisibility = () => {
       setIsVisible(currentState);
       setWasHidden(wasPreviouslyHidden);
       
-      // Log for debugging
-      if (currentState) {
-        console.log('🟢 Page became visible - user returned to tab');
-      } else {
-        console.log('🔴 Page became hidden - user left tab');
-      }
     };
 
     // Initial check

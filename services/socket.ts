@@ -302,7 +302,6 @@ class SocketService {
 
     private enqueueOrPublish(destination: string, body: string) {
         if (!this.stompClient.connected) {
-            console.log(`Socket not connected. Queueing message for ${destination}`)
             this.messageQueue.push({ destination, body })
             // Automatically try to connect if we aren't already
             if (localStorage.getItem("auth_token")) {

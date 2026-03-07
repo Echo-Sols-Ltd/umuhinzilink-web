@@ -24,6 +24,8 @@
     "retry": "Retry",
     "noData": "No data available",
     "footerCopyright": "© Dreamize 2025",
+    "logout": "Logout",
+    "farmer": "Farmer",
     "status": {
       "completed": "Completed",
       "pending": "Pending",
@@ -77,9 +79,36 @@
     }
   },
   "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your profile information",
+    "sections": {
+      "personal": "Personal Information",
+      "contact": "Contact Information",
+      "address": "Address"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone",
+      "email": "Email",
+      "district": "District",
+      "sector": "Sector"
+    },
+    "actions": {
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "upload": "Upload",
+      "newImage": "New Profile Image"
+    },
+    "notProvided": "Not provided",
     "updated": {
       "success": "Profile updated successfully.",
       "error": "Failed to update profile."
+    },
+    "upload": {
+      "success": "Profile image uploaded successfully.",
+      "error": "Failed to upload image. Please try again."
     }
   },
   "sidebar": {
@@ -349,6 +378,182 @@
         "browseMarketplace": "Browse Marketplace",
         "savedProducts": "Saved Products"
       }
+    },
+    "marketplace": {
+      "title": "Marketplace",
+      "tagline": "Fresh from the farm to your table",
+      "verifiedFarmers": "Verified Farmers",
+      "filters": "Filters",
+      "contactMessage": "Hello! I am interested in your {{productName}}. Is it still available?",
+      "toasts": {
+        "authRequired": {
+          "title": "Authentication Required",
+          "body": "Please log in to contact the farmer."
+        },
+        "farmerNotAvailable": {
+          "title": "Farmer Unavailable",
+          "body": "This farmer is currently unavailable for contact."
+        },
+        "messageSent": {
+          "title": "Message Sent",
+          "body": "Your message has been sent to {{farmerName}} regarding {{productName}}."
+        },
+        "failedToSendMessage": {
+          "title": "Failed to Send Message",
+          "body": "An error occurred while trying to send your message. Please try again."
+        }
+      }
+    },
+    "purchases": {
+      "title": "My Purchases",
+      "subtitle": "Track your orders and manage your purchases",
+      "stats": {
+        "totalPurchases": "Total Purchases",
+        "completed": "Completed Orders",
+        "inProgress": "In Progress",
+        "totalSpent": "Total Spent"
+      },
+      "filters": {
+        "all": "All",
+        "pending": "Pending",
+        "pendingPayment": "Pending Payment",
+        "inProgress": "In Progress",
+        "completed": "Completed",
+        "allCrops": "All Crops",
+        "searchPlaceholder": "Search orders..."
+      },
+      "table": {
+        "orderId": "ORDER ID",
+        "product": "PRODUCT",
+        "farmer": "FARMER",
+        "quantity": "QUANTITY",
+        "price": "PRICE",
+        "date": "DATE",
+        "status": "STATUS",
+        "actions": "ACTIONS"
+      },
+      "noOrders": "No orders found",
+      "tryAdjusting": "Try adjusting your filters",
+      "noOrdersYet": "You have no orders yet.",
+      "pay": "Pay",
+      "confirm": "Confirm",
+      "viewDetails": "View Details",
+      "trackDelivery": "Track Delivery",
+      "confirmSafeDelivery": "Confirm Safe Delivery",
+      "confirmSatisfaction": "Satisfaction Confirmed",
+      "confirmSatisfactionMsg": "Thank you for confirming safe delivery!",
+      "paymentSuccess": "Payment Successful",
+      "paymentSuccessMsg": "Your order has been paid successfully."
+    },
+    "orders": {
+      "details": "Order Details",
+      "backToPurchases": "Back to Purchases",
+      "orderNotFound": "Order Not Found",
+      "orderNotFoundDesc": "The order you're looking for doesn't exist.",
+      "product": "Product",
+      "farmer": "Farmer",
+      "totalAmount": "Total Amount",
+      "buyerInfo": "Buyer Information",
+      "productDetails": "Product Details",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "location": "Location",
+      "productName": "Product Name",
+      "quantity": "Quantity",
+      "unitPrice": "Unit Price",
+      "totalPrice": "Total Price",
+      "paymentMethod": "Payment Method",
+      "paymentStatus": "Payment Status",
+      "paid": "PAID",
+      "unpaid": "UNPAID",
+      "deliveryTracking": "Delivery Tracking",
+      "deliveryNotAvailable": "Delivery information not yet available",
+      "deliveryNotAvailableDesc": "The farmer will update delivery status once the order is processed."
+    },
+    "wallet": {
+      "title": "My Wallet",
+      "subtitle": "Manage your finances and track transactions",
+      "balance": "Current Balance",
+      "active": "Active",
+      "addMoney": "Add Money",
+      "stats": {
+        "totalDeposits": "Total Deposits",
+        "totalPayments": "Total Payments",
+        "withdrawals": "Withdrawals",
+        "pending": "Pending"
+      },
+      "filters": {
+        "title": "Filters",
+        "allTransactions": "All Transactions",
+        "deposits": "Deposits",
+        "payments": "Payments",
+        "withdrawals": "Withdrawals",
+        "newestFirst": "Newest First",
+        "oldestFirst": "Oldest First",
+        "highestAmount": "Highest Amount",
+        "lowestAmount": "Lowest Amount",
+        "searchPlaceholder": "Search transactions...",
+        "transactionType": "Transaction Type",
+        "sortBy": "Sort By"
+      },
+      "history": "Transaction History",
+      "noTransactions": "No transactions found",
+      "historyDescription": "Your transaction history will appear here",
+      "tryAdjusting": "Try adjusting your search or filters",
+      "modal": {
+        "title": "Add Money to Wallet",
+        "amount": "Amount",
+        "description": "Description (Optional)",
+        "descriptionPlaceholder": "Add a note for this deposit",
+        "instructionsTitle": "Payment Instructions",
+        "instructions": "You will be redirected to complete the payment using your selected method. Funds will be available in your wallet once the payment is confirmed.",
+        "cancel": "Cancel",
+        "confirm": "Add Money"
+      },
+      "export": "Export"
+    },
+    "saved": {
+      "title": "Favorites",
+      "sortBy": "Sort by:",
+      "sortOptions": {
+        "newest": "Newest",
+        "priceLowHigh": "Price: Low to High",
+        "priceHighLow": "Price: High to Low"
+      },
+      "available": "Available",
+      "buyNow": "Buy Now",
+      "remove": "Remove"
+    },
+    "productDetail": {
+      "title": "Product Information",
+      "supplierInfo": "Supplier Information",
+      "farmerInfo": "Farmer Information",
+      "harvested": "Harvested",
+      "location": "Location",
+      "category": "Category",
+      "price": "Price",
+      "certification": "Certification",
+      "stock": {
+        "outOfStock": "Out of Stock",
+        "lowStock": "Only {{count}} left",
+        "available": "{{count}} available"
+      },
+      "actions": {
+        "purchase": "Purchase Product",
+        "save": "Save",
+        "saved": "Saved",
+        "share": "Share",
+        "edit": "Edit",
+        "delete": "Delete",
+        "chat": "Chat with Owner",
+        "negotiable": "Negotiable"
+      },
+      "toasts": {
+        "addedToFavorites": "Product added to favorites",
+        "removedFromFavorites": "Product removed from favorites",
+        "linkCopied": "Product link copied to clipboard"
+      }
     }
   },
   "farmer": {
@@ -383,6 +588,157 @@
         "amount": "Amount",
         "date": "Date",
         "noOrders": "No recent orders found"
+      }
+    },
+    "products": {
+      "title": "Marketplace Inventory",
+      "subtitle": "Manage your produce listings and monitor stock levels",
+      "addProduct": "Add Product",
+      "metrics": {
+        "listings": "Total Listings",
+        "inStock": "In Stock",
+        "outOfStock": "Out of Stock",
+        "units": "Total Units"
+      },
+      "filters": {
+        "search": "Search your products...",
+        "allStatus": "All Status",
+        "inStock": "In Stock",
+        "outOfStock": "Out of Stock",
+        "pending": "Pending Review",
+        "reset": "Reset"
+      },
+      "activeListings": "Active Listings",
+      "results": "Results",
+      "noListings": "No listings found",
+      "noListingsDesc": "Try adjusting your filters or create a new product listing.",
+      "loading": "Loading products..."
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Manage your farmer details",
+      "loading": "Loading profile...",
+      "notAvailable": "Profile data is not available right now.",
+      "registeredFarmer": "Registered Farmer",
+      "farmSize": "Farm size",
+      "lastUpdated": "Last updated",
+      "newProfileImage": "New Profile Image",
+      "upload": "Upload",
+      "cancel": "Cancel",
+      "sections": {
+        "personal": "Personal Information",
+        "contact": "Contact Information",
+        "address": "Address",
+        "farming": "Farming Details"
+      },
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "phone": "Phone Number",
+        "email": "Email",
+        "district": "District",
+        "province": "Province",
+        "farmSize": "Farm Size",
+        "crops": "Crops",
+        "experience": "Experience Level",
+        "notProvided": "Not provided"
+      },
+      "toasts": {
+        "imageUpdated": "Image Updated",
+        "imageUpdatedDesc": "Profile image updated successfully",
+        "uploadFailed": "Upload Failed",
+        "uploadFailedDesc": "Failed to upload image. Please try again."
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "profile": {
+        "title": "Profile Settings",
+        "name": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "district": "District",
+        "sector": "Sector",
+        "save": "Save Changes"
+      },
+      "password": {
+        "title": "Change Password",
+        "current": "Current Password",
+        "new": "New Password",
+        "confirm": "Confirm New Password",
+        "update": "Update Password"
+      },
+      "appearance": {
+        "title": "Appearance",
+        "darkMode": "Dark Mode",
+        "darkModeDesc": "Toggle dark/light theme",
+        "language": "Language",
+        "languageDesc": "Choose your preferred language"
+      },
+      "notifications": {
+        "title": "Notification Preferences",
+        "email": "Email Notifications",
+        "emailDesc": "Order updates and promotions",
+        "sms": "SMS Notifications",
+        "smsDesc": "Critical alerts via SMS",
+        "updates": "Order Updates",
+        "updatesDesc": "Real-time order status",
+        "alerts": "Price Alerts",
+        "alertsDesc": "Product price changes",
+        "marketing": "Marketing Emails",
+        "marketingDesc": "Promotions and news"
+      }
+    },
+    "orders": {
+      "title": "Orders",
+      "subtitle": "Order overview for",
+      "export": "Export",
+      "metrics": {
+        "total": "Total orders",
+        "revenue": "Revenue",
+        "paid": "Paid",
+        "pending": "Pending",
+        "allTime": "All time",
+        "grossValue": "Gross value",
+        "paidDesc": "Orders fully paid",
+        "pendingDesc": "Awaiting fulfilment"
+      },
+      "filters": {
+        "status": "Status",
+        "clear": "Clear filter",
+        "all": "All"
+      },
+      "status": {
+        "pending": "Pending",
+        "pendingPayment": "Pending Payment",
+        "active": "In Progress",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "table": {
+        "orderId": "ORDER ID",
+        "buyer": "BUYER",
+        "unknownBuyer": "Unknown buyer",
+        "date": "DATE",
+        "product": "PRODUCT",
+        "quantity": "QUANTITY",
+        "amount": "AMOUNT",
+        "status": "STATUS",
+        "action": "ACTION",
+        "loading": "Loading orders...",
+        "noOrders": "No orders found",
+        "noOrdersDesc": "Try adjusting your filters",
+        "approve": "Approve",
+        "viewDetails": "View Order Details",
+        "tracking": "Tracking Details"
+      },
+      "toasts": {
+        "confirmCancel": "Are you sure you want to cancel this order?",
+        "confirmSuccess": "Buyer has confirmed safe delivery successfully!",
+        "confirmFailed": "Failed to confirm satisfaction. Please try again."
       }
     }
   },
@@ -682,7 +1038,27 @@
       },
       "noSmartphone": "No smartphone? No problem! Access via SMS in Kinyarwanda"
     },
-    "footer": {
+    "contact": {
+    "title": "Contact Us",
+    "getInTouch": "Get in Touch",
+    "description": "Have questions or need help? You can reach us through any of the following methods:",
+    "email": "Email",
+    "phone": "Phone",
+    "location": "Location",
+    "sendMessage": "Send us a Message",
+    "yourName": "Your Name",
+    "yourEmail": "Your Email",
+    "subject": "Subject",
+    "message": "Message",
+    "sendAction": "Send Message",
+    "placeholders": {
+      "name": "John Doe",
+      "email": "you@example.com",
+      "subject": "Subject here",
+      "message": "Write your message..."
+    }
+  },
+  "footer": {
       "description": "Empowering Rwandan farmers through digital agriculture and AI-powered solutions.",
       "about": {
         "title": "About",

@@ -23,6 +23,8 @@ import {
 import { WalletDTO, WalletTransactionDTO } from '@/types/wallet';
 import { cn } from '@/lib/utils';
 
+import { useI18n } from '@/contexts/I18nContext';
+
 interface WalletDashboardProps {
   wallet: WalletDTO | null;
   transactions: WalletTransactionDTO[];
@@ -43,6 +45,7 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
   onPayOrder,
   className,
 }) => {
+  const { t, locale } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [sortType, setSortType] = useState<SortType>('newest');
@@ -146,15 +149,25 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
     }
   };
 
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case 'COMPLETED': return t('common.status.completed');
+      case 'PENDING': return t('common.status.pending');
+      case 'FAILED': return t('common.error');
+      case 'CANCELLED': return t('common.status.cancelled');
+      default: return status;
+    }
+  };
+
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(locale === 'rw' ? 'rw-RW' : 'en-US', {
       style: 'currency',
-      currency: wallet?.currency || 'USD',
+      currency: wallet?.currency || 'RWF',
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -190,8 +203,8 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
               <Wallet className="w-8 h-8 text-success" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">My Wallet</h1>
-              <p className="text-sm text-muted-foreground">Manage your finances and track transactions</p>
+              <h1 className="text-2xl font-bold text-foreground">{t('buyer.wallet.title')}</h1>
+              <p className="text-sm text-muted-foreground">{t('buyer.wallet.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -203,17 +216,17 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div className="space-y-1">
-              <p className="text-green-50/80 text-sm font-medium uppercase tracking-wider">Current Balance</p>
+              <p className="text-green-50/80 text-sm font-medium uppercase tracking-wider">{t('buyer.wallet.balance')}</p>
               <div className="flex items-baseline gap-2">
                 <h2 className="text-xl md:text-2xl font-extrabold tracking-tight">
                   {formatCurrency(wallet?.balance || 0)}
                 </h2>
-                <span className="text-green-100/60 text-lg font-medium">{wallet?.currency || 'USD'}</span>
+                <span className="text-green-100/60 text-lg font-medium">{wallet?.currency || 'RWF'}</span>
               </div>
               <div className="flex items-center gap-3 pt-2">
                 <span className="flex items-center gap-1 text-xs bg-white/10 px-2 py-0.5 rounded-full border border-white/20 backdrop-blur-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
-                  Active
+                  {t('buyer.wallet.active')}
                 </span>
                 <span className="text-xs font-mono text-green-50/60">
                   ID: {wallet?.id ? `****${wallet.id.slice(-8)}` : 'N/A'}
@@ -227,7 +240,7 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                 className="flex items-center justify-center gap-2 px-6 py-2 bg-white text-green-700 font-semibold rounded-xl hover:bg-green-50 transition-all transform active:scale-95 shadow-md"
               >
                 <Plus className="w-5 h-5" />
-                Add Money
+                {t('buyer.wallet.addMoney')}
               </button>
             </div>
           </div>
@@ -240,10 +253,10 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
         {/* Statistics Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Total Deposits', value: stats.totalDeposits, icon: TrendingUp, color: 'success' },
-            { label: 'Total Payments', value: stats.totalPayments, icon: CreditCard, color: 'info' },
-            { label: 'Withdrawals', value: stats.totalWithdrawals, icon: TrendingDown, color: 'destructive' },
-            { label: 'Pending', value: stats.pendingTransactions, icon: Clock, color: 'warning', isCount: true }
+            { label: t('buyer.wallet.stats.totalDeposits'), value: stats.totalDeposits, icon: TrendingUp, color: 'success' },
+            { label: t('buyer.wallet.stats.totalPayments'), value: stats.totalPayments, icon: CreditCard, color: 'info' },
+            { label: t('buyer.wallet.stats.withdrawals'), value: stats.totalWithdrawals, icon: TrendingDown, color: 'destructive' },
+            { label: t('buyer.wallet.stats.pending'), value: stats.pendingTransactions, icon: Clock, color: 'warning', isCount: true }
           ].map((item, idx) => (
             <div key={idx} className="bg-card p-6 rounded-2xl border border-border hover:border-foreground/10 hover:shadow-sm transition-all group">
               <div className="flex items-center justify-between">
@@ -287,7 +300,7 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search transactions..."
+                placeholder={t('buyer.wallet.filters.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -300,13 +313,13 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
               className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-card"
             >
               <Filter className="w-4 h-4" />
-              <span>Filters</span>
+              <span>{t('buyer.wallet.filters.title')}</span>
             </button>
 
             {/* Export */}
             <button className="flex items-center space-x-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">
               <Download className="w-4 h-4" />
-              <span>Export</span>
+              <span>{t('buyer.wallet.export')}</span>
             </button>
           </div>
 
@@ -314,30 +327,30 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
           {showFilters && (
             <div className="mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">Transaction Type</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">{t('buyer.wallet.filters.transactionType')}</label>
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value as FilterType)}
                   className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                  <option value="all">All Transactions</option>
-                  <option value="deposit">Deposits</option>
-                  <option value="payment">Payments</option>
-                  <option value="withdrawal">Withdrawals</option>
+                  <option value="all">{t('buyer.wallet.filters.allTransactions')}</option>
+                  <option value="deposit">{t('buyer.wallet.filters.deposits')}</option>
+                  <option value="payment">{t('buyer.wallet.filters.payments')}</option>
+                  <option value="withdrawal">{t('buyer.wallet.filters.withdrawals')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">Sort By</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">{t('buyer.wallet.filters.sortBy')}</label>
                 <select
                   value={sortType}
                   onChange={(e) => setSortType(e.target.value as SortType)}
                   className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="amount_high">Highest Amount</option>
-                  <option value="amount_low">Lowest Amount</option>
+                  <option value="newest">{t('buyer.wallet.filters.newestFirst')}</option>
+                  <option value="oldest">{t('buyer.wallet.filters.oldestFirst')}</option>
+                  <option value="amount_high">{t('buyer.wallet.filters.highestAmount')}</option>
+                  <option value="amount_low">{t('buyer.wallet.filters.lowestAmount')}</option>
                 </select>
               </div>
             </div>
@@ -349,18 +362,18 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
           <div className="p-4 border-b">
             <div className="flex items-center space-x-2">
               <History className="w-5 h-5 text-muted-foreground" />
-              <h3 className="text-lg font-semibold text-foreground">Transaction History</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('buyer.wallet.history')}</h3>
             </div>
           </div>
 
           {filteredAndSortedTransactions.length === 0 ? (
             <div className="text-center py-12">
               <History className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">No transactions found</h3>
+              <h3 className="text-lg font-medium text-foreground mb-2">{t('buyer.wallet.noTransactions')}</h3>
               <p className="text-muted-foreground">
                 {searchTerm || filterType !== 'all'
-                  ? 'Try adjusting your search or filters'
-                  : 'Your transaction history will appear here'}
+                  ? t('buyer.wallet.tryAdjusting')
+                  : t('buyer.wallet.historyDescription')}
               </p>
             </div>
           ) : (
@@ -390,7 +403,7 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                         'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
                         getStatusColor(transaction.status)
                       )}>
-                        {transaction.status}
+                        {translateStatus(transaction.status)}
                       </span>
                     </div>
                   </div>
@@ -406,7 +419,7 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
             <div className="bg-card rounded-lg shadow-xl w-full max-w-md m-4">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-foreground">Add Money to Wallet</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t('buyer.wallet.modal.title')}</h3>
                   <button
                     onClick={() => setShowDepositModal(false)}
                     className="text-muted-foreground hover:text-foreground"
@@ -418,7 +431,7 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      Amount ({wallet?.currency || 'USD'})
+                      {t('buyer.wallet.modal.amount')} ({wallet?.currency || 'RWF'})
                     </label>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -436,13 +449,13 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
 
                   <div>
                     <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      Description (Optional)
+                      {t('buyer.wallet.modal.description')}
                     </label>
                     <input
                       type="text"
                       value={depositDescription}
                       onChange={(e) => setDepositDescription(e.target.value)}
-                      placeholder="Add a note for this deposit"
+                      placeholder={t('buyer.wallet.modal.descriptionPlaceholder')}
                       className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
                   </div>
@@ -451,10 +464,9 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                     <div className="flex items-start space-x-2">
                       <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5" />
                       <div className="text-sm text-blue-800">
-                        <p className="font-medium">Payment Instructions</p>
+                        <p className="font-medium">{t('buyer.wallet.modal.instructionsTitle')}</p>
                         <p className="mt-1">
-                          You will be redirected to complete the payment using your selected method.
-                          Funds will be available in your wallet once the payment is confirmed.
+                          {t('buyer.wallet.modal.instructions')}
                         </p>
                       </div>
                     </div>
@@ -465,14 +477,14 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
                       onClick={() => setShowDepositModal(false)}
                       className="flex-1 px-4 py-2 border border-border text-muted-foreground rounded-lg hover:bg-card transition-colors"
                     >
-                      Cancel
+                      {t('buyer.wallet.modal.cancel')}
                     </button>
                     <button
                       onClick={handleDeposit}
                       disabled={!depositAmount || parseFloat(depositAmount) <= 0}
                       className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      Add Money
+                      {t('buyer.wallet.modal.confirm')}
                     </button>
                   </div>
                 </div>

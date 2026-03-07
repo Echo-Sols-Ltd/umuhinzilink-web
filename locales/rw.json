@@ -24,6 +24,8 @@
     "retry": "Ongera ugerageze",
     "noData": "Nta makuru aboneka",
     "footerCopyright": "© Dreamize 2025",
+    "logout": "Sohoka",
+    "farmer": "Umuhinzi",
     "status": {
       "completed": "Byarangiye",
       "pending": "Bitegereje",
@@ -77,9 +79,36 @@
     }
   },
   "profile": {
+    "title": "Imimerere y'ukoresha konti",
+    "subtitle": "Cunga amakuru yawe hano",
+    "sections": {
+      "personal": "Amakuru bwite",
+      "contact": "Amakuru y'itumanaho",
+      "address": "Aho uherereye"
+    },
+    "fields": {
+      "firstName": "Izina rya mbere",
+      "lastName": "Izina rya kabiri",
+      "phone": "Telefoni",
+      "email": "Imeyili",
+      "district": "Akarere",
+      "sector": "Umurenge"
+    },
+    "actions": {
+      "edit": "Hindura",
+      "save": "Bika",
+      "cancel": "Siba",
+      "upload": "Ohereza",
+      "newImage": "Indangamuntu nshya"
+    },
+    "notProvided": "Ntabwo byashyizwemo",
     "updated": {
-      "success": "Umwirondoro wavuguruwe neza.",
-      "error": "Ntibishoboye kuvugurura umwirondoro."
+      "success": "Amakuru yawe yahinduwe neza.",
+      "error": "Guhindura amakuru byanze."
+    },
+    "upload": {
+      "success": "Ifoto yawe yohererejwe neza.",
+      "error": "Ohereza ifoto byanze. Ongera ugerageze."
     }
   },
   "sidebar": {
@@ -349,6 +378,182 @@
         "browseMarketplace": "Gushakisha ku isoko",
         "savedProducts": "Ibicuruzwa wabitse"
       }
+    },
+    "marketplace": {
+      "title": "Isoko ryacu",
+      "tagline": "Ibicuruzwa bishya bivuye mu murima",
+      "verifiedFarmers": "Abahinzi bemewe",
+      "filters": "Gushungura",
+      "contactMessage": "Ndabaramukije! Ndifuza kugura {{productName}}. Mbese muracyagifite?",
+      "toasts": {
+        "authRequired": {
+          "title": "Kwinjira birakenewe",
+          "body": "Nyamuneka jya muri konti yawe mbere yo kuvugana n'umuhinzi."
+        },
+        "farmerNotAvailable": {
+          "title": "Umuhinzi ntaboneka",
+          "body": "Uyu muhinzi ntaboneka ubu."
+        },
+        "messageSent": {
+          "title": "Ubutumwa bwoherejwe",
+          "body": "Ubutumwa bwawe bwoherejwe kuri {{farmerName}} ku bijyanye na {{productName}}."
+        },
+        "failedToSendMessage": {
+          "title": "Kunoheresha byanze",
+          "body": "Habayeho ikibazo mu kohereza ubutumwa bwawe. Ongera ugerageze."
+        }
+      }
+    },
+    "purchases": {
+      "title": "Ibyo natumije",
+      "subtitle": "Kurikirana ibyo watumije kandi ucunge ibyo waguze",
+      "stats": {
+        "totalPurchases": "Ibyo watumije byose",
+        "completed": "Ibitumwa byarangiye",
+        "inProgress": "Ibirimo gukorwa",
+        "totalSpent": "Amafaranga yakoreshejwe yose"
+      },
+      "filters": {
+        "all": "Byose",
+        "pending": "Bitegereje",
+        "pendingPayment": "Bitegereje kwishyurwa",
+        "inProgress": "Ibirimo gukorwa",
+        "completed": "Byarangiye",
+        "allCrops": "Ibihingwa byose",
+        "searchPlaceholder": "Shakisha ibitumwa..."
+      },
+      "table": {
+        "orderId": "ID Y'IGITUMWA",
+        "product": "IGICURUZWA",
+        "farmer": "UMUHINZI",
+        "quantity": "INGANO",
+        "price": "IGICIRO",
+        "date": "ITARIKI",
+        "status": "IMEREWE",
+        "actions": "IBIKORWA"
+      },
+      "noOrders": "Nta bitumwa byabonetse",
+      "tryAdjusting": "Gerageza guhindura ibyo ushakisha",
+      "noOrdersYet": "Nta bitumwa ufite kugeza ubu.",
+      "pay": "Ishyura",
+      "confirm": "Emeza",
+      "viewDetails": "Reba amakuru arambuye",
+      "trackDelivery": "Kurikirana itumwa",
+      "confirmSafeDelivery": "Emeza ko byageze neza",
+      "confirmSatisfaction": "Bemejwe",
+      "confirmSatisfactionMsg": "Murakoze kwemeza ko ibyo mwatumije byageze neza!",
+      "paymentSuccess": "Kwishyura byagenze neza",
+      "paymentSuccessMsg": "Ibyo mwatumije byishyuwe neza."
+    },
+    "orders": {
+      "details": "Amakuru ku bicuruzwa watse",
+      "backToPurchases": "Subira inyuma",
+      "orderNotFound": "Ibikoresho ntibibonetse",
+      "orderNotFoundDesc": "Ibi bintu ushaka ntibigaragara muri sisitemu.",
+      "product": "Igicuruzwa",
+      "farmer": "Umuhinzi",
+      "totalAmount": "Amafaranga yose",
+      "buyerInfo": "Amakuru y'umuguzi",
+      "productDetails": "Amakuru ku gicuruzwa",
+      "name": "Izina",
+      "email": "Imeyili",
+      "phone": "Telefoni",
+      "location": "Aho aherereye",
+      "productName": "Izina ry'igicuruzwa",
+      "quantity": "Ingano",
+      "unitPrice": "Igiciro ku kintu kimwe",
+      "totalPrice": "Igiciro cyose",
+      "paymentMethod": "Uburyo bwo kwishyura",
+      "paymentStatus": "Imiterere yo kwishyura",
+      "paid": "YISHYUWE",
+      "unpaid": "NTAYISHYURWA",
+      "deliveryTracking": "Gukurikirana itumizwa",
+      "deliveryNotAvailable": "Amakuru yo kwakira ntaraboneka",
+      "deliveryNotAvailableDesc": "Umuhinzi azashyiraho amakuru namara gutegura igicuruzwa cyawe."
+    },
+    "wallet": {
+      "title": "Umufuka wanjye",
+      "subtitle": "Cunga imari yawe kandi ukurikirane ibikorwa",
+      "balance": "Amafaranga ahari",
+      "active": "Irakora",
+      "addMoney": "Ongeramo amafaranga",
+      "stats": {
+        "totalDeposits": "Amafaranga yose yinjiye",
+        "totalPayments": "Amashyura yose",
+        "withdrawals": "Amafaranga yasohotse",
+        "pending": "Bitegereje"
+      },
+      "filters": {
+        "title": "Ibyo ushakiraho",
+        "allTransactions": "Ibikorwa byose",
+        "deposits": "Amafaranga yinjiye",
+        "payments": "Amashyura",
+        "withdrawals": "Amafaranga yasohotse",
+        "newestFirst": "Ibya vuba mbere",
+        "oldestFirst": "Ibya kera mbere",
+        "highestAmount": "Amafaranga menshi",
+        "lowestAmount": "Amafaranga make",
+        "searchPlaceholder": "Shakisha ibikorwa...",
+        "transactionType": "Ubwoko bw'igikorwa",
+        "sortBy": "Gura nkurikije"
+      },
+      "history": "Urutonde rw'ibyakozwe",
+      "noTransactions": "Nta bikorwa byabonetse",
+      "historyDescription": "Urutonde rw'ibikorwa byawe ruzagaragara hano",
+      "tryAdjusting": "Gerageza guhindura ibyo ushakisha",
+      "modal": {
+        "title": "Ongeramo amafaranga mu mufuka",
+        "amount": "Ingano",
+        "description": "Ibisobanuro (Si ngombwa)",
+        "descriptionPlaceholder": "Shyiraho icyitonderwa kuri iri shyura",
+        "instructionsTitle": "Amabwiriza yo kwishyura",
+        "instructions": "Urajyanwa ahabugenewe kugira ngo urangize kwishyura ukoresheje uburyo wahisemo. Amafaranga azagaragara mu mufuka wawe umaze kwishyura.",
+        "cancel": "Siba",
+        "confirm": "Ongeramo amafaranga"
+      },
+      "export": "Kohereza"
+    },
+    "saved": {
+      "title": "Ibyo nishimiye",
+      "sortBy": "Gura nkurikije:",
+      "sortOptions": {
+        "newest": "Ibya vuba",
+        "priceLowHigh": "Igiciro: Guhera ku gito",
+        "priceHighLow": "Igiciro: Guhera ku kinini"
+      },
+      "available": "Bihari",
+      "buyNow": "Gura ubu",
+      "remove": "Kuraho"
+    },
+    "productDetail": {
+      "title": "Amakuru ku gicuruzwa",
+      "supplierInfo": "Amakuru ku muvunjayi",
+      "farmerInfo": "Amakuru ku muhinzi",
+      "harvested": "Yasaruye",
+      "location": "Aho giherereye",
+      "category": "Icyiciro",
+      "price": "Igiciro",
+      "certification": "Icyemezo",
+      "stock": {
+        "outOfStock": "Byarashize",
+        "lowStock": "Hasigaye {{count}} gusa",
+        "available": "{{count}} bihari"
+      },
+      "actions": {
+        "purchase": "Gura iki gicuruzwa",
+        "save": "Bika",
+        "saved": "Byabitswe",
+        "share": "Sangiza abandi",
+        "edit": "Hindura",
+        "delete": "Siba",
+        "chat": "Vugana n'ukirinda",
+        "negotiable": "Baracibazanya"
+      },
+      "toasts": {
+        "addedToFavorites": "Byongewe mu byo wakunze",
+        "removedFromFavorites": "Byakuwe mu byo wakunze",
+        "linkCopied": "Ihuza ryakopewe"
+      }
     }
   },
   "farmer": {
@@ -383,6 +588,157 @@
         "amount": "Amafaranga",
         "date": "Itariki",
         "noOrders": "Nta bitumwa biheruka byabenetse"
+      }
+    },
+    "products": {
+      "title": "Ibicuruzwa mu Isoko",
+      "subtitle": "Cunga ibicuruzwa byawe kandi ugenzure ingano yabyo",
+      "addProduct": "Ongeramo Igicuruzwa",
+      "metrics": {
+        "listings": "Ibicuruzwa byose",
+        "inStock": "Bihari",
+        "outOfStock": "Byashize",
+        "units": "Ingano yose"
+      },
+      "filters": {
+        "search": "Shakisha ibicuruzwa byawe...",
+        "allStatus": "Imiterere yose",
+        "inStock": "Bihari",
+        "outOfStock": "Byashize",
+        "pending": "Bitegereje isubiramo",
+        "reset": "Subiramo"
+      },
+      "activeListings": "Ibicuruzwa bigaragara",
+      "results": "Ibisubizo",
+      "noListings": "Nta bicuruzwa byaboneka",
+      "noListingsDesc": "Gerageza guhindura uko ushashika cyangwa ushyireho igicuruzwa gishya.",
+      "loading": "Turi gushaka ibicuruzwa..."
+    },
+    "profile": {
+      "title": "Umwirondoro",
+      "subtitle": "Cunga amakuru yawe y'umuhinzi",
+      "loading": "Turi gushaka umwirondoro wawe...",
+      "notAvailable": "Amakuru y'umwirondoro ntahari ubu.",
+      "registeredFarmer": "Umuhinzi wiyandikishije",
+      "farmSize": "Ingano y'isambu",
+      "lastUpdated": "Byahinduwe bwa nyuma",
+      "newProfileImage": "Ifoto nshya",
+      "upload": "Emeza",
+      "cancel": "Reba",
+      "sections": {
+        "personal": "Amakuru yite",
+        "contact": "Amakuru yo kuguhamagara",
+        "address": "Aho uherereye",
+        "farming": "Amakuru y'ubuhinzi"
+      },
+      "fields": {
+        "firstName": "Izina rya mbere",
+        "lastName": "Izina rya kabiri",
+        "phone": "Nimero ya telefone",
+        "email": "Imeli",
+        "district": "Akarere",
+        "province": "Intara",
+        "farmSize": "Ingano y'isambu",
+        "crops": "Ibihingwa",
+        "experience": "Uburambe mu buhinzi",
+        "notProvided": "Ntibyatanzwe"
+      },
+      "toasts": {
+        "imageUpdated": "Ifoto yahindutse",
+        "imageUpdatedDesc": "Ifoto y'umwirondoro yahindutse neza",
+        "uploadFailed": "Gushyiraho byaranze",
+        "uploadFailedDesc": "Ntibyashobotse gushyiraho ifoto. Gerageza kandi."
+      }
+    },
+    "settings": {
+      "title": "Igenamiterere",
+      "profile": {
+        "title": "Igenamiterere ry'umwirondoro",
+        "name": "Amazina yose",
+        "email": "Imeli",
+        "phone": "Telefone",
+        "district": "Akarere",
+        "sector": "Umurenge",
+        "save": "Bika Amahinduka"
+      },
+      "password": {
+        "title": "Hindura Ijambo ry'ibanga",
+        "current": "Ijambo ry'ibanga rya none",
+        "new": "Ijambo ry'ibanga rishya",
+        "confirm": "Remeza ijambo ry'ibanga",
+        "update": "Hura Ijambo ry'ibanga"
+      },
+      "appearance": {
+        "title": "Imigaragarire",
+        "darkMode": "Imigaragarire y'umwijima",
+        "darkModeDesc": "Hindura hagati y'umwijima n'umweru",
+        "language": "Ururimi",
+        "languageDesc": "Hitamo ururimi wifuza"
+      },
+      "notifications": {
+        "title": "Igenamiterere ry'imenyesha",
+        "email": "Imenyesha kuri Imeli",
+        "emailDesc": "Amakuru y'ibitumwa n'amamaza",
+        "sms": "Imenyesha kuri SMS",
+        "smsDesc": "Imenyesha ryihutirwa kuri SMS",
+        "updates": "Amakuru y'ibitumwa",
+        "updatesDesc": "Uko igitumwa gihagaze mu gihe nyacyo",
+        "alerts": "Imenyesha ry'ibiciro",
+        "alertsDesc": "Ihinduka ry'ibiciro by'ibicuruzwa",
+        "marketing": "Imeli z'ubucuruzi",
+        "marketingDesc": "Amamaza n'amakuru mashya"
+      }
+    },
+    "orders": {
+      "title": "Ibitumwa",
+      "subtitle": "Incamake y'ibitumwa bya",
+      "export": "Akura hanze",
+      "metrics": {
+        "total": "Ibitumwa byose",
+        "revenue": "Inyungu",
+        "paid": "Byishuwe",
+        "pending": "Bitegerejwe",
+        "allTime": "Igihe cyose",
+        "grossValue": "Agaciro kose",
+        "paidDesc": "Ibitumwa byishuwe neza",
+        "pendingDesc": "Bitegereje gukorwa"
+      },
+      "filters": {
+        "status": "Imiterere",
+        "clear": "Kuraho akayunguruzo",
+        "all": "Byose"
+      },
+      "status": {
+        "pending": "Bitegerejwe",
+        "pendingPayment": "Bitegereje kwishyura",
+        "active": "Biri gukorwa",
+        "processing": "Biri gutegurwa",
+        "shipped": "Byoherejwe",
+        "delivered": "Byatanzwe",
+        "completed": "Byarangiye",
+        "cancelled": "Byakuweho"
+      },
+      "table": {
+        "orderId": "NUMERO",
+        "buyer": "UMUGUZI",
+        "unknownBuyer": "Umuguzi utazwi",
+        "date": "ITARIKI",
+        "product": "IGICURUZWA",
+        "quantity": "INGANO",
+        "amount": "AMAFARANGA",
+        "status": "IMITERERE",
+        "action": "IGIKORWA",
+        "loading": "Turi gushaka ibitumwa...",
+        "noOrders": "Nta bitumwa byabonetse",
+        "noOrdersDesc": "Gerageza guhindura uko ushashika",
+        "approve": "Emeza",
+        "viewDetails": "Reba ibindi bisobanuro",
+        "tracking": "Reba aho bigeze"
+      },
+      "toasts": {
+        "confirmCancel": "Ese uracyashaka gukuraho iki gitumwa?",
+        "confirmSuccess": "Umuguzi yemeje ko yakiriye neza!",
+        "confirmFailed": "Ntibyashobotse kwemeza. Gerageza kandi."
       }
     }
   },
@@ -682,7 +1038,27 @@
       },
       "noSmartphone": "Nta smartphone? Nta kibazo! Koresha SMS mu Kinyarwanda"
     },
-    "footer": {
+    "contact": {
+    "title": "Twandikire",
+    "getInTouch": "Tuvugishe",
+    "description": "Ufite ikibazo cyangwa ukeneye ubufasha? Batwandikire ukoresheje bumwe mu buryo bukurikira:",
+    "email": "Imeyili",
+    "phone": "Telefoni",
+    "location": "Aho duherereye",
+    "sendMessage": "Twandikire ubutumwa",
+    "yourName": "Izina ryawe",
+    "yourEmail": "Imeyili yawe",
+    "subject": "Intego",
+    "message": "Ubutumwa",
+    "sendAction": "Ohereza ubutumwa",
+    "placeholders": {
+      "name": "Izina ryawe hano",
+      "email": "imeyili@urugero.com",
+      "subject": "Intego y'ubutumwa",
+      "message": "Andika ubutumwa bwawe hano..."
+    }
+  },
+  "footer": {
       "description": "Dufasha abahinzi b'u Rwanda binyuze mu buhinzi bwa digitale n'ibisubizo bya AI.",
       "about": {
         "title": "Ibyerekeye",

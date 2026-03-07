@@ -80,7 +80,10 @@ const Logo = () => (
   </span>
 );
 
+import { useI18n } from '@/contexts/I18nContext';
+
 function SavedItemsComponent() {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<'all' | 'expected' | 'available'>('all');
   const [sortBy, setSortBy] = useState('Newest');
   const [logoutPending, setLogoutPending] = useState(false);
@@ -111,15 +114,15 @@ function SavedItemsComponent() {
       <div className="flex-1 flex flex-col h-full overflow-auto">
         {/* Sort Bar */}
         <div className="bg-card border-b px-6 py-4 flex justify-end items-center">
-          <label className="text-sm text-muted-foreground mr-2">Sort by:</label>
+          <label className="text-sm text-muted-foreground mr-2">{t('buyer.saved.sortBy')}</label>
           <select
             className="border border-border rounded-lg py-2 px-3 text-sm"
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
           >
-            <option>Newest</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
+            <option value="Newest">{t('buyer.saved.sortOptions.newest')}</option>
+            <option value="Price: Low to High">{t('buyer.saved.sortOptions.priceLowHigh')}</option>
+            <option value="Price: High to Low">{t('buyer.saved.sortOptions.priceHighLow')}</option>
           </select>
         </div>
 
@@ -139,7 +142,7 @@ function SavedItemsComponent() {
                     <h3 className="font-semibold text-lg text-foreground">{p.name}</h3>
                     <p className="text-success font-semibold text-sm">{p.price}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">Available: {p.available}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{t('buyer.saved.available')}: {p.available}</p>
                   <div className="flex items-center text-sm text-muted-foreground mt-1">
                     <UserIcon className="w-4 h-4 mr-1" /> {p.farmer}
                     <span className="mx-1">•</span>
@@ -149,12 +152,12 @@ function SavedItemsComponent() {
                   {/* Action Buttons */}
                   <div className="mt-3 flex items-center gap-2">
                     <button className="bg-success text-primary-foreground px-4 py-2 rounded text-sm flex-1">
-                      Buy Now
+                      {t('buyer.saved.buyNow')}
                     </button>
                     <button className="border border-border p-2 rounded">
                       <MessageSquare className="w-4 h-4 text-foreground" />
                     </button>
-                    <button className="border border-destructive p-2 rounded">
+                    <button className="border border-destructive p-2 rounded" title={t('buyer.saved.remove')}>
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </button>
                   </div>
