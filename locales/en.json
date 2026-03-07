@@ -32,6 +32,17 @@
       "active": "Active",
       "processing": "Processing",
       "cancelled": "Cancelled"
+    },
+    "productDetailMsg": {
+      "productNotFoundTitle": "Product Not Found",
+      "productNotFoundDesc": "This product could not be found.",
+      "goBack": "Go Back",
+      "loadingProduct": "Loading product...",
+      "failedToLoadProduct": "Failed to load product details",
+      "linkCopied": "Product link copied to clipboard",
+      "confirmDelete": "Are you sure you want to delete this product? This action cannot be undone.",
+      "deleteSuccess": "Product deleted successfully",
+      "deleteFailed": "Failed to delete product"
     }
   },
   "errors": {
@@ -536,6 +547,7 @@
       "backToPurchases": "Back to Purchases",
       "orderNotFound": "Order Not Found",
       "orderNotFoundDesc": "The order you're looking for doesn't exist.",
+      "failedToLoad": "Failed to load order details",
       "product": "Product",
       "farmer": "Farmer",
       "totalAmount": "Total Amount",
@@ -824,7 +836,65 @@
       "toasts": {
         "confirmCancel": "Are you sure you want to cancel this order?",
         "confirmSuccess": "Buyer has confirmed safe delivery successfully!",
-        "confirmFailed": "Failed to confirm satisfaction. Please try again."
+        "confirmFailed": "Failed to confirm satisfaction. Please try again.",
+        "orderNotFound": "Order Not Found",
+        "failedToLoad": "Failed to load order details",
+        "updateFailed": "Failed to update delivery status. Please try again."
+      },
+      "detail": {
+        "orderNotFound": "Order Not Found",
+        "orderNotFoundDesc": "The order you're looking for doesn't exist.",
+        "backToOrders": "Back to Orders",
+        "title": "Order Details",
+        "product": "Product",
+        "customer": "Customer",
+        "totalAmount": "Total Amount",
+        "customerInfo": "Customer Information",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "deliveryAddress": "Delivery Address",
+        "productDetails": "Product Details",
+        "productName": "Product Name",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "totalPrice": "Total Price",
+        "paymentMethod": "Payment Method",
+        "paymentStatus": "Payment Status",
+        "paid": "PAID",
+        "unpaid": "UNPAID",
+        "deliveryTracking": "Delivery Tracking"
+      }
+    },
+    "supplierOrders": {
+      "toasts": {
+        "orderNotFound": "Order Not Found",
+        "failedToLoad": "Failed to load order details",
+        "updateFailed": "Failed to update delivery status. Please try again."
+      },
+      "detail": {
+        "orderNotFound": "Order Not Found",
+        "orderNotFoundDesc": "The order you're looking for doesn't exist.",
+        "backToOrders": "Back to Supplier Orders",
+        "title": "Order Details",
+        "product": "Input Item",
+        "supplier": "Supplier",
+        "totalAmount": "Total Amount",
+        "supplierInfo": "Supplier Information",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "supplierAddress": "Supplier Address",
+        "productDetails": "Input Item Details",
+        "productName": "Input Name",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "totalPrice": "Total Price",
+        "paymentMethod": "Payment Method",
+        "paymentStatus": "Payment Status",
+        "paid": "PAID",
+        "unpaid": "UNPAID",
+        "deliveryTracking": "Delivery Tracking"
       }
     }
   },
@@ -895,6 +965,37 @@
         "restock": "Restock",
         "allHealthy": "All stock levels are healthy.",
         "manageProducts": "Manage Products"
+      }
+    },
+    "orders": {
+      "toasts": {
+        "orderNotFound": "Order Not Found",
+        "failedToLoad": "Failed to load order details",
+        "updateFailed": "Failed to update delivery status. Please try again."
+      },
+      "detail": {
+        "orderNotFound": "Order Not Found",
+        "orderNotFoundDesc": "The order you're looking for doesn't exist.",
+        "backToOrders": "Back to Orders",
+        "title": "Order Details",
+        "product": "Input Item",
+        "farmer": "Farmer",
+        "totalAmount": "Total Amount",
+        "farmerInfo": "Farmer Information",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "deliveryAddress": "Delivery Address",
+        "productDetails": "Input Item Details",
+        "productName": "Input Name",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "totalPrice": "Total Price",
+        "paymentMethod": "Payment Method",
+        "paymentStatus": "Payment Status",
+        "paid": "PAID",
+        "unpaid": "UNPAID",
+        "deliveryTracking": "Delivery Tracking"
       }
     }
   },

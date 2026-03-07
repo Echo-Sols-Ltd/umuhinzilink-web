@@ -32,6 +32,17 @@
       "active": "Birimo gukora",
       "processing": "Birimo gutunganywa",
       "cancelled": "Byahagaritswe"
+    },
+    "productDetailMsg": {
+      "productNotFoundTitle": "Igicuruzwa Ntikibonetse",
+      "productNotFoundDesc": "Iki gicuruzwa ntigishoboye kuboneka.",
+      "goBack": "Subira Inyuma",
+      "loadingProduct": "Gufungura igicuruzwa...",
+      "failedToLoadProduct": "Gufungura amakuru y'igicuruzwa byanze",
+      "linkCopied": "Link y'igicuruzwa yakopiwe",
+      "confirmDelete": "Wizeye neza ko ushaka gusiba iki gicuruzwa? Iki gikorwa ntigishobora gusubizwa inyuma.",
+      "deleteSuccess": "Igicuruzwa cyasibwe neza",
+      "deleteFailed": "Gusiba igicuruzwa byanze"
     }
   },
   "errors": {
@@ -536,6 +547,7 @@
       "backToPurchases": "Subira inyuma",
       "orderNotFound": "Ibikoresho ntibibonetse",
       "orderNotFoundDesc": "Ibi bintu ushaka ntibigaragara muri sisitemu.",
+      "failedToLoad": "Kuzana amakuru y'igitumizwa byanze",
       "product": "Igicuruzwa",
       "farmer": "Umuhinzi",
       "totalAmount": "Amafaranga yose",
@@ -824,7 +836,65 @@
       "toasts": {
         "confirmCancel": "Ese uracyashaka gukuraho iki gitumwa?",
         "confirmSuccess": "Umuguzi yemeje ko yakiriye neza!",
-        "confirmFailed": "Ntibyashobotse kwemeza. Gerageza kandi."
+        "confirmFailed": "Ntibyashobotse kwemeza. Gerageza kandi.",
+        "orderNotFound": "Igitumizwa Ntikibonetse",
+        "failedToLoad": "Kuzana amakuru y'igitumizwa byanze",
+        "updateFailed": "Kuvugurura uko kigezwa byanze. Ongera ugerageze."
+      },
+      "detail": {
+        "orderNotFound": "Igitumizwa Ntikibonetse",
+        "orderNotFoundDesc": "Igitumizwa ushakisha ntikibaho.",
+        "backToOrders": "Subira Inyuma Ku Bicuruzwa",
+        "title": "Amakuru Ku Gicuruzwa Cyasabwe",
+        "product": "Igicuruzwa",
+        "customer": "Umuguzi",
+        "totalAmount": "Amafaranga Yose",
+        "customerInfo": "Amakuru Y'umuguzi",
+        "name": "Izina",
+        "email": "Imeli",
+        "phone": "Telefoni",
+        "deliveryAddress": "Aho Ibikoresho Bizagezwa",
+        "productDetails": "Amakuru Ku Gicuruzwa",
+        "productName": "Izina Ry'igicuruzwa",
+        "quantity": "Ingano",
+        "unitPrice": "Igiciro Ku Ngano",
+        "totalPrice": "Igiciro Cyose",
+        "paymentMethod": "Uburyo Bwo Kwishyura",
+        "paymentStatus": "Uko Kwishyura Bimeze",
+        "paid": "YISHYUWE",
+        "unpaid": "NTIYISHYUWE",
+        "deliveryTracking": "Kureba Aho Igitumizwa Kigeze"
+      }
+    },
+    "supplierOrders": {
+      "toasts": {
+        "orderNotFound": "Igitumizwa Ntikibonetse",
+        "failedToLoad": "Kuzana amakuru y'igitumizwa byanze",
+        "updateFailed": "Kuvugurura uko kigezwa byanze. Ongera ugerageze."
+      },
+      "detail": {
+        "orderNotFound": "Igitumizwa Ntikibonetse",
+        "orderNotFoundDesc": "Igitumizwa ushakisha ntikibaho.",
+        "backToOrders": "Subira Ku Bicuruzwa By'abacuruzi",
+        "title": "Amakuru Ku Gicuruzwa",
+        "product": "Igicuruzwa Cy'ubuhinzi",
+        "supplier": "Umucuruzi",
+        "totalAmount": "Amafaranga Yose",
+        "supplierInfo": "Amakuru Y'umucuruzi",
+        "name": "Izina",
+        "email": "Imeli",
+        "phone": "Telefoni",
+        "supplierAddress": "Aderesi Y'umucuruzi",
+        "productDetails": "Amakuru Ku Gicuruzwa Cy'ubuhinzi",
+        "productName": "Izina Ry'igicuruzwa",
+        "quantity": "Ingano",
+        "unitPrice": "Igiciro Ku Ngano",
+        "totalPrice": "Igiciro Cyose",
+        "paymentMethod": "Uburyo Bwo Kwishyura",
+        "paymentStatus": "Uko Kwishyura Bimeze",
+        "paid": "YISHYUWE",
+        "unpaid": "NTIYISHYUWE",
+        "deliveryTracking": "Kureba Aho Igitumizwa Kigeze"
       }
     }
   },
@@ -895,6 +965,37 @@
         "restock": "Ongeramo mu bubiko",
         "allHealthy": "Ibicuruzwa byose birahagije mu bubiko.",
         "manageProducts": "Gucunga ibicuruzwa"
+      }
+    },
+    "orders": {
+      "toasts": {
+        "orderNotFound": "Igitumizwa Ntikibonetse",
+        "failedToLoad": "Kuzana amakuru y'igitumizwa byanze",
+        "updateFailed": "Kuvugurura uko kigezwa byanze. Ongera ugerageze."
+      },
+      "detail": {
+        "orderNotFound": "Igitumizwa Ntikibonetse",
+        "orderNotFoundDesc": "Igitumizwa ushakisha ntikibaho.",
+        "backToOrders": "Subira Inyuma Ku Bicuruzwa",
+        "title": "Amakuru Ku Gicuruzwa Cyasabwe",
+        "product": "Igicuruzwa",
+        "farmer": "Umuhinzi",
+        "totalAmount": "Amafaranga Yose",
+        "farmerInfo": "Amakuru Y'umuhinzi",
+        "name": "Izina",
+        "email": "Imeli",
+        "phone": "Telefoni",
+        "deliveryAddress": "Aho Ibikoresho Bizagezwa",
+        "productDetails": "Amakuru Ku Gicuruzwa",
+        "productName": "Izina Ry'igicuruzwa",
+        "quantity": "Ingano",
+        "unitPrice": "Igiciro Ku Ngano",
+        "totalPrice": "Igiciro Cyose",
+        "paymentMethod": "Uburyo Bwo Kwishyura",
+        "paymentStatus": "Uko Kwishyura Bimeze",
+        "paid": "YISHYUWE",
+        "unpaid": "NTIYISHYUWE",
+        "deliveryTracking": "Kureba Aho Igitumizwa Kigeze"
       }
     }
   },

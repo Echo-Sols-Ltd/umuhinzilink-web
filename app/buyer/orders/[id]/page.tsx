@@ -70,7 +70,7 @@ function BuyerOrderDetailPage() {
         }
       } catch (error) {
         console.error('Failed to fetch order:', error);
-        notify.error("Failed to load order details", t('common.error'));
+        notify.error(t('buyer.orders.failedToLoad'), t('common.error'));
       } finally {
         setLoading(false);
       }
