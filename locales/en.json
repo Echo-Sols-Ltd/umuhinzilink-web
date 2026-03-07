@@ -43,6 +43,33 @@
       "confirmDelete": "Are you sure you want to delete this product? This action cannot be undone.",
       "deleteSuccess": "Product deleted successfully",
       "deleteFailed": "Failed to delete product"
+    },
+    "notificationPage": {
+      "title": "Notifications",
+      "unreadPlural": "{{count}} unread notifications",
+      "unreadSingular": "1 unread notification",
+      "caughtUp": "You're all caught up!",
+      "markAllRead": "Mark all read",
+      "searchPlaceholder": "Search notifications…",
+      "noResultsFound": "No results found",
+      "noUnreadNotifications": "No unread notifications",
+      "noNotificationsYet": "No notifications yet",
+      "tryDifferentSearch": "Try a different search term",
+      "checkBackLater": "Check back later",
+      "pageOf": "Page {{current}} of {{total}}",
+      "totalElements": "({{total}} total)",
+      "tabs": {
+        "all": "All",
+        "unread": "Unread",
+        "success": "Success",
+        "messages": "Messages",
+        "warnings": "Warnings",
+        "errors": "Errors",
+        "system": "System",
+        "info": "Info",
+        "products": "Products",
+        "orders": "Orders"
+      }
     }
   },
   "errors": {

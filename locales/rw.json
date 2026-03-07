@@ -43,6 +43,33 @@
       "confirmDelete": "Wizeye neza ko ushaka gusiba iki gicuruzwa? Iki gikorwa ntigishobora gusubizwa inyuma.",
       "deleteSuccess": "Igicuruzwa cyasibwe neza",
       "deleteFailed": "Gusiba igicuruzwa byanze"
+    },
+    "notificationPage": {
+      "title": "Aho Umenyesherezwa",
+      "unreadPlural": "Ibyatumye bitasomijwe {{count}}",
+      "unreadSingular": "Icyatumye 1 kidasomijwe",
+      "caughtUp": "Uko kugezweho!",
+      "markAllRead": "Soma byose",
+      "searchPlaceholder": "Shakisha mu bimenyeshwa…",
+      "noResultsFound": "Nta bisubizo byabonetse",
+      "noUnreadNotifications": "Nta bimenyeshwa bishya bihari",
+      "noNotificationsYet": "Nta bimenyeshwa biraboneka",
+      "tryDifferentSearch": "Gerageza ikindi jambo ryo gushakisha",
+      "checkBackLater": "Ongera urebe nyuma",
+      "pageOf": "Paji {{current}} kuri {{total}}",
+      "totalElements": "({{total}} byose)",
+      "tabs": {
+        "all": "Byose",
+        "unread": "Ibitarasomwa",
+        "success": "Ibyagenze neza",
+        "messages": "Ubutumwa",
+        "warnings": "Ibiburira",
+        "errors": "Amakosa",
+        "system": "Sisitemu",
+        "info": "Amakuru",
+        "products": "Ibicuruzwa",
+        "orders": "Ibitumizwa"
+      }
     }
   },
   "errors": {
