@@ -5,16 +5,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserType } from '@/types';
 import AdminDashboard from '@/components/dashboard/admin/AdminDashboard';
 import Sidebar from '@/components/shared/Sidebar';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function AdminDashboardPage() {
   const { user } = useAuth();
+  const { t } = useI18n();
 
   if (!user || user.role !== UserType.ADMIN) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground">This dashboard is only available to administrators.</p>
+          <h1 className="text-2xl font-semibold mb-4">{t('admin.dashboard.accessDenied.title')}</h1>
+          <p className="text-muted-foreground">{t('admin.dashboard.accessDenied.description')}</p>
         </div>
       </div>
     );
@@ -36,10 +38,10 @@ export default function AdminDashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-3xl font-bold text-foreground mb-2">
-                    Admin Dashboard
+                    {t('admin.dashboard.title')}
                   </h1>
                   <p className="text-muted-foreground">
-                    Monitor system health, manage users, and track platform metrics
+                    {t('admin.dashboard.subtitle')}
                   </p>
                 </div>
               </div>

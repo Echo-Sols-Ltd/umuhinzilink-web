@@ -19,11 +19,12 @@ import { DashboardSection } from '../common/DashboardGrid';
 import { AdminDashboardData } from '@/types/dashboard';
 import { dashboardService } from '@/services/dashboardService';
 import DashboardChart from '../common/DashboardChart';
+import { useI18n } from '@/contexts/I18nContext';
 
-// Ensure Activity is available
 export default function AdminDashboard() {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useI18n();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -60,7 +61,7 @@ export default function AdminDashboard() {
   if (!dashboardData) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Failed to load dashboard data</p>
+        <p className="text-muted-foreground">{t('common.error')}</p>
       </div>
     );
   }
@@ -74,64 +75,64 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* Section 1: Ecosystem Overview */}
-      <DashboardSection title="Ecosystem Overview" cols={4}>
+      <DashboardSection title={t('admin.dashboard.sections.ecosystemOverview')} cols={4}>
         <MetricCard
-          title="Total Users"
+          title={t('admin.dashboard.metrics.totalUsers')}
           value={dashboardData.totalUsers}
           icon={<Users className="w-5 h-5 text-primary" />}
         />
         <MetricCard
-          title="Total Farmers"
+          title={t('admin.dashboard.metrics.totalFarmers')}
           value={dashboardData.totalFarmers || 0}
           icon={<Briefcase className="w-5 h-5 text-green-500" />}
         />
         <MetricCard
-          title="Total Buyers"
+          title={t('admin.dashboard.metrics.totalBuyers')}
           value={dashboardData.totalBuyers || 0}
           icon={<ShoppingCart className="w-5 h-5 text-blue-500" />}
         />
         <MetricCard
-          title="Total Suppliers"
+          title={t('admin.dashboard.metrics.totalSuppliers')}
           value={dashboardData.totalSuppliers || 0}
           icon={<Store className="w-5 h-5 text-orange-500" />}
         />
       </DashboardSection>
 
       {/* Section 2: Platform Performance */}
-      <DashboardSection title="Platform Performance" cols={4}>
+      <DashboardSection title={t('admin.dashboard.sections.platformPerformance')} cols={4}>
         <MetricCard
-          title="Total Orders"
+          title={t('admin.dashboard.metrics.totalOrders')}
           value={dashboardData.totalOrders || 0}
           icon={<ShoppingCart className="w-5 h-5 text-blue-500" />}
         />
         <MetricCard
-          title="Transaction Volume"
+          title={t('admin.dashboard.metrics.transactionVolume')}
           value={dashboardData.transactionVolume}
           format="currency"
           icon={<Activity className="w-5 h-5 text-purple-500" />}
         />
         <MetricCard
-          title="Platform Revenue"
+          title={t('admin.dashboard.metrics.platformRevenue')}
           value={dashboardData.platformRevenue}
           format="currency"
           icon={<DollarSign className="w-5 h-5 text-green-500" />}
         />
         <MetricCard
-          title="New Registrations (30d)"
+          title={t('admin.dashboard.metrics.newRegistrations')}
           value={dashboardData.newRegistrationsLast30Days || dashboardData.newRegistrations || 0}
           icon={<TrendingUp className="w-5 h-5 text-teal-500" />}
         />
       </DashboardSection>
 
       {/* Section 3: Engagement and Operational Health */}
-      <DashboardSection title="Engagement & Operations" cols={2}>
+      <DashboardSection title={t('admin.dashboard.sections.engagementOperations')} cols={2}>
         <MetricCard
-          title="Active Users (Last 7 Days)"
+          title={t('admin.dashboard.metrics.activeUsers')}
           value={dashboardData.activeUsersLast7Days || dashboardData.activeSessions || 0}
           icon={<UserCheck className="w-5 h-5 text-indigo-500" />}
         />
         <MetricCard
-          title="Open Support Tickets"
+          title={t('admin.dashboard.metrics.openSupportTickets')}
           value={dashboardData.openSupportTickets}
           icon={<AlertTriangle className={`w-5 h-5 ${dashboardData.openSupportTickets > 10 ? 'text-red-500' : 'text-green-500'}`} />}
         />
@@ -139,7 +140,7 @@ export default function AdminDashboard() {
 
       {/* Section 4: Charts */}
       {fallbackChartData.userGrowthTrend && fallbackChartData.revenueTrend && (
-        <DashboardSection title="Platform Trends" cols={2}>
+        <DashboardSection title={t('admin.dashboard.sections.platformTrends')} cols={2}>
           <DashboardChart
             config={fallbackChartData.userGrowthTrend}
             height={300}

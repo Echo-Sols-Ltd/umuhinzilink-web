@@ -5,16 +5,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserType } from '@/types';
 import GovernmentDashboard from '@/components/dashboard/government/GovernmentDashboard';
 import Sidebar from '@/components/shared/Sidebar';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function GovernmentDashboardPage() {
   const { user } = useAuth();
+  const { t } = useI18n();
 
   if (!user || user.role !== UserType.GOVERNMENT) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground">This dashboard is only available to government officials.</p>
+          <h1 className="text-2xl font-semibold mb-4">{t('government.dashboard.accessDenied.title')}</h1>
+          <p className="text-muted-foreground">{t('government.dashboard.accessDenied.description')}</p>
         </div>
       </div>
     );
@@ -36,10 +38,10 @@ export default function GovernmentDashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-3xl font-bold text-foreground mb-2">
-                    Government Dashboard
+                    {t('government.dashboard.title')}
                   </h1>
                   <p className="text-muted-foreground">
-                    Monitor agricultural data, track compliance, and analyze economic impact
+                    {t('government.dashboard.subtitle')}
                   </p>
                 </div>
               </div>

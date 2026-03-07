@@ -17,11 +17,13 @@ import { DashboardSection } from '../common/DashboardGrid';
 import { BuyerDashboardData } from '@/types/dashboard';
 import { dashboardService } from '@/services/dashboardService';
 import DashboardChart from '../common/DashboardChart';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function BuyerDashboard() {
   const [dashboardData, setDashboardData] = useState<BuyerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t, locale } = useI18n();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -32,17 +34,17 @@ export default function BuyerDashboard() {
         if (response.success) {
           setDashboardData(response.data);
         } else {
-          setError(response.message || 'Failed to load dashboard data');
+          setError(response.message || t('common.error'));
         }
       } catch (err) {
-        setError('Failed to load dashboard data');
+        setError(t('common.error'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchDashboardData();
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
@@ -61,7 +63,7 @@ export default function BuyerDashboard() {
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
           >
-            Retry
+            {t('common.retry') || 'Retry'}
           </button>
         </div>
       </div>
@@ -71,10 +73,19 @@ export default function BuyerDashboard() {
   if (!dashboardData) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">No dashboard data available</p>
+        <p className="text-muted-foreground">{t('common.noData') || 'No dashboard data available'}</p>
       </div>
     );
   }
+
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case 'Delivered': return t('common.status.completed');
+      case 'Processing': return t('common.status.processing');
+      case 'Shipped': return t('common.status.active'); // Using active for shipped
+      default: return status;
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -95,25 +106,25 @@ export default function BuyerDashboard() {
   return (
     <div className="space-y-8">
       {/* Section 1: Overview Cards */}
-      <DashboardSection title="Overview" cols={4}>
+      <DashboardSection title={t('buyer.dashboard.sections.overview')} cols={4}>
         <MetricCard
-          title="Active Orders"
+          title={t('buyer.dashboard.metrics.activeOrders')}
           value={dashboardData.activeOrders}
           icon={<Package className="w-5 h-5 text-blue-500" />}
         />
         <MetricCard
-          title="Pending Orders"
+          title={t('buyer.dashboard.metrics.pendingOrders')}
           value={dashboardData.pendingOrders}
           icon={<Clock className={`w-5 h-5 ${dashboardData.pendingOrders > 0 ? 'text-yellow-500' : 'text-primary'}`} />}
         />
         <MetricCard
-          title="Wallet Balance"
+          title={t('buyer.dashboard.metrics.walletBalance')}
           value={dashboardData.walletBalance}
           format="currency"
           icon={<Wallet className="w-5 h-5 text-purple-500" />}
         />
         <MetricCard
-          title="Total Spent"
+          title={t('buyer.dashboard.metrics.totalSpent')}
           value={dashboardData.totalSpent}
           format="currency"
           icon={<ShoppingCart className="w-5 h-5 text-green-500" />}
@@ -123,14 +134,14 @@ export default function BuyerDashboard() {
       <div className="gap-8">
         {/* Section 2: Quick Access */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Quick Access</h2>
+          <h2 className="text-lg font-semibold">{t('buyer.dashboard.sections.quickAccess')}</h2>
           <div className="flex gap-4">
             <Link href="/buyer/purchases" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
                   <Package className="w-5 h-5 text-blue-600" />
                 </div>
-                <span className="font-medium">Track Orders</span>
+                <span className="font-medium">{t('buyer.dashboard.actions.trackOrders')}</span>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
@@ -139,7 +150,7 @@ export default function BuyerDashboard() {
                 <div className="p-2 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
                   <Search className="w-5 h-5 text-green-600" />
                 </div>
-                <span className="font-medium">Browse Marketplace</span>
+                <span className="font-medium">{t('buyer.dashboard.actions.browseMarketplace')}</span>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
@@ -149,7 +160,7 @@ export default function BuyerDashboard() {
                   <Heart className="w-5 h-5 text-pink-600" />
                 </div>
                 <span className="font-medium flex items-center gap-2">
-                  Saved Products
+                  {t('buyer.dashboard.actions.savedProducts')}
                   <span className="bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400 py-0.5 px-2 rounded-full text-xs font-bold">
                     {dashboardData.savedProducts}
                   </span>
@@ -164,7 +175,7 @@ export default function BuyerDashboard() {
             <div className="mt-6">
               <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                Monthly Spending
+                {t('buyer.dashboard.sections.monthlySpending')}
               </h2>
               <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
                 <DashboardChart config={dashboardData.spendingTrend} height={180} />

@@ -21,7 +21,16 @@
     "or": "CYANGWA",
     "continue": "Komeza",
     "resend": "Ohereza nanone",
-    "footerCopyright": "© Dreamize 2025"
+    "retry": "Ongera ugerageze",
+    "noData": "Nta makuru aboneka",
+    "footerCopyright": "© Dreamize 2025",
+    "status": {
+      "completed": "Byarangiye",
+      "pending": "Bitegereje",
+      "active": "Birimo gukora",
+      "processing": "Birimo gutunganywa",
+      "cancelled": "Byahagaritswe"
+    }
   },
   "errors": {
     "unknown": "Habaye ikibazo kitazwi. Ongera ugerageze nyuma.",
@@ -315,6 +324,165 @@
   "dashboard": {
     "loading": "Irimo gutegura dashboard...",
     "redirecting": "Irimo kukujyana kuri dashboard yawe..."
+  },
+  "buyer": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Ntabwo byemewe",
+        "description": "Iyi dashboard igenewe abaguzi gusa."
+      },
+      "title": "Dashboard y'umuguzi",
+      "subtitle": "Genzura ibyo watumije, gucunga umufuka wawe, no gushakisha ku isoko",
+      "sections": {
+        "overview": "Incamake",
+        "quickAccess": "Inzira zihuse",
+        "monthlySpending": "Imikoreshereze y'ukwezi"
+      },
+      "metrics": {
+        "activeOrders": "Ibitumwa bikomeza",
+        "pendingOrders": "Ibitumwa bitaremezwa",
+        "walletBalance": "Amafaranga ari mu mufuka",
+        "totalSpent": "Amafaranga yakoreshejwe"
+      },
+      "actions": {
+        "trackOrders": "Gukurikirana ibitumwa",
+        "browseMarketplace": "Gushakisha ku isoko",
+        "savedProducts": "Ibicuruzwa wabitse"
+      }
+    }
+  },
+  "farmer": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Ntabwo byemewe",
+        "description": "Iyi dashboard igenewe abahinzi gusa."
+      },
+      "title": "Dashboard y'umuhinzi",
+      "subtitle": "Genzura inyungu zawe, gucunga ibicuruzwa, n'iterambere ry'ubuhinzi bwawe",
+      "sections": {
+        "financialOverview": "Incamake y'imari",
+        "quickActions": "Ibikorwa byihuse",
+        "recentOrders": "Ibitumwa biheruka"
+      },
+      "metrics": {
+        "totalEarnings": "Inyungu zose",
+        "pendingOrders": "Ibitumwa bitaremezwa",
+        "totalOrders": "Ibitumwa byose",
+        "lowStockProducts": "Ibicuruzwa bishize mu bubiko"
+      },
+      "actions": {
+        "addProduct": "Ongeramo igicuruzwa",
+        "viewPayments": "Reba amashyura",
+        "manageInventory": "Gucunga ibicuruzwa",
+        "viewAll": "Reba byose"
+      },
+      "table": {
+        "orderId": "Nimero y'igitumwa",
+        "buyer": "Umuguzi",
+        "status": "Uko bihagaze",
+        "amount": "Amafaranga",
+        "date": "Itariki",
+        "noOrders": "Nta bitumwa biheruka byabenetse"
+      }
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Ntabwo byemewe",
+        "description": "Iyi dashboard igenewe abayobozi gusa."
+      },
+      "title": "Dashboard y'umuyobozi",
+      "subtitle": "Genzura imikorere ya sisitemu, gucunga abakoresha n'imibare y'urubuga",
+      "sections": {
+        "ecosystemOverview": "Incamake y'uburyo bwo gukora",
+        "platformPerformance": "Imikorere y'urubuga",
+        "engagementOperations": "Ibikorwa n'imikoranire",
+        "platformTrends": "Iterambere ry'urubuga"
+      },
+      "metrics": {
+        "totalUsers": "Abakoresha bose",
+        "totalFarmers": "Abahinzi bose",
+        "totalBuyers": "Abaguzi bose",
+        "totalSuppliers": "Abagabuzi bose",
+        "totalOrders": "Ibitumwa byose",
+        "transactionVolume": "Ingano y'ubucuruzi",
+        "platformRevenue": "Inyungu y'urubuga",
+        "newRegistrations": "Abiyandikishije bashya (iminsi 30)",
+        "activeUsers": "Abakoresha bakora (iminsi 7)",
+        "openSupportTickets": "Ibibazo bitegereje gusubizwa"
+      }
+    }
+  },
+  "supplier": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Ntabwo byemewe",
+        "description": "Iyi dashboard igenewe abagabuzi gusa."
+      },
+      "title": "Dashboard y'umugabuzi",
+      "subtitle": "Genzura itangwa ry'ibicuruzwa, gukurikirana imikorere n'ibikoresho",
+      "sections": {
+        "performanceOverview": "Incamake y'imikorere",
+        "inventoryAlerts": "Amenyesha y'ububiko",
+        "revenueTrend": "Iterambere ry'inyungu (iminsi 30)",
+        "recentOrders": "Ibitumwa biheruka"
+      },
+      "metrics": {
+        "totalRevenue": "Inyungu yose",
+        "activeOrders": "Ibitumwa bikomeza",
+        "lowStockProducts": "Ibicuruzwa bishize",
+        "deliveryRate": "Itangwa ry'ibicuruzwa ku gihe"
+      },
+      "table": {
+        "farmer": "Umuhinzi",
+        "product": "Igicuruzwa",
+        "quantity": "Ingano",
+        "status": "Uko bihagaze",
+        "deliveryDate": "Itariki yo gutanga",
+        "noOrders": "Nta bitumwa biheruka byabenetse"
+      },
+      "alerts": {
+        "inStock": "mu bubiko",
+        "min": "Byibuze",
+        "restock": "Ongeramo mu bubiko",
+        "allHealthy": "Ibicuruzwa byose birahagije mu bubiko.",
+        "manageProducts": "Gucunga ibicuruzwa"
+      }
+    }
+  },
+  "government": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Ntabwo byemewe",
+        "description": "Iyi dashboard igenewe abahagarariye leta gusa."
+      },
+      "title": "Dashboard ya leta",
+      "subtitle": "Genzura amakuru y'ubuhinzi n'ingaruka ku bukungu",
+      "sections": {
+        "agriOverview": "Incamake y'ubuhinzi",
+        "productionAnalytics": "Isesengura ry'umusaruro",
+        "foodSecurityCompliance": "Umutekano w'ibiribwa n'amategeko",
+        "economicImpact": "Ingaruka ku bukungu",
+        "keyIndicators": "Ibimenyetso by'ingenzi",
+        "regionalStats": "Imibare y'uturere"
+      },
+      "metrics": {
+        "registeredFarmers": "Abahinzi biyandikishije",
+        "totalProduction": "Umusaruro wose",
+        "marketValue": "Agaciro ku isoko",
+        "exportVolume": "Ibyoherezwa hanze",
+        "foodSecurityIndex": "Igipimo cy'umutekano w'ibiribwa",
+        "sustainabilityScore": "Amanota y'uburyo burambye",
+        "complianceRate": "Igipimo cyo kubahiriza amategeko",
+        "subsidyDistributed": "Nkunganire zatanzwe"
+      },
+      "stats": {
+        "totalRegistered": "Biyandikishije bose",
+        "tonsProduced": "Toni zasaruwe",
+        "tonsExported": "Toni zoherejwe hanze"
+      }
+    }
   },
   "landing": {
     "nav": {

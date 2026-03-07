@@ -21,7 +21,16 @@
     "or": "OR",
     "continue": "Continue",
     "resend": "Resend",
-    "footerCopyright": "© Dreamize 2025"
+    "retry": "Retry",
+    "noData": "No data available",
+    "footerCopyright": "© Dreamize 2025",
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "active": "Active",
+      "processing": "Processing",
+      "cancelled": "Cancelled"
+    }
   },
   "errors": {
     "unknown": "An unknown error occurred. Please try again later.",
@@ -315,6 +324,165 @@
   "dashboard": {
     "loading": "Loading dashboard...",
     "redirecting": "Redirecting to your dashboard..."
+  },
+  "buyer": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Access Denied",
+        "description": "This dashboard is only available to buyers."
+      },
+      "title": "Buyer Dashboard",
+      "subtitle": "Track orders, manage your wallet, and browse the marketplace",
+      "sections": {
+        "overview": "Overview",
+        "quickAccess": "Quick Access",
+        "monthlySpending": "Monthly Spending"
+      },
+      "metrics": {
+        "activeOrders": "Active Orders",
+        "pendingOrders": "Pending Orders",
+        "walletBalance": "Wallet Balance",
+        "totalSpent": "Total Spent"
+      },
+      "actions": {
+        "trackOrders": "Track Orders",
+        "browseMarketplace": "Browse Marketplace",
+        "savedProducts": "Saved Products"
+      }
+    }
+  },
+  "farmer": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Access Denied",
+        "description": "This dashboard is only available to farmers."
+      },
+      "title": "Farmer Dashboard",
+      "subtitle": "Track your revenue, manage products, and monitor growth",
+      "sections": {
+        "financialOverview": "Financial Overview",
+        "quickActions": "Quick Actions",
+        "recentOrders": "Recent Orders"
+      },
+      "metrics": {
+        "totalEarnings": "Total Earnings",
+        "pendingOrders": "Pending Orders",
+        "totalOrders": "Total Orders",
+        "lowStockProducts": "Low Stock Products"
+      },
+      "actions": {
+        "addProduct": "Add Product",
+        "viewPayments": "View Payments",
+        "manageInventory": "Manage Inventory",
+        "viewAll": "View All"
+      },
+      "table": {
+        "orderId": "Order ID",
+        "buyer": "Buyer",
+        "status": "Status",
+        "amount": "Amount",
+        "date": "Date",
+        "noOrders": "No recent orders found"
+      }
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Access Denied",
+        "description": "This dashboard is only available to administrators."
+      },
+      "title": "Admin Dashboard",
+      "subtitle": "Monitor system health, manage users, and track platform metrics",
+      "sections": {
+        "ecosystemOverview": "Ecosystem Overview",
+        "platformPerformance": "Platform Performance",
+        "engagementOperations": "Engagement & Operations",
+        "platformTrends": "Platform Trends"
+      },
+      "metrics": {
+        "totalUsers": "Total Users",
+        "totalFarmers": "Total Farmers",
+        "totalBuyers": "Total Buyers",
+        "totalSuppliers": "Total Suppliers",
+        "totalOrders": "Total Orders",
+        "transactionVolume": "Transaction Volume",
+        "platformRevenue": "Platform Revenue",
+        "newRegistrations": "New Registrations (30d)",
+        "activeUsers": "Active Users (7d)",
+        "openSupportTickets": "Open Support Tickets"
+      }
+    }
+  },
+  "supplier": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Access Denied",
+        "description": "This dashboard is only available to suppliers."
+      },
+      "title": "Supplier Dashboard",
+      "subtitle": "Monitor deliveries, track performance, and manage logistics",
+      "sections": {
+        "performanceOverview": "Performance Overview",
+        "inventoryAlerts": "Inventory Alerts",
+        "revenueTrend": "Revenue Trend (30 Days)",
+        "recentOrders": "Recent Orders"
+      },
+      "metrics": {
+        "totalRevenue": "Total Revenue",
+        "activeOrders": "Active Orders",
+        "lowStockProducts": "Low Stock Products",
+        "deliveryRate": "On-Time Delivery"
+      },
+      "table": {
+        "farmer": "Farmer",
+        "product": "Product",
+        "quantity": "Quantity",
+        "status": "Status",
+        "deliveryDate": "Delivery Date",
+        "noOrders": "No recent orders found"
+      },
+      "alerts": {
+        "inStock": "in stock",
+        "min": "Min",
+        "restock": "Restock",
+        "allHealthy": "All stock levels are healthy.",
+        "manageProducts": "Manage Products"
+      }
+    }
+  },
+  "government": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Access Denied",
+        "description": "This dashboard is only available to government officials."
+      },
+      "title": "Government Dashboard",
+      "subtitle": "Monitor agricultural data, track compliance, and analyze economic impact",
+      "sections": {
+        "agriOverview": "Agricultural Overview",
+        "productionAnalytics": "Production Analytics",
+        "foodSecurityCompliance": "Food Security & Compliance",
+        "economicImpact": "Economic Impact",
+        "keyIndicators": "Key Indicators",
+        "regionalStats": "Regional Statistics"
+      },
+      "metrics": {
+        "registeredFarmers": "Registered Farmers",
+        "totalProduction": "Total Production",
+        "marketValue": "Market Value",
+        "exportVolume": "Export Volume",
+        "foodSecurityIndex": "Food Security Index",
+        "sustainabilityScore": "Sustainability Score",
+        "complianceRate": "Compliance Rate",
+        "subsidyDistributed": "Subsidy Distributed"
+      },
+      "stats": {
+        "totalRegistered": "Total registered",
+        "tonsProduced": "Tons produced",
+        "tonsExported": "Tons exported"
+      }
+    }
   },
   "landing": {
     "nav": {
