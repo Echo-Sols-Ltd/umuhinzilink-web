@@ -132,6 +132,42 @@
     "attachFile": "Ongeraho dosiye",
     "addEmoji": "Ongeraho emoji"
   },
+  "productCard": {
+    "loginToNegotiate": "Nyamuneka injira kugira ngo ucire urubanza",
+    "authRequired": "Ubusabe bwo kwemeza",
+    "noProducerInfo": "Ntibishoboka kubona amakuru y'umuhinzi",
+    "unavailable": "Ntibiboneka",
+    "negotiateMessage": "Muraho! Nifuza {productName} yanyu. Reka tuvugane kugira ngo dushyikirane!",
+    "redirectingToChat": "Ikohereza ku kiganiro na {ownerName}",
+    "inquirySent": "Ikibazo cyoherejwe",
+    "couldNotStartChat": "Ntibishobotse gutangira ikiganiro",
+    "error": "Ikosa",
+    "inStock": "Gihari",
+    "lowStock": "Gishira",
+    "outOfStock": "Ntacyo",
+    "unitPrice": "Igiciro",
+    "edit": "Hindura",
+    "negotiatePrice": "Cira igiciro",
+    "buy": "Gura"
+  },
+  "productRow": {
+    "loginToContact": "Nyamuneka injira kugira ngo uvugane n'abahinzi",
+    "noFarmerInfo": "Ntibishoboka kubona amakuru y'umuhinzi kuri iki gicuruzwa",
+    "farmerNotAvailable": "Umuhinzi Ntaboneka",
+    "contactMessage": "Muraho! Nifuza {productName} yanyu\n Nyoherereza amakuru arambuye kuri iki gicuruzwa",
+    "chatWithFarmer": "Ubu ushobora kuvugana na {farmerName} kubyerekeye {productName}",
+    "messageSent": "Ubutumwa bwoherejwe",
+    "tryAgainLater": "Nyamuneka ongera ugerageze mukanya",
+    "failedToSend": "Kwohereza ubutumwa byanze",
+    "confirmDelete": "Wizeye neza ko ushaka gusiba \"{productName}\"? Iki gikorwa ntigishobora gusubizwa inyuma.",
+    "deleteFailed": "Gusiba igicuruzwa byanze. Nyamuneka ongera ugerageze.",
+    "deleteTitle": "Gusiba Byanze",
+    "available": "Ibihari:",
+    "edit": "Hindura",
+    "delete": "Siba",
+    "deleteProduct": "Siba igicuruzwa",
+    "buyNow": "Gura ubu"
+  },
   "sidebar": {
     "a11y": {
       "openNavigation": "Fungura menu"

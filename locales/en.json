@@ -132,6 +132,42 @@
     "attachFile": "Attach file",
     "addEmoji": "Add emoji"
   },
+  "productCard": {
+    "loginToNegotiate": "Please log in to negotiate",
+    "authRequired": "Authentication Required",
+    "noProducerInfo": "Unable to find producer information",
+    "unavailable": "Unavailable",
+    "negotiateMessage": "Hi! I'm interested in your {productName}. Let's discuss a deal!",
+    "redirectingToChat": "Redirecting to chat with {ownerName}",
+    "inquirySent": "Inquiry Sent",
+    "couldNotStartChat": "Could not start conversation",
+    "error": "Error",
+    "inStock": "In Stock",
+    "lowStock": "Low Stock",
+    "outOfStock": "Out of Stock",
+    "unitPrice": "Unit Price",
+    "edit": "Edit",
+    "negotiatePrice": "Negotiate Price",
+    "buy": "Buy"
+  },
+  "productRow": {
+    "loginToContact": "Please log in to contact farmers",
+    "noFarmerInfo": "Unable to find farmer information for this product",
+    "farmerNotAvailable": "Farmer Not Available",
+    "contactMessage": "Hi! I'm interested in your {productName}\n Send me more details about this product to reach me",
+    "chatWithFarmer": "You can now chat with {farmerName} about {productName}",
+    "messageSent": "Message Sent",
+    "tryAgainLater": "Please try again later",
+    "failedToSend": "Failed to Send Message",
+    "confirmDelete": "Are you sure you want to delete \"{productName}\"? This action cannot be undone.",
+    "deleteFailed": "Failed to delete product. Please try again.",
+    "deleteTitle": "Delete Failed",
+    "available": "Available:",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteProduct": "Delete product",
+    "buyNow": "Buy Now"
+  },
   "sidebar": {
     "a11y": {
       "openNavigation": "Open navigation"

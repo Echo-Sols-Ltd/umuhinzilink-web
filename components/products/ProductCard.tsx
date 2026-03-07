@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useProduct } from "@/contexts/ProductContext";
 import { useChat, userToChatUser } from "@/hooks/useChat";
+import { useI18n } from "@/contexts/I18nContext";
 
 interface ProductCardProps {
     product: SupplierProduct | FarmerProduct;
@@ -18,6 +19,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
     const { showOrderModal } = useProduct();
     const { handleUserClick, handleSendMessage } = useChat();
     const router = useRouter();
+    const { t } = useI18n();
 
     const isProductOwner = user?.id === product.owner?.id;
     const isAvailable = product.productStatus === 'IN_STOCK';
@@ -49,12 +51,12 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
     const handleNegotiate = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!user) {
-            notify.error("Please log in to negotiate", "Authentication Required");
+            notify.error(t('productCard.loginToNegotiate'), t('productCard.authRequired'));
             return;
         }
 
         if (!product.owner) {
-            notify.error("Unable to find producer information", "Unavailable");
+            notify.error(t('productCard.noProducerInfo'), t('productCard.unavailable'));
             return;
         }
 
@@ -68,18 +70,18 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
             };
 
             await handleSendMessage(
-                `Hi! I'm interested in your ${product.name}. Let's discuss a deal!`,
+                t('productCard.negotiateMessage').replace('{productName}', product.name),
                 MessageType.PRODUCT,
                 undefined,
                 productRef,
                 owner
             );
 
-            notify.success(`Redirecting to chat with ${owner.names}`, "Inquiry Sent");
+            notify.success(t('productCard.redirectingToChat').replace('{ownerName}', owner.names), t('productCard.inquirySent'));
             router.push(`/chat/${owner.id}`);
         } catch (error) {
             console.error('Failed to initiate negotiation:', error);
-            notify.error("Could not start conversation", "Error");
+            notify.error(t('productCard.couldNotStartChat'), t('productCard.error'));
         }
     };
 
@@ -109,7 +111,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                             isLowStock ? 'bg-warning/90 border-white/20' :
                                 'bg-destructive/90 border-white/20'
                     )}>
-                        {isAvailable ? 'In Stock' : isLowStock ? 'Low Stock' : 'Out of Stock'}
+                        {isAvailable ? t('productCard.inStock') : isLowStock ? t('productCard.lowStock') : t('productCard.outOfStock')}
                     </span>
                 </div>
 
@@ -153,7 +155,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                     <div className="flex items-center justify-between">
                         {/* Price */}
                         <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1  text-opacity-70">Unit Price</span>
+                            <span className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1  text-opacity-70">{t('productCard.unitPrice')}</span>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-xl font-black text-foreground">
                                     {Number(product.unitPrice).toLocaleString()}
@@ -170,7 +172,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                                     className="flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground h-11 px-5 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 group/btn"
                                 >
                                     <Edit className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform" />
-                                    <span className="text-[11px] font-black uppercase ">Edit</span>
+                                    <span className="text-[11px] font-black uppercase ">{t('productCard.edit')}</span>
                                 </button>
                             ) : (
                                 <>
@@ -178,7 +180,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                                         <button
                                             onClick={handleNegotiate}
                                             className="flex items-center justify-center bg-muted hover:bg-muted/80 text-foreground h-11 px-5 py-2 rounded-xl transition-all active:scale-95 border border-border/50"
-                                            title="Negotiate Price"
+                                            title={t('productCard.negotiatePrice')}
                                         >
                                             <MessageSquare className="w-4 h-4 text-primary" />
                                         </button>
@@ -188,7 +190,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                                         className="flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground h-11 px-5 py-2 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 group/btn"
                                     >
                                         <ShoppingCart className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform" />
-                                        <span className="text-[11px] font-black uppercase ">Buy</span>
+                                        <span className="text-[11px] font-black uppercase ">{t('productCard.buy')}</span>
                                     </button>
                                 </>
                             )}
