@@ -40,7 +40,10 @@ export default function OrderManagementDashboard({
   loading,
   orderType,
   title,
+  className,
   onViewOrder,
+  onAcceptOrder,
+  onRejectOrder,
   onUpdateStatus,
 }: OrderManagementDashboardProps) {
   const { t } = useI18n();
