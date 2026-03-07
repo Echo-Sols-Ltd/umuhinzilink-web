@@ -111,6 +111,27 @@
       "error": "Ohereza ifoto byanze. Ongera ugerageze."
     }
   },
+  "chat": {
+    "messages": "Ubutumwa",
+    "searchPlaceholder": "Shakisha inyigisho\u2026",
+    "noResults": "Nta bisubizo bibonetse",
+    "noConversations": "Nta nyigisho zirabaho",
+    "tryDifferentName": "Gerageza izina rindi",
+    "startChatting": "Tangira kuvugana",
+    "typing": "arandika\u2026",
+    "typingDots": "arandika...",
+    "sayHey": "Vuga Muraho \uD83D\uDC4B",
+    "online": "Kuri interineti",
+    "offline": "Nta interineti",
+    "loginRequired": "Injira konte mbere yo gukoresha ubutumwa.",
+    "noConversationSelected": "Nta nyigisho yahiswemo",
+    "chooseFromSidebar": "Hitamo umuntu uri ku ruhande kugira ngo utangire inyigisho",
+    "confirmDelete": "Ubu rumenya ko ushaka gusiba ubu butumwa?",
+    "replyingTo": "Gusubiza",
+    "messagePlaceholder": "Andika ubutumwa bwawe...",
+    "attachFile": "Ongeraho dosiye",
+    "addEmoji": "Ongeraho emoji"
+  },
   "sidebar": {
     "a11y": {
       "openNavigation": "Fungura menu"
@@ -771,6 +792,11 @@
     }
   },
   "supplier": {
+    "profile": {
+      "businessInfo": "Amakuru y'Ubucuruzi",
+      "businessName": "Izina ry'Ubucuruzi",
+      "businessType": "Ubwoko bw'Ubucuruzi"
+    },
     "dashboard": {
       "accessDenied": {
         "title": "Ntabwo byemewe",
@@ -1082,6 +1108,38 @@
   },
   "settings": {
     "title": "Igenamiterere",
+    "profileSettings": "Igenamiterere rya Profil",
+    "changePassword": "Hindura Ijambo Banga",
+    "currentPassword": "Ijambo Banga rya Ubu",
+    "newPassword": "Ijambo Banga Rishya",
+    "confirmNewPassword": "Emeza Ijambo Banga Rishya",
+    "updatePassword": "Vugurura Ijambo Banga",
+    "appearance": "Imiterere",
+    "darkMode": "Uburyo bw'Ijoro",
+    "toggleTheme": "Hindura itheme ryijoro/rya manywa",
+    "language": "Ururimi",
+    "chooseLanguage": "Hitamo ururimi ukunda",
+    "notifications": "Ibimenyetso by'Itumanaho",
+    "emailNotifications": {
+      "label": "Imenyesha kuri Email",
+      "description": "Amakuru y'itumizwa n'ibizamini"
+    },
+    "smsNotifications": {
+      "label": "Imenyesha kuri SMS",
+      "description": "Imenyesha y'ingenzi kuri SMS"
+    },
+    "orderUpdates": {
+      "label": "Amakuru y'Itumizwa",
+      "description": "Imiterere y'itumizwa igihe kizima"
+    },
+    "priceAlerts": {
+      "label": "Imenyesha y'Ibiciro",
+      "description": "Impinduka z'ibiciro by'ibicuruzwa"
+    },
+    "marketingEmails": {
+      "label": "Imeli ya Marekiteri",
+      "description": "Ibizamini n'amakuru mashya"
+    },
     "hub": {
       "title": "Igenamiterere",
       "description": "Gena igenamiterere rya konti n'ibyo ukunda",

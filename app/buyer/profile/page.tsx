@@ -163,7 +163,7 @@ function BuyerProfileComponent() {
               </div>
               <div>
                 <h1 className="text-2xl font-semibold text-foreground">
-                  {profile.firstName || 'User'} {profile.lastName}
+                  {profile.firstName || t('common.user')} {profile.lastName}
                 </h1>
                 <p className="text-muted-foreground">{t('sidebar.roles.buyer')}</p>
               </div>

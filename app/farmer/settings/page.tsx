@@ -68,7 +68,7 @@ function SettingsComponent() {
                   type="text"
                   defaultValue={user?.names}
                   className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-success/20 focus:border-success transition-all"
-                  placeholder="John Doe"
+                  placeholder={t('auth.placeholders.fullName')}
                 />
               </div>
 
@@ -78,7 +78,7 @@ function SettingsComponent() {
                   type="email"
                   defaultValue={user?.email}
                   className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-success/20 focus:border-success transition-all"
-                  placeholder="you@example.com"
+                  placeholder={t('auth.placeholders.email')}
                 />
               </div>
 
@@ -99,7 +99,7 @@ function SettingsComponent() {
                     type="text"
                     defaultValue={user?.address?.district}
                     className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-success/20 focus:border-success transition-all"
-                    placeholder="District"
+                    placeholder={t('profile.fields.district')}
                   />
                 </div>
 
@@ -108,7 +108,7 @@ function SettingsComponent() {
                   <input
                     type="text"
                     className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-success/20 focus:border-success transition-all"
-                    placeholder="Sector"
+                    placeholder={t('profile.fields.sector')}
                   />
                 </div>
               </div>
