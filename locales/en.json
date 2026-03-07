@@ -168,6 +168,35 @@
     "deleteProduct": "Delete product",
     "buyNow": "Buy Now"
   },
+  "enums": {
+    "categories": {
+      "FERTILIZER": "Fertilizer",
+      "SEEDS": "Seeds",
+      "PESTICIDE": "Pesticide",
+      "TOOLS": "Tools",
+      "IRRIGATION": "Irrigation",
+      "MACHINERY": "Machinery",
+      "POST_HARVEST": "Post Harvest",
+      "ANIMAL_HEALTH": "Animal Health",
+      "ANIMAL_FEED": "Animal Feed",
+      "SOIL_AMENDMENT": "Soil Amendment",
+      "ORGANIC_INPUT": "Organic Input",
+      "PACKAGING": "Packaging",
+      "GREENHOUSE": "Greenhouse",
+      "ACCESSORIES": "Accessories"
+    },
+    "units": {
+      "KG": "KG",
+      "G": "G",
+      "TON": "TON",
+      "LITER": "LITER",
+      "ML": "ML",
+      "BAG": "Bag",
+      "CRATE": "Crate",
+      "BUNDLE": "Bundle",
+      "PIECE": "Piece"
+    }
+  },
   "sidebar": {
     "a11y": {
       "openNavigation": "Open navigation"

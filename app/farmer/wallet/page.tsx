@@ -7,15 +7,17 @@ import { UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import { useWallet } from '@/contexts/WalletContext';
+import { useI18n } from '@/contexts/I18nContext';
 
 function WalletPage() {
     const { wallet, transactions, loading, handleDeposit } = useWallet();
+    const { t } = useI18n();
 
     return (
         <div className="flex h-screen bg-background">
             <Sidebar
                 userType={UserType.FARMER}
-                activeItem='Wallet'
+                activeItem={t('common.wallet')}
             />
 
             {/* Main Content */}

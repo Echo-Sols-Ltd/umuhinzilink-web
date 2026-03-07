@@ -130,11 +130,15 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                 {/* Category + Quantity */}
                 <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black text-muted-foreground uppercase ">
-                        {product.category?.replace(/_/g, ' ')}
+                        {t(`enums.categories.${product.category}`) === `enums.categories.${product.category}` 
+                            ? product.category?.replace(/_/g, ' ') 
+                            : t(`enums.categories.${product.category}`)}
                     </span>
                     <div className="flex items-center gap-1.5 px-2 py-0.5 bg-primary/5 rounded-full text-[10px] font-bold text-primary border border-primary/10">
                         <Package className="w-3 h-3" />
-                        {product.quantity} {product.measurementUnit}
+                        {product.quantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` 
+                            ? product.measurementUnit 
+                            : t(`enums.units.${product.measurementUnit}`)}
                     </div>
                 </div>
 

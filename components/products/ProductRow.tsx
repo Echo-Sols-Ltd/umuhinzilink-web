@@ -85,9 +85,9 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                 <div>
                     <div className="flex justify-between items-start">
                         <h3 className="font-semibold text-lg text-foreground">{product.name}</h3>
-                        <p className="text-green-600 font-semibold text-lg">{product.unitPrice} RWF / {product.measurementUnit}</p>
+                        <p className="text-green-600 font-semibold text-lg">{product.unitPrice} RWF / {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` ? product.measurementUnit : t(`enums.units.${product.measurementUnit}`)}</p>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{t('productRow.available')} {product.quantity} {product.measurementUnit}</p>
+                    <p className="text-sm text-gray-500 mt-1">{t('productRow.available')} {product.quantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` ? product.measurementUnit : t(`enums.units.${product.measurementUnit}`)}</p>
                     <div className="flex items-center text-sm text-gray-500 mt-1">
                         <UserIcon className="w-4 h-4 mr-1" /> {product.owner.names}
                         <span className="mx-2">•</span>

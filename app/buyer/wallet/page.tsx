@@ -7,6 +7,7 @@ import { BuyerPages, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import { useWallet } from '@/contexts/WalletContext';
+import { useI18n } from '@/contexts/I18nContext';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
@@ -17,6 +18,7 @@ const Logo = () => (
 
 function WalletPageComponent() {
   const { wallet, transactions, loading, handleDeposit } = useWallet();
+  const { t } = useI18n();
 
   const handleLogout = async () => {
     // Logout logic here
@@ -26,7 +28,7 @@ function WalletPageComponent() {
     <div className="flex h-screen bg-background">
       <Sidebar
         userType={UserType.BUYER}
-        activeItem='Wallet'
+        activeItem={t('common.wallet')}
       />
 
       {/* Main Content */}

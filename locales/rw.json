@@ -168,6 +168,35 @@
     "deleteProduct": "Siba igicuruzwa",
     "buyNow": "Gura ubu"
   },
+  "enums": {
+    "categories": {
+      "FERTILIZER": "Ifumbire",
+      "SEEDS": "Imbuto",
+      "PESTICIDE": "Imiti y'ubuhinzi",
+      "TOOLS": "Ibikoresho",
+      "IRRIGATION": "Kuhira",
+      "MACHINERY": "Imashini",
+      "POST_HARVEST": "Nyuma y'isarura",
+      "ANIMAL_HEALTH": "Ubuzima bw'amatungo",
+      "ANIMAL_FEED": "Ibiryo by'amatungo",
+      "SOIL_AMENDMENT": "Ifumbire y'ubutaka",
+      "ORGANIC_INPUT": "Ifumbire y'imborera",
+      "PACKAGING": "Ibipfunyika",
+      "GREENHOUSE": "Tente y'ubuhinzi",
+      "ACCESSORIES": "Ibikoresho byongeweho"
+    },
+    "units": {
+      "KG": "KG",
+      "G": "G",
+      "TON": "TON",
+      "LITER": "LITIRO",
+      "ML": "ML",
+      "BAG": "Umufuka",
+      "CRATE": "Kesi",
+      "BUNDLE": "Umuriro",
+      "PIECE": "Igice"
+    }
+  },
   "sidebar": {
     "a11y": {
       "openNavigation": "Fungura menu"
