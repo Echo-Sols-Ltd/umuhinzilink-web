@@ -1416,6 +1416,87 @@
         }
       }
     },
+    "delivery": {
+      "tracking": {
+        "title": "Delivery Tracking",
+        "noDeliveryInfo": "No delivery information available",
+        "currentStatus": "Current Status",
+        "updateTo": "Update to {{status}}",
+        "updateStatus": "Update Delivery Status",
+        "confirmUpdate": "Are you sure you want to update the delivery status to <strong>{{status}}</strong>?",
+        "confirmButton": "Confirm Update",
+        "cancelButton": "Cancel",
+        "updating": "Updating...",
+        "estimatedDelivery": "Estimated Delivery: {{date}}",
+        "deliveryTimeline": "Delivery Timeline",
+        "origin": "ORIGIN",
+        "destination": "DESTINATION",
+        "statusLabels": {
+          "pending": "Pending",
+          "preparing": "Preparing",
+          "inTransit": "In Transit",
+          "delivered": "Delivered",
+          "failed": "Failed"
+        },
+        "steps": {
+          "orderReceived": {
+            "label": "Order Received",
+            "description": "Order has been received and is being processed"
+          },
+          "preparingOrder": {
+            "label": "Preparing Order",
+            "description": "Order is being prepared for delivery"
+          },
+          "inTransit": {
+            "label": "In Transit",
+            "description": "Order is on the way to delivery location"
+          },
+          "delivered": {
+            "label": "Delivered",
+            "description": "Order has been successfully delivered"
+          }
+        },
+        "completed": "Completed: {{date}}",
+        "pendingDate": "Pending Date"
+      }
+    },
+    "orderStatus": {
+      "tracker": {
+        "orderPlaced": {
+          "label": "Order Placed",
+          "description": "Your order has been received"
+        },
+        "paymentPending": {
+          "label": "Payment Pending",
+          "description": "Waiting for payment via wallet"
+        },
+        "orderConfirmed": {
+          "label": "Order Confirmed",
+          "description": "Seller has confirmed your order"
+        },
+        "processing": {
+          "label": "Processing",
+          "description": "Your order is being prepared"
+        },
+        "shipped": {
+          "label": "Shipped",
+          "description": "Your order is on the way"
+        },
+        "delivered": {
+          "label": "Delivered",
+          "description": "Your order has been delivered"
+        },
+        "completed": {
+          "label": "Completed",
+          "description": "Your order has been completed"
+        },
+        "cancelled": {
+          "label": "Order Cancelled",
+          "description": "This order has been cancelled"
+        },
+        "currentStatus": "Current Status: {{status}}"
+      }
+    },
     "localization": {
       "pageTitle": "Language & Region",
       "pageDescription": "Adjust platform language and regional preferences",

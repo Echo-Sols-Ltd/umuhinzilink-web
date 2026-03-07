@@ -4,6 +4,7 @@ import React from 'react';
 import { CheckCircle, Clock, Truck, Package, XCircle, AlertCircle, DollarSign } from 'lucide-react';
 import { OrderStatus, DeliveryStatus } from '@/types';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface OrderStatusTrackerProps {
   orderStatus: OrderStatus;
@@ -22,12 +23,13 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
   deliveryDate,
   className,
 }) => {
+  const { t } = useI18n();
   const getStatusSteps = () => {
     const baseSteps = [
       {
         id: 'pending',
-        label: 'Order Placed',
-        description: 'Your order has been received',
+        labelKey: 'orderStatus.tracker.orderPlaced.label',
+        descriptionKey: 'orderStatus.tracker.orderPlaced.description',
         icon: Clock,
         status: 'completed' as const,
         timestamp: createdAt,
@@ -39,8 +41,8 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
         ...baseSteps,
         {
           id: 'cancelled',
-          label: 'Order Cancelled',
-          description: 'This order has been cancelled',
+          labelKey: 'orderStatus.tracker.cancelled.label',
+          descriptionKey: 'orderStatus.tracker.cancelled.description',
           icon: XCircle,
           status: 'error' as const,
           timestamp: updatedAt,
@@ -55,16 +57,16 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       ...baseSteps,
       {
         id: 'payment',
-        label: 'Payment Pending',
-        description: 'Waiting for payment via wallet',
+        labelKey: 'orderStatus.tracker.paymentPending.label',
+        descriptionKey: 'orderStatus.tracker.paymentPending.description',
         icon: DollarSign,
         status: isBeyondPayment ? 'completed' : isPaymentActive ? 'active' : 'pending' as const,
         timestamp: isBeyondPayment ? updatedAt : undefined,
       },
       {
         id: 'confirmed',
-        label: 'Order Confirmed',
-        description: 'Seller has confirmed your order',
+        labelKey: 'orderStatus.tracker.orderConfirmed.label',
+        descriptionKey: 'orderStatus.tracker.orderConfirmed.description',
         icon: CheckCircle,
         status: orderStatus === OrderStatus.ACTIVE || orderStatus === OrderStatus.COMPLETED ? 'completed' : 'pending' as const,
         timestamp: orderStatus === OrderStatus.ACTIVE || orderStatus === OrderStatus.COMPLETED ? updatedAt : undefined,
@@ -76,8 +78,8 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       const deliverySteps = [
         {
           id: 'processing',
-          label: 'Processing',
-          description: 'Your order is being prepared',
+          labelKey: 'orderStatus.tracker.processing.label',
+          descriptionKey: 'orderStatus.tracker.processing.description',
           icon: Package,
           status: [DeliveryStatus.SCHEDULED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' :
             deliveryStatus === DeliveryStatus.PENDING ? 'active' : 'pending' as const,
@@ -85,8 +87,8 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
         },
         {
           id: 'shipped',
-          label: 'Shipped',
-          description: 'Your order is on the way',
+          labelKey: 'orderStatus.tracker.shipped.label',
+          descriptionKey: 'orderStatus.tracker.shipped.description',
           icon: Truck,
           status: [DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' :
             deliveryStatus === DeliveryStatus.SCHEDULED ? 'active' : 'pending' as const,
@@ -94,8 +96,8 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
         },
         {
           id: 'delivered',
-          label: 'Delivered',
-          description: 'Your order has been delivered',
+          labelKey: 'orderStatus.tracker.delivered.label',
+          descriptionKey: 'orderStatus.tracker.delivered.description',
           icon: CheckCircle,
           status: deliveryStatus === DeliveryStatus.DELIVERED ? 'completed' :
             deliveryStatus === DeliveryStatus.FAILED ? 'error' : 'pending' as const,
@@ -110,8 +112,8 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
     if (orderStatus === OrderStatus.COMPLETED) {
       activeSteps.push({
         id: 'completed',
-        label: 'Completed',
-        description: 'Your order has been completed',
+        labelKey: 'orderStatus.tracker.completed.label',
+        descriptionKey: 'orderStatus.tracker.completed.description',
         icon: CheckCircle,
         status: 'completed' as const,
         timestamp: updatedAt,
@@ -195,9 +197,9 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
                           step.status === 'active' ? 'text-info' :
                             step.status === 'error' ? 'text-destructive' : 'text-muted-foreground'
                       )}>
-                        {step.label}
+                        {t(step.labelKey)}
                       </p>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
+                      <p className="text-sm text-muted-foreground">{t(step.descriptionKey)}</p>
                     </div>
                     {step.timestamp && (
                       <div className="whitespace-nowrap text-right text-sm text-muted-foreground">
@@ -224,7 +226,7 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
                 orderStatus === OrderStatus.CANCELLED ? 'bg-destructive' : 'bg-warning'
           )} />
           <span className="text-sm font-medium text-foreground">
-            Current Status: {orderStatus.replace('_', ' ')}
+            {t('orderStatus.tracker.currentStatus', { status: orderStatus.replace('_', ' ') })}
           </span>
         </div>
         {deliveryStatus && (
@@ -243,7 +245,7 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
           <div className="flex items-center space-x-2">
             <AlertCircle className="w-4 h-4 text-info" />
             <span className="text-sm font-medium text-foreground">
-              Estimated Delivery: {formatTimestamp(deliveryDate)}
+              {t('delivery.tracking.estimatedDelivery', { date: formatTimestamp(deliveryDate) })}
             </span>
           </div>
         </div>

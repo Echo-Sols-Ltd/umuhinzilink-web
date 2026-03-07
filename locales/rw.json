@@ -1416,6 +1416,87 @@
         }
       }
     },
+    "delivery": {
+      "tracking": {
+        "title": "Kurikirana Icyakwirwa",
+        "noDeliveryInfo": "Nta makuru yo kwakira aboneka",
+        "currentStatus": "Imiterere y'ikigereranyo",
+        "updateTo": "Hindura ugereke kuri {{status}}",
+        "updateStatus": "Hindura imiterere yo kwakira",
+        "confirmUpdate": "Wizeye neza ko ushaka guhindura imiterere yo kwakira igera kuri <strong>{{status}}</strong>?",
+        "confirmButton": "Emeza guhindura",
+        "cancelButton": "Siba",
+        "updating": "Irimo guhindurwa...",
+        "estimatedDelivery": "Itariki y'ibyo bizagezwa: {{date}}",
+        "deliveryTimeline": "Urutonde rw'igihe cyo kwakira",
+        "origin": "AHO BIVUKIRA",
+        "destination": "AHO BIGEZWA",
+        "statusLabels": {
+          "pending": "Bitegereje",
+          "preparing": "Biri gutegurwa",
+          "inTransit": "Birimo gutwara",
+          "delivered": "Byatanzwe",
+          "failed": "Byanze"
+        },
+        "steps": {
+          "orderReceived": {
+            "label": "Ibyatumijwe byakiriwe",
+            "description": "Ibyatumijwe byakiriwe kandi birimo gutunganywa"
+          },
+          "preparingOrder": {
+            "label": "Ibyatumijwe biritegurwa",
+            "description": "Ibyatumijwe biritegurwa kugira ngo biherere kuri we"
+          },
+          "inTransit": {
+            "label": "Birimo gutwara",
+            "description": "Ibyatumijwe birimo gutwara kugera ku kibanza cyo kwakira"
+          },
+          "delivered": {
+            "label": "Byatanzwe",
+            "description": "Ibyatumijwe byatanzwe neza"
+          }
+        },
+        "completed": "Byarangiye: {{date}}",
+        "pendingDate": "Itariki itegeje"
+      }
+    },
+    "orderStatus": {
+      "tracker": {
+        "orderPlaced": {
+          "label": "Igitumizwa cyashyizweho",
+          "description": "Igitumizwa cyawe cyakiriwe"
+        },
+        "paymentPending": {
+          "label": "Kwishyura bitegereje",
+          "description": "Tegereza kwishyura ukoresheje wallet"
+        },
+        "orderConfirmed": {
+          "label": "Igitumizwa cyemewe",
+          "description": "Umucuruzi yemeje igitekerezo cyawe"
+        },
+        "processing": {
+          "label": "Biri gutunganywa",
+          "description": "Igitumizwa cyawe kiritegurwa"
+        },
+        "shipped": {
+          "label": "Byoherejwe",
+          "description": "Igitumizwa cyawe kirimo gutwara"
+        },
+        "delivered": {
+          "label": "Byatanzwe",
+          "description": "Igitumizwa cyawe cyatanzwe"
+        },
+        "completed": {
+          "label": "Byarangiye",
+          "description": "Igitumizwa cyawe cyarangiye"
+        },
+        "cancelled": {
+          "label": "Igitumizwa cyahagaritswe",
+          "description": "Iki gitumizwa cyahagaritswe"
+        },
+        "currentStatus": "Imiterere y'ikigereranyo: {{status}}"
+      }
+    },
     "localization": {
       "pageTitle": "Ururimi n'Akarere",
       "pageDescription": "Hindura ururimi n'igenamiterere ry'akarere",
