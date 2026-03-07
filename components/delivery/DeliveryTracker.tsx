@@ -58,6 +58,8 @@ const DELIVERY_STATUS_LABELS: Record<DeliveryStatus, string> = {
   [DeliveryStatus.FAILED]: 'delivery.tracking.statusLabels.failed'
 };
 
+
+
 const DELIVERY_STATUS_COLORS: Record<DeliveryStatus, string> = {
   [DeliveryStatus.PENDING]: 'bg-muted text-muted-foreground',
   [DeliveryStatus.SCHEDULED]: 'bg-info/10 text-info',
@@ -78,6 +80,19 @@ export default function DeliveryTracker({
   const [selectedStatus, setSelectedStatus] = useState<DeliveryStatus | null>(null);
   const { user } = useAuth();
   const { t } = useI18n();
+
+  const getStatusLabel = (status: DeliveryStatus) => {
+    const key = DELIVERY_STATUS_LABELS[status];
+    return t(key);
+  };
+
+  const getStepLabel = (step: typeof DELIVERY_STEPS[0]) => {
+    return t(step.labelKey);
+  };
+
+  const getStepDescription = (step: typeof DELIVERY_STEPS[0]) => {
+    return t(step.descriptionKey);
+  };
 
   // Only order owners can update delivery status
   // - Farmers can update their supplier orders (orders they placed)
@@ -146,7 +161,7 @@ export default function DeliveryTracker({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${DELIVERY_STATUS_COLORS[currentStatus as DeliveryStatus]}`}>
-            {t(DELIVERY_STATUS_LABELS[currentStatus as DeliveryStatus])}
+            {getStatusLabel(currentStatus)}
           </span>
           <div className="flex items-center text-sm text-muted-foreground font-medium">
             <Calendar className="w-4 h-4 mr-1 text-muted-foreground" />
@@ -236,7 +251,7 @@ export default function DeliveryTracker({
                   <div className="flex items-center space-x-2">
                     <h3 className={`font-medium ${isCompleted ? 'text-success' : isCurrent ? 'text-foreground' : 'text-muted-foreground'
                       }`}>
-                      {t(step.labelKey)}
+                      {getStepLabel(step)}
                     </h3>
                     {isCompleted && (
                       <Check className="w-4 h-4 text-success" />
@@ -247,7 +262,7 @@ export default function DeliveryTracker({
                   </div>
                   <p className={`text-sm mt-1 ${isCompleted ? 'text-success' : isCurrent ? 'text-muted-foreground' : 'text-muted-foreground'
                     }`}>
-                    {t(step.descriptionKey)}
+                    {getStepDescription(step)}
                   </p>
 
                   {/* Show timestamp for completed steps */}
@@ -275,7 +290,7 @@ export default function DeliveryTracker({
                     }`}></div>
                   <span className={`${step.completed ? 'text-success font-medium' : 'text-muted-foreground'
                     }`}>
-                    {t(DELIVERY_STATUS_LABELS[step.status])}
+                    {getStatusLabel(step.status)}
                   </span>
                 </div>
                 <span className={`${step.completed ? 'text-success' : 'text-muted-foreground'
@@ -296,7 +311,7 @@ export default function DeliveryTracker({
               {t('delivery.tracking.updateStatus')}
             </h3>
             <p className="text-muted-foreground mb-6">
-              {t('delivery.tracking.confirmUpdate', { status: t(DELIVERY_STATUS_LABELS[selectedStatus]) })}
+              {t('delivery.tracking.confirmUpdate', { status: getStatusLabel(selectedStatus) })}
             </p>
             <div className="flex space-x-3">
               <button

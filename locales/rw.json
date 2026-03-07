@@ -1026,6 +1026,50 @@
       }
     }
   },
+  "delivery": {
+    "tracking": {
+      "title": "Kurikirana Icyakwirwa",
+      "noDeliveryInfo": "Nta makuru yo kwakira aboneka",
+      "currentStatus": "Imiterere y'ikigereranyo",
+      "updateTo": "Hindura ugereke kuri {{status}}",
+      "updateStatus": "Hindura imiterere yo kwakira",
+      "confirmUpdate": "Wizeye neza ko ushaka guhindura imiterere yo kwakira igera kuri <strong>{{status}}</strong>?",
+      "confirmButton": "Emeza guhindura",
+      "cancelButton": "Siba",
+      "updating": "Irimo guhindurwa...",
+      "estimatedDelivery": "Itariki y'ibyo bizagezwa: {{date}}",
+      "deliveryTimeline": "Urutonde rw'igihe cyo kwakira",
+      "origin": "AHO BIVUKIRA",
+      "destination": "AHO BIGEZWA",
+      "statusLabels": {
+        "pending": "Bitegereje",
+        "preparing": "Biri gutegurwa",
+        "inTransit": "Birimo gutwara",
+        "delivered": "Byatanzwe",
+        "failed": "Byanze"
+      },
+      "steps": {
+        "orderReceived": {
+          "label": "Ibyatumijwe byakiriwe",
+          "description": "Ibyatumijwe byakiriwe kandi birimo gutunganywa"
+        },
+        "preparingOrder": {
+          "label": "Ibyatumijwe biritegurwa",
+          "description": "Ibyatumijwe biritegurwa kugira ngo biherere kuri we"
+        },
+        "inTransit": {
+          "label": "Birimo gutwara",
+          "description": "Ibyatumijwe birimo gutwara kugera ku kibanza cyo kwakira"
+        },
+        "delivered": {
+          "label": "Byatanzwe",
+          "description": "Ibyatumijwe byatanzwe neza"
+        }
+      },
+      "completed": "Byarangiye: {{date}}",
+      "pendingDate": "Itariki itegeje"
+    }
+  },
   "government": {
     "dashboard": {
       "accessDenied": {
@@ -1416,50 +1460,6 @@
         }
       }
     },
-    "delivery": {
-      "tracking": {
-        "title": "Kurikirana Icyakwirwa",
-        "noDeliveryInfo": "Nta makuru yo kwakira aboneka",
-        "currentStatus": "Imiterere y'ikigereranyo",
-        "updateTo": "Hindura ugereke kuri {{status}}",
-        "updateStatus": "Hindura imiterere yo kwakira",
-        "confirmUpdate": "Wizeye neza ko ushaka guhindura imiterere yo kwakira igera kuri <strong>{{status}}</strong>?",
-        "confirmButton": "Emeza guhindura",
-        "cancelButton": "Siba",
-        "updating": "Irimo guhindurwa...",
-        "estimatedDelivery": "Itariki y'ibyo bizagezwa: {{date}}",
-        "deliveryTimeline": "Urutonde rw'igihe cyo kwakira",
-        "origin": "AHO BIVUKIRA",
-        "destination": "AHO BIGEZWA",
-        "statusLabels": {
-          "pending": "Bitegereje",
-          "preparing": "Biri gutegurwa",
-          "inTransit": "Birimo gutwara",
-          "delivered": "Byatanzwe",
-          "failed": "Byanze"
-        },
-        "steps": {
-          "orderReceived": {
-            "label": "Ibyatumijwe byakiriwe",
-            "description": "Ibyatumijwe byakiriwe kandi birimo gutunganywa"
-          },
-          "preparingOrder": {
-            "label": "Ibyatumijwe biritegurwa",
-            "description": "Ibyatumijwe biritegurwa kugira ngo biherere kuri we"
-          },
-          "inTransit": {
-            "label": "Birimo gutwara",
-            "description": "Ibyatumijwe birimo gutwara kugera ku kibanza cyo kwakira"
-          },
-          "delivered": {
-            "label": "Byatanzwe",
-            "description": "Ibyatumijwe byatanzwe neza"
-          }
-        },
-        "completed": "Byarangiye: {{date}}",
-        "pendingDate": "Itariki itegeje"
-      }
-    },
     "orderStatus": {
       "tracker": {
         "orderPlaced": {
@@ -1495,6 +1495,24 @@
           "description": "Iki gitumizwa cyahagaritswe"
         },
         "currentStatus": "Imiterere y'ikigereranyo: {{status}}"
+      }
+    },
+    "orderManagement": {
+      "dashboard": {
+        "searchPlaceholder": "Shakisha ibitumwa...",
+        "filters": "Muyunguruzo",
+        "export": "Kohereza hanze",
+        "status": "Imiterere",
+        "sortBy": "Gura nkurikije",
+        "allOrders": "Ibitumwa byose",
+        "pending": "Bitegereje",
+        "active": "Biri gukora",
+        "completed": "Byarangiye",
+        "cancelled": "Byakuweho",
+        "newestFirst": "Ibya vuba mbere",
+        "oldestFirst": "Ibya kera mbere",
+        "highestAmount": "Amafaranga menshi",
+        "lowestAmount": "Amafaranga make"
       }
     },
     "localization": {

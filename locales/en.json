@@ -1026,6 +1026,50 @@
       }
     }
   },
+  "delivery": {
+    "tracking": {
+      "title": "Delivery Tracking",
+      "noDeliveryInfo": "No delivery information available",
+      "currentStatus": "Current Status",
+      "updateTo": "Update to {{status}}",
+      "updateStatus": "Update Delivery Status",
+      "confirmUpdate": "Are you sure you want to update the delivery status to <strong>{{status}}</strong>?",
+      "confirmButton": "Confirm Update",
+      "cancelButton": "Cancel",
+      "updating": "Updating...",
+      "estimatedDelivery": "Estimated Delivery: {{date}}",
+      "deliveryTimeline": "Delivery Timeline",
+      "origin": "ORIGIN",
+      "destination": "DESTINATION",
+      "statusLabels": {
+        "pending": "Pending",
+        "preparing": "Preparing",
+        "inTransit": "In Transit",
+        "delivered": "Delivered",
+        "failed": "Failed"
+      },
+      "steps": {
+        "orderReceived": {
+          "label": "Order Received",
+          "description": "Order has been received and is being processed"
+        },
+        "preparingOrder": {
+          "label": "Preparing Order",
+          "description": "Order is being prepared for delivery"
+        },
+        "inTransit": {
+          "label": "In Transit",
+          "description": "Order is on the way to delivery location"
+        },
+        "delivered": {
+          "label": "Delivered",
+          "description": "Order has been successfully delivered"
+        }
+      },
+      "completed": "Completed: {{date}}",
+      "pendingDate": "Pending Date"
+    }
+  },
   "government": {
     "dashboard": {
       "accessDenied": {
@@ -1258,26 +1302,26 @@
       "noSmartphone": "No smartphone? No problem! Access via SMS in Kinyarwanda"
     },
     "contact": {
-    "title": "Contact Us",
-    "getInTouch": "Get in Touch",
-    "description": "Have questions or need help? You can reach us through any of the following methods:",
-    "email": "Email",
-    "phone": "Phone",
-    "location": "Location",
-    "sendMessage": "Send us a Message",
-    "yourName": "Your Name",
-    "yourEmail": "Your Email",
-    "subject": "Subject",
-    "message": "Message",
-    "sendAction": "Send Message",
-    "placeholders": {
-      "name": "John Doe",
-      "email": "you@example.com",
-      "subject": "Subject here",
-      "message": "Write your message..."
-    }
-  },
-  "footer": {
+      "title": "Contact Us",
+      "getInTouch": "Get in Touch",
+      "description": "Have questions or need help? You can reach us through any of the following methods:",
+      "email": "Email",
+      "phone": "Phone",
+      "location": "Location",
+      "sendMessage": "Send us a Message",
+      "yourName": "Your Name",
+      "yourEmail": "Your Email",
+      "subject": "Subject",
+      "message": "Message",
+      "sendAction": "Send Message",
+      "placeholders": {
+        "name": "John Doe",
+        "email": "you@example.com",
+        "subject": "Subject here",
+        "message": "Write your message..."
+      }
+    },
+    "footer": {
       "description": "Empowering Rwandan farmers through digital agriculture and AI-powered solutions.",
       "about": {
         "title": "About",
@@ -1416,50 +1460,6 @@
         }
       }
     },
-    "delivery": {
-      "tracking": {
-        "title": "Delivery Tracking",
-        "noDeliveryInfo": "No delivery information available",
-        "currentStatus": "Current Status",
-        "updateTo": "Update to {{status}}",
-        "updateStatus": "Update Delivery Status",
-        "confirmUpdate": "Are you sure you want to update the delivery status to <strong>{{status}}</strong>?",
-        "confirmButton": "Confirm Update",
-        "cancelButton": "Cancel",
-        "updating": "Updating...",
-        "estimatedDelivery": "Estimated Delivery: {{date}}",
-        "deliveryTimeline": "Delivery Timeline",
-        "origin": "ORIGIN",
-        "destination": "DESTINATION",
-        "statusLabels": {
-          "pending": "Pending",
-          "preparing": "Preparing",
-          "inTransit": "In Transit",
-          "delivered": "Delivered",
-          "failed": "Failed"
-        },
-        "steps": {
-          "orderReceived": {
-            "label": "Order Received",
-            "description": "Order has been received and is being processed"
-          },
-          "preparingOrder": {
-            "label": "Preparing Order",
-            "description": "Order is being prepared for delivery"
-          },
-          "inTransit": {
-            "label": "In Transit",
-            "description": "Order is on the way to delivery location"
-          },
-          "delivered": {
-            "label": "Delivered",
-            "description": "Order has been successfully delivered"
-          }
-        },
-        "completed": "Completed: {{date}}",
-        "pendingDate": "Pending Date"
-      }
-    },
     "orderStatus": {
       "tracker": {
         "orderPlaced": {
@@ -1495,6 +1495,24 @@
           "description": "This order has been cancelled"
         },
         "currentStatus": "Current Status: {{status}}"
+      }
+    },
+    "orderManagement": {
+      "dashboard": {
+        "searchPlaceholder": "Search orders...",
+        "filters": "Filters",
+        "export": "Export",
+        "status": "Status",
+        "sortBy": "Sort By",
+        "allOrders": "All Orders",
+        "pending": "Pending",
+        "active": "Active",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "newestFirst": "Newest First",
+        "oldestFirst": "Oldest First",
+        "highestAmount": "Highest Amount",
+        "lowestAmount": "Lowest Amount"
       }
     },
     "localization": {
