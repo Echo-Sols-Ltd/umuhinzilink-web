@@ -1,17 +1,20 @@
 'use client';
 
+import { useI18n } from '@/contexts/I18nContext';
+
 export default function CallToAction() {
+  const { t } = useI18n();
   const buttons = [
-    { text: 'Get Started - Farmers', color: 'bg-card text-success', icon: UsersIcon },
-    { text: 'Join as Business', color: 'bg-card text-success', icon: BriefcaseIcon },
-    { text: 'SMS: *123*456#', color: 'bg-card text-success', icon: MessageSquareIcon },
+    { textKey: 'landing.cta.buttons.farmers', color: 'bg-card text-success', icon: UsersIcon },
+    { textKey: 'landing.cta.buttons.business', color: 'bg-card text-success', icon: BriefcaseIcon },
+    { textKey: 'landing.cta.buttons.sms', color: 'bg-card text-success', icon: MessageSquareIcon },
   ];
 
   return (
     <section className="bg-background py-20 text-foreground text-center">
-      <h2 className="text-2xl font-semibold">Ready to Transform Your Farming?</h2>
+      <h2 className="text-2xl font-semibold">{t('landing.cta.title')}</h2>
       <p className="mt-2">
-        Join thousands of farmers already using UmuhinziLink to grow their business
+        {t('landing.cta.subtitle')}
       </p>
 
       <div className="flex flex-wrap justify-center gap-4 mt-6">
@@ -21,11 +24,11 @@ export default function CallToAction() {
             className={`flex items-center gap-2 px-5 py-2 rounded-lg shadow cursor-pointer ${btn.color}`}
           >
             <btn.icon className="w-5 h-5" />
-            {btn.text}
+            {t(btn.textKey)}
           </button>
         ))}
       </div>
-      <p className="text-sm mt-2">No smartphone? No problem! Access via SMS in Kinyarwanda</p>
+      <p className="text-sm mt-2">{t('landing.cta.noSmartphone')}</p>
     </section>
   );
 }

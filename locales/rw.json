@@ -1,0 +1,690 @@
+{
+  "app": {
+    "name": "UmuhinziLink",
+    "description": "UmuhinziLink ni urubuga rufasha abahinzi kugurisha umusaruro wabo ku baguzi."
+  },
+  "common": {
+    "back": "Subira inyuma",
+    "backToSettings": "Subira ku igenamiterere",
+    "goBack": "Subira inyuma",
+    "user": "Ukoresha konti",
+    "success": "Byagenze neza",
+    "warning": "Iburira",
+    "information": "Amakuru",
+    "processing": "Birimo gutunganywa...",
+    "save": "Bika",
+    "saveChanges": "Bika impinduka",
+    "saving": "Birimo kubikwa...",
+    "saved": "Byabitswe!",
+    "error": "Ikosa",
+    "preview": "Igaragaza ry'ibanze",
+    "or": "CYANGWA",
+    "continue": "Komeza",
+    "resend": "Ohereza nanone",
+    "footerCopyright": "© Dreamize 2025"
+  },
+  "errors": {
+    "unknown": "Habaye ikibazo kitazwi. Ongera ugerageze nyuma.",
+    "emptyResponse": "Nta gisubizo cyabonetse kuri seriveri."
+  },
+  "orders": {
+    "created": {
+      "success": "Igitumizwa cyakozwe neza. Gutangiza kwishyura...",
+      "error": "Ntibishoboye gukora igitumizwa."
+    },
+    "statusUpdated": {
+      "success": "Uko igitumizwa gihagaze byavuguruwe neza.",
+      "error": "Ntibishoboye kuvugurura uko igitumizwa gihagaze."
+    },
+    "accepted": {
+      "success": "Igitumizwa cyemewe.",
+      "error": "Ntibishoboye kwemera igitumizwa."
+    },
+    "cancelled": {
+      "success": "Igitumizwa cyahagaritswe.",
+      "error": "Ntibishoboye guhagarika igitumizwa."
+    },
+    "rejected": {
+      "success": "Igitumizwa cyanzwe.",
+      "error": "Ntibishoboye kwanga igitumizwa."
+    },
+    "payment": {
+      "loading": "Birimo kwishyura ukoresheje wallet yawe...",
+      "error": "Habaye ikibazo mu kwishyura."
+    }
+  },
+  "products": {
+    "created": {
+      "success": "Igicuruzwa cyakozwe neza.",
+      "error": "Ntibishoboye gukora igicuruzwa."
+    },
+    "updated": {
+      "success": "Igicuruzwa cyavuguruwe neza.",
+      "error": "Ntibishoboye kuvugurura igicuruzwa."
+    },
+    "deleted": {
+      "success": "Igicuruzwa cyasibwe.",
+      "error": "Ntibishoboye gusiba igicuruzwa."
+    }
+  },
+  "profile": {
+    "updated": {
+      "success": "Umwirondoro wavuguruwe neza.",
+      "error": "Ntibishoboye kuvugurura umwirondoro."
+    }
+  },
+  "sidebar": {
+    "a11y": {
+      "openNavigation": "Fungura menu"
+    },
+    "brand": {
+      "logoAlt": "Ikirangantego"
+    },
+    "groups": {
+      "overview": "Incamake",
+      "communication": "Itumanaho",
+      "account": "Konti",
+      "operations": "Ibikorwa",
+      "administration": "Ubuyobozi",
+      "monitoring": "Gukurikirana"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "myProducts": "Ibicuruzwa byanjye",
+      "supplyMarket": "Isoko ry'inyongeramusaruro",
+      "customerOrders": "Ibyatumijwe n'abakiriya",
+      "supplyOrders": "Ibyatumijwe ku bagabuzi",
+      "marketIntelligence": "Amakuru y'isoko",
+      "advisoryInsights": "Inama z'ubuhinzi",
+      "messages": "Ubutumwa",
+      "notifications": "Amatangazo",
+      "alerts": "Amaburira",
+      "wallet": "Wallet",
+      "profile": "Umwirondoro",
+      "settings": "Igenamiterere",
+      "marketplace": "Isoko",
+      "myOrders": "Ibyanjye natumije",
+      "favorites": "Ibyakunzwe",
+      "farmerOrders": "Ibyatumijwe n'abahinzi",
+      "userManagement": "Gucunga abakoresha",
+      "orderManagement": "Gucunga ibitumwa",
+      "productManagement": "Gucunga ibicuruzwa",
+      "platformAnalytics": "Isesengura ry'urubuga",
+      "systemReports": "Raporo za sisitemu",
+      "securityCenter": "Ikigo cy'umutekano",
+      "walletManagement": "Gucunga wallet",
+      "overview": "Incamake",
+      "farmerOutput": "Umusaruro w'abahinzi",
+      "inputSupplyMonitoring": "Gukurikirana itangwa ry'inyongeramusaruro",
+      "home": "Ahabanza"
+    },
+    "roles": {
+      "farmer": "Umuhinzi",
+      "buyer": "Umuguzi",
+      "supplier": "Umugabuzi",
+      "administrator": "Umuyobozi",
+      "governmentOfficial": "Uhagarariye leta"
+    },
+    "user": {
+      "avatarAlt": "Ifoto"
+    },
+    "actions": {
+      "settings": "Igenamiterere",
+      "signOut": "Sohoka"
+    }
+  },
+  "auth": {
+    "login": {
+      "success": "Winjiye neza.",
+      "error": "Ntibishoboye kwinjira."
+    },
+    "register": {
+      "success": "Wiyandikishije neza.",
+      "error": "Ntibishoboye kwiyandikisha."
+    },
+    "fields": {
+      "fullName": "Amazina yuzuye",
+      "email": "Imeri",
+      "emailAddress": "Aderesi ya imeri",
+      "phoneNumber": "Nimero ya telefone",
+      "accountType": "Ubwoko bwa konti",
+      "password": "Ijambo banga"
+    },
+    "placeholders": {
+      "fullName": "John Doe",
+      "email": "you@example.com",
+      "enterYourEmail": "Andika imeri yawe",
+      "phoneNumber": "+250 7...",
+      "passwordDots": "••••••••"
+    },
+    "accountTypes": {
+      "farmer": "Umuhinzi",
+      "supplier": "Umugabuzi",
+      "buyer": "Umuguzi"
+    },
+    "validation": {
+      "fixErrorsBelow": "Kosora amakosa ari hepfo",
+      "emailRequired": "Imeri irakenewe",
+      "invalidEmail": "Imeri si yo",
+      "invalidEmailAddress": "Aderesi ya imeri si yo",
+      "passwordRequired": "Ijambo banga rirakenewe",
+      "minimumCharacters": "Nibura inyuguti {{count}}",
+      "fullNameRequired": "Amazina yuzuye arakenewe",
+      "nameMinCharacters": "Izina rigomba kuba nibura inyuguti {{count}}",
+      "phoneNumberRequired": "Nimero ya telefone irakenewe",
+      "minimumDigits": "Nibura imibare {{count}}",
+      "mustContainUppercase": "Igomba kuba harimo inyuguti nkuru",
+      "mustContainNumber": "Igomba kuba harimo umubare",
+      "mustContainSpecialChar": "Igomba kuba harimo ikimenyetso cyihariye",
+      "mustAgreeToTerms": "Ugomba kwemera amabwiriza"
+    },
+    "signIn": {
+      "title": "Murakaza neza",
+      "subtitle": "Injira muri konti yawe",
+      "rememberMe": "Nyibuka",
+      "forgot": "Wibagiwe?",
+      "signingIn": "Birimo kwinjira…",
+      "signIn": "Injira",
+      "noAccount": "Nta konti ufite?",
+      "signUp": "Iyandikishe",
+      "heroTitle": "Murakaza neza!",
+      "heroSubtitle": {
+        "line1": "Injira kugira ngo ubone konti yawe kandi ukomeze urugendo rwawe",
+        "line2": "hamwe na UmuhinziLink"
+      },
+      "toast": {
+        "loggedOut": {
+          "title": "Wasohotse",
+          "body": "Wasohotse muri konti neza."
+        },
+        "registered": {
+          "title": "Konti yakozwe",
+          "body": "Kwiyandikisha byagenze neza. Injira kugirango ukomeze."
+        }
+      }
+    },
+    "signUp": {
+      "title": "Kora konti",
+      "subtitle": "Iyandikishe ukoresheje imbuga nkoranyambaga cyangwa ifishi",
+      "agreeToTerms": "Nemeye amabwiriza n'ibisabwa",
+      "creatingAccount": "Birimo gukora konti…",
+      "signUp": "Iyandikishe",
+      "alreadyHaveAccount": "Usanzwe ufite konti?",
+      "signIn": "Injira",
+      "heroTitle": "Murakaza neza!",
+      "heroSubtitle": {
+        "line1": "Koresha iyi fishi kugirango winjire cyangwa ukore konti nshya",
+        "line2": "mu mushinga wawe ku buntu"
+      }
+    },
+    "forgotPassword": {
+      "title": "Wibagiwe ijambo banga?",
+      "description": "Andika imeri yawe hanyuma tukoherereze kode y'imibare 6 yo gusubiramo ijambo banga.",
+      "backToSignIn": "Subira ku kwinjira",
+      "sending": "Birimo koherezwa...",
+      "sendResetCode": "Ohereza kode yo gusubiramo",
+      "rememberPassword": "Wibuka ijambo banga?",
+      "submitted": {
+        "title": "Reba imeri yawe",
+        "description": "Twohereje kode y'imibare 6 kuri {{email}}.",
+        "cta": "Kanda hano usubiremo ijambo banga"
+      },
+      "toast": {
+        "resetCodeSent": {
+          "title": "Kode yoherejwe",
+          "body": "Reba imeri yawe kuri kode y'imibare 6."
+        },
+        "resetCodeFailed": {
+          "body": "Ntibishoboye kohereza kode. Ongera ugerageze."
+        }
+      }
+    },
+    "resetPassword": {
+      "verifyCode": {
+        "title": "Emeza kode yo gusubiramo",
+        "description": "Andika kode y'imibare 6 yoherejwe kuri imeri yawe.",
+        "cta": "Emeza kode"
+      },
+      "resetPassword": {
+        "title": "Subiramo ijambo banga",
+        "description": "Andika ijambo banga rishya hepfo.",
+        "cta": "Subiramo ijambo banga"
+      },
+      "fields": {
+        "resetCode": "Kode yo gusubiramo",
+        "newPassword": "Ijambo banga rishya",
+        "confirmNewPassword": "Emeza ijambo banga rishya"
+      },
+      "placeholders": {
+        "resetCode": "Andika kode y'imibare 6",
+        "newPassword": "Andika ijambo banga rishya",
+        "confirmNewPassword": "Ongera wandike ijambo banga rishya"
+      },
+      "verifying": "Birimo kwemezwa...",
+      "resetting": "Birimo gusubirwamo...",
+      "success": {
+        "title": "Ijambo banga ryasubiwemo",
+        "description": "Ijambo banga ryasubiwemo neza. Ubu ushobora kwinjira ukoresheje irishya."
+      },
+      "toast": {
+        "invalidEmail": {
+          "title": "Imeri si yo",
+          "body": "Andika aderesi ya imeri yemewe."
+        },
+        "invalidCode": {
+          "title": "Kode si yo",
+          "body": "Kode igomba kuba imibare 6 neza."
+        },
+        "codeVerified": {
+          "title": "Kode yemejwe",
+          "body": "Andika ijambo banga rishya."
+        },
+        "verificationFailed": {
+          "title": "Kwemeza byanze",
+          "body": "Kode si yo cyangwa yararangiye."
+        },
+        "weakPassword": {
+          "title": "Ijambo banga ricye",
+          "body": "Ijambo banga rigomba kuba nibura inyuguti 8."
+        },
+        "passwordMismatch": {
+          "title": "Ijambo banga ntirihura",
+          "body": "Amagambo banga ntabwo ahura."
+        },
+        "resetSuccessful": {
+          "title": "Byasubiwemo neza",
+          "body": "Ijambo banga ryasubiwemo neza."
+        },
+        "resetFailed": {
+          "title": "Gusubiramo byanze",
+          "body": "Ntibishoboye gusubiramo ijambo banga. Ongera ugerageze."
+        }
+      }
+    },
+    "verifyOtp": {
+      "title": "Emeza imeri yawe",
+      "subtitle": "Andika kode y'imibare 4 twohereje kuri imeri yawe.",
+      "didNotReceiveCode": "Ntubone kode?",
+      "resendIn": "Ohereza nanone mu {{time}}",
+      "haveAccount": "Ufite konti?",
+      "validation": {
+        "completeCode": "Andika kode yuzuye y'imibare 4"
+      }
+    }
+  },
+  "dashboard": {
+    "loading": "Irimo gutegura dashboard...",
+    "redirecting": "Irimo kukujyana kuri dashboard yawe..."
+  },
+  "landing": {
+    "nav": {
+      "home": "Ahabanza",
+      "features": "Ibiranga",
+      "agribusiness": "Ubuhinzi n'Ubucuruzi",
+      "lenders": "Abaguriza",
+      "contact": "Twandikire"
+    },
+    "hero": {
+      "title": {
+        "line1": "Huza abahinzi na",
+        "highlight": "amasoko ya digitale"
+      },
+      "subtitle": "Dufasha abahinzi bato mu Rwanda gukoresha ikoranabuhanga kugirango babone amasoko, bahabwe inama z'ubuhinzi zishingiye kuri AI kandi babone inguzanyo z'ubuhinzi.",
+      "cta": {
+        "getStarted": "Tangira",
+        "viewDemo": "Reba demo"
+      },
+      "stats": {
+        "registeredFarmers": "Abahinzi biyandikishije",
+        "inputSuppliers": "Abagabuzi b'inyongeramusaruro",
+        "transactionsCompleted": "Ibikorwa byarangiye"
+      },
+      "imageAlt": "Umuhinzi ukoresha ikoranabuhanga mu murima"
+    },
+    "about": {
+      "badge": "Ibyerekeye UmuhinzinLink",
+      "title": "Guhuza abahinzi n'amasoko",
+      "description": "UmuhinzinLink ni urubuga rwa mbere rwuzuye rw'ubuhinzi bwa digitale mu Rwanda, rwagenewe cyane abahinzi bato. Duhuza ikoranabuhanga rigezweho n'ubumenyi bw'imikorere y'ubuhinzi bw'iwacu kugira ngo dutange ibisubizo birambye.",
+      "images": {
+        "primaryAlt": "Umugore useka ufite imboga nshya",
+        "secondaryAlt": "Agatebo karimo inyanya nshya"
+      },
+      "points": {
+        "marketAccess": {
+          "title": "Kugera ku masoko",
+          "description": "Guhuza n'abaguzi mu buryo bworoshye n'ibiciro biboneye"
+        },
+        "aiAdvice": {
+          "title": "Inama zishingiye kuri AI",
+          "description": "Inama z'ubuhinzi zubakiye ku makuru mu rurimi rw'iwacu"
+        },
+        "financialInclusion": {
+          "title": "Ubwiyunge mu by'imari",
+          "description": "Kugera ku nguzanyo n'inguzanyo z'ubuhinzi"
+        }
+      },
+      "learnMore": "Menya byinshi"
+    },
+    "whoWeServe": {
+      "title": "Abaduha serivisi",
+      "subtitle": "Imiryango itatu ihuza iterambere ry'ubuhinzi",
+      "groups": {
+        "farmers": {
+          "title": "Abahinzi",
+          "items": {
+            "mobileOtp": "OTP kuri telefone n'ubufasha bw'Ikinyarwanda",
+            "aiTips": "Inama z'ubuhinzi zishingiye kuri AI",
+            "creditAccess": "Kugera ku nguzanyo y'inyongeramusaruro",
+            "marketTrends": "Imihindagurikire y'ibiciro ku isoko"
+          }
+        },
+        "suppliers": {
+          "title": "Abagabuzi",
+          "items": {
+            "listInputs": "Kwerekana inyongeramusaruro n'ububiko",
+            "demandMatching": "Guhuza ibyifuzo by'abahinzi",
+            "creditRequests": "Gucunga ibisabwa by'inguzanyo",
+            "salesAnalytics": "Gukurikirana igurishwa n'isesengura"
+          }
+        },
+        "buyers": {
+          "title": "Abaguzi",
+          "items": {
+            "browseProduce": "Reba umusaruro mushya",
+            "filter": "Shungura ukurikije akarere n'igiciro",
+            "directContact": "Kuvugana n'umuhinzi byihuse",
+            "securePayments": "Kwishyura mu buryo butekanye"
+          }
+        }
+      }
+    },
+    "features": {
+      "title": "Ibiranga urubuga",
+      "subtitle": "Ibikoresho byuzuye by'ubuhinzi bugezweho",
+      "items": {
+        "aiAdvisory": {
+          "title": "Inama zishingiye kuri AI",
+          "description": "Bona inama z'ubuhinzi zagenewe ibihingwa byawe binyuze kuri chatbot na SMS hashingiwe ku bihe n'ahantu.",
+          "points": {
+            "cropGuidance": "Inama zishingiye ku bihingwa",
+            "weatherRecommendations": "Inama zishingiye ku bihe",
+            "soilAnalysis": "Isesengura ry'ubutaka"
+          }
+        },
+        "marketAccess": {
+          "title": "Kugera ku masoko",
+          "description": "Huza n'abaguzi kandi ubone amakuru y'isoko n'ibiciro mu gihe nyacyo.",
+          "points": {
+            "directBuyerMatching": "Guhuza n'abaguzi by'ako kanya",
+            "priceTrendAnalysis": "Isesengura ry'imigendekere y'ibiciro",
+            "demandForecasting": "Guhanura ibyifuzo"
+          }
+        },
+        "inputCredit": {
+          "title": "Inguzanyo y'inyongeramusaruro",
+          "description": "Bona inyongeramusaruro ku nguzanyo binyuze mu bufatanye na NGO n'ibigo by'imari iciriritse.",
+          "points": {
+            "seedsAndFertilizerCredit": "Inguzanyo y'imbuto n'ifumbire",
+            "ngoPartnerships": "Ubufatanye na NGO",
+            "flexiblePaymentTerms": "Uburyo bworoshye bwo kwishyura"
+          }
+        },
+        "offlineSupport": {
+          "title": "Ubufasha n'iyo nta murongo",
+          "description": "Komeza uhuze n'ahantu hatari interineti ihagije ukoresheje SMS n'amaburira.",
+          "points": {
+            "smsLoginAndTips": "Kwinjira na inama kuri SMS",
+            "offlineNotifications": "Amatangazo n'iyo nta murongo",
+            "lowBandwidthDesign": "Ikoreshwa n'amakuru make"
+          }
+        },
+        "kinyarwandaSupport": {
+          "title": "Ubufasha bw'Ikinyarwanda",
+          "description": "Urubuga rwose ruboneka mu Kinyarwanda harimo UI, chatbot na SMS.",
+          "points": {
+            "nativeUi": "UI mu rurimi kavukire",
+            "chatbot": "Chatbot y'Ikinyarwanda",
+            "smsSupport": "Ubufasha bwa SMS bw'iwacu"
+          }
+        },
+        "inventoryManagement": {
+          "title": "Gucunga ububiko",
+          "description": "Gucunga urutonde rw'umusaruro n'ububiko bw'inyongeramusaruro hamwe n'ivugurura mu gihe nyacyo.",
+          "points": {
+            "realTimeInventory": "Ububiko mu gihe nyacyo",
+            "automatedUpdates": "Ivugurura ryikora",
+            "orderTracking": "Gukurikirana ibyatumijwe"
+          }
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Uko UmuhinziLink ikora",
+      "subtitle": "Intambwe zoroshye zo guteza imbere ubuhinzi bwawe",
+      "steps": {
+        "register": {
+          "title": "Iyandikishe",
+          "description": "Iyandikishe ukoresheje OTP kuri telefone cyangwa imeri. Uburyo bwihuse kandi butekanye."
+        },
+        "listRequest": {
+          "title": "Tangaza & Saba",
+          "description": "Tangaza umusaruro wawe cyangwa usabe inyongeramusaruro ku nguzanyo binyuze ku rubuga."
+        },
+        "connect": {
+          "title": "Huza",
+          "description": "Huza n'abaguzi, abagabuzi kandi ubone inama z'ubuhinzi zishingiye kuri AI."
+        },
+        "grow": {
+          "title": "Terimbere",
+          "description": "Gucunga ibikorwa, gukurikirana iterambere no kwagura ibikorwa by'ubuhinzi."
+        }
+      }
+    },
+    "impact": {
+      "title": "Ingaruka n'inkuru z'intsinzi",
+      "subtitle": "Abahinzi nyabo, ibisubizo nyabyo mu igeragezwa ryacu rya Nyagatare",
+      "metrics": {
+        "registeredFarmers": "Abahinzi biyandikishije",
+        "activeSuppliers": "Abagabuzi bakora",
+        "averageYieldIncrease": "Iyongera ry'umusaruro",
+        "totalTransactions": "Igiteranyo cy'ibikorwa"
+      },
+      "testimonials": {
+        "marie": {
+          "role": "Umuhinzi w'ibigori, Nyagatare",
+          "quote": "UmuhinziLink yaramfashije kugurisha ibigori byanjye ku baguzi ku giciro cyiza. Inama za SMS zongereye umusaruro wanjye ku rugero rwa 30%."
+        },
+        "jean": {
+          "role": "Umuhinzi w'ibishyimbo, Nyagatare",
+          "quote": "Kubona inguzanyo y'imbuto binyuze ku rubuga byahinduye byinshi. Ubu nshobora gutegura neza ibihe by'ihinga."
+        },
+        "agnes": {
+          "role": "Umuhinzi w'imboga, Nyagatare",
+          "quote": "Chatbot ya AI mu Kinyarwanda isubiza ibibazo byanjye byose by'ubuhinzi. Ni nk'ukugira impuguke mu mufuka."
+        }
+      }
+    },
+    "cta": {
+      "title": "Witeguye guhindura ubuhinzi bwawe?",
+      "subtitle": "Jya mu bihumbi by'abahinzi basanzwe bakoresha UmuhinziLink guteza imbere ibikorwa byabo",
+      "buttons": {
+        "farmers": "Tangira - Abahinzi",
+        "business": "Injira nk'ubucuruzi",
+        "sms": "SMS: *123*456#"
+      },
+      "noSmartphone": "Nta smartphone? Nta kibazo! Koresha SMS mu Kinyarwanda"
+    },
+    "footer": {
+      "description": "Dufasha abahinzi b'u Rwanda binyuze mu buhinzi bwa digitale n'ibisubizo bya AI.",
+      "about": {
+        "title": "Ibyerekeye",
+        "mission": "Intego yacu",
+        "team": "Itsinda",
+        "partners": "Abafatanyabikorwa",
+        "careers": "Akazi"
+      },
+      "support": {
+        "title": "Ubufasha",
+        "helpCenter": "Ikigo cy'ubufasha",
+        "contactUs": "Twandikire",
+        "smsSupport": "Ubufasha kuri SMS",
+        "training": "Amahugurwa"
+      },
+      "contact": {
+        "title": "Aho watwandikira"
+      },
+      "copyright": "© 2025 UmuhinziLink. Uburenganzira bwose burabitswe. Twubakiye abahinzi b'u Rwanda tubikunze ❤️"
+    }
+  },
+  "settings": {
+    "title": "Igenamiterere",
+    "hub": {
+      "title": "Igenamiterere",
+      "description": "Gena igenamiterere rya konti n'ibyo ukunda",
+      "moreFields": "+{{count}} andi",
+      "sections": {
+        "business": {
+          "title": "Amakuru y'ubucuruzi / umurima",
+          "description": "Genzura amakuru y'umurima cyangwa ubucuruzi agaragarira abaguzi.",
+          "fields": {
+            "businessName": "Izina ry'ubucuruzi",
+            "district": "Akarere",
+            "sector": "Umurenge",
+            "gpsLocation": "Ahantu (GPS)",
+            "farmSize": "Ingano y'umurima",
+            "cropTypes": "Ubwoko bw'ibihingwa"
+          }
+        },
+        "payments": {
+          "title": "Kwishyurwa n'iyishyurira",
+          "description": "Gena uko wakira amafaranga.",
+          "fields": {
+            "mobileMoneyProvider": "Umuyoboro wa Mobile Money",
+            "mobileMoneyNumber": "Nimero ya Mobile Money",
+            "bankAccount": "Konti ya banki"
+          }
+        },
+        "notifications": {
+          "title": "Amatangazo",
+          "description": "Hitamo uko wakira amatangazo.",
+          "fields": {
+            "smsNotifications": "Amatangazo ya SMS",
+            "emailNotifications": "Amatangazo kuri email",
+            "orderAlerts": "Amatangazo y'ibitumwa",
+            "priceAlerts": "Amatangazo y'ibiciro"
+          }
+        },
+        "localization": {
+          "title": "Ururimi n'Akarere",
+          "description": "Hindura ururimi n'ifaranga.",
+          "fields": {
+            "language": "Ururimi",
+            "currency": "Ifaranga",
+            "timeZone": "Agace k'igihe",
+            "dateFormat": "Uko itariki igaragara"
+          }
+        },
+        "security": {
+          "title": "Umutekano",
+          "description": "Genzura umutekano wa konti yawe.",
+          "fields": {
+            "twoFactorAuthentication": "Kwemeza mu byiciro bibiri",
+            "activeSessions": "Ibihe bikora",
+            "dataDownload": "Gukuramo amakuru",
+            "accountDeletion": "Gusiba konti"
+          }
+        },
+        "account": {
+          "title": "Igenamiterere rya konti",
+          "description": "Genzura umwirondoro n'igenamiterere rya konti.",
+          "fields": {
+            "profileInformation": "Amakuru y'umwirondoro",
+            "passwordChange": "Guhindura ijambo banga",
+            "emailPreferences": "Ibyo ukunda kuri email",
+            "privacySettings": "Igenamiterere ry'ibanga"
+          }
+        }
+      },
+      "quickActions": {
+        "title": "Ibikorwa byihuse",
+        "viewProfile": {
+          "title": "Reba umwirondoro",
+          "description": "Genzura umwirondoro wawe rusange"
+        },
+        "messages": {
+          "title": "Ubutumwa",
+          "description": "Reba ubutumwa bwawe"
+        },
+        "notifications": {
+          "title": "Amatangazo",
+          "description": "Reba amatangazo aheruka"
+        }
+      }
+    },
+    "localization": {
+      "pageTitle": "Ururimi n'Akarere",
+      "pageDescription": "Hindura ururimi n'igenamiterere ry'akarere",
+      "sections": {
+        "languagePreferences": "Igenamiterere ry'ururimi",
+        "currencyAndNumbers": "Amafaranga n'imibare",
+        "timeAndDate": "Igihe n'itariki"
+      },
+      "labels": {
+        "displayLanguage": "Ururimi rugaragara",
+        "defaultCurrency": "Ifaranga risanzwe",
+        "numberFormat": "Uko imibare igaragara",
+        "timeZone": "Agace k'igihe",
+        "timeFormat": "Uko igihe kigaragara",
+        "dateFormat": "Uko itariki igaragara"
+      },
+      "helperText": {
+        "language": "Ibi bihindura ururimi rukoreshwa muri porogaramu yose",
+        "currency": "Bikoreshwa kugaragaza ibiciro n'amakuru y'imari",
+        "numberFormatExample": "Urugero: {{example}}",
+        "timeZoneOffset": "Itandukaniro rigezweho: {{offset}}",
+        "timeFormatExample": "Urugero: {{example}}",
+        "dateFormatExample": "Urugero: {{example}}"
+      },
+      "preview": {
+        "samplePrice": "Igiciro cy'icyitegererezo:",
+        "sampleDate": "Itariki y'icyitegererezo:",
+        "sampleTime": "Igihe cy'icyitegererezo:"
+      },
+      "saveState": {
+        "successCheck": "✓",
+        "errorCross": "✗"
+      },
+      "options": {
+        "language": {
+          "en": "Icyongereza",
+          "rw": "Ikinyarwanda",
+          "fr": "Igifaransa"
+        },
+        "currency": {
+          "rwf": "Ifaranga ry'u Rwanda (RWF)",
+          "usd": "Idolari rya Amerika (USD)",
+          "eur": "Iyero (EUR)"
+        },
+        "timezone": {
+          "kigali": "Kigali (GMT+2)",
+          "nairobi": "Nairobi (GMT+3)",
+          "utc": "UTC (GMT+0)"
+        },
+        "dateFormat": {
+          "ddmmyyyy": "DD/MM/YYYY (31/12/2024)",
+          "mmddyyyy": "MM/DD/YYYY (12/31/2024)",
+          "yyyymmdd": "YYYY-MM-DD (2024-12-31)"
+        },
+        "timeFormat": {
+          "h24": "Amasaha 24 (14:30)",
+          "h12": "Amasaha 12 (2:30 PM)"
+        },
+        "numberFormat": {
+          "commaDecimal": "1,234.56 (Koma muri decimali)",
+          "dotComma": "1.234,56 (Akadomo na koma)",
+          "spaceComma": "1 234,56 (Umwanya na koma)"
+        }
+      }
+    }
+  }
+}

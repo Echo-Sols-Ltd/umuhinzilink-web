@@ -10,10 +10,12 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { UserRequest, UserType } from '@/types';
 
 export default function SignUp() {
   const { register } = useAuth();
+  const { t } = useI18n();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState<UserRequest>({
     names: '',
@@ -37,9 +39,9 @@ export default function SignUp() {
   ];
 
   const accountTypes = [
-    { value: UserType.FARMER, label: 'Farmer' },
-    { value: UserType.SUPPLIER, label: 'Supplier' },
-    { value: UserType.BUYER, label: 'Buyer' },
+    { value: UserType.FARMER, labelKey: 'auth.accountTypes.farmer' },
+    { value: UserType.SUPPLIER, labelKey: 'auth.accountTypes.supplier' },
+    { value: UserType.BUYER, labelKey: 'auth.accountTypes.buyer' },
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,26 +62,26 @@ export default function SignUp() {
 
     switch (name) {
       case 'names':
-        if (!strVal.trim()) error = 'Full name is required';
-        else if (strVal.trim().length < 2) error = 'Name must be at least 2 characters';
+        if (!strVal.trim()) error = t('auth.validation.fullNameRequired');
+        else if (strVal.trim().length < 2) error = t('auth.validation.nameMinCharacters', { count: 2 });
         break;
       case 'email':
-        if (!strVal.trim()) error = 'Email is required';
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(strVal)) error = 'Invalid email';
+        if (!strVal.trim()) error = t('auth.validation.emailRequired');
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(strVal)) error = t('auth.validation.invalidEmail');
         break;
       case 'phoneNumber':
-        if (!strVal.trim()) error = 'Phone number required';
-        else if (strVal.replace(/[^0-9+]/g, '').length < 10) error = 'Minimum 10 digits';
+        if (!strVal.trim()) error = t('auth.validation.phoneNumberRequired');
+        else if (strVal.replace(/[^0-9+]/g, '').length < 10) error = t('auth.validation.minimumDigits', { count: 10 });
         break;
       case 'password':
-        if (!strVal) error = 'Password required';
-        else if (strVal.length < 8) error = 'At least 8 characters';
-        else if (!/[A-Z]/.test(strVal)) error = 'Must contain uppercase';
-        else if (!/[0-9]/.test(strVal)) error = 'Must contain number';
-        else if (!/[!@#$%^&*]/.test(strVal)) error = 'Must contain special char';
+        if (!strVal) error = t('auth.validation.passwordRequired');
+        else if (strVal.length < 8) error = t('auth.validation.minimumCharacters', { count: 8 });
+        else if (!/[A-Z]/.test(strVal)) error = t('auth.validation.mustContainUppercase');
+        else if (!/[0-9]/.test(strVal)) error = t('auth.validation.mustContainNumber');
+        else if (!/[!@#$%^&*]/.test(strVal)) error = t('auth.validation.mustContainSpecialChar');
         break;
       case 'agreeToTerms':
-        if (value !== true) error = 'You must agree to terms';
+        if (value !== true) error = t('auth.validation.mustAgreeToTerms');
         break;
     }
 
@@ -105,7 +107,7 @@ export default function SignUp() {
     e.preventDefault();
     setLoading(true);
     if (!validateForm()) {
-      notify.error('Fix the errors below', 'Error');
+      notify.error(t('auth.validation.fixErrorsBelow'), t('common.error'));
       setLoading(false);
       return;
     }
@@ -119,8 +121,8 @@ export default function SignUp() {
       <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-card overflow-auto">
         <div className="w-full max-w-md flex flex-col justify-center">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">Create Account</h1>
-            <p className="text-muted-foreground text-sm sm:text-base mt-1">Sign up using social or form</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">{t('auth.signUp.title')}</h1>
+            <p className="text-muted-foreground text-sm sm:text-base mt-1">{t('auth.signUp.subtitle')}</p>
           </div>
 
           <div className="flex justify-center gap-3 mb-6">
@@ -138,17 +140,17 @@ export default function SignUp() {
 
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground">OR</span>
+            <span className="text-xs text-muted-foreground">{t('common.or')}</span>
             <div className="flex-1 h-px bg-border" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Names */}
             <div>
-              <Label className="text-sm">Full Name</Label>
+              <Label className="text-sm">{t('auth.fields.fullName')}</Label>
               <Input
                 name="names"
-                placeholder="John Doe"
+                placeholder={t('auth.placeholders.fullName')}
                 value={formData.names}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
@@ -160,11 +162,11 @@ export default function SignUp() {
 
             {/* Email */}
             <div>
-              <Label className="text-sm">Email</Label>
+              <Label className="text-sm">{t('auth.fields.email')}</Label>
               <Input
                 name="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('auth.placeholders.email')}
                 value={formData.email}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
@@ -176,11 +178,11 @@ export default function SignUp() {
 
             {/* Phone */}
             <div>
-              <Label className="text-sm">Phone Number</Label>
+              <Label className="text-sm">{t('auth.fields.phoneNumber')}</Label>
               <Input
                 name="phoneNumber"
                 type="tel"
-                placeholder="+250 7..."
+                placeholder={t('auth.placeholders.phoneNumber')}
                 value={formData.phoneNumber}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
@@ -192,7 +194,7 @@ export default function SignUp() {
 
             {/* Account Type */}
             <div>
-              <Label className="text-sm">Account Type</Label>
+              <Label className="text-sm">{t('auth.fields.accountType')}</Label>
               <div className="flex gap-4 mt-2 mb-4">
                 {accountTypes.map(type => (
                   <div key={type.value} className="flex items-center gap-2">
@@ -202,7 +204,7 @@ export default function SignUp() {
                       onCheckedChange={() => setFormData(prev => ({ ...prev, role: type.value }))}
                       className="data-[state=checked]:bg-success data-[state=unchecked]:bg-muted"
                     />
-                    <span className="text-foreground text-sm">{type.label}</span>
+                    <span className="text-foreground text-sm">{t(type.labelKey)}</span>
                   </div>
                 ))}
               </div>
@@ -210,11 +212,11 @@ export default function SignUp() {
 
             {/* Password */}
             <div className="relative">
-              <Label className="text-sm">Password</Label>
+              <Label className="text-sm">{t('auth.fields.password')}</Label>
               <Input
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
+                placeholder={t('auth.placeholders.passwordDots')}
                 value={formData.password}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
@@ -230,17 +232,17 @@ export default function SignUp() {
             {/* Agree Terms */}
             <div className="flex items-center gap-2">
               <Switch checked={agreeToTerms} onCheckedChange={setAgreeToTerms} className="data-[state=checked]:bg-success data-[state=unchecked]:bg-muted" />
-              <Label className="text-sm text-foreground">I agree to the terms & conditions</Label>
+              <Label className="text-sm text-foreground">{t('auth.signUp.agreeToTerms')}</Label>
             </div>
 
             {/* Submit */}
             <Button type="submit" className="w-full bg-success hover:bg-success/90" disabled={loading}>
-              {loading ? 'Creating Account…' : 'Sign Up'}
+              {loading ? t('auth.signUp.creatingAccount') : t('auth.signUp.signUp')}
             </Button>
 
             <p className="text-sm text-center text-muted-foreground">
-              Already have an account?{' '}
-              <Link href="/auth/signin" className="text-success font-semibold">Sign in</Link>
+              {t('auth.signUp.alreadyHaveAccount')}{' '}
+              <Link href="/auth/signin" className="text-success font-semibold">{t('auth.signUp.signIn')}</Link>
             </p>
           </form>
         </div>
@@ -249,9 +251,9 @@ export default function SignUp() {
       {/* RIGHT – Hero */}
       <div className="w-full sm:w-1/2 relative flex flex-col justify-center items-center text-center h-64 sm:h-auto">
         <Image src="/Image.png" alt="background" fill className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300" />
-        <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">Welcome!</h1>
+        <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">{t('auth.signUp.heroTitle')}</h1>
         <p className="text-white z-10 mt-2 text-sm sm:text-base px-6 sm:px-0">
-          Use these awesome forms to login or create a new <br /> account in your project for free
+          {t('auth.signUp.heroSubtitle.line1')} <br /> {t('auth.signUp.heroSubtitle.line2')}
         </p>
       </div>
     </div>

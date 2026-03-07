@@ -9,12 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { notify } from '@/lib/notify';
 import { authService } from '@/services/auth';
+import { useI18n } from '@/contexts/I18nContext';
 
 type ResetStep = 'code' | 'password' | 'success';
 
 function ResetPassword() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useI18n();
   const emailFromQuery = searchParams.get('email') || '';
 
   const [email, setEmail] = useState(emailFromQuery);
@@ -38,12 +40,12 @@ function ResetPassword() {
     e.preventDefault();
 
     if (!validateEmail(email)) {
-      notify.error('Please enter a valid email address.', 'Invalid Email');
+      notify.error(t('auth.resetPassword.toast.invalidEmail.body'), t('auth.resetPassword.toast.invalidEmail.title'));
       return;
     }
 
     if (resetCode.length !== 6) {
-      notify.error('Reset code must be exactly 6 digits.', 'Invalid Code');
+      notify.error(t('auth.resetPassword.toast.invalidCode.body'), t('auth.resetPassword.toast.invalidCode.title'));
       return;
     }
 
@@ -51,9 +53,9 @@ function ResetPassword() {
     try {
       await authService.verifyResetCode(email, resetCode);
       setStep('password');
-      notify.success('Please enter your new password.', 'Code Verified');
+      notify.success(t('auth.resetPassword.toast.codeVerified.body'), t('auth.resetPassword.toast.codeVerified.title'));
     } catch (error: any) {
-      notify.error(error.message || 'Invalid or expired reset code.', 'Verification Failed');
+      notify.error(error.message || t('auth.resetPassword.toast.verificationFailed.body'), t('auth.resetPassword.toast.verificationFailed.title'));
     } finally {
       setLoading(false);
     }
@@ -63,12 +65,12 @@ function ResetPassword() {
     e.preventDefault();
 
     if (!validatePassword(newPassword)) {
-      notify.error('Password must be at least 8 characters long.', 'Weak Password');
+      notify.error(t('auth.resetPassword.toast.weakPassword.body'), t('auth.resetPassword.toast.weakPassword.title'));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      notify.error('Passwords do not match.', 'Password Mismatch');
+      notify.error(t('auth.resetPassword.toast.passwordMismatch.body'), t('auth.resetPassword.toast.passwordMismatch.title'));
       return;
     }
 
@@ -76,9 +78,9 @@ function ResetPassword() {
     try {
       await authService.resetPassword(email, resetCode, newPassword);
       setStep('success');
-      notify.success('Your password has been reset successfully.', 'Password Reset Successful');
+      notify.success(t('auth.resetPassword.toast.resetSuccessful.body'), t('auth.resetPassword.toast.resetSuccessful.title'));
     } catch (error: any) {
-      notify.error(error.message || 'Failed to reset password. Please try again.', 'Reset Failed');
+      notify.error(error.message || t('auth.resetPassword.toast.resetFailed.body'), t('auth.resetPassword.toast.resetFailed.title'));
     } finally {
       setLoading(false);
     }
@@ -92,15 +94,15 @@ function ResetPassword() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Password Reset Successful</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">{t('auth.resetPassword.success.title')}</h2>
             <p className="text-gray-600 mb-6">
-              Your password has been reset successfully. You can now sign in with your new password.
+              {t('auth.resetPassword.success.description')}
             </p>
             <Button
               onClick={() => router.push('/auth/signin')}
               className="w-full bg-green-600 hover:bg-green-700 text-white"
             >
-              Sign In
+              {t('auth.signIn.signIn')}
             </Button>
           </div>
         </div>
@@ -117,15 +119,15 @@ function ResetPassword() {
             className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Sign In
+            {t('auth.forgotPassword.backToSignIn')}
           </Link>
           <h2 className="text-3xl font-semibold text-gray-900 mb-2">
-            {step === 'code' ? 'Verify Reset Code' : 'Reset Password'}
+            {step === 'code' ? t('auth.resetPassword.verifyCode.title') : t('auth.resetPassword.resetPassword.title')}
           </h2>
           <p className="text-gray-600">
             {step === 'code'
-              ? 'Enter the 6-digit code sent to your email address.'
-              : 'Enter your new password below.'
+              ? t('auth.resetPassword.verifyCode.description')
+              : t('auth.resetPassword.resetPassword.description')
             }
           </p>
         </div>
@@ -134,7 +136,7 @@ function ResetPassword() {
           <form onSubmit={handleVerifyCode} className="space-y-6">
             <div>
               <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+                {t('auth.fields.emailAddress')}
               </Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -144,7 +146,7 @@ function ResetPassword() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
-                  placeholder="Enter your email"
+                  placeholder={t('auth.placeholders.enterYourEmail')}
                   required
                 />
               </div>
@@ -152,7 +154,7 @@ function ResetPassword() {
 
             <div>
               <Label htmlFor="resetCode" className="block text-sm font-medium text-gray-700 mb-2">
-                Reset Code
+                {t('auth.resetPassword.fields.resetCode')}
               </Label>
               <Input
                 id="resetCode"
@@ -160,7 +162,7 @@ function ResetPassword() {
                 value={resetCode}
                 onChange={(e) => setResetCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 className="text-center text-lg font-mono"
-                placeholder="Enter 6-digit code"
+                placeholder={t('auth.resetPassword.placeholders.resetCode')}
                 maxLength={6}
                 required
               />
@@ -171,14 +173,14 @@ function ResetPassword() {
               className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3"
               disabled={loading}
             >
-              {loading ? 'Verifying...' : 'Verify Code'}
+              {loading ? t('auth.resetPassword.verifying') : t('auth.resetPassword.verifyCode.cta')}
             </Button>
           </form>
         ) : (
           <form onSubmit={handleResetPassword} className="space-y-6">
             <div>
               <Label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                New Password
+                {t('auth.resetPassword.fields.newPassword')}
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -188,7 +190,7 @@ function ResetPassword() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="pl-10 pr-10"
-                  placeholder="Enter new password"
+                  placeholder={t('auth.resetPassword.placeholders.newPassword')}
                   required
                 />
                 <button
@@ -203,7 +205,7 @@ function ResetPassword() {
 
             <div>
               <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm New Password
+                {t('auth.resetPassword.fields.confirmNewPassword')}
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -213,7 +215,7 @@ function ResetPassword() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="pl-10 pr-10"
-                  placeholder="Confirm new password"
+                  placeholder={t('auth.resetPassword.placeholders.confirmNewPassword')}
                   required
                 />
                 <button
@@ -231,16 +233,16 @@ function ResetPassword() {
               className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3"
               disabled={loading}
             >
-              {loading ? 'Resetting...' : 'Reset Password'}
+              {loading ? t('auth.resetPassword.resetting') : t('auth.resetPassword.resetPassword.cta')}
             </Button>
           </form>
         )}
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Remember your password?{' '}
+            {t('auth.forgotPassword.rememberPassword')}{' '}
             <Link href="/auth/signin" className="text-green-600 font-semibold hover:text-green-700">
-              Sign In
+              {t('auth.signIn.signIn')}
             </Link>
           </p>
         </div>

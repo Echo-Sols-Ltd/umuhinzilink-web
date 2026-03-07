@@ -3,9 +3,11 @@
 import Link from 'next/link';
 
 import { useEffect, useState } from 'react';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState('home');
+  const { t } = useI18n();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,14 +50,14 @@ export default function Navbar() {
         {/* Navigation links */}
         <div className="hidden md:flex items-center space-x-8">
           {[
-            { name: 'Home', href: '#home' },
-            { name: 'Features', href: '#features' },
-            { name: 'AgriBussiness', href: '#agribusiness' },
-            { name: 'Lenders', href: '#lenders' },
-            { name: 'Contact Us', href: '#contact' },
+            { nameKey: 'landing.nav.home', href: '#home' },
+            { nameKey: 'landing.nav.features', href: '#features' },
+            { nameKey: 'landing.nav.agribusiness', href: '#agribusiness' },
+            { nameKey: 'landing.nav.lenders', href: '#lenders' },
+            { nameKey: 'landing.nav.contact', href: '#contact' },
           ].map(link => (
             <a
-              key={link.name}
+              key={link.nameKey}
               href={link.href}
               className={
                 `px-3 py-2 rounded-md text-base font-medium  transition-colors duration-200 ` +
@@ -64,7 +66,7 @@ export default function Navbar() {
                   : 'text-foreground hover:text-success')
               }
             >
-              {link.name}
+              {t(link.nameKey)}
             </a>
           ))}
         </div>
@@ -73,7 +75,7 @@ export default function Navbar() {
           href="/auth/signin"
           className="bg-success text-primary-foreground px-5 py-2 rounded-full hover:bg-success/90"
         >
-          Sign in
+          {t('auth.signIn.signIn')}
         </Link>
       </div>
     </nav>

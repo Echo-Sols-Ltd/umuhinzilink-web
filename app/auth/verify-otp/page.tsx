@@ -4,10 +4,12 @@ import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function VerifyPage() {
     const { verifyOtp, user, askOtpCode, loadAuthState, logout } = useAuth()
     const router = useRouter();
+    const { t } = useI18n();
     const [otp, setOtp] = useState(['', '', '', '']);
     const [timer, setTimer] = useState(120);
     const [error, setError] = useState('');
@@ -59,7 +61,7 @@ export default function VerifyPage() {
         setError('');
         const otpValue = otp.join('');
         if (otpValue.length !== 4) {
-            setError('Please enter the complete 4-digit code');
+            setError(t('auth.verifyOtp.validation.completeCode'));
             return;
         }
         await verifyOtp(otpValue)
@@ -93,7 +95,7 @@ export default function VerifyPage() {
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        Go back
+                        {t('common.goBack')}
                     </button>
 
                     <div className="flex flex-col items-center justify-center flex-1">
@@ -108,10 +110,10 @@ export default function VerifyPage() {
 
                         {/* Title */}
                         <h1 className="text-3xl font-semibold text-foreground mb-2">
-                            Verify Your Email
+                            {t('auth.verifyOtp.title')}
                         </h1>
                         <p className="text-muted-foreground mb-2">
-                            Enter the 4-digit code we sent to your email.
+                            {t('auth.verifyOtp.subtitle')}
                         </p>
                         <p className="text-success text-sm mb-8">
                             {user?.email}
@@ -140,10 +142,10 @@ export default function VerifyPage() {
 
                             {/* Resend link */}
                             <div className="text-center mb-6">
-                                <span className="text-sm text-muted-foreground">Didn't receive code? </span>
+                                <span className="text-sm text-muted-foreground">{t('auth.verifyOtp.didNotReceiveCode')} </span>
                                 {timer > 0 ? (
                                     <span className="text-sm text-success">
-                                        Resend in {formatTime(timer)}
+                                        {t('auth.verifyOtp.resendIn', { time: formatTime(timer) })}
                                     </span>
                                 ) : (
                                     <button
@@ -151,7 +153,7 @@ export default function VerifyPage() {
                                         onClick={handleResend}
                                         className="text-sm text-success hover:text-success/80 font-medium"
                                     >
-                                        Resend
+                                        {t('common.resend')}
                                     </button>
                                 )}
                             </div>
@@ -160,15 +162,15 @@ export default function VerifyPage() {
                                 type="submit"
                                 className="w-full bg-success text-primary-foreground py-3 rounded-lg font-medium hover:bg-success/90 transition-colors"
                             >
-                                Continue
+                                {t('common.continue')}
                             </button>
                         </form>
 
                         {/* Sign in link */}
                         <p className="mt-6 text-sm text-muted-foreground">
-                            Have an account?{' '}
+                            {t('auth.verifyOtp.haveAccount')}{' '}
                             <div onClick={() => handleSignin()} className="text-success cursor-pointer hover:text-success/80 font-medium">
-                                Sign In
+                                {t('auth.signIn.signIn')}
                             </div>
                         </p>
                     </div>
@@ -176,7 +178,7 @@ export default function VerifyPage() {
 
                 {/* Footer */}
                 <div className="text-sm text-muted-foreground">
-                    © Dreamize 2025
+                    {t('common.footerCopyright')}
                 </div>
             </div>
 

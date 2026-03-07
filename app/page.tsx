@@ -4,10 +4,12 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserType } from '@/types';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const { t } = useI18n();
 
   React.useEffect(() => {
     if (!loading && user && user.verified) {
@@ -38,7 +40,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-800">Loading dashboard...</p>
+          <p className="text-gray-800">{t('dashboard.loading')}</p>
         </div>
       </div>
     );
@@ -48,7 +50,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Redirecting to your dashboard...</p>
+        <p className="text-gray-600">{t('dashboard.redirecting')}</p>
       </div>
     </div>
   );

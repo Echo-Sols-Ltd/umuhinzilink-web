@@ -34,6 +34,7 @@ import {
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { SidebarProps, SidebarItem, UserType } from '@/types';
 import { imageUrl } from '@/lib/utils';
 
@@ -43,6 +44,37 @@ interface NavGroup {
     items: SidebarItem[];
 }
 
+const SIDEBAR_ITEM_LABEL_KEYS: Record<string, string> = {
+  Dashboard: 'sidebar.items.dashboard',
+  'My Products': 'sidebar.items.myProducts',
+  'Supply Market': 'sidebar.items.supplyMarket',
+  'Customer Orders': 'sidebar.items.customerOrders',
+  'Supply Orders': 'sidebar.items.supplyOrders',
+  'Market Intelligence': 'sidebar.items.marketIntelligence',
+  'Advisory Insights': 'sidebar.items.advisoryInsights',
+  Messages: 'sidebar.items.messages',
+  Notifications: 'sidebar.items.notifications',
+  Alerts: 'sidebar.items.alerts',
+  Wallet: 'sidebar.items.wallet',
+  Profile: 'sidebar.items.profile',
+  Settings: 'sidebar.items.settings',
+  Marketplace: 'sidebar.items.marketplace',
+  'My Orders': 'sidebar.items.myOrders',
+  Favorites: 'sidebar.items.favorites',
+  'Farmer Orders': 'sidebar.items.farmerOrders',
+  'User Management': 'sidebar.items.userManagement',
+  'Order Management': 'sidebar.items.orderManagement',
+  'Product Management': 'sidebar.items.productManagement',
+  'Platform Analytics': 'sidebar.items.platformAnalytics',
+  'System Reports': 'sidebar.items.systemReports',
+  'Security Center': 'sidebar.items.securityCenter',
+  'Wallet Management': 'sidebar.items.walletManagement',
+  Overview: 'sidebar.items.overview',
+  'Farmer Output': 'sidebar.items.farmerOutput',
+  'Input Supply Monitoring': 'sidebar.items.inputSupplyMonitoring',
+  Home: 'sidebar.items.home',
+};
+
 // ─── Navigation config ───────────────────────────────────────────────────────
 function getNavGroups(userType: UserType): NavGroup[] {
     switch (userType) {
@@ -50,7 +82,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.FARMER:
             return [
                 {
-                    label: 'Overview',
+          label: 'sidebar.groups.overview',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/farmer/dashboard' },
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Products', href: '/farmer/products' },
@@ -62,14 +94,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-                    label: 'Communication',
+          label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
-                    label: 'Account',
+          label: 'sidebar.groups.account',
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/farmer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
@@ -81,7 +113,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.BUYER:
             return [
                 {
-                    label: 'Overview',
+          label: 'sidebar.groups.overview',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/buyer/dashboard' },
                         { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Marketplace', href: '/buyer/products' },
@@ -90,14 +122,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-                    label: 'Communication',
+          label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
-                    label: 'Account',
+          label: 'sidebar.groups.account',
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/buyer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
@@ -109,7 +141,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.SUPPLIER:
             return [
                 {
-                    label: 'Operations',
+          label: 'sidebar.groups.operations',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/supplier/dashboard' },
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Products', href: '/supplier/products' },
@@ -117,14 +149,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-                    label: 'Communication',
+          label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
-                    label: 'Account',
+          label: 'sidebar.groups.account',
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/supplier/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
@@ -136,7 +168,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.ADMIN:
             return [
                 {
-                    label: 'Administration',
+          label: 'sidebar.groups.administration',
                     items: [
                         { icon: <LayoutDashboard className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/admin/dashboard' },
                         { icon: <Users className="w-4.5 h-4.5" />, label: 'User Management', href: '/admin/users' },
@@ -149,14 +181,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-                    label: 'Communication',
+          label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
-                    label: 'Account',
+          label: 'sidebar.groups.account',
                     items: [
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/admin/profile' },
                         { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/admin/settings' },
@@ -167,7 +199,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.GOVERNMENT:
             return [
                 {
-                    label: 'Monitoring',
+          label: 'sidebar.groups.monitoring',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Overview', href: '/government/dashboard' },
                         { icon: <Tractor className="w-4.5 h-4.5" />, label: 'Farmer Output', href: '/government/farmers-produce' },
@@ -175,14 +207,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-                    label: 'Communication',
+          label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
-                        { icon: <Bell className="w-4.5 h-4.5" />, label: 'Alerts', href: '/notifications' },
+            { icon: <Bell className="w-4.5 h-4.5" />, label: 'Alerts', href: '/notifications' },
                     ],
                 },
                 {
-                    label: 'Account',
+          label: 'sidebar.groups.account',
                     items: [
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/government/profile' },
                         { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/government/settings' },
@@ -204,11 +236,11 @@ function getNavGroups(userType: UserType): NavGroup[] {
 
 // ─── Role badge colours ───────────────────────────────────────────────────────
 const ROLE_BADGE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-    FARMER: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', dot: 'bg-emerald-400', label: 'Farmer' },
-    BUYER: { bg: 'bg-blue-500/15', text: 'text-blue-400', dot: 'bg-blue-400', label: 'Buyer' },
-    SUPPLIER: { bg: 'bg-amber-500/15', text: 'text-amber-400', dot: 'bg-amber-400', label: 'Supplier' },
-    ADMIN: { bg: 'bg-rose-500/15', text: 'text-rose-400', dot: 'bg-rose-400', label: 'Administrator' },
-    GOVERNMENT: { bg: 'bg-violet-500/15', text: 'text-violet-400', dot: 'bg-violet-400', label: 'Gov. Official' },
+  FARMER: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', dot: 'bg-emerald-400', label: 'sidebar.roles.farmer' },
+  BUYER: { bg: 'bg-blue-500/15', text: 'text-blue-400', dot: 'bg-blue-400', label: 'sidebar.roles.buyer' },
+  SUPPLIER: { bg: 'bg-amber-500/15', text: 'text-amber-400', dot: 'bg-amber-400', label: 'sidebar.roles.supplier' },
+  ADMIN: { bg: 'bg-rose-500/15', text: 'text-rose-400', dot: 'bg-rose-400', label: 'sidebar.roles.administrator' },
+  GOVERNMENT: { bg: 'bg-violet-500/15', text: 'text-violet-400', dot: 'bg-violet-400', label: 'sidebar.roles.governmentOfficial' },
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -218,9 +250,10 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
 
     const { navigate } = useNavigationWithLoading();
     const { user, logout } = useAuth();
+  const { t } = useI18n();
 
     const currentUserType = (user?.role || userType) as UserType;
-    const userName = user?.names || 'User';
+  const userName = user?.names || t('common.user');
     const userEmail = user?.email || 'user@umuhinzilink.rw';
     const userInitials = userName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
     const badge = ROLE_BADGE[currentUserType] ?? ROLE_BADGE.FARMER;
@@ -244,7 +277,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
             {/* ── Mobile hamburger ─────────────────────────────────── */}
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                aria-label="Open navigation"
+                aria-label={t('sidebar.a11y.openNavigation')}
                 className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-foreground hover:bg-accent text-background rounded-xl shadow-lg transition-colors"
             >
                 <Menu className="w-5 h-5" />
@@ -285,7 +318,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-green-900/40 shrink-0">
                             <img
                                 src="/logo.png"
-                                alt="Logo"
+                                alt={t('sidebar.brand.logoAlt')}
                                 className="w-10 h-10 object-cover" />
                         </div>
                         <div className="min-w-0">
@@ -293,7 +326,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                             {/* Role badge */}
                             <span className={`inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase  ${badge.bg} ${badge.text}`}>
                                 <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
-                                {badge.label}
+                                {t(badge.label)}
                             </span>
                         </div>
                     </div>
@@ -305,7 +338,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                         <div key={gi}>
                             {group.label && (
                                 <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase  text-muted-foreground select-none">
-                                    {group.label}
+                                    {t(group.label)}
                                 </p>
                             )}
                             <ul className="space-y-0.5">
@@ -331,7 +364,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                                 <span className={`shrink-0 transition-colors ${isActive ? 'text-primary-foreground' : 'text-foreground group-hover:text-primary'}`}>
                                                     {item.icon}
                                                 </span>
-                                                <span className="truncate">{item.label}</span>
+                                                <span className="truncate">{t(SIDEBAR_ITEM_LABEL_KEYS[item.label] ?? item.label)}</span>
                                                 {isActive && (
                                                     <ChevronRight className="w-3.5 h-3.5 ml-auto text-primary-foreground" />
                                                 )}
@@ -352,7 +385,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                             <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shadow-md">
                                 {user?.avatar ? <img
                                     src={imageUrl(user?.avatar)}
-                                    alt="Avatar"
+                                alt={t('sidebar.user.avatarAlt')}
                                     className="w-9 h-9 rounded-full object-cover"
                                 /> : <User className="w-4 h-4" />}
                             </div>
@@ -378,14 +411,14 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                                                     currentUserType === UserType.GOVERNMENT ? '/government/settings' :
                                                         '/settings'
                                 )}
-                                title="Settings"
+                                title={t('sidebar.actions.settings')}
                                 className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
                             >
                                 <Settings className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={handleLogout}
-                                title="Sign out"
+                                title={t('sidebar.actions.signOut')}
                                 className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
                             >
                                 <LogOut className="w-4 h-4" />

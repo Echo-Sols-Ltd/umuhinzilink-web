@@ -1,44 +1,47 @@
 'use client';
 
 import { Mail } from 'lucide-react';
+import { useI18n } from '@/contexts/I18nContext';
+import { switchLanguage } from '@/lib/language-switch';
 
 export default function Footer() {
+  const { t, locale } = useI18n();
   return (
     <footer className="bg-background text-muted-foreground py-20">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Logo and  Description */}
         <div>
-          <p className="font-semibold text-primary-foreground">🌱 UmuhinziLink</p>
+          <p className="font-semibold text-primary-foreground">🌱 {t('app.name')}</p>
           <p className="mt-2 text-sm">
-            Empowering Rwandan farmers through digital agriculture and AI-powered solutions.
+            {t('landing.footer.description')}
           </p>
         </div>
 
         {/* About */}
         <div>
-          <p className="font-semibold text-primary-foreground ">About</p>
+          <p className="font-semibold text-primary-foreground ">{t('landing.footer.about.title')}</p>
           <ul className="mt-2 space-y-1 cursor-pointer">
-            <li>Our Mission</li>
-            <li>Team</li>
-            <li>Partners</li>
-            <li>Careers</li>
+            <li>{t('landing.footer.about.mission')}</li>
+            <li>{t('landing.footer.about.team')}</li>
+            <li>{t('landing.footer.about.partners')}</li>
+            <li>{t('landing.footer.about.careers')}</li>
           </ul>
         </div>
 
         {/* Support */}
         <div>
-          <p className="font-semibold text-primary-foreground">Support</p>
+          <p className="font-semibold text-primary-foreground">{t('landing.footer.support.title')}</p>
           <ul className="mt-2 space-y-1  cursor-pointer">
-            <li>Help Center</li>
-            <li>Contact Us</li>
-            <li>SMS Support</li>
-            <li>Training</li>
+            <li>{t('landing.footer.support.helpCenter')}</li>
+            <li>{t('landing.footer.support.contactUs')}</li>
+            <li>{t('landing.footer.support.smsSupport')}</li>
+            <li>{t('landing.footer.support.training')}</li>
           </ul>
         </div>
 
         {/* Contact Info */}
         <div>
-          <p className="font-semibold text-primary-foreground ">Contact Info</p>
+          <p className="font-semibold text-primary-foreground ">{t('landing.footer.contact.title')}</p>
           <ul className="mt-2 space-y-2">
             <li className="flex items-center gap-2 text-muted-foreground">
               <PhoneIcon className="w-5 h-5" />
@@ -53,17 +56,23 @@ export default function Footer() {
             </li>
           </ul>
           <div className="flex gap-2 mt-3">
-            <button className="px-3 py-1 bg-muted rounded text-sm cursor-pointer">
-              English
+            <button
+              onClick={() => switchLanguage('en')}
+              className={`px-3 py-1 rounded text-sm cursor-pointer ${locale === 'en' ? 'bg-success text-primary-foreground' : 'bg-muted'}`}
+            >
+              {t('settings.localization.options.language.en')}
             </button>
-            <button className="px-3 py-1 bg-success rounded text-sm text-primary-foreground cursor-pointer">
-              Kinyarwanda
+            <button
+              onClick={() => switchLanguage('rw')}
+              className={`px-3 py-1 rounded text-sm cursor-pointer ${locale === 'rw' ? 'bg-success text-primary-foreground' : 'bg-muted'}`}
+            >
+              {t('settings.localization.options.language.rw')}
             </button>
           </div>
         </div>
       </div>
       <p className="text-center text-xs text-muted-foreground mt-6">
-        © 2025 UmuhinziLink. All rights reserved. Built for Rwandan farmers with ❤️
+        {t('landing.footer.copyright')}
       </p>
     </footer>
   );

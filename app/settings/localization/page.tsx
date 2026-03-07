@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
+import { switchLanguage } from '@/lib/language-switch';
 import {
   Globe,
   ArrowLeft,
@@ -18,6 +20,7 @@ import {
 export default function LocalizationSettingsPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const { t } = useI18n();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [localization, setLocalization] = useState({
@@ -34,6 +37,11 @@ export default function LocalizationSettingsPage() {
       ...prev,
       [key]: value
     }));
+
+    if (key === 'language') {
+      if (value === 'English') switchLanguage('en');
+      if (value === 'Kinyarwanda') switchLanguage('rw');
+    }
   };
 
   const handleSave = async () => {
@@ -51,33 +59,33 @@ export default function LocalizationSettingsPage() {
 
   const localizationOptions = {
     language: [
-      { value: 'English', label: 'English', flag: '🇺🇸' },
-      { value: 'Kinyarwanda', label: 'Kinyarwanda', flag: '🇷🇼' },
-      { value: 'French', label: 'Français', flag: '🇫🇷' }
+      { value: 'English', labelKey: 'settings.localization.options.language.en', flag: '🇺🇸' },
+      { value: 'Kinyarwanda', labelKey: 'settings.localization.options.language.rw', flag: '🇷🇼' },
+      { value: 'French', labelKey: 'settings.localization.options.language.fr', flag: '🇫🇷' }
     ],
     currency: [
-      { value: 'RWF', label: 'Rwandan Franc (RWF)', symbol: '₣' },
-      { value: 'USD', label: 'US Dollar (USD)', symbol: '$' },
-      { value: 'EUR', label: 'Euro (EUR)', symbol: '€' }
+      { value: 'RWF', labelKey: 'settings.localization.options.currency.rwf', symbol: '₣' },
+      { value: 'USD', labelKey: 'settings.localization.options.currency.usd', symbol: '$' },
+      { value: 'EUR', labelKey: 'settings.localization.options.currency.eur', symbol: '€' }
     ],
     timezone: [
-      { value: 'Africa/Kigali', label: 'Kigali (GMT+2)', offset: '+02:00' },
-      { value: 'Africa/Nairobi', label: 'Nairobi (GMT+3)', offset: '+03:00' },
-      { value: 'UTC', label: 'UTC (GMT+0)', offset: '+00:00' }
+      { value: 'Africa/Kigali', labelKey: 'settings.localization.options.timezone.kigali', offset: '+02:00' },
+      { value: 'Africa/Nairobi', labelKey: 'settings.localization.options.timezone.nairobi', offset: '+03:00' },
+      { value: 'UTC', labelKey: 'settings.localization.options.timezone.utc', offset: '+00:00' }
     ],
     date_format: [
-      { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY (31/12/2024)', example: '31/12/2024' },
-      { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY (12/31/2024)', example: '12/31/2024' },
-      { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD (2024-12-31)', example: '2024-12-31' }
+      { value: 'DD/MM/YYYY', labelKey: 'settings.localization.options.dateFormat.ddmmyyyy', example: '31/12/2024' },
+      { value: 'MM/DD/YYYY', labelKey: 'settings.localization.options.dateFormat.mmddyyyy', example: '12/31/2024' },
+      { value: 'YYYY-MM-DD', labelKey: 'settings.localization.options.dateFormat.yyyymmdd', example: '2024-12-31' }
     ],
     time_format: [
-      { value: '24h', label: '24-hour (14:30)', example: '14:30' },
-      { value: '12h', label: '12-hour (2:30 PM)', example: '2:30 PM' }
+      { value: '24h', labelKey: 'settings.localization.options.timeFormat.h24', example: '14:30' },
+      { value: '12h', labelKey: 'settings.localization.options.timeFormat.h12', example: '2:30 PM' }
     ],
     number_format: [
-      { value: 'comma_decimal', label: '1,234.56 (Comma decimal)', example: '1,234.56' },
-      { value: 'dot_comma', label: '1.234,56 (Dot comma)', example: '1.234,56' },
-      { value: 'space_comma', label: '1 234,56 (Space comma)', example: '1 234,56' }
+      { value: 'comma_decimal', labelKey: 'settings.localization.options.numberFormat.commaDecimal', example: '1,234.56' },
+      { value: 'dot_comma', labelKey: 'settings.localization.options.numberFormat.dotComma', example: '1.234,56' },
+      { value: 'space_comma', labelKey: 'settings.localization.options.numberFormat.spaceComma', example: '1 234,56' }
     ]
   };
 
@@ -94,11 +102,11 @@ export default function LocalizationSettingsPage() {
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Settings</span>
+              <span>{t('common.backToSettings')}</span>
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Language & Region</h1>
-              <p className="text-muted-foreground mt-1">Adjust platform language and regional preferences</p>
+              <h1 className="text-2xl font-bold text-foreground">{t('settings.localization.pageTitle')}</h1>
+              <p className="text-muted-foreground mt-1">{t('settings.localization.pageDescription')}</p>
             </div>
           </div>
 
@@ -110,13 +118,13 @@ export default function LocalizationSettingsPage() {
                 <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center text-white">
                   <Languages className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Language Preferences</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.localization.sections.languagePreferences')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Display Language
+                    {t('settings.localization.labels.displayLanguage')}
                   </label>
                   <select
                     value={localization.language}
@@ -125,12 +133,12 @@ export default function LocalizationSettingsPage() {
                   >
                     {localizationOptions.language.map(option => (
                       <option key={option.value} value={option.value}>
-                        {option.flag} {option.label}
+                        {option.flag} {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    This will change the language used throughout the platform
+                    {t('settings.localization.helperText.language')}
                   </p>
                 </div>
               </div>
@@ -142,13 +150,13 @@ export default function LocalizationSettingsPage() {
                 <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
                   <DollarSign className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Currency & Numbers</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.localization.sections.currencyAndNumbers')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Default Currency
+                    {t('settings.localization.labels.defaultCurrency')}
                   </label>
                   <select
                     value={localization.currency}
@@ -157,18 +165,18 @@ export default function LocalizationSettingsPage() {
                   >
                     {localizationOptions.currency.map(option => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Used for displaying prices and financial information
+                    {t('settings.localization.helperText.currency')}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Number Format
+                    {t('settings.localization.labels.numberFormat')}
                   </label>
                   <select
                     value={localization.number_format}
@@ -177,12 +185,14 @@ export default function LocalizationSettingsPage() {
                   >
                     {localizationOptions.number_format.map(option => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Example: {localizationOptions.number_format.find(opt => opt.value === localization.number_format)?.example}
+                    {t('settings.localization.helperText.numberFormatExample', {
+                      example: localizationOptions.number_format.find(opt => opt.value === localization.number_format)?.example ?? ''
+                    })}
                   </p>
                 </div>
               </div>
@@ -194,13 +204,13 @@ export default function LocalizationSettingsPage() {
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
                   <Clock className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Time & Date</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.localization.sections.timeAndDate')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Time Zone
+                    {t('settings.localization.labels.timeZone')}
                   </label>
                   <select
                     value={localization.timezone}
@@ -209,18 +219,20 @@ export default function LocalizationSettingsPage() {
                   >
                     {localizationOptions.timezone.map(option => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Current offset: {localizationOptions.timezone.find(opt => opt.value === localization.timezone)?.offset}
+                    {t('settings.localization.helperText.timeZoneOffset', {
+                      offset: localizationOptions.timezone.find(opt => opt.value === localization.timezone)?.offset ?? ''
+                    })}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Time Format
+                    {t('settings.localization.labels.timeFormat')}
                   </label>
                   <select
                     value={localization.time_format}
@@ -229,18 +241,20 @@ export default function LocalizationSettingsPage() {
                   >
                     {localizationOptions.time_format.map(option => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Example: {localizationOptions.time_format.find(opt => opt.value === localization.time_format)?.example}
+                    {t('settings.localization.helperText.timeFormatExample', {
+                      example: localizationOptions.time_format.find(opt => opt.value === localization.time_format)?.example ?? ''
+                    })}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Date Format
+                    {t('settings.localization.labels.dateFormat')}
                   </label>
                   <select
                     value={localization.date_format}
@@ -249,12 +263,14 @@ export default function LocalizationSettingsPage() {
                   >
                     {localizationOptions.date_format.map(option => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Example: {localizationOptions.date_format.find(opt => opt.value === localization.date_format)?.example}
+                    {t('settings.localization.helperText.dateFormatExample', {
+                      example: localizationOptions.date_format.find(opt => opt.value === localization.date_format)?.example ?? ''
+                    })}
                   </p>
                 </div>
               </div>
@@ -262,18 +278,18 @@ export default function LocalizationSettingsPage() {
 
             {/* Preview Section */}
             <div className="bg-card rounded-lg border border-border p-6">
-              <h2 className="text-lg font-semibold text-foreground mb-4">Preview</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">{t('common.preview')}</h2>
               <div className="bg-muted/30 rounded-lg p-4 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Sample Price:</span>
+                  <span className="text-muted-foreground">{t('settings.localization.preview.samplePrice')}</span>
                   <span className="font-mono">1,234.56 RWF</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Sample Date:</span>
+                  <span className="text-muted-foreground">{t('settings.localization.preview.sampleDate')}</span>
                   <span className="font-mono">31/12/2024</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Sample Time:</span>
+                  <span className="text-muted-foreground">{t('settings.localization.preview.sampleTime')}</span>
                   <span className="font-mono">14:30</span>
                 </div>
               </div>
@@ -290,22 +306,22 @@ export default function LocalizationSettingsPage() {
               {saveStatus === 'saving' ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  {t('common.saving')}
                 </>
               ) : saveStatus === 'success' ? (
                 <>
                   <span>✓</span>
-                  Saved!
+                  {t('common.saved')}
                 </>
               ) : saveStatus === 'error' ? (
                 <>
                   <span>✗</span>
-                  Error
+                  {t('common.error')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Save Changes
+                  {t('common.saveChanges')}
                 </>
               )}
             </button>
