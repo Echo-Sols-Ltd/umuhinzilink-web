@@ -422,6 +422,7 @@ export default function FarmerSignUp() {
             </Button>
           </div>
         </form>
+        <AuthFooter />
       </div>
 
       {/* Hero Section */}
@@ -441,7 +442,7 @@ export default function FarmerSignUp() {
         </p>
       </div>
     </div>
-    <AuthFooter />
+    
   </>
   );
 }

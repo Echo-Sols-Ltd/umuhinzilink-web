@@ -214,7 +214,10 @@ export default function SignIn() {
               </Link>
             </p>
           </form>
+            {/* Language Selector at Bottom */}
+      <AuthFooter />
         </div>
+        
       </div>
 
       {/* RIGHT – Hero Section */}
@@ -233,8 +236,7 @@ export default function SignIn() {
         </p>
       </div>
 
-      {/* Language Selector at Bottom */}
-      <AuthFooter />
+    
     </div>
   );
 }

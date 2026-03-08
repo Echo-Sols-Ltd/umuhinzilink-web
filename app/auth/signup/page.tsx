@@ -256,6 +256,8 @@ export default function SignUp() {
               <Link href="/auth/signin" className="text-success font-semibold">{t('auth.signUp.signIn')}</Link>
             </p>
           </form>
+               {/* Language Selector at Bottom */}
+      <AuthFooter />
         </div>
       </div>
 
@@ -268,8 +270,7 @@ export default function SignUp() {
         </p>
       </div>
 
-      {/* Language Selector at Bottom */}
-      <AuthFooter />
+ 
     </div>
   );
 }

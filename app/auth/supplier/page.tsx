@@ -415,6 +415,7 @@ export default function SupplierSignUp() {
             </Button>
           </div>
         </form>
+        <AuthFooter />
       </div>
 
       {/* Hero Section */}
@@ -432,7 +433,7 @@ export default function SupplierSignUp() {
           {t('auth.signUp.joinMarketplace.supplier')}
         </p>
       </div>
-      <AuthFooter />
+
     </div>
   );
 }

@@ -231,6 +231,7 @@ export default function BuyerSignUp() {
             </Button>
           </div>
         </form>
+         <AuthFooter />
       </div>
 
       {/* Hero Section */}
@@ -239,7 +240,6 @@ export default function BuyerSignUp() {
         <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">{t('auth.signUp.buyerRegistration')}</h1>
         <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">{t('auth.signUp.joinMarketplace.buyer')}</p>
       </div>
-      <AuthFooter />
     </div>
 
   );

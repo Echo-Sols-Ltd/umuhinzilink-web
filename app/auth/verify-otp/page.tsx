@@ -177,11 +177,9 @@ export default function VerifyPage() {
                             </p>
                         </div>
                     </div>
+                    <AuthFooter />
 
-                    {/* Footer */}
-                    <div className="text-sm text-muted-foreground">
-                        {t('common.footerCopyright')}
-                    </div>
+
                 </div>
 
                 {/* Right side - Image */}
@@ -196,7 +194,7 @@ export default function VerifyPage() {
                     />
                 </div>
             </div>
-            <AuthFooter />
+
         </>
     );
 }
