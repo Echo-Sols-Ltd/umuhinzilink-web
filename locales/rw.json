@@ -349,6 +349,8 @@
       "signIn": "Injira",
       "noAccount": "Nta konti ufite?",
       "signUp": "Iyandikishe",
+      "continueWithFacebook": "Komeza ukoresheje Facebook",
+      "continueWithGoogle": "Komeza ukoresheje Google",
       "heroTitle": "Murakaza neza!",
       "heroSubtitle": {
         "line1": "Injira kugira ngo ubone konti yawe kandi ukomeze urugendo rwawe",
@@ -373,10 +375,35 @@
       "signUp": "Iyandikishe",
       "alreadyHaveAccount": "Usanzwe ufite konti?",
       "signIn": "Injira",
-      "heroTitle": "Murakaza neza!",
+      "continueWithFacebook": "Komeza ukoresheje Facebook",
+      "continueWithGoogle": "Komeza ukoresheje Google",
+      "buyerRegistration": "Iyandikishe ry'Umuturitsi",
+      "supplierRegistration": "Iyandikishe ry'Uwinga",
+      "farmerRegistration": "Iyandikishe ry'Umuhinzi",
+      "createBuyerAccount": "Kora Konti yawe y'Umuturitsi",
+      "createSupplierAccount": "Kora Konti yawe y'Uwinga",
+      "createFarmerAccount": "Kora Konti yawe y'Umuhinzi",
+      "profileImage": "Ifoto y'umwirima",
+      "uploadProfileImage": "Shyiramo ifoto y'umwirima",
+      "joinMarketplace": {
+        "buyer": "Jira umucyo w'ubuhinzi wa kwihangana n'abahinzi ku buryo",
+        "supplier": "Jira umucyo w'ubuhinzi wa kwihangana n'abahinzi n'abacuruzi",
+        "farmer": "Jira umucyo w'ubuhinzi wa kwihangana n'abacuruzi ku buryo"
+      },
+      "validation": {
+        "fileTooLarge": "Ifoto y'umwirima igomba kuba munsi ya MB 5",
+        "invalidFileType": "Muhitemo ifoto ya dosiye y'ishusho",
+        "selectImageFile": "Muhitemo ifoto ya dosiye y'ishusho",
+        "fileSizeHint": "JPG, PNG, GIF kugeza kuri MB 5"
+      },
+      "alt": {
+        "mountainRoad": "Umuhanda wa mountain",
+        "profilePreview": "Igaragazambwa ry'ifoto y'umwirima"
+      },
+      "heroTitle": "Murakaze neza!",
       "heroSubtitle": {
-        "line1": "Koresha iyi fishi kugirango winjire cyangwa ukore konti nshya",
-        "line2": "mu mushinga wawe ku buntu"
+        "line1": "Koresha iyi fishi kugirango winjire cyangwa ukora konti nshya",
+        "line2": "muri iyi porogaramu ku bushake"
       }
     },
     "forgotPassword": {
@@ -472,6 +499,92 @@
       "validation": {
         "completeCode": "Andika kode yuzuye y'imibare 4"
       }
+    },
+    "buyer": {
+      "fields": {
+        "buyerType": "Ubwoko bw'umuguzi",
+        "province": "Intara",
+        "district": "Akarere"
+      },
+      "placeholders": {
+        "selectBuyerType": "Hitamo ubwoko bw'umuguzi",
+        "selectProvince": "Hitamo intara",
+        "selectDistrict": "Hitamo akarere"
+      },
+      "validation": {
+        "buyerTypeRequired": "Bwoko bw'umuguzi ari ngombwa",
+        "provinceRequired": "Intara ari ngombwa",
+        "districtRequired": "Akarere ari ngombwa",
+        "fixErrorsBelow": "Siba amakosi hasi kongera ugerageze"
+      },
+      "success": {
+        "accountCreated": "Konti y'umuguzi yaremwe neza!"
+      },
+      "error": {
+        "accountCreationFailed": "Kudakora konti y'umuguzi byanze. Ongera ugerageze."
+      },
+      "creatingAccount": "Irimo gukora konti...",
+      "finishCreatingAccount": "Ihora gukora konti"
+    },
+    "farmer": {
+      "fields": {
+        "farmSize": "Ingano y'ubuhinzi",
+        "farmingExperience": "Ubunararibonye mu buhinzi"
+      },
+      "placeholders": {
+        "selectFarmSize": "Hitamo ingano y'ubuhinzi",
+        "selectExperienceLevel": "Hitamo urwego rw'ubunararibonye"
+      },
+      "validation": {
+        "farmSizeRequired": "Ingano y'ubuhinzi ari ngombwa",
+        "experienceLevelRequired": "Urwego rw'ubunararibonye ari ngombwa",
+        "provinceRequired": "Intara ari ngombwa",
+        "districtRequired": "Akarere ari ngombwa",
+        "cropsRequired": "Hitamo kimwe cyangwa se byinshi mu biribwa",
+        "fixErrorsBelow": "Siba amakosi hasi kongera ugerageze"
+      },
+      "success": {
+        "accountCreated": "Konti y'umuhinzi yaremwe neza!"
+      },
+      "error": {
+        "accountCreationFailed": "Kudakora konti y'umuhinzi byanze. Ongera ugerageze."
+      },
+      "farmInformation": "Amakuru y'ubuhinzi",
+      "farmLocation": "Aho umuhinzi ahagarariye",
+      "cropsYouGrow": "Biribwa uribwa",
+      "changeImage": "Hindura ifoto",
+      "chooseImage": "Hitamo ifoto",
+      "creatingAccount": "Irimo gukora konti...",
+      "finishCreatingAccount": "Ihora gukora konti"
+    },
+    "supplier": {
+      "fields": {
+        "businessName": "Izina ry'ubucuruzi",
+        "supplierType": "Ubwoko bw'umutunganya"
+      },
+      "placeholders": {
+        "businessName": "Andika izina ry'ubucuruzi bwawe",
+        "selectSupplierType": "Hitamo ubwoko bw'umutunganya"
+      },
+      "validation": {
+        "businessNameRequired": "Izina ry'ubucuruzi ari ngombwa",
+        "businessNameMinLength": "Izina ry'ubucuruzi rigira kuba rirenga inyuguti 2",
+        "supplierTypeRequired": "Ubwoko bw'umutunganya ari ngombwa",
+        "provinceRequired": "Intara ari ngombwa",
+        "districtRequired": "Akarere ari ngombwa",
+        "fixErrorsBelow": "Siba amakosi hasi kongera ugerageze"
+      },
+      "success": {
+        "accountCreated": "Konti y'umutunganya yaremwe neza!"
+      },
+      "error": {
+        "accountCreationFailed": "Kudakora konti y'umutunganya byanze. Ongera ugerageze."
+      },
+      "businessInformation": "Amakuru y'ubucuruzi",
+      "businessLocation": "Aho ubucuruzi bugaruriye",
+      "chooseImage": "Hitamo ifoto",
+      "creatingAccount": "Irimo gukora konti...",
+      "finishCreatingAccount": "Ihora gukora konti"
     }
   },
   "dashboard": {

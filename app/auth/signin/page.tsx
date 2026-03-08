@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
+import LanguageSelector from '@/components/auth/LanguageSelector';
+import AuthFooter from '@/components/auth/AuthFooter';
 
 export default function SignIn() {
   const socialLinks = [
@@ -97,22 +99,25 @@ export default function SignIn() {
       {/* LEFT – Form Section */}
       <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-card">
         <div className="w-full max-w-md flex flex-col justify-center">
-          <div className="mb-6 text-center">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">{t('auth.signIn.title')}</h1>
-            <p className="text-muted-foreground text-sm sm:text-base mt-1">{t('auth.signIn.subtitle')}</p>
+          {/* Logo/Brand */}
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <span className="text-white text-xl font-bold">UL</span>
+            </div>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground text-center mb-2">{t('auth.signIn.title')}</h1>
+          <p className="text-muted-foreground text-sm sm:text-base text-center mb-6">{t('auth.signIn.subtitle')}</p>
 
-          <div className="flex justify-center gap-3 mb-6">
-            {socialLinks.map((item, i) => (
-              <Link
-                key={i}
-                href={item.link}
-                target="_blank"
-                className="w-11 h-11 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-success/10 hover:text-success transition"
-              >
-                {item.icon}
-              </Link>
-            ))}
+          {/* Social Login Buttons */}
+          <div className="space-y-3 mb-6">
+            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              <BiLogoFacebookCircle size={20} className="mr-2 text-blue-600" />
+              <span>{t('auth.signIn.continueWithFacebook')}</span>
+            </button>
+            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              <BiLogoGoogle size={20} className="mr-2 text-red-500" />
+              <span>{t('auth.signIn.continueWithGoogle')}</span>
+            </button>
           </div>
 
           <div className="flex items-center gap-3 mb-6">
@@ -122,9 +127,11 @@ export default function SignIn() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email Field */}
             <div>
-              <Label className="text-sm">{t('auth.fields.email')}</Label>
+              <Label htmlFor="email" className="text-sm">{t('auth.fields.email')}</Label>
               <Input
+                id="email"
                 name="email"
                 type="email"
                 placeholder={t('auth.placeholders.email')}
@@ -142,9 +149,11 @@ export default function SignIn() {
               )}
             </div>
 
+            {/* Password Field */}
             <div className="relative">
-              <Label className="text-sm">{t('auth.fields.password')}</Label>
+              <Label htmlFor="password" className="text-sm">{t('auth.fields.password')}</Label>
               <Input
+                id="password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder={t('auth.placeholders.passwordDots')}
@@ -169,16 +178,26 @@ export default function SignIn() {
               )}
             </div>
 
+            {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Switch checked={rememberMe} onCheckedChange={setRememberMe} />
-                <span className="text-sm text-muted-foreground">{t('auth.signIn.rememberMe')}</span>
+                <Switch 
+                  id="remember-me" 
+                  checked={rememberMe} 
+                  onCheckedChange={setRememberMe}
+                  className="data-[state=checked]:bg-green-600"
+                />
+                <Label htmlFor="remember-me" className="text-sm text-muted-foreground">
+                  {t('auth.signIn.rememberMe')}
+                </Label>
               </div>
+
               <Link href="/forgot-password" className="text-sm text-success hover:underline">
                 {t('auth.signIn.forgot')}
               </Link>
             </div>
 
+            {/* Submit Button */}
             <Button
               type="submit"
               disabled={loading}
@@ -187,6 +206,7 @@ export default function SignIn() {
               {loading ? t('auth.signIn.signingIn') : t('auth.signIn.signIn')}
             </Button>
 
+            {/* Sign Up Link */}
             <p className="text-sm text-center text-muted-foreground">
               {t('auth.signIn.noAccount')}{' '}
               <Link href="/auth/signup" className="text-success font-semibold">
@@ -194,7 +214,10 @@ export default function SignIn() {
               </Link>
             </p>
           </form>
+            {/* Language Selector at Bottom */}
+      <AuthFooter />
         </div>
+        
       </div>
 
       {/* RIGHT – Hero Section */}
@@ -212,6 +235,8 @@ export default function SignIn() {
           {t('auth.signIn.heroSubtitle.line1')} <br /> {t('auth.signIn.heroSubtitle.line2')}
         </p>
       </div>
+
+    
     </div>
   );
 }

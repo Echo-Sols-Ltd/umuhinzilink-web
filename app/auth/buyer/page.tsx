@@ -10,12 +10,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { BuyerRequest, BuyerType, Province, District } from '@/types';
 import { buyerTypeOptions, provinceOptions, districtOptions } from '@/types/enums';
 import useUserAction from '@/hooks/useUserAction';
+import AuthFooter from '@/components/auth/AuthFooter';
 
 export default function BuyerSignUp() {
   const { registerBuyer, user } = useAuth();
+  const { t } = useI18n();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
   const [buyerData, setBuyerData] = useState<BuyerRequest>({
     userId: user?.id!,
@@ -28,6 +31,7 @@ export default function BuyerSignUp() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const [fieldErrors, setFieldErrors] = useState({
     buyerType: '',
@@ -40,6 +44,26 @@ export default function BuyerSignUp() {
     province: false,
     district: false,
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        notify.error(t('auth.signUp.validation.fileTooLarge'), t('common.error'));
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        notify.error(t('auth.signUp.validation.invalidFileType'), t('common.error'));
+        return;
+      }
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
@@ -72,13 +96,13 @@ export default function BuyerSignUp() {
     if (!value) {
       switch (name) {
         case 'buyerType':
-          error = 'Buyer type is required';
+          error = t('auth.buyer.validation.buyerTypeRequired');
           break;
         case 'province':
-          error = 'Province is required';
+          error = t('auth.buyer.validation.provinceRequired');
           break;
         case 'district':
-          error = 'District is required';
+          error = t('auth.buyer.validation.districtRequired');
           break;
       }
     }
@@ -97,18 +121,6 @@ export default function BuyerSignUp() {
     return buyerTypeValid && provinceValid && districtValid;
   };
 
-  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) return notify.error('Please select an image file', 'Invalid file type');
-    if (file.size > 5 * 1024 * 1024) return notify.error('Profile image must be less than 5MB', 'File too large');
-
-    setProfileImage(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setProfilePreview(reader.result as string);
-    reader.readAsDataURL(file);
-  };
-
   const removeProfileImage = () => {
     setProfileImage(null);
     setProfilePreview('');
@@ -118,7 +130,7 @@ export default function BuyerSignUp() {
     e.preventDefault();
     setLoading(true);
     if (!validateForm()) {
-      notify.error('Please fix the errors below and try again.', 'Validation Error');
+      notify.error(t('auth.buyer.validation.fixErrorsBelow'), t('common.error'));
       setLoading(false);
       return;
     }
@@ -126,9 +138,9 @@ export default function BuyerSignUp() {
     try {
       if (profileImage) await uploadFile(profileImage);
       await registerBuyer(buyerData);
-      notify.success('Buyer account created successfully!', 'Success');
+      notify.success(t('auth.buyer.success.accountCreated'), t('common.success'));
     } catch {
-      notify.error('Failed to create buyer account. Please try again.', 'Registration Error');
+      notify.error(t('auth.buyer.error.accountCreationFailed'), t('auth.register.error'));
     } finally {
       setLoading(false);
     }
@@ -137,91 +149,98 @@ export default function BuyerSignUp() {
   return (
     <div className="w-full h-screen bg-background flex items-center">
       <div className="w-full overflow-scroll h-full bg-card rounded-lg  p-6 sm:p-6 z-20 relative py-20">
-        <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">Create Your Buyer Account</h1>
+        <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">{t('auth.signUp.createBuyerAccount')}</h1>
 
         <div className="flex gap-4 justify-center mb-6">
           {socialLinks.map((linkItem, idx) => (
-            <Link key={idx} href={linkItem.link} target="_blank" className="p-3 text-muted-foreground transition border border-border rounded-md hover:bg-muted">{linkItem.icon}</Link>
+            <a
+              key={idx}
+              href={linkItem.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-12 h-12 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-success/10 hover:text-success transition"
+            >
+              {linkItem.icon}
+            </a>
           ))}
         </div>
 
-        <p className="text-center text-muted-foreground text-sm mb-6">Or fill in your details below</p>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-
-          {/* Profile Image */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Profile Image</h2>
-            <div className="flex items-center space-x-6">
-              <div className="relative">
-                {profilePreview ? (
-                  <div className="relative">
-                    <Image src={profilePreview} alt="Profile preview" width={120} height={120} className="w-30 h-30 rounded-full object-cover border-4 border-border" />
-                    <button type="button" onClick={removeProfileImage} className="absolute -top-2 -right-2 bg-destructive text-primary-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-30 h-30 rounded-full bg-muted border-4 border-muted flex items-center justify-center">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Profile Image Upload */}
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.signUp.profileImage')}</h2>
+              <div className="flex items-center space-x-6">
+                <div className="relative">
+                  {profilePreview ? (
+                    <img src={profilePreview} alt={t('auth.signUp.alt.profilePreview')} className="w-full h-full object-cover" />
+                  ) : (
                     <Upload className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                )}
-              </div>
-              <Button type="button" onClick={() => document.getElementById('profileImage')?.click()} disabled={loading || uploadLoading} variant="outline">Choose Image</Button>
-              <input id="profileImage" type="file" accept="image/*" onChange={handleProfileImageChange} className="hidden" disabled={loading || uploadLoading} />
-            </div>
-          </div>
-
-          {/* Buyer Info */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Buyer Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="buyerType" className="text-foreground font-medium text-sm">Buyer Type</Label>
-                <select id="buyerType" name="buyerType" value={buyerData.buyerType} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.buyerType && fieldErrors.buyerType ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
-                  <option value="">Select buyer type</option>
-                  {buyerTypeOptions.map(option => <option key={option.value} value={option.value}>{option.label.replace(/_/g, ' ')}</option>)}
-                </select>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-success rounded-full flex items-center justify-center text-white hover:bg-success/90 transition-colors"
+                >
+                  <Upload className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Location */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Business Location</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="province" className="text-foreground font-medium text-sm">Province</Label>
-                <select id="province" name="province" value={buyerData.address.province} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
-                  <option value="">Select province</option>
-                  {provinceOptions.map(option => <option key={option.value} value={option.value}>{option.label.replace(/_/g, ' ')}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label htmlFor="district" className="text-foreground font-medium text-sm">District</Label>
-                <select id="district" name="district" value={buyerData.address.district} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
-                  <option value="">Select district</option>
-                  {districtOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-                </select>
-              </div>
+          {/* Form Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="buyerType" className="text-foreground font-medium text-sm">{t('auth.buyer.fields.buyerType')}</Label>
+              <select id="buyerType" name="buyerType" value={buyerData.buyerType} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.buyerType && fieldErrors.buyerType ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
+                <option value="">{t('auth.buyer.placeholders.selectBuyerType')}</option>
+                {buyerTypeOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+              </select>
+              {touched.buyerType && fieldErrors.buyerType && <p className="text-destructive text-xs mt-1">{fieldErrors.buyerType}</p>}
+            </div>
+            <div>
+              <Label htmlFor="profileImage" className="text-foreground font-medium text-sm mb-2 block">{t('auth.signUp.uploadProfileImage')}</Label>
+              <select id="province" name="province" value={buyerData.address.province} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
+                <option value="">{t('auth.buyer.placeholders.selectProvince')}</option>
+                {provinceOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+              </select>
+              {touched.province && fieldErrors.province && <p className="text-destructive text-xs mt-1">{fieldErrors.province}</p>}
+            </div>
+            <div>
+              <Label htmlFor="district" className="text-foreground font-medium text-sm">{t('auth.buyer.fields.district')}</Label>
+              <select id="district" name="district" value={buyerData.address.district} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
+                <option value="">{t('auth.buyer.placeholders.selectDistrict')}</option>
+                {districtOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+              </select>
+              {touched.district && fieldErrors.district && <p className="text-destructive text-xs mt-1">{fieldErrors.district}</p>}
             </div>
           </div>
 
           {/* Submit */}
           <div className="space-y-4">
             <Button type="submit" className="w-full bg-success hover:bg-success/90 text-primary-foreground font-medium text-sm" disabled={loading || uploadLoading}>
-              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
+              {loading || uploadLoading ? t('auth.buyer.creatingAccount') : t('auth.buyer.finishCreatingAccount')}
             </Button>
           </div>
         </form>
+         <AuthFooter />
       </div>
 
       {/* Hero Section */}
       <div className="relative w-full h-full flex flex-col justify-center items-center text-center">
         <Image src="/Image.png" alt="background" fill className="absolute right-0 top-0 object-cover w-full h-full dark:brightness-50 dark:contrast-110 transition-all duration-300" />
-        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">Buyer Registration</h1>
-        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">Join our agricultural marketplace and connect with farmers directly</p>
+        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">{t('auth.signUp.buyerRegistration')}</h1>
+        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">{t('auth.signUp.joinMarketplace.buyer')}</p>
       </div>
     </div>
+
   );
 }
