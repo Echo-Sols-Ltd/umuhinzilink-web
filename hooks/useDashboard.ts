@@ -152,7 +152,6 @@ export const useRealtimeDashboard = (userRole: string) => {
 
     return () => {
       // Cleanup function placeholder
-      console.log('Unsubscribing from dashboard updates');
     };
   }, [userRole]);
 

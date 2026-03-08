@@ -18,31 +18,35 @@ import Image from 'next/image';
 import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus } from '@/types';
 import { cn } from '@/lib/utils';
 import OrderStatusTracker from './OrderStatusTracker';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface OrderManagementDashboardProps {
   orders: (FarmerOrder | SupplierOrder)[];
-  userRole: 'buyer' | 'farmer' | 'supplier';
+  orderType?: string;
+  title?: string;
+  loading?: boolean;
+  className?: string;
   onViewOrder?: (order: FarmerOrder | SupplierOrder) => void;
   onAcceptOrder?: (orderId: string) => void;
   onRejectOrder?: (orderId: string) => void;
   onUpdateStatus?: (orderId: string, status: DeliveryStatus) => void;
-  loading?: boolean;
-  className?: string;
 }
 
 type FilterType = 'all' | 'pending' | 'active' | 'completed' | 'cancelled';
 type SortType = 'newest' | 'oldest' | 'amount_high' | 'amount_low';
 
-const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
+export default function OrderManagementDashboard({
   orders,
-  userRole,
+  loading,
+  orderType,
+  title,
+  className,
   onViewOrder,
   onAcceptOrder,
   onRejectOrder,
   onUpdateStatus,
-  loading = false,
-  className,
-}) => {
+}: OrderManagementDashboardProps) {
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [sortType, setSortType] = useState<SortType>('newest');
@@ -126,12 +130,12 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
   };
 
   const canAcceptOrder = (order: FarmerOrder | SupplierOrder) => {
-    return (userRole === 'farmer' || userRole === 'supplier') &&
+    return (orderType === 'farmer' || orderType === 'supplier') &&
       order.status === OrderStatus.PENDING;
   };
 
   const canUpdateStatus = (order: FarmerOrder | SupplierOrder) => {
-    return (userRole === 'farmer' || userRole === 'supplier') &&
+    return (orderType === 'farmer' || orderType === 'supplier') &&
       order.status === OrderStatus.ACTIVE;
   };
 
@@ -233,7 +237,7 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <input
               type="text"
-              placeholder="Search orders..."
+              placeholder={t('orderManagement.dashboard.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -246,13 +250,13 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
             className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-background"
           >
             <Filter className="w-4 h-4" />
-            <span>Filters</span>
+            <span>{t('orderManagement.dashboard.filters')}</span>
           </button>
 
           {/* Export */}
           <button className="flex items-center space-x-2 px-4 py-2 bg-success text-success-foreground rounded-lg hover:bg-success/90">
             <Download className="w-4 h-4" />
-            <span>Export</span>
+            <span>{t('orderManagement.dashboard.export')}</span>
           </button>
         </div>
 
@@ -260,31 +264,31 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
         {showFilters && (
           <div className="mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Status</label>
+              <label className="block text-sm font-medium text-foreground mb-2">{t('orderManagement.dashboard.status')}</label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FilterType)}
                 className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
               >
-                <option value="all">All Orders</option>
-                <option value="pending">Pending</option>
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="all">{t('orderManagement.dashboard.allOrders')}</option>
+                <option value="pending">{t('orderManagement.dashboard.pending')}</option>
+                <option value="active">{t('orderManagement.dashboard.active')}</option>
+                <option value="completed">{t('orderManagement.dashboard.completed')}</option>
+                <option value="cancelled">{t('orderManagement.dashboard.cancelled')}</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Sort By</label>
+              <label className="block text-sm font-medium text-foreground mb-2">{t('orderManagement.dashboard.sortBy')}</label>
               <select
                 value={sortType}
                 onChange={(e) => setSortType(e.target.value as SortType)}
                 className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
               >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="amount_high">Highest Amount</option>
-                <option value="amount_low">Lowest Amount</option>
+                <option value="newest">{t('orderManagement.dashboard.newestFirst')}</option>
+                <option value="oldest">{t('orderManagement.dashboard.oldestFirst')}</option>
+                <option value="amount_high">{t('orderManagement.dashboard.highestAmount')}</option>
+                <option value="amount_low">{t('orderManagement.dashboard.lowestAmount')}</option>
               </select>
             </div>
           </div>
@@ -312,7 +316,7 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
                     Order
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
-                    {userRole === 'buyer' ? 'Seller' : 'Customer'}
+                    {orderType === 'buyer' ? 'Seller' : 'Customer'}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase ">
                     Product
@@ -484,6 +488,4 @@ const OrderManagementDashboard: React.FC<OrderManagementDashboardProps> = ({
       )}
     </div>
   );
-};
-
-export default OrderManagementDashboard;
+}

@@ -9,12 +9,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import ProductDetail from '@/components/products/ProductDetail';
 import { useToast } from '@/components/ui/use-toast';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function SupplierProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
+  const { t } = useI18n();
   const { 
     supplierProducts, 
     currentSupplierProduct, 
@@ -56,20 +58,20 @@ export default function SupplierProductDetailPage() {
             // Refresh the list to include this product for future navigation
             fetchSupplierProducts();
           } else {
-            setError('Product not found');
+            setError(t('common.productDetailMsg.productNotFoundTitle'));
             showToast({
-              title: "Error",
-              description: "Failed to load product details",
+              title: t('common.error'),
+              description: t('common.productDetailMsg.failedToLoadProduct'),
               variant: "default"
             });
           }
         }
       } catch (err) {
         console.error('Failed to fetch product:', err);
-        setError('Failed to load product');
+        setError(t('common.productDetailMsg.failedToLoadProduct'));
         showToast({
-          title: "Error", 
-          description: "Failed to load product details",
+          title: t('common.error'), 
+          description: t('common.productDetailMsg.failedToLoadProduct'),
           variant: "default"
         });
       } finally {
@@ -93,7 +95,7 @@ export default function SupplierProductDetailPage() {
       // Fallback - copy to clipboard
       navigator.clipboard.writeText(window.location.href);
       showToast({
-        description: 'Product link copied to clipboard',
+        description: t('common.productDetailMsg.linkCopied'),
         variant: 'default',
       });
     }
@@ -105,7 +107,7 @@ export default function SupplierProductDetailPage() {
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+    if (!confirm(t('common.productDetailMsg.confirmDelete'))) {
       return;
     }
 
@@ -116,20 +118,20 @@ export default function SupplierProductDetailPage() {
 
       if (response.ok) {
         showToast({
-          description: 'Product deleted successfully',
+          description: t('common.productDetailMsg.deleteSuccess'),
           variant: 'default',
         });
         router.push('/supplier/products');
       } else {
         const data = await response.json();
         showToast({
-          description: data.message || 'Failed to delete product',
+          description: data.message || t('common.productDetailMsg.deleteFailed'),
           variant: 'error',
         });
       }
     } catch (err) {
       showToast({
-        description: 'Failed to delete product',
+        description: t('common.productDetailMsg.deleteFailed'),
         variant: 'error',
       });
     }
@@ -142,7 +144,7 @@ export default function SupplierProductDetailPage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading product...</p>
+            <p className="text-muted-foreground">{t('common.productDetailMsg.loadingProduct')}</p>
           </div>
         </main>
       </div>
@@ -155,13 +157,13 @@ export default function SupplierProductDetailPage() {
         <Sidebar userType={UserType.SUPPLIER} activeItem="My Inputs" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
-            <p className="text-muted-foreground mb-4">{error || 'This product could not be found.'}</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">{t('common.productDetailMsg.productNotFoundTitle')}</h1>
+            <p className="text-muted-foreground mb-4">{error || t('common.productDetailMsg.productNotFoundDesc')}</p>
             <button
               onClick={() => router.back()}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             >
-              Go Back
+              {t('common.productDetailMsg.goBack')}
             </button>
           </div>
         </main>

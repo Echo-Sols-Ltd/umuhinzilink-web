@@ -10,7 +10,10 @@ import { useProduct } from '@/contexts/ProductContext';
 import ProductDetail from '@/components/products/ProductDetail';
 import { useToast } from '@/components/ui/use-toast';
 
+import { useI18n } from '@/contexts/I18nContext';
+
 export default function BuyerProductDetailPage() {
+  const { t } = useI18n();
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
@@ -116,11 +119,11 @@ export default function BuyerProductDetailPage() {
         }
       } catch (err) {
         console.error('Failed to fetch product:', err);
-        setError('Failed to load product');
+        setError(t('buyer.productDetail.notFoundDesc'));
         showToast({
-          title: "Error",
-          description: "Failed to load product details",
-          variant: "default"
+          title: t('common.error'),
+          description: t('buyer.productDetail.notFoundDesc'),
+          variant: "error"
         });
       } finally {
         setLoading(false);
@@ -130,7 +133,7 @@ export default function BuyerProductDetailPage() {
     if (productId) {
       loadProduct();
     }
-  }, [productId, farmerProducts, supplierProducts, buyerProducts, currentFarmerProduct, currentSupplierProduct, currentBuyerProduct, setCurrentFarmerProduct, setCurrentSupplierProduct, setCurrentBuyerProduct, fetchFarmerProducts, fetchSupplierProducts, fetchBuyerProducts, showToast]);
+  }, [productId, farmerProducts, supplierProducts, buyerProducts, currentFarmerProduct, currentSupplierProduct, currentBuyerProduct, setCurrentFarmerProduct, setCurrentSupplierProduct, setCurrentBuyerProduct, fetchFarmerProducts, fetchSupplierProducts, fetchBuyerProducts, showToast, t]);
 
   // Get current product based on type
   const getCurrentProduct = () => {
@@ -157,13 +160,13 @@ export default function BuyerProductDetailPage() {
     if (newSaved.has(productId)) {
       newSaved.delete(productId);
       showToast({
-        description: 'Product removed from favorites',
+        description: t('buyer.productDetail.toasts.removedFromFavorites'),
         variant: 'default',
       });
     } else {
       newSaved.add(productId);
       showToast({
-        description: 'Product added to favorites',
+        description: t('buyer.productDetail.toasts.addedToFavorites'),
         variant: 'default',
       });
     }
@@ -182,7 +185,7 @@ export default function BuyerProductDetailPage() {
       // Fallback - copy to clipboard
       navigator.clipboard.writeText(window.location.href);
       showToast({
-        description: 'Product link copied to clipboard',
+        description: t('buyer.productDetail.toasts.linkCopied'),
         variant: 'default',
       });
     }
@@ -200,8 +203,8 @@ export default function BuyerProductDetailPage() {
         <Sidebar userType={UserType.BUYER} activeItem="Marketplace" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading product...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
+            <p className="text-muted-foreground">{t('buyer.productDetail.loading')}</p>
           </div>
         </main>
       </div>
@@ -213,14 +216,14 @@ export default function BuyerProductDetailPage() {
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.BUYER} activeItem="Marketplace" />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
-            <p className="text-muted-foreground mb-4">{error || 'This product could not be found.'}</p>
+          <div className="text-center p-6">
+            <h1 className="text-2xl font-bold text-foreground mb-2">{t('buyer.productDetail.notFound')}</h1>
+            <p className="text-muted-foreground mb-6">{error || t('buyer.productDetail.notFoundDesc')}</p>
             <button
               onClick={() => router.back()}
-              className="px-4 py-2 bg-success text-primary-foreground rounded-lg hover:bg-success/90 transition-colors"
+              className="px-6 py-2 bg-success text-primary-foreground rounded-lg hover:bg-success/90 transition-colors font-medium"
             >
-              Go Back
+               {t('buyer.productDetail.goBack')}
             </button>
           </div>
         </main>

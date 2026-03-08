@@ -19,7 +19,7 @@ export default function MetricCard({
     
     switch (format) {
       case 'currency':
-        return new Intl.NumberFormat('rw-RW', {
+        return new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: 'RWF',
           minimumFractionDigits: 0,
@@ -28,7 +28,7 @@ export default function MetricCard({
       case 'percentage':
         return `${val}%`;
       default:
-        return new Intl.NumberFormat('rw-RW').format(val);
+        return new Intl.NumberFormat('en-US').format(val);
     }
   };
 

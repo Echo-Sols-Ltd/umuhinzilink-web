@@ -5,16 +5,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserType } from '@/types';
 import FarmerDashboard from '@/components/dashboard/farmer/FarmerDashboard';
 import Sidebar from '@/components/shared/Sidebar';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function FarmerDashboardPage() {
   const { user } = useAuth();
+  const { t } = useI18n();
 
   if (!user || user.role !== UserType.FARMER) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground">This dashboard is only available to farmers.</p>
+          <h1 className="text-2xl font-semibold mb-4">{t('farmer.dashboard.accessDenied.title')}</h1>
+          <p className="text-muted-foreground">{t('farmer.dashboard.accessDenied.description')}</p>
         </div>
       </div>
     );
@@ -36,10 +38,10 @@ export default function FarmerDashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-3xl font-bold text-foreground mb-2">
-                    Farmer Dashboard
+                    {t('farmer.dashboard.title')}
                   </h1>
                   <p className="text-muted-foreground">
-                    Track your revenue, manage products, and monitor growth
+                    {t('farmer.dashboard.subtitle')}
                   </p>
                 </div>
               </div>

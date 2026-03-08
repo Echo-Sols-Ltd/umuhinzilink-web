@@ -7,6 +7,7 @@ import { useChat, userToChatUser } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useProduct } from "@/contexts/ProductContext";
+import { useI18n } from "@/contexts/I18nContext";
 
 interface ProductRowProps {
     product: FarmerProduct | SupplierProduct
@@ -20,15 +21,16 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
     const { deleteFarmerProduct } = useProduct()
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
+    const { t } = useI18n()
 
     const handleContactFarmer = async (product: FarmerProduct) => {
         if (!user) {
-            notify.error("Please log in to contact farmers", "Authentication Required");
+            notify.error(t('productRow.loginToContact'), t('productCard.authRequired'));
             return;
         }
 
         if (!product.owner) {
-            notify.error("Unable to find farmer information for this product", "Farmer Not Available");
+            notify.error(t('productRow.noFarmerInfo'), t('productRow.farmerNotAvailable'));
             return;
         }
 
@@ -41,23 +43,23 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                 productType: product.owner.role
             }
             await handleSendMessage(
-                `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
+                t('productRow.contactMessage').replace('{productName}', product.name),
                 MessageType.PRODUCT,
                 product.owner.names,
                 productRef
             );
 
-            notify.success(`You can now chat with ${product.owner.names} about ${product.name}`, "Message Sent");
+            notify.success(t('productRow.chatWithFarmer').replace('{farmerName}', product.owner.names).replace('{productName}', product.name), t('productRow.messageSent'));
 
             router.push(`/chat/${farmerUser.id}`);
         } catch (error) {
             console.error('Failed to contact farmer:', error);
-            notify.error("Please try again later", "Failed to Send Message");
+            notify.error(t('productRow.tryAgainLater'), t('productRow.failedToSend'));
         }
     };
 
     const handleDeleteProduct = async (productId: string, productName: string) => {
-        if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+        if (!confirm(t('productRow.confirmDelete').replace('{productName}', productName))) {
             return;
         }
 
@@ -65,7 +67,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
             await deleteFarmerProduct(productId);
         } catch (error) {
             console.error('Failed to delete product:', error);
-            notify.error("Failed to delete product. Please try again.", "Delete Failed");
+            notify.error(t('productRow.deleteFailed'), t('productRow.deleteTitle'));
         }
     };
 
@@ -83,9 +85,9 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                 <div>
                     <div className="flex justify-between items-start">
                         <h3 className="font-semibold text-lg text-foreground">{product.name}</h3>
-                        <p className="text-green-600 font-semibold text-lg">{product.unitPrice} RWF / {product.measurementUnit}</p>
+                        <p className="text-green-600 font-semibold text-lg">{product.unitPrice} RWF / {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` ? product.measurementUnit : t(`enums.units.${product.measurementUnit}`)}</p>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">Available: {product.quantity} {product.measurementUnit}</p>
+                    <p className="text-sm text-gray-500 mt-1">{t('productRow.available')} {product.quantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` ? product.measurementUnit : t(`enums.units.${product.measurementUnit}`)}</p>
                     <div className="flex items-center text-sm text-gray-500 mt-1">
                         <UserIcon className="w-4 h-4 mr-1" /> {product.owner.names}
                         <span className="mx-2">•</span>
@@ -102,14 +104,14 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                                 href={`/farmer/products/${product.id}/edit`}
                                 className="bg-green-600 hover:bg-green-700 transition-colors text-white px-6 py-2 rounded-lg text-sm font-medium"
                             >
-                                Edit
+                                {t('productRow.edit')}
                             </Link>
                             <button
                                 onClick={() => handleDeleteProduct(product.id, product.name)}
                                 className="bg-red-50 text-red-600 hover:bg-red-100 transition-colors px-4 py-2 rounded-lg text-sm flex items-center gap-2"
-                                title="Delete product"
+                                title={t('productRow.deleteProduct')}
                             >
-                                <Trash2 className="w-4 h-4" /> Delete
+                                <Trash2 className="w-4 h-4" /> {t('productRow.delete')}
                             </button>
                         </>
                     ) : (<>
@@ -128,7 +130,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                                 e.stopPropagation();
                                 onPurchase();
                             }}>
-                            Buy Now
+                            {t('productRow.buyNow')}
                         </button>
                     </>
                     )}

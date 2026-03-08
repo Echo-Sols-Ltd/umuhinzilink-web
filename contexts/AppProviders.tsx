@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { I18nProvider } from '@/contexts/I18nContext';
 import { ProductProvider } from '@/contexts/ProductContext';
 import { OrderProvider } from '@/contexts/OrderContext';
 import { UserProvider } from '@/contexts/UserContext';
@@ -21,28 +22,30 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserNotificationProvider>
-          <SocketProvider>
-            <UserProvider>
-              <NotificationProvider>
-                <ProductProvider>
-                  <WalletProvider>
-                    <OrderProvider>
-                      <MessageProvider>
-                        <ProfileProvider>
-                          {children}
-                          <GlobalOrderModal />
-                        </ProfileProvider>
-                      </MessageProvider>
-                    </OrderProvider>
-                  </WalletProvider>
-                </ProductProvider>
-              </NotificationProvider>
-            </UserProvider>
-          </SocketProvider>
-        </BrowserNotificationProvider>
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <BrowserNotificationProvider>
+            <SocketProvider>
+              <UserProvider>
+                <NotificationProvider>
+                  <ProductProvider>
+                    <WalletProvider>
+                      <OrderProvider>
+                        <MessageProvider>
+                          <ProfileProvider>
+                            {children}
+                            <GlobalOrderModal />
+                          </ProfileProvider>
+                        </MessageProvider>
+                      </OrderProvider>
+                    </WalletProvider>
+                  </ProductProvider>
+                </NotificationProvider>
+              </UserProvider>
+            </SocketProvider>
+          </BrowserNotificationProvider>
+        </AuthProvider>
+      </I18nProvider>
     </ThemeProvider>
   );
 }

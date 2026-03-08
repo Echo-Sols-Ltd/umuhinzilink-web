@@ -12,6 +12,7 @@ import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import { DeliveryStatus } from '@/types/enums';
 import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard, ShoppingCart } from 'lucide-react';
+import { useI18n } from '@/contexts/I18nContext';
 
 function FarmerSupplierOrderDetailPage() {
   const params = useParams();
@@ -19,6 +20,7 @@ function FarmerSupplierOrderDetailPage() {
   const { user } = useAuth();
   const { supplierOrders } = useOrder();
   const { updateSupplierOrderStatus } = useOrderAction();
+  const { t } = useI18n();
 
   const [order, setOrder] = useState<SupplierOrder | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,7 @@ function FarmerSupplierOrderDetailPage() {
         }
       } catch (error) {
         console.error('Failed to fetch order:', error);
-        notify.error("Failed to load order details", "Error");
+        notify.error(t('farmer.supplierOrders.toasts.failedToLoad'), t('common.error'));
       } finally {
         setLoading(false);
       }
@@ -80,7 +82,7 @@ function FarmerSupplierOrderDetailPage() {
       notify.success(`Order delivery status has been updated successfully.`, "Delivery Status Updated");
     } catch (error) {
       console.error('Failed to update delivery status:', error);
-      notify.error("Failed to update delivery status. Please try again.", "Update Failed");
+      notify.error(t('farmer.supplierOrders.toasts.updateFailed'), t('common.error'));
     } finally {
       setUpdatingStatus(false);
     }
@@ -108,8 +110,8 @@ function FarmerSupplierOrderDetailPage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-foreground mb-2">Order Not Found</h2>
-            <p className="text-muted-foreground">The order you're looking for doesn't exist.</p>
+            <h2 className="text-xl font-semibold text-foreground mb-2">{t('farmer.supplierOrders.detail.orderNotFound')}</h2>
+            <p className="text-muted-foreground">{t('farmer.supplierOrders.detail.orderNotFoundDesc')}</p>
           </div>
         </main>
       </div>
@@ -133,10 +135,10 @@ function FarmerSupplierOrderDetailPage() {
               className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Supplier Orders</span>
+              <span>{t('farmer.supplierOrders.detail.backToOrders')}</span>
             </button>
             <div className="h-8 w-px bg-border"></div>
-            <h1 className="text-xl font-semibold text-foreground">Order Details</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t('farmer.supplierOrders.detail.title')}</h1>
             <span className="text-sm text-muted-foreground">#{order.id.slice(0, 8)}</span>
           </div>
         </header>
@@ -150,7 +152,7 @@ function FarmerSupplierOrderDetailPage() {
                   <Package className="w-5 h-5 text-info" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Input Item</p>
+                  <p className="text-sm text-muted-foreground">{t('farmer.supplierOrders.detail.product')}</p>
                   <p className="font-semibold text-foreground">{product.name}</p>
                 </div>
               </div>
@@ -162,7 +164,7 @@ function FarmerSupplierOrderDetailPage() {
                   <User className="w-5 h-5 text-success" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Supplier</p>
+                  <p className="text-sm text-muted-foreground">{t('farmer.supplierOrders.detail.supplier')}</p>
                   <p className="font-semibold text-foreground">{supplier.names}</p>
                 </div>
               </div>
@@ -174,7 +176,7 @@ function FarmerSupplierOrderDetailPage() {
                   <CreditCard className="w-5 h-5 text-warning" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Amount</p>
+                  <p className="text-sm text-muted-foreground">{t('farmer.supplierOrders.detail.totalAmount')}</p>
                   <p className="font-semibold text-foreground">RWF {order.totalPrice.toLocaleString()}</p>
                 </div>
               </div>
@@ -187,26 +189,26 @@ function FarmerSupplierOrderDetailPage() {
             <div className="bg-card rounded-lg p-6 border border-border">
               <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <User className="w-5 h-5 mr-2 text-success" />
-                Supplier Information
+                {t('farmer.supplierOrders.detail.supplierInfo')}
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Name</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.name')}</label>
                   <p className="text-foreground">{supplier.names}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Email</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.email')}</label>
                   <p className="text-foreground">{supplier.email}</p>
                 </div>
                 {supplier.phoneNumber && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.phone')}</label>
                     <p className="text-foreground">{supplier.phoneNumber}</p>
                   </div>
                 )}
                 {supplier.address && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Supplier Address</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.supplierAddress')}</label>
                     <p className="text-foreground">
                       {supplier.address.district}, {supplier.address.province}
                     </p>
@@ -219,33 +221,33 @@ function FarmerSupplierOrderDetailPage() {
             <div className="bg-card rounded-lg p-6 border border-border">
               <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                 <Package className="w-5 h-5 mr-2 text-success" />
-                Input Item Details
+                {t('farmer.supplierOrders.detail.productDetails')}
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Input Name</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.productName')}</label>
                   <p className="text-foreground">{product.name}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Quantity</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.quantity')}</label>
                   <p className="text-foreground">{order.quantity} {product.measurementUnit}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Unit Price</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.unitPrice')}</label>
                   <p className="text-foreground">RWF {product.unitPrice?.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Total Price</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.totalPrice')}</label>
                   <p className="text-lg font-semibold text-success">RWF {order.totalPrice.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Payment Method</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.paymentMethod')}</label>
                   <p className="text-foreground">{order.paymentMethod.replace('_', ' ')}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Payment Status</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.paymentStatus')}</label>
                   <p className={`font-medium ${order.isPaid ? 'text-success' : 'text-destructive'}`}>
-                    {order.isPaid ? 'PAID' : 'UNPAID'}
+                    {order.isPaid ? t('farmer.supplierOrders.detail.paid') : t('farmer.supplierOrders.detail.unpaid')}
                   </p>
                 </div>
               </div>
@@ -256,7 +258,7 @@ function FarmerSupplierOrderDetailPage() {
           <div className="bg-card rounded-lg p-6 border border-border">
             <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
               <Calendar className="w-5 h-5 mr-2 text-success" />
-              Delivery Tracking
+              {t('farmer.supplierOrders.detail.deliveryTracking')}
             </h2>
             <DeliveryTracker
               delivery={order.delivery}

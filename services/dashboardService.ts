@@ -45,8 +45,7 @@ export const dashboardService = {
   subscribeToDashboardUpdates: (userRole: string, callback: (data: any) => void) => {
     // This would implement WebSocket connection for real-time updates
     // For now, it's a placeholder for future implementation
-    console.log(`Subscribing to ${userRole} dashboard updates`);
-    
+
     // Example WebSocket implementation:
     // const ws = new WebSocket(`${API_CONFIG.BASE_URL.replace('http', 'ws')}/dashboard/${userRole}`);
     // ws.onmessage = (event) => {

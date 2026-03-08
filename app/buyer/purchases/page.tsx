@@ -35,9 +35,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';
+import { useI18n } from '@/contexts/I18nContext';
 
 function MyPurchasesComponent() {
   const router = useRouter();
+  const { t, locale } = useI18n();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -105,7 +107,7 @@ function MyPurchasesComponent() {
       const result = await handleWalletPayment(orderId, `Payment for order #${orderId.slice(-6)}`);
 
       if (result) {
-        notify.success('Your order has been paid successfully.', 'Payment Successful');
+        notify.success(t('buyer.purchases.paymentSuccessMsg'), t('buyer.purchases.paymentSuccess'));
         // Refresh orders to show updated status
         await fetchBuyerOrders(currentPage - 1, itemsPerPage);
       }
@@ -137,7 +139,7 @@ function MyPurchasesComponent() {
         await markSupplierOrderSatisfaction(selectedOrderForSatisfaction.id);
       }
 
-      notify.success('Thank you for confirming safe delivery!', 'Satisfaction Confirmed');
+      notify.success(t('buyer.purchases.confirmSatisfactionMsg'), t('buyer.purchases.confirmSatisfaction'));
       setSatisfactionModalOpen(false);
       setSelectedOrderForSatisfaction(null);
       
@@ -145,7 +147,7 @@ function MyPurchasesComponent() {
       await fetchBuyerOrders(currentPage - 1, itemsPerPage);
     } catch (error) {
       console.error('Satisfaction confirmation error:', error);
-      notify.error('Failed to confirm satisfaction. Please try again.', 'Error');
+      notify.error(t('common.error'), t('common.error'));
     } finally {
       setSatisfactionLoading(null);
       setMutationLoading(false);
@@ -169,6 +171,17 @@ function MyPurchasesComponent() {
     }
   };
 
+  const translateStatus = (status: string) => {
+    switch (status.toUpperCase()) {
+      case 'COMPLETED': return t('common.status.completed');
+      case 'ACTIVE': return t('common.status.active');
+      case 'PENDING': return t('common.status.pending');
+      case 'PENDING_PAYMENT': return t('common.status.pendingPayment') || 'Pending Payment';
+      case 'CANCELLED': return t('common.status.cancelled');
+      default: return status;
+    }
+  };
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
@@ -181,19 +194,19 @@ function MyPurchasesComponent() {
         {/* Header */}
         <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
-            <h1 className="text-xl font-semibold text-foreground">My Purchases</h1>
-            <p className="text-xs text-muted-foreground">Track your orders and manage your purchases</p>
+            <h1 className="text-xl font-semibold text-foreground">{t('buyer.purchases.title')}</h1>
+            <p className="text-xs text-muted-foreground">{t('buyer.purchases.subtitle')}</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search orders..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success w-full"
-              />
+                <input
+                  type="text"
+                  placeholder={t('buyer.purchases.filters.searchPlaceholder')}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
+                />
             </div>
             <button
               onClick={() => fetchBuyerOrders(currentPage - 1, itemsPerPage)}
@@ -213,7 +226,7 @@ function MyPurchasesComponent() {
             <div className="bg-card p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm">Total Purchases</p>
+                  <p className="text-muted-foreground text-sm">{t('buyer.purchases.stats.totalPurchases')}</p>
                   <h2 className="text-2xl font-semibold text-foreground">{stats.total}</h2>
                 </div>
                 <div className="w-12 h-12 bg-info/10 rounded-lg flex items-center justify-center">
@@ -224,7 +237,7 @@ function MyPurchasesComponent() {
             <div className="bg-card p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm">Completed Orders</p>
+                  <p className="text-muted-foreground text-sm">{t('buyer.purchases.stats.completed')}</p>
                   <h2 className="text-2xl font-semibold text-foreground">{stats.completed}</h2>
                 </div>
                 <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
@@ -235,7 +248,7 @@ function MyPurchasesComponent() {
             <div className="bg-card p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm">In Progress</p>
+                  <p className="text-muted-foreground text-sm">{t('buyer.purchases.stats.inProgress')}</p>
                   <h2 className="text-2xl font-semibold text-foreground">{stats.inProgress}</h2>
                 </div>
                 <div className="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
@@ -246,8 +259,10 @@ function MyPurchasesComponent() {
             <div className="bg-card p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm">Total Spent</p>
-                  <h2 className="text-2xl font-semibold text-foreground">{stats.totalSpent.toLocaleString()} RWF</h2>
+                  <p className="text-muted-foreground text-sm">{t('buyer.purchases.stats.totalSpent')}</p>
+                  <h2 className="text-2xl font-semibold text-foreground">
+                    {new Intl.NumberFormat(locale === 'rw' ? 'rw-RW' : 'en-US').format(stats.totalSpent)} RWF
+                  </h2>
                 </div>
                 <div className="w-12 h-12 bg-purple/10 rounded-lg flex items-center justify-center">
                   <DollarSign className="w-6 h-6 text-purple-600" />
@@ -260,11 +275,11 @@ function MyPurchasesComponent() {
           <div className="flex justify-between items-center mb-6 gap-4">
             <div className="flex gap-2">
               {[
-                { id: 'all', label: 'All' },
-                { id: 'pending', label: 'Pending' },
-                { id: 'pending_payment', label: 'Pending Payment' },
-                { id: 'active', label: 'In Progress' },
-                { id: 'completed', label: 'Completed' },
+                { id: 'all', label: t('buyer.purchases.filters.all') },
+                { id: 'pending', label: t('buyer.purchases.filters.pending') },
+                { id: 'pending_payment', label: t('buyer.purchases.filters.pendingPayment') },
+                { id: 'active', label: t('buyer.purchases.filters.inProgress') },
+                { id: 'completed', label: t('buyer.purchases.filters.completed') },
               ].map((option) => (
                 <button
                   key={option.id}
@@ -283,7 +298,7 @@ function MyPurchasesComponent() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <input
                   type="text"
-                  placeholder="Search orders..."
+                  placeholder={t('buyer.purchases.filters.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="bg-card border border-border rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-success focus:border-transparent w-64"
@@ -295,7 +310,7 @@ function MyPurchasesComponent() {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="appearance-none bg-card border border-border text-foreground rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-success hover:bg-card transition-colors w-40 cursor-pointer"
                 >
-                  <option value="all">All Crops</option>
+                  <option value="all">{t('buyer.purchases.filters.allCrops')}</option>
                   {categories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
@@ -310,14 +325,14 @@ function MyPurchasesComponent() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ORDER ID</TableHead>
-                  <TableHead>PRODUCT</TableHead>
-                  <TableHead>FARMER</TableHead>
-                  <TableHead>QUANTITY</TableHead>
-                  <TableHead>PRICE</TableHead>
-                  <TableHead>DATE</TableHead>
-                  <TableHead>STATUS</TableHead>
-                  <TableHead className="text-right">ACTIONS</TableHead>
+                  <TableHead>{t('buyer.purchases.table.orderId')}</TableHead>
+                  <TableHead>{t('buyer.purchases.table.product')}</TableHead>
+                  <TableHead>{t('buyer.purchases.table.farmer')}</TableHead>
+                  <TableHead>{t('buyer.purchases.table.quantity')}</TableHead>
+                  <TableHead>{t('buyer.purchases.table.price')}</TableHead>
+                  <TableHead>{t('buyer.purchases.table.date')}</TableHead>
+                  <TableHead>{t('buyer.purchases.table.status')}</TableHead>
+                  <TableHead className="text-right">{t('buyer.purchases.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -344,11 +359,11 @@ function MyPurchasesComponent() {
                     <TableCell colSpan={8} className="py-20 text-center">
                       <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <ShoppingBag className="w-12 h-12 mb-4 opacity-20" />
-                        <p className="text-lg font-medium">No orders found</p>
+                        <p className="text-lg font-medium">{t('buyer.purchases.noOrders')}</p>
                         <p className="text-sm">
                           {searchTerm || filterStatus !== 'all'
-                            ? 'Try adjusting your filters'
-                            : 'You have no orders yet.'}
+                            ? t('buyer.purchases.tryAdjusting')
+                            : t('buyer.purchases.noOrdersYet')}
                         </p>
                       </div>
                     </TableCell>
@@ -358,8 +373,8 @@ function MyPurchasesComponent() {
                     const farmerName = order.product?.owner?.names || 'Unknown Farmer';
                     const productName = order.product?.name || 'Unknown Product';
                     const quantity = `${order.quantity || 0} ${order.product?.measurementUnit || 'units'}`;
-                    const price = `${(order.totalPrice || 0).toLocaleString()} RWF`;
-                    const date = new Date(order.createdAt).toLocaleDateString('en-US', {
+                    const price = `${(order.totalPrice || 0).toLocaleString(locale === 'rw' ? 'rw-RW' : 'en-US')} RWF`;
+                    const date = new Date(order.createdAt).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
@@ -380,14 +395,14 @@ function MyPurchasesComponent() {
                             </div>
                             <div>
                               <div className="font-medium text-foreground">{productName}</div>
-                              <div className="text-[10px] text-muted-foreground uppercase ">Product</div>
+                              <div className="text-[10px] text-muted-foreground uppercase ">{t('buyer.purchases.table.product')}</div>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="text-foreground font-medium">{farmerName}</span>
-                            <span className="text-[10px] text-muted-foreground">Merchant</span>
+                            <span className="text-[10px] text-muted-foreground">{t('buyer.purchases.table.farmer')}</span>
                           </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground">{quantity}</TableCell>
@@ -395,7 +410,7 @@ function MyPurchasesComponent() {
                         <TableCell className="text-muted-foreground">{date}</TableCell>
                         <TableCell>
                           <Badge variant={getStatusVariant(order.status) as any} className="font-medium text-[10px] uppercase  px-2.5 py-0.5">
-                            {order.status.replace('_', ' ')}
+                            {translateStatus(order.status)}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
@@ -407,7 +422,7 @@ function MyPurchasesComponent() {
                                 className="px-4 py-1.5 bg-green-600 text-white text-[11px] font-semibold rounded-full hover:bg-green-700 transition shadow-sm flex items-center gap-1.5"
                               >
                                 {paymentLoading === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <DollarSign className="w-3.5 h-3.5" />}
-                                Pay
+                                {t('buyer.purchases.pay')}
                               </button>
                             )}
                             {order.delivery?.trackingSteps?.some(step => step.status === 'DELIVERED' && step.completed) && !order.isBuyerSatisfied && (
@@ -415,16 +430,16 @@ function MyPurchasesComponent() {
                                 onClick={() => handleSatisfactionClick(order)}
                                 disabled={satisfactionLoading === order.id}
                                 className="px-4 py-1.5 bg-blue-600 text-white text-[11px] font-semibold rounded-full hover:bg-blue-700 transition shadow-sm flex items-center gap-1.5"
-                                title="Confirm Safe Delivery"
+                                title={t('buyer.purchases.confirmSafeDelivery')}
                               >
                                 {satisfactionLoading === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <ThumbsUp className="w-3.5 h-3.5" />}
-                                Confirm
+                                {t('buyer.purchases.confirm')}
                               </button>
                             )}
                             <button
                               onClick={() => router.push(`/buyer/orders/${order.id}`)}
                               className="p-2 text-muted-foreground hover:text-info hover:bg-info/10 rounded-lg transition-all"
-                              title="View Details"
+                              title={t('buyer.purchases.viewDetails')}
                             >
                               <Eye className="w-4 h-4" />
                             </button>
@@ -432,7 +447,7 @@ function MyPurchasesComponent() {
                               <button
                                 onClick={() => router.push('/buyer/delivery')}
                                 className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all"
-                                title="Track Delivery"
+                                title={t('buyer.purchases.trackDelivery')}
                               >
                                 <Truck className="w-4 h-4" />
                               </button>
@@ -504,20 +519,22 @@ function MyPurchasesComponent() {
                   <div className="mb-6 p-4 bg-card rounded-lg">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="text-muted-foreground">Product:</span>
+                        <span className="text-muted-foreground">{t('buyer.purchases.table.product')}:</span>
                         <span className="ml-2 font-medium">{selectedOrder.product?.name}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Farmer:</span>
+                        <span className="text-muted-foreground">{t('buyer.purchases.table.farmer')}:</span>
                         <span className="ml-2 font-medium">{selectedOrder.product?.farmer?.user?.names}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Quantity:</span>
+                        <span className="text-muted-foreground">{t('buyer.purchases.table.quantity')}:</span>
                         <span className="ml-2 font-medium">{selectedOrder.quantity} {selectedOrder.product?.measurementUnit}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Total:</span>
-                        <span className="ml-2 font-medium">{(selectedOrder.totalPrice || 0).toLocaleString()} RWF</span>
+                        <span className="text-muted-foreground">{t('buyer.purchases.table.price')}:</span>
+                        <span className="ml-2 font-medium">
+                          {(selectedOrder.totalPrice || 0).toLocaleString(locale === 'rw' ? 'rw-RW' : 'en-US')} RWF
+                        </span>
                       </div>
                     </div>
                   </div>

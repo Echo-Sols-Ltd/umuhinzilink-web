@@ -71,12 +71,6 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     const isNotActiveChat = activeChatUser?.id !== message.sender.id;
 
     if (isNotSelf && isNotActiveChat) {
-      console.log('📨 New message notification logic:', {
-        sender: message.sender.names,
-        activeChatUser: activeChatUser?.names,
-        shouldUseInAppNotifications
-      });
-
       // Use intelligent notification routing
       const browserNotificationShown = showNotification({
         type: 'message',
@@ -115,13 +109,11 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
   // Handle online users updates
   const handleOnlineUsersUpdate = useCallback((users: Set<string>) => {
-    console.log(users)
     setOnlineUsers(users);
   }, []);
 
   // Handle typing updates
   const handleTypingUpdate = useCallback((typingData: ChatTyping) => {
-    console.log(typingData)
     setTypingUsers(prev => {
       const next = new Set(prev);
       if (typingData.typing) {
@@ -129,7 +121,6 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       } else {
         next.delete(typingData.userId);
       }
-      console.log(next)
       return next;
     });
   }, []);

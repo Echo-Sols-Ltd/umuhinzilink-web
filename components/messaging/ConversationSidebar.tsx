@@ -16,6 +16,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { ChatUser } from '@/types/chat';
 import { useChat } from '@/hooks/useChat';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface ConversationSidebarProps {
   className?: string;
@@ -67,6 +68,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   const { user: currentUser } = useAuth();
   const router = useRouter();
   const { chatUsers, resetUnreadCountForUser } = useUser();
+  const { t } = useI18n();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -104,7 +106,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
               <MessageCircle className="w-4 h-4 text-success" />
             </div>
-            <h2 className="text-lg font-semibold text-foreground ">Messages</h2>
+            <h2 className="text-lg font-semibold text-foreground ">{t('chat.messages')}</h2>
             {totalUnread > 0 && (
               <span className="bg-success text-primary-foreground text-[10px] font-semibold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-sm shadow-success/20">
                 {totalUnread > 99 ? '99+' : totalUnread}
@@ -120,7 +122,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-success transition-colors" />
           <input
             type="text"
-            placeholder="Search conversations…"
+            placeholder={t('chat.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-9 py-2 rounded-lg bg-card border border-transparent focus:border-success/50 focus:bg-card focus:ring-2 focus:ring-success/20 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all"
@@ -145,10 +147,10 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">
-                {searchTerm ? 'No results found' : 'No conversations yet'}
+                {searchTerm ? t('chat.noResults') : t('chat.noConversations')}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {searchTerm ? 'Try a different name' : 'Start chatting with someone'}
+                {searchTerm ? t('chat.tryDifferentName') : t('chat.startChatting')}
               </p>
             </div>
           </div>
@@ -232,8 +234,8 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                             </span>
                           )}
                           {isTyping
-                            ? 'typing…'
-                            : (user.lastMessage?.content || 'Say Hey 👋')
+                            ? t('chat.typing')
+                            : (user.lastMessage?.content || t('chat.sayHey'))
                           }
                         </p>
 

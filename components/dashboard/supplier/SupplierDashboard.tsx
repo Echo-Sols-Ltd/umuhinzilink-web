@@ -16,10 +16,12 @@ import { DashboardSection } from '../common/DashboardGrid';
 import { SupplierDashboardData } from '@/types/dashboard';
 import { dashboardService } from '@/services/dashboardService';
 import DashboardChart from '../common/DashboardChart';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function SupplierDashboard() {
   const [dashboardData, setDashboardData] = useState<SupplierDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t, locale } = useI18n();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -56,7 +58,7 @@ export default function SupplierDashboard() {
   if (!dashboardData) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Failed to load dashboard data</p>
+        <p className="text-muted-foreground">{t('common.error')}</p>
       </div>
     );
   }
@@ -68,6 +70,16 @@ export default function SupplierDashboard() {
       case 'In Transit': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400';
       case 'Cancelled': return 'text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400';
       default: return 'text-gray-600 bg-gray-100 dark:bg-gray-800 dark:text-gray-400';
+    }
+  };
+
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case 'Delivered': return t('common.status.completed'); // Using completed for delivered
+      case 'Pending': return t('common.status.pending');
+      case 'In Transit': return t('common.status.active'); // Using active for in transit
+      case 'Cancelled': return t('common.status.cancelled');
+      default: return status;
     }
   };
 
@@ -87,25 +99,25 @@ export default function SupplierDashboard() {
   return (
     <div className="space-y-8">
       {/* Section 1: KPI Cards */}
-      <DashboardSection title="Performance Overview" cols={4}>
+      <DashboardSection title={t('supplier.dashboard.sections.performanceOverview')} cols={4}>
         <MetricCard
-          title="Total Revenue"
+          title={t('supplier.dashboard.metrics.totalRevenue')}
           value={dashboardData.totalRevenue || (dashboardData as any).totalIncome || 0}
           format="currency"
           icon={<DollarSign className="w-5 h-5 text-green-500" />}
         />
         <MetricCard
-          title="Active Orders"
+          title={t('supplier.dashboard.metrics.activeOrders')}
           value={dashboardData.activeOrders}
           icon={<Package className="w-5 h-5 text-blue-500" />}
         />
         <MetricCard
-          title="Low Stock Products"
+          title={t('supplier.dashboard.metrics.lowStockProducts')}
           value={dashboardData.lowStockProducts}
           icon={<AlertTriangle className={`w-5 h-5 ${dashboardData.lowStockProducts > 0 ? 'text-red-500' : 'text-green-500'}`} />}
         />
         <MetricCard
-          title="On-Time Delivery"
+          title={t('supplier.dashboard.metrics.deliveryRate')}
           value={`${dashboardData.onTimeDeliveryRate}%`}
           icon={<Truck className={`w-5 h-5 ${dashboardData.onTimeDeliveryRate < 90 ? 'text-orange-500' : 'text-teal-500'}`} />}
         />
@@ -118,7 +130,7 @@ export default function SupplierDashboard() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-red-500" />
-                Inventory Alerts
+                {t('supplier.dashboard.sections.inventoryAlerts')}
               </h2>
             </div>
 
@@ -130,23 +142,23 @@ export default function SupplierDashboard() {
                       <h4 className="font-medium text-sm">{item.name}</h4>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         <span className="text-red-500 font-semibold">{item.currentStock}</span>
-                        {' '}in stock (Min: {item.minThreshold})
+                        {' '}{t('supplier.dashboard.alerts.inStock')} ({t('supplier.dashboard.alerts.min')}: {item.minThreshold})
                       </p>
                     </div>
                     <Link href={`/supplier/products/restock/${item.id}`} className="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md font-medium transition-colors">
-                      Restock
+                      {t('supplier.dashboard.alerts.restock')}
                     </Link>
                   </div>
                 ))
               ) : (
                 <div className="p-8 text-center text-muted-foreground">
                   <Package className="w-10 h-10 mx-auto mb-3 opacity-20" />
-                  <p>All stock levels are healthy.</p>
+                  <p>{t('supplier.dashboard.alerts.allHealthy')}</p>
                 </div>
               )}
 
               <Link href="/supplier/products" className="text-sm text-primary hover:underline mt-2 text-center py-2 flex items-center justify-center gap-1">
-                Manage Products
+                {t('supplier.dashboard.alerts.manageProducts')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -157,7 +169,7 @@ export default function SupplierDashboard() {
             <div>
               <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                Revenue Trend (30 Days)
+                {t('supplier.dashboard.sections.revenueTrend')}
               </h2>
               <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
                 <DashboardChart config={dashboardData.revenueTrend} height={180} />
@@ -169,9 +181,9 @@ export default function SupplierDashboard() {
         {/* Section 3: Recent Orders */}
         <div className="xl:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Recent Orders</h2>
+            <h2 className="text-lg font-semibold">{t('supplier.dashboard.sections.recentOrders')}</h2>
             <Link href="/supplier/orders" className="text-sm text-primary hover:underline">
-              View All
+              {t('farmer.dashboard.actions.viewAll')}
             </Link>
           </div>
           <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
@@ -179,11 +191,11 @@ export default function SupplierDashboard() {
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
                   <tr>
-                    <th className="px-6 py-4 font-medium">Farmer</th>
-                    <th className="px-6 py-4 font-medium">Product</th>
-                    <th className="px-6 py-4 font-medium">Quantity</th>
-                    <th className="px-6 py-4 font-medium">Status</th>
-                    <th className="px-6 py-4 font-medium">Delivery Date</th>
+                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.farmer')}</th>
+                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.product')}</th>
+                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.quantity')}</th>
+                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.status')}</th>
+                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.deliveryDate')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -194,18 +206,18 @@ export default function SupplierDashboard() {
                       <td className="px-6 py-4">{order.quantity}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {order.status}
+                          {translateStatus(order.status)}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-muted-foreground">
-                        {new Date(order.deliveryDate).toLocaleDateString()}
+                        {new Date(order.deliveryDate).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US')}
                       </td>
                     </tr>
                   ))}
                   {recentOrders.length === 0 && (
                     <tr>
                       <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
-                        No recent orders found
+                        {t('supplier.dashboard.table.noOrders')}
                       </td>
                     </tr>
                   )}

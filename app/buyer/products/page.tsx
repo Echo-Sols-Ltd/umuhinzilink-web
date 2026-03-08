@@ -28,6 +28,7 @@ import { useChat } from '@/hooks/useChat';
 import { MessageType, ProductRef } from '@/types/message';
 import { productService } from '@/services/products';
 import { ProductDisplay } from '@/components/products/ProductDisplay';
+import { useI18n } from '@/contexts/I18nContext';
 import {
   Select,
   SelectContent,
@@ -54,6 +55,7 @@ const Logo = () => (
 function ProductsPageComponent() {
   const router = useRouter();
   const { user: buyer } = useAuth();
+  const { t } = useI18n();
   const { handleUserClick, handleSendMessage } = useChat();
   const { chatUsers } = useUser()
   const { buyerProducts, loading: productsLoading } = useProduct();
@@ -133,12 +135,12 @@ function ProductsPageComponent() {
 
   const handleContactFarmer = async (product: FarmerProduct) => {
     if (!buyer) {
-      notify.error("Please log in to contact farmers", "Authentication Required");
+      notify.error(t('buyer.marketplace.toasts.authRequired.body'), t('buyer.marketplace.toasts.authRequired.title'));
       return;
     }
 
     if (!product.owner) {
-      notify.error("Unable to find farmer information for this product", "Farmer Not Available");
+      notify.error(t('buyer.marketplace.toasts.farmerNotAvailable.body'), t('buyer.marketplace.toasts.farmerNotAvailable.title'));
       return;
     }
 
@@ -157,19 +159,22 @@ function ProductsPageComponent() {
 
       // Send product reference message
       await handleSendMessage(
-        `Hi! I'm interested in your ${product.name}\n Send me more details about this product to reach me`,
+        t('buyer.marketplace.contactMessage', { productName: product.name }),
         MessageType.PRODUCT,
         product.owner.names,
         productRef
       );
 
-      notify.success(`You can now chat with ${product.owner.names} about ${product.name}`, "Message Sent");
+      notify.success(
+        t('buyer.marketplace.toasts.messageSent.body', { farmerName: product.owner.names, productName: product.name }),
+        t('buyer.marketplace.toasts.messageSent.title')
+      );
 
       // Navigate to chat page with specific user ID
       router.push(`/chat/${farmerUser.id}`);
     } catch (error) {
       console.error('Failed to contact farmer:', error);
-      notify.error("Please try again later", "Failed to Send Message");
+      notify.error(t('buyer.marketplace.toasts.failedToSendMessage.body'), t('buyer.marketplace.toasts.failedToSendMessage.title'));
     }
   };
 
@@ -191,7 +196,7 @@ function ProductsPageComponent() {
     <div className="bg-card shadow-sm border-b border-border px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-semibold text-foreground">Browse Products</h1>
+          <h1 className="text-2xl font-semibold text-foreground">{t('buyer.marketplace.title')}</h1>
           <div className="flex items-center space-x-2">
             <Button
               variant={viewMode === 'grid' ? 'default' : 'outline'}
@@ -211,13 +216,13 @@ function ProductsPageComponent() {
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <span>Rwanda's Largest Agricultural Marketplace</span>
+            <span>{t('buyer.marketplace.tagline')}</span>
             <div className="w-2 h-2 bg-success rounded-full mr-2" />
-            <span className="font-medium">Verified Farmers</span>
+            <span className="font-medium">{t('buyer.marketplace.verifiedFarmers')}</span>
           </div>
           <Button variant="outline" size="sm">
             <Filter className="w-4 h-4 mr-2" />
-            Filters
+            {t('buyer.marketplace.filters')}
           </Button>
         </div>
       </div>
@@ -256,8 +261,6 @@ function ProductsPageComponent() {
           selectedCategory={categoryFilter}
           selectedLocation={locationFilter}
           search={search}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
         />
       </div>
     </ResponsiveLayout>

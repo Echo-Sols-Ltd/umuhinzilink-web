@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { useNotification } from '@/hooks/useNotification';
 import { UserType } from '@/types';
 import { NotificationType, Notification } from '@/types/notification';
@@ -34,20 +35,6 @@ const PAGE_SIZE = 15;
 
 // Type tabs: 'ALL' + the types that make sense to surface separately
 type TabValue = 'ALL' | 'UNREAD' | NotificationType;
-
-const TABS: { value: TabValue; label: string }[] = [
-    { value: 'ALL', label: 'All' },
-    { value: 'UNREAD', label: 'Unread' },
-    { value: NotificationType.SUCCESS, label: 'Success' },
-    { value: NotificationType.MESSAGE, label: 'Messages' },
-    { value: NotificationType.WARNING, label: 'Warnings' },
-    { value: NotificationType.ERROR, label: 'Errors' },
-    { value: NotificationType.SYSTEM, label: 'System' },
-    { value: NotificationType.INFO, label: 'Info' },
-    { value: NotificationType.PRODUCT, label: 'Products' },
-    { value: NotificationType.ORDER, label: 'Orders' }
-];
-
 // ─── Icon / colour helpers ────────────────────────────────────────────────────
 const TYPE_META: Record<NotificationType, { icon: React.ReactNode; dot: string; badge: string }> = {
     [NotificationType.SUCCESS]: { icon: <CheckCircle className="w-5 h-5" />, dot: 'bg-emerald-500', badge: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
@@ -84,6 +71,7 @@ function NotificationIcon({ type }: { type: NotificationType }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function NotificationsPage() {
     const { user } = useAuth();
+    const { t } = useI18n();
     const {
         notifications: allNotifications,
         unreadCount,
@@ -111,6 +99,19 @@ export default function NotificationsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(0);
     const [notifications, setNotifications] = useState<Notification[]>(allNotifications)
+
+    const TABS: { value: TabValue; label: string }[] = useMemo(() => [
+        { value: 'ALL', label: t('common.notificationPage.tabs.all') },
+        { value: 'UNREAD', label: t('common.notificationPage.tabs.unread') },
+        { value: NotificationType.SUCCESS, label: t('common.notificationPage.tabs.success') },
+        { value: NotificationType.MESSAGE, label: t('common.notificationPage.tabs.messages') },
+        { value: NotificationType.WARNING, label: t('common.notificationPage.tabs.warnings') },
+        { value: NotificationType.ERROR, label: t('common.notificationPage.tabs.errors') },
+        { value: NotificationType.SYSTEM, label: t('common.notificationPage.tabs.system') },
+        { value: NotificationType.INFO, label: t('common.notificationPage.tabs.info') },
+        { value: NotificationType.PRODUCT, label: t('common.notificationPage.tabs.products') },
+        { value: NotificationType.ORDER, label: t('common.notificationPage.tabs.orders') }
+    ], [t]);
 
     // ── Load data when tab or page changes ────────────────────────────────────
     const load = useCallback(async (tab: TabValue, p: number) => {
@@ -165,11 +166,13 @@ export default function NotificationsPage() {
                                 <Bell className="w-5 h-5 text-green-600" />
                             </div>
                             <div>
-                                <h1 className="text-xl font-semibold text-foreground leading-tight">Notifications</h1>
+                                <h1 className="text-xl font-semibold text-foreground leading-tight">{t('common.notificationPage.title')}</h1>
                                 <p className="text-xs text-muted-foreground mt-0.5">
                                     {unreadCount > 0
-                                        ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`
-                                        : "You're all caught up!"}
+                                        ? (unreadCount > 1 
+                                            ? t('common.notificationPage.unreadPlural').replace('{{count}}', String(unreadCount))
+                                            : t('common.notificationPage.unreadSingular'))
+                                        : t('common.notificationPage.caughtUp')}
                                 </p>
                             </div>
                         </div>
@@ -189,7 +192,7 @@ export default function NotificationsPage() {
                             >
                                 <span className="flex items-center gap-1.5">
                                     <Check className="w-3.5 h-3.5" />
-                                    Mark all read
+                                    {t('common.notificationPage.markAllRead')}
                                 </span>
                             </button>
                         </div>
@@ -227,7 +230,7 @@ export default function NotificationsPage() {
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <input
                                     type="text"
-                                    placeholder="Search notifications…"
+                                    placeholder={t('common.notificationPage.searchPlaceholder')}
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
                                     className="w-full pl-9 pr-8 py-2 bg-card rounded-lg text-sm text-foreground placeholder:text-muted-foreground border border-transparent focus:border-success/50 focus:bg-card focus:ring-2 focus:ring-success/20 outline-none transition-all"
@@ -259,10 +262,10 @@ export default function NotificationsPage() {
                                         <Bell className="w-8 h-8 text-muted-foreground" />
                                     </div>
                                     <p className="text-sm font-semibold text-foreground">
-                                        {searchTerm ? 'No results found' : activeTab === 'UNREAD' ? 'No unread notifications' : 'No notifications yet'}
+                                        {searchTerm ? t('common.notificationPage.noResultsFound') : activeTab === 'UNREAD' ? t('common.notificationPage.noUnreadNotifications') : t('common.notificationPage.noNotificationsYet')}
                                     </p>
                                     <p className="text-xs text-muted-foreground mt-1">
-                                        {searchTerm ? 'Try a different search term' : 'Check back later'}
+                                        {searchTerm ? t('common.notificationPage.tryDifferentSearch') : t('common.notificationPage.checkBackLater')}
                                     </p>
                                 </div>
                             ) : (
@@ -337,8 +340,8 @@ export default function NotificationsPage() {
                         {!loading && totalPages > 1 && (
                             <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-white/40">
                                 <span className="text-xs text-gray-500">
-                                    Page {currentPage + 1} of {totalPages}
-                                    <span className="text-gray-400 ml-1">({totalElements} total)</span>
+                                    {t('common.notificationPage.pageOf').replace('{{current}}', String(currentPage + 1)).replace('{{total}}', String(totalPages))}
+                                    <span className="text-gray-400 ml-1">{t('common.notificationPage.totalElements').replace('{{total}}', String(totalElements))}</span>
                                 </span>
                                 <div className="flex items-center gap-1">
                                     <button

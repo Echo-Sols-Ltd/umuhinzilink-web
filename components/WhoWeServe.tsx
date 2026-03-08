@@ -1,5 +1,7 @@
 'use client';
 
+import { useI18n } from '@/contexts/I18nContext';
+
 const LucideIcons = {
   Phone: (
     <svg
@@ -119,38 +121,39 @@ const LucideIcons = {
 };
 
 export default function WhoWeServe() {
+  const { t } = useI18n();
   const data = [
     {
-      title: 'Farmers',
+      titleKey: 'landing.whoWeServe.groups.farmers.title',
       color: 'bg-success/10',
       iconColor: 'text-success',
       items: [
-        { icon: LucideIcons.Phone, text: 'Mobile OTP & Kinyarwanda support' },
-        { icon: LucideIcons.Leaf, text: 'AI-powered agronomy tips' },
-        { icon: LucideIcons.CreditCard, text: 'Credit access for inputs' },
-        { icon: LucideIcons.ChartBar, text: 'Market price trends' },
+        { icon: LucideIcons.Phone, textKey: 'landing.whoWeServe.groups.farmers.items.mobileOtp' },
+        { icon: LucideIcons.Leaf, textKey: 'landing.whoWeServe.groups.farmers.items.aiTips' },
+        { icon: LucideIcons.CreditCard, textKey: 'landing.whoWeServe.groups.farmers.items.creditAccess' },
+        { icon: LucideIcons.ChartBar, textKey: 'landing.whoWeServe.groups.farmers.items.marketTrends' },
       ],
     },
     {
-      title: 'Suppliers',
+      titleKey: 'landing.whoWeServe.groups.suppliers.title',
       color: 'bg-info/10',
       iconColor: 'text-info',
       items: [
-        { icon: LucideIcons.ClipboardList, text: 'List agri-inputs & inventory' },
-        { icon: LucideIcons.Users, text: 'Farmer demand matching' },
-        { icon: LucideIcons.CreditCard, text: 'Credit request management' },
-        { icon: LucideIcons.ChartBar, text: 'Sales tracking & analytics' },
+        { icon: LucideIcons.ClipboardList, textKey: 'landing.whoWeServe.groups.suppliers.items.listInputs' },
+        { icon: LucideIcons.Users, textKey: 'landing.whoWeServe.groups.suppliers.items.demandMatching' },
+        { icon: LucideIcons.CreditCard, textKey: 'landing.whoWeServe.groups.suppliers.items.creditRequests' },
+        { icon: LucideIcons.ChartBar, textKey: 'landing.whoWeServe.groups.suppliers.items.salesAnalytics' },
       ],
     },
     {
-      title: 'Buyers',
+      titleKey: 'landing.whoWeServe.groups.buyers.title',
       color: 'bg-warning/10',
       iconColor: 'text-warning',
       items: [
-        { icon: LucideIcons.Search, text: 'Browse fresh produce' },
-        { icon: LucideIcons.ClipboardList, text: 'Filter by region & price' },
-        { icon: LucideIcons.Phone, text: 'Direct farmer contact' },
-        { icon: LucideIcons.Lock, text: 'Secure payment processing' },
+        { icon: LucideIcons.Search, textKey: 'landing.whoWeServe.groups.buyers.items.browseProduce' },
+        { icon: LucideIcons.ClipboardList, textKey: 'landing.whoWeServe.groups.buyers.items.filter' },
+        { icon: LucideIcons.Phone, textKey: 'landing.whoWeServe.groups.buyers.items.directContact' },
+        { icon: LucideIcons.Lock, textKey: 'landing.whoWeServe.groups.buyers.items.securePayments' },
       ],
     },
   ];
@@ -158,20 +161,20 @@ export default function WhoWeServe() {
   return (
     <section className="py-12 bg-background">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-semibold text-foreground">Who We Serve</h2>
+        <h2 className="text-center text-2xl font-semibold text-foreground">{t('landing.whoWeServe.title')}</h2>
         <p className="text-center text-muted-foreground mt-2">
-          Three interconnected communities driving agricultural growth
+          {t('landing.whoWeServe.subtitle')}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {data.map(group => (
-            <div key={group.title} className={`${group.color} rounded-lg shadow-sm p-6`}>
-              <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
+            <div key={group.titleKey} className={`${group.color} rounded-lg shadow-sm p-6`}>
+              <h3 className="text-lg font-semibold text-foreground">{t(group.titleKey)}</h3>
               <ul className="mt-4 space-y-3">
                 {group.items.map((item, idx) => (
                   <li key={idx} className="flex items-start space-x-3">
                     <span className={`${group.iconColor}`}>{item.icon}</span>
-                    <span className="text-foreground text-sm">{item.text}</span>
+                    <span className="text-foreground text-sm">{t(item.textKey)}</span>
                   </li>
                 ))}
               </ul>

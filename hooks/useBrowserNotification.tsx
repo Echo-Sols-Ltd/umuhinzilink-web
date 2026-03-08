@@ -65,11 +65,9 @@ export const useBrowserNotification = (): UseBrowserNotificationReturn => {
 
   // Show notification with intelligent routing
   const showNotification = useCallback((data: NotificationData): boolean => {
-    console.log('📱 Showing notification:', data.type, 'Strategy:', shouldUseInAppNotifications ? 'In-App' : 'Browser');
 
     // Always show in-app notifications when page is visible
     if (shouldUseInAppNotifications) {
-      console.log('✅ Showing in-app notification (page is visible)');
       notify.info(data.body, data.title);
       // Return false to indicate browser notification was not shown
       return false;
@@ -77,7 +75,6 @@ export const useBrowserNotification = (): UseBrowserNotificationReturn => {
 
     // Show browser notification when page is hidden
     if (shouldUseBrowserNotifications && isEnabled) {
-      console.log('🔔 Showing browser notification (page is hidden)');
       try {
         const notification = new Notification(data.title, {
           body: data.body,
@@ -106,7 +103,6 @@ export const useBrowserNotification = (): UseBrowserNotificationReturn => {
       }
     }
 
-    console.log('⚠️ Notification not shown (page hidden but no permission)');
     return false;
   }, [shouldUseInAppNotifications, shouldUseBrowserNotifications, isEnabled]);
 

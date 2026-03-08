@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function SignIn() {
   const socialLinks = [
@@ -23,14 +24,15 @@ export default function SignIn() {
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({ email: false, password: false });
   const { login, loading } = useAuth();
+  const { t } = useI18n();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('logout')) {
-      notify.success('You have been logged out successfully.', 'Signed Out');
+      notify.success(t('auth.signIn.toast.loggedOut.body'), t('auth.signIn.toast.loggedOut.title'));
     }
     if (urlParams.get('registered')) {
-      notify.success('Registration successful. Please sign in to continue.', 'Account Created');
+      notify.success(t('auth.signIn.toast.registered.body'), t('auth.signIn.toast.registered.title'));
     }
   }, []);
 
@@ -60,12 +62,12 @@ export default function SignIn() {
   const validateField = (name: string, value: string) => {
     let error = '';
     if (name === 'email') {
-      if (!value.trim()) error = 'Email is required';
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = 'Invalid email address';
+      if (!value.trim()) error = t('auth.validation.emailRequired');
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = t('auth.validation.invalidEmailAddress');
     }
     if (name === 'password') {
-      if (!value.trim()) error = 'Password is required';
-      else if (value.length < 6) error = 'Minimum 6 characters';
+      if (!value.trim()) error = t('auth.validation.passwordRequired');
+      else if (value.length < 6) error = t('auth.validation.minimumCharacters', { count: 6 });
     }
     setFieldErrors(prev => ({ ...prev, [name]: error }));
     return error === '';
@@ -80,7 +82,7 @@ export default function SignIn() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
-      notify.error('Fix the errors below', 'Error');
+      notify.error(t('auth.validation.fixErrorsBelow'), t('common.error'));
       return;
     }
     if (rememberMe) {
@@ -96,8 +98,8 @@ export default function SignIn() {
       <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-card">
         <div className="w-full max-w-md flex flex-col justify-center">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">Welcome Back</h1>
-            <p className="text-muted-foreground text-sm sm:text-base mt-1">Sign in to your account</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">{t('auth.signIn.title')}</h1>
+            <p className="text-muted-foreground text-sm sm:text-base mt-1">{t('auth.signIn.subtitle')}</p>
           </div>
 
           <div className="flex justify-center gap-3 mb-6">
@@ -115,17 +117,17 @@ export default function SignIn() {
 
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground">OR</span>
+            <span className="text-xs text-muted-foreground">{t('common.or')}</span>
             <div className="flex-1 h-px bg-border" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label className="text-sm">Email</Label>
+              <Label className="text-sm">{t('auth.fields.email')}</Label>
               <Input
                 name="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('auth.placeholders.email')}
                 value={formData.email}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
@@ -141,11 +143,11 @@ export default function SignIn() {
             </div>
 
             <div className="relative">
-              <Label className="text-sm">Password</Label>
+              <Label className="text-sm">{t('auth.fields.password')}</Label>
               <Input
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
+                placeholder={t('auth.placeholders.passwordDots')}
                 value={formData.password}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
@@ -170,10 +172,10 @@ export default function SignIn() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Switch checked={rememberMe} onCheckedChange={setRememberMe} />
-                <span className="text-sm text-muted-foreground">Remember me</span>
+                <span className="text-sm text-muted-foreground">{t('auth.signIn.rememberMe')}</span>
               </div>
               <Link href="/forgot-password" className="text-sm text-success hover:underline">
-                Forgot?
+                {t('auth.signIn.forgot')}
               </Link>
             </div>
 
@@ -182,13 +184,13 @@ export default function SignIn() {
               disabled={loading}
               className="w-full bg-success hover:bg-success/90"
             >
-              {loading ? 'Signing in…' : 'Sign In'}
+              {loading ? t('auth.signIn.signingIn') : t('auth.signIn.signIn')}
             </Button>
 
             <p className="text-sm text-center text-muted-foreground">
-              No account?{' '}
+              {t('auth.signIn.noAccount')}{' '}
               <Link href="/auth/signup" className="text-success font-semibold">
-                Sign up
+                {t('auth.signIn.signUp')}
               </Link>
             </p>
           </form>
@@ -204,10 +206,10 @@ export default function SignIn() {
           className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300"
         />
         <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">
-          Welcome Back!
+          {t('auth.signIn.heroTitle')}
         </h1>
         <p className="text-white z-10 mt-2 text-sm sm:text-base px-6 sm:px-0">
-          Sign in to access your account and continue your journey <br /> with UmuhinziLink
+          {t('auth.signIn.heroSubtitle.line1')} <br /> {t('auth.signIn.heroSubtitle.line2')}
         </p>
       </div>
     </div>

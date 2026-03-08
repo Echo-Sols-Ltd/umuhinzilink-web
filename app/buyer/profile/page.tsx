@@ -36,7 +36,10 @@ const Logo = () => (
   </span>
 );
 
+import { useI18n } from '@/contexts/I18nContext';
+
 function BuyerProfileComponent() {
+  const { t } = useI18n();
   const router = useRouter();
   const [profile, setProfile] = useState({
     firstName: '',
@@ -87,7 +90,7 @@ function BuyerProfileComponent() {
   const handleSave = () => {
     localStorage.setItem('buyerProfile', JSON.stringify(profile));
     setIsEditing(false);
-    alert('Buyer profile updated successfully!');
+    toast.success(t('profile.updated.success'));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,15 +111,11 @@ function BuyerProfileComponent() {
     try {
       const res = await userService.uploadAvatar(imageFile);
       setProfile(prev => ({ ...prev, avatar: res.data! }));
-      toast.success("Profile image uploaded successfully", {
-        title: "Image Updated"
-      });
+      toast.success(t('profile.upload.success'));
       setImageFile(null);
       setPreviewUrl(null);
     } catch (error) {
-      toast.error("Failed to upload image. Please try again.", {
-        title: "Upload Failed"
-      });
+      toast.error(t('profile.upload.error'));
     }
   };
 
@@ -139,7 +138,7 @@ function BuyerProfileComponent() {
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-20 h-20 rounded-full overflow-hidden bg-success/10 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full overflow-hidden bg-success/10 flex items-center justify-center border border-border">
                   {previewUrl || profile.avatar ? (
                     <img
                       src={previewUrl || imageUrl(profile.avatar)}
@@ -164,18 +163,18 @@ function BuyerProfileComponent() {
               </div>
               <div>
                 <h1 className="text-2xl font-semibold text-foreground">
-                  {profile.firstName} {profile.lastName}
+                  {profile.firstName || t('common.user')} {profile.lastName}
                 </h1>
-                <p className="text-muted-foreground">Buyer</p>
+                <p className="text-muted-foreground">{t('sidebar.roles.buyer')}</p>
               </div>
             </div>
 
             {/* Image Upload Section */}
             {imageFile && (
               <div className="bg-card border border-border rounded-lg p-4 mb-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-lg overflow-hidden">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden border">
                       <img
                         src={previewUrl || ''}
                         alt="Preview"
@@ -183,7 +182,7 @@ function BuyerProfileComponent() {
                       />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-foreground">New Profile Image</p>
+                      <p className="text-sm font-medium text-foreground">{t('profile.actions.newImage')}</p>
                       <p className="text-xs text-muted-foreground">{imageFile.name}</p>
                     </div>
                   </div>
@@ -195,13 +194,13 @@ function BuyerProfileComponent() {
                       }}
                       className="px-3 py-1 text-sm border border-border rounded-md hover:bg-card"
                     >
-                      Cancel
+                      {t('profile.actions.cancel')}
                     </button>
                     <button
                       onClick={handleImageUpload}
-                      className="px-3 py-1 text-sm bg-success text-primary-foreground rounded-md hover:bg-success/600"
+                      className="px-3 py-1 text-sm bg-success text-primary-foreground rounded-md hover:bg-success/90"
                     >
-                      Upload
+                      {t('profile.actions.upload')}
                     </button>
                   </div>
                 </div>
@@ -212,80 +211,86 @@ function BuyerProfileComponent() {
               <div className="flex gap-2">
                 <button
                   onClick={handleSave}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700"
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
                 >
-                  <Save className="w-4 h-4" /> Save
+                  <Save className="w-4 h-4" /> {t('profile.actions.save')}
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="bg-muted text-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-muted"
+                  className="bg-muted text-foreground px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-muted/80 transition-colors"
                 >
-                  <X className="w-4 h-4" /> Cancel
+                  <X className="w-4 h-4" /> {t('profile.actions.cancel')}
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => setIsEditing(true)}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700"
+                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
               >
-                <Edit2 className="w-4 h-4" /> Edit
+                <Edit2 className="w-4 h-4" /> {t('profile.actions.edit')}
               </button>
             )}
           </div>
 
           {/* Profile Sections */}
           <div className="space-y-6">
-            <Section title="Personal Information">
+            <Section title={t('profile.sections.personal')}>
               <Field
-                label="First Name"
+                label={t('profile.fields.firstName')}
                 value={profile.firstName}
                 isEditing={isEditing}
                 name="firstName"
                 onChange={handleChange}
+                placeholder={t('profile.fields.firstName')}
               />
               <Field
-                label="Last Name"
+                label={t('profile.fields.lastName')}
                 value={profile.lastName}
                 isEditing={isEditing}
                 name="lastName"
                 onChange={handleChange}
+                placeholder={t('profile.fields.lastName')}
               />
             </Section>
 
-            <Section title="Contact Information">
+            <Section title={t('profile.sections.contact')}>
               <Field
-                label="Phone"
+                label={t('profile.fields.phone')}
                 value={profile.phone}
                 icon={<Phone className="w-4 h-4 text-muted-foreground" />}
                 isEditing={isEditing}
                 name="phone"
                 onChange={handleChange}
+                placeholder={t('profile.fields.phone')}
               />
               <Field
-                label="Email"
+                label={t('profile.fields.email')}
                 value={profile.email}
                 icon={<Mail className="w-4 h-4 text-muted-foreground" />}
                 isEditing={isEditing}
                 name="email"
                 onChange={handleChange}
+                placeholder={t('profile.fields.email')}
               />
             </Section>
 
-            <Section title="Address">
+            <Section title={t('profile.sections.address')}>
               <Field
-                label="District"
+                label={t('profile.fields.district')}
                 value={profile.district}
                 icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
                 isEditing={isEditing}
                 name="district"
                 onChange={handleChange}
+                placeholder={t('profile.fields.district')}
               />
               <Field
-                label="Sector"
+                label={t('profile.fields.sector')}
                 value={profile.sector}
                 isEditing={isEditing}
                 name="sector"
                 onChange={handleChange}
+                placeholder={t('profile.fields.sector')}
               />
             </Section>
           </div>
@@ -311,6 +316,7 @@ function Field({
   isEditing,
   name,
   onChange,
+  placeholder,
 }: {
   label: string;
   value: string;
@@ -318,16 +324,27 @@ function Field({
   isEditing: boolean;
   name: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
 }) {
+  const { t } = useI18n();
   return (
     <div>
       <label className="block text-sm font-medium text-foreground mb-1">{label}</label>
       {isEditing ? (
-        <input type="text" name={name} value={value} onChange={onChange} className={inputClass} />
+        <input
+          type="text"
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={inputClass}
+        />
       ) : (
-        <div className="flex items-center gap-2 text-foreground bg-card border border-border rounded-md px-3 py-2">
+        <div className="flex items-center gap-2 text-foreground bg-card border border-border rounded-md px-3 py-2 min-h-[42px]">
           {icon}
-          {value || <span className="text-muted-foreground">Not provided</span>}
+          <span className="truncate">
+            {value || <span className="text-muted-foreground italic">{t('profile.notProvided')}</span>}
+          </span>
         </div>
       )}
     </div>

@@ -10,6 +10,7 @@ import ChatInterface from '@/components/messaging/ChatInterface';
 import { useMessages } from '@/contexts/MessageContext';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import { useI18n } from '@/contexts/I18nContext';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
@@ -22,12 +23,13 @@ function GlobalChatListComponent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const { activeChatUser } = useMessages();
+  const { t } = useI18n();
 
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-          <p className="text-muted-foreground">Please log in to access chat.</p>
+          <p className="text-muted-foreground">{t('chat.loginRequired')}</p>
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
-import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus, UserType } from '@/types';
+import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus, UserType, SocketResponse } from '@/types';
 import type { OrderRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
@@ -129,7 +129,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       const res = await orderService.getBuyerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
-      console.log("this is the list", res)
       setBuyerOrders(Array.isArray(list) ? list : []);
       setBuyerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
       setBuyerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
@@ -247,15 +246,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     try {
       setMutationLoadingState(true);
       const response = await orderService.markFarmerOrderSatisfaction(id);
-      
+
       if (response.success && response.data) {
         // Update all relevant order lists with the satisfaction data
         const updatedOrder = response.data;
-        
+
         // Update farmer orders
         setFarmerOrders(prev => {
           if (!prev) return prev;
-          const updated = prev.map(order => 
+          const updated = prev.map(order =>
             order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
           );
           localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
@@ -265,7 +264,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         // Update buyer orders
         setBuyerOrders(prev => {
           if (!prev) return prev;
-          const updated = prev.map(order => 
+          const updated = prev.map(order =>
             order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
           );
           localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
@@ -273,10 +272,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         });
 
         // Update current order if it matches
-        setCurrentFarmerOrder(prev => 
+        setCurrentFarmerOrder(prev =>
           prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
         );
-        setCurrentBuyerOrder(prev => 
+        setCurrentBuyerOrder(prev =>
           prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
         );
       }
@@ -292,15 +291,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     try {
       setMutationLoadingState(true);
       const response = await orderService.markSupplierOrderSatisfaction(id);
-      
+
       if (response.success && response.data) {
         // Update all relevant order lists with the satisfaction data
         const updatedOrder = response.data;
-        
+
         // Update supplier orders
         setSupplierOrders(prev => {
           if (!prev) return prev;
-          const updated = prev.map(order => 
+          const updated = prev.map(order =>
             order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
           );
           localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
@@ -310,7 +309,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         // Update farmer buyer orders
         setFarmerBuyerOrders(prev => {
           if (!prev) return prev;
-          const updated = prev.map(order => 
+          const updated = prev.map(order =>
             order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
           );
           localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
@@ -318,10 +317,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         });
 
         // Update current order if it matches
-        setCurrentSupplierOrder(prev => 
+        setCurrentSupplierOrder(prev =>
           prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
         );
-        setCurrentFarmerBuyerOrder(prev => 
+        setCurrentFarmerBuyerOrder(prev =>
           prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
         );
       }
@@ -393,9 +392,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
   }
   // Socket event handlers
-  const handleNewOrder = useCallback((orderChange: FarmerOrder | SupplierOrder) => {
+  const handleNewOrder = useCallback((response: SocketResponse<FarmerOrder | SupplierOrder>) => {
     // Add null check to prevent undefined errors
-    if (!orderChange) {
+    const data = response.data
+    if (!data) {
       console.error('Order change data is undefined');
       return;
     }
@@ -404,8 +404,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     showNotification({
       type: 'order',
       title: 'New Order Received',
-      body: `${orderChange.buyer.names} wants ${orderChange.quantity} of ${orderChange.product.name}`,
-      icon: orderChange.product.image,
+      body: response.message,
+      icon: data.product.image,
       onClick: () => {
         // Navigate to orders page
         window.location.href = '/farmer/orders';
@@ -423,9 +423,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     fetchFarmerBuyerOrders();
   }, [isEnabled, showNotification, fetchBuyerOrders, fetchFarmerOrders, fetchSupplierOrders, fetchFarmerBuyerOrders]);
 
-  const handleOrderStatusChange = useCallback((orderChange: FarmerOrder | SupplierOrder) => {
+  const handleOrderStatusChange = useCallback((response: SocketResponse<FarmerOrder | SupplierOrder>) => {
     // Add null check to prevent undefined errors
-    if (!orderChange) {
+    const data = response.data
+    if (!data) {
       console.error('Order change data is undefined');
       return;
     }
@@ -435,7 +436,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       showNotification({
         type: 'order',
         title: 'Order Status Updated',
-        body: `Your order of ${orderChange.product.name} was updated.`,
+        body: response.message,
         icon: '/icons/order.svg',
         onClick: () => {
           // Navigate to orders page
@@ -443,14 +444,16 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         },
       });
     }
-    handleOrderChange(orderChange)
+    handleOrderChange(data)
   }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
 
 
 
-  const handleOrderDeliveryChange = useCallback((deliveryChange: FarmerOrder | SupplierOrder) => {
-    if (!deliveryChange) {
+  const handleOrderDeliveryChange = useCallback((response: SocketResponse<FarmerOrder | SupplierOrder>) => {
+    // Add null check to prevent undefined errors
+    const data = response.data
+    if (!data) {
       console.error('Delivery change data is undefined');
       return;
     }
@@ -467,23 +470,25 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
-    handleOrderChange(deliveryChange);
+    handleOrderChange(data);
 
   }, [shouldUseInAppNotifications, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
-  const handleOrderSatisfaction = useCallback((satisfactionChange: FarmerOrder | SupplierOrder) => {
-    if (!satisfactionChange) {
+  const handleOrderSatisfaction = useCallback((response: SocketResponse<FarmerOrder | SupplierOrder>) => {
+    // Add null check to prevent undefined errors
+    const data = response.data
+    if (!data) {
       console.error('Satisfaction change data is undefined');
       return;
     }
 
     // Show notification for seller when buyer confirms satisfaction
-    if (user?.role !== UserType.BUYER && satisfactionChange.isBuyerSatisfied) {
+    if (user?.role !== UserType.BUYER && data.isBuyerSatisfied) {
       showNotification({
         type: 'order',
         title: 'Order Delivered Safely',
-        body: `${satisfactionChange.buyer.names} confirmed safe delivery of ${satisfactionChange.product.name}`,
-        icon: satisfactionChange.product.image,
+        body: `${data.buyer.names} confirmed safe delivery of ${data.product.name}`,
+        icon: data.product.image,
         onClick: () => {
           // Navigate to orders page
           window.location.href = user?.role === UserType.FARMER ? '/farmer/orders' : '/supplier/orders';
@@ -491,7 +496,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       });
     }
 
-    handleOrderChange(satisfactionChange);
+    handleOrderChange(data);
 
   }, [user, showNotification, handleOrderChange]);
 

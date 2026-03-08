@@ -14,10 +14,10 @@ class SocketService {
     private messageEditionListeners: ((message: Message) => void)[] = []
     private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
-    private orderStatusChangeListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
-    private orderDeliveryChangeListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
-    private orderNewListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
-    private orderSatisfactionListeners: ((order: FarmerOrder | SupplierOrder) => void)[] = []
+    private orderStatusChangeListeners: ((data: SocketResponse<FarmerOrder | SupplierOrder>) => void)[] = []
+    private orderDeliveryChangeListeners: ((data: SocketResponse<FarmerOrder | SupplierOrder>) => void)[] = []
+    private orderNewListeners: ((data: SocketResponse<FarmerOrder | SupplierOrder>) => void)[] = []
+    private orderSatisfactionListeners: ((data: SocketResponse<FarmerOrder | SupplierOrder>) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
@@ -191,7 +191,7 @@ class SocketService {
             const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
             // Only call listeners if data exists
             if (body.data) {
-                this.orderNewListeners.forEach(cb => cb(body.data!))
+                this.orderNewListeners.forEach(cb => cb(body))
             } else {
                 console.warn('New order received but no data provided', body)
             }
@@ -206,7 +206,7 @@ class SocketService {
             const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
             // Only call listeners if data exists
             if (body.data) {
-                this.orderStatusChangeListeners.forEach(cb => cb(body.data!))
+                this.orderStatusChangeListeners.forEach(cb => cb(body))
             } else {
                 console.warn('Order status change received but no data provided', body)
             }
@@ -220,7 +220,7 @@ class SocketService {
             const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
             // Only call listeners if data exists
             if (body.data) {
-                this.orderDeliveryChangeListeners.forEach(cb => cb(body.data!))
+                this.orderDeliveryChangeListeners.forEach(cb => cb(body))
             } else {
                 console.warn('Order delivery change received but no data provided', body)
             }
@@ -234,7 +234,7 @@ class SocketService {
             const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
             // Only call listeners if data exists
             if (body.data) {
-                this.orderSatisfactionListeners.forEach(cb => cb(body.data!))
+                this.orderSatisfactionListeners.forEach(cb => cb(body))
             } else {
                 console.warn('Order satisfaction received but no data provided', body)
             }
@@ -302,7 +302,6 @@ class SocketService {
 
     private enqueueOrPublish(destination: string, body: string) {
         if (!this.stompClient.connected) {
-            console.log(`Socket not connected. Queueing message for ${destination}`)
             this.messageQueue.push({ destination, body })
             // Automatically try to connect if we aren't already
             if (localStorage.getItem("auth_token")) {
@@ -322,28 +321,28 @@ class SocketService {
             }
         }
     }
-    public onNewOrder(callback: (order: FarmerOrder|SupplierOrder) => void) {
+    public onNewOrder(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
         this.orderNewListeners.push(callback)
     }
-    public removeNewOrderListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
+    public removeNewOrderListener(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
         this.orderNewListeners = this.orderNewListeners.filter(cb => cb !== callback)
     }
-    public onOrderStatusChange(callback: (order: FarmerOrder|SupplierOrder) => void) {
+    public onOrderStatusChange(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
         this.orderStatusChangeListeners.push(callback)
     }
-    public removeOrderStatusChangeListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
+    public removeOrderStatusChangeListener(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
         this.orderStatusChangeListeners = this.orderStatusChangeListeners.filter(cb => cb !== callback)
     }
-    public onOrderDeliveryChange(callback: (order: FarmerOrder|SupplierOrder) => void) {
+    public onOrderDeliveryChange(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
         this.orderDeliveryChangeListeners.push(callback)
     }
-    public removeOrderDeliveryChangeListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
+    public removeOrderDeliveryChangeListener(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
         this.orderDeliveryChangeListeners = this.orderDeliveryChangeListeners.filter(cb => cb !== callback)
     }
-    public onOrderSatisfaction(callback: (order: FarmerOrder|SupplierOrder) => void) {
+    public onOrderSatisfaction(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
         this.orderSatisfactionListeners.push(callback)
     }
-    public removeOrderSatisfactionListener(callback: (order: FarmerOrder|SupplierOrder) => void) {
+    public removeOrderSatisfactionListener(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
         this.orderSatisfactionListeners = this.orderSatisfactionListeners.filter(cb => cb !== callback)
     }
 
