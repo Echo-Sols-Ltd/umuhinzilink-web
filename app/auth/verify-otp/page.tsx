@@ -188,7 +188,7 @@ export default function VerifyPage() {
                 <div className="hidden lg:block flex-2 relative overflow-hidden">
                     <Image
                         src="/Image.png"
-                        alt="Mountain road"
+                        alt={t('auth.forgotPassword.alt.mountainRoad')}
                         fill
                         className="object-cover object-center scale-105 dark:brightness-50 dark:contrast-110 transition-all duration-300"
                         priority
