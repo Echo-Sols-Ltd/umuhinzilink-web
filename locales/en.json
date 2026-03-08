@@ -393,7 +393,8 @@
       "validation": {
         "fileTooLarge": "Profile image must be less than 5MB",
         "invalidFileType": "Please select an image file",
-        "selectImageFile": "Please select an image file"
+        "selectImageFile": "Please select an image file",
+        "fileSizeHint": "JPG, PNG, GIF up to 5MB"
       },
       "alt": {
         "mountainRoad": "Mountain road",
@@ -498,6 +499,92 @@
       "validation": {
         "completeCode": "Please enter the complete 4-digit code"
       }
+    },
+    "buyer": {
+      "fields": {
+        "buyerType": "Buyer Type",
+        "province": "Province",
+        "district": "District"
+      },
+      "placeholders": {
+        "selectBuyerType": "Select buyer type",
+        "selectProvince": "Select province",
+        "selectDistrict": "Select district"
+      },
+      "validation": {
+        "buyerTypeRequired": "Buyer type is required",
+        "provinceRequired": "Province is required",
+        "districtRequired": "District is required",
+        "fixErrorsBelow": "Please fix the errors below and try again"
+      },
+      "success": {
+        "accountCreated": "Buyer account created successfully!"
+      },
+      "error": {
+        "accountCreationFailed": "Failed to create buyer account. Please try again."
+      },
+      "creatingAccount": "Creating Account...",
+      "finishCreatingAccount": "Finish Creating Account"
+    },
+    "farmer": {
+      "fields": {
+        "farmSize": "Farm Size",
+        "farmingExperience": "Farming Experience"
+      },
+      "placeholders": {
+        "selectFarmSize": "Select farm size",
+        "selectExperienceLevel": "Select experience level"
+      },
+      "validation": {
+        "farmSizeRequired": "Farm size is required",
+        "experienceLevelRequired": "Experience level is required",
+        "provinceRequired": "Province is required",
+        "districtRequired": "District is required",
+        "cropsRequired": "Please select at least one crop",
+        "fixErrorsBelow": "Please fix errors below and try again"
+      },
+      "success": {
+        "accountCreated": "Farmer account created successfully!"
+      },
+      "error": {
+        "accountCreationFailed": "Failed to create farmer account. Please try again."
+      },
+      "farmInformation": "Farm Information",
+      "farmLocation": "Farm Location",
+      "cropsYouGrow": "Crops You Grow",
+      "changeImage": "Change Image",
+      "chooseImage": "Choose Image",
+      "creatingAccount": "Creating Account...",
+      "finishCreatingAccount": "Finish Creating Account"
+    },
+    "supplier": {
+      "fields": {
+        "businessName": "Business Name",
+        "supplierType": "Supplier Type"
+      },
+      "placeholders": {
+        "businessName": "Enter your business name",
+        "selectSupplierType": "Select supplier type"
+      },
+      "validation": {
+        "businessNameRequired": "Business name is required",
+        "businessNameMinLength": "Business name must be at least 2 characters",
+        "supplierTypeRequired": "Supplier type is required",
+        "provinceRequired": "Province is required",
+        "districtRequired": "District is required",
+        "fixErrorsBelow": "Please fix errors below and try again"
+      },
+      "success": {
+        "accountCreated": "Supplier account created successfully!"
+      },
+      "error": {
+        "accountCreationFailed": "Failed to create supplier account. Please try again."
+      },
+      "businessInformation": "Business Information",
+      "businessLocation": "Business Location",
+      "chooseImage": "Choose Image",
+      "creatingAccount": "Creating Account...",
+      "finishCreatingAccount": "Finish Creating Account"
     }
   },
   "dashboard": {

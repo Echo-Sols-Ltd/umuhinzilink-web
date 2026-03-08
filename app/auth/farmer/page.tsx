@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { UserRequest, UserType } from '@/types';
 import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, District, RwandaCrop } from '@/types';
 import { farmSizeOptions, experienceLevelOptions, provinceOptions, districtOptions } from '@/types/enums';
@@ -19,6 +20,7 @@ import AuthFooter from '@/components/auth/AuthFooter';
 
 export default function FarmerSignUp() {
   const { registerFarmer, user } = useAuth();
+  const { t } = useI18n();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -134,27 +136,27 @@ export default function FarmerSignUp() {
 
       case 'farmSize':
         if (!value) {
-          error = 'Farm size is required';
+          error = t('auth.farmer.validation.farmSizeRequired');
         }
         break;
       case 'experienceLevel':
         if (!value) {
-          error = 'Experience level is required';
+          error = t('auth.farmer.validation.experienceLevelRequired');
         }
         break;
       case 'province':
         if (!value) {
-          error = 'Province is required';
+          error = t('auth.farmer.validation.provinceRequired');
         }
         break;
       case 'district':
         if (!value) {
-          error = 'District is required';
+          error = t('auth.farmer.validation.districtRequired');
         }
         break;
       case 'crops':
         if (!value || (Array.isArray(value) && value.length === 0)) {
-          error = 'Please select at least one crop';
+          error = t('auth.farmer.validation.cropsRequired');
         }
         break;
       default:
@@ -191,11 +193,11 @@ export default function FarmerSignUp() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        notify.error('Profile image must be less than 5MB', 'File too large');
+        notify.error(t('auth.signUp.validation.fileTooLarge'), t('common.error'));
         return;
       }
       if (!file.type.startsWith('image/')) {
-        notify.error('Please select an image file', 'Invalid file type');
+        notify.error(t('auth.signUp.validation.invalidFileType'), t('common.error'));
         return;
       }
       setProfileImage(file);
@@ -218,7 +220,7 @@ export default function FarmerSignUp() {
 
     // Validate form data
     if (!validateForm()) {
-      notify.error('Please fix the errors below and try again.', 'Validation Error');
+      notify.error(t('auth.farmer.validation.fixErrorsBelow'), t('common.error'));
       setLoading(false);
       return;
     }
@@ -232,10 +234,10 @@ export default function FarmerSignUp() {
       // Then register the farmer
       await registerFarmer(farmerData);
 
-      notify.success('Farmer account created successfully!', 'Success');
+      notify.success(t('auth.farmer.success.accountCreated'), t('common.success'));
 
     } catch (error) {
-      notify.error('Failed to create farmer account. Please try again.', 'Registration Error');
+      notify.error(t('auth.farmer.error.accountCreationFailed'), t('auth.register.error'));
     } finally {
       setLoading(false);
     }
@@ -261,7 +263,7 @@ export default function FarmerSignUp() {
     <div className="w-full h-screen bg-background flex items-center">
       <div className="w-full h-full bg-card shadow-lg rounded-lg p-6 sm:p-6 overflow-scroll z-20 relative">
         <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">
-          Create Your Farmer Account
+          {t('auth.signUp.createFarmerAccount')}
         </h1>
 
         <div className="flex gap-4 justify-center mb-6">
@@ -277,17 +279,17 @@ export default function FarmerSignUp() {
           ))}
         </div>
 
-        <p className="text-center text-muted-foreground text-sm mb-6">Or fill in your details below</p>
+        <p className="text-center text-muted-foreground text-sm mb-6">{t('auth.signUp.subtitle')}</p>
 
         <form className="space-y-6">
 
           {/* Profile Image Section */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Profile Image</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.signUp.profileImage')}</h2>
             <div className="flex items-center space-x-6">
               <div className="relative w-24 h-24 rounded-full bg-muted border-2 border-border flex items-center justify-center overflow-hidden">
                 {profilePreview ? (
-                  <img src={profilePreview} alt="Profile Preview" className="w-full h-full object-cover" />
+                  <img src={profilePreview} alt={t('auth.signUp.alt.profilePreview')} className="w-full h-full object-cover" />
                 ) : (
                   <Upload className="w-8 h-8 text-muted-foreground" />
                 )}
@@ -302,7 +304,7 @@ export default function FarmerSignUp() {
                 )}
               </div>
               <div className="flex-1">
-                <Label className="text-foreground font-medium text-sm mb-2 block">Upload Profile Image</Label>
+                <Label className="text-foreground font-medium text-sm mb-2 block">{t('auth.signUp.uploadProfileImage')}</Label>
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -316,39 +318,39 @@ export default function FarmerSignUp() {
                   className="mb-2"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  {profilePreview ? 'Change Image' : 'Choose Image'}
+                  {profilePreview ? t('auth.farmer.changeImage') : t('auth.farmer.chooseImage')}
                 </Button>
-                <p className="text-xs text-muted-foreground">JPG, PNG, GIF up to 5MB</p>
+                <p className="text-xs text-muted-foreground">{t('auth.signUp.validation.fileSizeHint')}</p>
               </div>
             </div>
           </div>
 
           {/* Farm Information */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Farm Information</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.farmer.farmInformation')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-foreground font-medium text-sm">Farm Size</Label>
+                <Label className="text-foreground font-medium text-sm">{t('auth.farmer.fields.farmSize')}</Label>
                 <select
                   name="farmSize"
                   value={farmerData.farmSize}
                   onChange={handleFarmerInputChange}
                   className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
                 >
-                  <option value="">Select farm size</option>
+                  <option value="">{t('auth.farmer.placeholders.selectFarmSize')}</option>
                   {farmSizeOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
                 </select>
                 {touched.farmSize && fieldErrors.farmSize && <p className="text-red-500 text-xs mt-1">{fieldErrors.farmSize}</p>}
               </div>
               <div>
-                <Label className="text-foreground font-medium text-sm">Farming Experience</Label>
+                <Label className="text-foreground font-medium text-sm">{t('auth.farmer.fields.farmingExperience')}</Label>
                 <select
                   name="experienceLevel"
                   value={farmerData.experienceLevel}
                   onChange={handleFarmerInputChange}
                   className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
                 >
-                  <option value="">Select experience level</option>
+                  <option value="">{t('auth.farmer.placeholders.selectExperienceLevel')}</option>
                   {experienceLevelOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
                 </select>
                 {touched.experienceLevel && fieldErrors.experienceLevel && <p className="text-red-500 text-xs mt-1">{fieldErrors.experienceLevel}</p>}
@@ -358,30 +360,30 @@ export default function FarmerSignUp() {
 
           {/* Location */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Farm Location</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.farmer.farmLocation')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-foreground font-medium text-sm">Province</Label>
+                <Label className="text-foreground font-medium text-sm">{t('auth.buyer.fields.province')}</Label>
                 <select
                   name="province"
                   value={farmerData.address.province}
                   onChange={handleFarmerInputChange}
                   className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
                 >
-                  <option value="">Select province</option>
+                  <option value="">{t('auth.buyer.placeholders.selectProvince')}</option>
                   {provinceOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
                 </select>
                 {touched.province && fieldErrors.province && <p className="text-red-500 text-xs mt-1">{fieldErrors.province}</p>}
               </div>
               <div>
-                <Label className="text-foreground font-medium text-sm">District</Label>
+                <Label className="text-foreground font-medium text-sm">{t('auth.buyer.fields.district')}</Label>
                 <select
                   name="district"
                   value={farmerData.address.district}
                   onChange={handleFarmerInputChange}
                   className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
                 >
-                  <option value="">Select district</option>
+                  <option value="">{t('auth.buyer.placeholders.selectDistrict')}</option>
                   {districtOptions.map(option => <option key={option} value={option}>{option}</option>)}
                 </select>
                 {touched.district && fieldErrors.district && <p className="text-red-500 text-xs mt-1">{fieldErrors.district}</p>}
@@ -391,7 +393,7 @@ export default function FarmerSignUp() {
 
           {/* Crops */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Crops You Grow</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.farmer.cropsYouGrow')}</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {commonCrops.map(crop => (
                 <div key={crop} className="flex items-center space-x-2">
@@ -416,7 +418,7 @@ export default function FarmerSignUp() {
               disabled={loading || uploadLoading}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
             >
-              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
+              {loading || uploadLoading ? t('auth.farmer.creatingAccount') : t('auth.farmer.finishCreatingAccount')}
             </Button>
           </div>
         </form>
@@ -432,10 +434,10 @@ export default function FarmerSignUp() {
         />
 
         <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-          Farmer Registration
+          {t('auth.signUp.farmerRegistration')}
         </h1>
         <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-          Join our agricultural marketplace and connect with buyers directly
+          {t('auth.signUp.joinMarketplace.farmer')}
         </p>
       </div>
     </div>

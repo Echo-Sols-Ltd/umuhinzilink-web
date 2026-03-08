@@ -96,13 +96,13 @@ export default function BuyerSignUp() {
     if (!value) {
       switch (name) {
         case 'buyerType':
-          error = 'Buyer type is required';
+          error = t('auth.buyer.validation.buyerTypeRequired');
           break;
         case 'province':
-          error = 'Province is required';
+          error = t('auth.buyer.validation.provinceRequired');
           break;
         case 'district':
-          error = 'District is required';
+          error = t('auth.buyer.validation.districtRequired');
           break;
       }
     }
@@ -130,7 +130,7 @@ export default function BuyerSignUp() {
     e.preventDefault();
     setLoading(true);
     if (!validateForm()) {
-      notify.error('Please fix the errors below and try again.', 'Validation Error');
+      notify.error(t('auth.buyer.validation.fixErrorsBelow'), t('common.error'));
       setLoading(false);
       return;
     }
@@ -138,9 +138,9 @@ export default function BuyerSignUp() {
     try {
       if (profileImage) await uploadFile(profileImage);
       await registerBuyer(buyerData);
-      notify.success('Buyer account created successfully!', 'Success');
+      notify.success(t('auth.buyer.success.accountCreated'), t('common.success'));
     } catch {
-      notify.error('Failed to create buyer account. Please try again.', 'Registration Error');
+      notify.error(t('auth.buyer.error.accountCreationFailed'), t('auth.register.error'));
     } finally {
       setLoading(false);
     }
@@ -199,9 +199,9 @@ export default function BuyerSignUp() {
           {/* Form Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="buyerType" className="text-foreground font-medium text-sm">Buyer Type</Label>
+              <Label htmlFor="buyerType" className="text-foreground font-medium text-sm">{t('auth.buyer.fields.buyerType')}</Label>
               <select id="buyerType" name="buyerType" value={buyerData.buyerType} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.buyerType && fieldErrors.buyerType ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
-                <option value="">Select buyer type</option>
+                <option value="">{t('auth.buyer.placeholders.selectBuyerType')}</option>
                 {buyerTypeOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
               {touched.buyerType && fieldErrors.buyerType && <p className="text-destructive text-xs mt-1">{fieldErrors.buyerType}</p>}
@@ -209,15 +209,15 @@ export default function BuyerSignUp() {
             <div>
               <Label htmlFor="profileImage" className="text-foreground font-medium text-sm mb-2 block">{t('auth.signUp.uploadProfileImage')}</Label>
               <select id="province" name="province" value={buyerData.address.province} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
-                <option value="">Select province</option>
+                <option value="">{t('auth.buyer.placeholders.selectProvince')}</option>
                 {provinceOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
               {touched.province && fieldErrors.province && <p className="text-destructive text-xs mt-1">{fieldErrors.province}</p>}
             </div>
             <div>
-              <Label htmlFor="district" className="text-foreground font-medium text-sm">District</Label>
+              <Label htmlFor="district" className="text-foreground font-medium text-sm">{t('auth.buyer.fields.district')}</Label>
               <select id="district" name="district" value={buyerData.address.district} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
-                <option value="">Select district</option>
+                <option value="">{t('auth.buyer.placeholders.selectDistrict')}</option>
                 {districtOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
               {touched.district && fieldErrors.district && <p className="text-destructive text-xs mt-1">{fieldErrors.district}</p>}
@@ -227,7 +227,7 @@ export default function BuyerSignUp() {
           {/* Submit */}
           <div className="space-y-4">
             <Button type="submit" className="w-full bg-success hover:bg-success/90 text-primary-foreground font-medium text-sm" disabled={loading || uploadLoading}>
-              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
+              {loading || uploadLoading ? t('auth.buyer.creatingAccount') : t('auth.buyer.finishCreatingAccount')}
             </Button>
           </div>
         </form>

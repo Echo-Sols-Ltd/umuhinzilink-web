@@ -116,24 +116,24 @@ export default function SupplierSignUp() {
     switch (name) {
       case 'businessName':
         if (!value || stringValue.trim() === '') {
-          error = 'Business name is required';
+          error = t('auth.supplier.validation.businessNameRequired');
         } else if (stringValue.length < 2) {
-          error = 'Business name must be at least 2 characters';
+          error = t('auth.supplier.validation.businessNameMinLength');
         }
         break;
       case 'supplierType':
         if (!value) {
-          error = 'Supplier type is required';
+          error = t('auth.supplier.validation.supplierTypeRequired');
         }
         break;
       case 'province':
         if (!value) {
-          error = 'Province is required';
+          error = t('auth.supplier.validation.provinceRequired');
         }
         break;
       case 'district':
         if (!value) {
-          error = 'District is required';
+          error = t('auth.supplier.validation.districtRequired');
         }
         break;
       default:
@@ -195,7 +195,7 @@ export default function SupplierSignUp() {
 
     // Validate form data
     if (!validateForm()) {
-      notify.error('Please fix the errors below and try again.', 'Validation Error');
+      notify.error(t('auth.supplier.validation.fixErrorsBelow'), t('common.error'));
       setLoading(false);
       return;
     }
@@ -209,10 +209,10 @@ export default function SupplierSignUp() {
       // Then register the supplier
       await registerSupplier(supplierData);
 
-      notify.success('Supplier account created successfully!', 'Success');
+      notify.success(t('auth.supplier.success.accountCreated'), t('common.success'));
 
     } catch (error) {
-      notify.error('Failed to create supplier account. Please try again.', 'Registration Error');
+      notify.error(t('auth.supplier.error.accountCreationFailed'), t('auth.register.error'));
     } finally {
       setLoading(false);
     }
@@ -243,19 +243,19 @@ export default function SupplierSignUp() {
           ))}
         </div>
 
-        <p className="text-center text-muted-foreground text-sm mb-6">Or fill in your details below</p>
+        <p className="text-center text-muted-foreground text-sm mb-6">{t('auth.signUp.subtitle')}</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Profile Image Section */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Profile Image</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.signUp.profileImage')}</h2>
             <div className="flex items-center space-x-6">
               <div className="relative">
                 {profilePreview ? (
                   <div className="relative">
                     <Image
                       src={profilePreview}
-                      alt="Profile preview"
+                      alt={t('auth.signUp.alt.profilePreview')}
                       width={120}
                       height={120}
                       className="w-30 h-30 rounded-full object-cover border-4 border-border"
@@ -280,7 +280,7 @@ export default function SupplierSignUp() {
                 disabled={loading || uploadLoading}
                 variant="outline"
               >
-                Choose Image
+                {t('auth.supplier.chooseImage')}
               </Button>
               <input
                 id="profileImage"
@@ -295,11 +295,11 @@ export default function SupplierSignUp() {
 
           {/* Business Information Section */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Business Information</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.supplier.businessInformation')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="businessName" className="text-foreground font-medium text-sm">
-                  Business Name
+                  {t('auth.supplier.fields.businessName')}
                 </Label>
                 <Input
                   id="businessName"
@@ -309,7 +309,7 @@ export default function SupplierSignUp() {
                   onChange={handleSupplierInputChange}
                   onBlur={handleBlur}
                   disabled={loading}
-                  placeholder="Enter your business name"
+                  placeholder={t('auth.supplier.placeholders.businessName')}
                   className={`text-foreground font-medium text-sm ${touched.businessName && fieldErrors.businessName
                     ? 'border-destructive focus:border-destructive focus:ring-destructive'
                     : 'border-border focus:border-success focus:ring-success'
@@ -320,7 +320,7 @@ export default function SupplierSignUp() {
 
               <div>
                 <Label htmlFor="supplierType" className="text-foreground font-medium text-sm">
-                  Supplier Type
+                  {t('auth.supplier.fields.supplierType')}
                 </Label>
                 <select
                   id="supplierType"
@@ -335,7 +335,7 @@ export default function SupplierSignUp() {
                     }`}
                   required
                 >
-                  <option value="">Select supplier type</option>
+                  <option value="">{t('auth.supplier.placeholders.selectSupplierType')}</option>
                   {supplierTypeOptions.map(option => (
                     <option key={option.value} value={option.value}>
                       {option.label.replace(/_/g, ' ')}
@@ -348,11 +348,11 @@ export default function SupplierSignUp() {
 
           {/* Business Location Section */}
           <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Business Location</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.supplier.businessLocation')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="province" className="text-foreground font-medium text-sm">
-                  Province
+                  {t('auth.buyer.fields.province')}
                 </Label>
                 <select
                   id="province"
@@ -367,7 +367,7 @@ export default function SupplierSignUp() {
                     }`}
                   required
                 >
-                  <option value="">Select province</option>
+                  <option value="">{t('auth.buyer.placeholders.selectProvince')}</option>
                   {provinceOptions.map(option => (
                     <option key={option.value} value={option.value}>
                       {option.label.replace(/_/g, ' ')}
@@ -378,7 +378,7 @@ export default function SupplierSignUp() {
 
               <div>
                 <Label htmlFor="district" className="text-foreground font-medium text-sm">
-                  District
+                  {t('auth.buyer.fields.district')}
                 </Label>
                 <select
                   id="district"
@@ -393,7 +393,7 @@ export default function SupplierSignUp() {
                     }`}
                   required
                 >
-                  <option value="">Select district</option>
+                  <option value="">{t('auth.buyer.placeholders.selectDistrict')}</option>
                   {districtOptions.map(option => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -411,7 +411,7 @@ export default function SupplierSignUp() {
               className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
               disabled={loading || uploadLoading}
             >
-              {loading || uploadLoading ? 'Creating Account...' : 'Finish Creating Account'}
+              {loading || uploadLoading ? t('auth.supplier.creatingAccount') : t('auth.supplier.finishCreatingAccount')}
             </Button>
           </div>
         </form>
@@ -426,10 +426,10 @@ export default function SupplierSignUp() {
           className="absolute top-0 left-0 object-cover w-full h-full dark:brightness-50 dark:contrast-110 transition-all duration-300"
         />
         <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-          Supplier Registration
+          {t('auth.signUp.supplierRegistration')}
         </h1>
         <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-          Join our agricultural marketplace and connect with farmers and buyers
+          {t('auth.signUp.joinMarketplace.supplier')}
         </p>
       </div>
       <AuthFooter />
