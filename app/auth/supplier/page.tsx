@@ -11,14 +11,16 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRequest, UserType } from '@/types';
+import { useI18n } from '@/contexts/I18nContext';
 import { SupplierRequest, SupplierType, Address, Province, District } from '@/types';
 import { supplierTypeOptions, provinceOptions, districtOptions } from '@/types/enums';
 import useUserAction from '@/hooks/useUserAction';
 import { Upload, X } from 'lucide-react';
+import AuthFooter from '@/components/auth/AuthFooter';
 
 export default function SupplierSignUp() {
   const { registerSupplier, user } = useAuth();
+  const { t } = useI18n();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -166,11 +168,11 @@ export default function SupplierSignUp() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        notify.error('Profile image must be less than 5MB', 'File too large');
+        notify.error(t('auth.signUp.validation.fileTooLarge'), t('common.error'));
         return;
       }
       if (!file.type.startsWith('image/')) {
-        notify.error('Please select an image file', 'Invalid file type');
+        notify.error(t('auth.signUp.validation.invalidFileType'), t('common.error'));
         return;
       }
       setProfileImage(file);
@@ -226,9 +228,7 @@ export default function SupplierSignUp() {
   return (
     <div className="w-full h-screen bg-background flex items-center">
       <div className="w-full overflow-scroll h-full bg-card rounded-lg p-6 sm:p-6 z-20 relative py-20">
-        <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">
-          Create Your Supplier Account
-        </h1>
+        <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">{t('auth.signUp.createSupplierAccount')}</h1>
 
         <div className="flex gap-4 justify-center mb-6">
           {socialLinks.map((linkItem, idx) => (
@@ -432,7 +432,7 @@ export default function SupplierSignUp() {
           Join our agricultural marketplace and connect with farmers and buyers
         </p>
       </div>
+      <AuthFooter />
     </div>
   );
-
 }

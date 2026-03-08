@@ -377,10 +377,32 @@
       "signIn": "Injira",
       "continueWithFacebook": "Komeza ukoresheje Facebook",
       "continueWithGoogle": "Komeza ukoresheje Google",
-      "heroTitle": "Murakaza neza!",
+      "buyerRegistration": "Iyandikishe ry'Umuturitsi",
+      "supplierRegistration": "Iyandikishe ry'Uwinga",
+      "farmerRegistration": "Iyandikishe ry'Umuhinzi",
+      "createBuyerAccount": "Kora Konti yawe y'Umuturitsi",
+      "createSupplierAccount": "Kora Konti yawe y'Uwinga",
+      "createFarmerAccount": "Kora Konti yawe y'Umuhinzi",
+      "profileImage": "Ifoto y'umwirima",
+      "uploadProfileImage": "Shyiramo ifoto y'umwirima",
+      "joinMarketplace": {
+        "buyer": "Jira umucyo w'ubuhinzi wa kwihangana n'abahinzi ku buryo",
+        "supplier": "Jira umucyo w'ubuhinzi wa kwihangana n'abahinzi n'abacuruzi",
+        "farmer": "Jira umucyo w'ubuhinzi wa kwihangana n'abacuruzi ku buryo"
+      },
+      "validation": {
+        "fileTooLarge": "Ifoto y'umwirima igomba kuba munsi ya MB 5",
+        "invalidFileType": "Muhitemo ifoto ya dosiye y'ishusho",
+        "selectImageFile": "Muhitemo ifoto ya dosiye y'ishusho"
+      },
+      "alt": {
+        "mountainRoad": "Umuhanda wa mountain",
+        "profilePreview": "Igaragazambwa ry'ifoto y'umwirima"
+      },
+      "heroTitle": "Murakaze neza!",
       "heroSubtitle": {
-        "line1": "Koresha iyi fishi kugirango winjire cyangwa ukore konti nshya",
-        "line2": "mu mushinga wawe ku buntu"
+        "line1": "Koresha iyi fishi kugirango winjire cyangwa ukora konti nshya",
+        "line2": "muri iyi porogaramu ku bushake"
       }
     },
     "forgotPassword": {

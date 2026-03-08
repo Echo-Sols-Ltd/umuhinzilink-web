@@ -370,13 +370,35 @@
     "signUp": {
       "title": "Create Account",
       "subtitle": "Sign up using social or form",
-      "agreeToTerms": "I agree to the terms & conditions",
+      "agreeToTerms": "I agree to terms & conditions",
       "creatingAccount": "Creating Account…",
       "signUp": "Sign Up",
       "alreadyHaveAccount": "Already have an account?",
       "signIn": "Sign in",
       "continueWithFacebook": "Continue with Facebook",
       "continueWithGoogle": "Continue with Google",
+      "buyerRegistration": "Buyer Registration",
+      "supplierRegistration": "Supplier Registration",
+      "farmerRegistration": "Farmer Registration",
+      "createBuyerAccount": "Create Your Buyer Account",
+      "createSupplierAccount": "Create Your Supplier Account",
+      "createFarmerAccount": "Create Your Farmer Account",
+      "profileImage": "Profile Image",
+      "uploadProfileImage": "Upload Profile Image",
+      "joinMarketplace": {
+        "buyer": "Join our agricultural marketplace and connect with farmers directly",
+        "supplier": "Join our agricultural marketplace and connect with farmers and buyers",
+        "farmer": "Join our agricultural marketplace and connect with buyers directly"
+      },
+      "validation": {
+        "fileTooLarge": "Profile image must be less than 5MB",
+        "invalidFileType": "Please select an image file",
+        "selectImageFile": "Please select an image file"
+      },
+      "alt": {
+        "mountainRoad": "Mountain road",
+        "profilePreview": "Profile preview"
+      },
       "heroTitle": "Welcome!",
       "heroSubtitle": {
         "line1": "Use these awesome forms to login or create a new",

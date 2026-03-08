@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
+import AuthFooter from '@/components/auth/AuthFooter';
 
 export default function VerifyPage() {
     const { verifyOtp, user, askOtpCode, loadAuthState, logout } = useAuth()
@@ -83,116 +84,119 @@ export default function VerifyPage() {
     }
 
     return (
-        <div className="flex h-screen">
-            {/* Left side - Form */}
-            <div className="flex flex-2 flex-col justify-between p-6 bg-card">
-                <div className="flex flex-col flex-1 max-w-md mx-auto w-full">
-                    {/* Go back button */}
-                    <button
-                        onClick={() => loadAuthState()}
-                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        {t('common.goBack')}
-                    </button>
+        <>
+            <div className="flex h-screen">
+                {/* Left side - Form */}
+                <div className="flex flex-2 flex-col justify-between p-6 bg-card">
+                    <div className="flex flex-col flex-1 max-w-md mx-auto w-full">
+                        {/* Go back button */}
+                        <button
+                            onClick={() => loadAuthState()}
+                            className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                            {t('common.goBack')}
+                        </button>
 
-                    <div className="flex flex-col items-center justify-center flex-1">
-                        {/* Logo */}
-                        <div className="mb-8">
-                            <div className="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center">
-                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
-                                </svg>
+                        <div className="flex flex-col items-center justify-center flex-1">
+                            {/* Logo */}
+                            <div className="mb-8">
+                                <div className="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center">
+                                    <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                                    </svg>
+                                </div>
                             </div>
+
+                            {/* Title */}
+                            <h1 className="text-3xl font-semibold text-foreground mb-2">
+                                {t('auth.verifyOtp.title')}
+                            </h1>
+                            <p className="text-muted-foreground mb-2">
+                                {t('auth.verifyOtp.subtitle')}
+                            </p>
+                            <p className="text-success text-sm mb-8">
+                                {user?.email}
+                            </p>
+
+                            {/* OTP Form */}
+                            <form onSubmit={handleContinue} className="w-full">
+                                <div className="flex gap-3 justify-center mb-2">
+                                    {otp.map((digit, index) => (
+                                        <input
+                                            key={index}
+                                            ref={(el) => { inputRefs.current[index] = el; }}
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={1}
+                                            value={digit}
+                                            onChange={(e) => handleChange(index, e.target.value)}
+                                            onKeyDown={(e) => handleKeyDown(index, e)}
+                                            onPaste={handlePaste}
+                                            className={`w-12 h-14 text-center text-xl font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-transparent text-foreground ${error ? 'border-destructive' : 'border-border'
+                                                }`}
+                                        />
+                                    ))}
+                                </div>
+                                {error && <p className="mb-4 text-sm text-red-500 text-center">{error}</p>}
+
+                                {/* Resend link */}
+                                <div className="text-center mb-6">
+                                    <span className="text-sm text-muted-foreground">{t('auth.verifyOtp.didNotReceiveCode')} </span>
+                                    {timer > 0 ? (
+                                        <span className="text-sm text-success">
+                                            {t('auth.verifyOtp.resendIn', { time: formatTime(timer) })}
+                                        </span>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={handleResend}
+                                            className="text-sm text-success hover:text-success/80 font-medium"
+                                        >
+                                            {t('common.resend')}
+                                        </button>
+                                    )}
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="w-full bg-success text-primary-foreground py-3 rounded-lg font-medium hover:bg-success/90 transition-colors"
+                                >
+                                    {t('common.continue')}
+                                </button>
+                            </form>
+
+                            {/* Sign in link */}
+                            <p className="mt-6 text-sm text-muted-foreground">
+                                {t('auth.verifyOtp.haveAccount')}{' '}
+                                <div onClick={() => handleSignin()} className="text-success cursor-pointer hover:text-success/80 font-medium">
+                                    {t('auth.signIn.signIn')}
+                                </div>
+                            </p>
                         </div>
+                    </div>
 
-                        {/* Title */}
-                        <h1 className="text-3xl font-semibold text-foreground mb-2">
-                            {t('auth.verifyOtp.title')}
-                        </h1>
-                        <p className="text-muted-foreground mb-2">
-                            {t('auth.verifyOtp.subtitle')}
-                        </p>
-                        <p className="text-success text-sm mb-8">
-                            {user?.email}
-                        </p>
-
-                        {/* OTP Form */}
-                        <form onSubmit={handleContinue} className="w-full">
-                            <div className="flex gap-3 justify-center mb-2">
-                                {otp.map((digit, index) => (
-                                    <input
-                                        key={index}
-                                        ref={(el) => { inputRefs.current[index] = el; }}
-                                        type="text"
-                                        inputMode="numeric"
-                                        maxLength={1}
-                                        value={digit}
-                                        onChange={(e) => handleChange(index, e.target.value)}
-                                        onKeyDown={(e) => handleKeyDown(index, e)}
-                                        onPaste={handlePaste}
-                                        className={`w-12 h-14 text-center text-xl font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-transparent text-foreground ${error ? 'border-destructive' : 'border-border'
-                                            }`}
-                                    />
-                                ))}
-                            </div>
-                            {error && <p className="mb-4 text-sm text-red-500 text-center">{error}</p>}
-
-                            {/* Resend link */}
-                            <div className="text-center mb-6">
-                                <span className="text-sm text-muted-foreground">{t('auth.verifyOtp.didNotReceiveCode')} </span>
-                                {timer > 0 ? (
-                                    <span className="text-sm text-success">
-                                        {t('auth.verifyOtp.resendIn', { time: formatTime(timer) })}
-                                    </span>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        onClick={handleResend}
-                                        className="text-sm text-success hover:text-success/80 font-medium"
-                                    >
-                                        {t('common.resend')}
-                                    </button>
-                                )}
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="w-full bg-success text-primary-foreground py-3 rounded-lg font-medium hover:bg-success/90 transition-colors"
-                            >
-                                {t('common.continue')}
-                            </button>
-                        </form>
-
-                        {/* Sign in link */}
-                        <p className="mt-6 text-sm text-muted-foreground">
-                            {t('auth.verifyOtp.haveAccount')}{' '}
-                            <div onClick={() => handleSignin()} className="text-success cursor-pointer hover:text-success/80 font-medium">
-                                {t('auth.signIn.signIn')}
-                            </div>
-                        </p>
+                    {/* Footer */}
+                    <div className="text-sm text-muted-foreground">
+                        {t('common.footerCopyright')}
                     </div>
                 </div>
 
-                {/* Footer */}
-                <div className="text-sm text-muted-foreground">
-                    {t('common.footerCopyright')}
+                {/* Right side - Image */}
+                <div className="hidden lg:block flex-2 relative overflow-hidden">
+                    <Image
+                        src="/Image.png"
+                        alt="Mountain road"
+                        fill
+                        className="object-cover object-center scale-105 dark:brightness-50 dark:contrast-110 transition-all duration-300"
+                        priority
+                        quality={100}
+                    />
                 </div>
             </div>
-
-            {/* Right side - Image */}
-            <div className="hidden lg:block flex-2 relative overflow-hidden">
-                <Image
-                    src="/Image.png"
-                    alt="Mountain road"
-                    fill
-                    className="object-cover object-center scale-105 dark:brightness-50 dark:contrast-110 transition-all duration-300"
-                    priority
-                    quality={100}
-                />
-            </div>
-        </div>
+            <AuthFooter />
+        </>
     );
 }

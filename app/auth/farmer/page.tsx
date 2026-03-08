@@ -15,6 +15,7 @@ import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, Di
 import { farmSizeOptions, experienceLevelOptions, provinceOptions, districtOptions } from '@/types/enums';
 import useUserAction from '@/hooks/useUserAction';
 import { Upload, X } from 'lucide-react';
+import AuthFooter from '@/components/auth/AuthFooter';
 
 export default function FarmerSignUp() {
   const { registerFarmer, user } = useAuth();
@@ -256,10 +257,8 @@ export default function FarmerSignUp() {
   const commonCrops = ['MAIZE', 'DRY_BEANS', 'IRISH_POTATO', 'CASSAVA', 'TOMATO', 'CABBAGE', 'ONION', 'CARROT', 'COFFEE', 'TEA'];
 
 
-  return (
-    <div className="w-full h-screen bg-background flex  items-center">
-
-
+  return (<>
+    <div className="w-full h-screen bg-background flex items-center">
       <div className="w-full h-full bg-card shadow-lg rounded-lg p-6 sm:p-6 overflow-scroll z-20 relative">
         <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">
           Create Your Farmer Account
@@ -440,5 +439,7 @@ export default function FarmerSignUp() {
         </p>
       </div>
     </div>
+    <AuthFooter />
+  </>
   );
 }
