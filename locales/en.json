@@ -349,6 +349,8 @@
       "signIn": "Sign In",
       "noAccount": "No account?",
       "signUp": "Sign up",
+      "continueWithFacebook": "Continue with Facebook",
+      "continueWithGoogle": "Continue with Google",
       "heroTitle": "Welcome Back!",
       "heroSubtitle": {
         "line1": "Sign in to access your account and continue your journey",
@@ -373,6 +375,8 @@
       "signUp": "Sign Up",
       "alreadyHaveAccount": "Already have an account?",
       "signIn": "Sign in",
+      "continueWithFacebook": "Continue with Facebook",
+      "continueWithGoogle": "Continue with Google",
       "heroTitle": "Welcome!",
       "heroSubtitle": {
         "line1": "Use these awesome forms to login or create a new",

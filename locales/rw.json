@@ -349,6 +349,8 @@
       "signIn": "Injira",
       "noAccount": "Nta konti ufite?",
       "signUp": "Iyandikishe",
+      "continueWithFacebook": "Komeza ukoresheje Facebook",
+      "continueWithGoogle": "Komeza ukoresheje Google",
       "heroTitle": "Murakaza neza!",
       "heroSubtitle": {
         "line1": "Injira kugira ngo ubone konti yawe kandi ukomeze urugendo rwawe",
@@ -373,6 +375,8 @@
       "signUp": "Iyandikishe",
       "alreadyHaveAccount": "Usanzwe ufite konti?",
       "signIn": "Injira",
+      "continueWithFacebook": "Komeza ukoresheje Facebook",
+      "continueWithGoogle": "Komeza ukoresheje Google",
       "heroTitle": "Murakaza neza!",
       "heroSubtitle": {
         "line1": "Koresha iyi fishi kugirango winjire cyangwa ukore konti nshya",

@@ -12,6 +12,7 @@ import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { UserRequest, UserType } from '@/types';
+import LanguageSelector from '@/components/auth/LanguageSelector';
 
 export default function SignUp() {
   const { register } = useAuth();
@@ -117,25 +118,28 @@ export default function SignUp() {
 
   return (
     <div className="w-full h-screen flex flex-col sm:flex-row bg-background overflow-hidden">
-      {/* LEFT – Form */}
+      {/* LEFT – Form Section */}
       <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-card overflow-auto">
         <div className="w-full max-w-md flex flex-col justify-center">
-          <div className="mb-6 text-center">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">{t('auth.signUp.title')}</h1>
-            <p className="text-muted-foreground text-sm sm:text-base mt-1">{t('auth.signUp.subtitle')}</p>
+          {/* Logo/Brand */}
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <span className="text-white text-xl font-bold">UL</span>
+            </div>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground text-center mb-2">{t('auth.signUp.title')}</h1>
+          <p className="text-muted-foreground text-sm sm:text-base text-center mb-6">{t('auth.signUp.subtitle')}</p>
 
-          <div className="flex justify-center gap-3 mb-6">
-            {socialLinks.map((item, i) => (
-              <Link
-                key={i}
-                href={item.link}
-                target="_blank"
-                className="w-11 h-11 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-success/10 hover:text-success transition"
-              >
-                {item.icon}
-              </Link>
-            ))}
+          {/* Social Login Buttons */}
+          <div className="space-y-3 mb-6">
+            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              <BiLogoFacebookCircle size={20} className="mr-2 text-blue-600" />
+              <span>{t('auth.signUp.continueWithFacebook')}</span>
+            </button>
+            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              <BiLogoGoogle size={20} className="mr-2 text-red-500" />
+              <span>{t('auth.signUp.continueWithGoogle')}</span>
+            </button>
           </div>
 
           <div className="flex items-center gap-3 mb-6">
@@ -145,11 +149,13 @@ export default function SignUp() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Names */}
+            {/* Names Field */}
             <div>
-              <Label className="text-sm">{t('auth.fields.fullName')}</Label>
+              <Label htmlFor="names" className="text-sm">{t('auth.fields.fullName')}</Label>
               <Input
+                id="names"
                 name="names"
+                type="text"
                 placeholder={t('auth.placeholders.fullName')}
                 value={formData.names}
                 onChange={handleInputChange}
@@ -160,10 +166,11 @@ export default function SignUp() {
               {touched.names && fieldErrors.names && <p className="text-xs text-red-500 mt-1">{fieldErrors.names}</p>}
             </div>
 
-            {/* Email */}
+            {/* Email Field */}
             <div>
-              <Label className="text-sm">{t('auth.fields.email')}</Label>
+              <Label htmlFor="email" className="text-sm">{t('auth.fields.email')}</Label>
               <Input
+                id="email"
                 name="email"
                 type="email"
                 placeholder={t('auth.placeholders.email')}
@@ -176,10 +183,11 @@ export default function SignUp() {
               {touched.email && fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
             </div>
 
-            {/* Phone */}
+            {/* Phone Field */}
             <div>
-              <Label className="text-sm">{t('auth.fields.phoneNumber')}</Label>
+              <Label htmlFor="phoneNumber" className="text-sm">{t('auth.fields.phoneNumber')}</Label>
               <Input
+                id="phoneNumber"
                 name="phoneNumber"
                 type="tel"
                 placeholder={t('auth.placeholders.phoneNumber')}
@@ -202,7 +210,7 @@ export default function SignUp() {
                       id={type.value}
                       checked={formData.role === type.value}
                       onCheckedChange={() => setFormData(prev => ({ ...prev, role: type.value }))}
-                      className="data-[state=checked]:bg-success data-[state=unchecked]:bg-muted"
+                      className="data-[state=checked]:bg-green-600"
                     />
                     <span className="text-foreground text-sm">{t(type.labelKey)}</span>
                   </div>
@@ -210,10 +218,11 @@ export default function SignUp() {
               </div>
             </div>
 
-            {/* Password */}
+            {/* Password Field */}
             <div className="relative">
-              <Label className="text-sm">{t('auth.fields.password')}</Label>
+              <Label htmlFor="password" className="text-sm">{t('auth.fields.password')}</Label>
               <Input
+                id="password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder={t('auth.placeholders.passwordDots')}
@@ -229,17 +238,18 @@ export default function SignUp() {
               {touched.password && fieldErrors.password && <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>}
             </div>
 
-            {/* Agree Terms */}
+            {/* Terms Agreement */}
             <div className="flex items-center gap-2">
-              <Switch checked={agreeToTerms} onCheckedChange={setAgreeToTerms} className="data-[state=checked]:bg-success data-[state=unchecked]:bg-muted" />
+              <Switch checked={agreeToTerms} onCheckedChange={setAgreeToTerms} className="data-[state=checked]:bg-green-600" />
               <Label className="text-sm text-foreground">{t('auth.signUp.agreeToTerms')}</Label>
             </div>
 
-            {/* Submit */}
+            {/* Submit Button */}
             <Button type="submit" className="w-full bg-success hover:bg-success/90" disabled={loading}>
               {loading ? t('auth.signUp.creatingAccount') : t('auth.signUp.signUp')}
             </Button>
 
+            {/* Sign In Link */}
             <p className="text-sm text-center text-muted-foreground">
               {t('auth.signUp.alreadyHaveAccount')}{' '}
               <Link href="/auth/signin" className="text-success font-semibold">{t('auth.signUp.signIn')}</Link>
@@ -248,13 +258,20 @@ export default function SignUp() {
         </div>
       </div>
 
-      {/* RIGHT – Hero */}
+      {/* RIGHT – Hero Section */}
       <div className="w-full sm:w-1/2 relative flex flex-col justify-center items-center text-center h-64 sm:h-auto">
         <Image src="/Image.png" alt="background" fill className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300" />
         <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">{t('auth.signUp.heroTitle')}</h1>
         <p className="text-white z-10 mt-2 text-sm sm:text-base px-6 sm:px-0">
           {t('auth.signUp.heroSubtitle.line1')} <br /> {t('auth.signUp.heroSubtitle.line2')}
         </p>
+      </div>
+
+      {/* Language Selector at Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-50">
+        <div className="flex justify-center">
+          <LanguageSelector />
+        </div>
       </div>
     </div>
   );
