@@ -26,19 +26,19 @@ export interface ChartConfig {
   };
 }
 
-// Notification types
-export interface Notification {
+// Dashboard notification types
+export interface DashboardNotification {
   id: number;
   type: 'success' | 'warning' | 'info' | 'error';
   title: string;
   message: string;
-  timestamp: string;
-  isRead: boolean;
+  timestamp?: string;
+  isRead?: boolean;
   actionUrl?: string;
 }
 
 export interface NotificationResponse {
-  notifications: Notification[];
+  notifications: DashboardNotification[];
 }
 
 export interface BuyerRecentOrder {

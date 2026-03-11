@@ -6,7 +6,7 @@ import { Farmer } from '@/types/user';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
-import { RwandaCrop, FarmSizeCategory, ExperienceLevel } from '@/types/enums';
+import { RwandaCrop, FarmSizeCategory, ExperienceLevel } from '@/types';
 import ProfileActivityComponent from './ProfileActivity';
 import ProfileBadgesComponent from './ProfileBadges';
 

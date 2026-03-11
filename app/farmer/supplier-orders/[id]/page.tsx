@@ -9,7 +9,7 @@ import Sidebar from '@/components/shared/Sidebar';
 import { UserType, Order } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
-import { DeliveryStatus } from '@/types/enums';
+import { DeliveryStatus } from '@/types';
 import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard, ShoppingCart } from 'lucide-react';
 import { useI18n } from '@/contexts/I18nContext';

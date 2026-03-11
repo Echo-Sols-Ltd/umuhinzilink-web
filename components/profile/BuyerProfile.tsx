@@ -6,7 +6,7 @@ import { Buyer } from '@/types/user';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
-import { BuyerType } from '@/types/enums';
+import { BuyerType } from '@/types';
 
 interface BuyerProfileProps {
   profile: Buyer | null;

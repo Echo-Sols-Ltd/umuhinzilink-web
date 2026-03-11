@@ -30,7 +30,7 @@ import { Supplier } from '@/types/user';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
-import { SupplierType } from '@/types/enums';
+import { SupplierType } from '@/types';
 import ProfileActivityComponent from './ProfileActivity';
 import ProfileBadgesComponent from './ProfileBadges';
 
