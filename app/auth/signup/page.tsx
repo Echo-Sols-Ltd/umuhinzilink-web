@@ -1,7 +1,8 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { BiLogoFacebookCircle, BiLogoGoogle } from 'react-icons/bi';
+import { useSession, signIn } from "next-auth/react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
@@ -14,11 +15,16 @@ import { useI18n } from '@/contexts/I18nContext';
 import { UserRequest, UserType } from '@/types';
 import LanguageSelector from '@/components/auth/LanguageSelector';
 import AuthFooter from '@/components/auth/AuthFooter';
+import GoogleRoleSelectionModal from '@/components/auth/GoogleRoleSelectionModal';
+import { GoogleToken } from 'google-auth-library';
+import GoogleLogin from '@/components/GoogleLogin';
 
 export default function SignUp() {
-  const { register, registerGoogle, googleLogin } = useAuth();
+  const { register, registerGoogle, googleToken } = useAuth();
   const { t } = useI18n();
-  const [showModal, setShowModal] = useState(false)
+  const { data: session } = useSession();
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState<UserRequest>({
     names: '',
@@ -35,6 +41,46 @@ export default function SignUp() {
     names: false, email: false, phoneNumber: false, password: false, agreeToTerms: false, role: false,
   });
   const [loading, setLoading] = useState(false);
+
+  // Detect Google OAuth success and show role selection modal
+  useEffect(() => {
+    if (session && showRoleModal) {
+      // User is authenticated with Google, show role selection
+      return;
+    }
+  }, [session, showRoleModal]);
+
+  const handleGoogleSignUp = async () => {
+    try {
+      setGoogleLoading(true);
+      await signIn('google', { redirect: false });
+      setShowRoleModal(true);
+    } catch (error) {
+      notify.error(t('auth.googleSignUp.error'), t('common.error'));
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleRoleSubmit = async (role: UserType) => {
+    try {
+      if (!googleToken) return
+      setGoogleLoading(true);
+      await registerGoogle({ role, token: googleToken });
+      setShowRoleModal(false);
+      notify.success(t('auth.signUp.success'), t('common.success'));
+    } catch (error) {
+      notify.error(t('auth.googleSignUp.error'), t('common.error'));
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleRoleModalClose = () => {
+    if (!googleLoading) {
+      setShowRoleModal(false);
+    }
+  };
 
   const socialLinks = [
     { icon: <BiLogoFacebookCircle size={22} />, link: 'https://facebook.com' },
@@ -125,7 +171,7 @@ export default function SignUp() {
         <div className="w-full max-w-md flex flex-col justify-center">
           {/* Logo/Brand */}
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 bg-linear-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
               <span className="text-white text-xl font-bold">UL</span>
             </div>
           </div>
@@ -138,10 +184,7 @@ export default function SignUp() {
               <BiLogoFacebookCircle size={20} className="mr-2 text-blue-600" />
               <span>{t('auth.signUp.continueWithFacebook')}</span>
             </button>
-            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-              <BiLogoGoogle size={20} className="mr-2 text-red-500" />
-              <span>{t('auth.signUp.continueWithGoogle')}</span>
-            </button>
+            <GoogleLogin/>
           </div>
 
           <div className="flex items-center gap-3 mb-6">
@@ -263,15 +306,28 @@ export default function SignUp() {
       </div>
 
       {/* RIGHT – Hero Section */}
-      <div className="w-full sm:w-1/2 relative flex flex-col justify-center items-center text-center h-64 sm:h-auto">
-        <Image src="/Image.png" alt="background" fill className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300" />
-        <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">{t('auth.signUp.heroTitle')}</h1>
+      <div className="w-full sm:w-1/2 relative flex flex-col justify-center items-center text-center overflow-hidden h-64 sm:h-auto">
+        <Image
+          src="/Image.png"
+          alt="background"
+          fill
+          className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300"
+        />
+        <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">
+          {t('auth.signUp.heroTitle')}
+        </h1>
         <p className="text-white z-10 mt-2 text-sm sm:text-base px-6 sm:px-0">
-          {t('auth.s  ignUp.heroSubtitle.line1')} <br /> {t('auth.signUp.heroSubtitle.line2')}
+          {t('auth.signUp.heroSubtitle.line1')} <br /> {t('auth.signUp.heroSubtitle.line2')}
         </p>
       </div>
 
-
+      {/* Google Role Selection Modal */}
+      <GoogleRoleSelectionModal
+        isOpen={showRoleModal}
+        onClose={handleRoleModalClose}
+        onSubmit={handleGoogleRoleSubmit}
+        loading={googleLoading}
+      />
     </div>
   );
 }
