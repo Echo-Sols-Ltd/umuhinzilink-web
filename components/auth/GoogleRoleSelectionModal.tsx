@@ -48,12 +48,12 @@ export default function GoogleRoleSelectionModal({
     }
   };
 
-  if (!session || !isOpen) {
+  if (!isOpen) {
     return null;
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative">
         {/* Close Button */}
         {!loading && (
@@ -81,16 +81,20 @@ export default function GoogleRoleSelectionModal({
         {/* User Info */}
         <div className="bg-gray-50 rounded-lg p-4 mb-6">
           <div className="flex items-center space-x-3">
-            {session.user?.image && (
+            {session?.user?.image ? (
               <img 
                 src={session.user.image} 
                 alt={session.user.name || ''}
                 className="w-12 h-12 rounded-full"
               />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+                <span className="text-gray-600 font-semibold">G</span>
+              </div>
             )}
             <div>
-              <p className="font-medium text-gray-900">{session.user?.name}</p>
-              <p className="text-sm text-gray-600">{session.user?.email}</p>
+              <p className="font-medium text-gray-900">{session?.user?.name || 'Google User'}</p>
+              <p className="text-sm text-gray-600">{session?.user?.email || 'google@example.com'}</p>
             </div>
           </div>
         </div>

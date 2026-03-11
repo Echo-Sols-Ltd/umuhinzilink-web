@@ -16,15 +16,12 @@ import { UserRequest, UserType } from '@/types';
 import LanguageSelector from '@/components/auth/LanguageSelector';
 import AuthFooter from '@/components/auth/AuthFooter';
 import GoogleRoleSelectionModal from '@/components/auth/GoogleRoleSelectionModal';
-import { GoogleToken } from 'google-auth-library';
 import GoogleLogin from '@/components/GoogleLogin';
 
 export default function SignUp() {
   const { register, registerGoogle, googleToken } = useAuth();
   const { t } = useI18n();
-  const { data: session } = useSession();
   const [showRoleModal, setShowRoleModal] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState<UserRequest>({
     names: '',
@@ -42,44 +39,31 @@ export default function SignUp() {
   });
   const [loading, setLoading] = useState(false);
 
-  // Detect Google OAuth success and show role selection modal
   useEffect(() => {
-    if (session && showRoleModal) {
-      // User is authenticated with Google, show role selection
-      return;
-    }
-  }, [session, showRoleModal]);
-
-  const handleGoogleSignUp = async () => {
-    try {
-      setGoogleLoading(true);
-      await signIn('google', { redirect: false });
+    if (googleToken) {
+      console.log("wow is it working")
       setShowRoleModal(true);
-    } catch (error) {
-      notify.error(t('auth.googleSignUp.error'), t('common.error'));
-    } finally {
-      setGoogleLoading(false);
     }
-  };
+  }, [googleToken]);
+
 
   const handleGoogleRoleSubmit = async (role: UserType) => {
     try {
       if (!googleToken) return
-      setGoogleLoading(true);
       await registerGoogle({ role, token: googleToken });
       setShowRoleModal(false);
       notify.success(t('auth.signUp.success'), t('common.success'));
     } catch (error) {
       notify.error(t('auth.googleSignUp.error'), t('common.error'));
     } finally {
-      setGoogleLoading(false);
+
     }
   };
 
   const handleRoleModalClose = () => {
-    if (!googleLoading) {
-      setShowRoleModal(false);
-    }
+
+    setShowRoleModal(false);
+
   };
 
   const socialLinks = [
@@ -184,7 +168,7 @@ export default function SignUp() {
               <BiLogoFacebookCircle size={20} className="mr-2 text-blue-600" />
               <span>{t('auth.signUp.continueWithFacebook')}</span>
             </button>
-            <GoogleLogin/>
+            <GoogleLogin />
           </div>
 
           <div className="flex items-center gap-3 mb-6">
@@ -326,7 +310,7 @@ export default function SignUp() {
         isOpen={showRoleModal}
         onClose={handleRoleModalClose}
         onSubmit={handleGoogleRoleSubmit}
-        loading={googleLoading}
+        loading={loading}
       />
     </div>
   );
