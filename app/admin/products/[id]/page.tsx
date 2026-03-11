@@ -21,7 +21,7 @@ export default function AdminProductDetailPage() {
   const { user } = useAuth();
   const { toast: showToast } = useToast();
   const { fetchProductById, loading, deleteFarmerProduct, deleteSupplierProduct } = useProduct();
-  const [product, setProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [productType, setProductType] = useState<'farmer' | 'supplier'>('farmer');
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +45,7 @@ export default function AdminProductDetailPage() {
     fetchProduct();
   }, [params.id]);
 
-  const handleShareProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handleShareProduct = (product: Product) => {
     if (navigator.share) {
       navigator.share({
         title: product.name,

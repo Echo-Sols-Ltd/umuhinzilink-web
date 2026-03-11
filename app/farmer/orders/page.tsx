@@ -76,11 +76,11 @@ function FarmerOrders() {
   } = useOrderAction();
 
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [satisfactionModalOpen, setSatisfactionModalOpen] = useState(false);
-  const [selectedOrderForSatisfaction, setSelectedOrderForSatisfaction] = useState<FarmerOrder | null>(null);
+  const [selectedOrderForSatisfaction, setSelectedOrderForSatisfaction] = useState<Order | null>(null);
   const [satisfactionLoading, setSatisfactionLoading] = useState<string | null>(null);
 
   const orders = useMemo(() => farmerOrders || [], [farmerOrders]);

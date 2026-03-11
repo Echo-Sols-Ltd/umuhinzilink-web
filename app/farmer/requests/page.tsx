@@ -55,9 +55,9 @@ function FarmerRequestsComponent() {
   const router = useRouter()
   const [payingId, setPayingId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedProduct, setSelectedProduct] = useState<SupplierProduct | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [viewingOrder, setViewingOrder] = useState<SupplierOrder | null>(null);
+  const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [ordersPage, setOrdersPage] = useState(1);
 
@@ -89,12 +89,12 @@ function FarmerRequestsComponent() {
     return { total, pending, completed, active };
   }, [orders, ordersTotalElements]);
 
-  const handleBuyClick = (product: SupplierProduct) => {
+  const handleBuyClick = (product: Product) => {
     setSelectedProduct(product);
     setIsOrderModalOpen(true);
   };
 
-  const handleViewOrder = (order: SupplierOrder) => {
+  const handleViewOrder = (order: Order) => {
     setViewingOrder(order);
     setIsDetailsModalOpen(true);
   };
@@ -106,7 +106,7 @@ function FarmerRequestsComponent() {
     }
   };
 
-  const handlePayOrder = async (order: SupplierOrder) => {
+  const handlePayOrder = async (order: Order) => {
     setPayingId(order.id);
     try {
       await processOrderPayment(order.id, order.paymentMethod);

@@ -174,7 +174,7 @@ export default function BuyerProductDetailPage() {
     localStorage.setItem('savedProducts', JSON.stringify([...newSaved]));
   };
 
-  const handleShareProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handleShareProduct = (product: Product) => {
     if (navigator.share) {
       navigator.share({
         title: product.name,
@@ -191,7 +191,7 @@ export default function BuyerProductDetailPage() {
     }
   };
 
-  const handlePurchaseProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handlePurchaseProduct = (product: Product) => {
     showOrderModal(product, productType);
   };
 

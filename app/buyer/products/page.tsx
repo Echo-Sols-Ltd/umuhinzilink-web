@@ -133,7 +133,7 @@ function ProductsPageComponent() {
   const endIndex = startIndex + itemsPerPage;
   const paginatedProducts = filteredProducts?.slice(startIndex, endIndex) || [];
 
-  const handleContactFarmer = async (product: FarmerProduct) => {
+  const handleContactFarmer = async (product: Product) => {
     if (!buyer) {
       notify.error(t('buyer.marketplace.toasts.authRequired.body'), t('buyer.marketplace.toasts.authRequired.title'));
       return;

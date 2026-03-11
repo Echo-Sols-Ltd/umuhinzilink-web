@@ -160,7 +160,7 @@ export default function AdminOrderDetailPage() {
         }
     };
 
-    const handleShareOrder = (order: FarmerOrder | SupplierOrder) => {
+    const handleShareOrder = (order: Order) => {
         if (navigator.share) {
             navigator.share({
                 title: `Order ${order.id}`,
