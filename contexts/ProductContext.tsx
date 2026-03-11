@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useMemo, useState, ReactNode, useCallback, useEffect } from 'react';
 import { productService } from '@/services/products';
 import {
-  FarmerProductionStat,
   Product,
   ProductStatus,
-  SupplierProductionStat,
 } from '@/types';
 import type { FarmerProductRequest, SupplierProductRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
@@ -145,52 +143,50 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   const handleProductChange = (data: Product) => {
     const productId = data.id
-    const farmerData = data as FarmerProduct
-    const supplierData = data as SupplierProduct
 
     setFarmerProducts(prev => {
       if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...farmerData } : p);
+      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
     setBuyerProducts(prev => {
       if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...farmerData } : p);
+      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
     setSupplierProducts(prev => {
       if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...supplierData } : p);
+      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
     setFarmerBuyerProducts(prev => {
       if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...supplierData } : p);
+      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
 
     // Update current products if they match
-    setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
-    setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
-    setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
-    setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
-    setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
-    setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
-    setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
-    setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+    setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
 
   }
 
   // Socket event handlers for real-time product updates
-  const handleProductUpdate = useCallback((productData: FarmerProduct | SupplierProduct) => {
+  const handleProductUpdate = useCallback((productData: Product) => {
     if (!productData) return;
 
     handleProductChange(productData);
   }, []);
 
-  const handleProductStatusChange = useCallback((productData: FarmerProduct | SupplierProduct) => {
+  const handleProductStatusChange = useCallback((productData: Product) => {
     if (!productData) return;
 
     handleProductChange(productData);
   }, []);
 
-  const handleProductDeletion = useCallback((productData: FarmerProduct | SupplierProduct) => {
+  const handleProductDeletion = useCallback((productData: Product) => {
     if (!productData) return;
     const productId = productData.id
 

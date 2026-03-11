@@ -118,7 +118,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                         <button className="border border-border hover:bg-primary transition-colors p-2.5 rounded-lg flex items-center justify-center"
                             onClick={(e: any) => {
                                 e.stopPropagation();
-                                handleContactFarmer(product as FarmerProduct)
+                                handleContactFarmer(product)
                             }}>
                             <MessageSquare className="w-4 h-4 text-gray-600" />
                         </button>

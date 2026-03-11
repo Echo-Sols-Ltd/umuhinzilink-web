@@ -129,12 +129,12 @@ export default function OrderManagementDashboard({
     }
   };
 
-  const canAcceptOrder = (order: FarmerOrder | SupplierOrder) => {
+  const canAcceptOrder = (order: Order) => {
     return (orderType === 'farmer' || orderType === 'supplier') &&
       order.status === OrderStatus.PENDING;
   };
 
-  const canUpdateStatus = (order: FarmerOrder | SupplierOrder) => {
+  const canUpdateStatus = (order: Order) => {
     return (orderType === 'farmer' || orderType === 'supplier') &&
       order.status === OrderStatus.ACTIVE;
   };
