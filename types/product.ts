@@ -63,15 +63,6 @@ export enum CertificationType {
   OTHER = 'OTHER',
 }
 
-// Options arrays suitable for select controls (label/value)
-export const productCategoryOptions = Object.values(ProductCategory).map(c => ({
-  label: c
-    .replace(/_/g, ' ')
-    .toLowerCase()
-    .replace(/\b\w/g, ch => ch.toUpperCase()),
-  value: c,
-}));
-
 import { User } from './user';
 
 export interface Statistics {
