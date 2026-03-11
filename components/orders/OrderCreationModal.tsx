@@ -11,7 +11,7 @@ import useOrderAction from '@/hooks/useOrderAction';
 interface OrderCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  product?: FarmerProduct | SupplierProduct | null;
+  product?: Product | null;
   productType?: 'farmer' | 'supplier';
   orderType?: 'buyer' | 'supplier';
 }

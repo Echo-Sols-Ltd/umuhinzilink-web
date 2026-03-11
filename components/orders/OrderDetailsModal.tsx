@@ -24,7 +24,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserType } from '@/types';
 
 interface OrderDetailsModalProps {
-    order: FarmerOrder | SupplierOrder | null;
+    order: Order | null;
     isOpen: boolean;
     onClose: () => void;
     onAccept?: (id: string) => Promise<void>;

@@ -8,14 +8,14 @@ import { Product, User, Order, WalletTransactionDTO, PaginatedResponse, WalletDT
 
 interface AdminContextType {
   users: PaginatedResponse<User[]> | null;
-  farmerProducts: FarmerProduct[];
-  supplierProducts: SupplierProduct[];
-  farmerOrders: FarmerOrder[];
-  supplierOrders: SupplierOrder[];
+  farmerProducts: Product[];
+  supplierProducts: Product[];
+  farmerOrders: Order[];
+  supplierOrders: Order[];
   systemWallet: WalletDTO | null
   systemTransactions: WalletTransactionDTO[]
-  products: (FarmerProduct | SupplierProduct)[]; // Aggregate for dashboard/generic views
-  orders: (FarmerOrder | SupplierOrder)[]; // Aggregate for dashboard/generic views
+  products: Product[]; // Aggregate for dashboard/generic views
+  orders: Order[]; // Aggregate for dashboard/generic views
   loading: boolean;
   error: string | null;
   refreshUsers: () => Promise<void>;

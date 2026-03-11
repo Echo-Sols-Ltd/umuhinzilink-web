@@ -8,10 +8,10 @@ import { cn } from '@/lib/utils';
 import OrderCreationModal from './OrderCreationModal';
 
 interface ProductOrderInterfaceProps {
-  product: FarmerProduct | SupplierProduct;
+  product: Product;
   productType: 'farmer' | 'supplier';
   onSaveProduct?: (productId: string) => void;
-  onShareProduct?: (product: FarmerProduct | SupplierProduct) => void;
+  onShareProduct?: (product: Product) => void;
   isSaved?: boolean;
   className?: string;
   setIsPurchasing: (isPurchasing: boolean) => void;

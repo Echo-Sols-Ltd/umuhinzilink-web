@@ -13,13 +13,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
 interface ProductDetailProps {
-  product: FarmerProduct | SupplierProduct;
+  product: Product;
   productType: 'farmer' | 'supplier';
   onSaveProduct?: (productId: string) => void;
-  onShareProduct?: (product: FarmerProduct | SupplierProduct) => void;
-  onEditProduct?: (product: FarmerProduct | SupplierProduct) => void;
+  onShareProduct?: (product: Product) => void;
+  onEditProduct?: (product: Product) => void;
   onDeleteProduct?: (productId: string) => void;
-  onPurchaseProduct?: (product: FarmerProduct | SupplierProduct) => void;
+  onPurchaseProduct?: (product: Product) => void;
   isSaved?: boolean;
   showActions?: boolean;
   className?: string;

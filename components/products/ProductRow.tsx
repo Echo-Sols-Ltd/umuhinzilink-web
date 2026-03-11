@@ -10,7 +10,7 @@ import { useProduct } from "@/contexts/ProductContext";
 import { useI18n } from "@/contexts/I18nContext";
 
 interface ProductRowProps {
-    product: FarmerProduct | SupplierProduct
+    product: Product
     onSelect: () => void;
     onPurchase: () => void;
     onContact: () => void;

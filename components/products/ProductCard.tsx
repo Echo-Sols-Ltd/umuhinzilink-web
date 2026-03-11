@@ -10,7 +10,7 @@ import { useChat, userToChatUser } from "@/hooks/useChat";
 import { useI18n } from "@/contexts/I18nContext";
 
 interface ProductCardProps {
-    product: SupplierProduct | FarmerProduct;
+    product: Product;
     featured?: boolean;
 }
 

@@ -18,7 +18,7 @@ import ProductCard from './ProductCard';
 import ProductRow from './ProductRow';
 
 interface ProductDisplayProps {
-  products: FarmerProduct[];
+  products: Product[];
   loading?: boolean;
   viewMode?: 'grid' | 'list';
   showFilters?: boolean;

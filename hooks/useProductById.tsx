@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ProductRef, UserType } from '@/types';
 
 export function useProductById(productRef: ProductRef | null) {
-  const [product, setProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
