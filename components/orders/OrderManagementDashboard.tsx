@@ -21,12 +21,12 @@ import OrderStatusTracker from './OrderStatusTracker';
 import { useI18n } from '@/contexts/I18nContext';
 
 interface OrderManagementDashboardProps {
-  orders: (FarmerOrder | SupplierOrder)[];
+  orders: Order[];
   orderType?: string;
   title?: string;
   loading?: boolean;
   className?: string;
-  onViewOrder?: (order: FarmerOrder | SupplierOrder) => void;
+  onViewOrder?: (order: Order) => void;
   onAcceptOrder?: (orderId: string) => void;
   onRejectOrder?: (orderId: string) => void;
   onUpdateStatus?: (orderId: string, status: DeliveryStatus) => void;

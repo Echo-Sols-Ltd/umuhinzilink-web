@@ -11,7 +11,7 @@ import {
 import { Order } from '@/types';
 
 interface SatisfactionConfirmationModalProps {
-  order: FarmerOrder | SupplierOrder | null;
+  order: Order | null;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => Promise<void>;

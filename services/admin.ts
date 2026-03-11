@@ -54,9 +54,9 @@ export const adminService = {
   },
 
   // Get all farmer products (paginated)
-  getAllFarmerProducts: async (page = 0, size = 10): Promise<PaginatedResponse<FarmerProduct[]>> => {
+  getAllFarmerProducts: async (page = 0, size = 10): Promise<PaginatedResponse<Product[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(
+      return await apiClient.get<PaginatedResponse<Product[]>>(
         `${API_ENDPOINTS.ADMIN.FARMER_PRODUCTS}?page=${page}&size=${size}`
       );
     } catch (error) {
@@ -68,7 +68,7 @@ export const adminService = {
   // Approve/Reject product
   moderateProduct: async (productId: string, action: 'approve' | 'reject', reason?: string) => {
     try {
-      const response = await apiClient.put<ApiResponse<FarmerProduct>>(`${API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId)}/moderate`, {
+      const response = await apiClient.put<ApiResponse<Product>>(`${API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId)}/moderate`, {
         action,
         reason
       });
@@ -80,9 +80,9 @@ export const adminService = {
   },
 
   // Get all farmer orders (paginated)
-  getAllFarmerOrders: async (page = 0, size = 10): Promise<PaginatedResponse<FarmerOrder[]>> => {
+  getAllFarmerOrders: async (page = 0, size = 10): Promise<PaginatedResponse<Order[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<FarmerOrder[]>>(
+      return await apiClient.get<PaginatedResponse<Order[]>>(
         `${API_ENDPOINTS.ADMIN.FARMER_ORDERS}?page=${page}&size=${size}`
       );
     } catch (error) {
@@ -94,7 +94,7 @@ export const adminService = {
   // Resolve order dispute
   resolveDispute: async (orderId: string, resolution: string, refundAmount?: number) => {
     try {
-      const response = await apiClient.put<ApiResponse<FarmerOrder>>(`${API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId)}/dispute`, {
+      const response = await apiClient.put<ApiResponse<Order>>(`${API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId)}/dispute`, {
         resolution,
         refundAmount
       });
@@ -119,7 +119,7 @@ export const adminService = {
   // Delete product
   deleteProduct: async (productId: string) => {
     try {
-      const response = await apiClient.delete<ApiResponse<FarmerProduct>>(API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId));
+      const response = await apiClient.delete<ApiResponse<Product>>(API_ENDPOINTS.ADMIN.PRODUCTS_BY_ID(productId));
       return response.data;
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -130,7 +130,7 @@ export const adminService = {
   // Delete order
   deleteOrder: async (orderId: string) => {
     try {
-      const response = await apiClient.delete<ApiResponse<FarmerOrder>>(API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId));
+      const response = await apiClient.delete<ApiResponse<Order>>(API_ENDPOINTS.ADMIN.ORDERS_BY_ID(orderId));
       return response.data;
     } catch (error) {
       console.error('Error deleting order:', error);
@@ -173,9 +173,9 @@ export const adminService = {
   },
 
   // Get all supplier products (paginated)
-  getAllSupplierProducts: async (page = 0, size = 10): Promise<PaginatedResponse<SupplierProduct[]>> => {
+  getAllSupplierProducts: async (page = 0, size = 10): Promise<PaginatedResponse<Product[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(
+      return await apiClient.get<PaginatedResponse<Product[]>>(
         `${API_ENDPOINTS.ADMIN.SUPPLIER_PRODUCTS}?page=${page}&size=${size}`
       );
     } catch (error) {
@@ -185,9 +185,9 @@ export const adminService = {
   },
 
   // Get all supplier orders (paginated)
-  getAllSupplierOrders: async (page = 0, size = 10): Promise<PaginatedResponse<SupplierOrder[]>> => {
+  getAllSupplierOrders: async (page = 0, size = 10): Promise<PaginatedResponse<Order[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<SupplierOrder[]>>(
+      return await apiClient.get<PaginatedResponse<Order[]>>(
         `${API_ENDPOINTS.ADMIN.SUPPLIER_ORDERS}?page=${page}&size=${size}`
       );
     } catch (error) {
