@@ -372,7 +372,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchFarmerProductById = async (id: string): Promise<{ product: FarmerProduct | null; type: 'farmer' | null; error: string | null }> => {
+  const fetchFarmerProductById = async (id: string): Promise<{ product: Product | null; type: 'farmer' | null; error: string | null }> => {
     try {
       setLoading(true);
       const res = await productService.getFarmerProduct(id);
@@ -387,7 +387,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchSupplierProductById = async (id: string): Promise<{ product: SupplierProduct | null; type: 'supplier' | null; error: string | null }> => {
+  const fetchSupplierProductById = async (id: string): Promise<{ product: Product | null; type: 'supplier' | null; error: string | null }> => {
     try {
       setLoading(true);
       const res = await productService.getSupplierProduct(id);
@@ -402,7 +402,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchProductById = async (id: string): Promise<{ product: FarmerProduct | SupplierProduct | null; type: 'farmer' | 'supplier' | null; error: string | null }> => {
+  const fetchProductById = async (id: string): Promise<{ product: Product | null; type: 'farmer' | 'supplier' | null; error: string | null }> => {
     // Try farmer product first
     const farmerResult = await fetchFarmerProductById(id);
     if (farmerResult.product) {
@@ -419,7 +419,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   };
 
   // Order modal management methods
-  const showOrderModal = (product: FarmerProduct | SupplierProduct, productType: 'farmer' | 'supplier') => {
+  const showOrderModal = (product: Product, productType: 'farmer' | 'supplier') => {
     setOrderModalProduct(product);
     setOrderModalProductType(productType);
     setIsOrderModalOpen(true);
@@ -433,7 +433,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
 
 
-  const addFarmerProduct = (data: FarmerProduct) => {
+  const addFarmerProduct = (data: Product) => {
     setFarmerProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
@@ -441,7 +441,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const addSupplierProduct = (data: SupplierProduct) => {
+  const addSupplierProduct = (data: Product) => {
     setSupplierProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
       localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
@@ -449,7 +449,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateBuyerProduct = (id: string, data: FarmerProduct) => {
+  const updateBuyerProduct = (id: string, data: Product) => {
     setBuyerProducts(prev => {
       const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(updated));
@@ -457,7 +457,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateFarmerProduct = (id: string, data: FarmerProduct) => {
+  const updateFarmerProduct = (id: string, data: Product) => {
     setFarmerProducts(prev => {
       const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
@@ -465,7 +465,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateSupplierProduct = (id: string, data: SupplierProduct) => {
+  const updateSupplierProduct = (id: string, data: Product) => {
     setSupplierProducts(prev => {
       const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));

@@ -1,4 +1,4 @@
-import { Product, PaginatedResponse, User } from '@/types';
+import { Product, Order, PaginatedResponse, User } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 

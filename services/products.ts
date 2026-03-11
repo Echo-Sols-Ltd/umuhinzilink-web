@@ -1,11 +1,8 @@
 import {
-  FarmerProduct,
-  SupplierProduct,
+  Product,
   FarmerProductRequest,
   ApiResponse,
   PaginatedResponse,
-  FarmerProductionStat,
-  SupplierProductionStat,
   SupplierProductRequest,
 } from '@/types';
 import { apiClient } from './client';
