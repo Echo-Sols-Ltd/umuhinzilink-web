@@ -16,13 +16,7 @@ export default function GoogleLogin() {
             window.google.accounts.id.initialize({
                 client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
                 callback: async (response: any) => {
-                    const res = await fetch("/api/auth/google", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ token: response.credential }),
-                    });
-                    const data = await res.json();
-                    const token = data.token
+                    const token = response.credential
                     await googleLogin(token)
                 },
             });

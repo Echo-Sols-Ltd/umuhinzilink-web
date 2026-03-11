@@ -255,6 +255,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const googleLogin = async (token: string) => {
     try {
       setLoading(true);
+      console.log(token)
       const res = await authService.googleLogin(token);
 
       if (!res.success) {
