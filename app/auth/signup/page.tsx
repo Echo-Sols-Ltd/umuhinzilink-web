@@ -16,8 +16,9 @@ import LanguageSelector from '@/components/auth/LanguageSelector';
 import AuthFooter from '@/components/auth/AuthFooter';
 
 export default function SignUp() {
-  const { register } = useAuth();
+  const { register, registerGoogle, googleLogin } = useAuth();
   const { t } = useI18n();
+  const [showModal, setShowModal] = useState(false)
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState<UserRequest>({
     names: '',
@@ -256,8 +257,8 @@ export default function SignUp() {
               <Link href="/auth/signin" className="text-success font-semibold">{t('auth.signUp.signIn')}</Link>
             </p>
           </form>
-               {/* Language Selector at Bottom */}
-      <AuthFooter />
+          {/* Language Selector at Bottom */}
+          <AuthFooter />
         </div>
       </div>
 
@@ -270,7 +271,7 @@ export default function SignUp() {
         </p>
       </div>
 
- 
+
     </div>
   );
 }

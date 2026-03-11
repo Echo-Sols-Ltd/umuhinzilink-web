@@ -40,6 +40,7 @@ interface AuthContextType {
   supplier: Supplier | null;
   buyer: Buyer | null;
   logout: () => Promise<void>;
+  registerGoogle: (data: GoogleAuthRequest) => Promise<void>
   register: (data: UserRequest) => Promise<void>;
   registerBuyer: (data: BuyerRequest) => Promise<void>;
   registerSupplier: (data: SupplierRequest) => Promise<void>;
@@ -496,6 +497,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         buyer,
         logout,
         register,
+        registerGoogle,
         registerBuyer,
         registerSupplier,
         registerFarmer,
