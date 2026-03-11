@@ -10,9 +10,9 @@ interface GovernmentContextType {
   isValidGovernmentUser: () => boolean;
   startFetchingResources: () => Promise<void>;
   users: User[] | null;
-  supplierProducts: SupplierProduct[];
-  farmerProducts: FarmerProduct[];
-  orders: FarmerOrder[];
+  supplierProducts: Product[];
+  farmerProducts: Product[];
+  orders: Order[];
   loading: boolean;
   error: string | null;
   refreshUsers: () => Promise<void>;
@@ -49,9 +49,9 @@ const GovernmentContext = createContext<GovernmentContextType | null>(null);
 export function GovernmentProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [users, setUsers] = useState<User[] | null>(null);
-  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
-  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
-  const [orders, setOrders] = useState<FarmerOrder[]>([]);
+  const [supplierProducts, setSupplierProducts] = useState<Product[]>([]);
+  const [farmerProducts, setFarmerProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

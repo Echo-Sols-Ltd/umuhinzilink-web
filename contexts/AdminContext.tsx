@@ -50,10 +50,10 @@ const AdminContext = createContext<AdminContextType | null>(null);
 export function AdminProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [users, setUsers] = useState<PaginatedResponse<User[]> | null>(null);
-  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
-  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
-  const [farmerOrders, setFarmerOrders] = useState<FarmerOrder[]>([]);
-  const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[]>([]);
+  const [farmerProducts, setFarmerProducts] = useState<Product[]>([]);
+  const [supplierProducts, setSupplierProducts] = useState<Product[]>([]);
+  const [farmerOrders, setFarmerOrders] = useState<Order[]>([]);
+  const [supplierOrders, setSupplierOrders] = useState<Order[]>([]);
   const [systemTransactions, setSystemTransactions] = useState<WalletTransactionDTO[]>([])
   // Derived state for backward compatibility or aggregation
   const products = [...farmerProducts, ...supplierProducts];

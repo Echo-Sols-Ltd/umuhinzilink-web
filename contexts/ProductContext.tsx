@@ -61,40 +61,40 @@ type ProductContextValue = {
   farmerBuyerProductsTotalElements: number;
   loading: boolean;
   error: string | null;
-  farmerProducts: FarmerProduct[] | null;
-  supplierProducts: SupplierProduct[] | null;
-  farmerStats: FarmerProductionStat[] | null;
-  supplierStats: SupplierProductionStat[] | null;
-  currentFarmerProduct: FarmerProduct | null;
-  currentSupplierProduct: SupplierProduct | null;
-  currentFarmerBuyerProduct: SupplierProduct | null;
-  currentBuyerProduct: FarmerProduct | null;
-  editFarmerProduct: FarmerProduct | null;
-  editSupplierProduct: SupplierProduct | null;
-  editBuyerProduct: FarmerProduct | null;
-  editFarmerBuyerProduct: SupplierProduct | null;
-  buyerProducts: FarmerProduct[] | null;
-  farmerBuyerProducts: SupplierProduct[] | null;
-  setCurrentFarmerProduct: (product: FarmerProduct | null) => void;
-  setEditFarmerProduct: (product: FarmerProduct | null) => void;
-  setCurrentSupplierProduct: (product: SupplierProduct | null) => void;
-  setEditSupplierProduct: (product: SupplierProduct | null) => void;
-  setCurrentFarmerBuyerProduct: (product: SupplierProduct | null) => void;
-  setCurrentBuyerProduct: (product: FarmerProduct | null) => void;
-  setEditBuyerProduct: (product: FarmerProduct | null) => void;
-  setEditFarmerBuyerProduct: (product: SupplierProduct | null) => void;
-  instockFarmerProducts: FarmerProduct[] | null;
-  outOfStockFarmerProducts: FarmerProduct[] | null;
-  lowInStockFarmerProducts: FarmerProduct[] | null;
-  instockSupplierProducts: SupplierProduct[] | null;
-  outOfStockSupplierProducts: SupplierProduct[] | null;
-  lowInStockSupplierProducts: SupplierProduct[] | null;
-  inStockFarmerBuyerProducts: SupplierProduct[] | null;
-  outOfStockFarmerBuyerProducts: SupplierProduct[] | null;
-  lowInStockFarmerBuyerProducts: SupplierProduct[] | null;
-  inStockBuyerProducts: FarmerProduct[] | null;
-  outOfStockBuyerProducts: FarmerProduct[] | null;
-  lowInStockBuyerProducts: FarmerProduct[] | null;
+  farmerProducts: Product[] | null;
+  supplierProducts: Product[] | null;
+  farmerStats: any[] | null;
+  supplierStats: any[] | null;
+  currentFarmerProduct: Product | null;
+  currentSupplierProduct: Product | null;
+  currentFarmerBuyerProduct: Product | null;
+  currentBuyerProduct: Product | null;
+  editFarmerProduct: Product | null;
+  editSupplierProduct: Product | null;
+  editBuyerProduct: Product | null;
+  editFarmerBuyerProduct: Product | null;
+  buyerProducts: Product[] | null;
+  farmerBuyerProducts: Product[] | null;
+  setCurrentFarmerProduct: (product: Product | null) => void;
+  setEditFarmerProduct: (product: Product | null) => void;
+  setCurrentSupplierProduct: (product: Product | null) => void;
+  setEditSupplierProduct: (product: Product | null) => void;
+  setCurrentFarmerBuyerProduct: (product: Product | null) => void;
+  setCurrentBuyerProduct: (product: Product | null) => void;
+  setEditBuyerProduct: (product: Product | null) => void;
+  setEditFarmerBuyerProduct: (product: Product | null) => void;
+  instockFarmerProducts: Product[] | null;
+  outOfStockFarmerProducts: Product[] | null;
+  lowInStockFarmerProducts: Product[] | null;
+  instockSupplierProducts: Product[] | null;
+  outOfStockSupplierProducts: Product[] | null;
+  lowInStockSupplierProducts: Product[] | null;
+  inStockFarmerBuyerProducts: Product[] | null;
+  outOfStockFarmerBuyerProducts: Product[] | null;
+  lowInStockFarmerBuyerProducts: Product[] | null;
+  inStockBuyerProducts: Product[] | null;
+  outOfStockBuyerProducts: Product[] | null;
+  lowInStockBuyerProducts: Product[] | null;
 };
 
 const ProductContext = createContext<ProductContextValue | undefined>(undefined);
@@ -121,29 +121,29 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [farmerBuyerProductsTotalPages, setFarmerBuyerProductsTotalPages] = useState(0);
   const [farmerBuyerProductsTotalElements, setFarmerBuyerProductsTotalElements] = useState(0);
 
-  const [farmerStats, setFarmerStats] = useState<FarmerProductionStat[] | null>([]);
-  const [supplierStats, setSupplierStats] = useState<SupplierProductionStat[] | null>([]);
+  const [farmerStats, setFarmerStats] = useState<any[] | null>([]);
+  const [supplierStats, setSupplierStats] = useState<any[] | null>([]);
 
-  const [currentFarmerProduct, setCurrentFarmerProduct] = useState<FarmerProduct | null>(null);
-  const [currentSupplierProduct, setCurrentSupplierProduct] = useState<SupplierProduct | null>(
+  const [currentFarmerProduct, setCurrentFarmerProduct] = useState<Product | null>(null);
+  const [currentSupplierProduct, setCurrentSupplierProduct] = useState<Product | null>(
     null
   );
   const [currentFarmerBuyerProduct, setCurrentFarmerBuyerProduct] =
-    useState<SupplierProduct | null>(null);
-  const [currentBuyerProduct, setCurrentBuyerProduct] = useState<FarmerProduct | null>(null);
-  const [editFarmerProduct, setEditFarmerProduct] = useState<FarmerProduct | null>(null);
-  const [editSupplierProduct, setEditSupplierProduct] = useState<SupplierProduct | null>(null);
-  const [editFarmerBuyerProduct, setEditFarmerBuyerProduct] = useState<SupplierProduct | null>(
+    useState<Product | null>(null);
+  const [currentBuyerProduct, setCurrentBuyerProduct] = useState<Product | null>(null);
+  const [editFarmerProduct, setEditFarmerProduct] = useState<Product | null>(null);
+  const [editSupplierProduct, setEditSupplierProduct] = useState<Product | null>(null);
+  const [editFarmerBuyerProduct, setEditFarmerBuyerProduct] = useState<Product | null>(
     null
   );
-  const [editBuyerProduct, setEditBuyerProduct] = useState<FarmerProduct | null>(null);
+  const [editBuyerProduct, setEditBuyerProduct] = useState<Product | null>(null);
 
   // Order modal state
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [orderModalProduct, setOrderModalProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
+  const [orderModalProduct, setOrderModalProduct] = useState<Product | null>(null);
   const [orderModalProductType, setOrderModalProductType] = useState<'farmer' | 'supplier' | null>(null);
 
-  const handleProductChange = (data: FarmerProduct | SupplierProduct) => {
+  const handleProductChange = (data: Product) => {
     const productId = data.id
     const farmerData = data as FarmerProduct
     const supplierData = data as SupplierProduct

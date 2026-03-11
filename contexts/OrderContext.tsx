@@ -20,30 +20,30 @@ const STORAGE_KEYS = {
 type OrderContextValue = {
   loading: boolean;
   error?: string | null;
-  buyerOrders: FarmerOrder[] | null;
-  farmerOrders: FarmerOrder[] | null;
-  supplierOrders: SupplierOrder[] | null;
-  farmerBuyerOrders: SupplierOrder[] | null;
+  buyerOrders: Order[] | null;
+  farmerOrders: Order[] | null;
+  supplierOrders: Order[] | null;
+  farmerBuyerOrders: Order[] | null;
 
-  currentFarmerOrder: FarmerOrder | null;
-  currentBuyerOrder: FarmerOrder | null;
-  currentSupplierOrder: SupplierOrder | null;
-  currentFarmerBuyerOrder: SupplierOrder | null;
-  currentProduct: FarmerProduct | null;
+  currentFarmerOrder: Order | null;
+  currentBuyerOrder: Order | null;
+  currentSupplierOrder: Order | null;
+  currentFarmerBuyerOrder: Order | null;
+  currentProduct: Product | null;
 
-  setCurrentFarmerOrder: (order: FarmerOrder | null) => void;
-  setCurrentSupplierOrder: (order: SupplierOrder | null) => void;
-  setCurrentFarmerBuyerOrder: (order: SupplierOrder | null) => void;
-  setCurrentBuyerOrder: (order: FarmerOrder | null) => void;
+  setCurrentFarmerOrder: (order: Order | null) => void;
+  setCurrentSupplierOrder: (order: Order | null) => void;
+  setCurrentFarmerBuyerOrder: (order: Order | null) => void;
+  setCurrentBuyerOrder: (order: Order | null) => void;
 
-  setCurrentProduct: (product: FarmerProduct | null) => void;
+  setCurrentProduct: (product: Product | null) => void;
 
-  addFarmerOrder: (data: FarmerOrder) => void;
-  addFarmerBuyerOrder: (data: SupplierOrder) => void;
+  addFarmerOrder: (data: Order) => void;
+  addFarmerBuyerOrder: (data: Order) => void;
 
-  editFarmerOrder: (data: FarmerOrder) => void;
-  editFarmerBuyerOrder: (data: SupplierOrder) => void;
-  editSupplierOrder: (data: SupplierOrder) => void;
+  editFarmerOrder: (data: Order) => void;
+  editFarmerBuyerOrder: (data: Order) => void;
+  editSupplierOrder: (data: Order) => void;
 
   // Satisfaction methods
   markFarmerOrderSatisfaction: (id: string) => Promise<void>;
@@ -54,10 +54,10 @@ type OrderContextValue = {
 
   mutationLoading: boolean;
 
-  fetchBuyerOrders: (page?: number, size?: number) => Promise<FarmerOrder[] | null>;
-  fetchFarmerOrders: (page?: number, size?: number) => Promise<FarmerOrder[] | null>;
-  fetchSupplierOrders: (page?: number, size?: number) => Promise<SupplierOrder[] | null>;
-  fetchFarmerBuyerOrders: (page?: number, size?: number) => Promise<SupplierOrder[] | null>;
+  fetchBuyerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
+  fetchFarmerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
+  fetchSupplierOrders: (page?: number, size?: number) => Promise<Order[] | null>;
+  fetchFarmerBuyerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
 
   farmerOrdersTotalPages: number;
   farmerOrdersTotalElements: number;
@@ -69,25 +69,25 @@ type OrderContextValue = {
   farmerBuyerOrdersTotalElements: number;
 
   // Derived order states
-  pendingBuyerOrders: FarmerOrder[];
-  completedBuyerOrders: FarmerOrder[];
-  cancelledBuyerOrders: FarmerOrder[];
-  activeBuyerOrders: FarmerOrder[];
+  pendingBuyerOrders: Order[];
+  completedBuyerOrders: Order[];
+  cancelledBuyerOrders: Order[];
+  activeBuyerOrders: Order[];
 
-  pendingFarmerOrders: FarmerOrder[];
-  completedFarmerOrders: FarmerOrder[];
-  cancelledFarmerOrders: FarmerOrder[];
-  activeFarmerOrders: FarmerOrder[];
+  pendingFarmerOrders: Order[];
+  completedFarmerOrders: Order[];
+  cancelledFarmerOrders: Order[];
+  activeFarmerOrders: Order[];
 
-  pendingSupplierOrders: SupplierOrder[];
-  completedSupplierOrders: SupplierOrder[];
-  cancelledSupplierOrders: SupplierOrder[];
-  activeSupplierOrders: SupplierOrder[];
+  pendingSupplierOrders: Order[];
+  completedSupplierOrders: Order[];
+  cancelledSupplierOrders: Order[];
+  activeSupplierOrders: Order[];
 
-  pendingFarmerBuyerOrders: SupplierOrder[];
-  completedFarmerBuyerOrders: SupplierOrder[];
-  cancelledFarmerBuyerOrders: SupplierOrder[];
-  activeFarmerBuyerOrders: SupplierOrder[];
+  pendingFarmerBuyerOrders: Order[];
+  completedFarmerBuyerOrders: Order[];
+  cancelledFarmerBuyerOrders: Order[];
+  activeFarmerBuyerOrders: Order[];
 };
 
 const OrderContext = createContext<OrderContextValue | undefined>(undefined);
@@ -101,10 +101,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
 
-  const [buyerOrders, setBuyerOrders] = useState<FarmerOrder[] | null>(null);
-  const [farmerOrders, setFarmerOrders] = useState<FarmerOrder[] | null>(null);
-  const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[] | null>(null);
-  const [farmerBuyerOrders, setFarmerBuyerOrders] = useState<SupplierOrder[] | null>(null);
+  const [buyerOrders, setBuyerOrders] = useState<Order[] | null>(null);
+  const [farmerOrders, setFarmerOrders] = useState<Order[] | null>(null);
+  const [supplierOrders, setSupplierOrders] = useState<Order[] | null>(null);
+  const [farmerBuyerOrders, setFarmerBuyerOrders] = useState<Order[] | null>(null);
 
   const [farmerOrdersTotalPages, setFarmerOrdersTotalPages] = useState(0);
   const [farmerOrdersTotalElements, setFarmerOrdersTotalElements] = useState(0);
@@ -115,13 +115,13 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [farmerBuyerOrdersTotalPages, setFarmerBuyerOrdersTotalPages] = useState(0);
   const [farmerBuyerOrdersTotalElements, setFarmerBuyerOrdersTotalElements] = useState(0);
 
-  const [currentFarmerOrder, setCurrentFarmerOrder] = useState<FarmerOrder | null>(null);
-  const [currentSupplierOrder, setCurrentSupplierOrder] = useState<SupplierOrder | null>(null);
-  const [currentFarmerBuyerOrder, setCurrentFarmerBuyerOrder] = useState<SupplierOrder | null>(
+  const [currentFarmerOrder, setCurrentFarmerOrder] = useState<Order | null>(null);
+  const [currentSupplierOrder, setCurrentSupplierOrder] = useState<Order | null>(null);
+  const [currentFarmerBuyerOrder, setCurrentFarmerBuyerOrder] = useState<Order | null>(
     null
   );
-  const [currentBuyerOrder, setCurrentBuyerOrder] = useState<FarmerOrder | null>(null);
-  const [currentProduct, setCurrentProduct] = useState<FarmerProduct | null>(null);
+  const [currentBuyerOrder, setCurrentBuyerOrder] = useState<Order | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
 
   const fetchBuyerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
     try {
