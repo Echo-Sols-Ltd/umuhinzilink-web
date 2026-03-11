@@ -1,14 +1,11 @@
 import {
   Month,
-  ProductCategory,
   ProductType,
   ProductStatus,
   MeasurementUnit,
   CertificationType,
-  RwandaCrop,
-  RwandaCropCategory,
 } from './enums';
-import { Farmer, Supplier, User } from './user';
+import { User } from './user';
 
 export interface Statistics {
   month: Month;
@@ -21,25 +18,9 @@ export interface Trend {
   percentage: number;
 }
 
-export interface FarmerProductionStat {
-  product: FarmerProduct;
-  kigali: number;
-  musanze: number;
-  nyagatare: number;
-  statistics: Statistics[];
-  trend: Trend;
-}
 
-export interface SupplierProductionStat {
-  product: SupplierProduct;
-  kigali: number;
-  musanze: number;
-  nyagatare: number;
-  statistics: Statistics[];
-  trend: Trend;
-}
 
-export interface FarmerProduct {
+export interface Product {
   id: string;
   owner: User;
   name: string;
@@ -48,35 +29,12 @@ export interface FarmerProduct {
   image: string;
   quantity: number;
   measurementUnit: MeasurementUnit;
-  category: RwandaCropCategory;
-  harvestDate: string;
+  category: string;
   location: string;
   isNegotiable: boolean;
   certification: CertificationType;
   productStatus: ProductStatus;
-  createdAt?: string;
-  updatedAt?: string;
+  productType: ProductType;
+  createdAt: string;
+  updatedAt: string;
 }
-
-export interface SupplierProduct {
-  id: string;
-  owner: User;
-  name: string;
-  description: string;
-  unitPrice: number;
-  images: string[];
-  image?: string;
-  quantity: number;
-  measurementUnit: MeasurementUnit;
-  category: ProductCategory;
-  harvestDate: Date;
-  location: string;
-  isNegotiable: boolean;
-  certification: CertificationType;
-  productStatus: ProductStatus;
-}
-
-export const cropOptions = Object.values(RwandaCrop).map(crop => ({
-  label: crop.toString(),
-  value: crop,
-}));

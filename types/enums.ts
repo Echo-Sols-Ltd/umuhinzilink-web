@@ -12,6 +12,11 @@ export enum FarmerPages {
   SETTINGS,
   LOGOUT,
 }
+
+export enum ProductType {
+  FARMER_PRODUCT = 'FARMER_PRODUCT',
+  SUPPLIER_PRODUCT = 'SUPPLIER_PRODUCT'
+}
 export enum AdminPages {
   DASHBOARD,
   USERS,
