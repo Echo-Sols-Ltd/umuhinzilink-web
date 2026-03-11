@@ -15,17 +15,17 @@ export const useCartData = () => {
 
   // Get normal items
   const getNormalItems = (): CartItem[] => {
-    return getItemsByType('NORMAL');
+    return getItemsByType(CartItemType.NORMAL);
   };
 
   // Get negotiation items
   const getNegotiationItems = (): CartItem[] => {
-    return getItemsByType('NEGOTIATION');
+    return getItemsByType(CartItemType.NEGOTIATION);
   };
 
   // Get accepted negotiation items
   const getAcceptedNegotiationItems = (): CartItem[] => {
-    return getItemsByType('NEGOTIATION_ACCEPTED');
+    return getItemsByType(CartItemType.NEGOTIATION_ACCEPTED);
   };
 
   // Check if cart is empty
@@ -53,17 +53,17 @@ export const useCartData = () => {
 
   // Get normal items total
   const getNormalItemsTotal = (): number => {
-    return getTotalByType('NORMAL');
+    return getTotalByType(CartItemType.NORMAL);
   };
 
   // Get negotiation items total
   const getNegotiationItemsTotal = (): number => {
-    return getTotalByType('NEGOTIATION');
+    return getTotalByType(CartItemType.NEGOTIATION);
   };
 
   // Get accepted negotiation items total
   const getAcceptedNegotiationItemsTotal = (): number => {
-    return getTotalByType('NEGOTIATION_ACCEPTED');
+    return getTotalByType(CartItemType.NEGOTIATION_ACCEPTED);
   };
 
   // Count items by type
@@ -90,9 +90,9 @@ export const useCartData = () => {
     
     // Counts
     getCartItemCount,
-    getNormalItemsCount: () => getCountByType('NORMAL'),
-    getNegotiationItemsCount: () => getCountByType('NEGOTIATION'),
-    getAcceptedNegotiationItemsCount: () => getCountByType('NEGOTIATION_ACCEPTED'),
+    getNormalItemsCount: () => getCountByType(CartItemType.NORMAL),
+    getNegotiationItemsCount: () => getCountByType(CartItemType.NEGOTIATION),
+    getAcceptedNegotiationItemsCount: () => getCountByType(CartItemType.NEGOTIATION_ACCEPTED),
     
     // Totals
     getCartTotal,

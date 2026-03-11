@@ -1,7 +1,7 @@
 import { useCart } from '@/contexts/CartContext';
 import { cartService } from '@/services/cart';
 import { notify } from '@/lib/notify';
-import { Cart, CartItem, CartItemRequest, CartUpdateRequest, CartNegotiateRequest, CartCheckoutRequest, Order } from '@/types';
+import { Cart, CartItem, CartItemRequest, CartUpdateRequest, CartNegotiateRequest, CartCheckoutRequest, Order, CartItemType } from '@/types';
 import { useState } from 'react';
 
 /**
@@ -38,7 +38,7 @@ export const useCartAction = () => {
         productId,
         quantity,
         proposedPrice,
-        type: proposedPrice ? 'NEGOTIATION' : 'NORMAL',
+        type: proposedPrice ? CartItemType.NEGOTIATION : CartItemType.NORMAL,
       };
       
       if (proposedPrice) {
@@ -74,11 +74,11 @@ export const useCartAction = () => {
   };
 
   // Update cart item proposed price
-  const updateCartItemPrice = async (itemId: string, proposedPrice: number) => {
+  const updateCartItemPrice = async (itemId: string, proposedPrice: number, quantity?: number) => {
     setLoading(true);
     setError(null);
     try {
-      const request: CartUpdateRequest = { proposedPrice };
+      const request: CartUpdateRequest = { quantity: quantity || 1, proposedPrice };
       await updateItem(itemId, request);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update item price';
@@ -132,8 +132,8 @@ export const useCartAction = () => {
       const readyItems = await getItemsReadyForCheckout();
       const checkoutItems = readyItems.filter(item => itemIds.includes(item.id));
       
-      const hasNormalItems = checkoutItems.some(item => item.type === 'NORMAL');
-      const hasNegotiatedItems = checkoutItems.some(item => item.type === 'NEGOTIATION_ACCEPTED');
+      const hasNormalItems = checkoutItems.some(item => item.type === CartItemType.NORMAL);
+      const hasNegotiatedItems = checkoutItems.some(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
       
       let request: CartCheckoutRequest = {
         itemIds,
