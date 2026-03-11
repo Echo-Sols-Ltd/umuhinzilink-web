@@ -1,5 +1,5 @@
 import { DeliveryStatus, OrderStatus, PaymentMethod } from './enums';
-import { FarmerProduct, SupplierProduct } from './product';
+import { Product} from './product';
 import { User } from './user';
 
 export interface DeliveryStep {
@@ -16,33 +16,17 @@ export interface Delivery {
   trackingSteps: DeliveryStep[];
 }
 
-export interface FarmerOrder {
+export interface Order {
   id: string;
   buyer: User;
-  product: FarmerProduct;
+  product: Product;
   quantity: number;
   totalPrice: number;
   isPaid: boolean;
   status: OrderStatus;
   delivery?: Delivery;
   paymentMethod: PaymentMethod;
-  isBuyerSatisfied?: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SupplierOrder {
-  id: string;
-  buyer: User;
-  product: SupplierProduct;
-  quantity: number;
-  totalPrice: number;
-  isPaid: boolean;
-  status: OrderStatus;
-  delivery?: Delivery;
-  paymentMethod: PaymentMethod;
-  deliveryDate?: string;
-  isBuyerSatisfied?: boolean;
+  isBuyerSatisfied: boolean;
   createdAt: string;
   updatedAt: string;
 }
