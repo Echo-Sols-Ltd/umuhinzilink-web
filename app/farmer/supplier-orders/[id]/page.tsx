@@ -22,7 +22,7 @@ function FarmerSupplierOrderDetailPage() {
   const { updateSupplierOrderStatus } = useOrderAction();
   const { t } = useI18n();
 
-  const [order, setOrder] = useState<SupplierOrder | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const orderId = params.id as string;

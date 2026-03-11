@@ -30,9 +30,9 @@ interface ProductDisplayProps {
   onViewModeChange?: (mode: 'grid' | 'list') => void;
   onSearchChange?: (search: string) => void;
   onFilterChange?: (filters: any) => void;
-  onProductSelect?: (product: FarmerProduct) => void;
-  onProductPurchase?: (product: FarmerProduct) => void;
-  onProductContact?: (product: FarmerProduct) => void;
+  onProductSelect?: (product: Product) => void;
+  onProductPurchase?: (product: Product) => void;
+  onProductContact?: (product: Product) => void;
   selectedCategory?: string;
   selectedLocation?: string;
   search?: string;

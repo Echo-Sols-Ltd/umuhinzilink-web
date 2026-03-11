@@ -84,7 +84,7 @@ export default function SupplierProductDetailPage() {
     }
   }, [productId, supplierProducts, currentSupplierProduct, setCurrentSupplierProduct, fetchSupplierProducts, showToast]);
 
-  const handleShareProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handleShareProduct = (product: Product) => {
     if (navigator.share) {
       navigator.share({
         title: product.name,
@@ -101,7 +101,7 @@ export default function SupplierProductDetailPage() {
     }
   };
 
-  const handleEditProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handleEditProduct = (product: Product) => {
     // Navigate to edit page
     router.push(`/supplier/products/${product.id}/edit`);
   };

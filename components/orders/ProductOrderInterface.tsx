@@ -167,7 +167,7 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Harvest Date:</span>
                 <span className="text-sm font-medium text-foreground">
-                  {formatDate(product.harvestDate)}
+                  {productType === 'farmer' && 'harvestDate' in product ? formatDate((product as any).harvestDate) : 'N/A'}
                 </span>
               </div>
             </div>

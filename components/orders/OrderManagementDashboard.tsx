@@ -50,7 +50,7 @@ export default function OrderManagementDashboard({
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [sortType, setSortType] = useState<SortType>('newest');
-  const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | SupplierOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
   // Filter and sort orders

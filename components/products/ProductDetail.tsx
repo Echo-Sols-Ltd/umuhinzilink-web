@@ -200,7 +200,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground uppercase tracking-wider">{t('buyer.productDetail.harvested')}</span>
-                    <span className="font-medium text-sm sm:text-base">{formatDate(product.harvestDate)}</span>
+                    <span className="font-medium text-sm sm:text-base">
+                      {productType === 'farmer' && 'harvestDate' in product ? formatDate((product as any).harvestDate) : 'N/A'}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -173,7 +173,7 @@ function FarmerSupplierOrders() {
     }
   };
 
-  const handleSatisfactionClick = (order: SupplierOrder) => {
+  const handleSatisfactionClick = (order: Order) => {
     setSelectedOrderForSatisfaction(order);
     setSatisfactionModalOpen(true);
   };

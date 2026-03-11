@@ -50,7 +50,7 @@ function OrdersPageComponent() {
   } = useOrderAction();
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedOrder, setSelectedOrder] = useState<SupplierOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -77,7 +77,7 @@ function OrdersPageComponent() {
     return { total, pending, active, completed };
   }, [orders]);
 
-  const handleViewDetails = (order: SupplierOrder) => {
+  const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
     setIsDetailsModalOpen(true);
   };

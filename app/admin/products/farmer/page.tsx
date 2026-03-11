@@ -38,7 +38,7 @@ function FarmerProductManagement() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [actionLoading, setActionLoading] = useState<string | null>(null);
-    const [selectedProduct, setSelectedProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const [loading, setLoading] = useState(false);
 
