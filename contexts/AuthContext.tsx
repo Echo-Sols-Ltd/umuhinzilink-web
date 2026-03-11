@@ -33,6 +33,7 @@ interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
   googleLogin: (data: string) => Promise<void>
   googleToken: string | null
+  setGoogleToken: (data: string) => void
   loading: boolean;
   loadAuthState: () => Promise<void>;
   user: User | null;
@@ -488,6 +489,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         loading,
         googleToken,
+        setGoogleToken,
         login,
         googleLogin,
         loadAuthState,

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 declare global { interface Window { google: any } }
 
 export default function GoogleLogin() {
-    const { googleLogin } = useAuth()
+    const { setGoogleToken } = useAuth()
     useEffect(() => {
         const script = document.createElement("script");
         script.src = "https://accounts.google.com/gsi/client";
@@ -17,7 +17,7 @@ export default function GoogleLogin() {
                 client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
                 callback: async (response: any) => {
                     const token = response.credential
-                    await googleLogin(token)
+                    setGoogleToken(token)
                 },
             });
 

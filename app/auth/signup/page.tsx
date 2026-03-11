@@ -267,7 +267,7 @@ export default function SignUp() {
         <Image src="/Image.png" alt="background" fill className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300" />
         <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">{t('auth.signUp.heroTitle')}</h1>
         <p className="text-white z-10 mt-2 text-sm sm:text-base px-6 sm:px-0">
-          {t('auth.signUp.heroSubtitle.line1')} <br /> {t('auth.signUp.heroSubtitle.line2')}
+          {t('auth.s  ignUp.heroSubtitle.line1')} <br /> {t('auth.signUp.heroSubtitle.line2')}
         </p>
       </div>
 
