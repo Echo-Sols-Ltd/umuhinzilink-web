@@ -10,6 +10,7 @@ import {
   Buyer,
   Supplier,
   Farmer,
+  GoogleAuthRequest,
 } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
@@ -34,6 +35,11 @@ class AuthService {
   /**
    * Sign up a new user and store tokens.
    */
+  async registerGoogleUser(data: GoogleAuthRequest): Promise<ApiResponse<AuthResponse>> {
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.REGISTER_GOOGLE_USER, data);
+    return response
+  }
+
   async register(userData: UserRequest): Promise<ApiResponse<AuthResponse>> {
     const response = await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.REGISTER, userData);
     return response;

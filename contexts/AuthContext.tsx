@@ -9,6 +9,7 @@ import {
   Farmer,
   Supplier,
   Buyer,
+  GoogleAuthRequest,
 } from '@/types';
 import { UserType } from '@/types';
 import { authService } from '@/services/auth';
@@ -293,6 +294,29 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {
       notify.error('Please try again', 'Error logging in');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const registerGoogle = async (data: GoogleAuthRequest) => {
+    try {
+      setLoading(true);
+      const res = await authService.registerGoogleUser(data);
+
+      if (!res.success) {
+        notify.error(res.message, 'Register Failed');
+        return;
+      }
+
+      if (res.data) {
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
+        setUser(res.data.user);
+        await loadAuthState();
+      }
+    } catch {
+      notify.error('Please try again', 'Error registering');
     } finally {
       setLoading(false);
     }

@@ -17,6 +17,7 @@ export const API_ENDPOINTS = {
     REGISTER_FARMER: '/auth/register/farmer',
     REGISTER_SUPPLIER: '/auth/register/supplier',
     REGISTER_BUYER: '/auth/register/buyer',
+    REGISTER_GOOGLE_USER: '/auth/register/google',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
     VERIFY_USER: '/auth/check-token',
