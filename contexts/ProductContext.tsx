@@ -2,8 +2,7 @@ import React, { createContext, useContext, useMemo, useState, ReactNode, useCall
 import { productService } from '@/services/products';
 import {
   FarmerProductionStat,
-  FarmerProduct,
-  SupplierProduct,
+  Product,
   ProductStatus,
   SupplierProductionStat,
 } from '@/types';

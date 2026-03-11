@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
-import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus, UserType, SocketResponse } from '@/types';
+import { Order, OrderStatus, Product, DeliveryStatus, UserType, SocketResponse } from '@/types';
 import type { OrderRequest } from '@/types/request';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';

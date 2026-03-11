@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO, PaginatedResponse, WalletDTO } from '@/types';
+import { Product, User, Order, WalletTransactionDTO, PaginatedResponse, WalletDTO } from '@/types';
 
 interface AdminContextType {
   users: PaginatedResponse<User[]> | null;

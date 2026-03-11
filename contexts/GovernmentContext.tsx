@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { governmentService } from '@/services/government';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { FarmerProduct, SupplierProduct, User, FarmerOrder } from '@/types';
+import { Product, User, Order } from '@/types';
 
 interface GovernmentContextType {
   isValidGovernmentUser: () => boolean;
