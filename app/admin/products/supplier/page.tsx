@@ -17,7 +17,7 @@ import {
 import { useAdmin } from '@/contexts/AdminContext';
 import { adminService } from '@/services/admin';
 import Sidebar from '@/components/shared/Sidebar';
-import { SupplierProduct, UserType } from '@/types';
+import { Product, UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { notify } from '@/lib/notify';
 import {

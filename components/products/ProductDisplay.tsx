@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { RwandaCropCategory } from '@/types';
-import { FarmerProduct } from '@/types/product';
+import { Product } from '@/types/product';
 import ProductCard from './ProductCard';
 import ProductRow from './ProductRow';
 

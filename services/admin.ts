@@ -1,4 +1,4 @@
-import { ApiResponse, FarmerOrder, FarmerProduct, PaginatedResponse, SupplierOrder, SupplierProduct, User, WalletDTO, WalletTransactionDTO } from '@/types';
+import { ApiResponse, PaginatedResponse, Order, Product, User, WalletDTO, WalletTransactionDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 

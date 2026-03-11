@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
-import { FarmerOrder, SupplierOrder, UserType } from '@/types';
+import { Order, UserType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useToast } from '@/components/ui/use-toast';

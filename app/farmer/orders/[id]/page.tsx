@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, FarmerOrder } from '@/types';
+import { UserType, Order } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import { DeliveryStatus } from '@/types/enums';

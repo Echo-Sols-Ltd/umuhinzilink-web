@@ -1,5 +1,5 @@
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, ProductRef, SupplierProduct } from "@/types";
+import { Product, MessageType, ProductRef } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";

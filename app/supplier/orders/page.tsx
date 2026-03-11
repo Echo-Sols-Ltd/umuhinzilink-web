@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, SupplierOrder, DeliveryStatus } from '@/types';
+import { UserType, Order, DeliveryStatus } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import { Pagination } from '@/components/ui/pagination';

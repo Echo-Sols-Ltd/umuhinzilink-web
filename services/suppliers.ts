@@ -1,4 +1,4 @@
-import { ApiResponse, Supplier, SupplierProduct, SupplierOrder, SupplierProductionStat, PaginatedResponse } from '@/types';
+import { ApiResponse, Supplier, Product, Order,PaginatedResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 

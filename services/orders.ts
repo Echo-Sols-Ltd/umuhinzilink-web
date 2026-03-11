@@ -1,4 +1,4 @@
-import { ApiResponse, DeliveryStatus, FarmerOrder, OrderRequest, PaginatedResponse, SupplierOrder } from '@/types';
+import { ApiResponse, DeliveryStatus, Order, OrderRequest, PaginatedResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 

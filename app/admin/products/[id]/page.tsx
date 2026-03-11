@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { FarmerProduct, SupplierProduct, ProductStatus } from '@/types';
+import { Product, ProductStatus } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';

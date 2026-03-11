@@ -17,7 +17,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, SupplierProduct, SupplierOrder, OrderStatus } from '@/types';
+import { UserType, Product, Order, OrderStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import OrderCreationModal from '@/components/orders/OrderCreationModal';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';

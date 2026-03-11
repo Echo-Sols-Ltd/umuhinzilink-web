@@ -15,7 +15,7 @@ import {
   Eye,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
+import { UserType, Order, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';

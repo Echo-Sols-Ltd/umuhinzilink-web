@@ -17,7 +17,7 @@ import {
     Phone,
     ThumbsUp
 } from 'lucide-react';
-import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus, deliveryStatusOptions } from '@/types';
+import { Order, OrderStatus, DeliveryStatus, deliveryStatusOptions } from '@/types';
 import OrderStatusTracker from './OrderStatusTracker';
 import DeliveryTracker from '../delivery/DeliveryTracker';
 import { useAuth } from '@/contexts/AuthContext';

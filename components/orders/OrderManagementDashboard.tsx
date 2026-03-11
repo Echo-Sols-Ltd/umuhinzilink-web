@@ -15,7 +15,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import Image from 'next/image';
-import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus } from '@/types';
+import { Order, OrderStatus, DeliveryStatus } from '@/types';
 import { cn } from '@/lib/utils';
 import OrderStatusTracker from './OrderStatusTracker';
 import { useI18n } from '@/contexts/I18nContext';

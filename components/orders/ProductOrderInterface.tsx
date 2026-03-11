@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info } from 'lucide-react';
 import Image from 'next/image';
-import { FarmerProduct, SupplierProduct } from '@/types';
+import { Product } from '@/types';
 import { cn } from '@/lib/utils';
 import OrderCreationModal from './OrderCreationModal';
 

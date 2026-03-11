@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
-import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping, FarmerOrder, SupplierOrder } from '@/types'
+import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping, Order } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants';
 import { OrderChangeResponse, OrderDeliveryChange } from './websocket';
 

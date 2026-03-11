@@ -2,7 +2,7 @@ import { useOrder } from '@/contexts/OrderContext';
 import { orderService } from '@/services/orders';
 import { useWallet } from '@/contexts/WalletContext';
 import { notify } from '@/lib/notify';
-import { FarmerOrder, SupplierOrder, DeliveryStatus } from '@/types';
+import { Order, DeliveryStatus } from '@/types';
 import type { OrderRequest } from '@/types/request';
 import { useState } from 'react';
 

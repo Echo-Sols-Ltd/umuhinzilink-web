@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, SupplierOrder } from '@/types';
+import { UserType, Order } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import { DeliveryStatus } from '@/types/enums';

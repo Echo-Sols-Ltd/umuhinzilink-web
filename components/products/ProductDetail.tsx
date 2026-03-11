@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
-import { FarmerProduct, SupplierProduct } from '@/types';
+import { Product } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
