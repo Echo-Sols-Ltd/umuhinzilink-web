@@ -4,7 +4,7 @@ import {
   Product,
   ProductStatus,
 } from '@/types';
-import type { FarmerProductRequest, SupplierProductRequest } from '@/types/request';
+import type { FarmerProductRequest, SupplierProductRequest } from '@/types';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
 import { notify } from '@/lib/notify';

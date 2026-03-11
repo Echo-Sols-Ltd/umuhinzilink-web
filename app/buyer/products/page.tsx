@@ -25,7 +25,7 @@ import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChat } from '@/hooks/useChat';
-import { MessageType, ProductRef } from '@/types/message';
+import { MessageType, ProductRef } from '@/types';
 import { productService } from '@/services/products';
 import { ProductDisplay } from '@/components/products/ProductDisplay';
 import { useI18n } from '@/contexts/I18nContext';

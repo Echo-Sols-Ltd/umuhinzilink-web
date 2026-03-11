@@ -14,7 +14,7 @@ import {
   AdminDashboardData,
   GovernmentDashboardData,
   NotificationResponse
-} from '@/types/dashboard';
+} from '@/types';
 
 // Union type for all dashboard data
 type DashboardData = 

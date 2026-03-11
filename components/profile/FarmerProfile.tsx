@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { User, Phone, MapPin, Mail, Loader2, Edit2, Save, X } from 'lucide-react';
-import { Farmer } from '@/types/user';
+import { Farmer } from '@/types';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';

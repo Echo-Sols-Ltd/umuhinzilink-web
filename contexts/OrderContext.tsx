@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
 import { Order, OrderStatus, Product, DeliveryStatus, UserType, SocketResponse } from '@/types';
-import type { OrderRequest } from '@/types/request';
+import type { OrderRequest } from '@/types';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
 import { socketService } from '@/services/socket';

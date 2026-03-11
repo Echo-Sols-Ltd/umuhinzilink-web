@@ -14,7 +14,7 @@ import {
 import MetricCard from '../common/MetricCard';
 import DashboardChart from '../common/DashboardChart';
 import DashboardGrid, { DashboardSection } from '../common/DashboardGrid';
-import { GovernmentDashboardData } from '@/types/dashboard';
+import { GovernmentDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
 
 import { useI18n } from '@/contexts/I18nContext';

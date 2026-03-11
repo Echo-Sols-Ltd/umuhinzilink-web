@@ -26,7 +26,7 @@ import {
   FileText,
   BarChart3
 } from 'lucide-react';
-import { Supplier } from '@/types/user';
+import { Supplier } from '@/types';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DeliveryStep, Delivery } from '@/types/order';
+import { DeliveryStep, Delivery } from '@/types';
 import { DeliveryStatus } from '@/types';
 import { Check, Clock, Truck, Package, AlertCircle, Calendar, MapPin, Navigation } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';

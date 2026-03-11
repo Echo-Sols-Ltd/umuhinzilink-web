@@ -16,7 +16,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import Image from 'next/image';
-import { Message, MessageType } from '@/types/message';
+import { Message, MessageType } from '@/types';
 import { useMessages } from '@/contexts/MessageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';

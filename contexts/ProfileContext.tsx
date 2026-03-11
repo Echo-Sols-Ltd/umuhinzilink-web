@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { User, Farmer, Supplier, Buyer } from '@/types/user';
+import { User, Farmer, Supplier, Buyer } from '@/types';
 import { UserType } from '@/types';
 import { useAuth } from './AuthContext';
 import { userService } from '@/services/users';

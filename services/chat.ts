@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/types';
-import { ChatUser } from '@/types/chat';
+import { ChatUser } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 

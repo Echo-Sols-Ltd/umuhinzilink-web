@@ -1,11 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Notification, NotificationFilter, NotificationType } from '@/types/notification';
+import { Notification, NotificationFilter, NotificationType } from '@/types';
 import { notificationService } from '@/services/notification';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { PaginatedResponse } from '@/types/api';
+import { PaginatedResponse } from '@/types';
 
 interface NotificationContextType {
     notifications: Notification[];

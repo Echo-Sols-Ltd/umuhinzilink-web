@@ -14,7 +14,7 @@ import {
   AlertCircle,
   Star
 } from 'lucide-react';
-import { Message } from '@/types/message';
+import { Message } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface MessageActionsModalProps {

@@ -14,7 +14,7 @@ import {
 import Link from 'next/link';
 import MetricCard from '../common/MetricCard';
 import { DashboardSection } from '../common/DashboardGrid';
-import { FarmerDashboardData } from '@/types/dashboard';
+import { FarmerDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
 import { useI18n } from '@/contexts/I18nContext';
 

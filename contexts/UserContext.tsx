@@ -3,7 +3,7 @@ import { User, UserType } from '@/types';
 import { notify } from '@/lib/notify';
 import { userService } from '@/services/users';
 import { useAuth } from './AuthContext';
-import { ChatUser } from '@/types/chat';
+import { ChatUser } from '@/types';
 import { chatService } from '@/services/chat';
 
 interface UserContextType {

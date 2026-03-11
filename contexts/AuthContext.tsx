@@ -10,7 +10,7 @@ import {
   Supplier,
   Buyer,
 } from '@/types';
-import { UserType } from '@/types/user';
+import { UserType } from '@/types';
 import { authService } from '@/services/auth';
 import { farmerService } from '@/services/farmers';
 import { buyerService } from '@/services/buyers';

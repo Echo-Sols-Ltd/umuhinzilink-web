@@ -3,7 +3,7 @@ import { orderService } from '@/services/orders';
 import { useWallet } from '@/contexts/WalletContext';
 import { notify } from '@/lib/notify';
 import { Order, DeliveryStatus } from '@/types';
-import type { OrderRequest } from '@/types/request';
+import type { OrderRequest } from '@/types';
 import { useState } from 'react';
 
 /**

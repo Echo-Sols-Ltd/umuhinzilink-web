@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Product } from '@/types/product';
+import { Product } from '@/types';
 import { productService } from '@/services/products';
 import { useAuth } from '@/contexts/AuthContext';
 import { ProductRef, UserType } from '@/types';
