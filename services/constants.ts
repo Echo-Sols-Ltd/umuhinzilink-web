@@ -149,6 +149,26 @@ export const API_ENDPOINTS = {
   CHAT: {
     ALL: '/chat/users',
     BY_USER: (id: string) => `/chat/${id}`
+  },
+  CART: {
+    ITEMS: {
+      UPDATE: (itemId: string) => `/api/v1/cart/items/${itemId}`,
+      DELETE: (itemId: string) => `/api/v1/cart/items/${itemId}`,
+      ADD: '/api/v1/cart/items',
+      ADD_NEGOTIATE: '/api/v1/cart/items/negotiate',
+      READY_FOR_CHECKOUT: '/api/v1/cart/items/ready-for-checkout',
+      NORMAL: '/api/v1/cart/items/normal',
+      ACCEPTED_NEGOTIATIONS: '/api/v1/cart/items/accepted-negotiations'
+    },
+    NEGOTIATE: '/api/v1/cart/negotiate',
+    CLEANUP_EXPIRED: '/api/v1/cart/cleanup-expired',
+    CHECKOUT: {
+      NORMAL: '/api/v1/cart/checkout/normal',
+      NEGOTIATED: '/api/v1/cart/checkout/negotiated',
+      MIXED: '/api/v1/cart/checkout/mixed'
+    },
+    GET: '/api/v1/cart',
+    CLEAR: '/api/v1/cart'
   }
 };
 
