@@ -58,7 +58,7 @@ function EditProduct() {
         measurementUnit: foundProduct.measurementUnit,
         location: foundProduct.location,
         harvestDate: (foundProduct as any).harvestDate || '',
-        category: foundProduct.category,
+        category: foundProduct.category as any,
         description: foundProduct.description,
         isNegotiable: foundProduct.isNegotiable,
         image: foundProduct.image,
