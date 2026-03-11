@@ -26,6 +26,11 @@ class AuthService {
     return response;
   }
 
+  async googleLogin(data: string): Promise<ApiResponse<AuthResponse>> {
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.GOOGLE_LOGIN, data)
+    return response
+  }
+
   /**
    * Sign up a new user and store tokens.
    */

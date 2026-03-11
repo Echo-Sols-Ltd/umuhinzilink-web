@@ -30,6 +30,7 @@ const STORAGE_KEYS = {
 
 interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
+  googleLogin: (data: string) => Promise<void>
   loading: boolean;
   loadAuthState: () => Promise<void>;
   user: User | null;
@@ -75,7 +76,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setSupplier(null);
       setBuyer(null);
       setLoading(false);
-      
+
       // Redirect to login page
       router.push('/auth/signin');
     };
@@ -251,6 +252,50 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const googleLogin = async (token: string) => {
+    try {
+      setLoading(true);
+      const res = await authService.googleLogin(token);
+
+      if (!res.success) {
+        notify.error(res.message, 'Login Failed');
+        return;
+      }
+
+      if (res.data) {
+        // Store auth token and user data
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
+        setUser(res.data.user);
+
+        // Fetch role-specific profile data
+        const roleFetchers = {
+          [UserType.BUYER]: fetchBuyer,
+          [UserType.FARMER]: fetchFarmer,
+          [UserType.SUPPLIER]: fetchSupplier,
+        };
+
+        const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
+        if (fetcher) await fetcher();
+
+        // Navigate to role-specific dashboard
+        const dashboardRoutes = {
+          [UserType.ADMIN]: '/admin/dashboard',
+          [UserType.FARMER]: '/farmer/dashboard',
+          [UserType.BUYER]: '/buyer/dashboard',
+          [UserType.SUPPLIER]: '/supplier/dashboard',
+        };
+
+        const route = dashboardRoutes[res.data.user.role as keyof typeof dashboardRoutes];
+        if (route) router.replace(route);
+      }
+    } catch {
+      notify.error('Please try again', 'Error logging in');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Register new user account
   const register = async (data: UserRequest) => {
     try {
@@ -416,6 +461,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         loading,
         login,
+        googleLogin,
         loadAuthState,
         user,
         farmer,

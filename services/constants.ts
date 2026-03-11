@@ -12,6 +12,7 @@ export const API_CONFIG = {
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
+    GOOGLE_LOGIN:'/auth/login/google',
     REGISTER: '/auth/register',
     REGISTER_FARMER: '/auth/register/farmer',
     REGISTER_SUPPLIER: '/auth/register/supplier',
@@ -152,23 +153,23 @@ export const API_ENDPOINTS = {
   },
   CART: {
     ITEMS: {
-      UPDATE: (itemId: string) => `/api/v1/cart/items/${itemId}`,
-      DELETE: (itemId: string) => `/api/v1/cart/items/${itemId}`,
-      ADD: '/api/v1/cart/items',
-      ADD_NEGOTIATE: '/api/v1/cart/items/negotiate',
-      READY_FOR_CHECKOUT: '/api/v1/cart/items/ready-for-checkout',
-      NORMAL: '/api/v1/cart/items/normal',
-      ACCEPTED_NEGOTIATIONS: '/api/v1/cart/items/accepted-negotiations'
+      UPDATE: (itemId: string) => `/cart/items/${itemId}`,
+      DELETE: (itemId: string) => `/cart/items/${itemId}`,
+      ADD: '/cart/items',
+      ADD_NEGOTIATE: '/cart/items/negotiate',
+      READY_FOR_CHECKOUT: '/cart/items/ready-for-checkout',
+      NORMAL: '/cart/items/normal',
+      ACCEPTED_NEGOTIATIONS: '/cart/items/accepted-negotiations'
     },
-    NEGOTIATE: '/api/v1/cart/negotiate',
-    CLEANUP_EXPIRED: '/api/v1/cart/cleanup-expired',
+    NEGOTIATE: '/cart/negotiate',
+    CLEANUP_EXPIRED: '/cart/cleanup-expired',
     CHECKOUT: {
-      NORMAL: '/api/v1/cart/checkout/normal',
-      NEGOTIATED: '/api/v1/cart/checkout/negotiated',
-      MIXED: '/api/v1/cart/checkout/mixed'
+      NORMAL: '/cart/checkout/normal',
+      NEGOTIATED: '/cart/checkout/negotiated',
+      MIXED: '/cart/checkout/mixed'
     },
-    GET: '/api/v1/cart',
-    CLEAR: '/api/v1/cart'
+    GET: '/cart',
+    CLEAR: '/cart'
   }
 };
 
