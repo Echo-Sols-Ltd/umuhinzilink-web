@@ -33,3 +33,23 @@ export interface Cart {
     updatedAt: string;
 }
 
+export interface CartItemRequest {
+  productId: string;
+  quantity: number;
+  proposedPrice?: number;
+  type: CartItemType;
+}
+
+export interface CartUpdateRequest {
+  quantity: number;
+  proposedPrice?: number;
+}
+
+export interface CartNegotiateRequest {
+  itemIds: string[];
+}
+
+export interface CartCheckoutRequest {
+  itemIds: string[];
+  checkoutType: 'NORMAL' | 'NEGOTIATED' | 'MIXED';
+}
