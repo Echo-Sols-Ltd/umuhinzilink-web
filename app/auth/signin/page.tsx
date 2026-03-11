@@ -21,8 +21,14 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({ email: false, password: false });
-  const { login, loading } = useAuth();
+  const { login, googleToken, googleLogin, loading } = useAuth();
   const { t } = useI18n();
+
+  useEffect(() => {
+    if (googleToken) {
+      googleLogin(googleToken)
+    }
+  }, [googleToken])
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);

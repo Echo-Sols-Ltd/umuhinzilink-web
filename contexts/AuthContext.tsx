@@ -31,6 +31,7 @@ const STORAGE_KEYS = {
 interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
   googleLogin: (data: string) => Promise<void>
+  googleToken: string | null
   loading: boolean;
   loadAuthState: () => Promise<void>;
   user: User | null;
@@ -60,7 +61,7 @@ function useAuth(): AuthContextType {
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-
+  const [googleToken, setGoogleToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [farmer, setFarmer] = useState<Farmer | null>(null);
@@ -461,6 +462,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         loading,
+        googleToken,
         login,
         googleLogin,
         loadAuthState,
