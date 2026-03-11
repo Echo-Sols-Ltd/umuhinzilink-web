@@ -16,11 +16,6 @@ import AuthFooter from '@/components/auth/AuthFooter';
 import GoogleLogin from '@/components/GoogleLogin';
 
 export default function SignIn() {
-  const socialLinks = [
-    { icon: <BiLogoFacebookCircle size={22} />, link: 'https://facebook.com' },
-    { icon: <BiLogoGoogle size={22} />, link: 'https://google.com' },
-  ];
-
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
