@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supplierService, SupplierProductRequest } from '@/services/suppliers';
-import { SupplierProduct, SupplierOrder } from '@/types';
+import { Product, Order } from '@/types';
 import { notify } from '@/lib/notify';
 import { useProduct } from '@/contexts/ProductContext';
 import { useOrder } from '@/contexts/OrderContext';

@@ -22,11 +22,11 @@ const STORAGE_KEYS = {
 };
 
 type ProductContextValue = {
-  addFarmerProduct: (data: FarmerProduct) => void;
-  addSupplierProduct: (data: SupplierProduct) => void;
-  updateFarmerProduct: (id: string, data: FarmerProduct) => void;
-  updateBuyerProduct: (id: string, data: FarmerProduct) => void;
-  updateSupplierProduct: (id: string, data: SupplierProduct) => void;
+  addFarmerProduct: (data: Product) => void;
+  addSupplierProduct: (data: Product) => void;
+  updateFarmerProduct: (id: string, data: Product) => void;
+  updateBuyerProduct: (id: string, data: Product) => void;
+  updateSupplierProduct: (id: string, data: Product) => void;
   removeFarmerProduct: (id: string) => void;
   removeSupplierProduct: (id: string) => void;
   createFarmerProduct: (payload: FarmerProductRequest, image: File) => Promise<void>;
@@ -42,14 +42,14 @@ type ProductContextValue = {
   fetchFarmerBuyerProducts: (page?: number, size?: number) => Promise<void>;
   fetchFarmerStats: () => Promise<void>;
   fetchSupplierStats: () => Promise<void>;
-  fetchFarmerProductById: (id: string) => Promise<{ product: FarmerProduct | null; type: 'farmer' | null; error: string | null }>;
-  fetchSupplierProductById: (id: string) => Promise<{ product: SupplierProduct | null; type: 'supplier' | null; error: string | null }>;
-  fetchProductById: (id: string) => Promise<{ product: FarmerProduct | SupplierProduct | null; type: 'farmer' | 'supplier' | null; error: string | null }>;
+  fetchFarmerProductById: (id: string) => Promise<{ product: Product | null; type: 'farmer' | null; error: string | null }>;
+  fetchSupplierProductById: (id: string) => Promise<{ product: Product | null; type: 'supplier' | null; error: string | null }>;
+  fetchProductById: (id: string) => Promise<{ product: Product | null; type: 'farmer' | 'supplier' | null; error: string | null }>;
   // Order modal management
-  showOrderModal: (product: FarmerProduct | SupplierProduct, productType: 'farmer' | 'supplier') => void;
+  showOrderModal: (product: Product, productType: 'farmer' | 'supplier') => void;
   hideOrderModal: () => void;
   isOrderModalOpen: boolean;
-  orderModalProduct: FarmerProduct | SupplierProduct | null;
+  orderModalProduct: Product | null;
   orderModalProductType: 'farmer' | 'supplier' | null;
   farmerProductsTotalPages: number;
   farmerProductsTotalElements: number;
@@ -107,10 +107,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [mutationLoading, setMutationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[] | null>([]);
-  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[] | null>([]);
-  const [buyerProducts, setBuyerProducts] = useState<FarmerProduct[] | null>([]);
-  const [farmerBuyerProducts, setFarmerBuyerProducts] = useState<SupplierProduct[] | null>([]);
+  const [farmerProducts, setFarmerProducts] = useState<Product[] | null>([]);
+  const [supplierProducts, setSupplierProducts] = useState<Product[] | null>([]);
+  const [buyerProducts, setBuyerProducts] = useState<Product[] | null>([]);
+  const [farmerBuyerProducts, setFarmerBuyerProducts] = useState<Product[] | null>([]);
 
   const [farmerProductsTotalPages, setFarmerProductsTotalPages] = useState(0);
   const [farmerProductsTotalElements, setFarmerProductsTotalElements] = useState(0);

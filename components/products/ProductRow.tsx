@@ -23,7 +23,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
     const router = useRouter()
     const { t } = useI18n()
 
-    const handleContactFarmer = async (product: FarmerProduct) => {
+    const handleContactFarmer = async (product: Product) => {
         if (!user) {
             notify.error(t('productRow.loginToContact'), t('productCard.authRequired'));
             return;

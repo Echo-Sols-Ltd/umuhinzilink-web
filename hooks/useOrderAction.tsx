@@ -28,7 +28,7 @@ export default function useOrderAction() {
       setLoading(true);
       const response = await orderService.updateFarmerOrderStatus(id, status);
       if (response.success && response.data) {
-        editFarmerOrder({ ...response.data, id } as FarmerOrder);
+        editFarmerOrder({ ...response.data, id } as Order);
         notify.success('Delivery status has been updated.', 'Order status updated successfully' );
       } else {
         notify.error(response.message || 'Failed to update', 'Failed to update order status');
@@ -42,7 +42,7 @@ export default function useOrderAction() {
     }
   };
 
-  const updateSupplierOrderStatus = async (id: string, status: DeliveryStatus): Promise<SupplierOrder | null> => {
+  const updateSupplierOrderStatus = async (id: string, status: DeliveryStatus): Promise<Order | null> => {
     try {
       setLoading(true);
       const res = await orderService.updateSupplierOrderStatus(id, status);
@@ -117,7 +117,7 @@ export default function useOrderAction() {
     }
   };
 
-  const acceptFarmerOrder = async (id: string): Promise<FarmerOrder | null> => {
+  const acceptFarmerOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
       const res = await orderService.acceptFarmerOrder(id);
@@ -142,7 +142,7 @@ export default function useOrderAction() {
     }
   };
 
-  const acceptSupplierOrder = async (id: string): Promise<SupplierOrder | null> => {
+  const acceptSupplierOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
       const res = await orderService.acceptSupplierOrder(id);
@@ -167,7 +167,7 @@ export default function useOrderAction() {
     }
   };
 
-  const cancelFarmerOrder = async (id: string): Promise<FarmerOrder | null> => {
+  const cancelFarmerOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
       const res = await orderService.cancelFarmerOrder(id);
@@ -192,7 +192,7 @@ export default function useOrderAction() {
     }
   };
 
-  const cancelSupplierOrder = async (id: string): Promise<SupplierOrder | null> => {
+  const cancelSupplierOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
       const res = await orderService.cancelSupplierOrder(id);

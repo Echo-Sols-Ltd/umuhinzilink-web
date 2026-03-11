@@ -123,7 +123,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [currentBuyerOrder, setCurrentBuyerOrder] = useState<Order | null>(null);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
 
-  const fetchBuyerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
+  const fetchBuyerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getBuyerOrders(page, size);
@@ -140,7 +140,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchFarmerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
+  const fetchFarmerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getFarmerOrders(page, size);
@@ -158,7 +158,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchSupplierOrders = async (page = 0, size = 10): Promise<SupplierOrder[] | null> => {
+  const fetchSupplierOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getSupplierOrders(page, size);
@@ -176,7 +176,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchFarmerBuyerOrders = async (page = 0, size = 10): Promise<SupplierOrder[] | null> => {
+  const fetchFarmerBuyerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getFarmerBuyerOrders(page, size);
