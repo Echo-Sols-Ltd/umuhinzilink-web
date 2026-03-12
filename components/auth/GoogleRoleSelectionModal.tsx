@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-import { useSession, signIn } from "next-auth/react";
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -23,7 +22,6 @@ export default function GoogleRoleSelectionModal({
   onSubmit, 
   loading 
 }: GoogleRoleSelectionModalProps) {
-  const { data: session } = useSession();
   const { t } = useI18n();
   const [selectedRole, setSelectedRole] = React.useState<UserType>(UserType.FARMER);
 
@@ -78,26 +76,7 @@ export default function GoogleRoleSelectionModal({
           </p>
         </div>
 
-        {/* User Info */}
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <div className="flex items-center space-x-3">
-            {session?.user?.image ? (
-              <img 
-                src={session.user.image} 
-                alt={session.user.name || ''}
-                className="w-12 h-12 rounded-full"
-              />
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
-                <span className="text-gray-600 font-semibold">G</span>
-              </div>
-            )}
-            <div>
-              <p className="font-medium text-gray-900">{session?.user?.name || 'Google User'}</p>
-              <p className="text-sm text-gray-600">{session?.user?.email || 'google@example.com'}</p>
-            </div>
-          </div>
-        </div>
+     
 
         {/* Role Selection */}
         <div className="mb-6">

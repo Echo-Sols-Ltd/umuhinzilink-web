@@ -253,6 +253,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       notify.error('Please try again', 'Error logging in');
     } finally {
       setLoading(false);
+      
     }
   };
 
@@ -298,6 +299,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       notify.error('Please try again', 'Error logging in');
     } finally {
       setLoading(false);
+      setGoogleToken(null)
     }
   }
 
@@ -321,6 +323,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       notify.error('Please try again', 'Error registering');
     } finally {
       setLoading(false);
+      setGoogleToken(null)
     }
   }
 

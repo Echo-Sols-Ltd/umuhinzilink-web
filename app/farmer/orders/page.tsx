@@ -133,7 +133,7 @@ function FarmerOrders() {
 
   useEffect(() => {
     fetchFarmerOrders(currentPage - 1, ITEMS_PER_PAGE);
-  }, [currentPage, fetchFarmerOrders]); // Added fetchFarmerOrders to dependencies
+  }, [currentPage]); // Added fetchFarmerOrders to dependencies
 
   useEffect(() => {
     setCurrentPage(1);
