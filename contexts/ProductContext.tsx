@@ -299,16 +299,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchBuyerProducts = async (page = 0, size = 10) => {
-    if (!user?.id) return;
+  const fetchBuyerProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
       const res = await productService.getPublicProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
         setBuyerProducts(Array.isArray(list) ? list : []);
-        setBuyerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-        setBuyerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+        setBuyerProductsTotalPages(res.totalPages ?? 0);
+        setBuyerProductsTotalElements(res.totalElements ?? 0);
         localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(Array.isArray(list) ? list : []));
       }
     } catch (err) {
@@ -316,18 +315,17 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchFarmerBuyerProducts = async (page = 0, size = 10) => {
-    if (!user?.id) return;
+  const fetchFarmerBuyerProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
       const res = await productService.getPublicProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
         setFarmerBuyerProducts(Array.isArray(list) ? list : []);
-        setFarmerBuyerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-        setFarmerBuyerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+        setFarmerBuyerProductsTotalPages(res.totalPages ?? 0);
+        setFarmerBuyerProductsTotalElements(res.totalElements ?? 0);
         localStorage.setItem(
           STORAGE_KEYS.FARMER_BUYER_PRODUCTS,
           JSON.stringify(Array.isArray(list) ? list : [])
@@ -338,7 +336,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const fetchFarmerStats = async () => {
     if (!user?.id) return;

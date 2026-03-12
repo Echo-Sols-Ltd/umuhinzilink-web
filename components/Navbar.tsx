@@ -54,30 +54,22 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-6">
           <Link
             href="/dashboard"
-            className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-              activeSection === 'home' ? 'text-success' : 'text-foreground hover:text-success'
-            }`}
+            className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
           >
-            {t('landing.nav.home')}
+            Marketplace
           </Link>
           <Link
             href="/about"
-            className="px-3 py-2 rounded-md text-sm font-medium text-foreground hover:text-success transition-colors"
+            className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
           >
-            {t('landing.nav.about') || 'About Us'}
+            How it Works
           </Link>
-          <a
-            href="/about#features"
-            className="px-3 py-2 rounded-md text-sm font-medium text-foreground hover:text-success transition-colors"
+          <Link
+            href="/about"
+            className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
           >
-            {t('landing.nav.features')}
-          </a>
-          <a
-            href="/about#contact"
-            className="px-3 py-2 rounded-md text-sm font-medium text-foreground hover:text-success transition-colors"
-          >
-            {t('landing.nav.contact')}
-          </a>
+            About Us
+          </Link>
         </div>
 
         {/* Actions */}

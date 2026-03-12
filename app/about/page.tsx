@@ -11,10 +11,10 @@ import Footer from '@/components/Footer';
 
 export default function AboutPage() {
   return (
-    <div className='bg-background overflow-hidden h-screen'>
-      <main className="bg-background overflow-auto h-full">
+    <div className='bg-background min-h-screen'>
+      <main className="bg-background w-full">
         <Navbar />
-        <section id="home" className="section-fade-up section-delay-1 pt-20">
+        <section id="home" className="section-fade-up section-delay-1 pt-24">
           <Hero />
         </section>
         <section id="features" className="section-fade-up section-delay-2">

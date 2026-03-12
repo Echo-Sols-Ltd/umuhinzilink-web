@@ -29,30 +29,32 @@ export default function Home() {
   }, [currentPage])
 
   return (
-    <div className='bg-background overflow-hidden h-screen'>
-      <main className="bg-background overflow-auto h-full">
-        <Navbar />
-        <div className="container mx-auto px-4 pt-24 pb-12">
-          <header className="mb-10 text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+    <div className='bg-background min-h-screen pb-12'>
+      <Navbar />
+      <main className="w-full">
+        <div className="container mx-auto px-4 pt-32 pb-12">
+          <header className="mb-14 text-center space-y-5 animate-in fade-in slide-in-from-top-4 duration-1000">
+            <h1 className="text-5xl md:text-6xl font-black text-foreground tracking-tight max-w-4xl mx-auto leading-tight">
               {t('landing.hero.title') || 'Fresh from the Farm to Your Table'}
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
               {t('landing.hero.subtitle') || 'Connecting Rwanda\'s farmers directly with buyers for a sustainable future.'}
             </p>
           </header>
-
-          <ProductDisplay 
-            products={buyerProducts || []}
-            loading={loading}
-            currentPage={currentPage}
-            totalPages={buyerProductsTotalPages}
-            onPageChange={setCurrentPage}
-            search={search}
-            onSearchChange={setSearch}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
-          />
+          
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+            <ProductDisplay 
+              products={buyerProducts || []}
+              loading={loading}
+              currentPage={currentPage}
+              totalPages={buyerProductsTotalPages}
+              onPageChange={setCurrentPage}
+              search={search}
+              onSearchChange={setSearch}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
+          </div>
         </div>
         <Footer />
       </main>
