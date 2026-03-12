@@ -20,118 +20,89 @@ const STORAGE_KEYS = {
 type OrderContextValue = {
   loading: boolean;
   error?: string | null;
-  buyerOrders: Order[] | null;
-  farmerOrders: Order[] | null;
-  supplierOrders: Order[] | null;
-  farmerBuyerOrders: Order[] | null;
+  buyingOrders: Order[] | null;
+  sellingOrders: Order[] | null;
 
-  currentFarmerOrder: Order | null;
-  currentBuyerOrder: Order | null;
-  currentSupplierOrder: Order | null;
-  currentFarmerBuyerOrder: Order | null;
+  currentOrder: Order | null;
   currentProduct: Product | null;
 
-  setCurrentFarmerOrder: (order: Order | null) => void;
-  setCurrentSupplierOrder: (order: Order | null) => void;
-  setCurrentFarmerBuyerOrder: (order: Order | null) => void;
-  setCurrentBuyerOrder: (order: Order | null) => void;
-
+  setCurrentOrder: (order: Order | null) => void;
   setCurrentProduct: (product: Product | null) => void;
 
-  addFarmerOrder: (data: Order) => void;
-  addFarmerBuyerOrder: (data: Order) => void;
-
-  editFarmerOrder: (data: Order) => void;
-  editFarmerBuyerOrder: (data: Order) => void;
-  editSupplierOrder: (data: Order) => void;
+  addOrder: (data: Order) => void;
+  updateOrderState: (data: Order) => void;
 
   // Satisfaction methods
-  markFarmerOrderSatisfaction: (id: string) => Promise<void>;
-  markSupplierOrderSatisfaction: (id: string) => Promise<void>;
+  markOrderSatisfaction: (id: string) => Promise<void>;
 
   // State management functions
   setMutationLoading: (loading: boolean) => void;
-
   mutationLoading: boolean;
 
+  fetchBuyingOrders: (page?: number, size?: number) => Promise<Order[] | null>;
+  fetchSellingOrders: (page?: number, size?: number) => Promise<Order[] | null>;
+
+  buyingOrdersTotalPages: number;
+  buyingOrdersTotalElements: number;
+  sellingOrdersTotalPages: number;
+  sellingOrdersTotalElements: number;
+
+  // Derived order states
+  pendingBuyingOrders: Order[];
+  completedBuyingOrders: Order[];
+  cancelledBuyingOrders: Order[];
+  activeBuyingOrders: Order[];
+
+  pendingSellingOrders: Order[];
+  completedSellingOrders: Order[];
+  cancelledSellingOrders: Order[];
+  activeSellingOrders: Order[];
+
+  // Legacy compatibility aliases
+  buyerOrders: Order[] | null;
+  farmerOrders: Order[] | null;
+  supplierOrders: Order[] | null;
   fetchBuyerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
   fetchFarmerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
   fetchSupplierOrders: (page?: number, size?: number) => Promise<Order[] | null>;
-  fetchFarmerBuyerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
-
-  farmerOrdersTotalPages: number;
-  farmerOrdersTotalElements: number;
-  supplierOrdersTotalPages: number;
-  supplierOrdersTotalElements: number;
-  buyerOrdersTotalPages: number;
-  buyerOrdersTotalElements: number;
-  farmerBuyerOrdersTotalPages: number;
-  farmerBuyerOrdersTotalElements: number;
-
-  // Derived order states
-  pendingBuyerOrders: Order[];
-  completedBuyerOrders: Order[];
-  cancelledBuyerOrders: Order[];
-  activeBuyerOrders: Order[];
-
-  pendingFarmerOrders: Order[];
-  completedFarmerOrders: Order[];
-  cancelledFarmerOrders: Order[];
-  activeFarmerOrders: Order[];
-
-  pendingSupplierOrders: Order[];
-  completedSupplierOrders: Order[];
-  cancelledSupplierOrders: Order[];
-  activeSupplierOrders: Order[];
-
-  pendingFarmerBuyerOrders: Order[];
-  completedFarmerBuyerOrders: Order[];
-  cancelledFarmerBuyerOrders: Order[];
-  activeFarmerBuyerOrders: Order[];
+  editFarmerOrder: (data: Order) => void;
+  editSupplierOrder: (data: Order) => void;
+  markFarmerOrderSatisfaction: (id: string) => Promise<void>;
+  markSupplierOrderSatisfaction: (id: string) => Promise<void>;
 };
 
 const OrderContext = createContext<OrderContextValue | undefined>(undefined);
 
 export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const { updateBuyerProduct } = useProduct();
+  const { updateProductState } = useProduct();
   const socket = useSocket()
   const { isEnabled, shouldUseInAppNotifications, shouldUseBrowserNotifications, showNotification } = useBrowserNotification();
 
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
 
-  const [buyerOrders, setBuyerOrders] = useState<Order[] | null>(null);
-  const [farmerOrders, setFarmerOrders] = useState<Order[] | null>(null);
-  const [supplierOrders, setSupplierOrders] = useState<Order[] | null>(null);
-  const [farmerBuyerOrders, setFarmerBuyerOrders] = useState<Order[] | null>(null);
+  const [buyingOrders, setBuyingOrders] = useState<Order[] | null>(null);
+  const [sellingOrders, setSellingOrders] = useState<Order[] | null>(null);
 
-  const [farmerOrdersTotalPages, setFarmerOrdersTotalPages] = useState(0);
-  const [farmerOrdersTotalElements, setFarmerOrdersTotalElements] = useState(0);
-  const [supplierOrdersTotalPages, setSupplierOrdersTotalPages] = useState(0);
-  const [supplierOrdersTotalElements, setSupplierOrdersTotalElements] = useState(0);
-  const [buyerOrdersTotalPages, setBuyerOrdersTotalPages] = useState(0);
-  const [buyerOrdersTotalElements, setBuyerOrdersTotalElements] = useState(0);
-  const [farmerBuyerOrdersTotalPages, setFarmerBuyerOrdersTotalPages] = useState(0);
-  const [farmerBuyerOrdersTotalElements, setFarmerBuyerOrdersTotalElements] = useState(0);
+  const [buyingOrdersTotalPages, setBuyingOrdersTotalPages] = useState(0);
+  const [buyingOrdersTotalElements, setBuyingOrdersTotalElements] = useState(0);
+  const [sellingOrdersTotalPages, setSellingOrdersTotalPages] = useState(0);
+  const [sellingOrdersTotalElements, setSellingOrdersTotalElements] = useState(0);
 
-  const [currentFarmerOrder, setCurrentFarmerOrder] = useState<Order | null>(null);
-  const [currentSupplierOrder, setCurrentSupplierOrder] = useState<Order | null>(null);
-  const [currentFarmerBuyerOrder, setCurrentFarmerBuyerOrder] = useState<Order | null>(
-    null
-  );
-  const [currentBuyerOrder, setCurrentBuyerOrder] = useState<Order | null>(null);
+  const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
 
-  const fetchBuyerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
+  const fetchBuyingOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getBuyerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
-      setBuyerOrders(Array.isArray(list) ? list : []);
-      setBuyerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-      setBuyerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+      setBuyingOrders(Array.isArray(list) ? list : []);
+      setBuyingOrdersTotalPages(res.totalPages ?? 0);
+      setBuyingOrdersTotalElements(res.totalElements ?? 0);
+      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(Array.isArray(list) ? list : []));
       return Array.isArray(list) ? list : null;
     } catch {
       return null;
@@ -140,15 +111,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchFarmerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
+  const fetchSellingOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getSellerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
-      setFarmerOrders(Array.isArray(list) ? list : []);
-      setFarmerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-      setFarmerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+      setSellingOrders(Array.isArray(list) ? list : []);
+      setSellingOrdersTotalPages(res.totalPages ?? 0);
+      setSellingOrdersTotalElements(res.totalElements ?? 0);
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(Array.isArray(list) ? list : []));
       return Array.isArray(list) ? list : null;
     } catch {
@@ -158,179 +129,73 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchSupplierOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
-    try {
-      setLoading(true);
-      const res = await orderService.getSellerOrders(page, size);
-      if (!res.success) return null;
-      const list = res.data ?? [];
-      setSupplierOrders(Array.isArray(list) ? list : []);
-      setSupplierOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-      setSupplierOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(Array.isArray(list) ? list : []));
-      return Array.isArray(list) ? list : null;
-    } catch {
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchFarmerBuyerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
-    try {
-      setLoading(true);
-      const res = await orderService.getBuyerOrders(page, size);
-      if (!res.success) return null;
-      const list = res.data ?? [];
-      setFarmerBuyerOrders(Array.isArray(list) ? list : []);
-      setFarmerBuyerOrdersTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-      setFarmerBuyerOrdersTotalElements((res as { totalElements?: number }).totalElements ?? 0);
-      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(Array.isArray(list) ? list : []));
-      return Array.isArray(list) ? list : null;
-    } catch {
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Legacy fetchers kept for compatibility
+  const fetchBuyerOrders = fetchBuyingOrders;
+  const fetchFarmerOrders = fetchSellingOrders;
+  const fetchSupplierOrders = fetchSellingOrders;
+  const fetchFarmerBuyerOrders = fetchBuyingOrders;
 
 
 
-  const addFarmerOrder = (data: Order) => {
-    setBuyerOrders(prev => {
+  const addOrder = useCallback((data: Order) => {
+    setBuyingOrders(prev => {
       const updated = prev ? [data, ...prev] : [data];
-      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
       return updated;
     });
-    updateBuyerProduct(data.product.id, data.product);
-    setCurrentBuyerOrder(data);
-  };
+    updateProductState(data.product.id, data.product);
+    setCurrentOrder(data);
+  }, [updateProductState]);
 
-  const addFarmerBuyerOrder = (data: Order) => {
-    setFarmerBuyerOrders(prev => {
-      const updated = prev ? [data, ...prev] : [data];
-      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
-      return updated;
-    });
-    setCurrentFarmerBuyerOrder(data);
-  };
+  const updateOrderState = useCallback((data: Order) => {
+    const updater = (prev: Order[] | null) => {
+      if (!prev) return [data];
+      return prev.map(order => (order.id === data.id ? data : order));
+    };
+    setBuyingOrders(updater);
+    setSellingOrders(updater);
+    if (currentOrder?.id === data.id) setCurrentOrder(data);
+  }, [currentOrder]);
 
-  const editFarmerOrder = (data: Order) => {
-    setFarmerOrders(prev => {
-      const updated = prev?.map(order => (order.id === data.id ? data : order)) ?? [data];
-      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
-      return updated;
-    });
-    setCurrentFarmerOrder(data);
-  };
+  // Legacy aliases
+  const addFarmerOrder = addOrder;
+  const addFarmerBuyerOrder = addOrder;
+  const editFarmerOrder = updateOrderState;
+  const editSupplierOrder = updateOrderState;
+  const editFarmerBuyerOrder = updateOrderState;
 
-  const editSupplierOrder = (data: Order) => {
-    setSupplierOrders(prev => {
-      const updated = prev?.map(order => (order.id === data.id ? data : order)) ?? [data];
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
-      return updated;
-    });
-    setCurrentSupplierOrder(data);
-  };
-
-  const editFarmerBuyerOrder = (data: Order) => {
-    setFarmerBuyerOrders(prev => {
-      const updated = prev?.map(order => (order.id === data.id ? data : order)) ?? [data];
-      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
-      return updated;
-    });
-    setCurrentFarmerBuyerOrder(data);
-  };
-
-  const markFarmerOrderSatisfaction = async (id: string) => {
+  const markOrderSatisfaction = async (id: string) => {
     try {
       setMutationLoadingState(true);
       const response = await orderService.markOrderSatisfaction(id);
 
       if (response.success && response.data) {
-        // Update all relevant order lists with the satisfaction data
         const updatedOrder = response.data;
-
-        // Update farmer orders
-        setFarmerOrders(prev => {
+        const updater = (prev: Order[] | null) => {
           if (!prev) return prev;
-          const updated = prev.map(order =>
+          return prev.map(order =>
             order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
           );
-          localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
-          return updated;
-        });
+        };
 
-        // Update buyer orders
-        setBuyerOrders(prev => {
-          if (!prev) return prev;
-          const updated = prev.map(order =>
-            order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
-          );
-          localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
-          return updated;
-        });
+        setSellingOrders(updater);
+        setBuyingOrders(updater);
 
-        // Update current order if it matches
-        setCurrentFarmerOrder(prev =>
-          prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
-        );
-        setCurrentBuyerOrder(prev =>
-          prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
-        );
+        if (currentOrder?.id === id) {
+          setCurrentOrder(prev => prev ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : null);
+        }
       }
     } catch (error) {
-      console.error('Error marking farmer order satisfaction:', error);
+      console.error('Error marking order satisfaction:', error);
       throw error;
     } finally {
       setMutationLoadingState(false);
     }
   };
 
-  const markSupplierOrderSatisfaction = async (id: string) => {
-    try {
-      setMutationLoadingState(true);
-      const response = await orderService.markOrderSatisfaction(id);
-
-      if (response.success && response.data) {
-        // Update all relevant order lists with the satisfaction data
-        const updatedOrder = response.data;
-
-        // Update supplier orders
-        setSupplierOrders(prev => {
-          if (!prev) return prev;
-          const updated = prev.map(order =>
-            order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
-          );
-          localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
-          return updated;
-        });
-
-        // Update farmer buyer orders
-        setFarmerBuyerOrders(prev => {
-          if (!prev) return prev;
-          const updated = prev.map(order =>
-            order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
-          );
-          localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
-          return updated;
-        });
-
-        // Update current order if it matches
-        setCurrentSupplierOrder(prev =>
-          prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
-        );
-        setCurrentFarmerBuyerOrder(prev =>
-          prev?.id === id ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : prev
-        );
-      }
-    } catch (error) {
-      console.error('Error marking supplier order satisfaction:', error);
-      throw error;
-    } finally {
-      setMutationLoadingState(false);
-    }
-  };
+  // Legacy aliases
+  const markFarmerOrderSatisfaction = markOrderSatisfaction;
+  const markSupplierOrderSatisfaction = markOrderSatisfaction;
 
   const setMutationLoading = (loading: boolean) => {
     setMutationLoadingState(loading);
@@ -338,56 +203,18 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
 
   // Helper to update socket orders
-  const handleOrderChange = (order: Order) => {
-    const orderId = order.id
-
-    // Update farmer orders delivery status
-    setFarmerOrders(prev => {
+  const handleOrderChange = useCallback((order: Order) => {
+    const orderId = order.id;
+    const updater = (prev: Order[] | null) => {
       if (!prev) return prev;
-      const updated = prev.map((order) => order.id === orderId ? order : order);
-      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
-      return updated;
-    });
+      return prev.map(o => o.id === orderId ? order : o);
+    };
 
-    // Update buyer orders delivery status
-    setBuyerOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map((order) => order.id === orderId ? order : order);
-      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
-      return updated;
-    });
+    setBuyingOrders(updater);
+    setSellingOrders(updater);
 
-    // Update supplier orders delivery status
-    setSupplierOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map((order) => order.id === orderId ? order : order);
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update farmer buyer orders delivery status
-    setFarmerBuyerOrders(prev => {
-      if (!prev) return prev;
-      const updated = prev.map((order) => order.id === orderId ? order : order);
-      localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
-      return updated;
-    });
-
-    // Update current orders if they match
-    setCurrentFarmerOrder(prev =>
-      prev?.id === orderId ? order : prev
-    );
-    setCurrentBuyerOrder(prev =>
-      prev?.id === orderId ? order : prev
-    );
-    setCurrentSupplierOrder(prev =>
-      prev?.id === orderId ? order : prev
-    );
-    setCurrentFarmerBuyerOrder(prev =>
-      prev?.id === orderId ? order : prev
-    );
-
-  }
+    if (currentOrder?.id === orderId) setCurrentOrder(order);
+  }, [currentOrder]);
   // Socket event handlers
   const handleNewOrder = useCallback((response: SocketResponse<Order>) => {
     // Add null check to prevent undefined errors
@@ -414,21 +241,14 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // For new orders, we need to refresh appropriate list since we don't have full order data
     // This is a limitation of the current socket event structure
     // In a real implementation, you might want to fetch the full order or have the socket send complete order data
-    fetchBuyerOrders();
-    fetchFarmerOrders();
-    fetchSupplierOrders();
-    fetchFarmerBuyerOrders();
-  }, [isEnabled, showNotification, fetchBuyerOrders, fetchFarmerOrders, fetchSupplierOrders, fetchFarmerBuyerOrders]);
+    fetchBuyingOrders();
+    fetchSellingOrders();
+  }, [isEnabled, showNotification, fetchBuyingOrders, fetchSellingOrders]);
 
   const handleOrderStatusChange = useCallback((response: SocketResponse<Order>) => {
-    // Add null check to prevent undefined errors
-    const data = response.data
-    if (!data) {
-      console.error('Order change data is undefined');
-      return;
-    }
+    const data = response.data;
+    if (!data) return;
 
-    // Show notification for order status change
     if (isEnabled) {
       showNotification({
         type: 'order',
@@ -436,40 +256,27 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         body: response.message,
         icon: '/icons/order.svg',
         onClick: () => {
-          // Navigate to orders page
           window.location.href = '/farmer/orders';
         },
       });
     }
-    handleOrderChange(data)
-  }, [isEnabled, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
+    handleOrderChange(data);
+  }, [isEnabled, showNotification, handleOrderChange]);  const handleOrderDeliveryChange = useCallback((response: SocketResponse<Order>) => {
+    const data = response.data;
+    if (!data) return;
 
-
-
-
-  const handleOrderDeliveryChange = useCallback((response: SocketResponse<Order>) => {
-    // Add null check to prevent undefined errors
-    const data = response.data
-    if (!data) {
-      console.error('Delivery change data is undefined');
-      return;
-    }
-
-    // Show notification for delivery status change
     showNotification({
       type: 'delivery',
       title: 'Delivery Status Updated',
       body: `Your order delivery was updated`,
       icon: '/icons/delivery.svg',
       onClick: () => {
-        // Navigate to delivery page
         window.location.href = '/farmer/delivery';
       },
     });
 
     handleOrderChange(data);
-
-  }, [shouldUseInAppNotifications, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
+  }, [showNotification, handleOrderChange]);
 
   const handleOrderSatisfaction = useCallback((response: SocketResponse<Order>) => {
     // Add null check to prevent undefined errors
@@ -517,127 +324,97 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, handleOrderSatisfaction, cleanupSocketListeners]);
 
   // 🔹 Derived Orders
-  const pendingBuyerOrders = useMemo(
-    () => buyerOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
-    [buyerOrders]
+  const pendingBuyingOrders = useMemo(
+    () => buyingOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
+    [buyingOrders]
   );
-  const completedBuyerOrders = useMemo(
-    () => buyerOrders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
-    [buyerOrders]
+  const completedBuyingOrders = useMemo(
+    () => buyingOrders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
+    [buyingOrders]
   );
-  const cancelledBuyerOrders = useMemo(
-    () => buyerOrders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
-    [buyerOrders]
+  const cancelledBuyingOrders = useMemo(
+    () => buyingOrders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
+    [buyingOrders]
   );
-  const activeBuyerOrders = useMemo(
-    () => buyerOrders?.filter(o => o.status === OrderStatus.ACTIVE) || [],
-    [buyerOrders]
-  );
-
-  const pendingFarmerOrders = useMemo(
-    () => farmerOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
-    [farmerOrders]
-  );
-  const completedFarmerOrders = useMemo(
-    () => farmerOrders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
-    [farmerOrders]
-  );
-  const cancelledFarmerOrders = useMemo(
-    () => farmerOrders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
-    [farmerOrders]
-  );
-  const activeFarmerOrders = useMemo(
-    () => farmerOrders?.filter(o => o.status === OrderStatus.ACTIVE) || [],
-    [farmerOrders]
+  const activeBuyingOrders = useMemo(
+    () => buyingOrders?.filter(o => o.status === OrderStatus.ACTIVE) || [],
+    [buyingOrders]
   );
 
-  const pendingSupplierOrders = useMemo(
-    () => supplierOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
-    [supplierOrders]
+  const pendingSellingOrders = useMemo(
+    () => sellingOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
+    [sellingOrders]
   );
-  const completedSupplierOrders = useMemo(
-    () => supplierOrders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
-    [supplierOrders]
+  const completedSellingOrders = useMemo(
+    () => sellingOrders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
+    [sellingOrders]
   );
-  const cancelledSupplierOrders = useMemo(
-    () => supplierOrders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
-    [supplierOrders]
+  const cancelledSellingOrders = useMemo(
+    () => sellingOrders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
+    [sellingOrders]
   );
-  const activeSupplierOrders = useMemo(
-    () => supplierOrders?.filter(o => o.status === OrderStatus.ACTIVE) || [],
-    [supplierOrders]
+  const activeSellingOrders = useMemo(
+    () => sellingOrders?.filter(o => o.status === OrderStatus.ACTIVE) || [],
+    [sellingOrders]
   );
 
-  const pendingFarmerBuyerOrders = useMemo(
-    () => farmerBuyerOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
-    [farmerBuyerOrders]
-  );
-  const completedFarmerBuyerOrders = useMemo(
-    () => farmerBuyerOrders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
-    [farmerBuyerOrders]
-  );
-  const cancelledFarmerBuyerOrders = useMemo(
-    () => farmerBuyerOrders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
-    [farmerBuyerOrders]
-  );
-  const activeFarmerBuyerOrders = useMemo(
-    () => farmerBuyerOrders?.filter(o => o.status === OrderStatus.ACTIVE) || [],
-    [farmerBuyerOrders]
-  );
+  // Legacy derived aliases
+  const pendingBuyerOrders = pendingBuyingOrders;
+  const completedBuyerOrders = completedBuyingOrders;
+  const cancelledBuyerOrders = cancelledBuyingOrders;
+  const activeBuyerOrders = activeBuyingOrders;
+  const pendingFarmerOrders = pendingSellingOrders;
+  const completedFarmerOrders = completedSellingOrders;
+  const cancelledFarmerOrders = cancelledSellingOrders;
+  const activeFarmerOrders = activeSellingOrders;
+  const pendingSupplierOrders = pendingSellingOrders;
+  const completedSupplierOrders = completedSellingOrders;
+  const cancelledSupplierOrders = cancelledSellingOrders;
+  const activeSupplierOrders = activeSellingOrders;
+  const pendingFarmerBuyerOrders = pendingBuyingOrders;
+  const completedFarmerBuyerOrders = completedBuyingOrders;
+  const cancelledFarmerBuyerOrders = cancelledBuyingOrders;
+  const activeFarmerBuyerOrders = activeBuyingOrders;
 
   const value: OrderContextValue = {
     loading,
-    buyerOrders,
-    farmerOrders,
-    supplierOrders,
-    farmerBuyerOrders,
-    currentFarmerOrder,
-    currentBuyerOrder,
-    currentSupplierOrder,
-    currentFarmerBuyerOrder,
+    buyingOrders,
+    sellingOrders,
+    currentOrder,
     currentProduct,
-    setCurrentFarmerOrder,
-    setCurrentSupplierOrder,
-    setCurrentBuyerOrder,
-    setCurrentFarmerBuyerOrder,
+    setCurrentOrder,
     setCurrentProduct,
-    addFarmerOrder,
-    addFarmerBuyerOrder,
-    editFarmerOrder,
-    editSupplierOrder,
-    editFarmerBuyerOrder,
-    markFarmerOrderSatisfaction,
-    markSupplierOrderSatisfaction,
+    addOrder,
+    updateOrderState,
+    markOrderSatisfaction,
     setMutationLoading,
     mutationLoading: mutationLoadingState,
+    fetchBuyingOrders,
+    fetchSellingOrders,
+    buyingOrdersTotalPages,
+    buyingOrdersTotalElements,
+    sellingOrdersTotalPages,
+    sellingOrdersTotalElements,
+    pendingBuyingOrders,
+    completedBuyingOrders,
+    cancelledBuyingOrders,
+    activeBuyingOrders,
+    pendingSellingOrders,
+    completedSellingOrders,
+    cancelledSellingOrders,
+    activeSellingOrders,
+
+    // Legacy aliases
+    buyerOrders: buyingOrders,
+    farmerOrders: sellingOrders,
+    supplierOrders: sellingOrders,
     fetchBuyerOrders,
     fetchFarmerOrders,
     fetchSupplierOrders,
-    fetchFarmerBuyerOrders,
-    farmerOrdersTotalPages,
-    farmerOrdersTotalElements,
-    supplierOrdersTotalPages,
-    supplierOrdersTotalElements,
-    buyerOrdersTotalPages,
-    buyerOrdersTotalElements,
-    farmerBuyerOrdersTotalPages,
-    farmerBuyerOrdersTotalElements,
-    pendingBuyerOrders,
-    completedBuyerOrders,
-    cancelledBuyerOrders,
-    activeBuyerOrders,
-    pendingFarmerOrders,
-    completedFarmerOrders,
-    cancelledFarmerOrders,
-    activeFarmerOrders,
-    pendingSupplierOrders,
-    completedSupplierOrders,
-    cancelledSupplierOrders,
-    activeSupplierOrders,
-    pendingFarmerBuyerOrders,
-    completedFarmerBuyerOrders,
-    cancelledFarmerBuyerOrders,
-    activeFarmerBuyerOrders,
+    editFarmerOrder,
+    editSupplierOrder,
+    markFarmerOrderSatisfaction,
+    markSupplierOrderSatisfaction,
   };
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;

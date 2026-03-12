@@ -94,3 +94,29 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface FarmerProductRequest {
+  name: string;
+  category: string;
+  description: string;
+  unitPrice: number;
+  measurementUnit: string;
+  image: string;
+  quantity: number;
+  location: string;
+  isNegotiable: boolean;
+  certification: CertificationType;
+}
+
+export interface SupplierProductRequest {
+  name: string;
+  category: string;
+  description: string;
+  unitPrice: number;
+  measurementUnit: string;
+  image: string;
+  quantity: number;
+  location: string;
+  isNegotiable: boolean;
+  certification: CertificationType;
+}

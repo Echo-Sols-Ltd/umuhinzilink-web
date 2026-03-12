@@ -14,10 +14,10 @@ export default function Home() {
   const { user } = useAuth()
   const { t } = useI18n()
   const { 
-    buyerProducts, 
-    fetchBuyerProducts, 
+    marketplaceProducts, 
+    fetchMarketplaceProducts, 
     loading, 
-    buyerProductsTotalPages 
+    marketplaceProductsTotalPages 
   } = useProduct()
   
   const [currentPage, setCurrentPage] = useState(1)
@@ -25,11 +25,11 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   useEffect(() => {
-    fetchBuyerProducts(currentPage - 1, 10)
-  }, [currentPage])
+    fetchMarketplaceProducts(currentPage - 1, 10)
+  }, [currentPage, fetchMarketplaceProducts])
 
   return (
-    <div className='bg-background min-h-screen pb-12'>
+    <div className='bg-background h-screen pb-12 overflow-auto'>
       <Navbar />
       <main className="w-full">
         <div className="container mx-auto px-4 pt-32 pb-12">
@@ -44,10 +44,10 @@ export default function Home() {
           
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
             <ProductDisplay 
-              products={buyerProducts || []}
+              products={marketplaceProducts || []}
               loading={loading}
               currentPage={currentPage}
-              totalPages={buyerProductsTotalPages}
+              totalPages={marketplaceProductsTotalPages}
               onPageChange={setCurrentPage}
               search={search}
               onSearchChange={setSearch}
