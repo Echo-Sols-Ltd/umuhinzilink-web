@@ -14,7 +14,7 @@ import { useMessages } from '@/contexts/MessageContext';
 import { useUser } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
-import { ChatUser } from '@/types/chat';
+import { ChatUser } from '@/types';
 import { useChat } from '@/hooks/useChat';
 import { useI18n } from '@/contexts/I18nContext';
 

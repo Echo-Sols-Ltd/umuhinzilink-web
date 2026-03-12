@@ -4,15 +4,15 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { governmentService } from '@/services/government';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { FarmerProduct, SupplierProduct, User, FarmerOrder } from '@/types';
+import { Product, User, Order } from '@/types';
 
 interface GovernmentContextType {
   isValidGovernmentUser: () => boolean;
   startFetchingResources: () => Promise<void>;
   users: User[] | null;
-  supplierProducts: SupplierProduct[];
-  farmerProducts: FarmerProduct[];
-  orders: FarmerOrder[];
+  supplierProducts: Product[];
+  farmerProducts: Product[];
+  orders: Order[];
   loading: boolean;
   error: string | null;
   refreshUsers: () => Promise<void>;
@@ -49,9 +49,9 @@ const GovernmentContext = createContext<GovernmentContextType | null>(null);
 export function GovernmentProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [users, setUsers] = useState<User[] | null>(null);
-  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
-  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
-  const [orders, setOrders] = useState<FarmerOrder[]>([]);
+  const [supplierProducts, setSupplierProducts] = useState<Product[]>([]);
+  const [farmerProducts, setFarmerProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

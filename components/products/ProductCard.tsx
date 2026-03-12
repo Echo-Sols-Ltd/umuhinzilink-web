@@ -1,6 +1,6 @@
 import React from "react";
 import { cn, imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, ProductRef, SupplierProduct } from "@/types";
+import { Product, MessageType, ProductRef } from "@/types";
 import { MapPin, Package, CheckCircle2, ShoppingCart, ArrowRight, Edit, MessageSquare } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,7 +10,7 @@ import { useChat, userToChatUser } from "@/hooks/useChat";
 import { useI18n } from "@/contexts/I18nContext";
 
 interface ProductCardProps {
-    product: SupplierProduct | FarmerProduct;
+    product: Product;
     featured?: boolean;
 }
 

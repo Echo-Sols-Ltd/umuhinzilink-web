@@ -1,4 +1,4 @@
-import { ApiResponse, Supplier, SupplierProduct, SupplierOrder, SupplierProductionStat, PaginatedResponse } from '@/types';
+import { ApiResponse, Supplier, Product, Order,PaginatedResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -23,7 +23,7 @@ interface SupplierDashboard {
   pendingOrders: number;
   totalRevenue: number;
   monthlyRevenue: number[];
-  topProducts: SupplierProduct[];
+  topProducts: Product[];
 }
 
 class SupplierService {
@@ -41,12 +41,12 @@ class SupplierService {
   }
 
   // Product Management Methods
-  async createProduct(productData: SupplierProductRequest): Promise<ApiResponse<SupplierProduct>> {
-    return await apiClient.post<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.CREATE_SUPPLIER, productData);
+  async createProduct(productData: SupplierProductRequest): Promise<ApiResponse<Product>> {
+    return await apiClient.post<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.CREATE_SUPPLIER, productData);
   }
 
-  async getMyProducts(page = 0, size = 10): Promise<PaginatedResponse<SupplierProduct[]>> {
-    return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(
+  async getMyProducts(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
+    return await apiClient.get<PaginatedResponse<Product[]>>(
       `${API_ENDPOINTS.PRODUCT.SUPPLIER_ALL}?page=${page}&size=${size}`
     );
   }
@@ -56,7 +56,7 @@ class SupplierService {
     size?: number;
     sortBy?: string;
     sortDirection?: string;
-  }): Promise<PaginatedResponse<SupplierProduct[]>> {
+  }): Promise<PaginatedResponse<Product[]>> {
     const queryParams = new URLSearchParams();
     queryParams.append('page', String(params?.page ?? 0));
     queryParams.append('size', String(params?.size ?? 10));
@@ -64,7 +64,7 @@ class SupplierService {
     if (params?.sortDirection) queryParams.append('sortDirection', params.sortDirection);
 
     const url = `${API_ENDPOINTS.PRODUCT.SUPPLIER_ALL_PUBLIC}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(url);
+    return await apiClient.get<PaginatedResponse<Product[]>>(url);
   }
 
   async searchProducts(params: {
@@ -76,7 +76,7 @@ class SupplierService {
     status?: string;
     page?: number;
     size?: number;
-  }): Promise<PaginatedResponse<SupplierProduct[]>> {
+  }): Promise<PaginatedResponse<Product[]>> {
     const queryParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -84,46 +84,46 @@ class SupplierService {
       }
     });
 
-    return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(`${API_ENDPOINTS.PRODUCT.SUPPLIER_SEARCH}?${queryParams.toString()}`);
+    return await apiClient.get<PaginatedResponse<Product[]>>(`${API_ENDPOINTS.PRODUCT.SUPPLIER_SEARCH}?${queryParams.toString()}`);
   }
 
-  async getProductById(id: string): Promise<ApiResponse<SupplierProduct>> {
-    return await apiClient.get<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.BY_SUPPLIER_ID(id));
+  async getProductById(id: string): Promise<ApiResponse<Product>> {
+    return await apiClient.get<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.BY_SUPPLIER_ID(id));
   }
 
-  async updateProduct(id: string, productData: Partial<SupplierProductRequest>): Promise<ApiResponse<SupplierProduct>> {
-    return await apiClient.put<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.UPDATE_SUPPLIER(id), productData);
+  async updateProduct(id: string, productData: Partial<SupplierProductRequest>): Promise<ApiResponse<Product>> {
+    return await apiClient.put<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.UPDATE_SUPPLIER(id), productData);
   }
 
   async deleteProduct(id: string): Promise<ApiResponse<void>> {
     return await apiClient.delete<ApiResponse<void>>(API_ENDPOINTS.PRODUCT.DELETE_SUPPLIER(id));
   }
 
-  async getProductStats(): Promise<ApiResponse<SupplierProductionStat[]>> {
-    return await apiClient.get<ApiResponse<SupplierProductionStat[]>>(API_ENDPOINTS.PRODUCT.SUPPLIER_STATS);
+  async getProductStats(): Promise<ApiResponse<any[]>> {
+    return await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.PRODUCT.SUPPLIER_STATS);
   }
 
   // Order Management Methods
-  async getMyOrders(page = 0, size = 10): Promise<PaginatedResponse<SupplierOrder[]>> {
-    return await apiClient.get<PaginatedResponse<SupplierOrder[]>>(
+  async getMyOrders(page = 0, size = 10): Promise<PaginatedResponse<Order[]>> {
+    return await apiClient.get<PaginatedResponse<Order[]>>(
       `${API_ENDPOINTS.ORDER.SUPPLIER_ALL}?page=${page}&size=${size}`
     );
   }
 
-  async getOrderById(id: string): Promise<ApiResponse<SupplierOrder>> {
-    return await apiClient.get<ApiResponse<SupplierOrder>>(API_ENDPOINTS.ORDER.BY_SUPPLIER_ID(id));
+  async getOrderById(id: string): Promise<ApiResponse<Order>> {
+    return await apiClient.get<ApiResponse<Order>>(API_ENDPOINTS.ORDER.BY_SUPPLIER_ID(id));
   }
 
-  async acceptOrder(id: string): Promise<ApiResponse<SupplierOrder>> {
-    return await apiClient.put<ApiResponse<SupplierOrder>>(API_ENDPOINTS.ORDER.ACCEPT_SUPPLIER(id));
+  async acceptOrder(id: string): Promise<ApiResponse<Order>> {
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.ACCEPT_SUPPLIER(id));
   }
 
-  async rejectOrder(id: string): Promise<ApiResponse<SupplierOrder>> {
-    return await apiClient.put<ApiResponse<SupplierOrder>>(API_ENDPOINTS.ORDER.CANCEL_SUPPLIER(id));
+  async rejectOrder(id: string): Promise<ApiResponse<Order>> {
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CANCEL_SUPPLIER(id));
   }
 
-  async updateOrderStatus(id: string, status: string): Promise<ApiResponse<SupplierOrder>> {
-    return await apiClient.put<ApiResponse<SupplierOrder>>(API_ENDPOINTS.ORDER.UPDATE_SUPPLIER_STATUS(id), JSON.stringify(status));
+  async updateOrderStatus(id: string, status: string): Promise<ApiResponse<Order>> {
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.UPDATE_SUPPLIER_STATUS(id), JSON.stringify(status));
   }
 
   // Dashboard Methods

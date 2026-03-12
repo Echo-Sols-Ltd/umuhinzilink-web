@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Message, SendMessageRequest, EditMessageRequest, MessageType, ChatReaction, ChatTyping } from '@/types/message';
-import { User } from '@/types/user';
+import { Message, SendMessageRequest, EditMessageRequest, MessageType, ChatReaction, ChatTyping } from '@/types';
+import { User } from '@/types';
 import { messageService } from '@/services/messages';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
-import { ChatUser } from '@/types/chat';
+import { ChatUser } from '@/types';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 
 interface MessageContextValue {

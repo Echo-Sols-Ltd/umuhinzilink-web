@@ -9,8 +9,9 @@ import {
   Farmer,
   Supplier,
   Buyer,
+  GoogleAuthRequest,
 } from '@/types';
-import { UserType } from '@/types/enums';
+import { UserType } from '@/types';
 import { authService } from '@/services/auth';
 import { farmerService } from '@/services/farmers';
 import { buyerService } from '@/services/buyers';
@@ -30,6 +31,9 @@ const STORAGE_KEYS = {
 
 interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
+  googleLogin: (data: string) => Promise<void>
+  googleToken: string | null
+  setGoogleToken: (data: string) => void
   loading: boolean;
   loadAuthState: () => Promise<void>;
   user: User | null;
@@ -37,6 +41,7 @@ interface AuthContextType {
   supplier: Supplier | null;
   buyer: Buyer | null;
   logout: () => Promise<void>;
+  registerGoogle: (data: GoogleAuthRequest) => Promise<void>
   register: (data: UserRequest) => Promise<void>;
   registerBuyer: (data: BuyerRequest) => Promise<void>;
   registerSupplier: (data: SupplierRequest) => Promise<void>;
@@ -59,7 +64,7 @@ function useAuth(): AuthContextType {
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-
+  const [googleToken, setGoogleToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [farmer, setFarmer] = useState<Farmer | null>(null);
@@ -75,7 +80,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setSupplier(null);
       setBuyer(null);
       setLoading(false);
-      
+
       // Redirect to login page
       router.push('/auth/signin');
     };
@@ -248,8 +253,79 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       notify.error('Please try again', 'Error logging in');
     } finally {
       setLoading(false);
+      
     }
   };
+
+  const googleLogin = async (token: string) => {
+    try {
+      setLoading(true);
+      console.log(token)
+      const res = await authService.googleLogin(token);
+
+      if (!res.success) {
+        notify.error(res.message, 'Login Failed');
+        return;
+      }
+
+      if (res.data) {
+        // Store auth token and user data
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
+        setUser(res.data.user);
+
+        // Fetch role-specific profile data
+        const roleFetchers = {
+          [UserType.BUYER]: fetchBuyer,
+          [UserType.FARMER]: fetchFarmer,
+          [UserType.SUPPLIER]: fetchSupplier,
+        };
+
+        const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
+        if (fetcher) await fetcher();
+
+        // Navigate to role-specific dashboard
+        const dashboardRoutes = {
+          [UserType.ADMIN]: '/admin/dashboard',
+          [UserType.FARMER]: '/farmer/dashboard',
+          [UserType.BUYER]: '/buyer/dashboard',
+          [UserType.SUPPLIER]: '/supplier/dashboard',
+        };
+
+        const route = dashboardRoutes[res.data.user.role as keyof typeof dashboardRoutes];
+        if (route) router.replace(route);
+      }
+    } catch {
+      notify.error('Please try again', 'Error logging in');
+    } finally {
+      setLoading(false);
+      setGoogleToken(null)
+    }
+  }
+
+  const registerGoogle = async (data: GoogleAuthRequest) => {
+    try {
+      setLoading(true);
+      const res = await authService.registerGoogleUser(data);
+
+      if (!res.success) {
+        notify.error(res.message, 'Register Failed');
+        return;
+      }
+
+      if (res.data) {
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
+        setUser(res.data.user);
+        await loadAuthState();
+      }
+    } catch {
+      notify.error('Please try again', 'Error registering');
+    } finally {
+      setLoading(false);
+      setGoogleToken(null)
+    }
+  }
 
   // Register new user account
   const register = async (data: UserRequest) => {
@@ -415,7 +491,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         loading,
+        googleToken,
+        setGoogleToken,
         login,
+        googleLogin,
         loadAuthState,
         user,
         farmer,
@@ -423,6 +502,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         buyer,
         logout,
         register,
+        registerGoogle,
         registerBuyer,
         registerSupplier,
         registerFarmer,

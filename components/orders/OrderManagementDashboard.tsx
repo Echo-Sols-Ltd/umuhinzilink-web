@@ -15,18 +15,18 @@ import {
   DollarSign
 } from 'lucide-react';
 import Image from 'next/image';
-import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus } from '@/types';
+import { Order, OrderStatus, DeliveryStatus } from '@/types';
 import { cn } from '@/lib/utils';
 import OrderStatusTracker from './OrderStatusTracker';
 import { useI18n } from '@/contexts/I18nContext';
 
 interface OrderManagementDashboardProps {
-  orders: (FarmerOrder | SupplierOrder)[];
+  orders: Order[];
   orderType?: string;
   title?: string;
   loading?: boolean;
   className?: string;
-  onViewOrder?: (order: FarmerOrder | SupplierOrder) => void;
+  onViewOrder?: (order: Order) => void;
   onAcceptOrder?: (orderId: string) => void;
   onRejectOrder?: (orderId: string) => void;
   onUpdateStatus?: (orderId: string, status: DeliveryStatus) => void;
@@ -50,7 +50,7 @@ export default function OrderManagementDashboard({
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [sortType, setSortType] = useState<SortType>('newest');
-  const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | SupplierOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
   // Filter and sort orders
@@ -129,12 +129,12 @@ export default function OrderManagementDashboard({
     }
   };
 
-  const canAcceptOrder = (order: FarmerOrder | SupplierOrder) => {
+  const canAcceptOrder = (order: Order) => {
     return (orderType === 'farmer' || orderType === 'supplier') &&
       order.status === OrderStatus.PENDING;
   };
 
-  const canUpdateStatus = (order: FarmerOrder | SupplierOrder) => {
+  const canUpdateStatus = (order: Order) => {
     return (orderType === 'farmer' || orderType === 'supplier') &&
       order.status === OrderStatus.ACTIVE;
   };

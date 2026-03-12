@@ -13,7 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { UserRequest, UserType } from '@/types';
 import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, District, RwandaCrop } from '@/types';
-import { farmSizeOptions, experienceLevelOptions, provinceOptions, districtOptions } from '@/types/enums';
+import { farmSizeOptions, experienceLevelOptions, provinceOptions, districtOptions } from '@/types';
 import useUserAction from '@/hooks/useUserAction';
 import { Upload, X } from 'lucide-react';
 import AuthFooter from '@/components/auth/AuthFooter';

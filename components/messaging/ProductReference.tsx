@@ -47,7 +47,7 @@ export function ProductReference({ productRef, messageContent, compact = false, 
   // Extract product info (works for both FarmerProduct and SupplierProduct)
   const productInfo = {
     name: product.name,
-    image: 'image' in product ? product.image : product.images?.[0] || '/placeholder.jpg',
+    image: product.image || '/placeholder.jpg',
     price: product.unitPrice,
     unit: product.measurementUnit,
     farmerName: product.owner?.names || 'Unknown',

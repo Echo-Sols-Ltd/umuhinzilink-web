@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { User, Phone, MapPin, Mail, Loader2, Edit2, Save, X } from 'lucide-react';
-import { Buyer } from '@/types/user';
+import { Buyer } from '@/types';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
-import { BuyerType } from '@/types/enums';
+import { BuyerType } from '@/types';
 
 interface BuyerProfileProps {
   profile: Buyer | null;

@@ -20,7 +20,7 @@ import {
   XCircle,
   AlertCircle
 } from 'lucide-react';
-import { WalletDTO, WalletTransactionDTO } from '@/types/wallet';
+import { WalletDTO, WalletTransactionDTO } from '@/types';
 import { cn } from '@/lib/utils';
 
 import { useI18n } from '@/contexts/I18nContext';

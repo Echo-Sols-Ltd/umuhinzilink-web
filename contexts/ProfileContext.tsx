@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { User, Farmer, Supplier, Buyer } from '@/types/user';
-import { UserType } from '@/types/enums';
+import { User, Farmer, Supplier, Buyer } from '@/types';
+import { UserType } from '@/types';
 import { useAuth } from './AuthContext';
 import { userService } from '@/services/users';
 import { farmerService } from '@/services/farmers';

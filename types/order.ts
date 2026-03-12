@@ -1,6 +1,28 @@
-import { DeliveryStatus, OrderStatus, PaymentMethod } from './enums';
-import { FarmerProduct, SupplierProduct } from './product';
-import { User } from './user';
+import { Product } from "./product";
+import { User } from "./user";
+
+// Order-related enums
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  ACTIVE = 'ACTIVE',
+}
+
+export enum PaymentMethod {
+  MOBILE_MONEY = 'MOBILE_MONEY',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+  WALLET = 'WALLET',
+  CASH = 'CASH',
+}
+
+export enum DeliveryStatus {
+  PENDING = 'PENDING',
+  SCHEDULED = 'SCHEDULED',
+  IN_TRANSIT = 'IN_TRANSIT',
+  DELIVERED = 'DELIVERED',
+  FAILED = 'FAILED',
+}
 
 export interface DeliveryStep {
   status: DeliveryStatus;
@@ -16,33 +38,17 @@ export interface Delivery {
   trackingSteps: DeliveryStep[];
 }
 
-export interface FarmerOrder {
+export interface Order {
   id: string;
   buyer: User;
-  product: FarmerProduct;
+  product: Product;
   quantity: number;
   totalPrice: number;
   isPaid: boolean;
   status: OrderStatus;
   delivery?: Delivery;
   paymentMethod: PaymentMethod;
-  isBuyerSatisfied?: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SupplierOrder {
-  id: string;
-  buyer: User;
-  product: SupplierProduct;
-  quantity: number;
-  totalPrice: number;
-  isPaid: boolean;
-  status: OrderStatus;
-  delivery?: Delivery;
-  paymentMethod: PaymentMethod;
-  deliveryDate?: string;
-  isBuyerSatisfied?: boolean;
+  isBuyerSatisfied: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import MetricCard from '../common/MetricCard';
 import { DashboardSection } from '../common/DashboardGrid';
-import { AdminDashboardData } from '@/types/dashboard';
+import { AdminDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
 import DashboardChart from '../common/DashboardChart';
 import { useI18n } from '@/contexts/I18nContext';

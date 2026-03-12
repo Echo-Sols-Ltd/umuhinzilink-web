@@ -15,7 +15,7 @@ import {
   Eye,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
+import { UserType, Order, DeliveryStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';
@@ -76,11 +76,11 @@ function FarmerOrders() {
   } = useOrderAction();
 
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedOrder, setSelectedOrder] = useState<FarmerOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [satisfactionModalOpen, setSatisfactionModalOpen] = useState(false);
-  const [selectedOrderForSatisfaction, setSelectedOrderForSatisfaction] = useState<FarmerOrder | null>(null);
+  const [selectedOrderForSatisfaction, setSelectedOrderForSatisfaction] = useState<Order | null>(null);
   const [satisfactionLoading, setSatisfactionLoading] = useState<string | null>(null);
 
   const orders = useMemo(() => farmerOrders || [], [farmerOrders]);
@@ -133,7 +133,7 @@ function FarmerOrders() {
 
   useEffect(() => {
     fetchFarmerOrders(currentPage - 1, ITEMS_PER_PAGE);
-  }, [currentPage, fetchFarmerOrders]); // Added fetchFarmerOrders to dependencies
+  }, [currentPage]); // Added fetchFarmerOrders to dependencies
 
   useEffect(() => {
     setCurrentPage(1);

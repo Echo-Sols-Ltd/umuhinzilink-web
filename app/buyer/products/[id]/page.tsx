@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { FarmerProduct, SupplierProduct } from '@/types';
+import { Product } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -174,7 +174,7 @@ export default function BuyerProductDetailPage() {
     localStorage.setItem('savedProducts', JSON.stringify([...newSaved]));
   };
 
-  const handleShareProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handleShareProduct = (product: Product) => {
     if (navigator.share) {
       navigator.share({
         title: product.name,
@@ -191,7 +191,7 @@ export default function BuyerProductDetailPage() {
     }
   };
 
-  const handlePurchaseProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handlePurchaseProduct = (product: Product) => {
     showOrderModal(product, productType);
   };
 

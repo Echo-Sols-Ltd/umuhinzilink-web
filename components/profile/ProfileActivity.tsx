@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, TrendingUp, Calendar, Eye, Download, MessageSquare, ShoppingBag, Star, Award } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
-import { UserType } from '@/types/enums';
+import { UserType } from '@/types';
 
 interface ActivityData {
   date: string;

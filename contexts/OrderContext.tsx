@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
-import { FarmerOrder, SupplierOrder, OrderStatus, FarmerProduct, DeliveryStatus, UserType, SocketResponse } from '@/types';
-import type { OrderRequest } from '@/types/request';
+import { Order, OrderStatus, Product, DeliveryStatus, UserType, SocketResponse } from '@/types';
+import type { OrderRequest } from '@/types';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
 import { socketService } from '@/services/socket';
@@ -20,30 +20,30 @@ const STORAGE_KEYS = {
 type OrderContextValue = {
   loading: boolean;
   error?: string | null;
-  buyerOrders: FarmerOrder[] | null;
-  farmerOrders: FarmerOrder[] | null;
-  supplierOrders: SupplierOrder[] | null;
-  farmerBuyerOrders: SupplierOrder[] | null;
+  buyerOrders: Order[] | null;
+  farmerOrders: Order[] | null;
+  supplierOrders: Order[] | null;
+  farmerBuyerOrders: Order[] | null;
 
-  currentFarmerOrder: FarmerOrder | null;
-  currentBuyerOrder: FarmerOrder | null;
-  currentSupplierOrder: SupplierOrder | null;
-  currentFarmerBuyerOrder: SupplierOrder | null;
-  currentProduct: FarmerProduct | null;
+  currentFarmerOrder: Order | null;
+  currentBuyerOrder: Order | null;
+  currentSupplierOrder: Order | null;
+  currentFarmerBuyerOrder: Order | null;
+  currentProduct: Product | null;
 
-  setCurrentFarmerOrder: (order: FarmerOrder | null) => void;
-  setCurrentSupplierOrder: (order: SupplierOrder | null) => void;
-  setCurrentFarmerBuyerOrder: (order: SupplierOrder | null) => void;
-  setCurrentBuyerOrder: (order: FarmerOrder | null) => void;
+  setCurrentFarmerOrder: (order: Order | null) => void;
+  setCurrentSupplierOrder: (order: Order | null) => void;
+  setCurrentFarmerBuyerOrder: (order: Order | null) => void;
+  setCurrentBuyerOrder: (order: Order | null) => void;
 
-  setCurrentProduct: (product: FarmerProduct | null) => void;
+  setCurrentProduct: (product: Product | null) => void;
 
-  addFarmerOrder: (data: FarmerOrder) => void;
-  addFarmerBuyerOrder: (data: SupplierOrder) => void;
+  addFarmerOrder: (data: Order) => void;
+  addFarmerBuyerOrder: (data: Order) => void;
 
-  editFarmerOrder: (data: FarmerOrder) => void;
-  editFarmerBuyerOrder: (data: SupplierOrder) => void;
-  editSupplierOrder: (data: SupplierOrder) => void;
+  editFarmerOrder: (data: Order) => void;
+  editFarmerBuyerOrder: (data: Order) => void;
+  editSupplierOrder: (data: Order) => void;
 
   // Satisfaction methods
   markFarmerOrderSatisfaction: (id: string) => Promise<void>;
@@ -54,10 +54,10 @@ type OrderContextValue = {
 
   mutationLoading: boolean;
 
-  fetchBuyerOrders: (page?: number, size?: number) => Promise<FarmerOrder[] | null>;
-  fetchFarmerOrders: (page?: number, size?: number) => Promise<FarmerOrder[] | null>;
-  fetchSupplierOrders: (page?: number, size?: number) => Promise<SupplierOrder[] | null>;
-  fetchFarmerBuyerOrders: (page?: number, size?: number) => Promise<SupplierOrder[] | null>;
+  fetchBuyerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
+  fetchFarmerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
+  fetchSupplierOrders: (page?: number, size?: number) => Promise<Order[] | null>;
+  fetchFarmerBuyerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
 
   farmerOrdersTotalPages: number;
   farmerOrdersTotalElements: number;
@@ -69,25 +69,25 @@ type OrderContextValue = {
   farmerBuyerOrdersTotalElements: number;
 
   // Derived order states
-  pendingBuyerOrders: FarmerOrder[];
-  completedBuyerOrders: FarmerOrder[];
-  cancelledBuyerOrders: FarmerOrder[];
-  activeBuyerOrders: FarmerOrder[];
+  pendingBuyerOrders: Order[];
+  completedBuyerOrders: Order[];
+  cancelledBuyerOrders: Order[];
+  activeBuyerOrders: Order[];
 
-  pendingFarmerOrders: FarmerOrder[];
-  completedFarmerOrders: FarmerOrder[];
-  cancelledFarmerOrders: FarmerOrder[];
-  activeFarmerOrders: FarmerOrder[];
+  pendingFarmerOrders: Order[];
+  completedFarmerOrders: Order[];
+  cancelledFarmerOrders: Order[];
+  activeFarmerOrders: Order[];
 
-  pendingSupplierOrders: SupplierOrder[];
-  completedSupplierOrders: SupplierOrder[];
-  cancelledSupplierOrders: SupplierOrder[];
-  activeSupplierOrders: SupplierOrder[];
+  pendingSupplierOrders: Order[];
+  completedSupplierOrders: Order[];
+  cancelledSupplierOrders: Order[];
+  activeSupplierOrders: Order[];
 
-  pendingFarmerBuyerOrders: SupplierOrder[];
-  completedFarmerBuyerOrders: SupplierOrder[];
-  cancelledFarmerBuyerOrders: SupplierOrder[];
-  activeFarmerBuyerOrders: SupplierOrder[];
+  pendingFarmerBuyerOrders: Order[];
+  completedFarmerBuyerOrders: Order[];
+  cancelledFarmerBuyerOrders: Order[];
+  activeFarmerBuyerOrders: Order[];
 };
 
 const OrderContext = createContext<OrderContextValue | undefined>(undefined);
@@ -101,10 +101,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
 
-  const [buyerOrders, setBuyerOrders] = useState<FarmerOrder[] | null>(null);
-  const [farmerOrders, setFarmerOrders] = useState<FarmerOrder[] | null>(null);
-  const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[] | null>(null);
-  const [farmerBuyerOrders, setFarmerBuyerOrders] = useState<SupplierOrder[] | null>(null);
+  const [buyerOrders, setBuyerOrders] = useState<Order[] | null>(null);
+  const [farmerOrders, setFarmerOrders] = useState<Order[] | null>(null);
+  const [supplierOrders, setSupplierOrders] = useState<Order[] | null>(null);
+  const [farmerBuyerOrders, setFarmerBuyerOrders] = useState<Order[] | null>(null);
 
   const [farmerOrdersTotalPages, setFarmerOrdersTotalPages] = useState(0);
   const [farmerOrdersTotalElements, setFarmerOrdersTotalElements] = useState(0);
@@ -115,15 +115,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [farmerBuyerOrdersTotalPages, setFarmerBuyerOrdersTotalPages] = useState(0);
   const [farmerBuyerOrdersTotalElements, setFarmerBuyerOrdersTotalElements] = useState(0);
 
-  const [currentFarmerOrder, setCurrentFarmerOrder] = useState<FarmerOrder | null>(null);
-  const [currentSupplierOrder, setCurrentSupplierOrder] = useState<SupplierOrder | null>(null);
-  const [currentFarmerBuyerOrder, setCurrentFarmerBuyerOrder] = useState<SupplierOrder | null>(
+  const [currentFarmerOrder, setCurrentFarmerOrder] = useState<Order | null>(null);
+  const [currentSupplierOrder, setCurrentSupplierOrder] = useState<Order | null>(null);
+  const [currentFarmerBuyerOrder, setCurrentFarmerBuyerOrder] = useState<Order | null>(
     null
   );
-  const [currentBuyerOrder, setCurrentBuyerOrder] = useState<FarmerOrder | null>(null);
-  const [currentProduct, setCurrentProduct] = useState<FarmerProduct | null>(null);
+  const [currentBuyerOrder, setCurrentBuyerOrder] = useState<Order | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
 
-  const fetchBuyerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
+  const fetchBuyerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getBuyerOrders(page, size);
@@ -140,7 +140,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchFarmerOrders = async (page = 0, size = 10): Promise<FarmerOrder[] | null> => {
+  const fetchFarmerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getFarmerOrders(page, size);
@@ -158,7 +158,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchSupplierOrders = async (page = 0, size = 10): Promise<SupplierOrder[] | null> => {
+  const fetchSupplierOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getSupplierOrders(page, size);
@@ -176,7 +176,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const fetchFarmerBuyerOrders = async (page = 0, size = 10): Promise<SupplierOrder[] | null> => {
+  const fetchFarmerBuyerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getFarmerBuyerOrders(page, size);
@@ -196,7 +196,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
 
 
-  const addFarmerOrder = (data: FarmerOrder) => {
+  const addFarmerOrder = (data: Order) => {
     setBuyerOrders(prev => {
       const updated = prev ? [data, ...prev] : [data];
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
@@ -206,7 +206,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentBuyerOrder(data);
   };
 
-  const addFarmerBuyerOrder = (data: SupplierOrder) => {
+  const addFarmerBuyerOrder = (data: Order) => {
     setFarmerBuyerOrders(prev => {
       const updated = prev ? [data, ...prev] : [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
@@ -215,7 +215,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerBuyerOrder(data);
   };
 
-  const editFarmerOrder = (data: FarmerOrder) => {
+  const editFarmerOrder = (data: Order) => {
     setFarmerOrders(prev => {
       const updated = prev?.map(order => (order.id === data.id ? data : order)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
@@ -224,7 +224,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentFarmerOrder(data);
   };
 
-  const editSupplierOrder = (data: SupplierOrder) => {
+  const editSupplierOrder = (data: Order) => {
     setSupplierOrders(prev => {
       const updated = prev?.map(order => (order.id === data.id ? data : order)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
@@ -233,7 +233,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentSupplierOrder(data);
   };
 
-  const editFarmerBuyerOrder = (data: SupplierOrder) => {
+  const editFarmerBuyerOrder = (data: Order) => {
     setFarmerBuyerOrders(prev => {
       const updated = prev?.map(order => (order.id === data.id ? data : order)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
@@ -338,16 +338,13 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
 
   // Helper to update socket orders
-  const handleOrderChange = (order: FarmerOrder | SupplierOrder) => {
+  const handleOrderChange = (order: Order) => {
     const orderId = order.id
-    const farmerOrder = order as FarmerOrder
-    const supplierOrder = order as SupplierOrder
-
 
     // Update farmer orders delivery status
     setFarmerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map((order) => order.id === orderId ? farmerOrder : order);
+      const updated = prev.map((order) => order.id === orderId ? order : order);
       localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(updated));
       return updated;
     });
@@ -355,7 +352,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update buyer orders delivery status
     setBuyerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map((order) => order.id === orderId ? farmerOrder : order);
+      const updated = prev.map((order) => order.id === orderId ? order : order);
       localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
       return updated;
     });
@@ -363,7 +360,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update supplier orders delivery status
     setSupplierOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map((order) => order.id === orderId ? supplierOrder : order);
+      const updated = prev.map((order) => order.id === orderId ? order : order);
       localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(updated));
       return updated;
     });
@@ -371,28 +368,28 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // Update farmer buyer orders delivery status
     setFarmerBuyerOrders(prev => {
       if (!prev) return prev;
-      const updated = prev.map((order) => order.id === orderId ? supplierOrder : order);
+      const updated = prev.map((order) => order.id === orderId ? order : order);
       localStorage.setItem(STORAGE_KEYS.FARMER_BUYER, JSON.stringify(updated));
       return updated;
     });
 
     // Update current orders if they match
     setCurrentFarmerOrder(prev =>
-      prev?.id === orderId ? farmerOrder : prev
+      prev?.id === orderId ? order : prev
     );
     setCurrentBuyerOrder(prev =>
-      prev?.id === orderId ? farmerOrder : prev
+      prev?.id === orderId ? order : prev
     );
     setCurrentSupplierOrder(prev =>
-      prev?.id === orderId ? supplierOrder : prev
+      prev?.id === orderId ? order : prev
     );
     setCurrentFarmerBuyerOrder(prev =>
-      prev?.id === orderId ? supplierOrder : prev
+      prev?.id === orderId ? order : prev
     );
 
   }
   // Socket event handlers
-  const handleNewOrder = useCallback((response: SocketResponse<FarmerOrder | SupplierOrder>) => {
+  const handleNewOrder = useCallback((response: SocketResponse<Order>) => {
     // Add null check to prevent undefined errors
     const data = response.data
     if (!data) {
@@ -423,7 +420,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     fetchFarmerBuyerOrders();
   }, [isEnabled, showNotification, fetchBuyerOrders, fetchFarmerOrders, fetchSupplierOrders, fetchFarmerBuyerOrders]);
 
-  const handleOrderStatusChange = useCallback((response: SocketResponse<FarmerOrder | SupplierOrder>) => {
+  const handleOrderStatusChange = useCallback((response: SocketResponse<Order>) => {
     // Add null check to prevent undefined errors
     const data = response.data
     if (!data) {
@@ -450,7 +447,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
 
 
-  const handleOrderDeliveryChange = useCallback((response: SocketResponse<FarmerOrder | SupplierOrder>) => {
+  const handleOrderDeliveryChange = useCallback((response: SocketResponse<Order>) => {
     // Add null check to prevent undefined errors
     const data = response.data
     if (!data) {
@@ -474,7 +471,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
   }, [shouldUseInAppNotifications, showNotification, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, setCurrentFarmerBuyerOrder]);
 
-  const handleOrderSatisfaction = useCallback((response: SocketResponse<FarmerOrder | SupplierOrder>) => {
+  const handleOrderSatisfaction = useCallback((response: SocketResponse<Order>) => {
     // Add null check to prevent undefined errors
     const data = response.data
     if (!data) {

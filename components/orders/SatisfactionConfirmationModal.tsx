@@ -8,10 +8,10 @@ import {
   AlertTriangle,
   Loader2
 } from 'lucide-react';
-import { FarmerOrder, SupplierOrder } from '@/types';
+import { Order } from '@/types';
 
 interface SatisfactionConfirmationModalProps {
-  order: FarmerOrder | SupplierOrder | null;
+  order: Order | null;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => Promise<void>;

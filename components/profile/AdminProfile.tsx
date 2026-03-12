@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { User, Mail, Phone, MapPin, Calendar, Shield, Edit2, Camera, Save, X, Loader2, Settings } from 'lucide-react';
-import { User as UserType } from '@/types/user';
+import { User as UserType } from '@/types';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';

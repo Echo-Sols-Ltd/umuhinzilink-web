@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, FarmerOrder, DeliveryStatus } from '@/types';
+import { UserType, Order, DeliveryStatus } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
 import { notify } from '@/lib/notify';

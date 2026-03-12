@@ -18,7 +18,7 @@ import {
   Area,
   AreaChart
 } from 'recharts';
-import { ChartComponentProps } from '@/types/dashboard';
+import { ChartComponentProps } from '@/types';
 import { cn } from '@/lib/utils';
 
 export default function DashboardChart({ config, className, height = 300 }: ChartComponentProps) {

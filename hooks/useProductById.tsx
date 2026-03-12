@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { FarmerProduct, SupplierProduct } from '@/types/product';
+import { Product } from '@/types';
 import { productService } from '@/services/products';
 import { useAuth } from '@/contexts/AuthContext';
 import { ProductRef, UserType } from '@/types';
 
 export function useProductById(productRef: ProductRef | null) {
-  const [product, setProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();

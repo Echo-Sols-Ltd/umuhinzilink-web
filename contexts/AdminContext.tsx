@@ -4,18 +4,18 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { FarmerProduct, User, FarmerOrder, SupplierProduct, SupplierOrder, WalletTransactionDTO, PaginatedResponse, WalletDTO } from '@/types';
+import { Product, User, Order, WalletTransactionDTO, PaginatedResponse, WalletDTO } from '@/types';
 
 interface AdminContextType {
   users: PaginatedResponse<User[]> | null;
-  farmerProducts: FarmerProduct[];
-  supplierProducts: SupplierProduct[];
-  farmerOrders: FarmerOrder[];
-  supplierOrders: SupplierOrder[];
+  farmerProducts: Product[];
+  supplierProducts: Product[];
+  farmerOrders: Order[];
+  supplierOrders: Order[];
   systemWallet: WalletDTO | null
   systemTransactions: WalletTransactionDTO[]
-  products: (FarmerProduct | SupplierProduct)[]; // Aggregate for dashboard/generic views
-  orders: (FarmerOrder | SupplierOrder)[]; // Aggregate for dashboard/generic views
+  products: Product[]; // Aggregate for dashboard/generic views
+  orders: Order[]; // Aggregate for dashboard/generic views
   loading: boolean;
   error: string | null;
   refreshUsers: () => Promise<void>;
@@ -50,10 +50,10 @@ const AdminContext = createContext<AdminContextType | null>(null);
 export function AdminProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [users, setUsers] = useState<PaginatedResponse<User[]> | null>(null);
-  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[]>([]);
-  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[]>([]);
-  const [farmerOrders, setFarmerOrders] = useState<FarmerOrder[]>([]);
-  const [supplierOrders, setSupplierOrders] = useState<SupplierOrder[]>([]);
+  const [farmerProducts, setFarmerProducts] = useState<Product[]>([]);
+  const [supplierProducts, setSupplierProducts] = useState<Product[]>([]);
+  const [farmerOrders, setFarmerOrders] = useState<Order[]>([]);
+  const [supplierOrders, setSupplierOrders] = useState<Order[]>([]);
   const [systemTransactions, setSystemTransactions] = useState<WalletTransactionDTO[]>([])
   // Derived state for backward compatibility or aggregation
   const products = [...farmerProducts, ...supplierProducts];

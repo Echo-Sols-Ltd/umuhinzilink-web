@@ -1,14 +1,69 @@
-import {
-  Month,
-  ProductCategory,
-  ProductType,
-  ProductStatus,
-  MeasurementUnit,
-  CertificationType,
-  RwandaCrop,
-  RwandaCropCategory,
-} from './enums';
-import { Farmer, Supplier, User } from './user';
+// Product-related enums
+export enum ProductType {
+  FARMER_PRODUCT = 'FARMER_PRODUCT',
+  SUPPLIER_PRODUCT = 'SUPPLIER_PRODUCT'
+}
+
+export enum ProductCategory {
+  FERTILIZER = 'FERTILIZER',
+  SEEDS = 'SEEDS',
+  PESTICIDE = 'PESTICIDE',
+  TOOLS = 'TOOLS',
+  IRRIGATION = 'IRRIGATION',
+  MACHINERY = 'MACHINERY',
+  POST_HARVEST = 'POST_HARVEST',
+  ANIMAL_HEALTH = 'ANIMAL_HEALTH',
+  ANIMAL_FEED = 'ANIMAL_FEED',
+  SOIL_AMENDMENT = 'SOIL_AMENDMENT',
+  ORGANIC_INPUT = 'ORGANIC_INPUT',
+  PACKAGING = 'PACKAGING',
+  GREENHOUSE = 'GREENHOUSE',
+  ACCESSORIES = 'ACCESSORIES',
+}
+
+export enum Month {
+  JANUARY,
+  FEBRUARY,
+  MARCH,
+  APRIL,
+  MAY,
+  JUNE,
+  JULY,
+  AUGUST,
+  SEPTEMBER,
+  OCTOBER,
+  NOVEMBER,
+  DECEMBER,
+}
+
+export enum ProductStatus {
+  IN_STOCK = 'IN_STOCK',
+  OUT_OF_STOCK = 'OUT_OF_STOCK',
+  LOW_STOCK = 'LOW_STOCK',
+}
+
+export enum MeasurementUnit {
+  KG = 'KG',
+  G = 'G',
+  TON = 'TON',
+  LITER = 'LITER',
+  ML = 'ML',
+  BAG = 'BAG',
+  CRATE = 'CRATE',
+  BUNDLE = 'BUNDLE',
+  PIECE = 'PIECE',
+}
+
+export enum CertificationType {
+  NONE = 'NONE',
+  RSB = 'RSB',
+  RWANDA_GAP = 'RWANDA_GAP',
+  NAEB = 'NAEB',
+  COOPERATIVE_CERT = 'COOPERATIVE_CERT',
+  OTHER = 'OTHER',
+}
+
+import { User } from './user';
 
 export interface Statistics {
   month: Month;
@@ -21,25 +76,7 @@ export interface Trend {
   percentage: number;
 }
 
-export interface FarmerProductionStat {
-  product: FarmerProduct;
-  kigali: number;
-  musanze: number;
-  nyagatare: number;
-  statistics: Statistics[];
-  trend: Trend;
-}
-
-export interface SupplierProductionStat {
-  product: SupplierProduct;
-  kigali: number;
-  musanze: number;
-  nyagatare: number;
-  statistics: Statistics[];
-  trend: Trend;
-}
-
-export interface FarmerProduct {
+export interface Product {
   id: string;
   owner: User;
   name: string;
@@ -48,35 +85,12 @@ export interface FarmerProduct {
   image: string;
   quantity: number;
   measurementUnit: MeasurementUnit;
-  category: RwandaCropCategory;
-  harvestDate: string;
+  category: string;
   location: string;
   isNegotiable: boolean;
   certification: CertificationType;
   productStatus: ProductStatus;
-  createdAt?: string;
-  updatedAt?: string;
+  productType: ProductType;
+  createdAt: string;
+  updatedAt: string;
 }
-
-export interface SupplierProduct {
-  id: string;
-  owner: User;
-  name: string;
-  description: string;
-  unitPrice: number;
-  images: string[];
-  image?: string;
-  quantity: number;
-  measurementUnit: MeasurementUnit;
-  category: ProductCategory;
-  harvestDate: Date;
-  location: string;
-  isNegotiable: boolean;
-  certification: CertificationType;
-  productStatus: ProductStatus;
-}
-
-export const cropOptions = Object.values(RwandaCrop).map(crop => ({
-  label: crop.toString(),
-  value: crop,
-}));

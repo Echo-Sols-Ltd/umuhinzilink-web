@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from "react"
 import { User, Message, Reaction, MessageType, ProductRef } from '@/types'
-import { ChatUser } from '@/types/chat'
+import { ChatUser } from '@/types'
 import { useAuth } from "@/contexts/AuthContext"
 import { useMessages } from "@/contexts/MessageContext"
 import { notify } from '@/lib/notify';

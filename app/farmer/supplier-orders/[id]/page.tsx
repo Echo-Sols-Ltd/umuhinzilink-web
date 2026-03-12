@@ -6,10 +6,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, SupplierOrder } from '@/types';
+import { UserType, Order } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import DeliveryTracker from '@/components/delivery/DeliveryTracker';
-import { DeliveryStatus } from '@/types/enums';
+import { DeliveryStatus } from '@/types';
 import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard, ShoppingCart } from 'lucide-react';
 import { useI18n } from '@/contexts/I18nContext';
@@ -22,7 +22,7 @@ function FarmerSupplierOrderDetailPage() {
   const { updateSupplierOrderStatus } = useOrderAction();
   const { t } = useI18n();
 
-  const [order, setOrder] = useState<SupplierOrder | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const orderId = params.id as string;

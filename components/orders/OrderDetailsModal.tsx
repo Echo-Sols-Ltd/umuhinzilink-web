@@ -17,14 +17,14 @@ import {
     Phone,
     ThumbsUp
 } from 'lucide-react';
-import { FarmerOrder, SupplierOrder, OrderStatus, DeliveryStatus, deliveryStatusOptions } from '@/types';
+import { Order, OrderStatus, DeliveryStatus, deliveryStatusOptions } from '@/types';
 import OrderStatusTracker from './OrderStatusTracker';
 import DeliveryTracker from '../delivery/DeliveryTracker';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserType } from '@/types';
 
 interface OrderDetailsModalProps {
-    order: FarmerOrder | SupplierOrder | null;
+    order: Order | null;
     isOpen: boolean;
     onClose: () => void;
     onAccept?: (id: string) => Promise<void>;

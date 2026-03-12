@@ -1,13 +1,10 @@
 import React, { createContext, useContext, useMemo, useState, ReactNode, useCallback, useEffect } from 'react';
 import { productService } from '@/services/products';
 import {
-  FarmerProductionStat,
-  FarmerProduct,
-  SupplierProduct,
+  Product,
   ProductStatus,
-  SupplierProductionStat,
 } from '@/types';
-import type { FarmerProductRequest, SupplierProductRequest } from '@/types/request';
+import type { FarmerProductRequest, SupplierProductRequest } from '@/types';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
 import { notify } from '@/lib/notify';
@@ -23,11 +20,11 @@ const STORAGE_KEYS = {
 };
 
 type ProductContextValue = {
-  addFarmerProduct: (data: FarmerProduct) => void;
-  addSupplierProduct: (data: SupplierProduct) => void;
-  updateFarmerProduct: (id: string, data: FarmerProduct) => void;
-  updateBuyerProduct: (id: string, data: FarmerProduct) => void;
-  updateSupplierProduct: (id: string, data: SupplierProduct) => void;
+  addFarmerProduct: (data: Product) => void;
+  addSupplierProduct: (data: Product) => void;
+  updateFarmerProduct: (id: string, data: Product) => void;
+  updateBuyerProduct: (id: string, data: Product) => void;
+  updateSupplierProduct: (id: string, data: Product) => void;
   removeFarmerProduct: (id: string) => void;
   removeSupplierProduct: (id: string) => void;
   createFarmerProduct: (payload: FarmerProductRequest, image: File) => Promise<void>;
@@ -43,14 +40,14 @@ type ProductContextValue = {
   fetchFarmerBuyerProducts: (page?: number, size?: number) => Promise<void>;
   fetchFarmerStats: () => Promise<void>;
   fetchSupplierStats: () => Promise<void>;
-  fetchFarmerProductById: (id: string) => Promise<{ product: FarmerProduct | null; type: 'farmer' | null; error: string | null }>;
-  fetchSupplierProductById: (id: string) => Promise<{ product: SupplierProduct | null; type: 'supplier' | null; error: string | null }>;
-  fetchProductById: (id: string) => Promise<{ product: FarmerProduct | SupplierProduct | null; type: 'farmer' | 'supplier' | null; error: string | null }>;
+  fetchFarmerProductById: (id: string) => Promise<{ product: Product | null; type: 'farmer' | null; error: string | null }>;
+  fetchSupplierProductById: (id: string) => Promise<{ product: Product | null; type: 'supplier' | null; error: string | null }>;
+  fetchProductById: (id: string) => Promise<{ product: Product | null; type: 'farmer' | 'supplier' | null; error: string | null }>;
   // Order modal management
-  showOrderModal: (product: FarmerProduct | SupplierProduct, productType: 'farmer' | 'supplier') => void;
+  showOrderModal: (product: Product, productType: 'farmer' | 'supplier') => void;
   hideOrderModal: () => void;
   isOrderModalOpen: boolean;
-  orderModalProduct: FarmerProduct | SupplierProduct | null;
+  orderModalProduct: Product | null;
   orderModalProductType: 'farmer' | 'supplier' | null;
   farmerProductsTotalPages: number;
   farmerProductsTotalElements: number;
@@ -62,40 +59,40 @@ type ProductContextValue = {
   farmerBuyerProductsTotalElements: number;
   loading: boolean;
   error: string | null;
-  farmerProducts: FarmerProduct[] | null;
-  supplierProducts: SupplierProduct[] | null;
-  farmerStats: FarmerProductionStat[] | null;
-  supplierStats: SupplierProductionStat[] | null;
-  currentFarmerProduct: FarmerProduct | null;
-  currentSupplierProduct: SupplierProduct | null;
-  currentFarmerBuyerProduct: SupplierProduct | null;
-  currentBuyerProduct: FarmerProduct | null;
-  editFarmerProduct: FarmerProduct | null;
-  editSupplierProduct: SupplierProduct | null;
-  editBuyerProduct: FarmerProduct | null;
-  editFarmerBuyerProduct: SupplierProduct | null;
-  buyerProducts: FarmerProduct[] | null;
-  farmerBuyerProducts: SupplierProduct[] | null;
-  setCurrentFarmerProduct: (product: FarmerProduct | null) => void;
-  setEditFarmerProduct: (product: FarmerProduct | null) => void;
-  setCurrentSupplierProduct: (product: SupplierProduct | null) => void;
-  setEditSupplierProduct: (product: SupplierProduct | null) => void;
-  setCurrentFarmerBuyerProduct: (product: SupplierProduct | null) => void;
-  setCurrentBuyerProduct: (product: FarmerProduct | null) => void;
-  setEditBuyerProduct: (product: FarmerProduct | null) => void;
-  setEditFarmerBuyerProduct: (product: SupplierProduct | null) => void;
-  instockFarmerProducts: FarmerProduct[] | null;
-  outOfStockFarmerProducts: FarmerProduct[] | null;
-  lowInStockFarmerProducts: FarmerProduct[] | null;
-  instockSupplierProducts: SupplierProduct[] | null;
-  outOfStockSupplierProducts: SupplierProduct[] | null;
-  lowInStockSupplierProducts: SupplierProduct[] | null;
-  inStockFarmerBuyerProducts: SupplierProduct[] | null;
-  outOfStockFarmerBuyerProducts: SupplierProduct[] | null;
-  lowInStockFarmerBuyerProducts: SupplierProduct[] | null;
-  inStockBuyerProducts: FarmerProduct[] | null;
-  outOfStockBuyerProducts: FarmerProduct[] | null;
-  lowInStockBuyerProducts: FarmerProduct[] | null;
+  farmerProducts: Product[] | null;
+  supplierProducts: Product[] | null;
+  farmerStats: any[] | null;
+  supplierStats: any[] | null;
+  currentFarmerProduct: Product | null;
+  currentSupplierProduct: Product | null;
+  currentFarmerBuyerProduct: Product | null;
+  currentBuyerProduct: Product | null;
+  editFarmerProduct: Product | null;
+  editSupplierProduct: Product | null;
+  editBuyerProduct: Product | null;
+  editFarmerBuyerProduct: Product | null;
+  buyerProducts: Product[] | null;
+  farmerBuyerProducts: Product[] | null;
+  setCurrentFarmerProduct: (product: Product | null) => void;
+  setEditFarmerProduct: (product: Product | null) => void;
+  setCurrentSupplierProduct: (product: Product | null) => void;
+  setEditSupplierProduct: (product: Product | null) => void;
+  setCurrentFarmerBuyerProduct: (product: Product | null) => void;
+  setCurrentBuyerProduct: (product: Product | null) => void;
+  setEditBuyerProduct: (product: Product | null) => void;
+  setEditFarmerBuyerProduct: (product: Product | null) => void;
+  instockFarmerProducts: Product[] | null;
+  outOfStockFarmerProducts: Product[] | null;
+  lowInStockFarmerProducts: Product[] | null;
+  instockSupplierProducts: Product[] | null;
+  outOfStockSupplierProducts: Product[] | null;
+  lowInStockSupplierProducts: Product[] | null;
+  inStockFarmerBuyerProducts: Product[] | null;
+  outOfStockFarmerBuyerProducts: Product[] | null;
+  lowInStockFarmerBuyerProducts: Product[] | null;
+  inStockBuyerProducts: Product[] | null;
+  outOfStockBuyerProducts: Product[] | null;
+  lowInStockBuyerProducts: Product[] | null;
 };
 
 const ProductContext = createContext<ProductContextValue | undefined>(undefined);
@@ -108,10 +105,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [mutationLoading, setMutationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [farmerProducts, setFarmerProducts] = useState<FarmerProduct[] | null>([]);
-  const [supplierProducts, setSupplierProducts] = useState<SupplierProduct[] | null>([]);
-  const [buyerProducts, setBuyerProducts] = useState<FarmerProduct[] | null>([]);
-  const [farmerBuyerProducts, setFarmerBuyerProducts] = useState<SupplierProduct[] | null>([]);
+  const [farmerProducts, setFarmerProducts] = useState<Product[] | null>([]);
+  const [supplierProducts, setSupplierProducts] = useState<Product[] | null>([]);
+  const [buyerProducts, setBuyerProducts] = useState<Product[] | null>([]);
+  const [farmerBuyerProducts, setFarmerBuyerProducts] = useState<Product[] | null>([]);
 
   const [farmerProductsTotalPages, setFarmerProductsTotalPages] = useState(0);
   const [farmerProductsTotalElements, setFarmerProductsTotalElements] = useState(0);
@@ -122,76 +119,74 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [farmerBuyerProductsTotalPages, setFarmerBuyerProductsTotalPages] = useState(0);
   const [farmerBuyerProductsTotalElements, setFarmerBuyerProductsTotalElements] = useState(0);
 
-  const [farmerStats, setFarmerStats] = useState<FarmerProductionStat[] | null>([]);
-  const [supplierStats, setSupplierStats] = useState<SupplierProductionStat[] | null>([]);
+  const [farmerStats, setFarmerStats] = useState<any[] | null>([]);
+  const [supplierStats, setSupplierStats] = useState<any[] | null>([]);
 
-  const [currentFarmerProduct, setCurrentFarmerProduct] = useState<FarmerProduct | null>(null);
-  const [currentSupplierProduct, setCurrentSupplierProduct] = useState<SupplierProduct | null>(
+  const [currentFarmerProduct, setCurrentFarmerProduct] = useState<Product | null>(null);
+  const [currentSupplierProduct, setCurrentSupplierProduct] = useState<Product | null>(
     null
   );
   const [currentFarmerBuyerProduct, setCurrentFarmerBuyerProduct] =
-    useState<SupplierProduct | null>(null);
-  const [currentBuyerProduct, setCurrentBuyerProduct] = useState<FarmerProduct | null>(null);
-  const [editFarmerProduct, setEditFarmerProduct] = useState<FarmerProduct | null>(null);
-  const [editSupplierProduct, setEditSupplierProduct] = useState<SupplierProduct | null>(null);
-  const [editFarmerBuyerProduct, setEditFarmerBuyerProduct] = useState<SupplierProduct | null>(
+    useState<Product | null>(null);
+  const [currentBuyerProduct, setCurrentBuyerProduct] = useState<Product | null>(null);
+  const [editFarmerProduct, setEditFarmerProduct] = useState<Product | null>(null);
+  const [editSupplierProduct, setEditSupplierProduct] = useState<Product | null>(null);
+  const [editFarmerBuyerProduct, setEditFarmerBuyerProduct] = useState<Product | null>(
     null
   );
-  const [editBuyerProduct, setEditBuyerProduct] = useState<FarmerProduct | null>(null);
+  const [editBuyerProduct, setEditBuyerProduct] = useState<Product | null>(null);
 
   // Order modal state
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [orderModalProduct, setOrderModalProduct] = useState<FarmerProduct | SupplierProduct | null>(null);
+  const [orderModalProduct, setOrderModalProduct] = useState<Product | null>(null);
   const [orderModalProductType, setOrderModalProductType] = useState<'farmer' | 'supplier' | null>(null);
 
-  const handleProductChange = (data: FarmerProduct | SupplierProduct) => {
+  const handleProductChange = (data: Product) => {
     const productId = data.id
-    const farmerData = data as FarmerProduct
-    const supplierData = data as SupplierProduct
 
     setFarmerProducts(prev => {
       if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...farmerData } : p);
+      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
     setBuyerProducts(prev => {
       if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...farmerData } : p);
+      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
     setSupplierProducts(prev => {
       if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...supplierData } : p);
+      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
     setFarmerBuyerProducts(prev => {
       if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...supplierData } : p);
+      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
 
     // Update current products if they match
-    setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
-    setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
-    setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
-    setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...farmerData } : prev);
-    setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
-    setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
-    setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
-    setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...supplierData } : prev);
+    setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
 
   }
 
   // Socket event handlers for real-time product updates
-  const handleProductUpdate = useCallback((productData: FarmerProduct | SupplierProduct) => {
+  const handleProductUpdate = useCallback((productData: Product) => {
     if (!productData) return;
 
     handleProductChange(productData);
   }, []);
 
-  const handleProductStatusChange = useCallback((productData: FarmerProduct | SupplierProduct) => {
+  const handleProductStatusChange = useCallback((productData: Product) => {
     if (!productData) return;
 
     handleProductChange(productData);
   }, []);
 
-  const handleProductDeletion = useCallback((productData: FarmerProduct | SupplierProduct) => {
+  const handleProductDeletion = useCallback((productData: Product) => {
     if (!productData) return;
     const productId = productData.id
 
@@ -377,7 +372,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchFarmerProductById = async (id: string): Promise<{ product: FarmerProduct | null; type: 'farmer' | null; error: string | null }> => {
+  const fetchFarmerProductById = async (id: string): Promise<{ product: Product | null; type: 'farmer' | null; error: string | null }> => {
     try {
       setLoading(true);
       const res = await productService.getFarmerProduct(id);
@@ -392,7 +387,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchSupplierProductById = async (id: string): Promise<{ product: SupplierProduct | null; type: 'supplier' | null; error: string | null }> => {
+  const fetchSupplierProductById = async (id: string): Promise<{ product: Product | null; type: 'supplier' | null; error: string | null }> => {
     try {
       setLoading(true);
       const res = await productService.getSupplierProduct(id);
@@ -407,7 +402,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const fetchProductById = async (id: string): Promise<{ product: FarmerProduct | SupplierProduct | null; type: 'farmer' | 'supplier' | null; error: string | null }> => {
+  const fetchProductById = async (id: string): Promise<{ product: Product | null; type: 'farmer' | 'supplier' | null; error: string | null }> => {
     // Try farmer product first
     const farmerResult = await fetchFarmerProductById(id);
     if (farmerResult.product) {
@@ -424,7 +419,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   };
 
   // Order modal management methods
-  const showOrderModal = (product: FarmerProduct | SupplierProduct, productType: 'farmer' | 'supplier') => {
+  const showOrderModal = (product: Product, productType: 'farmer' | 'supplier') => {
     setOrderModalProduct(product);
     setOrderModalProductType(productType);
     setIsOrderModalOpen(true);
@@ -438,7 +433,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
 
 
-  const addFarmerProduct = (data: FarmerProduct) => {
+  const addFarmerProduct = (data: Product) => {
     setFarmerProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
@@ -446,7 +441,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const addSupplierProduct = (data: SupplierProduct) => {
+  const addSupplierProduct = (data: Product) => {
     setSupplierProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
       localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
@@ -454,7 +449,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateBuyerProduct = (id: string, data: FarmerProduct) => {
+  const updateBuyerProduct = (id: string, data: Product) => {
     setBuyerProducts(prev => {
       const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(updated));
@@ -462,7 +457,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateFarmerProduct = (id: string, data: FarmerProduct) => {
+  const updateFarmerProduct = (id: string, data: Product) => {
     setFarmerProducts(prev => {
       const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
@@ -470,7 +465,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateSupplierProduct = (id: string, data: SupplierProduct) => {
+  const updateSupplierProduct = (id: string, data: Product) => {
     setSupplierProducts(prev => {
       const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
       localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));

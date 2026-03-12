@@ -7,13 +7,13 @@ import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
 import { User, UserType } from '@/types';
-import { ChatUser } from '@/types/chat';
+import { ChatUser } from '@/types';
 import ConversationSidebar from '@/components/messaging/ConversationSidebar';
 import ChatInterface from '@/components/messaging/ChatInterface';
 import { useMessages } from '@/contexts/MessageContext';
 import { cn } from '@/lib/utils';
 import { userService } from '@/services/users';
-import { Message } from '@/types/message';
+import { Message } from '@/types';
 
 // Helper function to convert User to ChatUser
 const userToChatUser = (user: User): ChatUser => ({

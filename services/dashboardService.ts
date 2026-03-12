@@ -7,7 +7,7 @@ import {
   AdminDashboardResponse,
   GovernmentDashboardResponse,
   NotificationResponse
-} from '@/types/dashboard';
+} from '@/types';
 
 // Dashboard Service using the existing API client
 export const dashboardService = {

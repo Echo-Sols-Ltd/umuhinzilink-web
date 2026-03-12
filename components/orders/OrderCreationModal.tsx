@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingCart, Calculator, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
-import { FarmerProduct, SupplierProduct, PaymentMethod } from '@/types';
+import { Product, PaymentMethod } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
@@ -11,7 +11,7 @@ import useOrderAction from '@/hooks/useOrderAction';
 interface OrderCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  product?: FarmerProduct | SupplierProduct | null;
+  product?: Product | null;
   productType?: 'farmer' | 'supplier';
   orderType?: 'buyer' | 'supplier';
 }

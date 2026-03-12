@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { UserType } from '@/types/enums';
+import { UserType } from '@/types';
 import { walletService } from '@/services/wallet';
-import { WalletDTO, WalletTransactionDTO } from '@/types/wallet';
+import { WalletDTO, WalletTransactionDTO } from '@/types';
 import {
     Wallet,
     Loader2,

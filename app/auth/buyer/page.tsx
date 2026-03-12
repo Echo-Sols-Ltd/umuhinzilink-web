@@ -12,7 +12,7 @@ import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { BuyerRequest, BuyerType, Province, District } from '@/types';
-import { buyerTypeOptions, provinceOptions, districtOptions } from '@/types/enums';
+import { buyerTypeOptions, provinceOptions, districtOptions } from '@/types';
 import useUserAction from '@/hooks/useUserAction';
 import AuthFooter from '@/components/auth/AuthFooter';
 

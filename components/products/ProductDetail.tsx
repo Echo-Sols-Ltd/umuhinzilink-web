@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
-import { FarmerProduct, SupplierProduct } from '@/types';
+import { Product } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,13 +13,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
 interface ProductDetailProps {
-  product: FarmerProduct | SupplierProduct;
+  product: Product;
   productType: 'farmer' | 'supplier';
   onSaveProduct?: (productId: string) => void;
-  onShareProduct?: (product: FarmerProduct | SupplierProduct) => void;
-  onEditProduct?: (product: FarmerProduct | SupplierProduct) => void;
+  onShareProduct?: (product: Product) => void;
+  onEditProduct?: (product: Product) => void;
   onDeleteProduct?: (productId: string) => void;
-  onPurchaseProduct?: (product: FarmerProduct | SupplierProduct) => void;
+  onPurchaseProduct?: (product: Product) => void;
   isSaved?: boolean;
   showActions?: boolean;
   className?: string;
@@ -200,7 +200,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground uppercase tracking-wider">{t('buyer.productDetail.harvested')}</span>
-                    <span className="font-medium text-sm sm:text-base">{formatDate(product.harvestDate)}</span>
+                    <span className="font-medium text-sm sm:text-base">
+                      {productType === 'farmer' && 'harvestDate' in product ? formatDate((product as any).harvestDate) : 'N/A'}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { imageUrl } from "@/lib/utils";
-import { FarmerProduct, MessageType, ProductRef, SupplierProduct } from "@/types";
+import { Product, MessageType, ProductRef } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,7 +10,7 @@ import { useProduct } from "@/contexts/ProductContext";
 import { useI18n } from "@/contexts/I18nContext";
 
 interface ProductRowProps {
-    product: FarmerProduct | SupplierProduct
+    product: Product
     onSelect: () => void;
     onPurchase: () => void;
     onContact: () => void;
@@ -23,7 +23,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
     const router = useRouter()
     const { t } = useI18n()
 
-    const handleContactFarmer = async (product: FarmerProduct) => {
+    const handleContactFarmer = async (product: Product) => {
         if (!user) {
             notify.error(t('productRow.loginToContact'), t('productCard.authRequired'));
             return;
@@ -118,7 +118,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                         <button className="border border-border hover:bg-primary transition-colors p-2.5 rounded-lg flex items-center justify-center"
                             onClick={(e: any) => {
                                 e.stopPropagation();
-                                handleContactFarmer(product as FarmerProduct)
+                                handleContactFarmer(product)
                             }}>
                             <MessageSquare className="w-4 h-4 text-gray-600" />
                         </button>

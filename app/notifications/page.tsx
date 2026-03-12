@@ -25,7 +25,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { useNotification } from '@/hooks/useNotification';
 import { UserType } from '@/types';
-import { NotificationType, Notification } from '@/types/notification';
+import { NotificationType, Notification } from '@/types';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';

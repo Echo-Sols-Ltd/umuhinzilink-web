@@ -11,3 +11,7 @@ export interface AuthResponse {
 }
 
 
+export interface GoogleAuthRequest {
+  token: string;
+  role: string;
+}

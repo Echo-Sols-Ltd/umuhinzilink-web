@@ -1,4 +1,4 @@
-import { FarmerOrder, FarmerProduct, PaginatedResponse, SupplierProduct, User } from '@/types';
+import { Product, Order, PaginatedResponse, User } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -14,9 +14,9 @@ export const governmentService = {
     }
   },
 
-  getAllSuppliersProducts: async (page = 0, size = 10): Promise<PaginatedResponse<SupplierProduct[]>> => {
+  getAllSuppliersProducts: async (page = 0, size = 10): Promise<PaginatedResponse<Product[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(
+      return await apiClient.get<PaginatedResponse<Product[]>>(
         `${API_ENDPOINTS.GOVERNMENT.PRODUCTS_SUPPLIERS}?page=${page}&size=${size}`
       );
     } catch (error) {
@@ -25,9 +25,9 @@ export const governmentService = {
     }
   },
 
-  getAllFarmersProducts: async (page = 0, size = 10): Promise<PaginatedResponse<FarmerProduct[]>> => {
+  getAllFarmersProducts: async (page = 0, size = 10): Promise<PaginatedResponse<Product[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(
+      return await apiClient.get<PaginatedResponse<Product[]>>(
         `${API_ENDPOINTS.GOVERNMENT.PRODUCTS_FARMERS}?page=${page}&size=${size}`
       );
     } catch (error) {
@@ -36,9 +36,9 @@ export const governmentService = {
     }
   },
 
-  getAllFarmersOrders: async (page = 0, size = 10): Promise<PaginatedResponse<FarmerOrder[]>> => {
+  getAllFarmersOrders: async (page = 0, size = 10): Promise<PaginatedResponse<Order[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<FarmerOrder[]>>(
+      return await apiClient.get<PaginatedResponse<Order[]>>(
         `${API_ENDPOINTS.GOVERNMENT.ORDERS_FARMERS}?page=${page}&size=${size}`
       );
     } catch (error) {
@@ -47,9 +47,9 @@ export const governmentService = {
     }
   },
 
-  getAllSuppliersOrders: async (page = 0, size = 10): Promise<PaginatedResponse<FarmerOrder[]>> => {
+  getAllSuppliersOrders: async (page = 0, size = 10): Promise<PaginatedResponse<Order[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<FarmerOrder[]>>(
+      return await apiClient.get<PaginatedResponse<Order[]>>(
         `${API_ENDPOINTS.GOVERNMENT.ORDERS_SUPPLIERS}?page=${page}&size=${size}`
       );
     } catch (error) {

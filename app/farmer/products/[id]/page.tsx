@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { FarmerProduct, SupplierProduct } from '@/types';
+import { Product } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -84,7 +84,7 @@ export default function FarmerProductDetailPage() {
     }
   }, [productId, farmerProducts, currentFarmerProduct, setCurrentFarmerProduct, fetchFarmerProducts, showToast]);
 
-  const handleShareProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handleShareProduct = (product: Product) => {
     if (navigator.share) {
       navigator.share({
         title: product.name,
@@ -101,7 +101,7 @@ export default function FarmerProductDetailPage() {
     }
   };
 
-  const handleEditProduct = (product: FarmerProduct | SupplierProduct) => {
+  const handleEditProduct = (product: Product) => {
     // Navigate to edit page
     router.push(`/farmer/products/${product.id}/edit`);
   };

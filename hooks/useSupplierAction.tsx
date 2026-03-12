@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supplierService, SupplierProductRequest } from '@/services/suppliers';
-import { SupplierProduct, SupplierOrder } from '@/types';
+import { Product, Order } from '@/types';
 import { notify } from '@/lib/notify';
 import { useProduct } from '@/contexts/ProductContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -12,7 +12,7 @@ export const useSupplierAction = () => {
   const { editSupplierOrder } = useOrder();
 
   // Product Management Actions (sync with ProductContext)
-  const createProduct = async (productData: SupplierProductRequest): Promise<SupplierProduct | null> => {
+  const createProduct = async (productData: SupplierProductRequest): Promise<Product | null> => {
     setLoading(true);
     setError(null);
     try {
@@ -34,7 +34,7 @@ export const useSupplierAction = () => {
     }
   };
 
-  const getMyProducts = async (): Promise<SupplierProduct[]> => {
+  const getMyProducts = async (): Promise<Product[]> => {
     setLoading(true);
     setError(null);
     try {
@@ -108,7 +108,7 @@ export const useSupplierAction = () => {
     }
   };
 
-  const updateProduct = async (id: string, productData: Partial<SupplierProductRequest>): Promise<SupplierProduct | null> => {
+  const updateProduct = async (id: string, productData: Partial<SupplierProductRequest>): Promise<Product | null> => {
     setLoading(true);
     setError(null);
     try {
@@ -153,7 +153,7 @@ export const useSupplierAction = () => {
   };
 
   // Order Management Actions
-  const getMyOrders = async (): Promise<SupplierOrder[]> => {
+  const getMyOrders = async (): Promise<Order[]> => {
     setLoading(true);
     setError(null);
     try {
@@ -173,7 +173,7 @@ export const useSupplierAction = () => {
     }
   };
 
-  const acceptOrder = async (id: string): Promise<SupplierOrder | null> => {
+  const acceptOrder = async (id: string): Promise<Order | null> => {
     setLoading(true);
     setError(null);
     try {
@@ -195,7 +195,7 @@ export const useSupplierAction = () => {
     }
   };
 
-  const rejectOrder = async (id: string): Promise<SupplierOrder | null> => {
+  const rejectOrder = async (id: string): Promise<Order | null> => {
     setLoading(true);
     setError(null);
     try {
@@ -217,7 +217,7 @@ export const useSupplierAction = () => {
     }
   };
 
-  const updateOrderStatus = async (id: string, status: string): Promise<SupplierOrder | null> => {
+  const updateOrderStatus = async (id: string, status: string): Promise<Order | null> => {
     setLoading(true);
     setError(null);
     try {

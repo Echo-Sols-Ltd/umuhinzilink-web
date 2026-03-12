@@ -13,12 +13,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { RwandaCropCategory } from '@/types';
-import { FarmerProduct } from '@/types/product';
+import { Product } from '@/types';
 import ProductCard from './ProductCard';
 import ProductRow from './ProductRow';
 
 interface ProductDisplayProps {
-  products: FarmerProduct[];
+  products: Product[];
   loading?: boolean;
   viewMode?: 'grid' | 'list';
   showFilters?: boolean;
@@ -30,9 +30,9 @@ interface ProductDisplayProps {
   onViewModeChange?: (mode: 'grid' | 'list') => void;
   onSearchChange?: (search: string) => void;
   onFilterChange?: (filters: any) => void;
-  onProductSelect?: (product: FarmerProduct) => void;
-  onProductPurchase?: (product: FarmerProduct) => void;
-  onProductContact?: (product: FarmerProduct) => void;
+  onProductSelect?: (product: Product) => void;
+  onProductPurchase?: (product: Product) => void;
+  onProductContact?: (product: Product) => void;
   selectedCategory?: string;
   selectedLocation?: string;
   search?: string;

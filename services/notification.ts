@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import { Notification, NotificationFilter } from '@/types/notification';
+import { Notification, NotificationFilter } from '@/types';
 import { ApiResponse } from '@/types';
 
 class NotificationService {

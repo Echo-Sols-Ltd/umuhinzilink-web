@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { walletService } from '@/services/wallet';
 import { paymentService } from '@/services/payments';
-import { WalletDTO, WalletTransactionDTO, PaymentRequest, PaymentResponseDTO } from '@/types/wallet';
+import { WalletDTO, WalletTransactionDTO, PaymentRequest, PaymentResponseDTO } from '@/types';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
 

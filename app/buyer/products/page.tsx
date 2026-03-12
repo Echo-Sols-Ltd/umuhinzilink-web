@@ -20,12 +20,12 @@ import {
 } from 'lucide-react';
 import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
-import { BuyerPages, FarmerProduct, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
+import { BuyerPages, Product, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChat } from '@/hooks/useChat';
-import { MessageType, ProductRef } from '@/types/message';
+import { MessageType, ProductRef } from '@/types';
 import { productService } from '@/services/products';
 import { ProductDisplay } from '@/components/products/ProductDisplay';
 import { useI18n } from '@/contexts/I18nContext';
@@ -133,7 +133,7 @@ function ProductsPageComponent() {
   const endIndex = startIndex + itemsPerPage;
   const paginatedProducts = filteredProducts?.slice(startIndex, endIndex) || [];
 
-  const handleContactFarmer = async (product: FarmerProduct) => {
+  const handleContactFarmer = async (product: Product) => {
     if (!buyer) {
       notify.error(t('buyer.marketplace.toasts.authRequired.body'), t('buyer.marketplace.toasts.authRequired.title'));
       return;

@@ -1,79 +1,76 @@
 import {
-  FarmerProduct,
-  SupplierProduct,
+  Product,
   FarmerProductRequest,
   ApiResponse,
   PaginatedResponse,
-  FarmerProductionStat,
-  SupplierProductionStat,
   SupplierProductRequest,
 } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
 class ProductService {
-  async createFarmerProduct(payload: FarmerProductRequest): Promise<ApiResponse<FarmerProduct>> {
-    return await apiClient.post<ApiResponse<FarmerProduct>>(API_ENDPOINTS.PRODUCT.CREATE_FARMER, payload);
+  async createFarmerProduct(payload: FarmerProductRequest): Promise<ApiResponse<Product>> {
+    return await apiClient.post<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.CREATE_FARMER, payload);
   }
 
   async createSupplierProduct(
     payload: SupplierProductRequest
-  ): Promise<ApiResponse<SupplierProduct>> {
-    return await apiClient.post<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.CREATE_SUPPLIER, payload);
+  ): Promise<ApiResponse<Product>> {
+    return await apiClient.post<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.CREATE_SUPPLIER, payload);
   }
 
   async updateFarmerProduct(
     id: string,
     payload: FarmerProductRequest
-  ): Promise<ApiResponse<FarmerProduct>> {
-    return await apiClient.put<ApiResponse<FarmerProduct>>(API_ENDPOINTS.PRODUCT.UPDATE_FARMER(id), payload);
+  ): Promise<ApiResponse<Product>> {
+    return await apiClient.put<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.UPDATE_FARMER(id), payload);
   }
 
   async updateSupplierProduct(
     id: string,
     payload: SupplierProductRequest
-  ): Promise<ApiResponse<SupplierProduct>> {
-    return await apiClient.put<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.UPDATE_SUPPLIER(id), payload);
+  ): Promise<ApiResponse<Product>> {
+    return await apiClient.put<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.UPDATE_SUPPLIER(id), payload);
   }
 
-  async deleteFarmerProduct(id: string): Promise<ApiResponse<FarmerProduct>> {
-    return await apiClient.delete<ApiResponse<FarmerProduct>>(API_ENDPOINTS.PRODUCT.DELETE_FARMER(id));
+  async deleteFarmerProduct(id: string): Promise<ApiResponse<Product>> {
+    return await apiClient.delete<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.DELETE_FARMER(id));
   }
 
-  async deleteSupplierProduct(id: string): Promise<ApiResponse<SupplierProduct>> {
-    return await apiClient.delete<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.DELETE_SUPPLIER(id));
+  async deleteSupplierProduct(id: string): Promise<ApiResponse<Product>> {
+    return await apiClient.delete<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.DELETE_SUPPLIER(id));
   }
 
-  async getProductsByFarmer(page = 0, size = 10): Promise<PaginatedResponse<FarmerProduct[]>> {
-    return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(
+  async getProductsByFarmer(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
+    return await apiClient.get<PaginatedResponse<Product[]>>(
       `${API_ENDPOINTS.PRODUCT.FARMER_ALL}?page=${page}&size=${size}`
     );
   }
 
-  async getProductsBySupplier(page = 0, size = 10): Promise<PaginatedResponse<SupplierProduct[]>> {
-    return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(
+  async getProductsBySupplier(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
+    return await apiClient.get<PaginatedResponse<Product[]>>(
       `${API_ENDPOINTS.PRODUCT.SUPPLIER_ALL}?page=${page}&size=${size}`
     );
   }
 
-  async getBuyerProducts(page = 0, size = 10): Promise<PaginatedResponse<FarmerProduct[]>> {
-    return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(
+  async getBuyerProducts(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
+    return await apiClient.get<PaginatedResponse<Product[]>>(
       `${API_ENDPOINTS.PRODUCT.FARMER_ALL_PUBLIC}?page=${page}&size=${size}`
     );
   }
 
-  async getFarmerBuyerProducts(page = 0, size = 10): Promise<PaginatedResponse<SupplierProduct[]>> {
-    return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(
+  async getFarmerBuyerProducts(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
+    return await apiClient.get<PaginatedResponse<Product[]>>(
       `${API_ENDPOINTS.PRODUCT.SUPPLIER_ALL_PUBLIC}?page=${page}&size=${size}`
     );
   }
 
-  async getFarmerStats(): Promise<ApiResponse<FarmerProductionStat[]>> {
-    return await apiClient.get<ApiResponse<FarmerProductionStat[]>>(API_ENDPOINTS.PRODUCT.FARMER_STATS);
+  async getFarmerStats(): Promise<ApiResponse<any[]>> {
+    return await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.PRODUCT.FARMER_STATS);
   }
 
-  async getSupplierStats(): Promise<ApiResponse<SupplierProductionStat[]>> {
-    return await apiClient.get<ApiResponse<SupplierProductionStat[]>>(API_ENDPOINTS.PRODUCT.SUPPLIER_STATS);
+  async getSupplierStats(): Promise<ApiResponse<any[]>> {
+    return await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.PRODUCT.SUPPLIER_STATS);
   }
 
   async searchFarmerProducts(params: {
@@ -85,7 +82,7 @@ class ProductService {
     maxPrice?: number;
     page?: number;
     size?: number;
-  }): Promise<PaginatedResponse<FarmerProduct[]>> {
+  }): Promise<PaginatedResponse<Product[]>> {
     const queryParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {
@@ -94,7 +91,7 @@ class ProductService {
       }
     });
 
-    return await apiClient.get<PaginatedResponse<FarmerProduct[]>>(`${API_ENDPOINTS.PRODUCT.FARMER_SEARCH}?${queryParams.toString()}`);
+    return await apiClient.get<PaginatedResponse<Product[]>>(`${API_ENDPOINTS.PRODUCT.FARMER_SEARCH}?${queryParams.toString()}`);
   }
 
   async searchSupplierProducts(params: {
@@ -106,7 +103,7 @@ class ProductService {
     maxPrice?: number;
     page?: number;
     size?: number;
-  }): Promise<PaginatedResponse<SupplierProduct[]>> {
+  }): Promise<PaginatedResponse<Product[]>> {
     const queryParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {
@@ -115,15 +112,15 @@ class ProductService {
       }
     });
 
-    return await apiClient.get<PaginatedResponse<SupplierProduct[]>>(`${API_ENDPOINTS.PRODUCT.SUPPLIER_SEARCH}?${queryParams.toString()}`);
+    return await apiClient.get<PaginatedResponse<Product[]>>(`${API_ENDPOINTS.PRODUCT.SUPPLIER_SEARCH}?${queryParams.toString()}`);
   }
 
-  async getFarmerProduct(id: string): Promise<ApiResponse<FarmerProduct>> {
-    return await apiClient.get<ApiResponse<FarmerProduct>>(API_ENDPOINTS.PRODUCT.BY_FARMER_ID(id));
+  async getFarmerProduct(id: string): Promise<ApiResponse<Product>> {
+    return await apiClient.get<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.BY_FARMER_ID(id));
   }
 
-  async getSupplierProduct(id: string): Promise<ApiResponse<SupplierProduct>> {
-    return await apiClient.get<ApiResponse<SupplierProduct>>(API_ENDPOINTS.PRODUCT.BY_SUPPLIER_ID(id));
+  async getSupplierProduct(id: string): Promise<ApiResponse<Product>> {
+    return await apiClient.get<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.BY_SUPPLIER_ID(id));
   }
 
   async uploadProductPhoto(file: File): Promise<ApiResponse<string>> {

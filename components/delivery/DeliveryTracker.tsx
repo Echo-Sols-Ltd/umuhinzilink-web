@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { DeliveryStep, Delivery } from '@/types/order';
-import { DeliveryStatus } from '@/types/enums';
+import { DeliveryStep, Delivery } from '@/types';
+import { DeliveryStatus } from '@/types';
 import { Check, Clock, Truck, Package, AlertCircle, Calendar, MapPin, Navigation } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserType } from '@/types/enums';
+import { UserType } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
 
 interface DeliveryTrackerProps {

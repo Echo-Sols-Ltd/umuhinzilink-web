@@ -13,20 +13,22 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import LanguageSelector from '@/components/auth/LanguageSelector';
 import AuthFooter from '@/components/auth/AuthFooter';
+import GoogleLogin from '@/components/GoogleLogin';
 
 export default function SignIn() {
-  const socialLinks = [
-    { icon: <BiLogoFacebookCircle size={22} />, link: 'https://facebook.com' },
-    { icon: <BiLogoGoogle size={22} />, link: 'https://google.com' },
-  ];
-
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({ email: false, password: false });
-  const { login, loading } = useAuth();
+  const { login, googleToken, googleLogin, loading } = useAuth();
   const { t } = useI18n();
+
+  useEffect(() => {
+    if (googleToken) {
+      googleLogin(googleToken)
+    }
+  }, [googleToken])
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -114,10 +116,7 @@ export default function SignIn() {
               <BiLogoFacebookCircle size={20} className="mr-2 text-blue-600" />
               <span>{t('auth.signIn.continueWithFacebook')}</span>
             </button>
-            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-              <BiLogoGoogle size={20} className="mr-2 text-red-500" />
-              <span>{t('auth.signIn.continueWithGoogle')}</span>
-            </button>
+            <GoogleLogin />
           </div>
 
           <div className="flex items-center gap-3 mb-6">
@@ -181,9 +180,9 @@ export default function SignIn() {
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Switch 
-                  id="remember-me" 
-                  checked={rememberMe} 
+                <Switch
+                  id="remember-me"
+                  checked={rememberMe}
                   onCheckedChange={setRememberMe}
                   className="data-[state=checked]:bg-green-600"
                 />
@@ -214,10 +213,10 @@ export default function SignIn() {
               </Link>
             </p>
           </form>
-            {/* Language Selector at Bottom */}
-      <AuthFooter />
+          {/* Language Selector at Bottom */}
+          <AuthFooter />
         </div>
-        
+
       </div>
 
       {/* RIGHT – Hero Section */}
@@ -236,7 +235,7 @@ export default function SignIn() {
         </p>
       </div>
 
-    
+
     </div>
   );
 }

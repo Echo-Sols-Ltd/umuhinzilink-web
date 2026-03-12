@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
-import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping, FarmerOrder, SupplierOrder } from '@/types'
+import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping, Order } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants';
 import { OrderChangeResponse, OrderDeliveryChange } from './websocket';
 
@@ -14,10 +14,10 @@ class SocketService {
     private messageEditionListeners: ((message: Message) => void)[] = []
     private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
-    private orderStatusChangeListeners: ((data: SocketResponse<FarmerOrder | SupplierOrder>) => void)[] = []
-    private orderDeliveryChangeListeners: ((data: SocketResponse<FarmerOrder | SupplierOrder>) => void)[] = []
-    private orderNewListeners: ((data: SocketResponse<FarmerOrder | SupplierOrder>) => void)[] = []
-    private orderSatisfactionListeners: ((data: SocketResponse<FarmerOrder | SupplierOrder>) => void)[] = []
+    private orderStatusChangeListeners: ((data: SocketResponse<Order>) => void)[] = []
+    private orderDeliveryChangeListeners: ((data: SocketResponse<Order>) => void)[] = []
+    private orderNewListeners: ((data: SocketResponse<Order>) => void)[] = []
+    private orderSatisfactionListeners: ((data: SocketResponse<Order>) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
@@ -188,7 +188,7 @@ class SocketService {
 
     private handleNewOrder(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
+            const body = JSON.parse(message.body) as SocketResponse<Order>
             // Only call listeners if data exists
             if (body.data) {
                 this.orderNewListeners.forEach(cb => cb(body))
@@ -203,7 +203,7 @@ class SocketService {
 
     private handleOrderStatusChange(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
+            const body = JSON.parse(message.body) as SocketResponse<Order>
             // Only call listeners if data exists
             if (body.data) {
                 this.orderStatusChangeListeners.forEach(cb => cb(body))
@@ -217,7 +217,7 @@ class SocketService {
 
     private handleOrderDeliveryChange(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
+            const body = JSON.parse(message.body) as SocketResponse<Order>
             // Only call listeners if data exists
             if (body.data) {
                 this.orderDeliveryChangeListeners.forEach(cb => cb(body))
@@ -231,7 +231,7 @@ class SocketService {
 
     private handleOrderSatisfaction(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<FarmerOrder | SupplierOrder>
+            const body = JSON.parse(message.body) as SocketResponse<Order>
             // Only call listeners if data exists
             if (body.data) {
                 this.orderSatisfactionListeners.forEach(cb => cb(body))
@@ -321,28 +321,28 @@ class SocketService {
             }
         }
     }
-    public onNewOrder(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
+    public onNewOrder(callback: (data: SocketResponse<Order>) => void) {
         this.orderNewListeners.push(callback)
     }
-    public removeNewOrderListener(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
+    public removeNewOrderListener(callback: (data: SocketResponse<Order>) => void) {
         this.orderNewListeners = this.orderNewListeners.filter(cb => cb !== callback)
     }
-    public onOrderStatusChange(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
+    public onOrderStatusChange(callback: (data: SocketResponse<Order>) => void) {
         this.orderStatusChangeListeners.push(callback)
     }
-    public removeOrderStatusChangeListener(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
+    public removeOrderStatusChangeListener(callback: (data: SocketResponse<Order>) => void) {
         this.orderStatusChangeListeners = this.orderStatusChangeListeners.filter(cb => cb !== callback)
     }
-    public onOrderDeliveryChange(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
+    public onOrderDeliveryChange(callback: (data: SocketResponse<Order>) => void) {
         this.orderDeliveryChangeListeners.push(callback)
     }
-    public removeOrderDeliveryChangeListener(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
+    public removeOrderDeliveryChangeListener(callback: (data: SocketResponse<Order>) => void) {
         this.orderDeliveryChangeListeners = this.orderDeliveryChangeListeners.filter(cb => cb !== callback)
     }
-    public onOrderSatisfaction(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
+    public onOrderSatisfaction(callback: (data: SocketResponse<Order>) => void) {
         this.orderSatisfactionListeners.push(callback)
     }
-    public removeOrderSatisfactionListener(callback: (data: SocketResponse<FarmerOrder | SupplierOrder>) => void) {
+    public removeOrderSatisfactionListener(callback: (data: SocketResponse<Order>) => void) {
         this.orderSatisfactionListeners = this.orderSatisfactionListeners.filter(cb => cb !== callback)
     }
 

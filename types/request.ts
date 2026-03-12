@@ -1,17 +1,25 @@
 import {
   PaymentMethod,
-  FarmSizeCategory,
-  ExperienceLevel,
-  SupplierType,
+} from './order';
+
+import {
   BuyerType,
+  SupplierType,
+  ExperienceLevel,
   Address,
-  CertificationType,
-  MeasurementUnit,
   RwandaCrop,
   RwandaCropCategory,
+  FarmSizeCategory,
+} from './user';
+
+import {
   ProductCategory,
   ProductType,
-} from './enums';
+  CertificationType,
+  MeasurementUnit,
+} from './product';
+
+import { User } from './user';
 
 export interface OrderRequest {
   productId?: string; // Made optional for custom supplier orders

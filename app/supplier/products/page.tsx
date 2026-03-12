@@ -31,7 +31,7 @@ import { useSupplierAction } from '@/hooks/useSupplierAction';
 import Sidebar from '@/components/shared/Sidebar';
 import { SupplierPages, UserType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
-import { ProductCategory, ProductType, MeasurementUnit, CertificationType } from '@/types/enums';
+import { ProductCategory, ProductType, MeasurementUnit, CertificationType } from '@/types';
 import { useProduct } from '@/contexts/ProductContext';
 import ProductCard from '@/components/products/ProductCard';
 import { Pagination } from '@/components/ui/pagination';
