@@ -1,0 +1,31 @@
+      "title": "Marketplace",
+      "tagline": "Fresh from the farm to your table",
+      "verifiedFarmers": "Verified Farmers",
+      "contactMessage": "Hello! I am interested in your {{productName}}. Is it still available?",
+      "toasts": {
+        "authRequired": {
+          "title": "Authentication Required",
+          "body": "Please log in to contact the farmer."
+        },
+        "farmerNotAvailable": {
+          "title": "Farmer Unavailable",
+          "body": "This farmer is currently unavailable for contact."
+        },
+        "messageSent": {
+          "title": "Message Sent",
+          "body": "Your message has been sent to {{farmerName}} regarding {{productName}}."
+        },
+        "failedToSendMessage": {
+          "title": "Failed to Send Message",
+          "body": "An error occurred while trying to send your message. Please try again."
+        }
+      },
+      "searchPlaceholder": "Find fresh produce...",
+      "noProducts": "No matching products",
+      "noProductsDesc": "We couldn't find what you're looking for. Try a different category or location.",
+      "filters": {
+        "label": "Filters",
+        "category": "Category",
+        "allRegions": "All Regions"
+      }
+    },

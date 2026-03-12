@@ -620,7 +620,6 @@
       "title": "Marketplace",
       "tagline": "Fresh from the farm to your table",
       "verifiedFarmers": "Verified Farmers",
-      "filters": "Filters",
       "contactMessage": "Hello! I am interested in your {{productName}}. Is it still available?",
       "toasts": {
         "authRequired": {
@@ -639,6 +638,14 @@
           "title": "Failed to Send Message",
           "body": "An error occurred while trying to send your message. Please try again."
         }
+      },
+      "searchPlaceholder": "Find fresh produce...",
+      "noProducts": "No matching products",
+      "noProductsDesc": "We couldn't find what you're looking for. Try a different category or location.",
+      "filters": {
+        "label": "Filters",
+        "category": "Category",
+        "allRegions": "All Regions"
       }
     },
     "purchases": {
@@ -1136,6 +1143,34 @@
         "paid": "PAID",
         "unpaid": "UNPAID",
         "deliveryTracking": "Delivery Tracking"
+      }
+    },
+    "products": {
+      "title": "Input Inventory",
+      "subtitle": "Manage and update your agricultural supplies for farmers",
+      "addProduct": "Add New Input",
+      "activeListings": "Active Listings",
+      "results": "Results",
+      "noListings": "No inputs found",
+      "noListingsDesc": "Start by listing your first agricultural input product.",
+      "addTitle": "Add New Input",
+      "editTitle": "Edit Input",
+      "filters": {
+        "search": "Search your inventory..."
+      },
+      "form": {
+        "details": "Product Details",
+        "selectType": "Select Product Type",
+        "descPlaceholder": "Describe your input product...",
+        "price": "Price (RWF)",
+        "measurement": "Measurement",
+        "selectUnit": "Select Unit",
+        "quantity": "Stock Quantity",
+        "certification": "Certification",
+        "none": "None",
+        "media": "Product Media",
+        "update": "Update Listing",
+        "list": "List Input"
       }
     }
   },

@@ -620,7 +620,6 @@
       "title": "Isoko ryacu",
       "tagline": "Ibicuruzwa bishya bivuye mu murima",
       "verifiedFarmers": "Abahinzi bemewe",
-      "filters": "Gushungura",
       "contactMessage": "Ndabaramukije! Ndifuza kugura {{productName}}. Mbese muracyagifite?",
       "toasts": {
         "authRequired": {
@@ -639,6 +638,14 @@
           "title": "Kunoheresha byanze",
           "body": "Habayeho ikibazo mu kohereza ubutumwa bwawe. Ongera ugerageze."
         }
+      },
+      "searchPlaceholder": "Shakisha umusaruro...",
+      "noProducts": "Nta gicuruzwa cyabonetse",
+      "noProductsDesc": "Ntitwabashije kubona ibyo ushaka. Gerageza gushakira mu kindi cyiciro cyangwa ahandi hantu.",
+      "filters": {
+        "label": "Gushungura",
+        "category": "Icyiciro",
+        "allRegions": "Intara zose"
       }
     },
     "purchases": {
@@ -1136,6 +1143,34 @@
         "paid": "YISHYUWE",
         "unpaid": "NTIYISHYUWE",
         "deliveryTracking": "Kureba Aho Igitumizwa Kigeze"
+      }
+    },
+    "products": {
+      "title": "Ibicuruzwa by'Inyongeramusaruro",
+      "subtitle": "Cunga kandi uvugurure inyongeramusaruro uha abahinzi",
+      "addProduct": "Ongeramo inyongeramusaruro nshya",
+      "activeListings": "Ibicuruzwa bihari",
+      "results": "Ibisubizo",
+      "noListings": "Nta nyongeramusaruro yabonetse",
+      "noListingsDesc": "Tangira ushyiraho inyongeramusaruro yawe ya mbere kuri uru rubuga.",
+      "addTitle": "Ongeramo inyongeramusaruro nshya",
+      "editTitle": "Hindura inyongeramusaruro",
+      "filters": {
+        "search": "Shakisha mu bubiko bwawe..."
+      },
+      "form": {
+        "details": "Amakuru ku gicuruzwa",
+        "selectType": "Hitamo ubwoko bw'igicuruzwa",
+        "descPlaceholder": "Sobanura inyongeramusaruro yawe...",
+        "price": "Igiciro (RWF)",
+        "measurement": "Ingano",
+        "selectUnit": "Hitamo urugero",
+        "quantity": "Ingano mu bubiko",
+        "certification": "Icyemezo",
+        "none": "Nta na kimwe",
+        "media": "Ifoto y'igicuruzwa",
+        "update": "Vugurura",
+        "list": "Shyiraho igicuruzwa"
       }
     }
   },
