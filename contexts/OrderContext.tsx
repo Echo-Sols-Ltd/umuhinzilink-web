@@ -143,7 +143,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const fetchFarmerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
-      const res = await orderService.getFarmerOrders(page, size);
+      const res = await orderService.getSellerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
       setFarmerOrders(Array.isArray(list) ? list : []);
@@ -161,7 +161,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const fetchSupplierOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
-      const res = await orderService.getSupplierOrders(page, size);
+      const res = await orderService.getSellerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
       setSupplierOrders(Array.isArray(list) ? list : []);
@@ -179,7 +179,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const fetchFarmerBuyerOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
-      const res = await orderService.getFarmerBuyerOrders(page, size);
+      const res = await orderService.getBuyerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
       setFarmerBuyerOrders(Array.isArray(list) ? list : []);
@@ -245,7 +245,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const markFarmerOrderSatisfaction = async (id: string) => {
     try {
       setMutationLoadingState(true);
-      const response = await orderService.markFarmerOrderSatisfaction(id);
+      const response = await orderService.markOrderSatisfaction(id);
 
       if (response.success && response.data) {
         // Update all relevant order lists with the satisfaction data
@@ -290,7 +290,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const markSupplierOrderSatisfaction = async (id: string) => {
     try {
       setMutationLoadingState(true);
-      const response = await orderService.markSupplierOrderSatisfaction(id);
+      const response = await orderService.markOrderSatisfaction(id);
 
       if (response.success && response.data) {
         // Update all relevant order lists with the satisfaction data

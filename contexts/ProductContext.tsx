@@ -265,7 +265,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const fetchFarmerProducts = async (page = 0, size = 10) => {
     try {
       setLoading(true);
-      const res = await productService.getProductsByFarmer(page, size);
+      const res = await productService.getPrivateProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
         setFarmerProducts(Array.isArray(list) ? list : []);
@@ -284,7 +284,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     if (!user?.id) return;
     try {
       setLoading(true);
-      const res = await productService.getProductsBySupplier(page, size);
+      const res = await productService.getPrivateProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
         setSupplierProducts(Array.isArray(list) ? list : []);
@@ -303,7 +303,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     if (!user?.id) return;
     try {
       setLoading(true);
-      const res = await productService.getBuyerProducts(page, size);
+      const res = await productService.getPublicProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
         setBuyerProducts(Array.isArray(list) ? list : []);
@@ -322,7 +322,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     if (!user?.id) return;
     try {
       setLoading(true);
-      const res = await productService.getFarmerBuyerProducts(page, size);
+      const res = await productService.getPublicProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
         setFarmerBuyerProducts(Array.isArray(list) ? list : []);
@@ -375,7 +375,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const fetchFarmerProductById = async (id: string): Promise<{ product: Product | null; type: 'farmer' | null; error: string | null }> => {
     try {
       setLoading(true);
-      const res = await productService.getFarmerProduct(id);
+      const res = await productService.getProductById(id);
       if (res.success && res.data) {
         return { product: res.data, type: 'farmer', error: null };
       }
@@ -390,7 +390,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const fetchSupplierProductById = async (id: string): Promise<{ product: Product | null; type: 'supplier' | null; error: string | null }> => {
     try {
       setLoading(true);
-      const res = await productService.getSupplierProduct(id);
+      const res = await productService.getProductById(id);
       if (res.success && res.data) {
         return { product: res.data, type: 'supplier', error: null };
       }
@@ -495,7 +495,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       const imgRes = await productService.uploadProductPhoto(image);
       if (!imgRes?.data) return;
       payload.image = imgRes.data;
-      const res = await productService.createFarmerProduct(payload);
+      const res = await productService.createProduct(payload);
       if (!res?.success || !res.data) {
         notify.error('Try again later', 'Failed to Create product');
         return;
@@ -513,7 +513,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const createSupplierProduct = async (payload: SupplierProductRequest) => {
     try {
       setMutationLoading(true);
-      const res = await productService.createSupplierProduct(payload);
+      const res = await productService.createProduct(payload);
       if (!res?.success || !res.data) {
         notify.error('Try again later', 'Failed to Create product');
         return;
@@ -531,7 +531,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const saveFarmerProduct = async (id: string, payload: FarmerProductRequest) => {
     try {
       setMutationLoading(true);
-      const res = await productService.updateFarmerProduct(id, payload);
+      const res = await productService.updateProduct(id, payload);
       if (!res?.success || !res.data) {
         notify.error('Try again later', 'Failed to Edit product');
         return;
@@ -549,7 +549,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const saveSupplierProduct = async (id: string, payload: SupplierProductRequest) => {
     try {
       setMutationLoading(true);
-      const res = await productService.updateSupplierProduct(id, payload);
+      const res = await productService.updateProduct(id, payload);
       if (!res?.success || !res.data) {
         notify.error('Try again later', 'Failed to Edit product');
         return;
@@ -567,7 +567,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const deleteFarmerProduct = async (id: string) => {
     try {
       setMutationLoading(true);
-      const res = await productService.deleteFarmerProduct(id);
+      const res = await productService.deleteProduct(id);
       if (!res?.success) {
         notify.error('Try again later', 'Failed to delete product');
         return;
@@ -585,7 +585,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const deleteSupplierProduct = async (id: string) => {
     try {
       setMutationLoading(true);
-      const res = await productService.deleteSupplierProduct(id);
+      const res = await productService.deleteProduct(id);
       if (!res?.success) {
         notify.error('Try again later', 'Failed to delete product');
         return;

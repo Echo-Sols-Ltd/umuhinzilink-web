@@ -8,6 +8,10 @@ import { useRouter } from "next/navigation";
 import { useProduct } from "@/contexts/ProductContext";
 import { useChat, userToChatUser } from "@/hooks/useChat";
 import { useI18n } from "@/contexts/I18nContext";
+import { useCart } from "@/contexts/CartContext";
+import { CartItemType } from "@/types";
+import NegotiationModal from "./NegotiationModal";
+import { useState } from "react";
 
 interface ProductCardProps {
     product: Product;
@@ -18,8 +22,10 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
     const { user } = useAuth();
     const { showOrderModal } = useProduct();
     const { handleUserClick, handleSendMessage } = useChat();
+    const { addItem } = useCart();
     const router = useRouter();
     const { t } = useI18n();
+    const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
 
     const isProductOwner = user?.id === product.owner?.id;
     const isAvailable = product.productStatus === 'IN_STOCK';
@@ -39,12 +45,22 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
         notify.success(`${product.name} saved`, "Wishlist Updated");
     };
 
-    const handleAction = (e: React.MouseEvent) => {
+    const handleAction = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (isProductOwner) {
             router.push(`/${user?.role?.toLowerCase()}/products/${product.id}/edit`);
         } else {
-            router.push(`/buyer/products/${product.id}`);
+            if (!user) {
+                notify.error(t('productCard.loginToBuy'), t('auth.required'));
+                router.push('/auth/signin');
+                return;
+            }
+            await addItem({
+                productId: product.id,
+                quantity: 1,
+                type: CartItemType.NORMAL
+            });
+            router.push(`/cart`);
         }
     }
 
@@ -52,6 +68,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
         e.stopPropagation();
         if (!user) {
             notify.error(t('productCard.loginToNegotiate'), t('productCard.authRequired'));
+            router.push('/auth/signin');
             return;
         }
 
@@ -60,29 +77,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
             return;
         }
 
-        try {
-            const owner = product.owner;
-            handleUserClick(userToChatUser(owner));
-
-            const productRef: ProductRef = {
-                productId: product.id,
-                productType: owner.role
-            };
-
-            await handleSendMessage(
-                t('productCard.negotiateMessage').replace('{productName}', product.name),
-                MessageType.PRODUCT,
-                undefined,
-                productRef,
-                owner
-            );
-
-            notify.success(t('productCard.redirectingToChat').replace('{ownerName}', owner.names), t('productCard.inquirySent'));
-            router.push(`/chat/${owner.id}`);
-        } catch (error) {
-            console.error('Failed to initiate negotiation:', error);
-            notify.error(t('productCard.couldNotStartChat'), t('productCard.error'));
-        }
+        setIsNegotiateModalOpen(true);
     };
 
     return (
@@ -202,6 +197,12 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                     </div>
                 </div>
             </div>
+
+            <NegotiationModal 
+                product={product}
+                isOpen={isNegotiateModalOpen}
+                onClose={() => setIsNegotiateModalOpen(false)}
+            />
         </div>
     );
 }
