@@ -26,7 +26,7 @@ function EditInput() {
   const router = useRouter();
   const { user } = useAuth();
   const supplierActions = useSupplierAction();
-  const { supplierProducts } = useProduct();
+  const { myProducts: supplierProducts, saveProduct: updateProduct } = useProduct();
   const inputId = params.id as string;
 
   const [formData, setFormData] = useState({
@@ -158,7 +158,7 @@ function EditInput() {
         harvestDate: new Date().toISOString(),
       };
 
-      await supplierActions.updateProduct(inputId, productData);
+      await updateProduct(inputId, productData);
 
       notify.success('Input updated successfully!', 'Success');
 

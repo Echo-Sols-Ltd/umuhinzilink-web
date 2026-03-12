@@ -233,7 +233,7 @@ function SupplierOrderDetailPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('supplier.orders.detail.unitPrice')}</label>
-                  <p className="text-foreground">RWF {(currentSupplierOrder.totalPrice / currentSupplierOrder.quantity).toLocaleString()}</p>
+                  <p className="text-foreground">RWF {(currentOrder.totalPrice / currentOrder.quantity).toLocaleString()}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('supplier.orders.detail.totalPrice')}</label>

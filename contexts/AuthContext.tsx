@@ -15,7 +15,6 @@ import { UserType } from '@/types';
 import { authService } from '@/services/auth';
 import { farmerService } from '@/services/farmers';
 import { buyerService } from '@/services/buyers';
-import { supplierService } from '@/services/suppliers';
 import { useRouter } from 'next/navigation';
 import { notify } from '@/lib/notify';
 import { apiClient } from '@/services/client';
@@ -130,19 +129,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Fetch supplier profile from API and store in state/localStorage
   const fetchSupplier = async () => {
-    try {
-      const res = await supplierService.getMe();
-      if (!res.success) {
-        router.replace('/auth/supplier');
-        return;
-      }
-      if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data));
-        setSupplier(res.data);
-      }
-    } catch {
-      notify.error('Please try again later', 'Fetching supplier failed');
-    }
+    // For now, supplier profile is fetched via auth check or similar
+    // If there was a specific supplierService.getMe(), it should be moved to a unified approach
   };
 
   // Retrieve user data from localStorage

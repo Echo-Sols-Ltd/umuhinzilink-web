@@ -48,10 +48,10 @@ function ProductsPageComponent() {
   const { loading } = useSupplier();
   const supplierActions = useSupplierAction();
   const {
-    supplierProducts,
-    fetchSupplierProducts,
-    supplierProductsTotalPages: totalPages,
-    supplierProductsTotalElements: totalElements,
+    myProducts: supplierProducts,
+    fetchMyProducts: fetchSupplierProducts,
+    myProductsTotalPages: totalPages,
+    myProductsTotalElements: totalElements,
   } = useProduct();
 
   const filteredProducts = useMemo(() => {
@@ -118,7 +118,7 @@ function ProductsPageComponent() {
       quantity: parseInt(formData.quantity),
       location: formData.location,
       isNegotiable: formData.isNegotiable,
-      certification: formData.certification,
+      certification: formData.certification as CertificationType,
       image: formData.imageUrl || '/placeholder.png',
       harvestDate: new Date().toISOString(),
     };

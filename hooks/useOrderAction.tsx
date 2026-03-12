@@ -2,8 +2,9 @@ import { useOrder } from '@/contexts/OrderContext';
 import { orderService } from '@/services/orders';
 import { useWallet } from '@/contexts/WalletContext';
 import { notify } from '@/lib/notify';
-import { Order, DeliveryStatus } from '@/types';
+import { Order, DeliveryStatus, UserType } from '@/types';
 import type { OrderRequest } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 
 /**
@@ -12,6 +13,7 @@ import { useState } from 'react';
  */
 export default function useOrderAction() {
   const [loading, setLoading] = useState(false)
+  const { user } = useAuth();
   const {
     addOrder,
     updateOrderState: editFarmerOrder,
@@ -66,7 +68,7 @@ export default function useOrderAction() {
     }
   };
 
-  const createFarmerOrder = async (payload: OrderRequest) => {
+  const createOrder = async (payload: OrderRequest) => {
     try {
       setLoading(true);
       const res = await orderService.createOrder(payload);
@@ -79,35 +81,15 @@ export default function useOrderAction() {
         notify.error('Failed to create order: empty response', 'Failed to create order');
         return;
       }
+      
       addOrder(newOrder);
       notify.success('Initiating payment...', 'Order created successfully' );
-      const paymentRes = await payWithWallet(newOrder.id, 'Order Payment');
-      if (paymentRes?.status === 'COMPLETED') {
-        // Order already updated via addFarmerOrder
+      
+      // If payment depends on role, logic can be added here
+      if (user?.role === UserType.FARMER) {
+          const paymentRes = await payWithWallet(newOrder.id, 'Order Payment');
+          // Update order locally if needed
       }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to create order';
-      notify.error(msg, 'Failed to create order');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createSupplierOrder = async (payload: OrderRequest) => {
-    try {
-      setLoading(true);
-      const res = await orderService.createOrder(payload);
-      if (!res.success) {
-        notify.error(res.message || 'Failed to create order', 'Failed to create order');
-        return;
-      }
-      const newOrder = res.data;
-      if (!newOrder) {
-        notify.error('Failed to create order: empty response', 'Failed to create order');
-        return;
-      }
-      addOrder(newOrder);
-      notify.success('Initiating payment...', 'Order created successfully' );
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to create order';
       notify.error(msg, 'Failed to create order');
@@ -236,8 +218,7 @@ export default function useOrderAction() {
   };
 
   return {
-    createFarmerOrder,
-    createSupplierOrder,
+    createOrder,
     acceptFarmerOrder,
     acceptSupplierOrder,
     cancelFarmerOrder,

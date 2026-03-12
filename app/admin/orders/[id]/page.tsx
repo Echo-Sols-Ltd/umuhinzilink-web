@@ -93,14 +93,7 @@ export default function AdminOrderDetailPage() {
 
     // Get current order based on type
     const getCurrentOrder = () => {
-        switch (orderType) {
-            case 'farmer':
-                return currentFarmerOrder;
-            case 'supplier':
-                return currentSupplierOrder;
-            default:
-                return null;
-        }
+        return currentOrder;
     };
 
     const handleShareOrder = (order: Order) => {

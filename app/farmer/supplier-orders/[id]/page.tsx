@@ -18,7 +18,7 @@ function FarmerSupplierOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { supplierOrders } = useOrder();
+  const { buyingOrders: supplierOrders } = useOrder();
   const { updateSupplierOrderStatus } = useOrderAction();
   const { t } = useI18n();
 
@@ -37,7 +37,7 @@ function FarmerSupplierOrderDetailPage() {
         } else {
           // Fallback to API call if not found in context
           const { orderService } = await import('@/services/orders');
-          const response = await orderService.getSupplierOrderById(orderId);
+          const response = await orderService.getOrderById(orderId);
           if (response.success && response.data) {
             setOrder(response.data);
           }

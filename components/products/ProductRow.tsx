@@ -18,7 +18,7 @@ interface ProductRowProps {
 
 export default function ProductRow({ product, onSelect, onPurchase, onContact }: ProductRowProps) {
     const { user } = useAuth()
-    const { deleteFarmerProduct } = useProduct()
+    const { deleteProduct } = useProduct()
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
     const { t } = useI18n()
@@ -64,7 +64,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
         }
 
         try {
-            await deleteFarmerProduct(productId);
+            await deleteProduct(productId);
         } catch (error) {
             console.error('Failed to delete product:', error);
             notify.error(t('productRow.deleteFailed'), t('productRow.deleteTitle'));

@@ -54,7 +54,10 @@ export interface Order {
 }
 
 export interface OrderRequest {
-  productId: string;
+  productId?: string;
   quantity: number;
   paymentMethod: PaymentMethod;
+  notes?: string;
+  productName?: string;
+  unitPrice?: number;
 }

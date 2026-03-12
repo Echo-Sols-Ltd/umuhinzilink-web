@@ -27,7 +27,7 @@ export default function CartPage() {
     firstName: user?.names?.split(' ')[0] || '',
     lastName: user?.names?.split(' ')[1] || '',
     email: user?.email || '',
-    phone: user?.phone || '',
+    phone: user?.phoneNumber || '',
     address: '',
     city: '',
     state: '',
