@@ -162,7 +162,7 @@ export default function CartPage() {
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 mb-8 custom-scrollbar">
               {cart.items.map((item) => (
                 <div key={item.id} className="flex gap-4 items-center group">
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-gray-50 flex-shrink-0 border border-gray-100">
+                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-gray-50 shrink-0 border border-gray-100">
                     <Image 
                       src={item.product.image || '/placeholder-product.png'} 
                       alt={item.product.name}
@@ -492,7 +492,7 @@ export default function CartPage() {
               </div>
 
               <div className="bg-yellow-50 p-6 rounded-3xl border border-yellow-200 flex gap-4">
-                 <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0" />
+                 <AlertCircle className="w-6 h-6 text-yellow-600 shrink-0" />
                  <p className="text-sm text-yellow-800">
                    By clicking "Pay", you agree to UmuhinziLink's <Link href="#" className="underline font-bold">Terms of Service</Link> and <Link href="#" className="underline font-bold">Privacy Policy</Link>.
                  </p>
@@ -507,7 +507,7 @@ export default function CartPage() {
                 </button>
                 <button 
                   onClick={handleNext}
-                  className="bg-primary text-primary-foreground h-14 px-12 rounded-2xl font-[900] shadow-2xl shadow-primary/40 hover:shadow-primary/50 active:scale-95 transition-all text-lg flex items-center gap-2"
+                   className="bg-primary text-primary-foreground h-14 px-12 rounded-2xl font-black shadow-2xl shadow-primary/40 hover:shadow-primary/50 active:scale-95 transition-all text-lg flex items-center gap-2"
                 >
                   Pay {total.toLocaleString()} RWF
                 </button>
