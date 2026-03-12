@@ -3,8 +3,6 @@ import { User, Farmer, Supplier, Buyer } from '@/types';
 import { UserType } from '@/types';
 import { useAuth } from './AuthContext';
 import { userService } from '@/services/users';
-import { farmerService } from '@/services/farmers';
-import { supplierService } from '@/services/suppliers';
 import { buyerService } from '@/services/buyers';
 
 interface ProfileContextValue {
@@ -63,7 +61,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             setProfile(farmer);
           } else {
             // Fetch farmer profile if not in auth context
-            const farmerData = await farmerService.getFarmerById(user.id);
+            const farmerData = await userService.getFarmerById(user.id);
             setFarmerProfile(farmerData.data || null);
             setProfile(farmerData.data || null);
           }
@@ -75,7 +73,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             setProfile(supplier);
           } else {
             // Fetch supplier profile if not in auth context
-            const supplierData = await supplierService.getSupplierById(user.id);
+            const supplierData = await userService.getSupplierById(user.id);
             setSupplierProfile(supplierData.data || null);
             setProfile(supplierData.data || null);
           }
@@ -145,7 +143,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     try {
-      const response = await farmerService.updateFarmer(farmerProfile.id, data);
+      const response = await userService.updateFarmerProfile(farmerProfile.id, data);
       if (response.success && response.data) {
         setFarmerProfile(response.data);
         setProfile(response.data);
@@ -168,7 +166,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     try {
-      const response = await supplierService.updateSupplier(supplierProfile.id, data);
+      const response = await userService.updateSupplierProfile(supplierProfile.id, data);
       if (response.success && response.data) {
         setSupplierProfile(response.data);
         setProfile(response.data);

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { Supplier, User } from '@/types';
 import { useSupplierAction } from '@/hooks/useSupplierAction';
-import { supplierService } from '@/services/suppliers';
+import { userService } from '@/services/users';
 import { useProduct } from './ProductContext';
 import { useOrder } from './OrderContext';
 import { notify } from '@/lib/notify';
@@ -34,7 +34,7 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const supplierActions = useSupplierAction();
   const { fetchSupplierProducts, fetchSupplierStats } = useProduct()
-  const { fetchSupplierOrders } = useOrder()
+  const { fetchSellingOrders: fetchSupplierOrders } = useOrder()
 
   // Fetch supplier profile
   const refreshSupplier = async () => {
@@ -43,7 +43,7 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.getMe();
+      const response = await userService.getSupplierMe();
       if (response.success && response.data) {
         setSupplier(response.data);
       } else {

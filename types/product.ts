@@ -106,6 +106,7 @@ export interface FarmerProductRequest {
   location: string;
   isNegotiable: boolean;
   certification: CertificationType;
+  harvestDate?: string;
 }
 
 export interface SupplierProductRequest {
@@ -119,4 +120,5 @@ export interface SupplierProductRequest {
   location: string;
   isNegotiable: boolean;
   certification: CertificationType;
+  harvestDate?: string;
 }

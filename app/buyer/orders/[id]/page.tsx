@@ -19,10 +19,10 @@ function BuyerOrderDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { 
-    buyerOrders, 
-    currentBuyerOrder, 
-    setCurrentBuyerOrder,
-    fetchBuyerOrders 
+    buyingOrders: buyerOrders, 
+    currentOrder: currentBuyerOrder, 
+    setCurrentOrder: setCurrentBuyerOrder,
+    fetchBuyingOrders: fetchBuyerOrders 
   } = useOrder();
 
   const [loading, setLoading] = useState(true);
@@ -56,7 +56,7 @@ function BuyerOrderDetailPage() {
         } else {
           // ❌ Not in context - fetch from server
           const { orderService } = await import('@/services/orders');
-          const response = await orderService.getFarmerOrderById(orderId);
+          const response = await orderService.getOrderById(orderId);
           
           if (response.success && response.data) {
             // Store in context for future use and real-time updates

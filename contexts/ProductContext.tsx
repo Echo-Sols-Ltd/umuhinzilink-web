@@ -81,6 +81,8 @@ type ProductContextValue = {
   fetchSupplierProducts: (page?: number, size?: number) => Promise<void>;
   fetchBuyerProducts: (page?: number, size?: number) => Promise<void>;
   buyerProductsTotalPages?: number;
+  fetchFarmerStats: () => Promise<void>;
+  fetchSupplierStats: () => Promise<void>;
 };
 
 const ProductContext = createContext<ProductContextValue | undefined>(undefined);
@@ -447,6 +449,26 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const outOfStockFarmerBuyerProducts = outOfStockMarketplaceProducts;
   const lowInStockFarmerBuyerProducts = lowStockMarketplaceProducts;
 
+  const fetchFarmerStats = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await productService.getFarmerStats();
+      if (res.success) setMyStats(res.data || []);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchSupplierStats = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await productService.getSupplierStats();
+      if (res.success) setMyStats(res.data || []);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const value: ProductContextValue = {
     addMyProduct,
     updateProductState,
@@ -493,6 +515,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     fetchSupplierProducts,
     fetchBuyerProducts,
     buyerProductsTotalPages: marketplaceProductsTotalPages,
+    fetchFarmerStats,
+    fetchSupplierStats,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

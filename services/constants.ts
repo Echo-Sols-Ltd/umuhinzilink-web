@@ -58,6 +58,14 @@ export const API_ENDPOINTS = {
     PUBLIC_ALL: '/products/all',
     PRIVATE_ALL: '/products',
     SEARCH: '/products/search',
+    // Legacy aliases
+    CREATE_SUPPLIER: '/products',
+    SUPPLIER_ALL: '/products',
+    SUPPLIER_ALL_PUBLIC: '/products/all',
+    SUPPLIER_SEARCH: '/products/search',
+    BY_SUPPLIER_ID: (id: string) => `/products/${id}`,
+    UPDATE_SUPPLIER: (id: string) => `/products/${id}`,
+    DELETE_SUPPLIER: (id: string) => `/products/${id}`,
   },
   BUYER: {
     BY_ID: (id: string) => `/buyers/${id}`,
@@ -73,6 +81,12 @@ export const API_ENDPOINTS = {
     SELLER_ALL: '/orders/seller',
     UPDATE_STATUS: (id: string) => `/orders/${id}/status`,
     SATISFACTION: (id: string) => `/orders/${id}/satisfaction`,
+    // Legacy aliases
+    SUPPLIER_ALL: '/orders/seller',
+    BY_SUPPLIER_ID: (id: string) => `/orders/${id}`,
+    ACCEPT_SUPPLIER: (id: string) => `/orders/${id}/accept`,
+    CANCEL_SUPPLIER: (id: string) => `/orders/${id}/reject`,
+    UPDATE_SUPPLIER_STATUS: (id: string) => `/orders/${id}/status`,
   },
   ADMIN: {
     USERS: '/admin/users',

@@ -38,13 +38,13 @@ import ProductCard from '@/components/products/ProductCard';
 const ORDERS_PER_PAGE = 10;
 
 function FarmerRequestsComponent() {
-  const { farmerBuyerProducts, fetchFarmerBuyerProducts, loading: productsLoading, error: productsError } = useProduct();
+  const { marketplaceProducts: farmerBuyerProducts, fetchMarketplaceProducts: fetchFarmerBuyerProducts, loading: productsLoading, error: productsError } = useProduct();
   const {
-    farmerBuyerOrders,
-    fetchFarmerBuyerOrders,
+    buyingOrders: farmerBuyerOrders,
+    fetchBuyingOrders: fetchFarmerBuyerOrders,
     loading: ordersLoading,
-    farmerBuyerOrdersTotalPages: ordersTotalPages,
-    farmerBuyerOrdersTotalElements: ordersTotalElements,
+    buyingOrdersTotalPages: ordersTotalPages,
+    buyingOrdersTotalElements: ordersTotalElements,
   } = useOrder();
   const {
     cancelSupplierOrder,

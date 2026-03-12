@@ -13,12 +13,11 @@ import { useState } from 'react';
 export default function useOrderAction() {
   const [loading, setLoading] = useState(false)
   const {
-    addFarmerOrder,
-    addFarmerBuyerOrder,
-    editFarmerOrder,
-    editSupplierOrder,
-    editFarmerBuyerOrder,
-    fetchFarmerBuyerOrders,
+    addOrder,
+    updateOrderState: editFarmerOrder,
+    updateOrderState: editSupplierOrder,
+    updateOrderState: editFarmerBuyerOrder,
+    fetchBuyingOrders: fetchFarmerBuyerOrders,
   } = useOrder();
   const { payOrder: payWithWallet } = useWallet();
 
@@ -26,7 +25,7 @@ export default function useOrderAction() {
   const updateFarmerOrderStatus = async (id: string, status: DeliveryStatus) => {
     try {
       setLoading(true);
-      const response = await orderService.updateFarmerOrderStatus(id, status);
+      const response = await orderService.updateOrderStatus(id, status);
       if (response.success && response.data) {
         editFarmerOrder({ ...response.data, id } as Order);
         notify.success('Delivery status has been updated.', 'Order status updated successfully' );
@@ -45,7 +44,7 @@ export default function useOrderAction() {
   const updateSupplierOrderStatus = async (id: string, status: DeliveryStatus): Promise<Order | null> => {
     try {
       setLoading(true);
-      const res = await orderService.updateSupplierOrderStatus(id, status);
+      const res = await orderService.updateOrderStatus(id, status);
       if (!res.success) {
         notify.error(res.message || 'Failed to update order status', 'Failed to update order status');
         return null;
@@ -70,7 +69,7 @@ export default function useOrderAction() {
   const createFarmerOrder = async (payload: OrderRequest) => {
     try {
       setLoading(true);
-      const res = await orderService.createFarmerOrder(payload);
+      const res = await orderService.createOrder(payload);
       if (!res.success) {
         notify.error(res.message || 'Failed to create order', 'Failed to create order');
         return;
@@ -80,7 +79,7 @@ export default function useOrderAction() {
         notify.error('Failed to create order: empty response', 'Failed to create order');
         return;
       }
-      addFarmerOrder(newOrder);
+      addOrder(newOrder);
       notify.success('Initiating payment...', 'Order created successfully' );
       const paymentRes = await payWithWallet(newOrder.id, 'Order Payment');
       if (paymentRes?.status === 'COMPLETED') {
@@ -97,7 +96,7 @@ export default function useOrderAction() {
   const createSupplierOrder = async (payload: OrderRequest) => {
     try {
       setLoading(true);
-      const res = await orderService.createSupplierOrder(payload);
+      const res = await orderService.createOrder(payload);
       if (!res.success) {
         notify.error(res.message || 'Failed to create order', 'Failed to create order');
         return;
@@ -107,7 +106,7 @@ export default function useOrderAction() {
         notify.error('Failed to create order: empty response', 'Failed to create order');
         return;
       }
-      addFarmerBuyerOrder(newOrder);
+      addOrder(newOrder);
       notify.success('Initiating payment...', 'Order created successfully' );
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to create order';
@@ -120,7 +119,7 @@ export default function useOrderAction() {
   const acceptFarmerOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
-      const res = await orderService.acceptFarmerOrder(id);
+      const res = await orderService.acceptOrder(id);
       if (!res.success) {
         notify.error(res.message || 'Failed to accept order', 'Failed to accept order');
         return null;
@@ -145,7 +144,7 @@ export default function useOrderAction() {
   const acceptSupplierOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
-      const res = await orderService.acceptSupplierOrder(id);
+      const res = await orderService.acceptOrder(id);
       if (!res.success) {
         notify.error(res.message || 'Failed to accept order', 'Failed to accept order');
         return null;
@@ -170,7 +169,7 @@ export default function useOrderAction() {
   const cancelFarmerOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
-      const res = await orderService.cancelFarmerOrder(id);
+      const res = await orderService.cancelOrder(id);
       if (!res.success) {
         notify.error(res.message || 'Failed to cancel order', 'Failed to cancel order');
         return null;
@@ -195,7 +194,7 @@ export default function useOrderAction() {
   const cancelSupplierOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
-      const res = await orderService.cancelSupplierOrder(id);
+      const res = await orderService.cancelOrder(id);
       if (!res.success) {
         notify.error(res.message || 'Failed to cancel order', 'Failed to cancel order');
         return null;

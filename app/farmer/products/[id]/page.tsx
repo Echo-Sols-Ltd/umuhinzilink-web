@@ -18,10 +18,10 @@ export default function FarmerProductDetailPage() {
   const { toast: showToast } = useToast();
   const { t } = useI18n();
   const { 
-    farmerProducts, 
-    currentFarmerProduct, 
-    setCurrentFarmerProduct,
-    fetchFarmerProducts,
+    myProducts, 
+    currentProduct, 
+    setCurrentProduct,
+    fetchMyProducts,
     loading: contextLoading
   } = useProduct();
   const [loading, setLoading] = useState(true);
@@ -35,28 +35,22 @@ export default function FarmerProductDetailPage() {
       
       try {
         // Step 1: Check if product is already in context lists
-        let foundProduct = farmerProducts?.find(p => p.id === productId);
+        let foundProduct = myProducts?.find((p: Product) => p.id === productId);
         
-        // Step 2: Check if it's the current context product
-        if (!foundProduct && currentFarmerProduct?.id === productId) {
-          foundProduct = currentFarmerProduct;
+        if (!foundProduct && currentProduct?.id === productId) {
+          foundProduct = currentProduct;
         }
         
         if (foundProduct) {
-          // ✅ Found in context - use immediately
-          setCurrentFarmerProduct(foundProduct);
+          setCurrentProduct(foundProduct);
           setLoading(false);
         } else {
-          // ❌ Not in context - fetch from server
           const { productService } = await import('@/services/products');
-          const response = await productService.getFarmerProduct(productId);
+          const response = await productService.getProductById(productId);
           
           if (response.success && response.data) {
-            // Store in context for future use and real-time updates
-            setCurrentFarmerProduct(response.data);
-            
-            // Refresh the list to include this product for future navigation
-            fetchFarmerProducts();
+            setCurrentProduct(response.data);
+            fetchMyProducts();
           } else {
             setError(t('common.productDetailMsg.productNotFoundTitle'));
             showToast({
@@ -82,7 +76,7 @@ export default function FarmerProductDetailPage() {
     if (productId) {
       loadProduct();
     }
-  }, [productId, farmerProducts, currentFarmerProduct, setCurrentFarmerProduct, fetchFarmerProducts, showToast]);
+  }, [productId, myProducts, currentProduct, setCurrentProduct, fetchMyProducts, showToast, t]);
 
   const handleShareProduct = (product: Product) => {
     if (navigator.share) {
@@ -151,7 +145,7 @@ export default function FarmerProductDetailPage() {
     );
   }
 
-  if (error || !currentFarmerProduct) {
+  if (error || !currentProduct) {
     return (
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.FARMER} activeItem="My Products" />
@@ -177,7 +171,7 @@ export default function FarmerProductDetailPage() {
       
       <main className="flex-1 overflow-auto">
         <ProductDetail
-          product={currentFarmerProduct}
+          product={currentProduct}
           productType="farmer"
           onShareProduct={handleShareProduct}
           onEditProduct={handleEditProduct}

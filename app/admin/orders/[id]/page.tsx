@@ -28,18 +28,12 @@ export default function AdminOrderDetailPage() {
     const router = useRouter();
     const { user } = useAuth();
     const {
-        farmerOrders,
-        buyerOrders,
-        supplierOrders,
-        currentFarmerOrder,
-        currentBuyerOrder,
-        currentSupplierOrder,
-        setCurrentFarmerOrder,
-        setCurrentBuyerOrder,
-        setCurrentSupplierOrder,
-        fetchFarmerOrders,
-        fetchBuyerOrders,
-        fetchSupplierOrders
+        buyingOrders,
+        sellingOrders,
+        currentOrder,
+        setCurrentOrder,
+        fetchBuyingOrders,
+        fetchSellingOrders
     } = useOrder();
     const { toast: showToast } = useToast();
     const [orderType, setOrderType] = useState<'farmer' | 'supplier'>('farmer');
@@ -55,79 +49,28 @@ export default function AdminOrderDetailPage() {
             setError(null);
 
             try {
-                // Step 1: Check all order types in context
-                let foundOrder = null;
-                let foundType = null;
-
-                // Check farmer orders
-                foundOrder = farmerOrders?.find(o => o.id === orderId);
-                if (foundOrder) {
-                    foundType = 'farmer';
-                    setCurrentFarmerOrder(foundOrder);
-                }
-
-                // Check buyer orders
-                if (!foundOrder) {
-                    foundOrder = buyerOrders?.find(o => o.id === orderId);
-                    if (foundOrder) {
-                        foundType = 'buyer';
-                        setCurrentBuyerOrder(foundOrder);
-                    }
-                }
-
-                // Check supplier orders
-                if (!foundOrder) {
-                    foundOrder = supplierOrders?.find(o => o.id === orderId);
-                    if (foundOrder) {
-                        foundType = 'supplier';
-                        setCurrentSupplierOrder(foundOrder);
-                    }
-                }
-
-                // Check current context orders
-                if (!foundOrder) {
-                    if (currentFarmerOrder?.id === orderId) {
-                        foundOrder = currentFarmerOrder;
-                        foundType = 'farmer';
-                    } else if (currentBuyerOrder?.id === orderId) {
-                        foundOrder = currentBuyerOrder;
-                        foundType = 'buyer';
-                    } else if (currentSupplierOrder?.id === orderId) {
-                        foundOrder = currentSupplierOrder;
-                        foundType = 'supplier';
-                    }
+                let foundOrder = buyingOrders?.find((o: Order) => o.id === orderId) || sellingOrders?.find((o: Order) => o.id === orderId);
+                
+                if (!foundOrder && currentOrder?.id === orderId) {
+                    foundOrder = currentOrder;
                 }
 
                 if (foundOrder) {
-                    // ✅ Found in context - use immediately
-                    setOrderType(foundType as 'farmer' | 'supplier');
+                    setCurrentOrder(foundOrder);
+                    setOrderType((foundOrder.product as any).productType === 'FARMER_PRODUCT' ? 'farmer' : 'supplier');
                     setLoading(false);
                 } else {
-                    // ❌ Not in context - fetch from server
-                    // Try different endpoints based on order type
-                    let response = null;
-
-                    try {
-                        const { orderService } = await import('@/services/orders');
-                        response = await orderService.getFarmerOrderById(orderId);
-                        if (response.success && response.data) {
-                            setCurrentFarmerOrder(response.data);
-                            setOrderType('farmer');
-                            fetchFarmerOrders();
-                        }
-                    } catch (e) {
-                        // Try supplier order
-                        try {
-                            const { orderService } = await import('@/services/orders');
-                            response = await orderService.getSupplierOrderById(orderId);
-                            if (response.success && response.data) {
-                                setCurrentSupplierOrder(response.data);
-                                setOrderType('supplier');
-                                fetchSupplierOrders();
-                            }
-                        } catch (e2) {
-                            throw new Error('Order not found');
-                        }
+                    const { orderService } = await import('@/services/orders');
+                    const response = await orderService.getOrderById(orderId);
+                    
+                    if (response.success && response.data) {
+                        const data = response.data;
+                        setCurrentOrder(data);
+                        setOrderType(data.product.productType === 'FARMER_PRODUCT' ? 'farmer' : 'supplier');
+                        fetchBuyingOrders();
+                        fetchSellingOrders();
+                    } else {
+                        throw new Error('Order not found');
                     }
                 }
             } catch (error) {
@@ -146,7 +89,7 @@ export default function AdminOrderDetailPage() {
         if (orderId) {
             loadOrder();
         }
-    }, [orderId, farmerOrders, buyerOrders, supplierOrders, currentFarmerOrder, currentBuyerOrder, currentSupplierOrder, setCurrentFarmerOrder, setCurrentBuyerOrder, setCurrentSupplierOrder, fetchFarmerOrders, fetchBuyerOrders, fetchSupplierOrders, showToast]);
+    }, [orderId, buyingOrders, sellingOrders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, showToast]);
 
     // Get current order based on type
     const getCurrentOrder = () => {

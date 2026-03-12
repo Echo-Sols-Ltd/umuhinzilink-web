@@ -4,7 +4,8 @@ export * from './dashboardService';
 export * from './client';
 
 // You can add other service exports here as they are created
-// export * from './authService';
-// export * from './productService';
-// export * from './orderService';
-// export * from './userService';
+export * from './products';
+export * from './orders';
+export * from './users';
+export * from './auth';
+export * from './farmers';

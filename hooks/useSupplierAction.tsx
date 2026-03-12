@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { supplierService, SupplierProductRequest } from '@/services/suppliers';
-import { Product, Order } from '@/types';
+import { productService } from '@/services/products';
+import { orderService } from '@/services/orders';
+import { dashboardService } from '@/services/dashboardService';
+import { Product, Order, SupplierProductRequest } from '@/types';
 import { notify } from '@/lib/notify';
 import { useProduct } from '@/contexts/ProductContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -8,15 +10,15 @@ import { useOrder } from '@/contexts/OrderContext';
 export const useSupplierAction = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { addSupplierProduct, updateSupplierProduct, removeSupplierProduct } = useProduct();
-  const { editSupplierOrder } = useOrder();
+  const { addMyProduct: addSupplierProduct, updateProductState: updateSupplierProduct, removeMyProduct: removeSupplierProduct } = useProduct();
+  const { updateOrderState: editSupplierOrder } = useOrder();
 
   // Product Management Actions (sync with ProductContext)
   const createProduct = async (productData: SupplierProductRequest): Promise<Product | null> => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.createProduct(productData);
+      const response = await productService.createProduct(productData);
       if (response.success && response.data) {
         addSupplierProduct(response.data);
         notify.success('Product created successfully', 'Success');
@@ -38,7 +40,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.getMyProducts();
+      const response = await productService.getPrivateProducts();
       if (response.success && response.data) {
         return response.data;
       } else {
@@ -63,7 +65,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.getAllProducts(params);
+      const response = await productService.getPublicProducts(params?.page, params?.size);
       if (response.success) {
         return response.data;
       } else {
@@ -92,7 +94,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.searchProducts(params);
+      const response = await productService.searchProducts(params);
       if (response.success) {
         return response.data;
       } else {
@@ -112,7 +114,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.updateProduct(id, productData);
+      const response = await productService.updateProduct(id, productData as any);
       if (response.success && response.data) {
         updateSupplierProduct(response.data.id, response.data);
         notify.success('Product updated successfully', 'Success');
@@ -134,7 +136,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.deleteProduct(id);
+      const response = await productService.deleteProduct(id);
       if (response.success) {
         removeSupplierProduct(id);
         notify.success('Product deleted successfully', 'Success');
@@ -157,7 +159,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.getMyOrders();
+      const response = await orderService.getSellerOrders();
       if (response.success && response.data) {
         return response.data;
       } else {
@@ -177,7 +179,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.acceptOrder(id);
+      const response = await orderService.acceptOrder(id);
       if (response.success && response.data) {
         editSupplierOrder(response.data);
         notify.success('Order accepted successfully', 'Success');
@@ -199,7 +201,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.rejectOrder(id);
+      const response = await orderService.cancelOrder(id);
       if (response.success && response.data) {
         editSupplierOrder(response.data);
         notify.success('Order rejected successfully', 'Success');
@@ -221,7 +223,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.updateOrderStatus(id, status);
+      const response = await orderService.updateOrderStatus(id, status as any);
       if (response.success && response.data) {
         editSupplierOrder(response.data);
         notify.success('Order status updated successfully', 'Success');
@@ -244,7 +246,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.getDashboardStats();
+      const response = await dashboardService.getSupplierDashboard();
       if (response.success) {
         return response.data;
       } else {
@@ -264,7 +266,7 @@ export const useSupplierAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await supplierService.getProductStats();
+      const response = await productService.getSupplierStats();
       if (response.success) {
         return response.data;
       } else {

@@ -52,3 +52,9 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface OrderRequest {
+  productId: string;
+  quantity: number;
+  paymentMethod: PaymentMethod;
+}
