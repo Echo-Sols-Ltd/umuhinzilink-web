@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Product } from '@/types';
+import { Product, CartItemType } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
 import { useCart } from '@/contexts/CartContext';
 import { X, DollarSign, MessageCircle, AlertCircle, TrendingDown, Clock } from 'lucide-react';
@@ -47,7 +47,7 @@ export default function NegotiationModal({ product, isOpen, onClose }: Negotiati
                 productId: product.id,
                 quantity: quantity,
                 proposedPrice: price,
-                type: 1 // CartItemType.NEGOTIATION
+                type: CartItemType.NEGOTIATION
             });
             notify.success('Item added for negotiation', 'Success');
             onClose();

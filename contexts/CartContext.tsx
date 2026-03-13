@@ -41,9 +41,9 @@ type CartContextValue = {
   getAcceptedNegotiationItems: () => Promise<CartItem[]>;
   
   // Checkout operations
-  checkoutNormal: (request: CartCheckoutRequest) => Promise<Order | null>;
-  checkoutNegotiated: (request: CartCheckoutRequest) => Promise<Order | null>;
-  checkoutMixed: (request: CartCheckoutRequest) => Promise<Order | null>;
+  checkoutNormal: (request: CartCheckoutRequest) => Promise<Order[] | null>;
+  checkoutNegotiated: (request: CartCheckoutRequest) => Promise<Order[] | null>;
+  checkoutMixed: (request: CartCheckoutRequest) => Promise<Order[] | null>;
   
   // Utility methods
   refreshCart: () => Promise<void>;
@@ -311,7 +311,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, [user]);
 
   // Checkout normal items
-  const checkoutNormal = useCallback(async (request: CartCheckoutRequest): Promise<Order | null> => {
+  const checkoutNormal = useCallback(async (request: CartCheckoutRequest): Promise<Order[] | null> => {
     if (!user) return null;
     
     setLoading(true);
@@ -320,7 +320,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const response = await cartService.checkoutNormal(request);
       if (response.success && response.data) {
         await fetchCart(); // Refresh cart
-        notify.success('Order placed successfully', 'Success');
+        notify.success('Orders placed successfully', 'Success');
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to checkout');
@@ -336,7 +336,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, [user, fetchCart]);
 
   // Checkout negotiated items
-  const checkoutNegotiated = useCallback(async (request: CartCheckoutRequest): Promise<Order | null> => {
+  const checkoutNegotiated = useCallback(async (request: CartCheckoutRequest): Promise<Order[] | null> => {
     if (!user) return null;
     
     setLoading(true);
@@ -345,7 +345,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const response = await cartService.checkoutNegotiated(request);
       if (response.success && response.data) {
         await fetchCart(); // Refresh cart
-        notify.success('Order placed successfully', 'Success');
+        notify.success('Orders placed successfully', 'Success');
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to checkout');
@@ -361,7 +361,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, [user, fetchCart]);
 
   // Mixed checkout
-  const checkoutMixed = useCallback(async (request: CartCheckoutRequest): Promise<Order | null> => {
+  const checkoutMixed = useCallback(async (request: CartCheckoutRequest): Promise<Order[] | null> => {
     if (!user) return null;
     
     setLoading(true);
@@ -370,7 +370,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const response = await cartService.checkoutMixed(request);
       if (response.success && response.data) {
         await fetchCart(); // Refresh cart
-        notify.success('Order placed successfully', 'Success');
+        notify.success('Orders placed successfully', 'Success');
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to checkout');

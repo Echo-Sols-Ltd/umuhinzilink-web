@@ -7,7 +7,7 @@ import { useI18n } from '@/contexts/I18nContext';
 import { ShoppingCart, Truck, CreditCard, ChevronRight, Minus, Plus, Trash2, MapPin, Phone, Mail, User, CheckCircle2, AlertCircle, MessageCircle, Clock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CartItem, CartItemType } from '@/types';
+import { CartItem, CartItemType, PaymentMethod } from '@/types';
 import { notify } from '@/lib/notify';
 
 enum CheckoutStep {
@@ -17,7 +17,7 @@ enum CheckoutStep {
 }
 
 export default function CartPage() {
-  const { cart, loading, updateItem, removeItem, getCartTotal, checkoutNormal } = useCart();
+  const { cart, loading, updateItem, removeItem, getCartTotal, checkoutNormal, checkoutNegotiated, checkoutMixed } = useCart();
   const { user } = useAuth();
   const { t } = useI18n();
   const [step, setStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
@@ -91,14 +91,26 @@ export default function CartPage() {
   const handlePlaceOrder = async () => {
     if (!cart?.items.length) return;
     
-    const itemIds = cart.items.map(item => item.id);
-    const result = await checkoutNormal({
-      itemIds,
-      checkoutType: 'NORMAL'
-    });
+    // Determine checkout type based on cart items
+    const hasNormalItems = cart.items.some(item => item.type === CartItemType.NORMAL);
+    const hasAcceptedNegotiations = cart.items.some(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
+    
+    let result;
+    const paymentMethod: PaymentMethod = formData.paymentMethod === 'pod' ? PaymentMethod.CASH_ON_DELIVERY : PaymentMethod.WALLET;
+    
+    if (hasNormalItems && hasAcceptedNegotiations) {
+      // Mixed checkout
+      result = await checkoutMixed({ paymentMethod });
+    } else if (hasAcceptedNegotiations) {
+      // Negotiated checkout only
+      result = await checkoutNegotiated({ paymentMethod });
+    } else {
+      // Normal checkout only
+      result = await checkoutNormal({ paymentMethod });
+    }
 
     if (result) {
-      notify.success('Your order has been placed successfully!', 'Order Confirmed');
+      notify.success('Your orders have been placed successfully!', 'Order Confirmed');
       // In a real app, redirect to order confirmation or orders page
     }
   };
