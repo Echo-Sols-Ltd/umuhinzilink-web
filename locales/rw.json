@@ -798,7 +798,39 @@
         "addedToFavorites": "Byongewe mu byo wakunze",
         "removedFromFavorites": "Byakuwe mu byo wakunze",
         "linkCopied": "Ihuza ryakopewe"
-      }
+      },
+      "breadcrumbs": {
+        "home": "Ahabanza",
+        "grainsAndCereals": "Ibigenzi n'imbuto"
+      },
+      "badges": {
+        "freshHarvest": "Byakwe vuba"
+      },
+      "overallRating": "4.8",
+      "reviews": "(124 ibiherutse)",
+      "description": "Ubusobanuro",
+      "productDetails": "Amakuru y'Igicuruzwa",
+      "details": {
+        "weight": "Ibirimo",
+        "harvestDate": "Itariki y'ikukura",
+        "location": "Aho biherereye",
+        "variety": "Ubwoko",
+        "storage": "Aho bikiriwe",
+        "delivery": "Igitigiri"
+      },
+      "quantity": "Ingano",
+      "addToCart": "Kuva mu shopingi",
+      "saveToWishlist": "Bika ku byashishwe",
+      "soldBy": "Yakuye",
+      "farmerSince": "Umuhinzi kuva",
+      "supplierSince": "Uwigenga kuva",
+      "sellerRating": "Ugereranyabwo",
+      "sales": "Ikwirwa",
+      "onTimeDelivery": "Igitigiri ku gihe",
+      "messageSeller": "Tumira uwakuye",
+      "customerReviews": "Inyandiko z'abakiriya",
+      "relatedProducts": "Ibicuruzwa bifitanye isano",
+      "otherGrainsFromNearbyFarmers": "Ibindi bigenzi bivuye ku bahinzi bari hafi"
     }
   },
   "farmer": {

@@ -798,7 +798,39 @@
         "addedToFavorites": "Product added to favorites",
         "removedFromFavorites": "Product removed from favorites",
         "linkCopied": "Product link copied to clipboard"
-      }
+      },
+      "breadcrumbs": {
+        "home": "Home",
+        "grainsAndCereals": "Grains & cereals"
+      },
+      "badges": {
+        "freshHarvest": "Fresh harvest"
+      },
+      "overallRating": "4.8",
+      "reviews": "(124 reviews)",
+      "description": "Description",
+      "productDetails": "Product Details",
+      "details": {
+        "weight": "Weight",
+        "harvestDate": "Harvest date",
+        "location": "Location",
+        "variety": "Variety",
+        "storage": "Storage",
+        "delivery": "Delivery"
+      },
+      "quantity": "Quantity",
+      "addToCart": "Add to cart",
+      "saveToWishlist": "Save to wishlist",
+      "soldBy": "Sold By",
+      "farmerSince": "Farmer since",
+      "supplierSince": "Supplier since",
+      "sellerRating": "Rating",
+      "sales": "Sales",
+      "onTimeDelivery": "On-time delivery",
+      "messageSeller": "Message seller",
+      "customerReviews": "Customer Reviews",
+      "relatedProducts": "Related products",
+      "otherGrainsFromNearbyFarmers": "Other grains from nearby farmers"
     }
   },
   "farmer": {

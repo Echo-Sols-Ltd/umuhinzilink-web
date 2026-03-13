@@ -27,6 +27,7 @@ interface ProductDetailProps {
 }
 
 import { useI18n } from '@/contexts/I18nContext';
+import Footer from '../Footer';
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
   product,
@@ -98,9 +99,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Home className="w-4 h-4" />
         <ChevronRight className="w-4 h-4" />
-        <span>Home</span>
+        <span>{t('buyer.productDetail.breadcrumbs.home')}</span>
         <ChevronRight className="w-4 h-4" />
-        <span>Grains & cereals</span>
+        <span>{t('buyer.productDetail.breadcrumbs.grainsAndCereals')}</span>
         <ChevronRight className="w-4 h-4" />
         <span className="text-foreground font-medium">{product.name}</span>
       </div>
@@ -160,7 +161,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         {/* Badges */}
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-            Fresh harvest
+            {t('buyer.productDetail.badges.freshHarvest')}
           </Badge>
           <Badge variant="outline" className="border-green-200 text-green-700">
             {product.category}
@@ -178,8 +179,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <Star key={i} className={cn('w-4 h-4', i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300')} />
               ))}
             </div>
-            <span className="font-semibold">4.8</span>
-            <span className="text-muted-foreground">(124 reviews)</span>
+            <span className="font-semibold">{t('buyer.productDetail.overallRating')}</span>
+            <span className="text-muted-foreground">{t('buyer.productDetail.reviews')}</span>
           </div>
           <div className={cn('px-3 py-1 rounded-full text-sm font-medium', stockStatus.bgColor, stockStatus.color)}>
             In stock - {product.quantity} {product.measurementUnit} available
@@ -193,7 +194,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       </div>
           {/* Description */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold">Description</h3>
+            <h3 className="text-lg font-semibold">{t('buyer.productDetail.description')}</h3>
             <p className="text-muted-foreground leading-relaxed">
               {product.description}
             </p>
@@ -201,35 +202,35 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
           {/* Product Details */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold">Product Details</h3>
+            <h3 className="text-lg font-semibold">{t('buyer.productDetail.productDetails')}</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Weight</span>
+                  <span className="text-muted-foreground">{t('buyer.productDetail.details.weight')}</span>
                   <span className="font-medium">{product.quantity} kg</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Harvest date</span>
+                  <span className="text-muted-foreground">{t('buyer.productDetail.details.harvestDate')}</span>
                   <span className="font-medium">
                     {productType === 'farmer' && 'harvestDate' in product ? formatDate((product as any).harvestDate) : 'Oct 2025'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Location</span>
+                  <span className="text-muted-foreground">{t('buyer.productDetail.details.location')}</span>
                   <span className="font-medium">{product.location}</span>
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Variety</span>
+                  <span className="text-muted-foreground">{t('buyer.productDetail.details.variety')}</span>
                   <span className="font-medium">PAN 691 white</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Storage</span>
+                  <span className="text-muted-foreground">{t('buyer.productDetail.details.storage')}</span>
                   <span className="font-medium">Dry warehouse</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Delivery</span>
+                  <span className="text-muted-foreground">{t('buyer.productDetail.details.delivery')}</span>
                   <span className="font-medium">2-4 days</span>
                 </div>
               </div>
@@ -239,7 +240,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           {/* Quantity and Actions */}
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <span className="font-medium">Quantity</span>
+              <span className="font-medium">{t('buyer.productDetail.quantity')}</span>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -280,7 +281,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   size="lg"
                 >
                   <ShoppingCart className="w-5 h-5 mr-2" />
-                  Add to cart - {formatPrice(product.unitPrice * quantity)}
+                  {t('buyer.productDetail.addToCart')} - {formatPrice(product.unitPrice * quantity)}
                 </Button>
 
                 <Button
@@ -289,7 +290,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   className="w-full h-12 shadow-sm border-border hover:border-success/50 transition-colors"
                 >
                   <Heart className={cn('w-4 h-4 mr-2', isSaved && 'fill-destructive text-destructive')} />
-                  {isSaved ? 'Saved' : 'Save to wishlist'}
+                  {isSaved ? t('buyer.productDetail.actions.saved') : t('buyer.productDetail.saveToWishlist')}
                 </Button>
               </div>
             )}
@@ -297,7 +298,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
            {/* Sold By Section */}
       <Card className="shadow-sm border-border">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Sold By</CardTitle>
+          <CardTitle className="text-lg font-semibold">{t('buyer.productDetail.soldBy')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-start gap-4">
@@ -307,7 +308,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             <div className="flex-1">
               <h3 className="font-semibold text-lg text-foreground">{product.owner.names}</h3>
               <p className="text-muted-foreground mb-3">
-                {product.location} • {productType === 'farmer' ? 'Farmer' : 'Supplier'} since 2021
+                {product.location} • {productType === 'farmer' ? t('buyer.productDetail.farmerSince') : t('buyer.productDetail.supplierSince')} 2021
               </p>
               
               <div className="grid grid-cols-3 gap-4 mb-4">
@@ -316,15 +317,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     <span className="font-semibold">4.9</span>
                   </div>
-                  <p className="text-xs text-muted-foreground">Rating</p>
+                  <p className="text-xs text-muted-foreground">{t('buyer.productDetail.sellerRating')}</p>
                 </div>
                 <div className="text-center">
                   <div className="font-semibold mb-1">243</div>
-                  <p className="text-xs text-muted-foreground">Sales</p>
+                  <p className="text-xs text-muted-foreground">{t('buyer.productDetail.sales')}</p>
                 </div>
                 <div className="text-center">
                   <div className="font-semibold mb-1">98%</div>
-                  <p className="text-xs text-muted-foreground">On-time delivery</p>
+                  <p className="text-xs text-muted-foreground">{t('buyer.productDetail.onTimeDelivery')}</p>
                 </div>
               </div>
 
@@ -334,7 +335,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 className="w-full border-success/30 hover:border-success/60 text-success hover:bg-success/10 transition-all font-medium"
               >
                 <MessageSquare className="w-4 h-4 mr-2" />
-                Message seller
+                {t('buyer.productDetail.messageSeller')}
               </Button>
             </div>
           </div>
@@ -348,7 +349,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       {/* Customer Reviews */}
       <Card className="shadow-sm border-border">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Customer Reviews</CardTitle>
+          <CardTitle className="text-lg font-semibold">{t('buyer.productDetail.customerReviews')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-6">
@@ -437,7 +438,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
       {/* Related Products */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Related products</h2>
+        <h2 className="text-xl font-semibold">{t('buyer.productDetail.relatedProducts')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { name: 'Yellow maize 50kg', seller: 'Karangwa - Musange', price: 11000 },
@@ -456,6 +457,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           ))}
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };
