@@ -59,10 +59,10 @@ export function ProductDisplay({
   const { t } = useI18n();
 
   return (
-    <div className="space-y-8 bg-background/50 p-4 sm:p-6 lg:p-8 rounded-[32px] border border-border/40">
+    <div className="space-y-8 bg-background/50 p-4 sm:p-6 lg:p-8">
       {/* 1️⃣ Filtering & Search Bar */}
       {(showSearch || showFilters) && (
-        <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between bg-card/40 backdrop-blur-xl p-4 rounded-2xl border border-border/50 shadow-sm">
+        <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between bg-card/40 backdrop-blur-xl px-4 py-2 rounded-xl shadow-sm">
           <div className="flex flex-1 gap-3">
             {showSearch && (
               <div className="relative flex-1 max-w-md">

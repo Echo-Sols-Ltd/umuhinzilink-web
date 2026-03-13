@@ -181,7 +181,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                                     {product.isNegotiable && (
                                         <button
                                             onClick={handleNegotiate}
-                                            className="flex items-center justify-center bg-muted hover:bg-muted/80 text-foreground h-11 px-5 py-2 rounded-xl transition-all active:scale-95 border border-border/50"
+                                            className="flex items-center justify-center bg-muted hover:bg-muted/80 text-foregroun px-6 py-2 rounded-xl transition-all active:scale-95 border border-border/50"
                                             title={t('productCard.negotiatePrice')}
                                         >
                                             <MessageSquare className="w-4 h-4 text-primary" />
@@ -189,7 +189,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                                     )}
                                     <button
                                         onClick={handleAction}
-                                        className="flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground h-11 px-5 py-2 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 group/btn"
+                                        className="flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground  px-6 py-2 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 group/btn"
                                     >
                                         <ShoppingCart className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform" />
                                         <span className="text-[11px] font-black uppercase ">{t('productCard.buy')}</span>

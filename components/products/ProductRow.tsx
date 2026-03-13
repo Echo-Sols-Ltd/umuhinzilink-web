@@ -125,7 +125,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                         <button className="border border-border hover:bg-red-50 transition-colors p-2.5 rounded-lg flex items-center justify-center">
                             <Heart className="w-4 h-4 text-red-500" />
                         </button>
-                        <button className="bg-primary hover:bg-green-700 transition-colors text-foreground px-6 py-2.5 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2"
+                        <button className="bg-primary hover:bg-green-700 transition-colors text-primary-foreground px-6 py-2.5 rounded-3xl text-sm font-medium shadow-sm flex items-center gap-2"
                             onClick={(e: any) => {
                                 e.stopPropagation();
                                 onPurchase();
