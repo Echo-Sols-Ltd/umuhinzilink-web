@@ -35,12 +35,10 @@ export default function Home() {
         <div className="container mx-auto px-4 pt-32 pb-12">
           <header className="mb-14 text-center space-y-5 animate-in fade-in slide-in-from-top-4 duration-1000">
             <h1 className="text-5xl md:text-6xl font-black text-foreground tracking-tight max-w-4xl mx-auto leading-tight">
-              {typeof t('landing.hero.title') === 'object' 
-                ? <>{t('landing.hero.title.line1')} <span className="text-success">{t('landing.hero.title.highlight')}</span></>
-                : (t('landing.hero.title') || 'Fresh from the Farm to Your Table')}
+              {t('landing.hero.title.line1')} <span className="text-success">{t('landing.hero.title.highlight')}</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
-              {t('landing.hero.subtitle') || 'Connecting Rwanda\'s farmers directly with buyers for a sustainable future.'}
+              {t('landing.hero.subtitle')}
             </p>
           </header>
           

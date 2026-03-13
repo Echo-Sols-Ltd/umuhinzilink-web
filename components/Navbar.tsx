@@ -50,25 +50,24 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Navigation links */}
         <div className="hidden md:flex items-center space-x-6">
           <Link
             href="/dashboard"
             className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
           >
-            Marketplace
+            {t('landing.nav.marketplace') || 'Marketplace'}
           </Link>
           <Link
             href="/about"
             className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
           >
-            How it Works
+            {t('landing.nav.howItWorks') || 'How it Works'}
           </Link>
           <Link
             href="/about"
             className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
           >
-            About Us
+            {t('landing.nav.aboutUs') || 'About Us'}
           </Link>
         </div>
 
