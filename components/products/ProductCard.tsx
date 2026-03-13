@@ -34,10 +34,10 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
 
     const handleCardClick = () => {
         if (isProductOwner) {
-            router.push(`/${user.role.toLowerCase()}/products/${product.id}/edit`);
+            router.push(`/products/${product.id}/edit`);
             return;
         }
-        router.push(`/buyer/products/${product.id}`);
+        router.push(`/products/${product.id}`);
     };
 
     const handleSave = (e: React.MouseEvent) => {

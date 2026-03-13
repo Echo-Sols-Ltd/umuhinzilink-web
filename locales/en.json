@@ -151,14 +151,14 @@
   },
   "chat": {
     "messages": "Messages",
-    "searchPlaceholder": "Search conversations\u2026",
+    "searchPlaceholder": "Search conversations…",
     "noResults": "No results found",
     "noConversations": "No conversations yet",
     "tryDifferentName": "Try a different name",
     "startChatting": "Start chatting with someone",
-    "typing": "typing\u2026",
+    "typing": "typing…",
     "typingDots": "typing...",
-    "sayHey": "Say Hey \uD83D\uDC4B",
+    "sayHey": "Say Hey 👋",
     "online": "Online",
     "offline": "Offline",
     "loginRequired": "Please log in to access chat.",
@@ -752,7 +752,7 @@
         "description": "Description (Optional)",
         "descriptionPlaceholder": "Add a note for this deposit",
         "instructionsTitle": "Payment Instructions",
-        "instructions": "You will be redirected to complete the payment using your selected method. Funds will be available in your wallet once the payment is confirmed.",
+        "instructions": "You will be redirected to complete the payment using your selected method. Funds will be available in your wallet once payment is confirmed.",
         "cancel": "Cancel",
         "confirm": "Add Money"
       },
@@ -769,117 +769,36 @@
       "available": "Available",
       "buyNow": "Buy Now",
       "remove": "Remove"
-    }
-  },
-  "orders": {
-    "details": "Order Details",
-    "backToPurchases": "Back to Purchases",
-    "orderNotFound": "Order Not Found",
-    "orderNotFoundDesc": "The order you're looking for doesn't exist.",
-    "failedToLoad": "Failed to load order details",
-    "product": "Product",
-    "farmer": "Farmer",
-    "totalAmount": "Total Amount",
-    "buyerInfo": "Buyer Information",
-    "productDetails": "Product Details",
-    "name": "Name",
-    "email": "Email",
-    "phone": "Phone",
-    "location": "Location",
-    "productName": "Product Name",
-    "quantity": "Quantity",
-    "unitPrice": "Unit Price",
-    "totalPrice": "Total Price",
-    "paymentMethod": "Payment Method",
-    "paymentStatus": "Payment Status",
-    "paid": "PAID",
-    "unpaid": "UNPAID",
-    "deliveryTracking": "Delivery Tracking",
-    "deliveryNotAvailable": "Delivery information not yet available",
-    "deliveryNotAvailableDesc": "The farmer will update delivery status once the order is processed."
-  },
-  "wallet": {
-    "title": "My Wallet",
-    "subtitle": "Manage your finances and track transactions",
-    "balance": "Current Balance",
-    "active": "Active",
-    "addMoney": "Add Money",
-    "stats": {
-      "totalDeposits": "Total Deposits",
-      "totalPayments": "Total Payments",
-      "withdrawals": "Withdrawals",
-      "pending": "Pending"
     },
-    "filters": {
-      "title": "Filters",
-      "allTransactions": "All Transactions",
-      "deposits": "Deposits",
-      "payments": "Payments",
-      "withdrawals": "Withdrawals",
-      "newestFirst": "Newest First",
-      "oldestFirst": "Oldest First",
-      "highestAmount": "Highest Amount",
-      "lowestAmount": "Lowest Amount",
-      "searchPlaceholder": "Search transactions...",
-      "transactionType": "Transaction Type",
-      "sortBy": "Sort By"
-    },
-    "history": "Transaction History",
-    "noTransactions": "No transactions found",
-    "historyDescription": "Your transaction history will appear here",
-    "tryAdjusting": "Try adjusting your search or filters",
-    "modal": {
-      "title": "Add Money to Wallet",
-      "amount": "Amount",
-      "description": "Description (Optional)",
-      "descriptionPlaceholder": "Add a note for this deposit",
-      "instructionsTitle": "Payment Instructions",
-      "instructions": "You will be redirected to complete the payment using your selected method. Funds will be available in your wallet once the payment is confirmed.",
-      "cancel": "Cancel",
-      "confirm": "Add Money"
-    },
-    "export": "Export"
-  },
-  "saved": {
-    "title": "Favorites",
-    "sortBy": "Sort by:",
-    "sortOptions": {
-      "newest": "Newest",
-      "priceLowHigh": "Price: Low to High",
-      "priceHighLow": "Price: High to Low"
-    },
-    "available": "Available",
-    "buyNow": "Buy Now",
-    "remove": "Remove"
-  },
-  "productDetail": {
-    "title": "Product Information",
-    "supplierInfo": "Supplier Information",
-    "farmerInfo": "Farmer Information",
-    "harvested": "Harvested",
-    "location": "Location",
-    "category": "Category",
-    "price": "Price",
-    "certification": "Certification",
-    "stock": {
-      "outOfStock": "Out of Stock",
-      "lowStock": "Only {{count}} left",
-      "available": "{{count}} available"
-    },
-    "actions": {
-      "purchase": "Purchase Product",
-      "save": "Save",
-      "saved": "Saved",
-      "share": "Share",
-      "edit": "Edit",
-      "delete": "Delete",
-      "chat": "Chat with Owner",
-      "negotiable": "Negotiable"
-    },
-    "toasts": {
-      "addedToFavorites": "Product added to favorites",
-      "removedFromFavorites": "Product removed from favorites",
-      "linkCopied": "Product link copied to clipboard"
+    "productDetail": {
+      "title": "Product Information",
+      "supplierInfo": "Supplier Information",
+      "farmerInfo": "Farmer Information",
+      "harvested": "Harvested",
+      "location": "Location",
+      "category": "Category",
+      "price": "Price",
+      "certification": "Certification",
+      "stock": {
+        "outOfStock": "Out of Stock",
+        "lowStock": "Only {{count}} left",
+        "available": "{{count}} available"
+      },
+      "actions": {
+        "purchase": "Purchase Product",
+        "save": "Save",
+        "saved": "Saved",
+        "share": "Share",
+        "edit": "Edit",
+        "delete": "Delete",
+        "chat": "Chat with Owner",
+        "negotiable": "Negotiable"
+      },
+      "toasts": {
+        "addedToFavorites": "Product added to favorites",
+        "removedFromFavorites": "Product removed from favorites",
+        "linkCopied": "Product link copied to clipboard"
+      }
     }
   },
   "farmer": {
@@ -1124,33 +1043,33 @@
         "unpaid": "UNPAID",
         "deliveryTracking": "Delivery Tracking"
       }
-    },
-    "admin": {
-      "dashboard": {
-        "accessDenied": {
-          "title": "Access Denied",
-          "description": "This dashboard is only available to administrators."
-        },
-        "title": "Admin Dashboard",
-        "subtitle": "Monitor system health, manage users, and track platform metrics",
-        "sections": {
-          "ecosystemOverview": "Ecosystem Overview",
-          "platformPerformance": "Platform Performance",
-          "engagementOperations": "Engagement & Operations",
-          "platformTrends": "Platform Trends"
-        },
-        "metrics": {
-          "totalUsers": "Total Users",
-          "totalFarmers": "Total Farmers",
-          "totalBuyers": "Total Buyers",
-          "totalSuppliers": "Total Suppliers",
-          "totalOrders": "Total Orders",
-          "transactionVolume": "Transaction Volume",
-          "platformRevenue": "Platform Revenue",
-          "newRegistrations": "New Registrations (30d)",
-          "activeUsers": "Active Users (7d)",
-          "openSupportTickets": "Open Support Tickets"
-        }
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Access Denied",
+        "description": "This dashboard is only available to administrators."
+      },
+      "title": "Admin Dashboard",
+      "subtitle": "Monitor system health, manage users, and track platform metrics",
+      "sections": {
+        "ecosystemOverview": "Ecosystem Overview",
+        "platformPerformance": "Platform Performance",
+        "engagementOperations": "Engagement & Operations",
+        "platformTrends": "Platform Trends"
+      },
+      "metrics": {
+        "totalUsers": "Total Users",
+        "totalFarmers": "Total Farmers",
+        "totalBuyers": "Total Buyers",
+        "totalSuppliers": "Total Suppliers",
+        "totalOrders": "Total Orders",
+        "transactionVolume": "Transaction Volume",
+        "platformRevenue": "Platform Revenue",
+        "newRegistrations": "New Registrations (30d)",
+        "activeUsers": "Active Users (7d)",
+        "openSupportTickets": "Open Support Tickets"
       }
     }
   },
@@ -1262,7 +1181,7 @@
       "currentStatus": "Current Status",
       "updateTo": "Update to {{status}}",
       "updateStatus": "Update Delivery Status",
-      "confirmUpdate": "Are you sure you want to update the delivery status to <strong>{{status}}</strong>?",
+      "confirmUpdate": "Are you sure you want to update delivery status to <strong>{{status}}</strong>?",
       "confirmButton": "Confirm Update",
       "cancelButton": "Cancel",
       "updating": "Updating...",
@@ -1288,7 +1207,7 @@
         },
         "inTransit": {
           "label": "In Transit",
-          "description": "Order is on the way to delivery location"
+          "description": "Order is on way to delivery location"
         },
         "delivered": {
           "label": "Delivered",
@@ -1358,7 +1277,7 @@
         "inputSuppliers": "Input Suppliers",
         "transactionsCompleted": "Transactions Completed"
       },
-      "imageAlt": "Farmer using digital technology in the field"
+      "imageAlt": "Farmer using digital technology in field"
     },
     "about": {
       "badge": "About UmuhinzinLink",
@@ -1515,7 +1434,7 @@
         },
         "jean": {
           "role": "Bean Farmer, Nyagatare",
-          "quote": "Getting credit for seeds through the platform was game-changing. Now I can plan my seasons better."
+          "quote": "Getting credit for seeds through platform was game-changing. Now I can plan my seasons better."
         },
         "agnes": {
           "role": "Vegetable Farmer, Nyagatare",
@@ -1712,7 +1631,7 @@
         },
         "shipped": {
           "label": "Shipped",
-          "description": "Your order is on the way"
+          "description": "Your order is on way"
         },
         "delivered": {
           "label": "Delivered",

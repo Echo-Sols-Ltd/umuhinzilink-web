@@ -127,7 +127,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </div>
             )}
           </div>
-          
+
           {images.length > 1 && (
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
               {images.map((image: string, index: number) => (
@@ -156,12 +156,20 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         <div className="space-y-6">
           {/* Price and Basic Info */}
           <Card className="shadow-sm border-border">
-            <CardHeader className="pb-3 border-b border-border/50">
-              <CardTitle className="flex items-center justify-between gap-4">
-                <span className="text-lg font-semibold">{t('buyer.productDetail.title')}</span>
-                <div className="text-xl sm:text-2xl font-bold text-success flex items-baseline">
-                  {formatPrice(product.unitPrice)}
-                  <span className="text-xs sm:text-sm text-muted-foreground font-normal ml-1">/{product.measurementUnit}</span>
+            <CardHeader className="">
+              <CardTitle className="flex flex-col justify-between gap-4">
+                <div className='flex text-2xl sm:text-3xl justify-between font-bold text-foreground'>
+                  <h1 >{product.name}</h1>
+                  <span className="ml-1">
+                    {product.quantity} {product.measurementUnit}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  {formatPrice(product.unitPrice)}/{product.measurementUnit}
+                </div>
+                <div className=" text-sm text-muted-foreground mt-1">
+                  <div className="text-lg text-foreground">Description:</div>
+                  {product.description}
                 </div>
               </CardTitle>
             </CardHeader>
@@ -206,9 +214,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   </div>
                 </div>
               </div>
-              
+
               <Separator className="bg-border/50" />
-              
+
               <div className="flex items-center gap-3">
                 <Award className="w-4 h-4 text-success" />
                 <span className="text-sm text-muted-foreground">{t('buyer.productDetail.certification')}:</span>
@@ -257,7 +265,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   {isOutOfStock ? t('buyer.productDetail.stock.outOfStock') : t('buyer.productDetail.actions.purchase')}
                 </Button>
               )}
-              
+
               <div className="flex gap-3">
                 <Button
                   variant="outline"
