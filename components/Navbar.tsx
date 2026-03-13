@@ -78,7 +78,7 @@ export default function Navbar() {
 
           {user ? (
             <Link
-              href={`/${user.role.toLowerCase()}/dashboard`}
+              href={`/dashboard`}
               className="flex items-center space-x-2 bg-success/10 text-success border border-success/20 px-4 py-2 rounded-full hover:bg-success/20 transition-all"
             >
               <UserIcon className="w-4 h-4" />

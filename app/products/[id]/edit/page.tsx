@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import Sidebar from '@/components/shared/Sidebar';
 import { imageUrl } from '@/lib/utils';
+import Navbar from '@/components/Navbar';
 
 function EditProduct() {
   const router = useRouter();
@@ -46,6 +47,7 @@ function EditProduct() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("i was temporary",params)
     const productId = params.id as string;
     const foundProduct = farmerProducts?.find(p => p.id === productId);
 
@@ -130,7 +132,7 @@ function EditProduct() {
   if (loading) {
     return (
       <div className="flex h-screen bg-background overflow-hidden">
-        <Sidebar userType={UserType.FARMER} activeItem='Products' />
+        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin" />
         </main>
@@ -141,7 +143,7 @@ function EditProduct() {
   if (!product) {
     return (
       <div className="flex h-screen bg-background overflow-hidden">
-        <Sidebar userType={UserType.FARMER} activeItem='Products' />
+        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-foreground mb-2">Product Not Found</h2>
@@ -160,7 +162,7 @@ function EditProduct() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={UserType.FARMER} activeItem='My Products' />
+      <Navbar />
       
       <main className="flex-1 overflow-hidden">
         {/* Header */}
