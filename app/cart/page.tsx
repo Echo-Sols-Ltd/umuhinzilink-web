@@ -4,10 +4,10 @@ import React, { useState, useMemo } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { ShoppingCart, Truck, CreditCard, ChevronRight, Minus, Plus, Trash2, MapPin, Phone, Mail, User, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ShoppingCart, Truck, CreditCard, ChevronRight, Minus, Plus, Trash2, MapPin, Phone, Mail, User, CheckCircle2, AlertCircle, MessageCircle, Clock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CartItem } from '@/types';
+import { CartItem, CartItemType } from '@/types';
 import { notify } from '@/lib/notify';
 
 enum CheckoutStep {
@@ -21,6 +21,24 @@ export default function CartPage() {
   const { user } = useAuth();
   const { t } = useI18n();
   const [step, setStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
+
+  // Helper functions for negotiation items
+  const isNegotiationItem = (item: CartItem) => item.type === CartItemType.NEGOTIATION;
+  const isAcceptedNegotiation = (item: CartItem) => item.type === CartItemType.NEGOTIATION_ACCEPTED;
+  const getNegotiationStatus = (item: CartItem) => {
+    if (isAcceptedNegotiation(item)) return { text: 'Accepted', color: 'text-green-600', bg: 'bg-green-50' };
+    if (isNegotiationItem(item)) return { text: 'Pending', color: 'text-yellow-600', bg: 'bg-yellow-50' };
+    return null;
+  };
+  const getTimeRemaining = (expiresAt: string) => {
+    const now = new Date();
+    const expiry = new Date(expiresAt);
+    const diff = expiry.getTime() - now.getTime();
+    if (diff <= 0) return 'Expired';
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours}h ${minutes}m`;
+  };
 
   // Form states
   const [formData, setFormData] = useState({
@@ -95,7 +113,7 @@ export default function CartPage() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
+      <div className=" h-screen flex flex-col items-center justify-center bg-background p-4">
         <div className="bg-muted/30 p-8 rounded-full mb-6">
           <ShoppingCart className="w-16 h-16 text-muted-foreground" />
         </div>
@@ -112,7 +130,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-20">
+    <div className="overflow-auto h-screen bg-[#F8F9FA] pb-20">
       {/* Header / Stepper Overlay */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
@@ -160,45 +178,101 @@ export default function CartPage() {
             </h2>
             
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 mb-8 custom-scrollbar">
-              {cart.items.map((item) => (
-                <div key={item.id} className="flex gap-4 items-center group">
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-gray-50 shrink-0 border border-gray-100">
-                    <Image 
-                      src={item.product.image || '/placeholder-product.png'} 
-                      alt={item.product.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-900 truncate">{item.product.name}</h3>
-                    <p className="text-sm text-gray-500 mb-2">{item.unitPrice.toLocaleString()} RWF</p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
+              {cart.items.map((item) => {
+                const status = getNegotiationStatus(item);
+                const isNegotiating = isNegotiationItem(item);
+                
+                return (
+                  <div key={item.id} className="flex gap-4 items-center group">
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-gray-50 shrink-0 border border-gray-100">
+                      <Image 
+                        src={item.product.image || '/placeholder-product.png'} 
+                        alt={item.product.name}
+                        fill
+                        className="object-cover"
+                      />
+                      {isNegotiating && (
+                        <div className="absolute top-1 right-1 bg-yellow-500 text-white rounded-full p-1">
+                          <MessageCircle className="w-3 h-3" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-bold text-gray-900 truncate">{item.product.name}</h3>
+                        {status && (
+                          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${status.bg} ${status.color}`}>
+                            {status.text}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Price Display */}
+                      <div className="space-y-1 mb-2">
+                        {isNegotiating ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 line-through">
+                              {item.unitPrice.toLocaleString()} RWF
+                            </span>
+                            <span className="text-sm font-bold text-primary">
+                              Proposed: {item.proposedPrice?.toLocaleString()} RWF
+                            </span>
+                            <span className="text-xs text-green-600 font-semibold">
+                              Save {((item.unitPrice - (item.proposedPrice || 0)) / item.unitPrice * 100).toFixed(0)}%
+                            </span>
+                          </div>
+                        ) : isAcceptedNegotiation(item) ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 line-through">
+                              {item.unitPrice.toLocaleString()} RWF
+                            </span>
+                            <span className="text-sm font-bold text-green-600">
+                              {item.proposedPrice?.toLocaleString()} RWF
+                            </span>
+                            <span className="text-xs text-green-600 font-semibold">
+                              ✓ Accepted
+                            </span>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-500">{item.unitPrice.toLocaleString()} RWF</p>
+                        )}
+                      </div>
+
+                      {/* Negotiation Timer */}
+                      {isNegotiating && item.negotiationExpiresAt && (
+                        <div className="flex items-center gap-1 text-xs text-yellow-600 mb-2">
+                          <Clock className="w-3 h-3" />
+                          <span>Expires in {getTimeRemaining(item.negotiationExpiresAt)}</span>
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
+                          <button 
+                            onClick={() => handleUpdateQuantity(item, -1)}
+                            className="p-1 hover:text-primary transition-colors"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                          <button 
+                            onClick={() => handleUpdateQuantity(item, 1)}
+                            className="p-1 hover:text-primary transition-colors"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
                         <button 
-                          onClick={() => handleUpdateQuantity(item, -1)}
-                          className="p-1 hover:text-primary transition-colors"
+                          onClick={() => removeItem(item.id)}
+                          className="text-gray-300 hover:text-red-500 transition-colors"
                         >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
-                        <button 
-                          onClick={() => handleUpdateQuantity(item, 1)}
-                          className="p-1 hover:text-primary transition-colors"
-                        >
-                          <Plus className="w-3 h-3" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                      <button 
-                        onClick={() => removeItem(item.id)}
-                        className="text-gray-300 hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="border-t border-dashed border-gray-100 pt-6 space-y-3">

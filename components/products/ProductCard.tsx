@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { cn, imageUrl } from "@/lib/utils";
 import { Product, MessageType, ProductRef } from "@/types";
 import { MapPin, Package, CheckCircle2, ShoppingCart, ArrowRight, Edit, MessageSquare } from "lucide-react";
@@ -6,7 +7,7 @@ import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useProduct } from "@/contexts/ProductContext";
-import { useChat, userToChatUser } from "@/hooks/useChat";
+import { useChat } from "@/hooks/useChat";
 import { useI18n } from "@/contexts/I18nContext";
 import { useCart } from "@/contexts/CartContext";
 import { CartItemType } from "@/types";
@@ -84,7 +85,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
         <div
             onClick={handleCardClick}
             className={cn(
-                "group relative bg-card rounded-xl transition-all duration-500 cursor-pointer flex flex-col h-full overflow-hidden w-full mx-auto",
+                "group bg-card rounded-xl transition-all duration-500 cursor-pointer flex flex-col h-full overflow-hidden w-full mx-auto",
                 featured
                     ? 'border-primary/30 shadow-xl shadow-primary/5 ring-1 ring-primary/10'
                     : 'border-border shadow-sm hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1'
@@ -201,11 +202,14 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                 </div>
             </div>
 
-            <NegotiationModal
-                product={product}
-                isOpen={isNegotiateModalOpen}
-                onClose={() => setIsNegotiateModalOpen(false)}
-            />
+            {createPortal(
+                <NegotiationModal
+                    product={product}
+                    isOpen={isNegotiateModalOpen}
+                    onClose={() => setIsNegotiateModalOpen(false)}
+                />,
+                document.body
+            )}
         </div>
     );
 }
