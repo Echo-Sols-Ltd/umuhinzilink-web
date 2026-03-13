@@ -84,14 +84,14 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
         <div
             onClick={handleCardClick}
             className={cn(
-                "group relative bg-card rounded-2xl border transition-all duration-500 cursor-pointer flex flex-col h-full overflow-hidden w-full mx-auto",
+                "group relative bg-card rounded-xl transition-all duration-500 cursor-pointer flex flex-col h-full overflow-hidden w-full mx-auto",
                 featured
                     ? 'border-primary/30 shadow-xl shadow-primary/5 ring-1 ring-primary/10'
                     : 'border-border shadow-sm hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1'
             )}
         >
             {/* 1️⃣ Image Section */}
-            <div className="relative aspect-square overflow-hidden bg-muted">
+            <div className="relative aspect-4/3 overflow-hidden bg-muted">
                 <img
                     src={imageUrl(product.image || (product as any).images?.[0])}
                     alt={product.name}
@@ -101,7 +101,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                 {/* Status Badge */}
                 <div className="absolute top-3 left-3 pointer-events-none">
                     <span className={cn(
-                        "px-2.5 py-1 rounded-lg text-[10px] font-black uppercase  backdrop-blur-md shadow-sm border text-white",
+                        "px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase  backdrop-blur-md shadow-sm border text-white",
                         isAvailable ? 'bg-success/90 border-white/20' :
                             isLowStock ? 'bg-warning/90 border-white/20' :
                                 'bg-destructive/90 border-white/20'
@@ -124,15 +124,15 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
             <div className="p-5 flex-1 flex flex-col gap-3">
                 {/* Category + Quantity */}
                 <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase ">
-                        {t(`enums.categories.${product.category}`) === `enums.categories.${product.category}` 
-                            ? product.category?.replace(/_/g, ' ') 
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase ">
+                        {t(`enums.categories.${product.category}`) === `enums.categories.${product.category}`
+                            ? product.category?.replace(/_/g, ' ')
                             : t(`enums.categories.${product.category}`)}
                     </span>
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 bg-primary/5 rounded-full text-[10px] font-bold text-primary border border-primary/10">
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 bg-primary/5 rounded-full text-xs font-bold text-primary border border-primary/10">
                         <Package className="w-3 h-3" />
-                        {product.quantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` 
-                            ? product.measurementUnit 
+                        {product.quantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}`
+                            ? product.measurementUnit
                             : t(`enums.units.${product.measurementUnit}`)}
                     </div>
                 </div>
@@ -154,12 +154,15 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                     <div className="flex items-center justify-between">
                         {/* Price */}
                         <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1  text-opacity-70">{t('productCard.unitPrice')}</span>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-xl font-black text-foreground">
+                                <span className="font-bold text-muted-foreground">RWF</span>
+                                <span className="font-bold text-foreground">
                                     {Number(product.unitPrice).toLocaleString()}
-                                </span>
-                                <span className="text-[10px] font-black text-muted-foreground">RWF</span>
+                                </span>/
+                                <span className="font-bold text-foreground">
+                                    {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}`
+                                    ? product.measurementUnit
+                                    : t(`enums.units.${product.measurementUnit}`)}</span>
                             </div>
                         </div>
 
@@ -198,7 +201,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                 </div>
             </div>
 
-            <NegotiationModal 
+            <NegotiationModal
                 product={product}
                 isOpen={isNegotiateModalOpen}
                 onClose={() => setIsNegotiateModalOpen(false)}
