@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare, Star, Minus, Plus, Home, ChevronRight, User, Clock, Truck } from 'lucide-react';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/input';
 
 interface ProductDetailProps {
   product: Product;
@@ -43,6 +44,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const { user } = useAuth();
   const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
 
   const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
   const isOutOfStock = product.quantity === 0;
@@ -92,23 +94,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   return (
     <div className={cn('max-w-6xl mx-auto p-4 sm:p-6 space-y-6', className)}>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{product.name}</h1>
-          <p className="text-base sm:text-lg text-muted-foreground mt-1">{product.description}</p>
-        </div>
-        {showActions && (
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className={cn('px-3 py-1', stockStatus.color, stockStatus.bgColor)}>
-              {stockStatus.text}
-            </Badge>
-            {product.isNegotiable && (
-              <Badge variant="secondary" className="px-3 py-1 font-medium">{t('buyer.productDetail.actions.negotiable')}</Badge>
-            )}
-          </div>
-        )}
+      {/* Breadcrumbs */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Home className="w-4 h-4" />
+        <ChevronRight className="w-4 h-4" />
+        <span>Home</span>
+        <ChevronRight className="w-4 h-4" />
+        <span>Grains & cereals</span>
+        <ChevronRight className="w-4 h-4" />
+        <span className="text-foreground font-medium">{product.name}</span>
       </div>
+
+      {/* Product Header */}
+      
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Product Images */}
@@ -152,170 +150,310 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           )}
         </div>
 
-        {/* Product Details */}
+        
+
+        {/* Right Column */}
         <div className="space-y-6">
-          {/* Price and Basic Info */}
-          <Card className="shadow-sm border-border">
-            <CardHeader className="">
-              <CardTitle className="flex flex-col justify-between gap-4">
-                <div className='flex text-2xl sm:text-3xl justify-between font-bold text-foreground'>
-                  <h1 >{product.name}</h1>
-                  <span className="ml-1">
-                    {product.quantity} {product.measurementUnit}
+          <div className="space-y-3">
+        <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
+        
+        {/* Badges */}
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
+            Fresh harvest
+          </Badge>
+          <Badge variant="outline" className="border-green-200 text-green-700">
+            {product.category}
+          </Badge>
+          <Badge variant="outline" className="border-blue-200 text-blue-700">
+            {product.location}
+          </Badge>
+        </div>
+
+        {/* Rating and Stock */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className={cn('w-4 h-4', i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300')} />
+              ))}
+            </div>
+            <span className="font-semibold">4.8</span>
+            <span className="text-muted-foreground">(124 reviews)</span>
+          </div>
+          <div className={cn('px-3 py-1 rounded-full text-sm font-medium', stockStatus.bgColor, stockStatus.color)}>
+            In stock - {product.quantity} {product.measurementUnit} available
+          </div>
+        </div>
+
+        {/* Price */}
+        <div className="text-2xl font-bold text-foreground">
+          {formatPrice(product.unitPrice)} per {product.measurementUnit}
+        </div>
+      </div>
+          {/* Description */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold">Description</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              {product.description}
+            </p>
+          </div>
+
+          {/* Product Details */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold">Product Details</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Weight</span>
+                  <span className="font-medium">{product.quantity} kg</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Harvest date</span>
+                  <span className="font-medium">
+                    {productType === 'farmer' && 'harvestDate' in product ? formatDate((product as any).harvestDate) : 'Oct 2025'}
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
-                  {formatPrice(product.unitPrice)}/{product.measurementUnit}
-                </div>
-                <div className=" text-sm text-muted-foreground mt-1">
-                  <div className="text-lg text-foreground">Description:</div>
-                  {product.description}
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 pt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-muted rounded-full">
-                    <Package className="w-4 h-4 text-muted-foreground" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground uppercase tracking-wider">{t('buyer.productDetail.category')}</span>
-                    <span className="font-medium text-sm sm:text-base capitalize">{product.category}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-muted rounded-full">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground uppercase tracking-wider">{t('buyer.productDetail.price')}</span>
-                    <span className="font-medium text-sm sm:text-base">{formatPrice(product.unitPrice)}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-muted rounded-full">
-                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground uppercase tracking-wider">{t('buyer.productDetail.location')}</span>
-                    <span className="font-medium text-sm sm:text-base">{product.location}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-muted rounded-full">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground uppercase tracking-wider">{t('buyer.productDetail.harvested')}</span>
-                    <span className="font-medium text-sm sm:text-base">
-                      {productType === 'farmer' && 'harvestDate' in product ? formatDate((product as any).harvestDate) : 'N/A'}
-                    </span>
-                  </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Location</span>
+                  <span className="font-medium">{product.location}</span>
                 </div>
               </div>
-
-              <Separator className="bg-border/50" />
-
-              <div className="flex items-center gap-3">
-                <Award className="w-4 h-4 text-success" />
-                <span className="text-sm text-muted-foreground">{t('buyer.productDetail.certification')}:</span>
-                <Badge variant={product.certification === 'COOPERATIVE_CERT' ? 'default' : 'secondary'} className="font-medium tracking-wide">
-                  {product.certification}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Owner Information */}
-          <Card className="shadow-sm border-border overflow-hidden">
-            <CardHeader className="pb-3 border-b border-border/50">
-              <CardTitle className="text-lg font-semibold">
-                {productType === 'farmer' ? t('buyer.productDetail.farmerInfo') : t('buyer.productDetail.supplierInfo')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center border border-success/20">
-                  <span className="text-lg font-bold text-success">
-                    {product.owner.names.charAt(0).toUpperCase()}
-                  </span>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Variety</span>
+                  <span className="font-medium">PAN 691 white</span>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">{product.owner.names}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {productType === 'farmer' ? t('sidebar.roles.farmer') : t('sidebar.roles.supplier')} • {product.location}
-                  </p>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Storage</span>
+                  <span className="font-medium">Dry warehouse</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Delivery</span>
+                  <span className="font-medium">2-4 days</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Actions */}
-          {showActions && (
-            <div className="space-y-4">
-              {!isOwner && (
+          {/* Quantity and Actions */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <span className="font-medium">Quantity</span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1}
+                  className="w-8 h-8 p-0"
+                >
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <Input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  className="w-20 text-center"
+                  min="1"
+                  max={product.quantity}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setQuantity(Math.min(product.quantity, quantity + 1))}
+                  disabled={quantity >= product.quantity}
+                  className="w-8 h-8 p-0"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+                <span className="text-muted-foreground">bag</span>
+              </div>
+            </div>
+
+            {showActions && (
+              <div className="space-y-3">
                 <Button
                   onClick={() => onPurchaseProduct?.(product)}
                   disabled={isOutOfStock}
-                  className="w-full text-lg h-12 sm:h-14 font-bold shadow-lg shadow-success/20 hover:shadow-success/40 transition-all"
+                  className="w-full h-12 font-semibold shadow-lg shadow-success/20 hover:shadow-success/40 transition-all"
                   size="lg"
                 >
-                  <ShoppingCart className="w-5 h-5 mr-3" />
-                  {isOutOfStock ? t('buyer.productDetail.stock.outOfStock') : t('buyer.productDetail.actions.purchase')}
+                  <ShoppingCart className="w-5 h-5 mr-2" />
+                  Add to cart - {formatPrice(product.unitPrice * quantity)}
                 </Button>
-              )}
 
-              <div className="flex gap-3">
                 <Button
                   variant="outline"
                   onClick={() => onSaveProduct?.(product.id)}
-                  className="flex-1 h-12 shadow-sm border-border hover:border-success/50 transition-colors"
+                  className="w-full h-12 shadow-sm border-border hover:border-success/50 transition-colors"
                 >
                   <Heart className={cn('w-4 h-4 mr-2', isSaved && 'fill-destructive text-destructive')} />
-                  {isSaved ? t('buyer.productDetail.actions.saved') : t('buyer.productDetail.actions.save')}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => onShareProduct?.(product)}
-                  className="flex-1 h-12 shadow-sm border-border hover:border-success/50 transition-colors"
-                >
-                  <Share2 className="w-4 h-4 mr-2 text-info" />
-                  {t('buyer.productDetail.actions.share')}
+                  {isSaved ? 'Saved' : 'Save to wishlist'}
                 </Button>
               </div>
-
-              {isOwner ? (
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => onEditProduct?.(product)}
-                    className="flex-1 h-11 border-border shadow-sm"
-                  >
-                    <Edit className="w-4 h-4 mr-2 text-info" />
-                    {t('buyer.productDetail.actions.edit')}
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => onDeleteProduct?.(product.id)}
-                    className="flex-1 h-11 shadow-sm"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    {t('buyer.productDetail.actions.delete')}
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="outline"
-                  onClick={handleChatWithOwner}
-                  className="w-full h-12 border-success/30 hover:border-success/60 text-success hover:bg-success/10 transition-all font-medium"
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  {t('buyer.productDetail.actions.chat')}
-                </Button>
-              )}
+            )}
+          </div>
+           {/* Sold By Section */}
+      <Card className="shadow-sm border-border">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Sold By</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center border border-success/20">
+              <User className="w-8 h-8 text-success" />
             </div>
-          )}
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg text-foreground">{product.owner.names}</h3>
+              <p className="text-muted-foreground mb-3">
+                {product.location} • {productType === 'farmer' ? 'Farmer' : 'Supplier'} since 2021
+              </p>
+              
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-semibold">4.9</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Rating</p>
+                </div>
+                <div className="text-center">
+                  <div className="font-semibold mb-1">243</div>
+                  <p className="text-xs text-muted-foreground">Sales</p>
+                </div>
+                <div className="text-center">
+                  <div className="font-semibold mb-1">98%</div>
+                  <p className="text-xs text-muted-foreground">On-time delivery</p>
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                onClick={handleChatWithOwner}
+                className="w-full border-success/30 hover:border-success/60 text-success hover:bg-success/10 transition-all font-medium"
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Message seller
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+        </div>
+        
+      </div>
+     
+      {/* Customer Reviews */}
+      <Card className="shadow-sm border-border">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Customer Reviews</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-6">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-bold">4.8</span>
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={cn('w-5 h-5', i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300')} />
+                  ))}
+                </div>
+              </div>
+              <span className="text-muted-foreground">(124 reviews)</span>
+            </div>
+            
+            {/* Rating Distribution */}
+            <div className="space-y-2">
+              {[5, 4, 3, 2, 1].map((rating) => (
+                <div key={rating} className="flex items-center gap-2">
+                  <span className="text-sm w-3">{rating}</span>
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div 
+                      className="bg-yellow-400 h-full rounded-full"
+                      style={{ width: `${rating === 5 ? 70 : rating === 4 ? 20 : rating === 3 ? 5 : rating === 2 ? 3 : 2}%` }}
+                    />
+                  </div>
+                  <span className="text-sm text-muted-foreground w-10 text-right">
+                    {rating === 5 ? 70 : rating === 4 ? 20 : rating === 3 ? 5 : rating === 2 ? 3 : 2}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Individual Reviews */}
+          <div className="space-y-4">
+            <div className="border-b border-border/50 pb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-semibold">Mukamana</span>
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span className="text-sm text-muted-foreground">Nov 2025</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Very good quality maize. Delivered on time to Kigali. Will order again next season.
+              </p>
+            </div>
+            
+            <div className="border-b border-border/50 pb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-semibold">Niyonzima</span>
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span className="text-sm text-muted-foreground">Oct 2025</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Exactly as described. Well dried, no mold. Seller responded quickly to my questions.
+              </p>
+            </div>
+            
+            <div className="pb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-semibold">Uwera</span>
+                <div className="flex items-center">
+                  {[...Array(4)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                  <Star className="w-3 h-3 text-gray-300" />
+                </div>
+                <span className="text-sm text-muted-foreground">Oct 2025</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Good product. Packaging could be tighter but the maize quality is excellent for milling.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Related Products */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Related products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'Yellow maize 50kg', seller: 'Karangwa - Musange', price: 11000 },
+            { name: 'Sorghum 50kg bag', seller: 'Bizimana - Ruhengeri', price: 9500 },
+            { name: 'Rice paddy 25kg', seller: 'Nkurunziza - Bugesera', price: 14000 },
+            { name: 'Beans 25kg bag', seller: 'Uwimana - Musanze', price: 18500 },
+          ].map((relatedProduct, index) => (
+            <Card key={index} className="shadow-sm border-border hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="pt-4">
+                <div className="aspect-square bg-muted rounded-lg mb-3" />
+                <h3 className="font-semibold text-sm mb-1">{relatedProduct.name}</h3>
+                <p className="text-xs text-muted-foreground mb-2">{relatedProduct.seller}</p>
+                <p className="font-bold text-sm">{formatPrice(relatedProduct.price)}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </div>
