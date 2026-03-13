@@ -55,13 +55,7 @@ export default function Navbar() {
             href="/dashboard"
             className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
           >
-            {t('landing.nav.marketplace') || 'Marketplace'}
-          </Link>
-          <Link
-            href="/about"
-            className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
-          >
-            {t('landing.nav.howItWorks') || 'How it Works'}
+            {t('landing.nav.marketplace') || 'Products'}
           </Link>
           <Link
             href="/about"
