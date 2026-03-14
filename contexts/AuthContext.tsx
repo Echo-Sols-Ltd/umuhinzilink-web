@@ -196,6 +196,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       notify.error('Please try again later', 'Loading auth state failed');
       setLoading(false);
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -225,23 +227,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
         const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
         if (fetcher) await fetcher();
-
-        // Navigate to role-specific dashboard
-        const dashboardRoutes = {
-          [UserType.ADMIN]: '/admin/dashboard',
-          [UserType.FARMER]: '/farmer/dashboard',
-          [UserType.BUYER]: '/buyer/dashboard',
-          [UserType.SUPPLIER]: '/supplier/dashboard',
-        };
-
-        const route = dashboardRoutes[res.data.user.role as keyof typeof dashboardRoutes];
-        if (route) router.replace(route);
+        router.replace('/dashboard');
       }
     } catch {
       notify.error('Please try again', 'Error logging in');
     } finally {
       setLoading(false);
-      
+
     }
   };
 
@@ -272,16 +264,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
         if (fetcher) await fetcher();
 
-        // Navigate to role-specific dashboard
-        const dashboardRoutes = {
-          [UserType.ADMIN]: '/admin/dashboard',
-          [UserType.FARMER]: '/farmer/dashboard',
-          [UserType.BUYER]: '/buyer/dashboard',
-          [UserType.SUPPLIER]: '/supplier/dashboard',
-        };
-
-        const route = dashboardRoutes[res.data.user.role as keyof typeof dashboardRoutes];
-        if (route) router.replace(route);
+      router.replace('/dashboard');
       }
     } catch {
       notify.error('Please try again', 'Error logging in');
