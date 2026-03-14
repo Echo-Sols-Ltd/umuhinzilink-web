@@ -106,13 +106,22 @@ export default function CartPage() {
     
     if (hasNormalItems && hasAcceptedNegotiations) {
       // Mixed checkout
-      result = await checkoutMixed({ paymentMethod });
+      const itemIds = cart.items
+        .filter(item => item.type === CartItemType.NORMAL || item.type === CartItemType.NEGOTIATION_ACCEPTED)
+        .map(item => item.id);
+      result = await checkoutMixed({ paymentMethod, itemIds, checkoutType: 'MIXED' });
     } else if (hasAcceptedNegotiations) {
       // Negotiated checkout only
-      result = await checkoutNegotiated({ paymentMethod });
+      const itemIds = cart.items
+        .filter(item => item.type === CartItemType.NEGOTIATION_ACCEPTED)
+        .map(item => item.id);
+      result = await checkoutNegotiated({ paymentMethod, itemIds, checkoutType: 'NEGOTIATED' });
     } else {
       // Normal checkout only
-      result = await checkoutNormal({ paymentMethod });
+      const itemIds = cart.items
+        .filter(item => item.type === CartItemType.NORMAL)
+        .map(item => item.id);
+      result = await checkoutNormal({ paymentMethod, itemIds, checkoutType: 'NORMAL' });
     }
 
     if (result) {

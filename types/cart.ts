@@ -56,4 +56,6 @@ export interface CartNegotiateRequest {
 
 export interface CartCheckoutRequest {
   paymentMethod: PaymentMethod;
+  itemIds?: string[];
+  checkoutType?: 'NORMAL' | 'NEGOTIATED' | 'MIXED';
 }
