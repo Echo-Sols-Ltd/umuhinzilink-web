@@ -1,13 +1,16 @@
-'use client';
-
 import Link from 'next/link';
-
 import { useEffect, useState } from 'react';
 import { useI18n } from '@/contexts/I18nContext';
+import { ShoppingCart, User as UserIcon } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState('home');
   const { t } = useI18n();
+  const { user } = useAuth();
+  const { getCartItemCount } = useCart();
+  const cartItemCount = getCartItemCount();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,49 +38,63 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="w-full bg-card shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300 animate-fade-in">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo placeholder */}
-        <div className="flex items-center space-x-2">
-          <span className="text-2xl font-extrabold  text-success font-sans">
+    <nav className="w-full bg-card/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300 animate-fade-in border-b border-border/40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/dashboard" className="flex items-center space-x-2">
+          <span className="text-2xl font-extrabold text-success font-sans">
             Umuhinzi
-            <span className="text-2xl font-extrabold  text-foreground font-sans">
+            <span className="text-2xl font-extrabold text-foreground font-sans">
               Link
             </span>
           </span>
-        </div>
-
-        {/* Navigation links */}
-        <div className="hidden md:flex items-center space-x-8">
-          {[
-            { nameKey: 'landing.nav.home', href: '#home' },
-            { nameKey: 'landing.nav.features', href: '#features' },
-            { nameKey: 'landing.nav.agribusiness', href: '#agribusiness' },
-            { nameKey: 'landing.nav.lenders', href: '#lenders' },
-            { nameKey: 'landing.nav.contact', href: '#contact' },
-          ].map(link => (
-            <a
-              key={link.nameKey}
-              href={link.href}
-              className={
-                `px-3 py-2 rounded-md text-base font-medium  transition-colors duration-200 ` +
-                (activeSection === link.href.replace('#', '')
-                  ? 'bg-success/10 text-success font-semibold'
-                  : 'text-foreground hover:text-success')
-              }
-            >
-              {t(link.nameKey)}
-            </a>
-          ))}
-        </div>
-
-        <Link
-          href="/auth/signin"
-          className="bg-success text-primary-foreground px-5 py-2 rounded-full hover:bg-success/90"
-        >
-          {t('auth.signIn.signIn')}
         </Link>
+
+        <div className="hidden md:flex items-center space-x-6">
+          <Link
+            href="/dashboard"
+            className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
+          >
+            {t('landing.nav.marketplace') || 'Products'}
+          </Link>
+          <Link
+            href="/about"
+            className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
+          >
+            {t('landing.nav.aboutUs') || 'About Us'}
+          </Link>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center space-x-4">
+          <Link href="/cart" className="relative p-2 text-foreground hover:text-success transition-colors">
+            <ShoppingCart className="w-6 h-6" />
+            {cartItemCount > 0 && (
+              <span className="absolute top-0 right-0 bg-success text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-background">
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
+
+          {user ? (
+            <Link
+              href={`/dashboard`}
+              className="flex items-center space-x-2 bg-success/10 text-success border border-success/20 px-4 py-2 rounded-full hover:bg-success/20 transition-all"
+            >
+              <UserIcon className="w-4 h-4" />
+              <span className="text-sm font-semibold">{t('common.dashboard') || 'Dashboard'}</span>
+            </Link>
+          ) : (
+            <Link
+              href="/auth/signin"
+              className="bg-success text-white px-6 py-2 rounded-full hover:bg-success/90 transition-all shadow-lg shadow-success/20 font-semibold"
+            >
+              {t('auth.signIn.signIn')}
+            </Link>
+          )}
+        </div>
       </div>
     </nav>
   );
 }
+

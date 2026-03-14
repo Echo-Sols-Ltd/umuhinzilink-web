@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Product } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { UserType, ProductType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import ProductDetail from '@/components/products/ProductDetail';
@@ -19,18 +19,10 @@ export default function BuyerProductDetailPage() {
   const { user } = useAuth();
   const { toast: showToast } = useToast();
   const { 
-    farmerProducts,
-    supplierProducts,
-    buyerProducts,
-    currentFarmerProduct,
-    currentSupplierProduct,
-    currentBuyerProduct,
-    setCurrentFarmerProduct,
-    setCurrentSupplierProduct,
-    setCurrentBuyerProduct,
-    fetchFarmerProducts,
-    fetchSupplierProducts,
-    fetchBuyerProducts,
+    marketplaceProducts,
+    currentProduct: contextProduct,
+    setCurrentProduct,
+    fetchMarketplaceProducts,
     loading: contextLoading,
     showOrderModal
   } = useProduct();
@@ -46,75 +38,27 @@ export default function BuyerProductDetailPage() {
       setError(null);
       
       try {
-        // Step 1: Check all product types in context
-        let foundProduct = null;
-        let foundType = null;
-
-        // Check farmer products
-        foundProduct = farmerProducts?.find(p => p.id === productId);
-        if (foundProduct) {
-          foundType = 'farmer';
-          setCurrentFarmerProduct(foundProduct);
-        }
-
-        // Check supplier products
-        if (!foundProduct) {
-          foundProduct = supplierProducts?.find(p => p.id === productId);
-          if (foundProduct) {
-            foundType = 'supplier';
-            setCurrentSupplierProduct(foundProduct);
-          }
-        }
-
-        // Check buyer products
-        if (!foundProduct) {
-          foundProduct = buyerProducts?.find(p => p.id === productId);
-          if (foundProduct) {
-            foundType = 'farmer'; // Buyer products are FarmerProduct type
-            setCurrentBuyerProduct(foundProduct);
-          }
-        }
-
-        // Check current context products
-        if (!foundProduct) {
-          if (currentFarmerProduct?.id === productId) {
-            foundProduct = currentFarmerProduct;
-            foundType = 'farmer';
-          } else if (currentSupplierProduct?.id === productId) {
-            foundProduct = currentSupplierProduct;
-            foundType = 'supplier';
-          } else if (currentBuyerProduct?.id === productId) {
-            foundProduct = currentBuyerProduct;
-            foundType = 'farmer';
-          }
+        let foundProduct = marketplaceProducts?.find((p: Product) => p.id === productId);
+        
+        if (!foundProduct && contextProduct?.id === productId) {
+          foundProduct = contextProduct;
         }
 
         if (foundProduct) {
-          // ✅ Found in context - use immediately
-          setProductType(foundType as 'farmer' | 'supplier');
+          setCurrentProduct(foundProduct);
+          setProductType(foundProduct.productType === ProductType.FARMER_PRODUCT ? 'farmer' : 'supplier');
           setLoading(false);
         } else {
-          // ❌ Not in context - fetch from server
           const { productService } = await import('@/services/products');
+          const response = await productService.getProductById(productId);
           
-          try {
-            const response = await productService.getFarmerProduct(productId);
-            if (response.success && response.data) {
-              setCurrentFarmerProduct(response.data);
-              setProductType('farmer');
-              fetchFarmerProducts();
-            }
-          } catch (e) {
-            try {
-              const response = await productService.getSupplierProduct(productId);
-              if (response.success && response.data) {
-                setCurrentSupplierProduct(response.data);
-                setProductType('supplier');
-                fetchSupplierProducts();
-              }
-            } catch (e2) {
-              throw new Error('Product not found');
-            }
+          if (response.success && response.data) {
+            const data = response.data;
+            setCurrentProduct(data);
+            setProductType(data.productType === ProductType.FARMER_PRODUCT ? 'farmer' : 'supplier');
+            fetchMarketplaceProducts();
+          } else {
+            throw new Error('Product not found');
           }
         }
       } catch (err) {
@@ -133,19 +77,8 @@ export default function BuyerProductDetailPage() {
     if (productId) {
       loadProduct();
     }
-  }, [productId, farmerProducts, supplierProducts, buyerProducts, currentFarmerProduct, currentSupplierProduct, currentBuyerProduct, setCurrentFarmerProduct, setCurrentSupplierProduct, setCurrentBuyerProduct, fetchFarmerProducts, fetchSupplierProducts, fetchBuyerProducts, showToast, t]);
+  }, [productId, marketplaceProducts, contextProduct, setCurrentProduct, fetchMarketplaceProducts, showToast, t]);
 
-  // Get current product based on type
-  const getCurrentProduct = () => {
-    switch (productType) {
-      case 'farmer':
-        return currentFarmerProduct || currentBuyerProduct;
-      case 'supplier':
-        return currentSupplierProduct;
-      default:
-        return null;
-    }
-  };
 
   useEffect(() => {
     // Load saved products
@@ -192,10 +125,10 @@ export default function BuyerProductDetailPage() {
   };
 
   const handlePurchaseProduct = (product: Product) => {
-    showOrderModal(product, productType);
+    showOrderModal(product, product.productType === ProductType.FARMER_PRODUCT ? 'farmer' : 'supplier');
   };
 
-  const currentProduct = getCurrentProduct();
+  const currentProduct = contextProduct;
 
   if (loading) {
     return (

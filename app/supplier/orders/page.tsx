@@ -36,11 +36,11 @@ const ITEMS_PER_PAGE = 10;
 function OrdersPageComponent() {
   const router = useRouter();
   const {
-    supplierOrders,
-    fetchSupplierOrders,
+    sellingOrders: supplierOrders,
+    fetchSellingOrders: fetchSupplierOrders,
     loading,
-    supplierOrdersTotalPages: totalPages,
-    supplierOrdersTotalElements: totalElements,
+    sellingOrdersTotalPages: totalPages,
+    sellingOrdersTotalElements: totalElements,
   } = useOrder();
   const {
     acceptSupplierOrder,

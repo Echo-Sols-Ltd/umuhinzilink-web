@@ -24,8 +24,8 @@ export function FarmerProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { fetchFarmerOrders, fetchFarmerBuyerOrders } = useOrder()
-  const { fetchFarmerProducts, fetchFarmerBuyerProducts, fetchFarmerStats } = useProduct()
+  const { fetchSellingOrders: fetchFarmerOrders, fetchBuyingOrders: fetchFarmerBuyerOrders } = useOrder()
+  const { fetchMyProducts: fetchFarmerProducts, fetchMarketplaceProducts: fetchFarmerBuyerProducts, fetchMyStats: fetchFarmerStats } = useProduct()
   const fetchAllData = useCallback(async (user: User) => {
 
     if (!user) return

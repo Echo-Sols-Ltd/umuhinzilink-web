@@ -20,79 +20,69 @@ const STORAGE_KEYS = {
 };
 
 type ProductContextValue = {
-  addFarmerProduct: (data: Product) => void;
-  addSupplierProduct: (data: Product) => void;
-  updateFarmerProduct: (id: string, data: Product) => void;
-  updateBuyerProduct: (id: string, data: Product) => void;
-  updateSupplierProduct: (id: string, data: Product) => void;
-  removeFarmerProduct: (id: string) => void;
-  removeSupplierProduct: (id: string) => void;
+  // Mutation methods
+  addMyProduct: (data: Product) => void;
+  updateProductState: (id: string, data: Partial<Product>) => void;
+  removeMyProduct: (id: string) => void;
+  
   createFarmerProduct: (payload: FarmerProductRequest, image: File) => Promise<void>;
   createSupplierProduct: (payload: SupplierProductRequest) => Promise<void>;
-  saveFarmerProduct: (id: string, payload: FarmerProductRequest) => Promise<void>;
-  saveSupplierProduct: (id: string, payload: SupplierProductRequest) => Promise<void>;
-  deleteFarmerProduct: (id: string) => Promise<void>;
-  deleteSupplierProduct: (id: string) => Promise<void>;
+  saveProduct: (id: string, payload: any) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
+  
   mutationLoading: boolean;
-  fetchFarmerProducts: (page?: number, size?: number) => Promise<void>;
-  fetchSupplierProducts: (page?: number, size?: number) => Promise<void>;
-  fetchBuyerProducts: (page?: number, size?: number) => Promise<void>;
-  fetchFarmerBuyerProducts: (page?: number, size?: number) => Promise<void>;
-  fetchFarmerStats: () => Promise<void>;
-  fetchSupplierStats: () => Promise<void>;
-  fetchFarmerProductById: (id: string) => Promise<{ product: Product | null; type: 'farmer' | null; error: string | null }>;
-  fetchSupplierProductById: (id: string) => Promise<{ product: Product | null; type: 'supplier' | null; error: string | null }>;
+  
+  // Fetching methods
+  fetchMyProducts: (page?: number, size?: number) => Promise<void>;
+  fetchMarketplaceProducts: (page?: number, size?: number) => Promise<void>;
+  fetchMyStats: () => Promise<void>;
   fetchProductById: (id: string) => Promise<{ product: Product | null; type: 'farmer' | 'supplier' | null; error: string | null }>;
+  
   // Order modal management
   showOrderModal: (product: Product, productType: 'farmer' | 'supplier') => void;
   hideOrderModal: () => void;
   isOrderModalOpen: boolean;
   orderModalProduct: Product | null;
   orderModalProductType: 'farmer' | 'supplier' | null;
-  farmerProductsTotalPages: number;
-  farmerProductsTotalElements: number;
-  supplierProductsTotalPages: number;
-  supplierProductsTotalElements: number;
-  buyerProductsTotalPages: number;
-  buyerProductsTotalElements: number;
-  farmerBuyerProductsTotalPages: number;
-  farmerBuyerProductsTotalElements: number;
+  
+  // States
+  myProductsTotalPages: number;
+  myProductsTotalElements: number;
+  marketplaceProductsTotalPages: number;
+  marketplaceProductsTotalElements: number;
+  
   loading: boolean;
   error: string | null;
+  
+  myProducts: Product[] | null;
+  marketplaceProducts: Product[] | null;
+  myStats: any[] | null;
+  
+  currentProduct: Product | null;
+  editProduct: Product | null;
+  
+  setCurrentProduct: (product: Product | null) => void;
+  setEditProduct: (product: Product | null) => void;
+  
+  // Filtered views
+  inStockMyProducts: Product[] | null;
+  outOfStockMyProducts: Product[] | null;
+  lowStockMyProducts: Product[] | null;
+  
+  inStockMarketplaceProducts: Product[] | null;
+  outOfStockMarketplaceProducts: Product[] | null;
+  lowStockMarketplaceProducts: Product[] | null;
+
+  // Legacy aliases for compatibility during transition (to be removed after audit)
   farmerProducts: Product[] | null;
   supplierProducts: Product[] | null;
-  farmerStats: any[] | null;
-  supplierStats: any[] | null;
-  currentFarmerProduct: Product | null;
-  currentSupplierProduct: Product | null;
-  currentFarmerBuyerProduct: Product | null;
-  currentBuyerProduct: Product | null;
-  editFarmerProduct: Product | null;
-  editSupplierProduct: Product | null;
-  editBuyerProduct: Product | null;
-  editFarmerBuyerProduct: Product | null;
   buyerProducts: Product[] | null;
-  farmerBuyerProducts: Product[] | null;
-  setCurrentFarmerProduct: (product: Product | null) => void;
-  setEditFarmerProduct: (product: Product | null) => void;
-  setCurrentSupplierProduct: (product: Product | null) => void;
-  setEditSupplierProduct: (product: Product | null) => void;
-  setCurrentFarmerBuyerProduct: (product: Product | null) => void;
-  setCurrentBuyerProduct: (product: Product | null) => void;
-  setEditBuyerProduct: (product: Product | null) => void;
-  setEditFarmerBuyerProduct: (product: Product | null) => void;
-  instockFarmerProducts: Product[] | null;
-  outOfStockFarmerProducts: Product[] | null;
-  lowInStockFarmerProducts: Product[] | null;
-  instockSupplierProducts: Product[] | null;
-  outOfStockSupplierProducts: Product[] | null;
-  lowInStockSupplierProducts: Product[] | null;
-  inStockFarmerBuyerProducts: Product[] | null;
-  outOfStockFarmerBuyerProducts: Product[] | null;
-  lowInStockFarmerBuyerProducts: Product[] | null;
-  inStockBuyerProducts: Product[] | null;
-  outOfStockBuyerProducts: Product[] | null;
-  lowInStockBuyerProducts: Product[] | null;
+  fetchFarmerProducts: (page?: number, size?: number) => Promise<void>;
+  fetchSupplierProducts: (page?: number, size?: number) => Promise<void>;
+  fetchBuyerProducts: (page?: number, size?: number) => Promise<void>;
+  buyerProductsTotalPages?: number;
+  fetchFarmerStats: () => Promise<void>;
+  fetchSupplierStats: () => Promise<void>;
 };
 
 const ProductContext = createContext<ProductContextValue | undefined>(undefined);
@@ -105,118 +95,61 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [mutationLoading, setMutationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [farmerProducts, setFarmerProducts] = useState<Product[] | null>([]);
-  const [supplierProducts, setSupplierProducts] = useState<Product[] | null>([]);
-  const [buyerProducts, setBuyerProducts] = useState<Product[] | null>([]);
-  const [farmerBuyerProducts, setFarmerBuyerProducts] = useState<Product[] | null>([]);
+  const [myProducts, setMyProducts] = useState<Product[] | null>([]);
+  const [marketplaceProducts, setMarketplaceProducts] = useState<Product[] | null>([]);
+  const [myStats, setMyStats] = useState<any[] | null>([]);
 
-  const [farmerProductsTotalPages, setFarmerProductsTotalPages] = useState(0);
-  const [farmerProductsTotalElements, setFarmerProductsTotalElements] = useState(0);
-  const [supplierProductsTotalPages, setSupplierProductsTotalPages] = useState(0);
-  const [supplierProductsTotalElements, setSupplierProductsTotalElements] = useState(0);
-  const [buyerProductsTotalPages, setBuyerProductsTotalPages] = useState(0);
-  const [buyerProductsTotalElements, setBuyerProductsTotalElements] = useState(0);
-  const [farmerBuyerProductsTotalPages, setFarmerBuyerProductsTotalPages] = useState(0);
-  const [farmerBuyerProductsTotalElements, setFarmerBuyerProductsTotalElements] = useState(0);
+  const [myProductsTotalPages, setMyProductsTotalPages] = useState(0);
+  const [myProductsTotalElements, setMyProductsTotalElements] = useState(0);
+  const [marketplaceProductsTotalPages, setMarketplaceProductsTotalPages] = useState(0);
+  const [marketplaceProductsTotalElements, setMarketplaceProductsTotalElements] = useState(0);
 
-  const [farmerStats, setFarmerStats] = useState<any[] | null>([]);
-  const [supplierStats, setSupplierStats] = useState<any[] | null>([]);
-
-  const [currentFarmerProduct, setCurrentFarmerProduct] = useState<Product | null>(null);
-  const [currentSupplierProduct, setCurrentSupplierProduct] = useState<Product | null>(
-    null
-  );
-  const [currentFarmerBuyerProduct, setCurrentFarmerBuyerProduct] =
-    useState<Product | null>(null);
-  const [currentBuyerProduct, setCurrentBuyerProduct] = useState<Product | null>(null);
-  const [editFarmerProduct, setEditFarmerProduct] = useState<Product | null>(null);
-  const [editSupplierProduct, setEditSupplierProduct] = useState<Product | null>(null);
-  const [editFarmerBuyerProduct, setEditFarmerBuyerProduct] = useState<Product | null>(
-    null
-  );
-  const [editBuyerProduct, setEditBuyerProduct] = useState<Product | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
 
   // Order modal state
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [orderModalProduct, setOrderModalProduct] = useState<Product | null>(null);
   const [orderModalProductType, setOrderModalProductType] = useState<'farmer' | 'supplier' | null>(null);
 
-  const handleProductChange = (data: Product) => {
-    const productId = data.id
+  const handleProductChange = useCallback((data: Product) => {
+    const productId = data.id;
 
-    setFarmerProducts(prev => {
+    setMyProducts(prev => {
       if (!prev) return [];
       return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
-    setBuyerProducts(prev => {
-      if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
-    });
-    setSupplierProducts(prev => {
-      if (!prev) return [];
-      return prev.map(p => p.id === productId ? { ...p, ...data } : p);
-    });
-    setFarmerBuyerProducts(prev => {
+    setMarketplaceProducts(prev => {
       if (!prev) return [];
       return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
 
-    // Update current products if they match
-    setCurrentFarmerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
-    setCurrentBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
-    setEditFarmerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
-    setEditBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
-    setCurrentSupplierProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
-    setCurrentFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
-    setEditSupplierProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
-    setEditFarmerBuyerProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
-
-  }
+    // Update current/edit products if they match
+    setCurrentProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+    setEditProduct(prev => prev?.id === productId ? { ...prev, ...data } : prev);
+  }, []);
 
   // Socket event handlers for real-time product updates
   const handleProductUpdate = useCallback((productData: Product) => {
     if (!productData) return;
-
     handleProductChange(productData);
-  }, []);
+  }, [handleProductChange]);
 
   const handleProductStatusChange = useCallback((productData: Product) => {
     if (!productData) return;
-
     handleProductChange(productData);
-  }, []);
+  }, [handleProductChange]);
 
   const handleProductDeletion = useCallback((productData: Product) => {
     if (!productData) return;
-    const productId = productData.id
+    const productId = productData.id;
 
+    setMyProducts(prev => prev?.filter(p => p.id !== productId) ?? []);
+    setMarketplaceProducts(prev => prev?.filter(p => p.id !== productId) ?? []);
 
-    setFarmerProducts(prev => {
-      if (!prev) return [];
-      return prev?.filter(p => p.id !== productData.id);
-    });
-    setBuyerProducts(prev => {
-      if (!prev) return [];
-      return prev?.filter(p => p.id !== productData.id);
-    });
-    setSupplierProducts(prev => {
-      if (!prev) return [];
-      return prev?.filter(p => p.id !== productId);
-    });
-    setFarmerBuyerProducts(prev => {
-      if (!prev) return [];
-      return prev?.filter(p => p.id !== productId);
-    });
-
-    // Clear current products if they match
-    if (currentFarmerProduct?.id === productId) setCurrentFarmerProduct(null);
-    if (currentBuyerProduct?.id === productId) setCurrentBuyerProduct(null);
-
-    // Clear current products if they match
-    if (currentSupplierProduct?.id === productId) setCurrentSupplierProduct(null);
-    if (currentFarmerBuyerProduct?.id === productId) setCurrentFarmerBuyerProduct(null);
-
-  }, [currentFarmerProduct, currentBuyerProduct, currentSupplierProduct, currentFarmerBuyerProduct]);
+    if (currentProduct?.id === productId) setCurrentProduct(null);
+    if (editProduct?.id === productId) setEditProduct(null);
+  }, [currentProduct, editProduct]);
 
   // Setup socket listeners
   useEffect(() => {
@@ -262,122 +195,74 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
 
 
-  const fetchFarmerProducts = async (page = 0, size = 10) => {
+  const fetchMyProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
-      const res = await productService.getProductsByFarmer(page, size);
+      const res = await productService.getPrivateProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
-        setFarmerProducts(Array.isArray(list) ? list : []);
-        setFarmerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-        setFarmerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+        setMyProducts(Array.isArray(list) ? list : []);
+        setMyProductsTotalPages(res.totalPages ?? 0);
+        setMyProductsTotalElements(res.totalElements ?? 0);
         localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(Array.isArray(list) ? list : []));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch farmer products');
+      setError(err instanceof Error ? err.message : 'Failed to fetch my products');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchSupplierProducts = async (page = 0, size = 10) => {
-    if (!user?.id) return;
+  // Legacy fetchers kept for compatibility
+  const fetchFarmerProducts = fetchMyProducts;
+  const fetchSupplierProducts = fetchMyProducts;
+
+  const fetchMarketplaceProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
-      const res = await productService.getProductsBySupplier(page, size);
+      const res = await productService.getPublicProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
-        setSupplierProducts(Array.isArray(list) ? list : []);
-        setSupplierProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-        setSupplierProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
-        localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(Array.isArray(list) ? list : []));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch supplier products');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchBuyerProducts = async (page = 0, size = 10) => {
-    if (!user?.id) return;
-    try {
-      setLoading(true);
-      const res = await productService.getBuyerProducts(page, size);
-      if (res.success) {
-        const list = res.data ?? [];
-        setBuyerProducts(Array.isArray(list) ? list : []);
-        setBuyerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-        setBuyerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
+        setMarketplaceProducts(Array.isArray(list) ? list : []);
+        setMarketplaceProductsTotalPages(res.totalPages ?? 0);
+        setMarketplaceProductsTotalElements(res.totalElements ?? 0);
         localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(Array.isArray(list) ? list : []));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch buyer products');
+      setError(err instanceof Error ? err.message : 'Failed to fetch marketplace products');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchFarmerBuyerProducts = async (page = 0, size = 10) => {
+  // Legacy fetchers kept for compatibility
+  const fetchBuyerProducts = fetchMarketplaceProducts;
+  const fetchFarmerBuyerProducts = fetchMarketplaceProducts;
+
+  const fetchMyStats = useCallback(async () => {
     if (!user?.id) return;
     try {
       setLoading(true);
-      const res = await productService.getFarmerBuyerProducts(page, size);
+      // Fetch both for now or based on role if needed, but unify into myStats
+      const res = await (user.role === 'FARMER' ? productService.getFarmerStats() : productService.getSupplierStats());
       if (res.success) {
-        const list = res.data ?? [];
-        setFarmerBuyerProducts(Array.isArray(list) ? list : []);
-        setFarmerBuyerProductsTotalPages((res as { totalPages?: number }).totalPages ?? 0);
-        setFarmerBuyerProductsTotalElements((res as { totalElements?: number }).totalElements ?? 0);
-        localStorage.setItem(
-          STORAGE_KEYS.FARMER_BUYER_PRODUCTS,
-          JSON.stringify(Array.isArray(list) ? list : [])
-        );
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch farmer buyer products');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchFarmerStats = async () => {
-    if (!user?.id) return;
-    try {
-      setLoading(true);
-      const res = await productService.getFarmerStats();
-      if (res.success) {
-        setFarmerStats(res.data ?? []);
+        setMyStats(res.data ?? []);
         localStorage.setItem(STORAGE_KEYS.FARMER_STATS, JSON.stringify(res.data ?? []));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch farmer stats');
+      setError(err instanceof Error ? err.message : 'Failed to fetch stats');
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  const fetchSupplierStats = async () => {
-    if (!user?.id) return;
+  const fetchProductById = useCallback(async (id: string): Promise<{ product: Product | null; type: 'farmer' | 'supplier' | null; error: string | null }> => {
     try {
       setLoading(true);
-      const res = await productService.getSupplierStats();
-      if (res.success) {
-        setSupplierStats(res.data ?? []);
-        localStorage.setItem(STORAGE_KEYS.SUPPLIER_STATS, JSON.stringify(res.data ?? []));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch supplier stats');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchFarmerProductById = async (id: string): Promise<{ product: Product | null; type: 'farmer' | null; error: string | null }> => {
-    try {
-      setLoading(true);
-      const res = await productService.getFarmerProduct(id);
+      const res = await productService.getProductById(id);
       if (res.success && res.data) {
-        return { product: res.data, type: 'farmer', error: null };
+        const type = res.data.productType === 'FARMER_PRODUCT' ? 'farmer' : 'supplier';
+        return { product: res.data, type, error: null };
       }
       return { product: null, type: null, error: 'Product not found' };
     } catch (err) {
@@ -385,38 +270,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetchSupplierProductById = async (id: string): Promise<{ product: Product | null; type: 'supplier' | null; error: string | null }> => {
-    try {
-      setLoading(true);
-      const res = await productService.getSupplierProduct(id);
-      if (res.success && res.data) {
-        return { product: res.data, type: 'supplier', error: null };
-      }
-      return { product: null, type: null, error: 'Product not found' };
-    } catch (err) {
-      return { product: null, type: null, error: err instanceof Error ? err.message : 'Failed to fetch product' };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchProductById = async (id: string): Promise<{ product: Product | null; type: 'farmer' | 'supplier' | null; error: string | null }> => {
-    // Try farmer product first
-    const farmerResult = await fetchFarmerProductById(id);
-    if (farmerResult.product) {
-      return farmerResult;
-    }
-
-    // Try supplier product
-    const supplierResult = await fetchSupplierProductById(id);
-    if (supplierResult.product) {
-      return supplierResult;
-    }
-
-    return { product: null, type: null, error: 'Product not found' };
-  };
+  }, []);
 
   // Order modal management methods
   const showOrderModal = (product: Product, productType: 'farmer' | 'supplier') => {
@@ -433,74 +287,51 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
 
 
-  const addFarmerProduct = (data: Product) => {
-    setFarmerProducts(prev => {
+  const addMyProduct = useCallback((data: Product) => {
+    setMyProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
       localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
-  };
+  }, []);
 
-  const addSupplierProduct = (data: Product) => {
-    setSupplierProducts(prev => {
-      const updated = prev ? [...prev, data] : [data];
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
+  const updateProductState = useCallback((id: string, data: Partial<Product>) => {
+    setMyProducts(prev => {
+      const updated = prev?.map(p => (p.id === id ? { ...p, ...data } : p)) ?? [];
+      localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
-  };
-
-  const updateBuyerProduct = (id: string, data: Product) => {
-    setBuyerProducts(prev => {
-      const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
+    setMarketplaceProducts(prev => {
+      const updated = prev?.map(p => (p.id === id ? { ...p, ...data } : p)) ?? [];
       localStorage.setItem(STORAGE_KEYS.BUYER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
-  };
+    // Update current/edit products if they match
+    setCurrentProduct(prev => prev?.id === id ? { ...prev, ...data } : prev);
+    setEditProduct(prev => prev?.id === id ? { ...prev, ...data } : prev);
+  }, []);
 
-  const updateFarmerProduct = (id: string, data: Product) => {
-    setFarmerProducts(prev => {
-      const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
-      localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const updateSupplierProduct = (id: string, data: Product) => {
-    setSupplierProducts(prev => {
-      const updated = prev?.map(p => (p.id === id ? data : p)) ?? [data];
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const removeFarmerProduct = (id: string) => {
-    setFarmerProducts(prev => {
+  const removeMyProduct = useCallback((id: string) => {
+    setMyProducts(prev => {
       const updated = prev?.filter(p => p.id !== id) ?? [];
       localStorage.setItem(STORAGE_KEYS.FARMER_PRODUCTS, JSON.stringify(updated));
       return updated;
     });
-  };
+  }, []);
 
-  const removeSupplierProduct = (id: string) => {
-    setSupplierProducts(prev => {
-      const updated = prev?.filter(p => p.id !== id) ?? [];
-      localStorage.setItem(STORAGE_KEYS.SUPPLIER_PRODUCTS, JSON.stringify(updated));
-      return updated;
-    });
-  };
-
+  // Creation/Updating/Deletion methods (Server-side)
   const createFarmerProduct = async (payload: FarmerProductRequest, image: File) => {
     try {
       setMutationLoading(true);
       const imgRes = await productService.uploadProductPhoto(image);
       if (!imgRes?.data) return;
       payload.image = imgRes.data;
-      const res = await productService.createFarmerProduct(payload);
+      const res = await productService.createProduct(payload);
       if (!res?.success || !res.data) {
         notify.error('Try again later', 'Failed to Create product');
         return;
       }
-      addFarmerProduct(res.data);
+      addMyProduct(res.data);
       router.push('/');
       notify.success('Product created successfully', 'Product created');
     } catch {
@@ -513,12 +344,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const createSupplierProduct = async (payload: SupplierProductRequest) => {
     try {
       setMutationLoading(true);
-      const res = await productService.createSupplierProduct(payload);
+      const res = await productService.createProduct(payload);
       if (!res?.success || !res.data) {
         notify.error('Try again later', 'Failed to Create product');
         return;
       }
-      addSupplierProduct(res.data);
+      addMyProduct(res.data);
       router.push('/');
       notify.success('Product created successfully', 'Product created');
     } catch {
@@ -528,15 +359,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const saveFarmerProduct = async (id: string, payload: FarmerProductRequest) => {
+  const saveProduct = async (id: string, payload: any) => {
     try {
       setMutationLoading(true);
-      const res = await productService.updateFarmerProduct(id, payload);
+      const res = await productService.updateProduct(id, payload);
       if (!res?.success || !res.data) {
         notify.error('Try again later', 'Failed to Edit product');
         return;
       }
-      updateFarmerProduct(res.data.id, res.data);
+      updateProductState(res.data.id, res.data);
       notify.success('The product was updated successfully', 'Product edited');
       router.back();
     } catch {
@@ -546,33 +377,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const saveSupplierProduct = async (id: string, payload: SupplierProductRequest) => {
+  const deleteProduct = async (id: string) => {
     try {
       setMutationLoading(true);
-      const res = await productService.updateSupplierProduct(id, payload);
-      if (!res?.success || !res.data) {
-        notify.error('Try again later', 'Failed to Edit product');
-        return;
-      }
-      updateSupplierProduct(res.data.id, res.data);
-      notify.success('Product updated successfully', 'Product edited');
-      router.back();
-    } catch {
-      notify.error('Try again later', 'Failed to Edit product');
-    } finally {
-      setMutationLoading(false);
-    }
-  };
-
-  const deleteFarmerProduct = async (id: string) => {
-    try {
-      setMutationLoading(true);
-      const res = await productService.deleteFarmerProduct(id);
+      const res = await productService.deleteProduct(id);
       if (!res?.success) {
         notify.error('Try again later', 'Failed to delete product');
         return;
       }
-      removeFarmerProduct(id);
+      removeMyProduct(id);
       notify.success('Product was deleted', 'Product Deleted Successfully');
       router.back();
     } catch {
@@ -582,151 +395,128 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const deleteSupplierProduct = async (id: string) => {
-    try {
-      setMutationLoading(true);
-      const res = await productService.deleteSupplierProduct(id);
-      if (!res?.success) {
-        notify.error('Try again later', 'Failed to delete product');
-        return;
-      }
-      removeSupplierProduct(id);
-      notify.success('Product was deleted', 'Product deleted successfully');
-      router.back();
-    } catch {
-      notify.error('Try again later', 'Failed to delete product');
-    } finally {
-      setMutationLoading(false);
-    }
-  };
+  // Legacy aliases for server actions
+  const addFarmerProduct = addMyProduct;
+  const addSupplierProduct = addMyProduct;
+  const updateFarmerProduct = updateProductState;
+  const updateSupplierProduct = updateProductState;
+  const updateBuyerProduct = updateProductState;
+  const removeFarmerProduct = removeMyProduct;
+  const removeSupplierProduct = removeMyProduct;
+  const saveFarmerProduct = saveProduct;
+  const saveSupplierProduct = saveProduct;
+  const deleteFarmerProduct = deleteProduct;
+  const deleteSupplierProduct = deleteProduct;
 
   // 🔹 Filters
-  const instockFarmerProducts = useMemo(
-    () => farmerProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
-    [farmerProducts]
+  const inStockMyProducts = useMemo(
+    () => myProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
+    [myProducts]
   );
-  const outOfStockFarmerProducts = useMemo(
-    () => farmerProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
-    [farmerProducts]
+  const outOfStockMyProducts = useMemo(
+    () => myProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
+    [myProducts]
   );
-  const lowInStockFarmerProducts = useMemo(
-    () => farmerProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
-    [farmerProducts]
-  );
-
-  const instockSupplierProducts = useMemo(
-    () => supplierProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
-    [supplierProducts]
-  );
-  const outOfStockSupplierProducts = useMemo(
-    () => supplierProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
-    [supplierProducts]
-  );
-  const lowInStockSupplierProducts = useMemo(
-    () => supplierProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
-    [supplierProducts]
+  const lowStockMyProducts = useMemo(
+    () => myProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
+    [myProducts]
   );
 
-  const inStockBuyerProducts = useMemo(
-    () => buyerProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
-    [buyerProducts]
+  const inStockMarketplaceProducts = useMemo(
+    () => marketplaceProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
+    [marketplaceProducts]
   );
-  const outOfStockBuyerProducts = useMemo(
-    () => buyerProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
-    [buyerProducts]
+  const outOfStockMarketplaceProducts = useMemo(
+    () => marketplaceProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
+    [marketplaceProducts]
   );
-  const lowInStockBuyerProducts = useMemo(
-    () => buyerProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
-    [buyerProducts]
+  const lowStockMarketplaceProducts = useMemo(
+    () => marketplaceProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
+    [marketplaceProducts]
   );
 
-  const inStockFarmerBuyerProducts = useMemo(
-    () => farmerBuyerProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
-    [farmerBuyerProducts]
-  );
-  const outOfStockFarmerBuyerProducts = useMemo(
-    () => farmerBuyerProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
-    [farmerBuyerProducts]
-  );
-  const lowInStockFarmerBuyerProducts = useMemo(
-    () => farmerBuyerProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
-    [farmerBuyerProducts]
-  );
+  // Legacy filter aliases
+  const instockFarmerProducts = inStockMyProducts;
+  const outOfStockFarmerProducts = outOfStockMyProducts;
+  const lowInStockFarmerProducts = lowStockMyProducts;
+  const instockSupplierProducts = inStockMyProducts;
+  const outOfStockSupplierProducts = outOfStockMyProducts;
+  const lowInStockSupplierProducts = lowStockMyProducts;
+  const inStockBuyerProducts = inStockMarketplaceProducts;
+  const outOfStockBuyerProducts = outOfStockMarketplaceProducts;
+  const lowInStockBuyerProducts = lowStockMarketplaceProducts;
+  const inStockFarmerBuyerProducts = inStockMarketplaceProducts;
+  const outOfStockFarmerBuyerProducts = outOfStockMarketplaceProducts;
+  const lowInStockFarmerBuyerProducts = lowStockMarketplaceProducts;
+
+  const fetchFarmerStats = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await productService.getFarmerStats();
+      if (res.success) setMyStats(res.data || []);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchSupplierStats = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await productService.getSupplierStats();
+      if (res.success) setMyStats(res.data || []);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const value: ProductContextValue = {
-    addFarmerProduct,
-    addSupplierProduct,
-    updateFarmerProduct,
-    updateBuyerProduct,
-    updateSupplierProduct,
-    removeFarmerProduct,
-    removeSupplierProduct,
+    addMyProduct,
+    updateProductState,
+    removeMyProduct,
     createFarmerProduct,
     createSupplierProduct,
-    saveFarmerProduct,
-    saveSupplierProduct,
-    deleteFarmerProduct,
-    deleteSupplierProduct,
+    saveProduct,
+    deleteProduct,
     mutationLoading,
-    fetchFarmerProducts,
-    fetchSupplierProducts,
-    fetchBuyerProducts,
-    fetchFarmerBuyerProducts,
-    fetchFarmerStats,
-    fetchSupplierStats,
-    fetchFarmerProductById,
-    fetchSupplierProductById,
+    fetchMyProducts,
+    fetchMarketplaceProducts,
+    fetchMyStats,
     fetchProductById,
-    // Order modal management
     showOrderModal,
     hideOrderModal,
     isOrderModalOpen,
     orderModalProduct,
     orderModalProductType,
-    farmerProductsTotalPages,
-    farmerProductsTotalElements,
-    supplierProductsTotalPages,
-    supplierProductsTotalElements,
-    buyerProductsTotalPages,
-    buyerProductsTotalElements,
-    farmerBuyerProductsTotalPages,
-    farmerBuyerProductsTotalElements,
+    myProductsTotalPages,
+    myProductsTotalElements,
+    marketplaceProductsTotalPages,
+    marketplaceProductsTotalElements,
     loading,
     error,
-    farmerProducts,
-    supplierProducts,
-    buyerProducts,
-    farmerBuyerProducts,
-    farmerStats,
-    supplierStats,
-    currentFarmerProduct,
-    currentSupplierProduct,
-    currentFarmerBuyerProduct,
-    currentBuyerProduct,
-    editFarmerProduct,
-    editSupplierProduct,
-    editBuyerProduct,
-    editFarmerBuyerProduct,
-    setCurrentFarmerProduct,
-    setEditFarmerProduct,
-    setCurrentSupplierProduct,
-    setEditSupplierProduct,
-    setCurrentFarmerBuyerProduct,
-    setEditFarmerBuyerProduct,
-    setCurrentBuyerProduct,
-    setEditBuyerProduct,
-    instockFarmerProducts,
-    outOfStockFarmerProducts,
-    lowInStockFarmerProducts,
-    instockSupplierProducts,
-    outOfStockSupplierProducts,
-    lowInStockSupplierProducts,
-    inStockFarmerBuyerProducts,
-    outOfStockFarmerBuyerProducts,
-    lowInStockFarmerBuyerProducts,
-    inStockBuyerProducts,
-    outOfStockBuyerProducts,
-    lowInStockBuyerProducts,
+    myProducts,
+    marketplaceProducts,
+    myStats,
+    currentProduct,
+    editProduct,
+    setCurrentProduct,
+    setEditProduct,
+    inStockMyProducts,
+    outOfStockMyProducts,
+    lowStockMyProducts,
+    inStockMarketplaceProducts,
+    outOfStockMarketplaceProducts,
+    lowStockMarketplaceProducts,
+
+    // Legacy aliases
+    farmerProducts: myProducts,
+    supplierProducts: myProducts,
+    buyerProducts: marketplaceProducts,
+    fetchFarmerProducts,
+    fetchSupplierProducts,
+    fetchBuyerProducts,
+    buyerProductsTotalPages: marketplaceProductsTotalPages,
+    fetchFarmerStats,
+    fetchSupplierStats,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

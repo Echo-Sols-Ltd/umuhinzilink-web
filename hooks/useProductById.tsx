@@ -23,33 +23,10 @@ export function useProductById(productRef: ProductRef | null) {
         setError(null);
 
         // Use different endpoint based on user role
-        if (productRef.productType === UserType.FARMER) {
-          // Farmer uses farmer-specific endpoint
-          const farmerResponse = await productService.getFarmerProduct(productRef.productId);
-          if (farmerResponse.success && farmerResponse.data) {
-            setProduct(farmerResponse.data);
-            return;
-          }
-        } else if (productRef.productType === UserType.SUPPLIER) {
-          // Supplier uses supplier-specific endpoint
-          const supplierResponse = await productService.getSupplierProduct(productRef.productId);
-          if (supplierResponse.success && supplierResponse.data) {
-            setProduct(supplierResponse.data);
-            return;
-          }
-        } else {
-          // Buyer or other roles - try both endpoints
-          const farmerResponse = await productService.getFarmerProduct(productRef.productId);
-          if (farmerResponse.success && farmerResponse.data) {
-            setProduct(farmerResponse.data);
-            return;
-          }
-
-          const supplierResponse = await productService.getSupplierProduct(productRef.productId);
-          if (supplierResponse.success && supplierResponse.data) {
-            setProduct(supplierResponse.data);
-            return;
-          }
+        const response = await productService.getProductById(productRef.productId);
+        if (response.success && response.data) {
+          setProduct(response.data);
+          return;
         }
 
         setError('Product not found');

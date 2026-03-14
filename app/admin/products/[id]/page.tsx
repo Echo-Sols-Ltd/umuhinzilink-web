@@ -20,7 +20,7 @@ export default function AdminProductDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
-  const { fetchProductById, loading, deleteFarmerProduct, deleteSupplierProduct } = useProduct();
+  const { fetchProductById, loading, deleteProduct } = useProduct();
   const [product, setProduct] = useState<Product | null>(null);
   const [productType, setProductType] = useState<'farmer' | 'supplier'>('farmer');
   const [error, setError] = useState<string | null>(null);
@@ -70,11 +70,7 @@ export default function AdminProductDetailPage() {
     }
 
     try {
-      if (productType === 'farmer') {
-        await deleteFarmerProduct(product.id);
-      } else {
-        await deleteSupplierProduct(product.id);
-      }
+      await deleteProduct(product.id);
       
       showToast({
         description: 'Product deleted successfully',

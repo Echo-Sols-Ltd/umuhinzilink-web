@@ -18,7 +18,7 @@ interface ProductRowProps {
 
 export default function ProductRow({ product, onSelect, onPurchase, onContact }: ProductRowProps) {
     const { user } = useAuth()
-    const { deleteFarmerProduct } = useProduct()
+    const { deleteProduct } = useProduct()
     const { handleUserClick, handleSendMessage } = useChat()
     const router = useRouter()
     const { t } = useI18n()
@@ -64,7 +64,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
         }
 
         try {
-            await deleteFarmerProduct(productId);
+            await deleteProduct(productId);
         } catch (error) {
             console.error('Failed to delete product:', error);
             notify.error(t('productRow.deleteFailed'), t('productRow.deleteTitle'));
@@ -125,7 +125,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                         <button className="border border-border hover:bg-red-50 transition-colors p-2.5 rounded-lg flex items-center justify-center">
                             <Heart className="w-4 h-4 text-red-500" />
                         </button>
-                        <button className="bg-primary hover:bg-green-700 transition-colors text-foreground px-6 py-2.5 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2"
+                        <button className="bg-primary hover:bg-green-700 transition-colors text-primary-foreground px-6 py-2.5 rounded-3xl text-sm font-medium shadow-sm flex items-center gap-2"
                             onClick={(e: any) => {
                                 e.stopPropagation();
                                 onPurchase();

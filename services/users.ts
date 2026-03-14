@@ -23,6 +23,22 @@ class UserService {
     return await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.USER.BY_ID(id));
   }
 
+  async getFarmerById(id: string): Promise<ApiResponse<any>> {
+    return await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.FARMER.BY_ID(id));
+  }
+
+  async getSupplierById(id: string): Promise<ApiResponse<any>> {
+    return await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.SUPPLIER.BY_ID(id));
+  }
+
+  async getFarmerMe(): Promise<ApiResponse<any>> {
+    return await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.FARMER.ME);
+  }
+
+  async getSupplierMe(): Promise<ApiResponse<any>> {
+    return await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.SUPPLIER.ME);
+  }
+
   async uploadAvatar(
     file: File,
     onUploadProgress?: (event: AxiosProgressEvent) => void,
@@ -40,6 +56,14 @@ class UserService {
 
   async updateProfile(id: string, data: Partial<User>): Promise<ApiResponse<User>> {
     return await apiClient.put<ApiResponse<User>>(API_ENDPOINTS.USER.BY_ID(id), data);
+  }
+
+  async updateFarmerProfile(id: string, data: Partial<any>): Promise<ApiResponse<any>> {
+    return await apiClient.put<ApiResponse<any>>(API_ENDPOINTS.FARMER.BY_ID(id), data);
+  }
+
+  async updateSupplierProfile(id: string, data: Partial<any>): Promise<ApiResponse<any>> {
+    return await apiClient.put<ApiResponse<any>>(API_ENDPOINTS.SUPPLIER.BY_ID(id), data);
   }
 }
 

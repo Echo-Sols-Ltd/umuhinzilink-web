@@ -24,7 +24,7 @@ function EditProduct() {
   const router = useRouter();
   const params = useParams();
   const { user } = useAuth();
-  const { farmerProducts, saveFarmerProduct: editFarmerProduct } = useProduct();
+  const { myProducts: farmerProducts, saveProduct: editFarmerProduct } = useProduct();
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -380,7 +380,7 @@ function EditProduct() {
                         <input
                           type="date"
                           name="harvestDate"
-                          value={new Date(formData.harvestDate).toLocaleDateString()}
+                          value={formData.harvestDate ? new Date(formData.harvestDate).toISOString().split('T')[0] : ''}
                           onChange={handleChange}
                           className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
                         />

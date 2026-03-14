@@ -3,12 +3,8 @@ import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
 class OrderService {
-  async createFarmerOrder(payload: OrderRequest): Promise<ApiResponse<Order>> {
-    return await apiClient.post<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CREATE_FARMER, payload);
-  }
-
-  async createSupplierOrder(payload: OrderRequest): Promise<ApiResponse<Order>> {
-    return await apiClient.post<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CREATE_SUPPLIER, payload);
+  async createOrder(payload: OrderRequest): Promise<ApiResponse<Order>> {
+    return await apiClient.post<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CREATE, payload);
   }
 
   async getBuyerOrders(page = 0, size = 10): Promise<PaginatedResponse<Order[]>> {
@@ -17,76 +13,37 @@ class OrderService {
     );
   }
 
-  async getFarmerBuyerOrders(page = 0, size = 10): Promise<PaginatedResponse<Order[]>> {
+  async getSellerOrders(page = 0, size = 10): Promise<PaginatedResponse<Order[]>> {
     return await apiClient.get<PaginatedResponse<Order[]>>(
-      `${API_ENDPOINTS.ORDER.FARMER_BUYER_ALL}?page=${page}&size=${size}`
+      `${API_ENDPOINTS.ORDER.SELLER_ALL}?page=${page}&size=${size}`
     );
   }
 
-  async getSupplierOrders(page = 0, size = 10): Promise<PaginatedResponse<Order[]>> {
-    return await apiClient.get<PaginatedResponse<Order[]>>(
-      `${API_ENDPOINTS.ORDER.SUPPLIER_ALL}?page=${page}&size=${size}`
-    );
+  async getOrderById(id: string): Promise<ApiResponse<Order>> {
+    return await apiClient.get<ApiResponse<Order>>(API_ENDPOINTS.ORDER.BY_ID(id));
   }
 
-  async getFarmerOrders(page = 0, size = 10): Promise<PaginatedResponse<Order[]>> {
-    return await apiClient.get<PaginatedResponse<Order[]>>(
-      `${API_ENDPOINTS.ORDER.FARMER_ALL}?page=${page}&size=${size}`
-    );
+  async cancelOrder(id: string): Promise<ApiResponse<Order>> {
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CANCEL(id));
   }
 
-  async getSupplierOrderById(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.get<ApiResponse<Order>>(API_ENDPOINTS.ORDER.BY_SUPPLIER_ID(id));
+  async acceptOrder(id: string): Promise<ApiResponse<Order>> {
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.ACCEPT(id));
   }
 
-  async getFarmerOrderById(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.get<ApiResponse<Order>>(API_ENDPOINTS.ORDER.BY_FARMER_ID(id));
-  }
-
-  async cancelSupplierOrder(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CANCEL_SUPPLIER(id));
-  }
-
-  async cancelFarmerOrder(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CANCEL_FARMER(id));
-  }
-
-  async acceptSupplierOrder(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.ACCEPT_SUPPLIER(id));
-  }
-
-  async acceptFarmerOrder(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.ACCEPT_FARMER(id));
-  }
-
-  async updateFarmerOrderStatus(
+  async updateOrderStatus(
     id: string,
     status: DeliveryStatus
   ): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.UPDATE_FARMER_STATUS(id), status);
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.UPDATE_STATUS(id), status);
   }
 
-  async updateSupplierOrderStatus(
-    id: string,
-    status: DeliveryStatus
-  ): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(
-      API_ENDPOINTS.ORDER.UPDATE_SUPPLIER_STATUS(id),
-      status
-    );
-  }
-
-  async markFarmerOrderSatisfaction(id: string): Promise<ApiResponse<Order>> {
+  async markOrderSatisfaction(id: string): Promise<ApiResponse<Order>> {
     return await apiClient.post<ApiResponse<Order>>(
-      API_ENDPOINTS.ORDER.SATISFACTION_FARMER(id)
-    );
-  }
-
-  async markSupplierOrderSatisfaction(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.post<ApiResponse<Order>>(
-      API_ENDPOINTS.ORDER.SATISFACTION_SUPPLIER(id)
+      API_ENDPOINTS.ORDER.SATISFACTION(id)
     );
   }
 }
+
 
 export const orderService = new OrderService();

@@ -37,11 +37,11 @@ function FarmerProducts() {
   const { user } = useAuth();
   const { t } = useI18n();
   const {
-    farmerProducts,
+    myProducts: farmerProducts,
     loading,
-    fetchFarmerProducts,
-    farmerProductsTotalPages: totalPages,
-    farmerProductsTotalElements: totalElements,
+    fetchMyProducts: fetchFarmerProducts,
+    myProductsTotalPages: totalPages,
+    myProductsTotalElements: totalElements,
   } = useProduct();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');

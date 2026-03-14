@@ -20,10 +20,10 @@ function FarmerOrderDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const {
-    farmerOrders,
-    currentFarmerOrder,
-    setCurrentFarmerOrder,
-    fetchFarmerOrders
+    sellingOrders,
+    currentOrder,
+    setCurrentOrder,
+    fetchSellingOrders
   } = useOrder();
   const { updateFarmerOrderStatus } = useOrderAction();
   const { t } = useI18n();
@@ -38,23 +38,21 @@ function FarmerOrderDetailPage() {
 
       try {
         // Step 1: Check if order is already in context lists
-        let foundOrder = farmerOrders?.find(o => o.id === orderId);
+        let foundOrder = sellingOrders?.find((o: Order) => o.id === orderId);
 
-        // Step 2: Check if it's the current context order
-        if (!foundOrder && currentFarmerOrder?.id === orderId) {
-          foundOrder = currentFarmerOrder;
+        if (!foundOrder && currentOrder?.id === orderId) {
+          foundOrder = currentOrder;
         }
 
         if (foundOrder) {
-
-          setCurrentFarmerOrder(foundOrder);
+          setCurrentOrder(foundOrder);
           setLoading(false);
         } else {
-          const response = await orderService.getFarmerOrderById(orderId);
+          const response = await orderService.getOrderById(orderId);
 
           if (response.success && response.data) {
-            setCurrentFarmerOrder(response.data);
-            fetchFarmerOrders();
+            setCurrentOrder(response.data);
+            fetchSellingOrders();
           } else {
             notify.error(t('farmer.orders.toasts.orderNotFound'), t('common.error'));
           }
@@ -70,14 +68,14 @@ function FarmerOrderDetailPage() {
     if (orderId) {
       loadOrder();
     }
-  }, [orderId, farmerOrders, currentFarmerOrder, setCurrentFarmerOrder, fetchFarmerOrders]);
+  }, [orderId, sellingOrders, currentOrder, setCurrentOrder, fetchSellingOrders]);
 
   const handleUpdateDeliveryStatus = async (newStatus: DeliveryStatus) => {
-    if (!currentFarmerOrder) return;
+    if (!currentOrder) return;
 
     setUpdatingStatus(true);
     try {
-      await updateFarmerOrderStatus(currentFarmerOrder.id, newStatus);
+      await updateFarmerOrderStatus(currentOrder.id, newStatus);
     } catch (error) {
       console.error('Failed to update delivery status:', error);
       notify.error(t('farmer.orders.toasts.updateFailed'), t('common.error'));
@@ -101,7 +99,7 @@ function FarmerOrderDetailPage() {
     );
   }
 
-  if (!currentFarmerOrder) {
+  if (!currentOrder) {
     return (
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.FARMER} activeItem='Orders' />
@@ -116,8 +114,8 @@ function FarmerOrderDetailPage() {
     );
   }
 
-  const buyer = currentFarmerOrder.buyer;
-  const product = currentFarmerOrder.product;
+  const buyer = currentOrder.buyer;
+  const product = currentOrder.product;
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -136,7 +134,7 @@ function FarmerOrderDetailPage() {
             </button>
             <div className="h-8 w-px bg-border"></div>
             <h1 className="text-xl font-semibold text-foreground">{t('farmer.orders.detail.title')}</h1>
-            <span className="text-sm text-muted-foreground">#{currentFarmerOrder.id.slice(0, 8)}</span>
+            <span className="text-sm text-muted-foreground">#{currentOrder.id.slice(0, 8)}</span>
           </div>
         </header>
 
@@ -174,7 +172,7 @@ function FarmerOrderDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t('farmer.orders.detail.totalAmount')}</p>
-                  <p className="font-semibold text-foreground">RWF {currentFarmerOrder.totalPrice.toLocaleString()}</p>
+                  <p className="font-semibold text-foreground">RWF {currentOrder.totalPrice.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -227,24 +225,24 @@ function FarmerOrderDetailPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.quantity')}</label>
-                  <p className="text-foreground">{currentFarmerOrder.quantity} {product.measurementUnit}</p>
+                  <p className="text-foreground">{currentOrder.quantity} {product.measurementUnit}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.unitPrice')}</label>
-                  <p className="text-foreground">RWF {(currentFarmerOrder.totalPrice / currentFarmerOrder.quantity).toLocaleString()}</p>
+                  <p className="text-foreground">RWF {(currentOrder.totalPrice / currentOrder.quantity).toLocaleString()}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.totalPrice')}</label>
-                  <p className="text-lg font-semibold text-success">RWF {currentFarmerOrder.totalPrice.toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-success">RWF {currentOrder.totalPrice.toLocaleString()}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.paymentMethod')}</label>
-                  <p className="text-foreground">{currentFarmerOrder.paymentMethod.replace('_', ' ')}</p>
+                  <p className="text-foreground">{currentOrder.paymentMethod.replace('_', ' ')}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.paymentStatus')}</label>
-                  <p className={`font-medium ${currentFarmerOrder.isPaid ? 'text-success' : 'text-destructive'}`}>
-                    {currentFarmerOrder.isPaid ? t('farmer.orders.detail.paid') : t('farmer.orders.detail.unpaid')}
+                  <p className={`font-medium ${currentOrder.isPaid ? 'text-success' : 'text-destructive'}`}>
+                    {currentOrder.isPaid ? t('farmer.orders.detail.paid') : t('farmer.orders.detail.unpaid')}
                   </p>
                 </div>
               </div>
@@ -258,12 +256,12 @@ function FarmerOrderDetailPage() {
               {t('farmer.orders.detail.deliveryTracking')}
             </h2>
             <DeliveryTracker
-              delivery={currentFarmerOrder.delivery}
+              delivery={currentOrder.delivery}
               onUpdateStatus={handleUpdateDeliveryStatus}
               isLoading={updatingStatus}
               orderType="farmer"
               isOrderOwner={true}
-              isPaid={currentFarmerOrder.isPaid}
+              isPaid={currentOrder.isPaid}
             />
           </div>
         </div>

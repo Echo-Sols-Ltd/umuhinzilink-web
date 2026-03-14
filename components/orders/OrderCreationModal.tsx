@@ -30,7 +30,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   const [productName, setProductName] = useState('');
   const [unitPrice, setUnitPrice] = useState(0);
 
-  const { createFarmerOrder, createSupplierOrder, loading } = useOrderAction();
+  const { createOrder, loading } = useOrderAction();
 
   // Reset form when modal opens/closes
   useEffect(() => {
@@ -97,13 +97,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
     };
 
     try {
-      if (orderType === 'supplier') {
-        await createSupplierOrder(orderData);
-      } else if (productType === 'farmer') {
-        await createFarmerOrder(orderData);
-      } else {
-        await createSupplierOrder(orderData);
-      }
+      await createOrder(orderData);
       onClose();
     } catch (error) {
       console.error('Failed to create order:', error);

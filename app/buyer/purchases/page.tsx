@@ -51,13 +51,12 @@ function MyPurchasesComponent() {
   const [selectedOrderForSatisfaction, setSelectedOrderForSatisfaction] = useState<any>(null);
   const [satisfactionLoading, setSatisfactionLoading] = useState<string | null>(null);
   const {
-    buyerOrders,
+    buyingOrders: buyerOrders,
     loading: ordersLoading,
-    fetchBuyerOrders,
-    buyerOrdersTotalPages: totalPages,
-    buyerOrdersTotalElements: totalElements,
-    markFarmerOrderSatisfaction,
-    markSupplierOrderSatisfaction,
+    fetchBuyingOrders: fetchBuyerOrders,
+    buyingOrdersTotalPages: totalPages,
+    buyingOrdersTotalElements: totalElements,
+    markOrderSatisfaction,
     setMutationLoading,
   } = useOrder();
   const { handleWalletPayment } = useWallet();
@@ -130,14 +129,8 @@ function MyPurchasesComponent() {
       setSatisfactionLoading(selectedOrderForSatisfaction.id);
       setMutationLoading(true);
 
-      // Determine order type and call appropriate method
-      if ('product' in selectedOrderForSatisfaction && 'owner' in selectedOrderForSatisfaction.product) {
-        // This is a FarmerOrder (product has owner)
-        await markFarmerOrderSatisfaction(selectedOrderForSatisfaction.id);
-      } else {
-        // This is a SupplierOrder
-        await markSupplierOrderSatisfaction(selectedOrderForSatisfaction.id);
-      }
+      // Use unified satisfaction method
+      await markOrderSatisfaction(selectedOrderForSatisfaction.id);
 
       notify.success(t('buyer.purchases.confirmSatisfactionMsg'), t('buyer.purchases.confirmSatisfaction'));
       setSatisfactionModalOpen(false);

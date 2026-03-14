@@ -18,10 +18,10 @@ export default function SupplierProductDetailPage() {
   const { toast: showToast } = useToast();
   const { t } = useI18n();
   const { 
-    supplierProducts, 
-    currentSupplierProduct, 
-    setCurrentSupplierProduct,
-    fetchSupplierProducts,
+    myProducts, 
+    currentProduct, 
+    setCurrentProduct,
+    fetchMyProducts,
     loading: contextLoading
   } = useProduct();
   const [loading, setLoading] = useState(true);
@@ -35,28 +35,22 @@ export default function SupplierProductDetailPage() {
       
       try {
         // Step 1: Check if product is already in context lists
-        let foundProduct = supplierProducts?.find(p => p.id === productId);
+        let foundProduct = myProducts?.find((p: Product) => p.id === productId);
         
-        // Step 2: Check if it's the current context product
-        if (!foundProduct && currentSupplierProduct?.id === productId) {
-          foundProduct = currentSupplierProduct;
+        if (!foundProduct && currentProduct?.id === productId) {
+          foundProduct = currentProduct;
         }
         
         if (foundProduct) {
-          // ✅ Found in context - use immediately
-          setCurrentSupplierProduct(foundProduct);
+          setCurrentProduct(foundProduct);
           setLoading(false);
         } else {
-          // ❌ Not in context - fetch from server
           const { productService } = await import('@/services/products');
-          const response = await productService.getSupplierProduct(productId);
+          const response = await productService.getProductById(productId);
           
           if (response.success && response.data) {
-            // Store in context for future use and real-time updates
-            setCurrentSupplierProduct(response.data);
-            
-            // Refresh the list to include this product for future navigation
-            fetchSupplierProducts();
+            setCurrentProduct(response.data);
+            fetchMyProducts();
           } else {
             setError(t('common.productDetailMsg.productNotFoundTitle'));
             showToast({
@@ -82,7 +76,7 @@ export default function SupplierProductDetailPage() {
     if (productId) {
       loadProduct();
     }
-  }, [productId, supplierProducts, currentSupplierProduct, setCurrentSupplierProduct, fetchSupplierProducts, showToast]);
+  }, [productId, myProducts, currentProduct, setCurrentProduct, fetchMyProducts, showToast, t]);
 
   const handleShareProduct = (product: Product) => {
     if (navigator.share) {
@@ -106,29 +100,20 @@ export default function SupplierProductDetailPage() {
     router.push(`/supplier/products/${product.id}/edit`);
   };
 
+  const { deleteProduct } = useProduct();
+
   const handleDeleteProduct = async (productId: string) => {
     if (!confirm(t('common.productDetailMsg.confirmDelete'))) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/products/supplier/${productId}`, {
-        method: 'DELETE',
+      await deleteProduct(productId);
+      showToast({
+        description: t('common.productDetailMsg.deleteSuccess'),
+        variant: 'default',
       });
-
-      if (response.ok) {
-        showToast({
-          description: t('common.productDetailMsg.deleteSuccess'),
-          variant: 'default',
-        });
-        router.push('/supplier/products');
-      } else {
-        const data = await response.json();
-        showToast({
-          description: data.message || t('common.productDetailMsg.deleteFailed'),
-          variant: 'error',
-        });
-      }
+      router.push('/supplier/products');
     } catch (err) {
       showToast({
         description: t('common.productDetailMsg.deleteFailed'),
@@ -151,7 +136,7 @@ export default function SupplierProductDetailPage() {
     );
   }
 
-  if (error || !currentSupplierProduct) {
+  if (error || !currentProduct) {
     return (
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.SUPPLIER} activeItem="My Inputs" />
@@ -177,7 +162,7 @@ export default function SupplierProductDetailPage() {
       
       <main className="flex-1 overflow-auto">
         <ProductDetail
-          product={currentSupplierProduct}
+          product={currentProduct}
           productType="supplier"
           onShareProduct={handleShareProduct}
           onEditProduct={handleEditProduct}

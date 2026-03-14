@@ -103,8 +103,8 @@ export default function SignIn() {
         <div className="w-full max-w-md flex flex-col justify-center">
           {/* Logo/Brand */}
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-xl font-bold">UL</span>
+            <div className="w-16 h-16  flex items-center justify-center">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground text-center mb-2">{t('auth.signIn.title')}</h1>

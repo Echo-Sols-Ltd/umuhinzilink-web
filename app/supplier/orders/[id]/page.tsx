@@ -19,10 +19,10 @@ function SupplierOrderDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { 
-    supplierOrders, 
-    currentSupplierOrder, 
-    setCurrentSupplierOrder,
-    fetchSupplierOrders 
+    sellingOrders, 
+    currentOrder, 
+    setCurrentOrder,
+    fetchSellingOrders 
   } = useOrder();
   const { updateSupplierOrderStatus } = useOrderAction();
   const { t } = useI18n();
@@ -37,28 +37,22 @@ function SupplierOrderDetailPage() {
       
       try {
         // Step 1: Check if order is already in context lists
-        let foundOrder = supplierOrders?.find(o => o.id === orderId);
+        let foundOrder = sellingOrders?.find((o: Order) => o.id === orderId);
         
-        // Step 2: Check if it's the current context order
-        if (!foundOrder && currentSupplierOrder?.id === orderId) {
-          foundOrder = currentSupplierOrder;
+        if (!foundOrder && currentOrder?.id === orderId) {
+          foundOrder = currentOrder;
         }
         
         if (foundOrder) {
-          // ✅ Found in context - use immediately
-          setCurrentSupplierOrder(foundOrder);
+          setCurrentOrder(foundOrder);
           setLoading(false);
         } else {
-          // ❌ Not in context - fetch from server
           const { orderService } = await import('@/services/orders');
-          const response = await orderService.getSupplierOrderById(orderId);
+          const response = await orderService.getOrderById(orderId);
           
           if (response.success && response.data) {
-            // Store in context for future use and real-time updates
-            setCurrentSupplierOrder(response.data);
-            
-            // Refresh the list to include this order for future navigation
-            fetchSupplierOrders();
+            setCurrentOrder(response.data);
+            fetchSellingOrders();
           } else {
             notify.error(t('supplier.orders.toasts.orderNotFound'), t('common.error'));
           }
@@ -74,14 +68,14 @@ function SupplierOrderDetailPage() {
     if (orderId) {
       loadOrder();
     }
-  }, [orderId, supplierOrders, currentSupplierOrder, setCurrentSupplierOrder, fetchSupplierOrders]);
+  }, [orderId, sellingOrders, currentOrder, setCurrentOrder, fetchSellingOrders]);
 
   const handleUpdateDeliveryStatus = async (newStatus: DeliveryStatus) => {
-    if (!currentSupplierOrder) return;
+    if (!currentOrder) return;
 
     setUpdatingStatus(true);
     try {
-      await updateSupplierOrderStatus(currentSupplierOrder.id, newStatus);
+      await updateSupplierOrderStatus(currentOrder.id, newStatus);
 
       // Context will automatically update via socket events
       // No need to manually update local state
@@ -109,7 +103,7 @@ function SupplierOrderDetailPage() {
     );
   }
 
-  if (!currentSupplierOrder) {
+  if (!currentOrder) {
     return (
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserType.SUPPLIER} activeItem='Orders' />
@@ -124,8 +118,8 @@ function SupplierOrderDetailPage() {
     );
   }
 
-  const buyer = currentSupplierOrder.buyer;
-  const product = currentSupplierOrder.product;
+  const buyer = currentOrder.buyer;
+  const product = currentOrder.product;
 
   return (
     <div className="flex h-screen bg-background">
@@ -144,7 +138,7 @@ function SupplierOrderDetailPage() {
             </button>
             <div className="h-8 w-px bg-border"></div>
             <h1 className="text-xl font-semibold text-foreground">{t('supplier.orders.detail.title')}</h1>
-            <span className="text-sm text-muted-foreground">#{currentSupplierOrder.id.slice(0, 8)}</span>
+            <span className="text-sm text-muted-foreground">#{currentOrder.id.slice(0, 8)}</span>
           </div>
         </header>
 
@@ -182,7 +176,7 @@ function SupplierOrderDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t('supplier.orders.detail.totalAmount')}</p>
-                  <p className="font-semibold text-foreground">RWF {currentSupplierOrder.totalPrice.toLocaleString()}</p>
+                  <p className="font-semibold text-foreground">RWF {currentOrder.totalPrice.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -235,24 +229,24 @@ function SupplierOrderDetailPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('supplier.orders.detail.quantity')}</label>
-                  <p className="text-foreground">{currentSupplierOrder.quantity} {product.measurementUnit}</p>
+                  <p className="text-foreground">{currentOrder.quantity} {product.measurementUnit}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('supplier.orders.detail.unitPrice')}</label>
-                  <p className="text-foreground">RWF {(currentSupplierOrder.totalPrice / currentSupplierOrder.quantity).toLocaleString()}</p>
+                  <p className="text-foreground">RWF {(currentOrder.totalPrice / currentOrder.quantity).toLocaleString()}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('supplier.orders.detail.totalPrice')}</label>
-                  <p className="text-lg font-semibold text-success">RWF {currentSupplierOrder.totalPrice.toLocaleString()}</p>
+                  <p className="text-lg font-semibold text-success">RWF {currentOrder.totalPrice.toLocaleString()}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('supplier.orders.detail.paymentMethod')}</label>
-                  <p className="text-foreground">{currentSupplierOrder.paymentMethod.replace('_', ' ')}</p>
+                  <p className="text-foreground">{currentOrder.paymentMethod.replace('_', ' ')}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('supplier.orders.detail.paymentStatus')}</label>
-                  <p className={`font-medium ${currentSupplierOrder.isPaid ? 'text-success' : 'text-destructive'}`}>
-                    {currentSupplierOrder.isPaid ? t('supplier.orders.detail.paid') : t('supplier.orders.detail.unpaid')}
+                  <p className={`font-medium ${currentOrder.isPaid ? 'text-success' : 'text-destructive'}`}>
+                    {currentOrder.isPaid ? t('supplier.orders.detail.paid') : t('supplier.orders.detail.unpaid')}
                   </p>
                 </div>
               </div>
@@ -266,12 +260,12 @@ function SupplierOrderDetailPage() {
               {t('supplier.orders.detail.deliveryTracking')}
             </h2>
             <DeliveryTracker
-              delivery={currentSupplierOrder.delivery}
+              delivery={currentOrder.delivery}
               onUpdateStatus={handleUpdateDeliveryStatus}
               isLoading={updatingStatus}
               orderType="supplier"
               isOrderOwner={true}
-              isPaid={currentSupplierOrder.isPaid}
+              isPaid={currentOrder.isPaid}
             />
           </div>
         </div>

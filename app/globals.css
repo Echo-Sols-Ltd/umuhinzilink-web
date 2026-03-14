@@ -3,136 +3,121 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =====================================================
-   UMUHINZILINK — AgriTech Startup Design System
-   Modern • Energetic • Investor-Ready • Accessible
+   UMUHINZILINK — AgriTech Design System v2.0
+   Theme: "Earth & Growth" (Modern, Trusted, Accessible)
 ===================================================== */
 
-/* =========================
-   LIGHT MODE
-========================= */
-
 :root {
-  /* Base */
-  --background: #F7F9F8;
-  --foreground: #1A2421;
+  /* --- Base Surfaces --- */
+  --background: #F8FAF9; /* Soft Paper White */
+  --foreground: #141C19; /* Deep Forest Black */
 
   --card: #FFFFFF;
-  --card-foreground: #1A2421;
+  --card-foreground: #141C19;
 
   --popover: #FFFFFF;
-  --popover-foreground: #1A2421;
+  --popover-foreground: #141C19;
 
-  /* 🌱 Primary — Confident AgriTech Green */
-  --primary: #1F7A4D;
-  --primary-foreground: #FFFFFF;
+  /* --- Brand Colors --- */
+  /* 🌱 Primary: Confident Growth Green */
+  --primary: #1a8f00; 
+  --primary-foreground: #F8FAF9;
 
-  /* 🌊 Secondary — Tech Trust Teal */
-  --secondary: #3D8B7A;
-  --secondary-foreground: #FFFFFF;
+  /* 🌊 Secondary: Modern Irrigation Teal */
+  --secondary: #30a117;
+  --secondary-foreground: #F8FAF9;
 
-  /* Neutral system */
-  --muted: #F1F4F3;
-  --muted-foreground: #5E6D68;
-
-  /* 🌾 Accent — Energetic Market Amber */
-  --accent: #C48A3A;
+  /* 🌾 Accent: Harvest Gold / Market Amber */
+  --accent: #D98E32;
   --accent-foreground: #FFFFFF;
 
-  /* Status colors */
-  --destructive: #E04F5F;
-  --destructive-foreground: #FFFFFF;
+  /* --- UI Neutrals --- */
+  --muted: #EDF2F0;
+  --muted-foreground: #5C6E67;
 
+  --border: #E2E9E6;
+  --input: #E2E9E6;
+  --ring: #1a6511;
+
+  /* --- Status --- */
+  --destructive: #D94452;
+  --destructive-foreground: #FFFFFF;
   --warning: #F59E0B;
   --warning-foreground: #FFFFFF;
-
-  --success: #0E9F6E;
+  --success: #10b910;
   --success-foreground: #FFFFFF;
-
   --info: #3B82F6;
   --info-foreground: #FFFFFF;
 
-  /* Surfaces */
-  --border: #E2E8E5;
-  --input: #E2E8E5;
-  --ring: #1F7A4D;
+  /* --- Charts --- */
+  --chart-1: #2c631b;
+  --chart-2: #347d40;
+  --chart-3: #D98E32;
+  --chart-4: #4acc16;
+  --chart-5: #64748B;
 
-  /* Charts */
-  --chart-1: #1F7A4D;
-  --chart-2: #3D8B7A;
-  --chart-3: #0E9F6E; /* Revenue */
-  --chart-4: #E04F5F;
-  --chart-5: #C48A3A;
+  --radius: 0.75rem;
 
-  --radius: 1rem;
-
-  /* Sidebar */
-  --sidebar: #F1F4F3;
-  --sidebar-foreground: #1A2421;
-  --sidebar-primary: #1F7A4D;
+  /* --- Sidebar --- */
+  --sidebar: #F1F5F3;
+  --sidebar-foreground: #141C19;
+  --sidebar-primary: #26631b;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E2E8E5;
-  --sidebar-accent-foreground: #1F7A4D;
-  --sidebar-border: #E2E8E5;
-  --sidebar-ring: #1F7A4D;
+  --sidebar-accent: #E2E9E6;
+  --sidebar-accent-foreground: #28631b;
+  --sidebar-border: #E2E9E6;
+  --sidebar-ring: #20631b;
 }
-
-
-/* =========================
-   DARK MODE — Clean Tech Dashboard
-========================= */
 
 .dark {
-  --background: #0F1A17;
-  --foreground: #E5E9E8;
+  /* --- Deep Forest Charcoal Surfaces --- */
+  --background: #242524;
+  --foreground: #ECF2F0;
 
-  --card: #1B2E29;
-  --card-foreground: #E5E9E8;
+  --card: #1c1c1c;
+  --card-foreground: #ECF2F0;
 
-  --popover: #1B2E29;
-  --popover-foreground: #E5E9E8;
+  --popover: #121816;
+  --popover-foreground: #ECF2F0;
 
-  --primary: #2FA36B;
-  --primary-foreground: #FFFFFF;
+  /* --- Brand (Vibrant for Dark Mode) --- */
+  --primary: #44b32b; 
+  --primary-foreground: #1d1e1d;
 
-  --secondary: #4A9C8D;
-  --secondary-foreground: #FFFFFF;
+  --secondary: #30a117;
+  --secondary-foreground: #1d1e1d;
 
-  --muted: #152420;
-  --muted-foreground: #8B9A95;
+  --accent: #F2A84B;
+  --accent-foreground: #1d1e1d;
 
-  --accent: #D4A24C;
-  --accent-foreground: #FFFFFF;
+  /* --- UI Neutrals --- */
+  --muted: #1A2421;
+  --muted-foreground: #8FA39C;
 
-  --destructive: #FF5A6B;
-  --destructive-foreground: #FFFFFF;
+  --border: #24302C;
+  --input: #24302C;
+  --ring: #39b32b;
 
+  /* --- Status --- */
+  --destructive: #FF5C6D;
+  --destructive-foreground: #0B0F0E;
   --warning: #FBBF24;
-  --warning-foreground: #1B2E29;
-
-  --success: #3FCF8E; /* Revenue */
-  --success-foreground: #1B2E29;
-
+  --warning-foreground: #0B0F0E;
+  --success: #51d334;
+  --success-foreground: #0B0F0E;
   --info: #60A5FA;
-  --info-foreground: #1B2E29;
+  --info-foreground: #131414;
 
-  --border: #263D38;
-  --input: #263D38;
-  --ring: #2FA36B;
-
-  --sidebar: #0D1614;
-  --sidebar-foreground: #E5E9E8;
-  --sidebar-primary: #2FA36B;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #263D38;
-  --sidebar-accent-foreground: #2FA36B;
-  --sidebar-border: #263D38;
-  --sidebar-ring: #2FA36B;
+  /* --- Sidebar --- */
+  --sidebar: #292929;
+  --sidebar-foreground: #ECF2F0;
+  --sidebar-primary: #2db32b;
+  --sidebar-primary-foreground: #0B0F0E;
+  --sidebar-accent: #1A2421;
+  --sidebar-accent-foreground: #34b32b;
+  --sidebar-border: #24302C;
+  --sidebar-ring: #42b32b;
 }
-
-
-/* =========================
-   THEME TOKENS
-========================= */
 
 @theme inline {
   --color-background: var(--background);
@@ -165,10 +150,12 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -177,48 +164,24 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* --- Custom Animations --- */
+  --animate-fade-up: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-
-
-/* =========================
-   BASE LAYER
-========================= */
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border transition-colors duration-200;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
 }
 
-
-/* =========================
-   ANIMATIONS
-========================= */
-
 @keyframes fadeUp {
-  0% { opacity: 0; transform: translateY(40px); }
-  100% { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.section-fade-up {
-  opacity: 0;
-  animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.section-delay-1 { animation-delay: 0.2s; }
-.section-delay-2 { animation-delay: 0.4s; }
-.section-delay-3 { animation-delay: 0.6s; }
-.section-delay-4 { animation-delay: 0.8s; }
-.section-delay-5 { animation-delay: 1s; }
-
-/* Scrollbar */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
+.animate-delay-100 { animation-delay: 100ms; }
+.animate-delay-200 { animation-delay: 200ms; }

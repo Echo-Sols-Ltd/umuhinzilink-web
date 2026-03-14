@@ -591,6 +591,38 @@
     "loading": "Irimo gutegura dashboard...",
     "redirecting": "Irimo kukujyana kuri dashboard yawe..."
   },
+  "marketplace": {
+    "title": "Isoko ryacu",
+    "tagline": "Ibicuruzwa bishya bivuye mu murima",
+    "verifiedFarmers": "Abahinzi bemewe",
+    "contactMessage": "Ndabaramukije! Ndifuza kugura {{productName}}. Mbese muracyagifite?",
+    "toasts": {
+      "authRequired": {
+        "title": "Kwinjira birakenewe",
+        "body": "Nyamuneka jya muri konti yawe mbere yo kuvugana n'umuhinzi."
+      },
+      "farmerNotAvailable": {
+        "title": "Umuhinzi ntaboneka",
+        "body": "Uyu muhinzi ntaboneka ubu."
+      },
+      "messageSent": {
+        "title": "Ubutumwa bwoherejwe",
+        "body": "Ubutumwa bwawe bwoherejwe kuri {{farmerName}} ku bijyanye na {{productName}}."
+      },
+      "failedToSendMessage": {
+        "title": "Kunoheresha byanze",
+        "body": "Habayeho ikibazo mu kohereza ubutumwa bwawe. Ongera ugerageze."
+      }
+    },
+    "searchPlaceholder": "Shakisha umusaruro...",
+    "noProducts": "Nta gicuruzwa cyabonetse",
+    "noProductsDesc": "Ntitwabashije kubona ibyo ushaka. Gerageza gushakira mu kindi cyiciro cyangwa ahandi hantu.",
+    "filters": {
+      "label": "Gushungura",
+      "category": "Icyiciro",
+      "allRegions": "Intara zose"
+    }
+  },
   "buyer": {
     "dashboard": {
       "accessDenied": {
@@ -614,31 +646,6 @@
         "trackOrders": "Gukurikirana ibitumwa",
         "browseMarketplace": "Gushakisha ku isoko",
         "savedProducts": "Ibicuruzwa wabitse"
-      }
-    },
-    "marketplace": {
-      "title": "Isoko ryacu",
-      "tagline": "Ibicuruzwa bishya bivuye mu murima",
-      "verifiedFarmers": "Abahinzi bemewe",
-      "filters": "Gushungura",
-      "contactMessage": "Ndabaramukije! Ndifuza kugura {{productName}}. Mbese muracyagifite?",
-      "toasts": {
-        "authRequired": {
-          "title": "Kwinjira birakenewe",
-          "body": "Nyamuneka jya muri konti yawe mbere yo kuvugana n'umuhinzi."
-        },
-        "farmerNotAvailable": {
-          "title": "Umuhinzi ntaboneka",
-          "body": "Uyu muhinzi ntaboneka ubu."
-        },
-        "messageSent": {
-          "title": "Ubutumwa bwoherejwe",
-          "body": "Ubutumwa bwawe bwoherejwe kuri {{farmerName}} ku bijyanye na {{productName}}."
-        },
-        "failedToSendMessage": {
-          "title": "Kunoheresha byanze",
-          "body": "Habayeho ikibazo mu kohereza ubutumwa bwawe. Ongera ugerageze."
-        }
       }
     },
     "purchases": {
@@ -791,7 +798,39 @@
         "addedToFavorites": "Byongewe mu byo wakunze",
         "removedFromFavorites": "Byakuwe mu byo wakunze",
         "linkCopied": "Ihuza ryakopewe"
-      }
+      },
+      "breadcrumbs": {
+        "home": "Ahabanza",
+        "grainsAndCereals": "Ibigenzi n'imbuto"
+      },
+      "badges": {
+        "freshHarvest": "Byakwe vuba"
+      },
+      "overallRating": "4.8",
+      "reviews": "(124 ibiherutse)",
+      "description": "Ubusobanuro",
+      "productDetails": "Amakuru y'Igicuruzwa",
+      "details": {
+        "weight": "Ibirimo",
+        "harvestDate": "Itariki y'ikukura",
+        "location": "Aho biherereye",
+        "variety": "Ubwoko",
+        "storage": "Aho bikiriwe",
+        "delivery": "Igitigiri"
+      },
+      "quantity": "Ingano",
+      "addToCart": "Kuva mu shopingi",
+      "saveToWishlist": "Bika ku byashishwe",
+      "soldBy": "Yakuye",
+      "farmerSince": "Umuhinzi kuva",
+      "supplierSince": "Uwigenga kuva",
+      "sellerRating": "Ugereranyabwo",
+      "sales": "Ikwirwa",
+      "onTimeDelivery": "Igitigiri ku gihe",
+      "messageSeller": "Tumira uwakuye",
+      "customerReviews": "Inyandiko z'abakiriya",
+      "relatedProducts": "Ibicuruzwa bifitanye isano",
+      "otherGrainsFromNearbyFarmers": "Ibindi bigenzi bivuye ku bahinzi bari hafi"
     }
   },
   "farmer": {
@@ -1137,6 +1176,34 @@
         "unpaid": "NTIYISHYUWE",
         "deliveryTracking": "Kureba Aho Igitumizwa Kigeze"
       }
+    },
+    "products": {
+      "title": "Ibicuruzwa by'Inyongeramusaruro",
+      "subtitle": "Cunga kandi uvugurure inyongeramusaruro uha abahinzi",
+      "addProduct": "Ongeramo inyongeramusaruro nshya",
+      "activeListings": "Ibicuruzwa bihari",
+      "results": "Ibisubizo",
+      "noListings": "Nta nyongeramusaruro yabonetse",
+      "noListingsDesc": "Tangira ushyiraho inyongeramusaruro yawe ya mbere kuri uru rubuga.",
+      "addTitle": "Ongeramo inyongeramusaruro nshya",
+      "editTitle": "Hindura inyongeramusaruro",
+      "filters": {
+        "search": "Shakisha mu bubiko bwawe..."
+      },
+      "form": {
+        "details": "Amakuru ku gicuruzwa",
+        "selectType": "Hitamo ubwoko bw'igicuruzwa",
+        "descPlaceholder": "Sobanura inyongeramusaruro yawe...",
+        "price": "Igiciro (RWF)",
+        "measurement": "Ingano",
+        "selectUnit": "Hitamo urugero",
+        "quantity": "Ingano mu bubiko",
+        "certification": "Icyemezo",
+        "none": "Nta na kimwe",
+        "media": "Ifoto y'igicuruzwa",
+        "update": "Vugurura",
+        "list": "Shyiraho igicuruzwa"
+      }
     }
   },
   "delivery": {
@@ -1219,6 +1286,9 @@
   "landing": {
     "nav": {
       "home": "Ahabanza",
+      "marketplace": "Ibicuruzwa",
+      "howItWorks": "Uko bikora",
+      "aboutUs": "Bitwerekeyeho",
       "features": "Ibiranga",
       "agribusiness": "Ubuhinzi n'Ubucuruzi",
       "lenders": "Abaguriza",

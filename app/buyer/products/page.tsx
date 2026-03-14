@@ -135,12 +135,12 @@ function ProductsPageComponent() {
 
   const handleContactFarmer = async (product: Product) => {
     if (!buyer) {
-      notify.error(t('buyer.marketplace.toasts.authRequired.body'), t('buyer.marketplace.toasts.authRequired.title'));
+      notify.error(t('marketplace.toasts.authRequired.body'), t('marketplace.toasts.authRequired.title'));
       return;
     }
 
     if (!product.owner) {
-      notify.error(t('buyer.marketplace.toasts.farmerNotAvailable.body'), t('buyer.marketplace.toasts.farmerNotAvailable.title'));
+      notify.error(t('marketplace.toasts.farmerNotAvailable.body'), t('marketplace.toasts.farmerNotAvailable.title'));
       return;
     }
 
@@ -159,22 +159,22 @@ function ProductsPageComponent() {
 
       // Send product reference message
       await handleSendMessage(
-        t('buyer.marketplace.contactMessage', { productName: product.name }),
+        t('marketplace.contactMessage', { productName: product.name }),
         MessageType.PRODUCT,
         product.owner.names,
         productRef
       );
 
       notify.success(
-        t('buyer.marketplace.toasts.messageSent.body', { farmerName: product.owner.names, productName: product.name }),
-        t('buyer.marketplace.toasts.messageSent.title')
+        t('marketplace.toasts.messageSent.body', { farmerName: product.owner.names, productName: product.name }),
+        t('marketplace.toasts.messageSent.title')
       );
 
       // Navigate to chat page with specific user ID
       router.push(`/chat/${farmerUser.id}`);
     } catch (error) {
       console.error('Failed to contact farmer:', error);
-      notify.error(t('buyer.marketplace.toasts.failedToSendMessage.body'), t('buyer.marketplace.toasts.failedToSendMessage.title'));
+      notify.error(t('marketplace.toasts.failedToSendMessage.body'), t('marketplace.toasts.failedToSendMessage.title'));
     }
   };
 
@@ -196,7 +196,7 @@ function ProductsPageComponent() {
     <div className="bg-card shadow-sm border-b border-border px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-semibold text-foreground">{t('buyer.marketplace.title')}</h1>
+          <h1 className="text-2xl font-semibold text-foreground">{t('marketplace.title')}</h1>
           <div className="flex items-center space-x-2">
             <Button
               variant={viewMode === 'grid' ? 'default' : 'outline'}
@@ -216,13 +216,13 @@ function ProductsPageComponent() {
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <span>{t('buyer.marketplace.tagline')}</span>
+            <span>{t('marketplace.tagline')}</span>
             <div className="w-2 h-2 bg-success rounded-full mr-2" />
-            <span className="font-medium">{t('buyer.marketplace.verifiedFarmers')}</span>
+            <span className="font-medium">{t('marketplace.verifiedFarmers')}</span>
           </div>
           <Button variant="outline" size="sm">
             <Filter className="w-4 h-4 mr-2" />
-            {t('buyer.marketplace.filters')}
+            {t('marketplace.filters')}
           </Button>
         </div>
       </div>

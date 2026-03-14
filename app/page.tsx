@@ -1,39 +1,18 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserType } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   const { t } = useI18n();
+  const router = useRouter()
 
-  React.useEffect(() => {
-    if (!loading && user && user.verified) {
-      // Redirect to role-specific dashboard
-      switch (user.role) {
-        case UserType.FARMER:
-          router.push('/farmer/dashboard');
-          break;
-        case UserType.BUYER:
-          router.push('/buyer/dashboard');
-          break;
-        case UserType.SUPPLIER:
-          router.push('/supplier/dashboard');
-          break;
-        case UserType.ADMIN:
-          router.push('/admin/dashboard');
-          break;
-        default:
-          router.push('/dashboard');
-      }
-    } else if (!loading && !user) {
-      router.push('/dashboard');
-    }
-  }, [user, loading]);
+  useEffect(() => {
+    if (!loading) router.push('/dashboard')
+  }, [loading])
 
   if (loading) {
     return (

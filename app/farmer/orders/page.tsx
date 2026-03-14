@@ -60,12 +60,12 @@ function FarmerOrders() {
   const { t, locale } = useI18n();
   const { user } = useAuth();
   const {
-    farmerOrders,
+    sellingOrders: farmerOrders,
     loading,
-    fetchFarmerOrders,
-    farmerOrdersTotalPages: totalPages,
-    farmerOrdersTotalElements: totalElements,
-    markFarmerOrderSatisfaction,
+    fetchSellingOrders: fetchFarmerOrders,
+    sellingOrdersTotalPages: totalPages,
+    sellingOrdersTotalElements: totalElements,
+    markOrderSatisfaction: markFarmerOrderSatisfaction,
     setMutationLoading,
   } = useOrder();
   const {

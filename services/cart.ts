@@ -54,18 +54,18 @@ class CartService {
   }
 
   // Checkout normal items
-  async checkoutNormal(request: CartCheckoutRequest): Promise<ApiResponse<Order>> {
-    return await apiClient.post<ApiResponse<Order>>(API_ENDPOINTS.CART.CHECKOUT.NORMAL, request);
+  async checkoutNormal(request: CartCheckoutRequest): Promise<ApiResponse<Order[]>> {
+    return await apiClient.post<ApiResponse<Order[]>>(API_ENDPOINTS.CART.CHECKOUT.NORMAL, request);
   }
 
   // Checkout accepted negotiations
-  async checkoutNegotiated(request: CartCheckoutRequest): Promise<ApiResponse<Order>> {
-    return await apiClient.post<ApiResponse<Order>>(API_ENDPOINTS.CART.CHECKOUT.NEGOTIATED, request);
+  async checkoutNegotiated(request: CartCheckoutRequest): Promise<ApiResponse<Order[]>> {
+    return await apiClient.post<ApiResponse<Order[]>>(API_ENDPOINTS.CART.CHECKOUT.NEGOTIATED, request);
   }
 
   // Mixed checkout
-  async checkoutMixed(request: CartCheckoutRequest): Promise<ApiResponse<Order>> {
-    return await apiClient.post<ApiResponse<Order>>(API_ENDPOINTS.CART.CHECKOUT.MIXED, request);
+  async checkoutMixed(request: CartCheckoutRequest): Promise<ApiResponse<Order[]>> {
+    return await apiClient.post<ApiResponse<Order[]>>(API_ENDPOINTS.CART.CHECKOUT.MIXED, request);
   }
 
   // Clear cart

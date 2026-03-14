@@ -72,12 +72,12 @@ function FarmerSupplierOrders() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const {
-    farmerBuyerOrders,
+    buyingOrders: farmerBuyerOrders,
     loading,
-    fetchFarmerBuyerOrders,
-    farmerBuyerOrdersTotalPages: totalPages,
-    farmerBuyerOrdersTotalElements: totalElements,
-    markSupplierOrderSatisfaction,
+    fetchBuyingOrders: fetchFarmerBuyerOrders,
+    buyingOrdersTotalPages: totalPages,
+    buyingOrdersTotalElements: totalElements,
+    markOrderSatisfaction: markSupplierOrderSatisfaction,
     setMutationLoading,
   } = useOrder();
   const {
