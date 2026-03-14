@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare, Star, Minus, Plus, Home, ChevronRight, User, Clock, Truck } from 'lucide-react';
 import Image from 'next/image';
 import { Product } from '@/types';
+import NegotiationModal from './NegotiationModal';
 import { cn, imageUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +47,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
 
   const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
   const isOutOfStock = product.quantity === 0;
@@ -284,6 +286,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   {t('buyer.productDetail.addToCart')} - {formatPrice(product.unitPrice * quantity)}
                 </Button>
 
+                {product.isNegotiable && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsNegotiateModalOpen(true)}
+                    className="w-full h-12 border-primary/30 text-primary hover:bg-primary/5 transition-all font-semibold"
+                    size="lg"
+                  >
+                    <MessageSquare className="w-5 h-5 mr-2" />
+                    {t('productCard.negotiatePrice')}
+                  </Button>
+                )}
+
                 <Button
                   variant="outline"
                   onClick={() => onSaveProduct?.(product.id)}
@@ -457,6 +471,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           ))}
         </div>
       </div>
+      <NegotiationModal 
+        product={product}
+        isOpen={isNegotiateModalOpen}
+        onClose={() => setIsNegotiateModalOpen(false)}
+      />
       <Footer/>
     </div>
   );

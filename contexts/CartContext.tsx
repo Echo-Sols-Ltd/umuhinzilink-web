@@ -78,6 +78,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
+      // Auto-cleanup expired negotiations before fetching
+      await cartService.cleanupExpiredNegotiations();
+
       const response = await cartService.getCart();
       if (response.success && response.data) {
         setCart(response.data);
@@ -88,7 +91,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch cart';
       setError(errorMessage);
-      notify.error(errorMessage, 'Error');
+      // Only notify if it's not a background fetch or if it's a critical error
+      if (errorMessage !== 'Failed to fetch cart') {
+         notify.error(errorMessage, 'Error');
+      }
     } finally {
       setLoading(false);
     }
@@ -399,7 +405,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const getCartTotal = useCallback((): number => {
     if (!cart?.items) return 0;
     return cart.items.reduce((total, item) => {
-      return total + (item.unitPrice * item.quantity);
+      const price = item.proposedPrice && (item.type === CartItemType.NEGOTIATION_ACCEPTED || item.type === CartItemType.NEGOTIATION)
+        ? item.proposedPrice
+        : item.unitPrice;
+      return total + (price * item.quantity);
     }, 0);
   }, [cart]);
 

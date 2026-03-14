@@ -17,7 +17,7 @@ enum CheckoutStep {
 }
 
 export default function CartPage() {
-  const { cart, loading, updateItem, removeItem, getCartTotal, checkoutNormal, checkoutNegotiated, checkoutMixed } = useCart();
+  const { cart, loading, updateItem, removeItem, getCartTotal, negotiateItems, checkoutNormal, checkoutNegotiated, checkoutMixed } = useCart();
   const { user } = useAuth();
   const { t } = useI18n();
   const [step, setStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
@@ -56,6 +56,12 @@ export default function CartPage() {
   });
 
   const subtotal = getCartTotal();
+  const negotiationItemIds = useMemo(() => 
+    cart?.items.filter(item => item.type === CartItemType.NEGOTIATION).map(item => item.id) || [], 
+  [cart]);
+
+  const hasPendingNegotiations = negotiationItemIds.length > 0;
+
   const shippingFee = formData.deliveryOption === 'standard' ? 0 : formData.deliveryOption === 'express' ? 5000 : 15000;
   const salesTax = subtotal * 0.18; // 18% VAT
   const total = subtotal + shippingFee + salesTax;
@@ -324,6 +330,32 @@ export default function CartPage() {
 
         {/* Right Side: Step Content */}
         <div className="lg:col-span-8 order-1 lg:order-2 space-y-8">
+          {hasPendingNegotiations && (
+            <div className="p-6 bg-linear-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-500 shadow-xl shadow-yellow-900/5">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
+                  <MessageCircle className="w-7 h-7 text-yellow-600" />
+                </div>
+                <div>
+                  <h4 className="font-black text-yellow-900 text-lg">Pending Negotiations</h4>
+                  <p className="text-sm text-yellow-700 font-medium">Some items in your cart need price review from sellers.</p>
+                </div>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    await negotiateItems({ itemIds: negotiationItemIds });
+                    notify.success('Negotiation requests sent to sellers', 'Success');
+                  } catch (error) {
+                    console.error('Failed to negotiate:', error);
+                  }
+                }}
+                className="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-black rounded-2xl transition-all shadow-lg shadow-yellow-500/30 active:scale-95 whitespace-nowrap"
+              >
+                Start Negotiations
+              </button>
+            </div>
+          )}
           
           {/* Step 1: Shipping */}
           {step === CheckoutStep.SHIPPING && (
