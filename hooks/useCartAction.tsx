@@ -7,6 +7,7 @@ import {
   CartUpdateRequest,
   CartNegotiateRequest,
   CartCheckoutRequest,
+  NegotiationItemRequest,
   CartItemType,
   PaymentMethod,
   Order,
@@ -36,8 +37,10 @@ export const useCartAction = () => {
    * - Loading/error state management
    * - Automatic cart refresh on success
    * - Consistent error notification
+   *
+   * Note: <T,> trailing comma is required in .tsx files to prevent the
+   * TypeScript generic from being parsed as a JSX element.
    */
-  
   const withMutation = async <T,>(
     fn: () => Promise<T>,
     fallbackError: string
@@ -59,12 +62,18 @@ export const useCartAction = () => {
   // ── Add to cart ─────────────────────────────────────────────────────────
 
   /** Add item to cart. If proposedPrice is provided, creates a negotiation item. */
-  const addProductToCart = async (productId: string, quantity: number, proposedPrice?: number) => {
+  const addProductToCart = async (
+    productId: string,
+    quantity: number,
+    proposedPrice?: number,
+    message?: string
+  ) => {
     const request: CartItemRequest = {
       productId,
       quantity,
       proposedPrice,
       type: proposedPrice ? CartItemType.NEGOTIATION : CartItemType.NORMAL,
+      message,
     };
 
     return withMutation(async () => {
@@ -119,9 +128,23 @@ export const useCartAction = () => {
 
   // ── Negotiate ───────────────────────────────────────────────────────────
 
-  /** Send negotiation requests for the given item IDs. */
-  const negotiateSelectedItems = async (itemIds: string[]) => {
-    const request: CartNegotiateRequest = { itemIds };
+  /**
+   * Send negotiation requests for cart items.
+   * Each NegotiationItemRequest must include: cartItemId, proposedPrice, message.
+   * Normal (non-negotiated) item IDs can be passed via normalItemIds if needed.
+   */
+  const negotiateSelectedItems = async (
+    negotiationItems: NegotiationItemRequest[],
+    normalItemIds: string[] = [],
+    paymentMethod: PaymentMethod = PaymentMethod.CASH_ON_DELIVERY
+  ) => {
+    const request: CartNegotiateRequest = {
+      paymentMethod,
+      itemIds: normalItemIds,
+      negotiationItemIds: negotiationItems.map(i => i.cartItemId),
+      negotiationItems,
+    };
+
     return withMutation(async () => {
       const response = await cartService.negotiateItems(request);
       if (!response.success) throw new Error(response.message || 'Failed to negotiate items');
@@ -143,19 +166,21 @@ export const useCartAction = () => {
   // ── Checkout ────────────────────────────────────────────────────────────
 
   /**
-   * Checkout selected items with automatic strategy detection:
-   * - NORMAL: only standard items
-   * - NEGOTIATED: only accepted negotiation items
-   * - MIXED: both types
+   * Checkout selected items.
+   * Automatically classifies items into normal vs accepted-negotiation groups
+   * and builds the correct CartCheckoutRequest for the backend.
    */
-  const checkoutItems = async (itemIds: string[]): Promise<Order[] | null> => {
+  const checkoutItems = async (
+    itemIds: string[],
+    paymentMethod: PaymentMethod = PaymentMethod.CASH_ON_DELIVERY
+  ): Promise<Order[] | null> => {
     if (!itemIds.length) {
       notify.warning('Please select items to checkout', 'Empty Selection');
       return null;
     }
 
     return withMutation(async () => {
-      // Determine which items are ready and filter to the requested selection
+      // Fetch ready items and filter to the caller's selection
       const readyItems = await getItemsReadyForCheckout();
       const selected = readyItems.filter(item => itemIds.includes(item.id));
 
@@ -164,23 +189,23 @@ export const useCartAction = () => {
         return null;
       }
 
-      const hasNormal = selected.some(item => item.type === CartItemType.NORMAL);
-      const hasNegotiated = selected.some(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
+      // Classify by type
+      const normalItems = selected.filter(item => item.type === CartItemType.NORMAL);
+      const negotiatedItems = selected.filter(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
 
       const request: CartCheckoutRequest = {
-        paymentMethod: PaymentMethod.CASH_ON_DELIVERY,
-        itemIds,
-        checkoutType: hasNormal && hasNegotiated ? 'MIXED' : hasNegotiated ? 'NEGOTIATED' : 'NORMAL',
+        paymentMethod,
+        itemIds: normalItems.map(item => item.id),
+        negotiationItemIds: negotiatedItems.map(item => item.id),
+        // Build NegotiationItemRequest from CartItem data for accepted negotiations
+        negotiationItems: negotiatedItems.map(item => ({
+          cartItemId: item.id,
+          proposedPrice: item.proposedPrice ?? item.unitPrice,
+          message: '',
+        })),
       };
 
-      let response;
-      if (request.checkoutType === 'MIXED') {
-        response = await cartService.checkoutMixed(request);
-      } else if (request.checkoutType === 'NEGOTIATED') {
-        response = await cartService.checkoutNegotiated(request);
-      } else {
-        response = await cartService.checkoutNormal(request);
-      }
+      const response = await cartService.checkoutNormal(request);
 
       if (!response.success || !response.data) {
         throw new Error(response.message || 'Checkout failed');
@@ -193,14 +218,16 @@ export const useCartAction = () => {
   };
 
   /** Checkout all items currently ready in the cart. */
-  const checkoutAllReadyItems = async (): Promise<Order[] | null> => {
+  const checkoutAllReadyItems = async (
+    paymentMethod: PaymentMethod = PaymentMethod.CASH_ON_DELIVERY
+  ): Promise<Order[] | null> => {
     const readyItems = await getItemsReadyForCheckout();
     if (readyItems.length === 0) {
       notify.warning('No items ready for checkout', 'Warning');
       return null;
     }
     // checkoutItems already handles loading/error state via withMutation
-    return checkoutItems(readyItems.map(item => item.id));
+    return checkoutItems(readyItems.map(item => item.id), paymentMethod);
   };
 
   // ── Clear ───────────────────────────────────────────────────────────────
