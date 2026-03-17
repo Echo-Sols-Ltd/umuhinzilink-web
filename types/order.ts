@@ -4,22 +4,25 @@ import { Negotiation } from "./negotiation";
 
 // Order-related enums
 export enum OrderStatus {
-  PROCESSING = 'PROCESSING',
-  CANCELLED = 'CANCELLED',
-  DELIVERED = 'DELIVERED',
-  SATISFIED = 'SATISFIED'
+  PENDING,
+  CONFIRMED,
+  COMPLETED,
+  CANCELLED,
+  OUT_FOR_DELIVERY
 }
 
+
 export enum OrderType {
-  NORMAL = 'NORMAL',
-  NEGOTIATED = 'NEGOTIATED'
+  NORMAL,
+  NEGOTIATED
 }
 
 export enum PaymentMethod {
-  WALLET = 'WALLET',
-  MOBILE_MONEY = 'MOBILE_MONEY',
-  BANK_TRANSFER = 'BANK_TRANSFER',
-  CASH_ON_DELIVERY = 'CASH_ON_DELIVERY'
+  MOBILE_MONEY,
+  AIRTEL_MONEY,
+  BANK_TRANSFER,
+  CASH,
+  WALLET
 }
 
 export enum DeliveryStatus {
@@ -38,9 +41,9 @@ export interface DeliveryStep {
 export interface Delivery {
   id: string;
   isCanceled: boolean;
-  deliveryStartDate: string;
-  deliveredDate: string;
   trackingSteps: DeliveryStep[];
+  deliveredDate: string;
+  deliveryStartDate: string;
 }
 
 export interface Order {
@@ -51,11 +54,11 @@ export interface Order {
   totalPrice: number;
   isPaid: boolean;
   status: OrderStatus;
+  delivery: Delivery;
   paymentMethod: PaymentMethod;
   isBuyerSatisfied: boolean;
   orderType: OrderType;
-  negotiation?: Negotiation;
-  delivery?: Delivery;
+  negotiation: Negotiation;
   createdAt: string;
   updatedAt: string;
 }

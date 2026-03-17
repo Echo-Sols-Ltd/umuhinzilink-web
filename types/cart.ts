@@ -2,27 +2,26 @@ import { Product, PaymentMethod } from ".";
 
 export enum CartStatus {
   ACTIVE = 'ACTIVE',
-  CHECKED_OUT = 'CHECKED_OUT'
+  CHECKED_OUT = 'CHECKED_OUT',
+  ABANDONED = 'ABANDONED'
 }
 
 export enum CartItemType {
   NORMAL = 'NORMAL',
-  NEGOTIATION = 'NEGOTIATION',
+  NEGOTIATION_PENDING = 'NEGOTIATION_PENDING',
   NEGOTIATION_ACCEPTED = 'NEGOTIATION_ACCEPTED'
 }
 
 export interface CartItem {
   id: string;
   product: Product;
+  cart: Cart;
   quantity: number;
   unitPrice: number;
+  proposedPrice: number;
+  negotiationId: string;
   type: CartItemType;
-  proposedPrice?: number;
-  negotiationId?: string;
-  negotiationExpiresAt?: string;
-  totalPrice: number;
-  readyForCheckout: boolean;
-  expired: boolean;
+  negotiationExpiresAt: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,8 +31,6 @@ export interface Cart {
   userId: string;
   status: CartStatus;
   items: CartItem[];
-  totalValue: number;
-  totalItems: number;
   createdAt: string;
   updatedAt: string;
 }
