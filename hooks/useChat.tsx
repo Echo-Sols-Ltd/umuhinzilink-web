@@ -9,7 +9,8 @@ import { messageService } from "@/services/messages"
 // Helper function to convert User to ChatUser
 export const userToChatUser = (user: User): ChatUser => ({
     id: user.id,
-    names: user.names,
+    firstName: user.firstName,
+    lastName: user.lastName,
     email: user.email,
     avatar: user.avatar,
     unreadMessage: 0, // Default values, will be updated by context

@@ -146,7 +146,7 @@ export function CartProvider({ children }: CartProviderProps) {
     return cart.items.reduce((total, item) => {
       const price =
         item.proposedPrice &&
-        (item.type === CartItemType.NEGOTIATION_ACCEPTED || item.type === CartItemType.NEGOTIATION)
+        (item.type === CartItemType.NEGOTIATION_ACCEPTED || item.type === CartItemType.NEGOTIATION_PENDING)
           ? item.proposedPrice
           : item.unitPrice;
       return total + price * item.quantity;

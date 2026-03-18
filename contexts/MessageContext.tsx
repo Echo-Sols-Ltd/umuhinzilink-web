@@ -74,7 +74,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       // Use intelligent notification routing
       const browserNotificationShown = showNotification({
         type: 'message',
-        title: `New message from ${message.sender.names}`,
+        title: `New message from ${message.sender.firstName} ${message.sender.lastName}`,
         body: message.content,
         icon: message.sender.avatar || '/icons/message.svg',
         onClick: () => {
@@ -190,19 +190,22 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
           fileName: request.fileName,
           productRef: request.productRef,
           replyTo: request.replyToId as any,
+          isEdited: false,
           sender: {
             id: user.id,
-            names: user.names,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             role: user.role,
             avatar: user.avatar,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
-            verified: user.verified
+            isVerified: user.isVerified
           } as any,
           receiver: {
             id: request.receiverId,
-            names: activeChatUser.names,
+            firstName: activeChatUser.firstName,
+            lastName: activeChatUser.lastName,
             email: activeChatUser.email,
             avatar: activeChatUser.avatar
           } as any,

@@ -1,4 +1,4 @@
-import { ApiResponse, Cart, CartItem, CartItemRequest, CartUpdateRequest, CartNegotiateRequest, CartCheckoutRequest, Order } from "@/types";
+import { ApiResponse, Cart, CartItem, CartItemRequest, CartUpdateRequest, CartCheckoutRequest, Order } from "@/types";
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -29,7 +29,7 @@ class CartService {
   }
 
   // Create negotiations from cart
-  async negotiateItems(request: CartNegotiateRequest): Promise<ApiResponse<CartItem[]>> {
+  async negotiateItems(request: CartCheckoutRequest): Promise<ApiResponse<CartItem[]>> {
     return await apiClient.post<ApiResponse<CartItem[]>>(API_ENDPOINTS.CART.NEGOTIATE, request);
   }
 

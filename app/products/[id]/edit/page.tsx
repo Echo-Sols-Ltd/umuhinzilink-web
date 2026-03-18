@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import Link from 'next/link';
 import { Loader2, ArrowLeft, Package, DollarSign, MapPin, ImageIcon, Eye, Info, Upload, Check } from 'lucide-react';
-import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
+import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, ProductCategory, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { productService } from '@/services/products';
 import {
@@ -37,7 +37,7 @@ function EditProduct() {
     measurementUnit: MeasurementUnit.KG,
     location: '',
     harvestDate: '',
-    category: RwandaCropCategory.FRUITS,
+    category: ProductCategory.FRUITS,
     description: '',
     isNegotiable: false,
     image: '',
@@ -241,7 +241,7 @@ function EditProduct() {
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
-                            {Object.values(RwandaCropCategory).map((category) => (
+                            {Object.values(ProductCategory).map((category) => (
                               <SelectItem key={category} value={category}>
                                 {category.replace(/_/g, ' ')}
                               </SelectItem>

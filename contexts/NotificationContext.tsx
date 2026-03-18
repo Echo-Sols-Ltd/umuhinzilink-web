@@ -23,10 +23,6 @@ interface NotificationContextType {
     clearAll: () => Promise<void>;
     productNotifications: Notification[]
     orderNotifications: Notification[]
-    warningNotifications: Notification[]
-    errorNotifications: Notification[]
-    successNotifications: Notification[]
-    infoNotifications: Notification[]
     systemNotifications: Notification[]
     messageNotifications: Notification[]
     unreadNotifications: Notification[]
@@ -150,10 +146,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const unreadCount = (Array.isArray(notifications) ? notifications : []).filter(n => n && !n.isRead).length;
     const productNotifications = notifications.filter(n => n.type === NotificationType.PRODUCT)
     const orderNotifications = notifications.filter(n => n.type === NotificationType.ORDER)
-    const warningNotifications = notifications.filter(n => n.type === NotificationType.WARNING)
-    const errorNotifications = notifications.filter(n => n.type === NotificationType.ERROR)
-    const successNotifications = notifications.filter(n => n.type === NotificationType.SUCCESS)
-    const infoNotifications = notifications.filter(n => n.type === NotificationType.INFO)
     const systemNotifications = notifications.filter(n => n.type === NotificationType.SYSTEM)
     const messageNotifications = notifications.filter(n => n.type === NotificationType.MESSAGE)
     const unreadNotifications = notifications.filter(n => n.isRead === false)
@@ -176,10 +168,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 clearAll,
                 productNotifications,
                 orderNotifications,
-                warningNotifications,
-                errorNotifications,
-                successNotifications,
-                infoNotifications,
                 systemNotifications,
                 messageNotifications,
                 unreadNotifications,

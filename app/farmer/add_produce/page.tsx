@@ -6,7 +6,7 @@ import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2, ArrowLeft, Package, DollarSign, MapPin, ImageIcon, Eye, Info, Upload, Check } from 'lucide-react';
-import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, RwandaCropCategory, UserType } from '@/types';
+import { CertificationType, FarmerProductRequest, MeasurementUnit, RwandaCrop, ProductCategory, UserType } from '@/types';
 import { useProduct } from '@/contexts/ProductContext';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import {
@@ -29,7 +29,7 @@ function AddProduce() {
     measurementUnit: MeasurementUnit.KG,
     location: '',
     harvestDate: '',
-    category: RwandaCropCategory.FRUITS,
+    category: ProductCategory.FRUITS,
     description: '',
     isNegotiable: false,
     image: '',
@@ -104,7 +104,7 @@ function AddProduce() {
         image: previewUrl || '',
         quantity: Number(formData.quantity) || 0,
         measurementUnit: formData.measurementUnit as MeasurementUnit,
-        category: formData.category as RwandaCropCategory,
+        category: formData.category as ProductCategory,
         harvestDate: formData.harvestDate ? new Date(formData.harvestDate).toISOString() : '',
         location: formData.location,
         isNegotiable: formData.isNegotiable,
@@ -188,7 +188,7 @@ function AddProduce() {
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
-                            {Object.values(RwandaCropCategory).map((category) => (
+                            {Object.values(ProductCategory).map((category) => (
                               <SelectItem key={category} value={category}>
                                 {category.replace(/_/g, ' ')}
                               </SelectItem>

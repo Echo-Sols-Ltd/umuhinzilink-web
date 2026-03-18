@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
-import { Supplier, User } from '@/types';
+import { Supplier, User, UserType } from '@/types';
 import { useSupplierAction } from '@/hooks/useSupplierAction';
 import { userService } from '@/services/users';
 import { useProduct } from './ProductContext';
@@ -38,7 +38,7 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
 
   // Fetch supplier profile
   const refreshSupplier = async () => {
-    if (!user || user.role !== 'SUPPLIER') return;
+    if (!user || user.role !== UserType.SUPPLIER) return;
 
     setLoading(true);
     setError(null);
@@ -60,7 +60,7 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
 
   // Fetch dashboard stats
   const refreshDashboard = async () => {
-    if (!user || user.role !== 'SUPPLIER') return;
+    if (!user || user.role !== UserType.SUPPLIER) return;
 
     setLoading(true);
     try {
@@ -94,7 +94,7 @@ function SupplierProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize data when user changes
   useEffect(() => {
-    if (user && user.role === 'SUPPLIER') {
+    if (user && user.role === UserType.SUPPLIER) {
       fetchAllData(user)
     }
   }, [user]);

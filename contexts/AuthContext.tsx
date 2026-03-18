@@ -158,7 +158,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(user);
 
       // Redirect to OTP verification if user is not verified
-      if (!user.verified) {
+      if (!user.isVerified) {
         await askOtpCode();
         router.replace('/auth/verify-otp');
         setLoading(false);
@@ -403,7 +403,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (res.data && user) {
-        const updatedUser = { ...user, verified: true };
+        const updatedUser = { ...user, isVerified: true };
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
         setUser(updatedUser);
         await loadAuthState();

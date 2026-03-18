@@ -5,7 +5,6 @@ import { notify } from '@/lib/notify';
 import {
   CartItemRequest,
   CartUpdateRequest,
-  CartNegotiateRequest,
   CartCheckoutRequest,
   NegotiationItemRequest,
   CartItemType,
@@ -72,7 +71,7 @@ export const useCartAction = () => {
       productId,
       quantity,
       proposedPrice,
-      type: proposedPrice ? CartItemType.NEGOTIATION : CartItemType.NORMAL,
+      type: proposedPrice ? CartItemType.NEGOTIATION_PENDING : CartItemType.NORMAL,
       message,
     };
 
@@ -94,7 +93,7 @@ export const useCartAction = () => {
 
   /** Update the quantity of an existing cart item. */
   const updateCartItemQuantity = async (itemId: string, quantity: number) => {
-    const request: CartUpdateRequest = { quantity };
+    const request: CartUpdateRequest = { stockQuantity: quantity };
     return withMutation(async () => {
       const response = await cartService.updateItem(itemId, request);
       if (!response.success) throw new Error(response.message || 'Failed to update quantity');
@@ -105,7 +104,7 @@ export const useCartAction = () => {
 
   /** Update the proposed price of a negotiation item. */
   const updateCartItemPrice = async (itemId: string, proposedPrice: number, quantity: number = 1) => {
-    const request: CartUpdateRequest = { quantity, proposedPrice };
+    const request: CartUpdateRequest = { stockQuantity: quantity };
     return withMutation(async () => {
       const response = await cartService.updateItem(itemId, request);
       if (!response.success) throw new Error(response.message || 'Failed to update price');
@@ -136,9 +135,9 @@ export const useCartAction = () => {
   const negotiateSelectedItems = async (
     negotiationItems: NegotiationItemRequest[],
     normalItemIds: string[] = [],
-    paymentMethod: PaymentMethod = PaymentMethod.CASH_ON_DELIVERY
+    paymentMethod: PaymentMethod = PaymentMethod.CASH
   ) => {
-    const request: CartNegotiateRequest = {
+    const request: CartCheckoutRequest = {
       paymentMethod,
       itemIds: normalItemIds,
       negotiationItemIds: negotiationItems.map(i => i.cartItemId),
@@ -172,7 +171,7 @@ export const useCartAction = () => {
    */
   const checkoutItems = async (
     itemIds: string[],
-    paymentMethod: PaymentMethod = PaymentMethod.CASH_ON_DELIVERY
+    paymentMethod: PaymentMethod = PaymentMethod.CASH
   ): Promise<Order[] | null> => {
     if (!itemIds.length) {
       notify.warning('Please select items to checkout', 'Empty Selection');
@@ -219,7 +218,7 @@ export const useCartAction = () => {
 
   /** Checkout all items currently ready in the cart. */
   const checkoutAllReadyItems = async (
-    paymentMethod: PaymentMethod = PaymentMethod.CASH_ON_DELIVERY
+    paymentMethod: PaymentMethod = PaymentMethod.CASH
   ): Promise<Order[] | null> => {
     const readyItems = await getItemsReadyForCheckout();
     if (readyItems.length === 0) {
