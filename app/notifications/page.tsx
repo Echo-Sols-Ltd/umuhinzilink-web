@@ -262,7 +262,7 @@ export default function NotificationsPage() {
                                 </div>
                             ) : (
                                 visible.map(n => {
-                                    const meta = TYPE_META[n.type] ?? TYPE_META.INFO;
+                                    const meta = TYPE_META[n.type] ?? TYPE_META.SYSTEM;
                                     const bg = iconBgClass[n.type] ?? 'bg-white text-gray-500';
                                     return (
                                         <div

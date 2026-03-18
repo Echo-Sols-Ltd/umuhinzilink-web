@@ -327,7 +327,7 @@ function FarmerSupplierOrders() {
                   filteredOrders.map(order => {
                     const statusKey = (order.status || 'PENDING').toUpperCase();
                     const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.PENDING;
-                    const supplierAddress = order.buyer?
+                    const supplierAddress = order.buyer
                       ? `${order.buyer.district || ''}${order.buyer.province ? `, ${order.buyer.province}` : ''}`.trim()
                       : '—';
                     const quantity =

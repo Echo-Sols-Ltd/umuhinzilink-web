@@ -76,7 +76,7 @@ function FarmerSupplierOrderDetailPage() {
               completed: true
             }
           ]
-        } : undefined
+        } : undefined as any
       } : null);
 
       notify.success(`Order delivery status has been updated successfully.`, "Delivery Status Updated");

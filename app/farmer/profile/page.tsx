@@ -24,14 +24,13 @@ const inputClass =
 
 type FarmerProfile = {
   id: string;
-  names: string;
+  firstName: string;
+  lastName: string;
   email?: string;
   phoneNumber?: string;
   avatar?: string;
-  address?: {
-    district?: string;
-    province?: string;
-  } | null;
+  district?: string;
+  province?: string;
   farmSize?: string;
   crops?: string[];
   experienceLevel?: string;
@@ -270,13 +269,13 @@ function FarmerProfileComponent() {
                   <Section title={t('farmer.profile.sections.address')}>
                     <Field
                       label={t('farmer.profile.fields.district')}
-                      value={profile.address?.district || '—'}
+                      value={profile.district || '—'}
                       icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
                       placeholder={t('farmer.profile.fields.notProvided')}
                     />
                     <Field
                       label={t('farmer.profile.fields.province')}
-                      value={profile.address?.province || '—'}
+                      value={profile.province || '—'}
                       icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
                       placeholder={t('farmer.profile.fields.notProvided')}
                     />
