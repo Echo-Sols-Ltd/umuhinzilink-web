@@ -66,7 +66,7 @@ function SettingsComponent() {
                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">{t('farmer.settings.profile.name')}</label>
                 <input
                   type="text"
-                  defaultValue={user?.names}
+                  defaultValue={`${user?.firstName || ''} ${user?.lastName || ''}`.trim()}
                   className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-success/20 focus:border-success transition-all"
                   placeholder={t('auth.placeholders.fullName')}
                 />
@@ -97,7 +97,7 @@ function SettingsComponent() {
                   <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">{t('farmer.settings.profile.district')}</label>
                   <input
                     type="text"
-                    defaultValue={user?.address?.district}
+                    defaultValue={user?.district}
                     className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-success/20 focus:border-success transition-all"
                     placeholder={t('profile.fields.district')}
                   />

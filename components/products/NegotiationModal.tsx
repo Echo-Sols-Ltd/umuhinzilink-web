@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Product, CartItemType } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
-import { useCart } from '@/contexts/CartContext';
+import { useCartAction } from '@/hooks/useCartAction';
 import { X, DollarSign, MessageCircle, AlertCircle, TrendingDown, Clock } from 'lucide-react';
 import { notify } from '@/lib/notify';
 
@@ -15,7 +15,7 @@ interface NegotiationModalProps {
 
 export default function NegotiationModal({ product, isOpen, onClose }: NegotiationModalProps) {
     const { t } = useI18n();
-    const { addItemForNegotiation } = useCart();
+    const { addProductToCart } = useCartAction();
     const [proposedPrice, setProposedPrice] = useState(product.unitPrice.toString());
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -49,13 +49,7 @@ export default function NegotiationModal({ product, isOpen, onClose }: Negotiati
 
         setLoading(true);
         try {
-            await addItemForNegotiation({
-                productId: product.id,
-                quantity: quantity,
-                proposedPrice: price,
-                type: CartItemType.NEGOTIATION
-            });
-            notify.success('Item added for negotiation', 'Success');
+            await addProductToCart(product.id, quantity, price);
             onClose();
         } catch (error) {
             console.error('Negotiation failed:', error);

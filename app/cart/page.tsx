@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useCartAction } from '@/hooks/useCartAction';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { ShoppingCart, Truck, CreditCard, ChevronRight, Minus, Plus, Trash2, MapPin, Phone, Mail, User, CheckCircle2, AlertCircle, MessageCircle, Clock } from 'lucide-react';
@@ -17,13 +18,14 @@ enum CheckoutStep {
 }
 
 export default function CartPage() {
-  const { cart, loading, updateItem, removeItem, getCartTotal, negotiateItems, checkoutNormal, checkoutNegotiated, checkoutMixed } = useCart();
+  const { cart, loading, getCartTotal } = useCart();
+  const { updateCartItemQuantity, removeCartItem, negotiateSelectedItems, checkoutItems } = useCartAction();
   const { user } = useAuth();
   const { t } = useI18n();
   const [step, setStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
 
   // Helper functions for negotiation items
-  const isNegotiationItem = (item: CartItem) => item.type === CartItemType.NEGOTIATION;
+  const isNegotiationItem = (item: CartItem) => item.type === CartItemType.NEGOTIATION_PENDING;
   const isAcceptedNegotiation = (item: CartItem) => item.type === CartItemType.NEGOTIATION_ACCEPTED;
   const getNegotiationStatus = (item: CartItem) => {
     if (isAcceptedNegotiation(item)) return { text: 'Accepted', color: 'text-green-600', bg: 'bg-green-50' };
@@ -42,8 +44,8 @@ export default function CartPage() {
 
   // Form states
   const [formData, setFormData] = useState({
-    firstName: user?.names?.split(' ')[0] || '',
-    lastName: user?.names?.split(' ')[1] || '',
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
     email: user?.email || '',
     phone: user?.phoneNumber || '',
     address: '',
@@ -57,7 +59,7 @@ export default function CartPage() {
 
   const subtotal = getCartTotal();
   const negotiationItemIds = useMemo(() => 
-    cart?.items.filter(item => item.type === CartItemType.NEGOTIATION).map(item => item.id) || [], 
+    cart?.items.filter(item => item.type === CartItemType.NEGOTIATION_PENDING).map(item => item.id) || [], 
   [cart]);
 
   const hasPendingNegotiations = negotiationItemIds.length > 0;
@@ -69,9 +71,9 @@ export default function CartPage() {
   const handleUpdateQuantity = (item: CartItem, delta: number) => {
     const newQuantity = item.quantity + delta;
     if (newQuantity <= 0) {
-      removeItem(item.id);
+      removeCartItem(item.id);
     } else {
-      updateItem(item.id, { quantity: newQuantity });
+      updateCartItemQuantity(item.id, newQuantity);
     }
   };
 
@@ -102,26 +104,26 @@ export default function CartPage() {
     const hasAcceptedNegotiations = cart.items.some(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
     
     let result;
-    const paymentMethod: PaymentMethod = formData.paymentMethod === 'pod' ? PaymentMethod.CASH_ON_DELIVERY : PaymentMethod.WALLET;
+    const paymentMethod: PaymentMethod = formData.paymentMethod === 'pod' ? PaymentMethod.CASH : PaymentMethod.WALLET;
     
     if (hasNormalItems && hasAcceptedNegotiations) {
       // Mixed checkout
       const itemIds = cart.items
         .filter(item => item.type === CartItemType.NORMAL || item.type === CartItemType.NEGOTIATION_ACCEPTED)
         .map(item => item.id);
-      result = await checkoutMixed({ paymentMethod, itemIds, checkoutType: 'MIXED' });
+      result = await checkoutItems(itemIds, paymentMethod);
     } else if (hasAcceptedNegotiations) {
       // Negotiated checkout only
       const itemIds = cart.items
         .filter(item => item.type === CartItemType.NEGOTIATION_ACCEPTED)
         .map(item => item.id);
-      result = await checkoutNegotiated({ paymentMethod, itemIds, checkoutType: 'NEGOTIATED' });
+      result = await checkoutItems(itemIds, paymentMethod);
     } else {
       // Normal checkout only
       const itemIds = cart.items
         .filter(item => item.type === CartItemType.NORMAL)
         .map(item => item.id);
-      result = await checkoutNormal({ paymentMethod, itemIds, checkoutType: 'NORMAL' });
+      result = await checkoutItems(itemIds, paymentMethod);
     }
 
     if (result) {
@@ -290,7 +292,7 @@ export default function CartPage() {
                           </button>
                         </div>
                         <button 
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeCartItem(item.id)}
                           className="text-gray-300 hover:text-red-500 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -353,7 +355,10 @@ export default function CartPage() {
               <button
                 onClick={async () => {
                   try {
-                    await negotiateItems({ itemIds: negotiationItemIds });
+                    const negotiationItems = cart?.items
+                      .filter(item => item.type === CartItemType.NEGOTIATION_PENDING)
+                      .map(item => ({ cartItemId: item.id, proposedPrice: item.proposedPrice || item.unitPrice, message: '' })) || [];
+                    await negotiateSelectedItems(negotiationItems);
                     notify.success('Negotiation requests sent to sellers', 'Success');
                   } catch (error) {
                     console.error('Failed to negotiate:', error);

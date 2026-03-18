@@ -92,7 +92,7 @@ export default function NegotiationCard({
 
   // Check if user can take action
   const canTakeAction = () => {
-    if (negotiation.expired) return false;
+    if (negotiation.isExpired) return false;
     
     if (userType === 'seller') {
       return negotiation.canSellerRespond && 
@@ -185,7 +185,7 @@ export default function NegotiationCard({
             <span className={`text-sm font-semibold ${statusInfo.color}`}>
               {statusInfo.text}
             </span>
-            {negotiation.expired && (
+            {negotiation.isExpired && (
               <span className="text-xs text-gray-500">(Expired)</span>
             )}
           </div>

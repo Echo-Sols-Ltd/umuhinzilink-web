@@ -20,7 +20,8 @@ function GovernmentProfile() {
 
   // Mock user data - replace with actual user data from auth context
   const [profileData, setProfileData] = useState({
-    names: 'John Government Official',
+    firstName: 'John',
+    lastName: 'Government Official',
     email: 'john@government.rw',
     phoneNumber: '+250 788 123 456',
     department: 'Ministry of Agriculture',
@@ -151,12 +152,15 @@ function GovernmentProfile() {
                 <h2 className="text-xl font-semibold text-gray-900">
                   {isEditing ? (
                     <Input
-                      value={editData.names}
-                      onChange={(e) => setEditData({ ...editData, names: e.target.value })}
+                      value={`${editData.firstName || ''} ${editData.lastName || ''}`.trim()}
+                      onChange={(e) => {
+                        const parts = e.target.value.split(' ');
+                        setEditData({ ...editData, firstName: parts[0] || '', lastName: parts.slice(1).join(' ') || '' });
+                      }}
                       className="text-xl font-semibold"
                     />
                   ) : (
-                    profileData.names
+                    `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim()
                   )}
                 </h2>
                 <p className="text-gray-600">

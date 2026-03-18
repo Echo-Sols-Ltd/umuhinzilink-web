@@ -280,7 +280,7 @@ export default function AdminOrderDetailPage() {
                                 <div>
                                     <p className="text-sm text-muted-foreground">Name</p>
                                     <p className="font-medium">
-                                        {orderType === 'farmer' ? order.buyer?.names : order.buyer?.names}
+                                        {orderType === 'farmer' ? order.buyer?.firstName : order.buyer?.firstName}
                                     </p>
                                 </div>
                                 <div>

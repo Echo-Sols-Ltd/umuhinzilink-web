@@ -109,7 +109,7 @@ function FarmerProfileComponent() {
     });
   };
 
-  const displayName = profile?.names || currentUser?.names || t('sidebar.roles.farmer');
+  const displayName = profile?.firstName || currentUser?.firstName || t('sidebar.roles.farmer');
   const [firstName, ...restNames] = displayName.split(' ');
   const lastName = restNames.join(' ');
 

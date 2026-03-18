@@ -203,7 +203,7 @@ function FarmerSupplierOrders() {
     }
   };
 
-  const displayName = currentUser?.names || 'Farmer';
+  const displayName = currentUser?.firstName || 'Farmer';
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -327,8 +327,8 @@ function FarmerSupplierOrders() {
                   filteredOrders.map(order => {
                     const statusKey = (order.status || 'PENDING').toUpperCase();
                     const statusMeta = ORDER_STATUS_META[statusKey] || ORDER_STATUS_META.PENDING;
-                    const supplierAddress = order.buyer?.address
-                      ? `${order.buyer.address.district || ''}${order.buyer.address.province ? `, ${order.buyer.address.province}` : ''}`.trim()
+                    const supplierAddress = order.buyer?
+                      ? `${order.buyer.district || ''}${order.buyer.province ? `, ${order.buyer.province}` : ''}`.trim()
                       : '—';
                     const quantity =
                       Number(order.quantity) || Number(order.product?.quantity) || 0;

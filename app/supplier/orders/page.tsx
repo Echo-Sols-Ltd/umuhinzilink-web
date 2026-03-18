@@ -215,7 +215,7 @@ function OrdersPageComponent() {
                             <User className="w-4 h-4" />
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-semibold text-foreground">{order.buyer?.names || 'Farmer'}</span>
+                            <span className="font-semibold text-foreground">{order.buyer?.firstName ? `${order.buyer?.firstName} ${order.buyer?.lastName}` : 'Farmer'}</span>
                             <span className="text-[10px] text-muted-foreground font-medium">
                               {order.buyer?.email || 'No email'}
                             </span>

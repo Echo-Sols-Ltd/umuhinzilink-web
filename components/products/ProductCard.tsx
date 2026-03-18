@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useProduct } from "@/contexts/ProductContext";
 import { useChat } from "@/hooks/useChat";
 import { useI18n } from "@/contexts/I18nContext";
-import { useCart } from "@/contexts/CartContext";
+import { useCartAction } from "@/hooks/useCartAction";
 import { CartItemType } from "@/types";
 import NegotiationModal from "./NegotiationModal";
 import { useState } from "react";
@@ -23,7 +23,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
     const { user } = useAuth();
     const { showOrderModal } = useProduct();
     const { handleUserClick, handleSendMessage } = useChat();
-    const { addItem } = useCart();
+    const { addProductToCart } = useCartAction();
     const router = useRouter();
     const { t } = useI18n();
     const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
@@ -56,11 +56,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                 router.push('/auth/signin');
                 return;
             }
-            await addItem({
-                productId: product.id,
-                quantity: 1,
-                type: CartItemType.NORMAL
-            });
+            await addProductToCart(product.id, 1);
             router.push(`/cart`);
         }
     }

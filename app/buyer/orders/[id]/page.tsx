@@ -163,7 +163,7 @@ function BuyerOrderDetailPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('buyer.orders.farmer')}</p>
-                  <p className="font-semibold text-foreground truncate max-w-[150px]">{currentBuyerOrder.product.owner.names || 'N/A'}</p>
+                  <p className="font-semibold text-foreground truncate max-w-[150px]">{currentBuyerOrder.product.owner.firstName ? `${currentBuyerOrder.product.owner.firstName} ${currentBuyerOrder.product.owner.lastName}` : 'N/A'}</p>
                 </div>
               </div>
             </div>
@@ -192,7 +192,7 @@ function BuyerOrderDetailPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-3">
                   <label className="text-sm font-medium text-muted-foreground">{t('buyer.orders.name')}</label>
-                  <p className="text-foreground col-span-2 font-medium">{buyer.names}</p>
+                  <p className="text-foreground col-span-2 font-medium">{buyer.firstName} {buyer.lastName}</p>
                 </div>
                 <div className="grid grid-cols-3">
                   <label className="text-sm font-medium text-muted-foreground">{t('buyer.orders.email')}</label>
@@ -204,7 +204,7 @@ function BuyerOrderDetailPage() {
                 </div>
                 <div className="grid grid-cols-3">
                   <label className="text-sm font-medium text-muted-foreground">{t('buyer.orders.location')}</label>
-                  <p className="text-foreground col-span-2">{buyer.address ? `${buyer.address.district}, ${buyer.address.province}` : 'N/A'}</p>
+                  <p className="text-foreground col-span-2">{buyer ? `${buyer.district}, ${buyer.province}` : 'N/A'}</p>
                 </div>
               </div>
             </div>

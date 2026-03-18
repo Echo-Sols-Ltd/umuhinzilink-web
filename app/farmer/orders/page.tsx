@@ -191,7 +191,7 @@ function FarmerOrders() {
     }
   };
 
-  const displayName = user?.names || t('common.farmer'); // Use i18n for default 'Farmer'
+  const displayName = user?.firstName || t('common.farmer'); // Use i18n for default 'Farmer'
 
   return (
     <div className="flex h-screen bg-background overflow-hidden text-foreground">
@@ -315,8 +315,8 @@ function FarmerOrders() {
                     const statusLabel = ORDER_STATUS_TRANSLATIONS[statusKey] || ORDER_STATUS_TRANSLATIONS.PENDING;
                     const statusVariant = ORDER_STATUS_VARIANTS[statusKey] || 'secondary';
 
-                    const buyerAddress = order.buyer?.address
-                      ? `${order.buyer.address.district || ''}${order.buyer.address.province ? `, ${order.buyer.address.province}` : ''}`.trim()
+                    const buyerAddress = order.buyer
+                      ? `${order.buyer.district || ''}${order.buyer.province ? `, ${order.buyer.province}` : ''}`.trim()
                       : '—';
                     const quantity =
                       Number(order.quantity) || Number(order.product?.quantity) || 0;
@@ -333,7 +333,7 @@ function FarmerOrders() {
                         <TableCell>
                           <div className="flex flex-col gap-0.5">
                             <span className="font-bold text-foreground truncate max-w-[150px]">
-                              {order.buyer?.names || order.buyer?.email || t('farmer.orders.table.unknownBuyer')}
+                              {order.buyer?.firstName ? `${order.buyer?.firstName} ${order.buyer?.lastName}` : order.buyer?.email || t('farmer.orders.table.unknownBuyer')}
                             </span>
                             <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[150px]">
                               {buyerAddress || '—'}

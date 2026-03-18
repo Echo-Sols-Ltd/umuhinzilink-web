@@ -94,7 +94,7 @@ function ProductsPageComponent() {
     // Location filter
     if (locationFilter) {
       filtered = filtered.filter(product =>
-        product.owner?.address?.district?.toLowerCase().includes(locationFilter.toLowerCase())
+        product.owner?.district?.toLowerCase().includes(locationFilter.toLowerCase())
       );
     }
 
@@ -161,12 +161,12 @@ function ProductsPageComponent() {
       await handleSendMessage(
         t('marketplace.contactMessage', { productName: product.name }),
         MessageType.PRODUCT,
-        product.owner.names,
+        product.owner.firstName,
         productRef
       );
 
       notify.success(
-        t('marketplace.toasts.messageSent.body', { farmerName: product.owner.names, productName: product.name }),
+        t('marketplace.toasts.messageSent.body', { farmerName: product.owner.firstName, productName: product.name }),
         t('marketplace.toasts.messageSent.title')
       );
 

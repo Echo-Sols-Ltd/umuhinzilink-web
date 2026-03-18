@@ -165,7 +165,7 @@ function FarmerSupplierOrderDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t('farmer.supplierOrders.detail.supplier')}</p>
-                  <p className="font-semibold text-foreground">{supplier.names}</p>
+                  <p className="font-semibold text-foreground">{supplier.firstName} {supplier.lastName}</p>
                 </div>
               </div>
             </div>
@@ -194,7 +194,7 @@ function FarmerSupplierOrderDetailPage() {
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.name')}</label>
-                  <p className="text-foreground">{supplier.names}</p>
+                  <p className="text-foreground">{supplier.firstName} {supplier.lastName}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.email')}</label>
@@ -206,11 +206,11 @@ function FarmerSupplierOrderDetailPage() {
                     <p className="text-foreground">{supplier.phoneNumber}</p>
                   </div>
                 )}
-                {supplier.address && (
+                {supplier && (
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">{t('farmer.supplierOrders.detail.supplierAddress')}</label>
                     <p className="text-foreground">
-                      {supplier.address.district}, {supplier.address.province}
+                      {supplier.district}, {supplier.province}
                     </p>
                   </div>
                 )}
