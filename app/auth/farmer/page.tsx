@@ -12,7 +12,7 @@ import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { UserRequest, UserType } from '@/types';
-import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, District, RwandaCrop } from '@/types';
+import { FarmerRequest, FarmSizeCategory, ExperienceLevel, Address, Province, District } from '@/types';
 import { farmSizeOptions, experienceLevelOptions, provinceOptions, districtOptions } from '@/types';
 import useUserAction from '@/hooks/useUserAction';
 import { Upload, X } from 'lucide-react';
@@ -107,7 +107,7 @@ export default function FarmerSignUp() {
     }
   };
 
-  const handleCropChange = (crop: RwandaCrop, isChecked: boolean) => {
+  const handleCropChange = (crop: string, isChecked: boolean) => {
     setFarmerData(prev => ({
       ...prev,
       crops: isChecked
@@ -399,8 +399,8 @@ export default function FarmerSignUp() {
                 <div key={crop} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={farmerData.crops.includes(crop as RwandaCrop)}
-                    onChange={(e) => handleCropChange(crop as RwandaCrop, e.target.checked)}
+                    checked={farmerData.crops.includes(crop as any)}
+                    onChange={(e) => handleCropChange(crop as any, e.target.checked)}
                     className="rounded border-border text-success focus:ring-success"
                   />
                   <Label className="text-sm text-foreground">{crop.replace(/_/g, ' ')}</Label>

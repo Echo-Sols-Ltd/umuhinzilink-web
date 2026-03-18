@@ -6,7 +6,7 @@ import { Farmer } from '@/types';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
-import { RwandaCrop, FarmSizeCategory, ExperienceLevel } from '@/types';
+import { string, FarmSizeCategory, ExperienceLevel } from '@/types';
 import ProfileActivityComponent from './ProfileActivity';
 import ProfileBadgesComponent from './ProfileBadges';
 
@@ -314,7 +314,7 @@ function FarmerProfileComponent({ profile }: FarmerProfileProps) {
             label="Crops"
             value={profile.crops && profile.crops.length ? profile.crops.join(', ') : '—'}
             isEditing={isEditing}
-            onChange={(value) => handleChange('crops', value.split(',').map(c => c.trim()) as RwandaCrop[])}
+            onChange={(value) => handleChange('crops', value.split(',').map(c => c.trim()) as string[])}
           />
           <Field 
             label="Experience Level" 

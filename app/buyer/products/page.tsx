@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
-import { BuyerPages, Product, RwandaCrop, ProductCategory, UserType } from '@/types';
+import { BuyerPages, Product, ProductCategory, UserType } from '@/types';
 import BuyerGuard from '@/contexts/guard/BuyerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { useAuth } from '@/contexts/AuthContext';
