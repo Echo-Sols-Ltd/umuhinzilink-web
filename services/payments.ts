@@ -1,28 +1,8 @@
-import { ApiResponse } from '@/types';
+import { ApiResponse, PaymentRequest, PaymentResponseDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
-interface PaymentRequest {
-  orderId: string;
-  paymentMethod: 'MOBILE_MONEY' | 'BANK_TRANSFER' | 'WALLET' | 'CASH';
-  phoneNumber?: string; // for mobile money
-  accountNumber?: string; // for bank transfer
-  bankName?: string; // for bank transfer
-  notes?: string;
-}
 
-interface PaymentResponseDTO {
-  transactionId: string;
-  orderId: string;
-  amount: number;
-  paymentMethod: string;
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-  reference: string;
-  message: string;
-  createdAt: string;
-  paidAt?: string;
-  phoneNumber?: string;
-}
 
 class PaymentService {
   // Process payment for order

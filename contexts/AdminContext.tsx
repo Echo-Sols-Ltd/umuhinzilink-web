@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { Product, User, Order, WalletTransactionDTO, PaginatedResponse, WalletDTO } from '@/types';
+import { Product, User, Order, WalletTransactionDTO, PaginatedResponse, WalletDTO, UserType, ProductStatus, OrderStatus } from '@/types';
 
 interface AdminContextType {
   users: PaginatedResponse<User[]> | null;
@@ -180,27 +180,27 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const userStats = {
     totalUsers: users?.data?.length || 0,
-    farmerCount: users?.data?.filter(u => u.role === 'FARMER').length || 0,
-    buyerCount: users?.data?.filter(u => u.role === 'BUYER').length || 0,
-    supplierCount: users?.data?.filter(u => u.role === 'SUPPLIER').length || 0,
+    farmerCount: users?.data?.filter(u => u.role === UserType.FARMER).length || 0,
+    buyerCount: users?.data?.filter(u => u.role === UserType.BUYER).length || 0,
+    supplierCount: users?.data?.filter(u => u.role === UserType.SUPPLIER).length || 0,
   };
 
   const productStats = {
     totalProducts: products.length,
-    inStockCount: products.filter(p => p.productStatus === 'IN_STOCK').length,
-    outOfStockCount: products.filter(p => p.productStatus === 'OUT_OF_STOCK').length,
-    lowStockCount: products.filter(p => p.productStatus === 'LOW_STOCK').length,
+    inStockCount: products.filter(p => p.status === ProductStatus.IN_STOCK).length,
+    outOfStockCount: products.filter(p => p.status === ProductStatus.OUT_OF_STOCK).length,
+    lowStockCount: products.filter(p => p.status === ProductStatus.LOW_STOCK).length,
   };
 
   const orderStats = {
     totalOrders: orders.length,
-    pendingCount: orders.filter(o => o.status === 'PENDING').length,
-    completedCount: orders.filter(o => o.status === 'COMPLETED').length,
-    cancelledCount: orders.filter(o => o.status === 'CANCELLED').length,
+    pendingCount: orders.filter(o => o.status === OrderStatus.PENDING).length,
+    completedCount: orders.filter(o => o.status === OrderStatus.COMPLETED).length,
+    cancelledCount: orders.filter(o => o.status === OrderStatus.CANCELLED).length,
   };
 
   const startFetchingResources = useCallback(async () => {
-    if (!user || user.role !== 'ADMIN') {
+    if (!user || user.role !== UserType.ADMIN) {
       throw new Error('Unauthorized access');
     }
     await fetchAllData(user);

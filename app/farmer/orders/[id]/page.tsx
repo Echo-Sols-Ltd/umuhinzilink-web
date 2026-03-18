@@ -160,7 +160,7 @@ function FarmerOrderDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t('farmer.orders.detail.customer')}</p>
-                  <p className="font-semibold text-foreground">{buyer.names}</p>
+                  <p className="font-semibold text-foreground">{buyer.firstName} {buyer.lastName}</p>
                 </div>
               </div>
             </div>
@@ -189,7 +189,7 @@ function FarmerOrderDetailPage() {
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.name')}</label>
-                  <p className="text-foreground">{buyer.names}</p>
+                  <p className="text-foreground">{buyer.firstName} {buyer.lastName}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.email')}</label>
@@ -201,11 +201,11 @@ function FarmerOrderDetailPage() {
                     <p className="text-foreground">{buyer.phoneNumber}</p>
                   </div>
                 )}
-                {buyer.address && (
+                {buyer && (
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.deliveryAddress')}</label>
                     <p className="text-foreground">
-                      {buyer.address.district}, {buyer.address.province}
+                      {buyer.district}, {buyer.province}
                     </p>
                   </div>
                 )}

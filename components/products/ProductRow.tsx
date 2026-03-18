@@ -42,14 +42,15 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                 productId: product.id,
                 productType: product.owner.role
             }
+            const farmerName = `${product.owner.firstName} ${product.owner.lastName}`;
             await handleSendMessage(
                 t('productRow.contactMessage').replace('{productName}', product.name),
                 MessageType.PRODUCT,
-                product.owner.names,
+                farmerName,
                 productRef
             );
 
-            notify.success(t('productRow.chatWithFarmer').replace('{farmerName}', product.owner.names).replace('{productName}', product.name), t('productRow.messageSent'));
+            notify.success(t('productRow.chatWithFarmer').replace('{farmerName}', farmerName).replace('{productName}', product.name), t('productRow.messageSent'));
 
             router.push(`/chat/${farmerUser.id}`);
         } catch (error) {
@@ -89,7 +90,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                     </div>
                     <p className="text-sm text-gray-500 mt-1">{t('productRow.available')} {product.quantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` ? product.measurementUnit : t(`enums.units.${product.measurementUnit}`)}</p>
                     <div className="flex items-center text-sm text-gray-500 mt-1">
-                        <UserIcon className="w-4 h-4 mr-1" /> {product.owner.names}
+                        <UserIcon className="w-4 h-4 mr-1" /> {product.owner.firstName} {product.owner.lastName}
                         <span className="mx-2">•</span>
                         {product.location}
                     </div>

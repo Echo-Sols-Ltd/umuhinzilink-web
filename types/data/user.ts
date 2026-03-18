@@ -17,7 +17,6 @@ export const buyerTypeOptions = [
 export const supplierTypeOptions = [
   { label: 'WHOLESALER', value: SupplierType.WHOLESALER },
   { label: 'RETAILER', value: SupplierType.RETAILER },
-  { label: 'AGGREGATOR', value: SupplierType.AGGREGATOR },
   { label: 'COOPERATIVE', value: SupplierType.COOPERATIVE },
   { label: 'PROCESSOR', value: SupplierType.PROCESSOR },
 ];

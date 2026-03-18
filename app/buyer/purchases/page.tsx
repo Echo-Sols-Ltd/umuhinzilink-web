@@ -363,7 +363,7 @@ function MyPurchasesComponent() {
                   </TableRow>
                 ) : (
                   filteredOrders.map((order) => {
-                    const farmerName = order.product?.owner?.names || 'Unknown Farmer';
+                    const farmerName = order.product?.owner?.firstName || 'Unknown Farmer';
                     const productName = order.product?.name || 'Unknown Product';
                     const quantity = `${order.quantity || 0} ${order.product?.measurementUnit || 'units'}`;
                     const price = `${(order.totalPrice || 0).toLocaleString(locale === 'rw' ? 'rw-RW' : 'en-US')} RWF`;
@@ -517,7 +517,7 @@ function MyPurchasesComponent() {
                       </div>
                       <div>
                         <span className="text-muted-foreground">{t('buyer.purchases.table.farmer')}:</span>
-                        <span className="ml-2 font-medium">{selectedOrder.product?.farmer?.user?.names}</span>
+                        <span className="ml-2 font-medium">{selectedOrder.product?.farmer?.user?.firstName} {selectedOrder.product?.farmer?.user?.lastName}</span>
                       </div>
                       <div>
                         <span className="text-muted-foreground">{t('buyer.purchases.table.quantity')}:</span>

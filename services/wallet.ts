@@ -1,4 +1,4 @@
-import { ApiResponse, PaginatedResponse, WalletDTO } from '@/types';
+import { ApiResponse, PaginatedResponse, WalletDTO, WalletTransactionDTO } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -12,15 +12,7 @@ interface WalletPaymentRequest {
   description?: string;
 }
 
-interface WalletTransactionDTO {
-  id: string;
-  walletId: string;
-  amount: number;
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'PAYMENT';
-  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-  description: string;
-  createdAt: string;
-}
+
 
 class WalletService {
   // Get wallet balance

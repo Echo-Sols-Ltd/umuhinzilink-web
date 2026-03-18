@@ -5,7 +5,7 @@ export const orderStatusOptions = [
   { label: 'PENDING', value: OrderStatus.PENDING },
   { label: 'COMPLETED', value: OrderStatus.COMPLETED },
   { label: 'CANCELLED', value: OrderStatus.CANCELLED },
-  { label: 'ACTIVE', value: OrderStatus.ACTIVE },
+  { label: 'CONFIRMED', value: OrderStatus.CONFIRMED },
 ];
 
 export const paymentMethodOptions = [
@@ -16,7 +16,6 @@ export const paymentMethodOptions = [
 ];
 
 export const deliveryStatusOptions = [
-  { label: 'PENDING', value: DeliveryStatus.PENDING },
   { label: 'SCHEDULED', value: DeliveryStatus.SCHEDULED },
   { label: 'IN_TRANSIT', value: DeliveryStatus.IN_TRANSIT },
   { label: 'DELIVERED', value: DeliveryStatus.DELIVERED },

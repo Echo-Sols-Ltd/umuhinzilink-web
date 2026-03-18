@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Product, CartItemType } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
-import { useCart } from '@/contexts/CartContext';
+import { useCartAction } from '@/hooks/useCartAction';
 import { X, DollarSign, MessageCircle, AlertCircle, TrendingDown, Clock } from 'lucide-react';
 import { notify } from '@/lib/notify';
 
@@ -15,7 +15,7 @@ interface NegotiationModalProps {
 
 export default function NegotiationModal({ product, isOpen, onClose }: NegotiationModalProps) {
     const { t } = useI18n();
-    const { addItemForNegotiation } = useCart();
+    const { addProductToCart } = useCartAction();
     const [proposedPrice, setProposedPrice] = useState(product.unitPrice.toString());
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -36,20 +36,20 @@ export default function NegotiationModal({ product, isOpen, onClose }: Negotiati
             return;
         }
 
-        if (price >= product.unitPrice) {
-            notify.error('Your proposed price should be lower than the current price', 'Invalid Proposal');
+        const minPrice = product.unitPrice * 0.5;
+        const maxPrice = product.unitPrice * 1.5;
+
+        if (price < minPrice || price > maxPrice) {
+            notify.error(
+                `Offer must be between ${minPrice.toLocaleString()} and ${maxPrice.toLocaleString()} RWF (50%-150% of original price)`, 
+                'Invalid Proposal'
+            );
             return;
         }
 
         setLoading(true);
         try {
-            await addItemForNegotiation({
-                productId: product.id,
-                quantity: quantity,
-                proposedPrice: price,
-                type: CartItemType.NEGOTIATION
-            });
-            notify.success('Item added for negotiation', 'Success');
+            await addProductToCart(product.id, quantity, price);
             onClose();
         } catch (error) {
             console.error('Negotiation failed:', error);
@@ -60,15 +60,15 @@ export default function NegotiationModal({ product, isOpen, onClose }: Negotiati
 
     return (
         <div 
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300"
+            className="fixed inset-0 z-9999 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300"
             onClick={onClose}
         >
             <div 
-                className="bg-gradient-to-br from-white to-gray-50 w-full max-w-lg rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden animate-in zoom-in-95 duration-300"
+                className="bg-linear-to-br from-white to-gray-50 w-full max-w-lg rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden animate-in zoom-in-95 duration-300"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="p-6 border-b border-gray-200/50 flex items-center justify-between bg-gradient-to-r from-primary/5 to-primary/10">
+                <div className="p-6 border-b border-gray-200/50 flex items-center justify-between bg-linear-to-r from-primary/5 to-primary/10">
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
                             <MessageCircle className="w-6 h-6 text-primary" />
@@ -89,7 +89,7 @@ export default function NegotiationModal({ product, isOpen, onClose }: Negotiati
                 {/* Content */}
                 <div className="p-8 space-y-6">
                     {/* Product Summary */}
-                    <div className="flex gap-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200/50">
+                    <div className="flex gap-4 p-4 bg-linear-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200/50">
                         <img 
                             src={product.image || '/placeholder-product.png'} 
                             alt={product.name}

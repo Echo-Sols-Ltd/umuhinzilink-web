@@ -60,7 +60,7 @@ export default function OrderManagementDashboard({
       const searchMatch = searchTerm === '' ||
         order.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.buyer.names.toLowerCase().includes(searchTerm.toLowerCase());
+        `${order.buyer.firstName} ${order.buyer.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
 
       // Status filter
       const statusMatch = filterType === 'all' || order.status.toLowerCase() === filterType.toLowerCase();
@@ -348,7 +348,7 @@ export default function OrderManagementDashboard({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-foreground">
-                        {order.buyer.names}
+                        {order.buyer.firstName} {order.buyer.lastName}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {order.buyer.email}
@@ -380,7 +380,7 @@ export default function OrderManagementDashboard({
                         {formatCurrency(order.totalPrice)}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {order.paymentMethod.replace('_', ' ')}
+                        {order.paymentMethod?.toString().replace('_', ' ')}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

@@ -71,7 +71,7 @@ export default function MessageComponent({ messages,
                 >
                     {message.replyTo && (
                         <div className={cn('text-xs mb-2 p-2 rounded border-l-2', isOwn ? 'bg-success/90 border-success/50 text-primary-foreground' : 'bg-muted border-border text-muted-foreground')}>
-                            <div className="font-medium">{message.replyTo.sender?.names ?? 'Unknown'}</div>
+                            <div className="font-medium">{message.replyTo.sender?.firstName ?? 'Unknown'}</div>
                             <div className="truncate">{message.replyTo.content}</div>
                         </div>
                     )}

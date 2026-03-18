@@ -211,10 +211,10 @@ export default function AdminWalletsPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <Badge
-                                                    variant={wallet.active ? 'success' : 'destructive'}
+                                                    variant={wallet.isActive ? 'success' : 'destructive'}
                                                     className="font-semibold text-xs px-3 py-1  rounded-full"
                                                 >
-                                                    {wallet.active ? 'Active' : 'Locked'}
+                                                    {wallet.isActive ? 'Active' : 'Locked'}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground font-medium text-sm">

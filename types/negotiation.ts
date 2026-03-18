@@ -13,16 +13,16 @@ export interface Negotiation {
     id: string;
     order: Order;
     buyerProposedPrice: number;
-    sellerResponsePrice?: number;
-    lastMessage?: string;
+    sellerResponsePrice: number;
+    lastMessage: string;
     status: NegotiationStatus;
     expiresAt: string;
-    expired: boolean;
+    createdAt: string;
+    updatedAt: string;
+    isExpired: boolean;
     timeRemaining: string;
     canBuyerRespond: boolean;
     canSellerRespond: boolean;
-    createdAt: string;
-    updatedAt: string;
 }
 
 export interface CounterOfferRequest {

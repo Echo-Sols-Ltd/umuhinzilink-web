@@ -196,15 +196,15 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
                 <span className="text-success font-semibold text-lg">
-                  {sellerInfo.names.charAt(0)}
+                  {sellerInfo.firstName?.charAt(0) || sellerInfo.lastName?.charAt(0) || 'S'}
                 </span>
               </div>
               <div>
-                <p className="font-medium text-foreground">{sellerInfo.names}</p>
+                <p className="font-medium text-foreground">{sellerInfo.firstName} {sellerInfo.lastName}</p>
                 <p className="text-sm text-muted-foreground">{sellerInfo.email}</p>
-                {sellerInfo.address && (
+                {sellerInfo.district && (
                   <p className="text-sm text-muted-foreground">
-                    {sellerInfo.address.district}, {sellerInfo.address.province}
+                    {sellerInfo.district}, {sellerInfo.province}
                   </p>
                 )}
               </div>

@@ -291,7 +291,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       showNotification({
         type: 'order',
         title: 'Order Delivered Safely',
-        body: `${data.buyer.names} confirmed safe delivery of ${data.product.name}`,
+        body: `${data.buyer.firstName} ${data.buyer.lastName} confirmed safe delivery of ${data.product.name}`,
         icon: data.product.image,
         onClick: () => {
           // Navigate to orders page
@@ -337,7 +337,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     [buyingOrders]
   );
   const activeBuyingOrders = useMemo(
-    () => buyingOrders?.filter(o => o.status === OrderStatus.ACTIVE) || [],
+    () => buyingOrders?.filter(o => o.status === OrderStatus.CONFIRMED) || [],
     [buyingOrders]
   );
 
@@ -354,7 +354,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     [sellingOrders]
   );
   const activeSellingOrders = useMemo(
-    () => sellingOrders?.filter(o => o.status === OrderStatus.ACTIVE) || [],
+    () => sellingOrders?.filter(o => o.status === OrderStatus.CONFIRMED) || [],
     [sellingOrders]
   );
 

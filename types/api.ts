@@ -22,8 +22,6 @@ export interface PaginatedResponse<T> {
   last: boolean
 }
 
-
-
 /**
  * Generic socket response wrapper.
  */

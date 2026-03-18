@@ -20,8 +20,8 @@ export interface Message {
   receiver: User;
   content: string;
   timestamp: string;
-  isEdited?: boolean;
-  isRead?: boolean;
+  isEdited: boolean;
+  isRead: boolean;
   type: MessageType;
   replyTo?: Message;
   fileName?: string;

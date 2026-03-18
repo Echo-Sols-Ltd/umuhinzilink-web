@@ -37,29 +37,27 @@ const PAGE_SIZE = 15;
 type TabValue = 'ALL' | 'UNREAD' | NotificationType;
 // ─── Icon / colour helpers ────────────────────────────────────────────────────
 const TYPE_META: Record<NotificationType, { icon: React.ReactNode; dot: string; badge: string }> = {
-    [NotificationType.SUCCESS]: { icon: <CheckCircle className="w-5 h-5" />, dot: 'bg-emerald-500', badge: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-    [NotificationType.ERROR]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-red-500', badge: 'text-red-700 bg-red-50 border-red-200' },
+    [NotificationType.PAYMENT]: { icon: <CheckCircle className="w-5 h-5" />, dot: 'bg-emerald-500', badge: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
+    [NotificationType.DELIVERY]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-sky-500', badge: 'text-sky-700 bg-sky-50 border-sky-200' },
+    [NotificationType.NEGOTIATION]: { icon: <Info className="w-5 h-5" />, dot: 'bg-amber-500', badge: 'text-amber-700 bg-amber-50 border-amber-200' },
     [NotificationType.SYSTEM]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-red-500', badge: 'text-red-700 bg-red-50 border-red-200' },
-    [NotificationType.WARNING]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-amber-500', badge: 'text-amber-700 bg-amber-50 border-amber-200' },
-    [NotificationType.INFO]: { icon: <Info className="w-5 h-5" />, dot: 'bg-blue-500', badge: 'text-blue-700 bg-blue-50 border-blue-200' },
     [NotificationType.MESSAGE]: { icon: <MessageSquare className="w-5 h-5" />, dot: 'bg-violet-500', badge: 'text-violet-700 bg-violet-50 border-violet-200' },
     [NotificationType.PRODUCT]: { icon: <User className="w-5 h-5" />, dot: 'bg-teal-500', badge: 'text-teal-700 bg-teal-50 border-teal-200' },
     [NotificationType.ORDER]: { icon: <Users className="w-5 h-5" />, dot: 'bg-sky-500', badge: 'text-sky-700 bg-sky-50 border-sky-200' },
 };
 
 const iconBgClass: Record<NotificationType | string, string> = {
-    [NotificationType.SUCCESS]: 'bg-emerald-50 text-emerald-600',
-    [NotificationType.ERROR]: 'bg-red-50 text-red-600',
-    [NotificationType.WARNING]: 'bg-amber-50 text-amber-600',
-    [NotificationType.INFO]: 'bg-blue-50 text-blue-600',
-    [NotificationType.SYSTEM]: 'bg-blue-50 text-blue-600',
+    [NotificationType.PAYMENT]: 'bg-emerald-50 text-emerald-600',
+    [NotificationType.DELIVERY]: 'bg-sky-50 text-sky-600',
+    [NotificationType.NEGOTIATION]: 'bg-amber-50 text-amber-600',
+    [NotificationType.SYSTEM]: 'bg-red-50 text-red-600',
     [NotificationType.MESSAGE]: 'bg-violet-50 text-violet-600',
     [NotificationType.PRODUCT]: 'bg-teal-50 text-teal-600',
     [NotificationType.ORDER]: 'bg-sky-50 text-sky-600',
 };
 
 function NotificationIcon({ type }: { type: NotificationType }) {
-    const meta = TYPE_META[type] ?? TYPE_META.INFO;
+    const meta = TYPE_META[type] ?? TYPE_META.SYSTEM;
     const bg = iconBgClass[type] ?? 'bg-card text-muted-foreground';
     return (
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${bg}`}>
@@ -86,10 +84,6 @@ export default function NotificationsPage() {
         deleteNotification,
         productNotifications,
         orderNotifications,
-        warningNotifications,
-        errorNotifications,
-        successNotifications,
-        infoNotifications,
         systemNotifications,
         messageNotifications,
         unreadNotifications
@@ -103,26 +97,24 @@ export default function NotificationsPage() {
     const TABS: { value: TabValue; label: string }[] = useMemo(() => [
         { value: 'ALL', label: t('common.notificationPage.tabs.all') },
         { value: 'UNREAD', label: t('common.notificationPage.tabs.unread') },
-        { value: NotificationType.SUCCESS, label: t('common.notificationPage.tabs.success') },
+        { value: NotificationType.PAYMENT, label: 'Payment' },
         { value: NotificationType.MESSAGE, label: t('common.notificationPage.tabs.messages') },
-        { value: NotificationType.WARNING, label: t('common.notificationPage.tabs.warnings') },
-        { value: NotificationType.ERROR, label: t('common.notificationPage.tabs.errors') },
+        { value: NotificationType.DELIVERY, label: 'Delivery' },
+        { value: NotificationType.NEGOTIATION, label: 'Negotiations' },
         { value: NotificationType.SYSTEM, label: t('common.notificationPage.tabs.system') },
-        { value: NotificationType.INFO, label: t('common.notificationPage.tabs.info') },
         { value: NotificationType.PRODUCT, label: t('common.notificationPage.tabs.products') },
         { value: NotificationType.ORDER, label: t('common.notificationPage.tabs.orders') }
     ], [t]);
 
     // ── Load data when tab or page changes ────────────────────────────────────
     const load = useCallback(async (tab: TabValue, p: number) => {
-        if (tab === NotificationType.ERROR) setNotifications(errorNotifications)
-        if (tab === NotificationType.WARNING) setNotifications(warningNotifications)
-        if (tab === NotificationType.INFO) setNotifications(infoNotifications)
-        if (tab === NotificationType.SUCCESS) setNotifications(successNotifications)
-        if (tab === NotificationType.MESSAGE) setNotifications(messageNotifications)
         if (tab === NotificationType.SYSTEM) setNotifications(systemNotifications)
+        if (tab === NotificationType.MESSAGE) setNotifications(messageNotifications)
         if (tab === NotificationType.PRODUCT) setNotifications(productNotifications)
         if (tab === NotificationType.ORDER) setNotifications(orderNotifications)
+        if (tab === NotificationType.PAYMENT || tab === NotificationType.DELIVERY || tab === NotificationType.NEGOTIATION) {
+          setNotifications(allNotifications.filter(n => n.type === tab))
+        }
         if (tab === 'ALL') setNotifications(allNotifications)
         if (tab === 'UNREAD') setNotifications(unreadNotifications)
     }, [activeTab]);
@@ -270,7 +262,7 @@ export default function NotificationsPage() {
                                 </div>
                             ) : (
                                 visible.map(n => {
-                                    const meta = TYPE_META[n.type] ?? TYPE_META.INFO;
+                                    const meta = TYPE_META[n.type] ?? TYPE_META.SYSTEM;
                                     const bg = iconBgClass[n.type] ?? 'bg-white text-gray-500';
                                     return (
                                         <div

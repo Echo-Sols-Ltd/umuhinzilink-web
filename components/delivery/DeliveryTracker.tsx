@@ -17,14 +17,6 @@ interface DeliveryTrackerProps {
 
 const DELIVERY_STEPS = [
   {
-    status: DeliveryStatus.PENDING,
-    labelKey: 'delivery.tracking.steps.orderReceived.label',
-    descriptionKey: 'delivery.tracking.steps.orderReceived.description',
-    icon: Package,
-    color: 'text-muted-foreground',
-    completedColor: 'text-success'
-  },
-  {
     status: DeliveryStatus.SCHEDULED,
     labelKey: 'delivery.tracking.steps.preparingOrder.label',
     descriptionKey: 'delivery.tracking.steps.preparingOrder.description',
@@ -51,21 +43,21 @@ const DELIVERY_STEPS = [
 ];
 
 const DELIVERY_STATUS_LABELS: Record<DeliveryStatus, string> = {
-  [DeliveryStatus.PENDING]: 'delivery.tracking.statusLabels.pending',
   [DeliveryStatus.SCHEDULED]: 'delivery.tracking.statusLabels.preparing',
   [DeliveryStatus.IN_TRANSIT]: 'delivery.tracking.statusLabels.inTransit',
   [DeliveryStatus.DELIVERED]: 'delivery.tracking.statusLabels.delivered',
-  [DeliveryStatus.FAILED]: 'delivery.tracking.statusLabels.failed'
+  [DeliveryStatus.FAILED]: 'delivery.tracking.statusLabels.failed',
+  [DeliveryStatus.CANCELLED]: 'delivery.tracking.statusLabels.cancelled'
 };
 
 
 
 const DELIVERY_STATUS_COLORS: Record<DeliveryStatus, string> = {
-  [DeliveryStatus.PENDING]: 'bg-muted text-muted-foreground',
   [DeliveryStatus.SCHEDULED]: 'bg-info/10 text-info',
   [DeliveryStatus.IN_TRANSIT]: 'bg-warning/10 text-warning',
   [DeliveryStatus.DELIVERED]: 'bg-success/10 text-success',
-  [DeliveryStatus.FAILED]: 'bg-destructive/10 text-destructive'
+  [DeliveryStatus.FAILED]: 'bg-destructive/10 text-destructive',
+  [DeliveryStatus.CANCELLED]: 'bg-destructive/10 text-destructive'
 };
 
 export default function DeliveryTracker({
@@ -117,8 +109,8 @@ export default function DeliveryTracker({
   const currentStatus = delivery.trackingSteps && delivery.trackingSteps.length > 0
     ? delivery.trackingSteps
       .filter(step => step.completed)
-      .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0]?.status || DeliveryStatus.PENDING
-    : DeliveryStatus.PENDING;
+      .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0]?.status || DeliveryStatus.SCHEDULED
+    : DeliveryStatus.SCHEDULED;
 
   const handleUpdateStatus = (status: DeliveryStatus) => {
     setSelectedStatus(status);
@@ -213,7 +205,7 @@ export default function DeliveryTracker({
               <Truck className="w-6 h-6 text-info" />
             )}
             {/* Ping animation if moving */}
-            {currentStatus !== DeliveryStatus.DELIVERED && currentStatus !== DeliveryStatus.PENDING && (
+            {currentStatus !== DeliveryStatus.DELIVERED && (
               <span className="absolute -inset-1 rounded-full border-2 border-info animate-ping opacity-20"></span>
             )}
           </div>

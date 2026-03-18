@@ -78,7 +78,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
 
   const sorted = useMemo(() =>
     [...chatUsers]
-      .filter(u => !searchTerm || u.names.toLowerCase().includes(searchTerm.toLowerCase()))
+      .filter(u => !searchTerm || `${u.firstName} ${u.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()))
       .sort((a, b) => {
         const tA = a.lastMessage ? new Date(a.lastMessage.timestamp).getTime() : 0;
         const tB = b.lastMessage ? new Date(b.lastMessage.timestamp).getTime() : 0;
@@ -161,8 +161,9 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
               const isOnline = onlineUsers.has(user.id);
               const isTyping = typingUsers.has(user.id);
               const hasUnread = user.unreadMessage > 0;
-              const initials = getInitials(user.names);
-              const gradient = avatarGradient(user.names);
+              const fullName = `${user.firstName} ${user.lastName}`;
+              const initials = getInitials(fullName);
+              const gradient = avatarGradient(fullName);
               const ownLast = user.lastMessage?.sender.id === currentUser?.id;
 
               return (
@@ -186,7 +187,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                       )}>
                         {user.avatar ? <img
                           src={imageUrl(user.avatar)}
-                          alt={user.names}
+                          alt={`${user.firstName} ${user.lastName}`}
                           className="rounded-full object-cover w-11 h-11"
                         /> : <div className='font-bold text-lg'>
                           {initials}
@@ -205,7 +206,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                           'text-sm truncate',
                           hasUnread ? 'font-semibold text-foreground' : 'font-medium text-muted-foreground'
                         )}>
-                          {user.names}
+                          {user.firstName} {user.lastName}
                         </span>
                         {user.lastMessage && (
                           <span className={cn(

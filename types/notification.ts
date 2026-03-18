@@ -1,23 +1,22 @@
 import { User } from './user';
 
 export enum NotificationType {
-    SYSTEM = 'SYSTEM',
-    MESSAGE = 'MESSAGE',
-    INFO = 'INFO',
-    WARNING = 'WARNING',
-    ERROR = 'ERROR',
-    SUCCESS = 'SUCCESS',
-    PRODUCT = 'PRODUCT',
     ORDER = 'ORDER',
+    PAYMENT = 'PAYMENT',
+    DELIVERY = 'DELIVERY',
+    MESSAGE = 'MESSAGE',
+    NEGOTIATION = 'NEGOTIATION',
+    PRODUCT = 'PRODUCT',
+    SYSTEM = 'SYSTEM'
 }
 export interface Notification {
     id: string;
     title: string;
-    user: User;
     message: string;
     timestamp: string;
     isRead: boolean;
     type: NotificationType;
+    user: User;
 }
 
 export interface NotificationFilter {

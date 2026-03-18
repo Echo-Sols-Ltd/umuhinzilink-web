@@ -28,7 +28,7 @@ function AddInput() {
     unitPrice: 0,
     measurementUnit: MeasurementUnit.KG,
     location: '',
-    category: ProductCategory.SEEDS,
+    category: ProductCategory.SEEDS_SEEDLINGS,
     description: '',
     isNegotiable: false,
     image: '',

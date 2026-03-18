@@ -81,9 +81,8 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
           labelKey: 'orderStatus.tracker.processing.label',
           descriptionKey: 'orderStatus.tracker.processing.description',
           icon: Package,
-          status: [DeliveryStatus.SCHEDULED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' :
-            deliveryStatus === DeliveryStatus.PENDING ? 'active' : 'pending' as const,
-          timestamp: deliveryStatus !== DeliveryStatus.PENDING ? updatedAt : undefined,
+          status: [DeliveryStatus.SCHEDULED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' : 'pending' as const,
+          timestamp: [DeliveryStatus.SCHEDULED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? updatedAt : undefined,
         },
         {
           id: 'shipped',

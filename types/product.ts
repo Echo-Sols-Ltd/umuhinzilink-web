@@ -5,20 +5,35 @@ export enum ProductType {
 }
 
 export enum ProductCategory {
-  FERTILIZER = 'FERTILIZER',
-  SEEDS = 'SEEDS',
-  PESTICIDE = 'PESTICIDE',
-  TOOLS = 'TOOLS',
-  IRRIGATION = 'IRRIGATION',
-  MACHINERY = 'MACHINERY',
-  POST_HARVEST = 'POST_HARVEST',
-  ANIMAL_HEALTH = 'ANIMAL_HEALTH',
-  ANIMAL_FEED = 'ANIMAL_FEED',
-  SOIL_AMENDMENT = 'SOIL_AMENDMENT',
-  ORGANIC_INPUT = 'ORGANIC_INPUT',
-  PACKAGING = 'PACKAGING',
-  GREENHOUSE = 'GREENHOUSE',
-  ACCESSORIES = 'ACCESSORIES',
+
+  // ── FARMER CATEGORIES ────────────────────────────────────────
+  CEREALS = "Cereals",
+  LEGUMES_PULSES = "Legumes & Pulses",
+  ROOTS_TUBERS = "Roots & Tubers",
+  BANANAS_PLANTAINS = "Bananas & Plantains",
+  VEGETABLES = "Vegetables",
+  FRUITS = "Fruits",
+  CASH_CROPS = "Cash Crops",
+  OILSEEDS = "Oilseeds",
+  SPICES_HERBS = "Spices & Herbs",
+  FODDER_FORAGE = "Fodder & Forage",
+
+  // ── SUPPLIER CATEGORIES ──────────────────────────────────────
+  FERTILISER = "Fertiliser",
+  PESTICIDE = "Pesticide",
+  HERBICIDE = "Herbicide",
+  FUNGICIDE = "Fungicide",
+  SEEDS_SEEDLINGS = "Seeds & Seedlings",
+  IRRIGATION = "Irrigation Equipment",
+  HAND_TOOLS = "Hand Tools",
+  MACHINERY = "Machinery",
+  STORAGE_EQUIPMENT = "Storage Equipment",
+  PACKAGING = "Packaging Material",
+  ANIMAL_FEED = "Animal Feed",
+  VETERINARY = "Veterinary Products",
+
+  // ── SHARED ───────────────────────────────────────────────────
+  OTHER = "Other"
 }
 
 export enum Month {
@@ -37,21 +52,29 @@ export enum Month {
 }
 
 export enum ProductStatus {
-  IN_STOCK = 'IN_STOCK',
-  OUT_OF_STOCK = 'OUT_OF_STOCK',
-  LOW_STOCK = 'LOW_STOCK',
+  DRAFT = "DRAFT",
+  IN_STOCK = "IN_STOCK",
+  LOW_STOCK = "LOW_STOCK",
+  OUT_OF_STOCK = "OUT_OF_STOCK",
+  DISCONTINUED = "DISCONTINUED"
 }
 
 export enum MeasurementUnit {
-  KG = 'KG',
-  G = 'G',
-  TON = 'TON',
-  LITER = 'LITER',
-  ML = 'ML',
-  BAG = 'BAG',
-  CRATE = 'CRATE',
-  BUNDLE = 'BUNDLE',
-  PIECE = 'PIECE',
+  KG = "Kilogram",
+  G = "Gram",
+  TON = "Metric Ton",
+  LITER = "Liter",
+  ML = "Milliliter",
+  BAG_25KG = "25kg Bag",
+  BAG_50KG = "50kg Bag",
+  BAG_100KG = "100kg Bag",
+  CRATE = "Crate",
+  BUNDLE = "Bundle",
+  BUNCH = "Bunch",
+  PIECE = "Piece",
+  DOZEN = "Dozen",
+  JERRICAN = "Jerrican",
+  SACK = "Sack"
 }
 
 export enum CertificationType {
@@ -63,7 +86,7 @@ export enum CertificationType {
   OTHER = 'OTHER',
 }
 
-import { User } from './user';
+import { District, User } from './user';
 
 export interface Statistics {
   month: Month;
@@ -80,17 +103,18 @@ export interface Product {
   id: string;
   owner: User;
   name: string;
+  category: ProductCategory;
   description: string;
   unitPrice: number;
-  image: string;
-  quantity: number;
   measurementUnit: MeasurementUnit;
-  category: string;
+  image: string;
   location: string;
+  district: District;
+  quantity: number;
   isNegotiable: boolean;
-  certification: CertificationType;
-  productStatus: ProductStatus;
   productType: ProductType;
+  certification: CertificationType;
+  status: ProductStatus;
   createdAt: string;
   updatedAt: string;
 }

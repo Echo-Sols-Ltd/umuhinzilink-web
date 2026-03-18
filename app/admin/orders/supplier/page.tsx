@@ -42,8 +42,8 @@ function SupplierOrderManagement() {
 
     const filteredOrders = orders.filter(order => {
         const matchesSearch =
-            order.buyer.names.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.product.owner?.names.toLowerCase().includes(searchTerm.toLowerCase());
+            order.buyer.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.product.owner?.firstName.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesSearch;
     });
 
@@ -106,7 +106,7 @@ function SupplierOrderManagement() {
                                                         <span className="text-[10px] font-semibold text-muted-foreground uppercase ">Sender (Buyer)</span>
                                                         <span className="text-sm text-foreground flex items-center gap-1.5">
                                                             <User className="w-3.5 h-3.5 text-success" />
-                                                            {order.buyer.names}
+                                                            {order.buyer.firstName} {order.buyer.lastName}
                                                         </span>
                                                     </div>
                                                     <div className="w-4 h-px bg-border" />
@@ -114,7 +114,7 @@ function SupplierOrderManagement() {
                                                         <span className="text-[10px] font-semibold text-muted-foreground uppercase ">Receiver (Supplier)</span>
                                                         <span className="text-sm text-foreground flex items-center gap-1.5">
                                                             <User className="w-3.5 h-3.5 text-warning" />
-                                                            {order.product.owner?.names}
+                                                            {order.product.owner?.firstName} {order.product.owner?.lastName}
                                                         </span>
                                                     </div>
                                                 </div>

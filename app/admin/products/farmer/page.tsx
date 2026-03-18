@@ -55,9 +55,9 @@ function FarmerProductManagement() {
     const filteredProducts = farmerProducts.filter(product => {
         const matchesSearch =
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            product.owner?.names.toLowerCase().includes(searchTerm.toLowerCase());
+            `${product.owner?.firstName} ${product.owner?.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
-        const matchesStatus = statusFilter === 'all' || product.productStatus === statusFilter;
+        const matchesStatus = statusFilter === 'all' || product.status === statusFilter;
 
         return matchesSearch && matchesCategory && matchesStatus;
     }) || [];
@@ -188,7 +188,7 @@ function FarmerProductManagement() {
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <p className="font-medium text-foreground">{product.owner?.names}</p>
+                                                <p className="font-medium text-foreground">{product.owner?.firstName} {product.owner?.lastName}</p>
                                                 <p className="text-sm text-muted-foreground">{product.owner?.email}</p>
                                             </TableCell>
                                             <TableCell>
@@ -203,8 +203,8 @@ function FarmerProductManagement() {
                                                 <p className="text-sm text-muted-foreground">{product.measurementUnit}</p>
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant={getStatusVariant(product.productStatus)} className='text-white'>
-                                                    {product.productStatus.replace('_', ' ')}
+                                                <Badge variant={getStatusVariant(product.status)} className='text-white'>
+                                                    {product.status.replace('_', ' ')}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-right">

@@ -92,7 +92,7 @@ export default function NegotiationCard({
 
   // Check if user can take action
   const canTakeAction = () => {
-    if (negotiation.expired) return false;
+    if (negotiation.isExpired) return false;
     
     if (userType === 'seller') {
       return negotiation.canSellerRespond && 
@@ -135,8 +135,15 @@ export default function NegotiationCard({
   // Handle counter offer
   const handleCounterOffer = async () => {
     const price = parseFloat(counterPrice);
-    if (isNaN(price) || price <= 0) {
-      notify.error('Please enter a valid price', 'Invalid Price');
+    const originalPrice = negotiation.order.product.unitPrice;
+    const minPrice = originalPrice * 0.5;
+    const maxPrice = originalPrice * 1.5;
+
+    if (price < minPrice || price > maxPrice) {
+      notify.error(
+        `Offer must be between ${minPrice.toLocaleString()} and ${maxPrice.toLocaleString()} RWF (50%-150% of original price)`, 
+        'Invalid Counter Offer'
+      );
       return;
     }
 
@@ -178,7 +185,7 @@ export default function NegotiationCard({
             <span className={`text-sm font-semibold ${statusInfo.color}`}>
               {statusInfo.text}
             </span>
-            {negotiation.expired && (
+            {negotiation.isExpired && (
               <span className="text-xs text-gray-500">(Expired)</span>
             )}
           </div>

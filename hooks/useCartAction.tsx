@@ -1,222 +1,247 @@
+import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { cartService } from '@/services/cart';
 import { notify } from '@/lib/notify';
-import { Cart, CartItem, CartItemRequest, CartUpdateRequest, CartNegotiateRequest, CartCheckoutRequest, Order, CartItemType } from '@/types';
-import { useState } from 'react';
+import {
+  CartItemRequest,
+  CartUpdateRequest,
+  CartCheckoutRequest,
+  NegotiationItemRequest,
+  CartItemType,
+  PaymentMethod,
+  Order,
+} from '@/types';
 
 /**
- * Cart actions hook that handles cart mutations and business logic
- * Uses CartContext for state management and updates
+ * useCartAction owns ALL cart mutations (POST / PUT / DELETE).
+ *
+ * Responsibilities:
+ * - Calls cartService directly for every write operation
+ * - Re-syncs CartContext state after each mutation via fetchCart()
+ * - Manages local loading & error state for UI feedback
+ * - Handles notifications (success / error)
+ *
+ * CartContext is intentionally kept GET-only after this separation.
  */
 export const useCartAction = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const {
-    fetchCart,
-    addItem,
-    addItemForNegotiation,
-    updateItem,
-    removeItem,
-    clearCart,
-    negotiateItems,
-    cleanupExpiredNegotiations,
-    getItemsReadyForCheckout,
-    getNormalItems,
-    getAcceptedNegotiationItems,
-    checkoutNormal,
-    checkoutNegotiated,
-    checkoutMixed,
-    refreshCart,
-  } = useCart();
 
-  // Add product to cart
-  const addProductToCart = async (productId: string, quantity: number, proposedPrice?: number) => {
+  const { fetchCart, refreshCart, getItemsReadyForCheckout } = useCart();
+
+  // ── Internal helper ─────────────────────────────────────────────────────
+
+  /**
+   * Wraps any async cart mutation with:
+   * - Loading/error state management
+   * - Automatic cart refresh on success
+   * - Consistent error notification
+   *
+   * Note: <T,> trailing comma is required in .tsx files to prevent the
+   * TypeScript generic from being parsed as a JSX element.
+   */
+  const withMutation = async <T,>(
+    fn: () => Promise<T>,
+    fallbackError: string
+  ): Promise<T | null> => {
     setLoading(true);
     setError(null);
     try {
-      const request: CartItemRequest = {
-        productId,
-        quantity,
-        proposedPrice,
-        type: proposedPrice ? CartItemType.NEGOTIATION : CartItemType.NORMAL,
-      };
-      
+      return await fn();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : fallbackError;
+      setError(message);
+      notify.error(message, 'Error');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Add to cart ─────────────────────────────────────────────────────────
+
+  /** Add item to cart. If proposedPrice is provided, creates a negotiation item. */
+  const addProductToCart = async (
+    productId: string,
+    quantity: number,
+    proposedPrice?: number,
+    message?: string
+  ) => {
+    const request: CartItemRequest = {
+      productId,
+      quantity,
+      proposedPrice,
+      type: proposedPrice ? CartItemType.NEGOTIATION_PENDING : CartItemType.NORMAL,
+      message,
+    };
+
+    return withMutation(async () => {
       if (proposedPrice) {
-        await addItemForNegotiation(request);
+        const response = await cartService.addItemForNegotiation(request);
+        if (!response.success) throw new Error(response.message || 'Failed to add item for negotiation');
+        notify.success('Item added for negotiation', 'Success');
       } else {
-        await addItem(request);
+        const response = await cartService.addItem(request);
+        if (!response.success) throw new Error(response.message || 'Failed to add item to cart');
+        notify.success('Item added to cart', 'Success');
       }
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to add product to cart';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+      await fetchCart();
+    }, 'Failed to add product to cart');
   };
 
-  // Update cart item quantity
+  // ── Update ──────────────────────────────────────────────────────────────
+
+  /** Update the quantity of an existing cart item. */
   const updateCartItemQuantity = async (itemId: string, quantity: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const request: CartUpdateRequest = { quantity };
-      await updateItem(itemId, request);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update item quantity';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+    const request: CartUpdateRequest = { stockQuantity: quantity };
+    return withMutation(async () => {
+      const response = await cartService.updateItem(itemId, request);
+      if (!response.success) throw new Error(response.message || 'Failed to update quantity');
+      notify.success('Quantity updated', 'Success');
+      await fetchCart();
+    }, 'Failed to update item quantity');
   };
 
-  // Update cart item proposed price
-  const updateCartItemPrice = async (itemId: string, proposedPrice: number, quantity?: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const request: CartUpdateRequest = { quantity: quantity || 1, proposedPrice };
-      await updateItem(itemId, request);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update item price';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+  /** Update the proposed price of a negotiation item. */
+  const updateCartItemPrice = async (itemId: string, proposedPrice: number, quantity: number = 1) => {
+    const request: CartUpdateRequest = { stockQuantity: quantity };
+    return withMutation(async () => {
+      const response = await cartService.updateItem(itemId, request);
+      if (!response.success) throw new Error(response.message || 'Failed to update price');
+      notify.success('Price proposal updated', 'Success');
+      await fetchCart();
+    }, 'Failed to update item price');
   };
 
-  // Remove item from cart
+  // ── Remove ──────────────────────────────────────────────────────────────
+
+  /** Remove a single item from the cart. */
   const removeCartItem = async (itemId: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await removeItem(itemId);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to remove item from cart';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+    return withMutation(async () => {
+      const response = await cartService.removeItem(itemId);
+      if (!response.success) throw new Error(response.message || 'Failed to remove item');
+      notify.success('Item removed from cart', 'Success');
+      await fetchCart();
+    }, 'Failed to remove item from cart');
   };
 
-  // Batch negotiate items
-  const negotiateSelectedItems = async (itemIds: string[]) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const request: CartNegotiateRequest = { itemIds };
-      await negotiateItems(request);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to negotiate items';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+  // ── Negotiate ───────────────────────────────────────────────────────────
+
+  /**
+   * Send negotiation requests for cart items.
+   * Each NegotiationItemRequest must include: cartItemId, proposedPrice, message.
+   * Normal (non-negotiated) item IDs can be passed via normalItemIds if needed.
+   */
+  const negotiateSelectedItems = async (
+    negotiationItems: NegotiationItemRequest[],
+    normalItemIds: string[] = [],
+    paymentMethod: PaymentMethod = PaymentMethod.CASH
+  ) => {
+    const request: CartCheckoutRequest = {
+      paymentMethod,
+      itemIds: normalItemIds,
+      negotiationItemIds: negotiationItems.map(i => i.cartItemId),
+      negotiationItems,
+    };
+
+    return withMutation(async () => {
+      const response = await cartService.negotiateItems(request);
+      if (!response.success) throw new Error(response.message || 'Failed to negotiate items');
+      notify.success('Negotiation requests sent', 'Success');
+      await fetchCart();
+    }, 'Failed to negotiate items');
   };
 
-  // Checkout with automatic type detection
-  const checkoutItems = async (itemIds: string[]): Promise<Order | null> => {
-    setLoading(true);
-    setError(null);
-    try {
-      // Get the items to determine checkout type
+  /** Manually clean up expired negotiation items. */
+  const cleanupExpired = async () => {
+    return withMutation(async () => {
+      const response = await cartService.cleanupExpiredNegotiations();
+      if (!response.success) throw new Error(response.message || 'Cleanup failed');
+      notify.success('Expired negotiations removed', 'Success');
+      await fetchCart();
+    }, 'Failed to cleanup expired negotiations');
+  };
+
+  // ── Checkout ────────────────────────────────────────────────────────────
+
+  /**
+   * Checkout selected items.
+   * Automatically classifies items into normal vs accepted-negotiation groups
+   * and builds the correct CartCheckoutRequest for the backend.
+   */
+  const checkoutItems = async (
+    itemIds: string[],
+    paymentMethod: PaymentMethod = PaymentMethod.CASH
+  ): Promise<Order[] | null> => {
+    if (!itemIds.length) {
+      notify.warning('Please select items to checkout', 'Empty Selection');
+      return null;
+    }
+
+    return withMutation(async () => {
+      // Fetch ready items and filter to the caller's selection
       const readyItems = await getItemsReadyForCheckout();
-      const checkoutItems = readyItems.filter(item => itemIds.includes(item.id));
-      
-      const hasNormalItems = checkoutItems.some(item => item.type === CartItemType.NORMAL);
-      const hasNegotiatedItems = checkoutItems.some(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
-      
-      let request: CartCheckoutRequest = {
-        itemIds,
-        checkoutType: 'NORMAL',
-      };
+      const selected = readyItems.filter(item => itemIds.includes(item.id));
 
-      let order: Order | null = null;
-
-      if (hasNormalItems && hasNegotiatedItems) {
-        request.checkoutType = 'MIXED';
-        order = await checkoutMixed(request);
-      } else if (hasNegotiatedItems) {
-        request.checkoutType = 'NEGOTIATED';
-        order = await checkoutNegotiated(request);
-      } else {
-        order = await checkoutNormal(request);
-      }
-
-      return order;
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to checkout items';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Quick checkout for all ready items
-  const checkoutAllReadyItems = async (): Promise<Order | null> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const readyItems = await getItemsReadyForCheckout();
-      if (readyItems.length === 0) {
-        notify.warning('No items ready for checkout', 'Warning');
+      if (selected.length === 0) {
+        notify.warning('Selected items are not ready for checkout', 'Warning');
         return null;
       }
 
-      const itemIds = readyItems.map(item => item.id);
-      return await checkoutItems(itemIds);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to checkout all items';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+      // Classify by type
+      const normalItems = selected.filter(item => item.type === CartItemType.NORMAL);
+      const negotiatedItems = selected.filter(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
+
+      const request: CartCheckoutRequest = {
+        paymentMethod,
+        itemIds: normalItems.map(item => item.id),
+        negotiationItemIds: negotiatedItems.map(item => item.id),
+        // Build NegotiationItemRequest from CartItem data for accepted negotiations
+        negotiationItems: negotiatedItems.map(item => ({
+          cartItemId: item.id,
+          proposedPrice: item.proposedPrice ?? item.unitPrice,
+          message: '',
+        })),
+      };
+
+      const response = await cartService.checkoutNormal(request);
+
+      if (!response.success || !response.data) {
+        throw new Error(response.message || 'Checkout failed');
+      }
+
+      notify.success('Orders placed successfully', 'Success');
+      await fetchCart();
+      return response.data;
+    }, 'Failed to checkout items');
   };
 
-  // Clean up expired negotiations
-  const cleanupExpired = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await cleanupExpiredNegotiations();
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to cleanup expired negotiations';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
+  /** Checkout all items currently ready in the cart. */
+  const checkoutAllReadyItems = async (
+    paymentMethod: PaymentMethod = PaymentMethod.CASH
+  ): Promise<Order[] | null> => {
+    const readyItems = await getItemsReadyForCheckout();
+    if (readyItems.length === 0) {
+      notify.warning('No items ready for checkout', 'Warning');
+      return null;
     }
+    // checkoutItems already handles loading/error state via withMutation
+    return checkoutItems(readyItems.map(item => item.id), paymentMethod);
   };
 
-  // Clear entire cart
+  // ── Clear ───────────────────────────────────────────────────────────────
+
+  /** Remove all items from the cart. */
   const clearUserCart = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await clearCart();
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to clear cart';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+    return withMutation(async () => {
+      const response = await cartService.clearCart();
+      if (!response.success) throw new Error(response.message || 'Failed to clear cart');
+      notify.success('Cart cleared', 'Success');
+      await fetchCart();
+    }, 'Failed to clear cart');
   };
+
+  // ── Public API ──────────────────────────────────────────────────────────
 
   return {
     loading,
@@ -226,9 +251,9 @@ export const useCartAction = () => {
     updateCartItemPrice,
     removeCartItem,
     negotiateSelectedItems,
+    cleanupExpired,
     checkoutItems,
     checkoutAllReadyItems,
-    cleanupExpired,
     clearUserCart,
     refreshCart,
   };

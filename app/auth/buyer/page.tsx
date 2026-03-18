@@ -20,10 +20,11 @@ export default function BuyerSignUp() {
   const { registerBuyer, user } = useAuth();
   const { t } = useI18n();
   const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
-  const [buyerData, setBuyerData] = useState<BuyerRequest>({
+  const [buyerData, setBuyerData] = useState<BuyerRequest & { province: Province }>({
     userId: user?.id!,
     buyerType: BuyerType.INDIVIDUAL,
-    address: { province: Province.KIGALI_CITY, district: District.GASABO },
+    district: District.GASABO,
+    province: Province.KIGALI_CITY,
   });
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -73,9 +74,9 @@ export default function BuyerSignUp() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === 'province') {
-      setBuyerData(prev => ({ ...prev, address: { ...prev.address, province: value as Province, district: District.GASABO } }));
+      setBuyerData(prev => ({ ...prev, province: value as Province, district: District.GASABO }));
     } else if (name === 'district') {
-      setBuyerData(prev => ({ ...prev, address: { ...prev.address, district: value as District } }));
+      setBuyerData(prev => ({ ...prev, district: value as District }));
     } else if (name === 'buyerType') {
       setBuyerData(prev => ({ ...prev, buyerType: value as BuyerType }));
     }
@@ -88,7 +89,8 @@ export default function BuyerSignUp() {
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name } = e.target;
     setTouched(prev => ({ ...prev, [name]: true }));
-    validateField(name, buyerData[name as keyof BuyerRequest] || buyerData.address[name as keyof typeof buyerData.address]);
+    const value = buyerData[name as keyof typeof buyerData];
+    validateField(name, value);
   };
 
   const validateField = (name: string, value: any) => {
@@ -113,8 +115,8 @@ export default function BuyerSignUp() {
 
   const validateForm = () => {
     const buyerTypeValid = validateField('buyerType', buyerData.buyerType);
-    const provinceValid = validateField('province', buyerData.address.province);
-    const districtValid = validateField('district', buyerData.address.district);
+    const provinceValid = validateField('province', buyerData.province);
+    const districtValid = validateField('district', buyerData.district);
 
     setTouched({ buyerType: true, province: true, district: true });
 
@@ -137,7 +139,8 @@ export default function BuyerSignUp() {
 
     try {
       if (profileImage) await uploadFile(profileImage);
-      await registerBuyer(buyerData);
+      const { province, ...requestData } = buyerData;
+      await registerBuyer(requestData);
       notify.success(t('auth.buyer.success.accountCreated'), t('common.success'));
     } catch {
       notify.error(t('auth.buyer.error.accountCreationFailed'), t('auth.register.error'));
@@ -207,8 +210,8 @@ export default function BuyerSignUp() {
               {touched.buyerType && fieldErrors.buyerType && <p className="text-destructive text-xs mt-1">{fieldErrors.buyerType}</p>}
             </div>
             <div>
-              <Label htmlFor="profileImage" className="text-foreground font-medium text-sm mb-2 block">{t('auth.signUp.uploadProfileImage')}</Label>
-              <select id="province" name="province" value={buyerData.address.province} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
+              <Label htmlFor="province" className="text-foreground font-medium text-sm mb-2 block">{t('auth.buyer.fields.province')}</Label>
+              <select id="province" name="province" value={buyerData.province} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
                 <option value="">{t('auth.buyer.placeholders.selectProvince')}</option>
                 {provinceOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
@@ -216,7 +219,7 @@ export default function BuyerSignUp() {
             </div>
             <div>
               <Label htmlFor="district" className="text-foreground font-medium text-sm">{t('auth.buyer.fields.district')}</Label>
-              <select id="district" name="district" value={buyerData.address.district} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
+              <select id="district" name="district" value={buyerData.district} onChange={handleInputChange} onBlur={handleBlur} disabled={loading} className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district ? 'border-destructive focus:border-destructive focus:ring-destructive' : 'border-border focus:border-success focus:ring-success'}`} required>
                 <option value="">{t('auth.buyer.placeholders.selectDistrict')}</option>
                 {districtOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>

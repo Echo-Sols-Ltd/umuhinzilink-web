@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useCartAction } from '@/hooks/useCartAction';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { ShoppingCart, Truck, CreditCard, ChevronRight, Minus, Plus, Trash2, MapPin, Phone, Mail, User, CheckCircle2, AlertCircle, MessageCircle, Clock } from 'lucide-react';
@@ -17,13 +18,14 @@ enum CheckoutStep {
 }
 
 export default function CartPage() {
-  const { cart, loading, updateItem, removeItem, getCartTotal, checkoutNormal, checkoutNegotiated, checkoutMixed } = useCart();
+  const { cart, loading, getCartTotal } = useCart();
+  const { updateCartItemQuantity, removeCartItem, negotiateSelectedItems, checkoutItems } = useCartAction();
   const { user } = useAuth();
   const { t } = useI18n();
   const [step, setStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
 
   // Helper functions for negotiation items
-  const isNegotiationItem = (item: CartItem) => item.type === CartItemType.NEGOTIATION;
+  const isNegotiationItem = (item: CartItem) => item.type === CartItemType.NEGOTIATION_PENDING;
   const isAcceptedNegotiation = (item: CartItem) => item.type === CartItemType.NEGOTIATION_ACCEPTED;
   const getNegotiationStatus = (item: CartItem) => {
     if (isAcceptedNegotiation(item)) return { text: 'Accepted', color: 'text-green-600', bg: 'bg-green-50' };
@@ -42,8 +44,8 @@ export default function CartPage() {
 
   // Form states
   const [formData, setFormData] = useState({
-    firstName: user?.names?.split(' ')[0] || '',
-    lastName: user?.names?.split(' ')[1] || '',
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
     email: user?.email || '',
     phone: user?.phoneNumber || '',
     address: '',
@@ -56,6 +58,12 @@ export default function CartPage() {
   });
 
   const subtotal = getCartTotal();
+  const negotiationItemIds = useMemo(() => 
+    cart?.items.filter(item => item.type === CartItemType.NEGOTIATION_PENDING).map(item => item.id) || [], 
+  [cart]);
+
+  const hasPendingNegotiations = negotiationItemIds.length > 0;
+
   const shippingFee = formData.deliveryOption === 'standard' ? 0 : formData.deliveryOption === 'express' ? 5000 : 15000;
   const salesTax = subtotal * 0.18; // 18% VAT
   const total = subtotal + shippingFee + salesTax;
@@ -63,9 +71,9 @@ export default function CartPage() {
   const handleUpdateQuantity = (item: CartItem, delta: number) => {
     const newQuantity = item.quantity + delta;
     if (newQuantity <= 0) {
-      removeItem(item.id);
+      removeCartItem(item.id);
     } else {
-      updateItem(item.id, { quantity: newQuantity });
+      updateCartItemQuantity(item.id, newQuantity);
     }
   };
 
@@ -96,17 +104,26 @@ export default function CartPage() {
     const hasAcceptedNegotiations = cart.items.some(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
     
     let result;
-    const paymentMethod: PaymentMethod = formData.paymentMethod === 'pod' ? PaymentMethod.CASH_ON_DELIVERY : PaymentMethod.WALLET;
+    const paymentMethod: PaymentMethod = formData.paymentMethod === 'pod' ? PaymentMethod.CASH : PaymentMethod.WALLET;
     
     if (hasNormalItems && hasAcceptedNegotiations) {
       // Mixed checkout
-      result = await checkoutMixed({ paymentMethod });
+      const itemIds = cart.items
+        .filter(item => item.type === CartItemType.NORMAL || item.type === CartItemType.NEGOTIATION_ACCEPTED)
+        .map(item => item.id);
+      result = await checkoutItems(itemIds, paymentMethod);
     } else if (hasAcceptedNegotiations) {
       // Negotiated checkout only
-      result = await checkoutNegotiated({ paymentMethod });
+      const itemIds = cart.items
+        .filter(item => item.type === CartItemType.NEGOTIATION_ACCEPTED)
+        .map(item => item.id);
+      result = await checkoutItems(itemIds, paymentMethod);
     } else {
       // Normal checkout only
-      result = await checkoutNormal({ paymentMethod });
+      const itemIds = cart.items
+        .filter(item => item.type === CartItemType.NORMAL)
+        .map(item => item.id);
+      result = await checkoutItems(itemIds, paymentMethod);
     }
 
     if (result) {
@@ -275,7 +292,7 @@ export default function CartPage() {
                           </button>
                         </div>
                         <button 
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeCartItem(item.id)}
                           className="text-gray-300 hover:text-red-500 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -324,6 +341,35 @@ export default function CartPage() {
 
         {/* Right Side: Step Content */}
         <div className="lg:col-span-8 order-1 lg:order-2 space-y-8">
+          {hasPendingNegotiations && (
+            <div className="p-6 bg-linear-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-500 shadow-xl shadow-yellow-900/5">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
+                  <MessageCircle className="w-7 h-7 text-yellow-600" />
+                </div>
+                <div>
+                  <h4 className="font-black text-yellow-900 text-lg">Pending Negotiations</h4>
+                  <p className="text-sm text-yellow-700 font-medium">Some items in your cart need price review from sellers.</p>
+                </div>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    const negotiationItems = cart?.items
+                      .filter(item => item.type === CartItemType.NEGOTIATION_PENDING)
+                      .map(item => ({ cartItemId: item.id, proposedPrice: item.proposedPrice || item.unitPrice, message: '' })) || [];
+                    await negotiateSelectedItems(negotiationItems);
+                    notify.success('Negotiation requests sent to sellers', 'Success');
+                  } catch (error) {
+                    console.error('Failed to negotiate:', error);
+                  }
+                }}
+                className="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-black rounded-2xl transition-all shadow-lg shadow-yellow-500/30 active:scale-95 whitespace-nowrap"
+              >
+                Start Negotiations
+              </button>
+            </div>
+          )}
           
           {/* Step 1: Shipping */}
           {step === CheckoutStep.SHIPPING && (

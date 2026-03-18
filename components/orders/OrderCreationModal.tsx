@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingCart, Calculator, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
-import { Product, PaymentMethod } from '@/types';
+import { Product, PaymentMethod, OrderType } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
@@ -84,11 +84,10 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
     if (!validateForm()) return;
 
     const orderData = {
-      productId: product?.id,
+      productId: product?.id || '',
       quantity,
       totalPrice,
-      paymentMethod,
-      notes: notes.trim() || undefined,
+      orderType: OrderType.NORMAL, paymentMethod, notes: notes.trim() || undefined,
       // For supplier orders, include product details
       ...(orderType === 'supplier' && {
         productName: productName.trim(),

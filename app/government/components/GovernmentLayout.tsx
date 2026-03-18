@@ -93,12 +93,12 @@ export function GovernmentLayout({
   };
 
   const shortName = useMemo(() => {
-    if (!user?.names) return 'Admin';
-    const parts = user.names.trim().split(/\s+/);
+    if (!user?.firstName) return 'Admin';
+    const parts = user.firstName.trim().split(/\s+/);
     return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1]}` : parts[0];
-  }, [user?.names]);
+  }, [user?.firstName]);
 
-  const initials = useMemo(() => getInitials(user?.names || 'Admin'), [user?.names]);
+  const initials = useMemo(() => getInitials(user?.firstName || 'Admin'), [user?.firstName]);
 
   // Show loading state
   if (authLoading) {

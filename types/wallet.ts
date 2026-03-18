@@ -1,3 +1,23 @@
+import { PaymentMethod } from ".";
+
+export enum TransactionType {
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAWAL = 'WITHDRAWAL',
+  PAYMENT = 'PAYMENT',
+  REFUND = 'REFUND',
+  TRANSFER_IN = 'TRANSFER_IN',
+  TRANSFER_OUT = 'TRANSFER_OUT',
+  INCOME = 'INCOME'
+}
+
+export enum TransactionStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED'
+}
+
 export interface WalletDTO {
   id: string;
   userId: string;
@@ -5,43 +25,33 @@ export interface WalletDTO {
   userName: string;
   balance: number;
   currency: string;
-  active: boolean;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-interface WalletDepositRequest {
-  amount: number;
-  description?: string;
-}
-
-interface WalletPaymentRequest {
-  orderId: string;
-  description?: string;
-}
 
 export interface WalletTransactionDTO {
   id: string;
-  transactionId?: string;
-  walletId?: string;
-  userId?: string;
-  userEmail?: string;
+  transactionId: string;
+  userId: string;
+  userEmail: string;
+  type: TransactionType;
   amount: number;
-  balanceBefore?: number;
-  balanceAfter?: number;
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'PAYMENT' | 'TRANSFER_IN' | 'TRANSFER_OUT' | 'INCOME';
-  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+  balanceBefore: number;
+  balanceAfter: number;
   description: string;
-  orderId?: string;
-  recipientId?: string;
-  recipientEmail?: string;
-  reference?: string;
+  orderId: string;
+  recipientId: string;
+  recipientEmail: string;
+  reference: string;
+  status: TransactionStatus;
   createdAt: string;
 }
 
 export interface PaymentRequest {
   orderId: string;
-  paymentMethod: 'MOBILE_MONEY' | 'BANK_TRANSFER' | 'WALLET' | 'CASH';
+  paymentMethod: PaymentMethod;
   phoneNumber?: string;
   accountNumber?: string;
   bankName?: string;
@@ -53,28 +63,10 @@ export interface PaymentResponseDTO {
   orderId: string;
   amount: number;
   paymentMethod: string;
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+  status: TransactionStatus;
   reference: string;
   message: string;
   createdAt: string;
   paidAt?: string;
   phoneNumber?: string;
-}
-
-// Pagination types for admin endpoints
-interface PagedResponse<T> {
-  content: T[];
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-  first: boolean;
-  last: boolean;
-}
-
-interface PaginationParams {
-  page?: number;
-  size?: number;
-  sortBy?: string;
-  sortDir?: 'asc' | 'desc';
 }

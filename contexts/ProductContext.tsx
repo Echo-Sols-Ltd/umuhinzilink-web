@@ -410,28 +410,28 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   // 🔹 Filters
   const inStockMyProducts = useMemo(
-    () => myProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
+    () => myProducts?.filter(p => p.status === ProductStatus.IN_STOCK) ?? [],
     [myProducts]
   );
   const outOfStockMyProducts = useMemo(
-    () => myProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
+    () => myProducts?.filter(p => p.status === ProductStatus.OUT_OF_STOCK) ?? [],
     [myProducts]
   );
   const lowStockMyProducts = useMemo(
-    () => myProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
+    () => myProducts?.filter(p => p.status === ProductStatus.LOW_STOCK) ?? [],
     [myProducts]
   );
 
   const inStockMarketplaceProducts = useMemo(
-    () => marketplaceProducts?.filter(p => p.productStatus === ProductStatus.IN_STOCK) ?? [],
+    () => marketplaceProducts?.filter(p => p.status === ProductStatus.IN_STOCK) ?? [],
     [marketplaceProducts]
   );
   const outOfStockMarketplaceProducts = useMemo(
-    () => marketplaceProducts?.filter(p => p.productStatus === ProductStatus.OUT_OF_STOCK) ?? [],
+    () => marketplaceProducts?.filter(p => p.status === ProductStatus.OUT_OF_STOCK) ?? [],
     [marketplaceProducts]
   );
   const lowStockMarketplaceProducts = useMemo(
-    () => marketplaceProducts?.filter(p => p.productStatus === ProductStatus.LOW_STOCK) ?? [],
+    () => marketplaceProducts?.filter(p => p.status === ProductStatus.LOW_STOCK) ?? [],
     [marketplaceProducts]
   );
 

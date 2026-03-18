@@ -93,6 +93,10 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
     );
   }
 
+  const firstName = profile.firstName || '';
+  const lastName = profile.lastName || '';
+  const displayName = `${firstName} ${lastName}`.trim() || 'Admin';
+
   return (
     <div className="max-w-4xl bg-card rounded-lg shadow-sm border p-6">
       {/* Profile Header */}
@@ -123,14 +127,24 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
           <div className="flex-1">
             <h2 className="text-xl font-semibold text-foreground">
               {isEditing ? (
-                <input
-                  type="text"
-                  value={editData.names || ''}
-                  onChange={(e) => handleChange('names', e.target.value)}
-                  className="text-xl font-semibold bg-transparent border-b border-border focus:border-green-500 outline-none"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={editData.firstName || ''}
+                    onChange={(e) => handleChange('firstName', e.target.value)}
+                    placeholder="First Name"
+                    className="text-xl font-semibold bg-transparent border-b border-border focus:border-green-500 outline-none w-1/2"
+                  />
+                  <input
+                    type="text"
+                    value={editData.lastName || ''}
+                    onChange={(e) => handleChange('lastName', e.target.value)}
+                    placeholder="Last Name"
+                    className="text-xl font-semibold bg-transparent border-b border-border focus:border-green-500 outline-none w-1/2"
+                  />
+                </div>
               ) : (
-                profile.names
+                displayName
               )}
             </h2>
             <p className="text-muted-foreground">System Administrator</p>
@@ -256,12 +270,12 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
             {isEditing ? (
               <input
                 type="text"
-                value={editData.address?.province || ''}
-                onChange={(e) => handleChange('address', { ...profile.address, province: e.target.value })}
+                value={editData.province || ''}
+                onChange={(e) => handleChange('province', e.target.value as any)}
                 className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             ) : (
-              <p className="text-foreground mt-1">{profile.address?.province || '—'}</p>
+              <p className="text-foreground mt-1">{profile.province || '—'}</p>
             )}
           </div>
         </div>
@@ -287,7 +301,7 @@ function AdminProfileComponent({ profile }: AdminProfileProps) {
             <label className="text-sm font-medium text-muted-foreground">Account Status</label>
             <div className="mt-1">
               <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-success/10 text-success">
-                {profile.verified ? 'Verified Admin' : 'Active'}
+                {profile.isVerified ? 'Verified Admin' : 'Active'}
               </span>
             </div>
           </div>

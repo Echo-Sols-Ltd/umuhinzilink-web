@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { useI18n } from '@/contexts/I18nContext';
 
-import { RwandaCropCategory } from '@/types';
+import { ProductCategory } from '@/types';
 import { Product } from '@/types';
 import ProductCard from './ProductCard';
 import ProductRow from './ProductRow';
@@ -86,7 +86,7 @@ export function ProductDisplay({
                     <SelectValue placeholder={t('marketplace.filters.category') || "Category"} />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.values(RwandaCropCategory).map((category) => (
+                    {Object.values(ProductCategory).map((category) => (
                       <SelectItem key={category} value={category}>{category}</SelectItem>
                     ))}
                   </SelectContent>

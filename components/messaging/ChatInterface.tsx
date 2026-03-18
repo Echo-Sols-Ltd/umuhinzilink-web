@@ -256,16 +256,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center shadow-sm">
               {activeChatUser.avatar ? <img
                 src={imageUrl(activeChatUser.avatar)}
-                alt={activeChatUser.names}
+                alt={`${activeChatUser.firstName} ${activeChatUser.lastName}`}
                 className="rounded-full object-cover w-10 h-10"
               /> : <div className='font-bold text-white text-lg'>
-                {activeChatUser.names.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase()}
+                {(activeChatUser.firstName?.[0] || '') + (activeChatUser.lastName?.[0] || '')}
               </div>}
             </div>
             {isUserOnline && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-success border-2 border-card rounded-full shadow-sm"></div>}
           </div>
           <div>
-            <h3 className="font-medium text-foreground">{activeChatUser.names}</h3>
+            <h3 className="font-medium text-foreground">{activeChatUser.firstName} {activeChatUser.lastName}</h3>
             <p className="text-sm text-muted-foreground">
               {typingUsers.has(activeChatUser.id) ? (
                 <span className="text-success animate-pulse">{t('chat.typingDots')}</span>
@@ -317,7 +317,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
             <div className="flex items-center space-x-2">
               <Reply className="w-4 h-4 text-info" />
               <div className="text-sm">
-                <span className="font-medium text-foreground">{t('chat.replyingTo')} {replyTo.sender.names.split(' ')[0]}</span>
+                <span className="font-medium text-foreground">{t('chat.replyingTo')} {replyTo.sender.firstName}</span>
                 <p className="text-info truncate max-w-xs">{replyTo.content}</p>
               </div>
             </div>

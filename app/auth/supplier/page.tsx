@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { SupplierRequest, SupplierType, Address, Province, District } from '@/types';
+import { SupplierRequest, SupplierType, Province, District } from '@/types';
 import { supplierTypeOptions, provinceOptions, districtOptions } from '@/types';
 import useUserAction from '@/hooks/useUserAction';
 import { Upload, X } from 'lucide-react';
@@ -32,14 +32,12 @@ export default function SupplierSignUp() {
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
   ];
 
-  const [supplierData, setSupplierData] = useState<SupplierRequest>({
+  const [supplierData, setSupplierData] = useState<SupplierRequest & { province: Province }>({
     userId: user?.id!,
     businessName: '',
     supplierType: SupplierType.WHOLESALER,
-    address: {
-      province: Province.KIGALI_CITY,
-      district: District.GASABO,
-    },
+    district: District.GASABO,
+    province: Province.KIGALI_CITY,
   });
 
   const [fieldErrors, setFieldErrors] = useState({
@@ -75,19 +73,13 @@ export default function SupplierSignUp() {
     } else if (name === 'province') {
       setSupplierData(prev => ({
         ...prev,
-        address: {
-          ...prev.address,
-          province: value as Province,
-          district: District.GASABO,
-        },
+        province: value as Province,
+        district: District.GASABO,
       }));
     } else if (name === 'district') {
       setSupplierData(prev => ({
         ...prev,
-        address: {
-          ...prev.address,
-          district: value as District,
-        },
+        district: value as District,
       }));
     } else if (name === 'supplierType') {
       setSupplierData(prev => ({
@@ -105,7 +97,8 @@ export default function SupplierSignUp() {
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name } = e.target;
     setTouched(prev => ({ ...prev, [name]: true }));
-    validateField(name, supplierData[name as keyof typeof supplierData] || supplierData.address[name as keyof typeof supplierData.address]);
+    const value = supplierData[name as keyof typeof supplierData];
+    validateField(name, value);
   };
 
   const validateField = (name: string, value: string | boolean | any) => {
@@ -151,8 +144,8 @@ export default function SupplierSignUp() {
   const validateForm = () => {
     const businessNameValid = validateField('businessName', supplierData.businessName);
     const supplierTypeValid = validateField('supplierType', supplierData.supplierType);
-    const provinceValid = validateField('province', supplierData.address.province);
-    const districtValid = validateField('district', supplierData.address.district);
+    const provinceValid = validateField('province', supplierData.province);
+    const districtValid = validateField('district', supplierData.district);
 
     setTouched({
       businessName: true,
@@ -207,7 +200,8 @@ export default function SupplierSignUp() {
       }
 
       // Then register the supplier
-      await registerSupplier(supplierData);
+      const { province, ...requestData } = supplierData;
+      await registerSupplier(requestData);
 
       notify.success(t('auth.supplier.success.accountCreated'), t('common.success'));
 
@@ -357,7 +351,7 @@ export default function SupplierSignUp() {
                 <select
                   id="province"
                   name="province"
-                  value={supplierData.address.province}
+                  value={supplierData.province}
                   onChange={handleSupplierInputChange}
                   onBlur={handleBlur}
                   disabled={loading}
@@ -383,7 +377,7 @@ export default function SupplierSignUp() {
                 <select
                   id="district"
                   name="district"
-                  value={supplierData.address.district}
+                  value={supplierData.district}
                   onChange={handleSupplierInputChange}
                   onBlur={handleBlur}
                   disabled={loading}

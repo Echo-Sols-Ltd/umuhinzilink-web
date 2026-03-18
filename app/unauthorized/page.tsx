@@ -33,7 +33,7 @@ export default function Unauthorized() {
         {user && (
           <div className="mb-6 p-4 bg-white rounded-lg">
             <p className="text-sm text-gray-700">
-              <span className="font-medium">Signed in as:</span> {user.names}
+              <span className="font-medium">Signed in as:</span> {user.firstName} {user.lastName}
             </p>
             <p className="text-sm text-gray-700">
               <span className="font-medium">Role:</span> {user.role}

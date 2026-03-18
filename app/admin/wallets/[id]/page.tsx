@@ -176,8 +176,8 @@ export default function WalletDetailPage() {
                         </div>
                         <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">
                             <p className="text-[10px] text-muted-foreground font-semibold uppercase">Account Status</p>
-                            <Badge variant={wallet.active ? 'success' : 'destructive'} className="font-semibold text-[10px] px-3 py-1 rounded-full uppercase ">
-                                {wallet.active ? 'Active' : 'Restricted'}
+                            <Badge variant={wallet.isActive ? 'success' : 'destructive'} className="font-semibold text-[10px] px-3 py-1 rounded-full uppercase ">
+                                {wallet.isActive ? 'Active' : 'Restricted'}
                             </Badge>
                         </div>
                         <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">

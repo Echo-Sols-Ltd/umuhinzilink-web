@@ -6,12 +6,33 @@ import { Farmer } from '@/types';
 import { useProfile } from '@/contexts/ProfileContext';
 import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
-import { RwandaCrop, FarmSizeCategory, ExperienceLevel } from '@/types';
+import { FarmSizeCategory, ExperienceLevel } from '@/types';
 import ProfileActivityComponent from './ProfileActivity';
 import ProfileBadgesComponent from './ProfileBadges';
 
+interface ExtendedFarmer extends Farmer {
+  names?: string;
+  crops?: string[];
+  farmName?: string;
+  farmRegistrationNumber?: string;
+  soilType?: string;
+  waterSource?: string;
+  annualProduction?: number;
+  harvestSeasons?: string[];
+  storageCapacity?: number;
+  isOrganicCertified?: boolean;
+  primaryMarkets?: string[];
+  paymentMethods?: string[];
+  deliveryRadius?: number;
+  yearsInBusiness?: number;
+  certifications?: string[];
+  trainingCompleted?: string[];
+  lastInspectionDate?: string;
+  inspectionStatus?: string;
+}
+
 interface FarmerProfileProps {
-  profile: Farmer | null;
+  profile: ExtendedFarmer | null;
 }
 
 function FarmerProfileComponent({ profile }: FarmerProfileProps) {
@@ -21,7 +42,7 @@ function FarmerProfileComponent({ profile }: FarmerProfileProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'activity' | 'badges'>('info');
-  const [editData, setEditData] = useState<Partial<Farmer>>({});
+  const [editData, setEditData] = useState<Partial<ExtendedFarmer>>({});
 
   React.useEffect(() => {
     if (profile) {
@@ -85,7 +106,7 @@ function FarmerProfileComponent({ profile }: FarmerProfileProps) {
     setIsEditing(false);
   };
 
-  const handleChange = (field: keyof Farmer, value: any) => {
+  const handleChange = (field: keyof ExtendedFarmer, value: any) => {
     setEditData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -97,7 +118,7 @@ function FarmerProfileComponent({ profile }: FarmerProfileProps) {
     );
   }
 
-  const displayName = profile.names || profile.user?.names || 'Farmer';
+  const displayName = `${profile.user?.firstName || ''} ${profile.user?.lastName || ''}`.trim() || 'Farmer';
   const [firstName, ...restNames] = displayName.split(' ');
   const lastName = restNames.join(' ');
 
@@ -253,13 +274,13 @@ function FarmerProfileComponent({ profile }: FarmerProfileProps) {
             label="First Name"
             value={firstName}
             isEditing={isEditing}
-            onChange={(value) => handleChange('user', { ...profile.user, names: `${value} ${lastName}`.trim() })}
+            onChange={(value) => handleChange('user', { ...profile.user, firstName: value })}
           />
           <Field
             label="Last Name"
             value={lastName}
             isEditing={isEditing}
-            onChange={(value) => handleChange('user', { ...profile.user, names: `${firstName} ${value}`.trim() })}
+            onChange={(value) => handleChange('user', { ...profile.user, lastName: value })}
           />
         </Section>
 
@@ -280,26 +301,13 @@ function FarmerProfileComponent({ profile }: FarmerProfileProps) {
           />
         </Section>
 
-        <Section title="Address">
+        <Section title="Location">
           <Field
             label="District"
-            value={profile.user?.address?.district || '—'}
+            value={profile.user?.district || '—'}
             icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
             isEditing={isEditing}
-            onChange={(value) => handleChange('user', { 
-              ...profile.user, 
-              address: { ...profile.user?.address, district: value }
-            })}
-          />
-          <Field
-            label="Province"
-            value={profile.user?.address?.province || '—'}
-            icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
-            isEditing={isEditing}
-            onChange={(value) => handleChange('user', { 
-              ...profile.user, 
-              address: { ...profile.user?.address, province: value }
-            })}
+            onChange={(value) => handleChange('user', { ...profile.user, district: value })}
           />
         </Section>
 
@@ -314,7 +322,7 @@ function FarmerProfileComponent({ profile }: FarmerProfileProps) {
             label="Crops"
             value={profile.crops && profile.crops.length ? profile.crops.join(', ') : '—'}
             isEditing={isEditing}
-            onChange={(value) => handleChange('crops', value.split(',').map(c => c.trim()) as RwandaCrop[])}
+            onChange={(value) => handleChange('crops', value.split(',').map(c => c.trim()) as string[])}
           />
           <Field 
             label="Experience Level" 

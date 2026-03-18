@@ -1,12 +1,9 @@
 import { Message } from './message';
 
-
-
-
-
 export interface ChatUser {
   id: string;
-  names: string;
+  firstName: string;
+  lastName: string
   email: string;
   avatar: string;
   unreadMessage: number;

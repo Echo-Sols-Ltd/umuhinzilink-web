@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { governmentService } from '@/services/government';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { Product, User, Order } from '@/types';
+import { Product, User, Order, UserType, ProductStatus, OrderStatus } from '@/types';
 
 interface GovernmentContextType {
   isValidGovernmentUser: () => boolean;
@@ -125,35 +125,35 @@ export function GovernmentProvider({ children }: { children: ReactNode }) {
   // Calculate stats
   const userStats = {
     totalUsers: users?.length || 0,
-    farmerCount: users?.filter(u => u.role === 'FARMER').length || 0,
-    buyerCount: users?.filter(u => u.role === 'BUYER').length || 0,
-    supplierCount: users?.filter(u => u.role === 'SUPPLIER').length || 0,
+    farmerCount: users?.filter(u => u.role === UserType.FARMER).length || 0,
+    buyerCount: users?.filter(u => u.role === UserType.BUYER).length || 0,
+    supplierCount: users?.filter(u => u.role === UserType.SUPPLIER).length || 0,
   };
 
   const supplierProductStats = {
     totalProducts: supplierProducts?.length || 0,
-    inStockCount: supplierProducts?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
-    outOfStockCount: supplierProducts?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
-    lowStockCount: supplierProducts?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
+    inStockCount: supplierProducts?.filter(p => p.status === ProductStatus.IN_STOCK).length || 0,
+    outOfStockCount: supplierProducts?.filter(p => p.status === ProductStatus.OUT_OF_STOCK).length || 0,
+    lowStockCount: supplierProducts?.filter(p => p.status === ProductStatus.LOW_STOCK).length || 0,
   };
 
   const farmerProductStats = {
     totalProducts: farmerProducts?.length || 0,
-    inStockCount: farmerProducts?.filter(p => p.productStatus === 'IN_STOCK').length || 0,
-    outOfStockCount: farmerProducts?.filter(p => p.productStatus === 'OUT_OF_STOCK').length || 0,
-    lowStockCount: farmerProducts?.filter(p => p.productStatus === 'LOW_STOCK').length || 0,
+    inStockCount: farmerProducts?.filter(p => p.status === ProductStatus.IN_STOCK).length || 0,
+    outOfStockCount: farmerProducts?.filter(p => p.status === ProductStatus.OUT_OF_STOCK).length || 0,
+    lowStockCount: farmerProducts?.filter(p => p.status === ProductStatus.LOW_STOCK).length || 0,
   };
 
   const orderStats = {
     totalOrders: orders?.length || 0,
-    pendingCount: orders?.filter(o => o.status === 'PENDING').length || 0,
-    completedCount: orders?.filter(o => o.status === 'COMPLETED').length || 0,
-    cancelledCount: orders?.filter(o => o.status === 'CANCELLED').length || 0,
+    pendingCount: orders?.filter(o => o.status === OrderStatus.PENDING).length || 0,
+    completedCount: orders?.filter(o => o.status === OrderStatus.COMPLETED).length || 0,
+    cancelledCount: orders?.filter(o => o.status === OrderStatus.CANCELLED).length || 0,
   };
 
   const isValidGovernmentUser = useCallback(() => {
     if (!user) return false;
-    return user.role === 'GOVERNMENT';
+    return user.role === UserType.GOVERNMENT;
   }, [user]);
 
   const startFetchingResources = useCallback(async () => {
