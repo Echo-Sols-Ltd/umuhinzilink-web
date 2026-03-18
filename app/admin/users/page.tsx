@@ -93,14 +93,14 @@ function UserManagement() {
   const filteredUsers =
     users?.filter(user => {
       const matchesSearch =
-        user.names.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.role.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesRole = roleFilter === 'all' || user.role === roleFilter;
       const matchesStatus = statusFilter === 'all' ||
-        (statusFilter === 'verified' && user.verified) ||
-        (statusFilter === 'pending' && !user.verified);
+        (statusFilter === 'verified' && user.isVerified) ||
+        (statusFilter === 'pending' && !user.isVerified);
 
       return matchesSearch && matchesRole && matchesStatus;
     }) || [];
@@ -246,23 +246,23 @@ function UserManagement() {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full overflow-hidden bg-card border border-border flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
                             {usersItem.avatar ? (
-                              <img src={imageUrl(usersItem.avatar)} alt={usersItem.names} className="w-full h-full object-cover" />
+                              <img src={imageUrl(usersItem.avatar)} alt={`${usersItem.firstName} ${usersItem.lastName}`} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full bg-linear-to-br from-success to-emerald-600 flex items-center justify-center text-white text-xs font-semibold">
-                                {usersItem.names.charAt(0).toUpperCase()}
+                                {usersItem.firstName.charAt(0).toUpperCase()}
                               </div>
                             )}
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-semibold text-foreground leading-tight">{usersItem.names}</span>
+                            <span className="font-semibold text-foreground leading-tight">{usersItem.firstName} {usersItem.lastName}</span>
                             <span className="text-[11px] text-muted-foreground">{usersItem.email}</span>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1.5">
-                          <Badge variant={usersItem.verified ? 'success' : 'warning'} className="font-semibold text-[9px] uppercase  px-2 py-0.5">
-                            {usersItem.verified ? 'Verified' : 'Pending'}
+                          <Badge variant={usersItem.isVerified ? 'success' : 'warning'} className="font-semibold text-[9px] uppercase  px-2 py-0.5">
+                            {usersItem.isVerified ? 'Verified' : 'Pending'}
                           </Badge>
                           {(usersItem as any).suspended && (
                             <Badge variant="destructive" className="font-semibold text-[9px] uppercase  px-2 py-0.5">
@@ -404,10 +404,10 @@ function UserManagement() {
                 <div className="w-24 h-24 rounded-2xl bg-card p-1 shadow-lg">
                   <div className="w-full h-full rounded-xl overflow-hidden bg-card flex items-center justify-center border border-border">
                     {selectedUser.avatar ? (
-                      <img src={imageUrl(selectedUser.avatar)} alt={selectedUser.names} className="w-full h-full object-cover" />
+                      <img src={imageUrl(selectedUser.avatar)} alt={`${selectedUser.firstName} ${selectedUser.lastName}`} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-success flex items-center justify-center text-white text-2xl font-semibold">
-                        {selectedUser.names.charAt(0).toUpperCase()}
+                        {selectedUser.firstName.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
@@ -416,7 +416,7 @@ function UserManagement() {
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-semibold text-foreground leading-tight">{selectedUser.names}</h3>
+                  <h3 className="text-2xl font-semibold text-foreground leading-tight">{selectedUser.firstName} {selectedUser.lastName}</h3>
                   <p className="text-muted-foreground font-medium">{selectedUser.email}</p>
                 </div>
 
@@ -432,8 +432,8 @@ function UserManagement() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Badge variant={selectedUser.verified ? 'success' : 'warning'} className="font-semibold">
-                    {selectedUser.verified ? 'Verified Account' : 'Pending Verification'}
+                  <Badge variant={selectedUser.isVerified ? 'success' : 'warning'} className="font-semibold">
+                    {selectedUser.isVerified ? 'Verified Account' : 'Pending Verification'}
                   </Badge>
                   {(selectedUser as any).suspended && (
                     <Badge variant="destructive" className="font-semibold">Suspended</Badge>

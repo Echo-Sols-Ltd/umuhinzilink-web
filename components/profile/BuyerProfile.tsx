@@ -8,8 +8,30 @@ import { imageUrl } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import { BuyerType } from '@/types';
 
+interface ExtendedBuyer extends Buyer {
+  businessName?: string;
+  businessRegistrationNumber?: string;
+  yearsInBusiness?: number;
+  preferredCategories?: string[];
+  budgetRange?: string;
+  orderFrequency?: string;
+  qualityRequirements?: string;
+  totalOrders?: number;
+  totalSpent?: number;
+  averageOrderValue?: number;
+  lastOrderDate?: string;
+  deliveryAddress?: string;
+  deliverySchedule?: string;
+  preferredSuppliers?: string[];
+  specialRequirements?: string;
+  paymentMethods?: string[];
+  creditLimit?: number;
+  billingCycle?: string;
+  taxExempt?: boolean;
+}
+
 interface BuyerProfileProps {
-  profile: Buyer | null;
+  profile: ExtendedBuyer | null;
 }
 
 function BuyerProfileComponent({ profile }: BuyerProfileProps) {
@@ -18,7 +40,7 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [editData, setEditData] = useState<Partial<Buyer>>({});
+  const [editData, setEditData] = useState<Partial<ExtendedBuyer>>({});
 
   React.useEffect(() => {
     if (profile) {
@@ -82,7 +104,7 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
     setIsEditing(false);
   };
 
-  const handleChange = (field: keyof Buyer, value: any) => {
+  const handleChange = (field: keyof ExtendedBuyer, value: any) => {
     setEditData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -94,9 +116,9 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
     );
   }
 
-  const displayName = profile.user?.names || 'Buyer';
-  const [firstName, ...restNames] = displayName.split(' ');
-  const lastName = restNames.join(' ');
+  const firstName = profile.user?.firstName || '';
+  const lastName = profile.user?.lastName || '';
+  const displayName = `${firstName} ${lastName}`.trim() || 'Buyer';
 
   return (
     <div className="max-w-4xl bg-card rounded-lg shadow-sm border p-6">
@@ -210,13 +232,13 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
             label="First Name"
             value={firstName}
             isEditing={isEditing}
-            onChange={(value) => handleChange('user', { ...profile.user, names: `${value} ${lastName}`.trim() })}
+            onChange={(value) => handleChange('user', { ...profile.user, firstName: value })}
           />
           <Field
             label="Last Name"
             value={lastName}
             isEditing={isEditing}
-            onChange={(value) => handleChange('user', { ...profile.user, names: `${firstName} ${value}`.trim() })}
+            onChange={(value) => handleChange('user', { ...profile.user, lastName: value })}
           />
         </Section>
 
@@ -240,22 +262,22 @@ function BuyerProfileComponent({ profile }: BuyerProfileProps) {
         <Section title="Address">
           <Field
             label="District"
-            value={profile.user?.address?.district || '—'}
+            value={profile.user?.district || '—'}
             icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
             isEditing={isEditing}
             onChange={(value) => handleChange('user', { 
               ...profile.user, 
-              address: { ...profile.user?.address, district: value }
+              district: value as any
             })}
           />
           <Field
             label="Province"
-            value={profile.user?.address?.province || '—'}
+            value={profile.user?.province || '—'}
             icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
             isEditing={isEditing}
             onChange={(value) => handleChange('user', { 
               ...profile.user, 
-              address: { ...profile.user?.address, province: value }
+              province: value as any
             })}
           />
         </Section>

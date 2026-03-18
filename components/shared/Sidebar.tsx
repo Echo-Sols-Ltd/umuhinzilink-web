@@ -253,9 +253,11 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
   const { t } = useI18n();
 
     const currentUserType = (user?.role || userType) as UserType;
-  const userName = user?.names || t('common.user');
+  const userName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || t('common.user') : t('common.user');
     const userEmail = user?.email || 'user@umuhinzilink.rw';
-    const userInitials = userName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    const userInitials = userName && userName !== t('common.user') 
+        ? userName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
+        : 'UL';
     const badge = ROLE_BADGE[currentUserType] ?? ROLE_BADGE.FARMER;
     const navGroups = getNavGroups(currentUserType);
 

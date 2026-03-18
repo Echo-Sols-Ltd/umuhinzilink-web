@@ -106,6 +106,7 @@ export interface User {
   language: Language;
   email: string;
   district: District;
+  province: Province;
   phoneNumber: string;
   password: string;
   role: UserType;
@@ -130,7 +131,7 @@ export interface Supplier {
   user: User;
   businessName: string;
   supplierType: SupplierType;
-  bussinessRegistrationNumber: string;
+  businessRegistrationNumber: string;
 }
 
 export interface UserRequest {

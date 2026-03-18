@@ -1,20 +1,21 @@
 import { PaymentMethod } from ".";
 
 export enum TransactionType {
-  DEPOSIT,
-  WITHDRAWAL,
-  PAYMENT,
-  REFUND,
-  TRANSFER_IN,
-  TRANSFER_OUT,
-  INCOME
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAWAL = 'WITHDRAWAL',
+  PAYMENT = 'PAYMENT',
+  REFUND = 'REFUND',
+  TRANSFER_IN = 'TRANSFER_IN',
+  TRANSFER_OUT = 'TRANSFER_OUT',
+  INCOME = 'INCOME'
 }
 
 export enum TransactionStatus {
-  PENDING,
-  COMPLETED,
-  FAILED,
-  CANCELLED
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED'
 }
 
 export interface WalletDTO {

@@ -320,7 +320,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               <User className="w-8 h-8 text-success" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-lg text-foreground">{product.owner.names}</h3>
+              <h3 className="font-semibold text-lg text-foreground">{product.owner.firstName} {product.owner.lastName}</h3>
               <p className="text-muted-foreground mb-3">
                 {product.location} • {productType === 'farmer' ? t('buyer.productDetail.farmerSince') : t('buyer.productDetail.supplierSince')} 2021
               </p>

@@ -120,7 +120,7 @@ export default function AdminProductDetailPage() {
   }
 
   const getStatusBadge = () => {
-    switch (product.productStatus) {
+    switch (product.status) {
       case ProductStatus.IN_STOCK:
         return (
           <Badge variant="default" className="bg-success/10 text-success">
@@ -146,7 +146,7 @@ export default function AdminProductDetailPage() {
         return (
           <Badge variant="outline">
             <Eye className="w-3 h-3 mr-1" />
-            {product.productStatus}
+            {product.status}
           </Badge>
         );
     }

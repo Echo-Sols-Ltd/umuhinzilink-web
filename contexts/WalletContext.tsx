@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { walletService } from '@/services/wallet';
 import { paymentService } from '@/services/payments';
-import { WalletDTO, WalletTransactionDTO, PaymentRequest, PaymentResponseDTO } from '@/types';
+import { WalletDTO, WalletTransactionDTO, PaymentRequest, PaymentResponseDTO, TransactionStatus } from '@/types';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
 
@@ -107,7 +107,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       const transactionData = res.data;
       const transactionList = transactionData ? transactionData : [];
 
-      setTransactions(transactionList);
+      setTransactions(transactionList as any);
       localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactionList));
 
       return transactionList;
@@ -138,7 +138,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         ? paymentData
         : (paymentData as any)?.content || [];
 
-      setPaymentHistory(paymentList);
+      setPaymentHistory(paymentList as any);
       localStorage.setItem(STORAGE_KEYS.PAYMENT_HISTORY, JSON.stringify(paymentList));
 
       return paymentList;
@@ -168,10 +168,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       const transaction = res.data;
       if (transaction) {
         // Add to transactions list
-        setTransactions(prev => [transaction, ...prev]);
+        setTransactions(prev => [transaction as any, ...prev]);
 
         // Update wallet balance if transaction is completed
-        if (transaction.status === 'COMPLETED' && wallet) {
+        if (transaction.status === TransactionStatus.COMPLETED && wallet) {
           const updatedWallet = { ...wallet, balance: wallet.balance + amount };
           setWallet(updatedWallet);
           localStorage.setItem(STORAGE_KEYS.WALLET, JSON.stringify(updatedWallet));
@@ -184,7 +184,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         notify.success('Your deposit request has been submitted successfully.', 'Deposit Initiated');
       }
 
-      return transaction ?? null;
+      return (transaction as any) ?? null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to deposit money';
       setError(errorMessage);
@@ -212,10 +212,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       const transaction = res.data;
       if (transaction) {
         // Add to transactions list
-        setTransactions(prev => [transaction, ...prev]);
+        setTransactions(prev => [transaction as any, ...prev]);
 
         // Update wallet balance if transaction is completed
-        if (transaction.status === 'COMPLETED' && wallet) {
+        if (transaction.status === TransactionStatus.COMPLETED && wallet) {
           const updatedWallet = { ...wallet, balance: wallet.balance - transaction.amount };
           setWallet(updatedWallet);
           localStorage.setItem(STORAGE_KEYS.WALLET, JSON.stringify(updatedWallet));
@@ -228,7 +228,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         notify.success('Your order has been paid successfully.', 'Payment Successful');
       }
 
-      return transaction ?? null;
+      return (transaction as any) ?? null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to process payment';
       setError(errorMessage);
@@ -245,7 +245,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const res = await paymentService.processPayment(request);
+      const res = await paymentService.processPayment(request as any);
       if (!res.success) {
         const errorMessage = res.message || 'Failed to process payment';
         setError(errorMessage);
@@ -253,7 +253,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
 
-      const payment = res.data;
+      const payment = res.data as PaymentResponseDTO;
       if (payment) {
         // Add to payment history
         setPaymentHistory(prev => [payment, ...prev]);
@@ -262,9 +262,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         const updatedHistory = [payment, ...paymentHistory];
         localStorage.setItem(STORAGE_KEYS.PAYMENT_HISTORY, JSON.stringify(updatedHistory));
 
-        if (payment.status === 'COMPLETED') {
+        if (payment.status === TransactionStatus.COMPLETED) {
           notify.success('Your payment has been processed successfully.', 'Payment Successful');
-        } else if (payment.status === 'PENDING' || payment.status === 'PROCESSING') {
+        } else if (payment.status === TransactionStatus.PENDING) {
           notify.warning('Your payment is being processed. You will receive a confirmation shortly.', 'Payment Processing');
         }
       }
@@ -288,7 +288,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
 
-      const payment = res.data;
+      const payment = res.data as PaymentResponseDTO;
       if (payment) {
         // Update payment in history
         setPaymentHistory(prev =>

@@ -60,7 +60,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     // Determine order type for DeliveryTracker
     const orderType = user?.role === UserType.FARMER ? 'farmer' : 'supplier';
 
-    const status = (order.status as string)?.toUpperCase();
+    const status = (order.status as unknown as string)?.toUpperCase();
     const isActionable = status === 'PENDING';
     const buyer = order.buyer;
     const product = order.product;
@@ -68,7 +68,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     // Satisfaction logic
     const isBuyer = user?.role === UserType.BUYER;
     const isDelivered = order.delivery?.trackingSteps?.some(
-        step => step.status === 'DELIVERED' && step.completed
+        step => (step.status as unknown as string) === 'DELIVERED' && step.completed
     ) || false;
     const canMarkSatisfaction = isBuyer && isDelivered && !order.isBuyerSatisfied;
 
@@ -172,7 +172,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 Customer Information
                             </h3>
                             <div className="bg-card rounded-lg p-4 space-y-3">
-                                <p className="text-sm font-medium text-foreground">{buyer.names || 'N/A'}</p>
+                                <p className="text-sm font-medium text-foreground">{buyer.firstName} {buyer.lastName}</p>
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <Mail className="w-3.5 h-3.5" />
                                     {buyer.email}
@@ -186,8 +186,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 <div className="flex items-start gap-2 text-xs text-muted-foreground">
                                     <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                                     <span>
-                                        {buyer.address?.district ? `${buyer.address.district}, ` : ''}
-                                        {buyer.address?.province || 'No address provided'}
+                                        {buyer.district ? `${buyer.district}, ` : ''}
+                                        {buyer.province || 'No address provided'}
                                     </span>
                                 </div>
                             </div>
@@ -225,7 +225,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                                 Payment Method
                             </h3>
                             <div className="bg-card rounded-lg p-4">
-                                <p className="text-sm text-foreground">{order.paymentMethod.replace('_', ' ')}</p>
+                                <p className="text-sm text-foreground">{order.paymentMethod?.toString().replace('_', ' ')}</p>
                                 <p className="text-xs mt-1 font-medium text-muted-foreground">
                                     Status: {order.isPaid ? 'PAID' : 'UNPAID'}
                                 </p>

@@ -29,8 +29,8 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
     const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
 
     const isProductOwner = user?.id === product.owner?.id;
-    const isAvailable = product.productStatus === 'IN_STOCK';
-    const isLowStock = product.productStatus === 'LOW_STOCK';
+    const isAvailable = product.status === 'IN_STOCK';
+    const isLowStock = product.status === 'LOW_STOCK';
     const isCertified = product.certification && product.certification !== 'NONE';
 
     const handleCardClick = () => {

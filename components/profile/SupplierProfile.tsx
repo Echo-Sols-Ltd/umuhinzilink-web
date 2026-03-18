@@ -34,8 +34,28 @@ import { SupplierType } from '@/types';
 import ProfileActivityComponent from './ProfileActivity';
 import ProfileBadgesComponent from './ProfileBadges';
 
+interface ExtendedSupplier extends Supplier {
+  yearsInBusiness?: number;
+  numberOfEmployees?: number;
+  annualRevenue?: number;
+  businessLicenseNumber?: string;
+  taxId?: string;
+  productCategories?: string[];
+  serviceAreas?: string[];
+  deliveryOptions?: string[];
+  paymentTerms?: string;
+  warehouseLocation?: string;
+  storageCapacity?: number;
+  fleetSize?: number;
+  deliveryRadius?: number;
+  certifications?: string[];
+  qualityStandards?: string;
+  insuranceCoverage?: string;
+  complianceStatus?: string;
+}
+
 interface SupplierProfileProps {
-  profile: Supplier | null;
+  profile: ExtendedSupplier | null;
 }
 
 function SupplierProfileComponent({ profile }: SupplierProfileProps) {
@@ -45,7 +65,7 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'activity' | 'badges'>('info');
-  const [editData, setEditData] = useState<Partial<Supplier>>({});
+  const [editData, setEditData] = useState<Partial<ExtendedSupplier>>({});
 
   React.useEffect(() => {
     if (profile) {
@@ -109,7 +129,7 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
     setIsEditing(false);
   };
 
-  const handleChange = (field: keyof Supplier, value: any) => {
+  const handleChange = (field: keyof ExtendedSupplier, value: any) => {
     setEditData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -121,9 +141,9 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
     );
   }
 
-  const displayName = profile.user?.names || 'Supplier';
-  const [firstName, ...restNames] = displayName.split(' ');
-  const lastName = restNames.join(' ');
+  const firstName = profile.user?.firstName || '';
+  const lastName = profile.user?.lastName || '';
+  const displayName = `${firstName} ${lastName}`.trim() || 'Supplier';
 
   // Calculate profile completion
   const calculateProfileCompletion = () => {
@@ -133,7 +153,7 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
       profile.supplierType,
       profile.user?.phoneNumber,
       profile.user?.email,
-      profile.user?.address?.province,
+      profile.user?.province,
       profile.businessRegistrationNumber,
       profile.yearsInBusiness,
       profile.productCategories
@@ -395,14 +415,14 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
                     value={firstName}
                     icon={<User className="w-4 h-4 text-muted-foreground" />}
                     isEditing={isEditing}
-                    onChange={(value) => handleChange('user', { ...profile.user, names: `${value} ${lastName}`.trim() })}
+                    onChange={(value) => handleChange('user', { ...profile.user, firstName: value })}
                   />
                   <EnhancedField
                     label="Last Name"
                     value={lastName}
                     icon={<User className="w-4 h-4 text-muted-foreground" />}
                     isEditing={isEditing}
-                    onChange={(value) => handleChange('user', { ...profile.user, names: `${firstName} ${value}`.trim() })}
+                    onChange={(value) => handleChange('user', { ...profile.user, lastName: value })}
                   />
                   <EnhancedField
                     label="Phone Number"
@@ -420,12 +440,12 @@ function SupplierProfileComponent({ profile }: SupplierProfileProps) {
                   />
                   <EnhancedField
                     label="Province"
-                    value={profile.user?.address?.province || '—'}
+                    value={profile.user?.province || '—'}
                     icon={<MapPin className="w-4 h-4 text-muted-foreground" />}
                     isEditing={isEditing}
                     onChange={(value) => handleChange('user', {
                       ...profile.user,
-                      address: { ...profile.user?.address, province: value }
+                      province: value as any
                     })}
                   />
                 </div>

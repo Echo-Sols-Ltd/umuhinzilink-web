@@ -57,7 +57,7 @@ function FarmerProducts() {
     let filtered = [...products];
     if (statusFilter !== 'all') {
       filtered = filtered.filter(
-        product => (product.productStatus || '').toLowerCase() === statusFilter.toLowerCase()
+        product => (product.status || '').toLowerCase() === statusFilter.toLowerCase()
       );
     }
     if (searchTerm.trim()) {
@@ -77,8 +77,8 @@ function FarmerProducts() {
 
   const stats = useMemo(() => {
     const total = products.length;
-    const active = products.filter(p => p.productStatus?.toUpperCase() === 'IN_STOCK').length;
-    const outOfStock = products.filter(p => p.productStatus?.toUpperCase() === 'OUT_OF_STOCK').length;
+    const active = products.filter(p => p.status?.toUpperCase() === 'IN_STOCK').length;
+    const outOfStock = products.filter(p => p.status?.toUpperCase() === 'OUT_OF_STOCK').length;
     const inventory = products.reduce((acc, p) => acc + (Number(p.quantity) || 0), 0);
     return { total, active, outOfStock, inventory };
   }, [products]);

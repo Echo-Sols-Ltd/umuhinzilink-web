@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChartDataPoint } from './InteractiveChart';
 import { analyticsService, DashboardMetrics, AnalyticsFilters } from '@/services/analytics';
+import { ProductStatus } from '@/types';
 import { toast } from '@/components/ui/use-toast';
 
 interface EnhancedDashboardProps {
@@ -111,7 +112,7 @@ export function EnhancedDashboard({
       totalRevenue: calculatedMetrics?.totalRevenue || 0,
       totalOrders: safeOrders.length || 0,
       totalProducts: safeProducts.length || 0,
-      activeProducts: safeProducts.filter(p => p?.productStatus?.toLowerCase() === 'in_stock').length || 0,
+      activeProducts: safeProducts.filter(p => p?.status === ProductStatus.IN_STOCK).length || 0,
       pendingOrders: safeOrders.filter(o => o?.status?.toLowerCase() === 'pending').length || 0,
       completedOrders: safeOrders.filter(o =>
         ['completed', 'delivered'].includes(o?.status?.toLowerCase() || '')

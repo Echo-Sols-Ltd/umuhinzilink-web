@@ -50,7 +50,7 @@ export function ProductReference({ productRef, messageContent, compact = false, 
     image: product.image || '/placeholder.jpg',
     price: product.unitPrice,
     unit: product.measurementUnit,
-    farmerName: product.owner?.names || 'Unknown',
+    farmerName: product.owner ? `${product.owner.firstName} ${product.owner.lastName}` : 'Unknown',
   };
 
   const imageSrc = imageUrl(productInfo.image!);

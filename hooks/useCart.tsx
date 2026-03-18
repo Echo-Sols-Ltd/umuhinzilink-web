@@ -20,7 +20,7 @@ export const useCartData = () => {
 
   // Get negotiation items
   const getNegotiationItems = (): CartItem[] => {
-    return getItemsByType(CartItemType.NEGOTIATION);
+    return getItemsByType(CartItemType.NEGOTIATION_PENDING);
   };
 
   // Get accepted negotiation items
@@ -58,7 +58,7 @@ export const useCartData = () => {
 
   // Get negotiation items total
   const getNegotiationItemsTotal = (): number => {
-    return getTotalByType(CartItemType.NEGOTIATION);
+    return getTotalByType(CartItemType.NEGOTIATION_PENDING);
   };
 
   // Get accepted negotiation items total
@@ -91,7 +91,7 @@ export const useCartData = () => {
     // Counts
     getCartItemCount,
     getNormalItemsCount: () => getCountByType(CartItemType.NORMAL),
-    getNegotiationItemsCount: () => getCountByType(CartItemType.NEGOTIATION),
+    getNegotiationItemsCount: () => getCountByType(CartItemType.NEGOTIATION_PENDING),
     getAcceptedNegotiationItemsCount: () => getCountByType(CartItemType.NEGOTIATION_ACCEPTED),
     
     // Totals

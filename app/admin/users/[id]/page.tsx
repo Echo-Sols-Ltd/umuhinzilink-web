@@ -249,10 +249,10 @@ export default function AdminUserDetailPage() {
                                     </CardDescription>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Badge className={user.verified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
+                                    <Badge className={user.isVerified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
                                         <div className="flex items-center space-x-1">
-                                            {user.verified ? <CheckCircle className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
-                                            <span>{user.verified ? 'Verified' : 'Pending'}</span>
+                                            {user.isVerified ? <CheckCircle className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
+                                            <span>{user.isVerified ? 'Verified' : 'Pending'}</span>
                                         </div>
                                     </Badge>
                                     {(user as any).suspended && (
@@ -299,7 +299,7 @@ export default function AdminUserDetailPage() {
                             <CardContent className="space-y-4">
                                 <div>
                                     <p className="text-sm text-muted-foreground">Full Name</p>
-                                    <p className="font-medium">{user.names}</p>
+                                    <p className="font-medium">{user.firstName} {user.lastName}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Email Address</p>
@@ -312,7 +312,7 @@ export default function AdminUserDetailPage() {
                                 <div>
                                     <p className="text-sm text-muted-foreground">Address</p>
                                     <p className="font-medium">
-                                        {user.address ? `${user.address.district}, ${user.address.province}` : 'Not provided'}
+                                        {user.district && user.province ? `${user.district}, ${user.province}` : 'Not provided'}
                                     </p>
                                 </div>
                             </CardContent>
@@ -333,8 +333,8 @@ export default function AdminUserDetailPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Verification Status</p>
-                                    <Badge className={user.verified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
-                                        {user.verified ? 'Verified' : 'Pending Verification'}
+                                    <Badge className={user.isVerified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
+                                        {user.isVerified ? 'Verified' : 'Pending Verification'}
                                     </Badge>
                                 </div>
                                 <div>

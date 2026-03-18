@@ -52,11 +52,11 @@ export enum Month {
 }
 
 export enum ProductStatus {
-  DRAFT = "Draft",
-  IN_STOCK = "In Stock",
-  LOW_STOCK = "Low Stock",
-  OUT_OF_STOCK = "Out of Stock",
-  DISCONTINUED = "Discontinued"
+  DRAFT = "DRAFT",
+  IN_STOCK = "IN_STOCK",
+  LOW_STOCK = "LOW_STOCK",
+  OUT_OF_STOCK = "OUT_OF_STOCK",
+  DISCONTINUED = "DISCONTINUED"
 }
 
 export enum MeasurementUnit {
@@ -108,8 +108,9 @@ export interface Product {
   unitPrice: number;
   measurementUnit: MeasurementUnit;
   image: string;
+  location: string;
   district: District;
-  stockQuantity: number;
+  quantity: number;
   isNegotiable: boolean;
   productType: ProductType;
   certification: CertificationType;
