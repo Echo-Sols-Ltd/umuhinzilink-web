@@ -16,7 +16,7 @@ export interface Notification {
     timestamp: string;
     isRead: boolean;
     type: NotificationType;
-    userId: string;
+    user: User;
 }
 
 export interface NotificationFilter {

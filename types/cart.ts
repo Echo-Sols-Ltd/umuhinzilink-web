@@ -44,21 +44,13 @@ export interface CartItemRequest {
 }
 
 export interface CartUpdateRequest {
-  quantity: number;
-  proposedPrice?: number;
+  stockQuantity: number;
 }
 
 export interface NegotiationItemRequest {
   cartItemId: string;
   proposedPrice: number;
   message: string;
-}
-
-export interface CartNegotiateRequest {
-  paymentMethod: PaymentMethod;
-  itemIds: string[];
-  negotiationItemIds: string[];
-  negotiationItems: NegotiationItemRequest[];
 }
 
 export interface CartCheckoutRequest {

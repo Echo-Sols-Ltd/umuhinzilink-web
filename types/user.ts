@@ -17,7 +17,6 @@ export enum BuyerType {
 export enum SupplierType {
   WHOLESALER = 'WHOLESALER',
   RETAILER = 'RETAILER',
-  AGGREGATOR = 'AGGREGATOR',
   COOPERATIVE = 'COOPERATIVE',
   PROCESSOR = 'PROCESSOR',
 }

@@ -26,10 +26,11 @@ export enum PaymentMethod {
 }
 
 export enum DeliveryStatus {
-  PENDING = 'PENDING',
-  IN_TRANSIT = 'IN_TRANSIT',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED'
+  SCHEDULED,
+  IN_TRANSIT,
+  DELIVERED,
+  FAILED,
+  CANCELLED
 }
 
 export interface DeliveryStep {
@@ -67,6 +68,7 @@ export interface OrderRequest {
   productId: string;
   quantity: number;
   totalPrice: number;
+  proposedPrice?: number;
   orderType: OrderType;
   paymentMethod: PaymentMethod;
 }
