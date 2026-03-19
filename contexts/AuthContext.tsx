@@ -115,7 +115,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await buyerService.getMe();
       if (!res.success) {
-        router.replace('/auth/buyer');
+        router.replace('/auth/signin');
         return;
       }
       if (res.data) {
@@ -169,7 +169,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (user.role === UserType.BUYER) {
         const buyerData = getStoredData<Buyer>(STORAGE_KEYS.BUYER);
         if (!buyerData) {
-          router.replace('/auth/buyer');
+          router.replace('/auth/signin');
           setLoading(false);
           return;
         }
