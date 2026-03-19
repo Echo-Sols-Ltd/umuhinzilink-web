@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useI18n } from '@/contexts/I18nContext';
-import { ShoppingCart, User as UserIcon } from 'lucide-react';
+import { Package, ShoppingCart, User as UserIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useRouter } from 'next/navigation';
@@ -14,10 +14,7 @@ export default function Navbar() {
   const { getCartItemCount } = useCart();
   const cartItemCount = getCartItemCount();
 
-  const handleDashboardNavigation = () => {
-    if (!user) return
-    router.push(`/${user?.role.toLowerCase()}/dashboard`)
-  }
+
   useEffect(() => {
     const handleScroll = () => {
       const sections = [
@@ -73,6 +70,13 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center space-x-4">
+
+           <Link href={`${user?.role.toLowerCase()}/orders`} className="relative p-2 text-foreground hover:text-success transition-colors flex">
+            <Package className="w-6 h-6" />
+            Orders
+          </Link>
+
+
           <Link href="/cart" className="relative p-2 text-foreground hover:text-success transition-colors">
             <ShoppingCart className="w-6 h-6" />
             {cartItemCount > 0 && (
