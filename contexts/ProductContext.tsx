@@ -4,7 +4,7 @@ import {
   Product,
   ProductStatus,
 } from '@/types';
-import type { FarmerProductRequest, SupplierProductRequest } from '@/types';
+import type { ProductRequest } from '@/types';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
 import { notify } from '@/lib/notify';
@@ -25,8 +25,8 @@ type ProductContextValue = {
   updateProductState: (id: string, data: Partial<Product>) => void;
   removeMyProduct: (id: string) => void;
   
-  createFarmerProduct: (payload: FarmerProductRequest, image: File) => Promise<void>;
-  createSupplierProduct: (payload: SupplierProductRequest) => Promise<void>;
+  createFarmerProduct: (payload: ProductRequest, image: File) => Promise<void>;
+  createSupplierProduct: (payload: ProductRequest) => Promise<void>;
   saveProduct: (id: string, payload: any) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   
@@ -320,7 +320,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Creation/Updating/Deletion methods (Server-side)
-  const createFarmerProduct = async (payload: FarmerProductRequest, image: File) => {
+  const createFarmerProduct = async (payload: ProductRequest, image: File) => {
     try {
       setMutationLoading(true);
       const imgRes = await productService.uploadProductPhoto(image);
@@ -341,7 +341,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const createSupplierProduct = async (payload: SupplierProductRequest) => {
+  const createSupplierProduct = async (payload: ProductRequest) => {
     try {
       setMutationLoading(true);
       const res = await productService.createProduct(payload);

@@ -49,7 +49,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
     const handleAction = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (isProductOwner) {
-            router.push(`/${user?.role?.toLowerCase()}/products/${product.id}/edit`);
+            router.push(`/products/${product.id}/edit`);
         } else {
             if (!user) {
                 notify.error(t('productCard.loginToBuy'), t('auth.required'));
@@ -128,7 +128,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                     </span>
                     <div className="flex items-center gap-1.5 px-2 py-0.5 bg-primary/5 rounded-full text-xs font-bold text-primary border border-primary/10">
                         <Package className="w-3 h-3" />
-                        {product.quantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}`
+                        {product.stockQuantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}`
                             ? product.measurementUnit
                             : t(`enums.units.${product.measurementUnit}`)}
                     </div>

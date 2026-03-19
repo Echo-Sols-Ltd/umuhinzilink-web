@@ -110,7 +110,7 @@ export interface Product {
   image: string;
   location: string;
   district: District;
-  quantity: number;
+  stockQuantity: number;
   isNegotiable: boolean;
   productType: ProductType;
   certification: CertificationType;
