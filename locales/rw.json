@@ -4,6 +4,7 @@
     "description": "UmuhinziLink ni urubuga rufasha abahinzi kugurisha umusaruro wabo ku baguzi."
   },
   "common": {
+    "dashboard":"Dashboard",
     "back": "Subira inyuma",
     "backToSettings": "Subira ku igenamiterere",
     "goBack": "Subira inyuma",

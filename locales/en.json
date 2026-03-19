@@ -4,6 +4,7 @@
     "description": "UmuhinziLink is a platform for farmers to sell their products to buyers."
   },
   "common": {
+    "dashboard":"Dashboard",
     "back": "Back",
     "backToSettings": "Back to Settings",
     "goBack": "Go back",
