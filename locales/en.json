@@ -305,7 +305,8 @@
       "error": "Failed to register."
     },
     "fields": {
-      "fullName": "Full Name",
+      "firstName": "First Name",
+      "lastName": "Last Name",
       "email": "Email",
       "emailAddress": "Email Address",
       "phoneNumber": "Phone Number",
@@ -313,7 +314,8 @@
       "password": "Password"
     },
     "placeholders": {
-      "fullName": "John Doe",
+      "firstName": "John",
+      "lastName": "Doe",
       "email": "you@example.com",
       "enterYourEmail": "Enter your email",
       "phoneNumber": "+250 7...",

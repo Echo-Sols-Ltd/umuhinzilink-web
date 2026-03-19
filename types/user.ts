@@ -135,9 +135,11 @@ export interface Supplier {
 }
 
 export interface UserRequest {
-  names: string;
+  firstName: string;
+  lastName: string
   email: string;
   phoneNumber: string;
   password: string;
   role: UserType;
+  district: District;
 }

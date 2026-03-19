@@ -70,6 +70,7 @@ export default function VerifyPage() {
 
     const handleResend = async () => {
         await askOtpCode();
+        setOtp(['', '', '', '']);
         setTimer(120);
     };
 

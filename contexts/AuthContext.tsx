@@ -81,7 +81,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
 
       // Redirect to login page
-      router.push('/auth/signin');
+      router.push('/');
     };
 
     // Register the logout callback with apiClient
@@ -227,7 +227,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
         const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
         if (fetcher) await fetcher();
-        router.replace('/dashboard');
+        router.replace('/');
       }
     } catch {
       notify.error('Please try again', 'Error logging in');
@@ -264,7 +264,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
         if (fetcher) await fetcher();
 
-      router.replace('/dashboard');
+      router.replace('/');
       }
     } catch {
       notify.error('Please try again', 'Error logging in');
@@ -288,6 +288,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
         setUser(res.data.user);
+        notify.success('Register Success', 'User registered successfully');
         await loadAuthState();
       }
     } catch {
@@ -313,6 +314,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
         setUser(res.data.user);
+        notify.success('Register Success', 'User registered successfully');
         await loadAuthState();
       }
     } catch {
@@ -336,6 +338,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data) {
         localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(res.data));
         setBuyer(res.data);
+        notify.success('Register Success', 'User registered successfully');
         router.replace('/');
       }
     } catch {
@@ -359,6 +362,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data) {
         localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data));
         setSupplier(res.data);
+        notify.success('Register Success', 'User registered successfully');
         router.replace('/');
       }
     } catch {
@@ -382,6 +386,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data) {
         localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(res.data));
         setFarmer(res.data);
+        notify.success('Register Success', 'User registered successfully');
         router.replace('/');
       }
     } catch {
@@ -406,6 +411,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         const updatedUser = { ...user, isVerified: true };
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
         setUser(updatedUser);
+        notify.success('Verify Success', 'User verified successfully');
         await loadAuthState();
       }
     } catch {
@@ -424,6 +430,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!res.success) {
         notify.error(res.message, 'Ask OTP Failed');
       }
+      notify.success('Ask OTP Success', 'OTP sent successfully');
     } catch {
       notify.error('Please try again', 'Error asking for OTP');
     } finally {

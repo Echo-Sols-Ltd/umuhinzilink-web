@@ -305,7 +305,8 @@
       "error": "Ntibishoboye kwiyandikisha."
     },
     "fields": {
-      "fullName": "Amazina yuzuye",
+      "firstName": "Izina rya mbere",
+      "lastName": "Izina rya kabiri",
       "email": "Imeri",
       "emailAddress": "Aderesi ya imeri",
       "phoneNumber": "Nimero ya telefone",
@@ -313,8 +314,9 @@
       "password": "Ijambo banga"
     },
     "placeholders": {
-      "fullName": "John Doe",
-      "email": "you@example.com",
+      "firstName": "Yohana",
+      "lastName": "Dowe",
+      "email": "wowe@urugero.com",
       "enterYourEmail": "Andika imeri yawe",
       "phoneNumber": "+250 7...",
       "passwordDots": "••••••••"

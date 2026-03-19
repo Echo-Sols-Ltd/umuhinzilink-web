@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { UserRequest, UserType } from '@/types';
-import LanguageSelector from '@/components/auth/LanguageSelector';
+import { District, UserRequest, UserType } from '@/types';
 import AuthFooter from '@/components/auth/AuthFooter';
 import GoogleRoleSelectionModal from '@/components/auth/GoogleRoleSelectionModal';
 import GoogleLogin from '@/components/GoogleLogin';
@@ -24,24 +23,38 @@ export default function SignUp() {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState<UserRequest>({
-    names: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phoneNumber: '',
     password: '',
     role: UserType.FARMER,
+    district: District.KICUKIRO
   });
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
-    names: '', email: '', phoneNumber: '', password: '', role: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    role: '',
+    district: ''
   });
   const [touched, setTouched] = useState({
-    names: false, email: false, phoneNumber: false, password: false, agreeToTerms: false, role: false,
+    firstName: false,
+    lastName: false,
+    email: false,
+    phoneNumber: false,
+    password: false,
+    agreeToTerms: false,
+    role: false,
+    district: false,
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (googleToken) {
-      console.log("wow is it working")
       setShowRoleModal(true);
     }
   }, [googleToken]);
@@ -66,10 +79,6 @@ export default function SignUp() {
 
   };
 
-  const socialLinks = [
-    { icon: <BiLogoFacebookCircle size={22} />, link: 'https://facebook.com' },
-    { icon: <BiLogoGoogle size={22} />, link: 'https://google.com' },
-  ];
 
   const accountTypes = [
     { value: UserType.FARMER, labelKey: 'auth.accountTypes.farmer' },
@@ -77,7 +86,7 @@ export default function SignUp() {
     { value: UserType.BUYER, labelKey: 'auth.accountTypes.buyer' },
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (fieldErrors[name as keyof typeof fieldErrors]) setFieldErrors(prev => ({ ...prev, [name]: '' }));
@@ -124,14 +133,15 @@ export default function SignUp() {
 
   const validateForm = () => {
     const ok =
-      validateField('names', formData.names) &&
+      validateField('firstName', formData.firstName) &&
+      validateField('lastName', formData.lastName) &&
       validateField('email', formData.email) &&
       validateField('phoneNumber', formData.phoneNumber) &&
       validateField('password', formData.password) &&
       validateField('agreeToTerms', agreeToTerms) &&
       validateField('role', formData.role);
     setTouched({
-      names: true, email: true, phoneNumber: true, password: true, agreeToTerms: true, role: true,
+      firstName: true, lastName: true, email: true, phoneNumber: true, district: true, password: true, agreeToTerms: true, role: true,
     });
     return ok;
   };
@@ -180,19 +190,34 @@ export default function SignUp() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Names Field */}
             <div>
-              <Label htmlFor="names" className="text-sm">{t('auth.fields.fullName')}</Label>
+              <Label htmlFor="names" className="text-sm">{t('auth.fields.firstName')}</Label>
               <Input
-                id="names"
-                name="names"
+                id="firstName"
+                name="firstName"
                 type="text"
-                placeholder={t('auth.placeholders.fullName')}
-                value={formData.names}
+                placeholder={t('auth.placeholders.firstName')}
+                value={formData.firstName}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`mt-1 ${touched.names && fieldErrors.names ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
+                className={`mt-1 ${touched.firstName && fieldErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
               />
-              {touched.names && fieldErrors.names && <p className="text-xs text-red-500 mt-1">{fieldErrors.names}</p>}
+              {touched.firstName && fieldErrors.firstName && <p className="text-xs text-red-500 mt-1">{fieldErrors.firstName}</p>}
+            </div>
+            <div>
+              <Label htmlFor="names" className="text-sm">{t('auth.fields.lastName')}</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder={t('auth.placeholders.lastName')}
+                value={formData.lastName}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                disabled={loading}
+                className={`mt-1 ${touched.lastName && fieldErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
+              />
+              {touched.lastName && fieldErrors.lastName && <p className="text-xs text-red-500 mt-1">{fieldErrors.lastName}</p>}
             </div>
 
             {/* Email Field */}
@@ -227,6 +252,19 @@ export default function SignUp() {
                 className={`mt-1 ${touched.phoneNumber && fieldErrors.phoneNumber ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
               />
               {touched.phoneNumber && fieldErrors.phoneNumber && <p className="text-xs text-red-500 mt-1">{fieldErrors.phoneNumber}</p>}
+            </div>
+            <div>
+              <Label className="text-foreground font-medium text-sm">{t('auth.farmer.fields.farmSize')}</Label>
+              <select
+                name="district"
+                value={formData.district}
+                onChange={handleInputChange}
+                className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
+              >
+                <option value="">{t('auth.farmer.placeholders.selectFarmSize')}</option>
+                {Object.values(District).map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
+              </select>
+              {touched.district && fieldErrors.district && <p className="text-red-500 text-xs mt-1">{fieldErrors.district}</p>}
             </div>
 
             {/* Account Type */}
