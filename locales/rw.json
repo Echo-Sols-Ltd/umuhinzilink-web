@@ -4,7 +4,7 @@
     "description": "UmuhinziLink ni urubuga rufasha abahinzi kugurisha umusaruro wabo ku baguzi."
   },
   "common": {
-    "dashboard":"Dashboard",
+    "dashboard": "Dashboard",
     "back": "Subira inyuma",
     "backToSettings": "Subira ku igenamiterere",
     "goBack": "Subira inyuma",
@@ -225,15 +225,22 @@
       "ACCESSORIES": "Ibikoresho byongeweho"
     },
     "units": {
-      "KG": "KG",
-      "G": "G",
-      "TON": "TON",
+      "KG": "Ikiro",
+      "G": "Igarama",
+      "TON": "Toni",
       "LITER": "LITIRO",
       "ML": "ML",
       "BAG": "Umufuka",
       "CRATE": "Kesi",
-      "BUNDLE": "Umuriro",
-      "PIECE": "Igice"
+      "BUNDLE": "Umufungo",
+      "PIECE": "Igice",
+      "BAG_25KG": "25kg By'umufuka",
+      "BAG_50KG": "50kg By'umufuka",
+      "BAG_100KG": "100kg By'umufuka",
+      "BUNCH": "Umufungo",
+      "DOZEN": "Idozeni",
+      "JERRICAN": "Jerrican",
+      "SACK": "Agafuka"
     }
   },
   "sidebar": {
@@ -1488,26 +1495,26 @@
       "noSmartphone": "Nta smartphone? Nta kibazo! Koresha SMS mu Kinyarwanda"
     },
     "contact": {
-    "title": "Twandikire",
-    "getInTouch": "Tuvugishe",
-    "description": "Ufite ikibazo cyangwa ukeneye ubufasha? Batwandikire ukoresheje bumwe mu buryo bukurikira:",
-    "email": "Imeyili",
-    "phone": "Telefoni",
-    "location": "Aho duherereye",
-    "sendMessage": "Twandikire ubutumwa",
-    "yourName": "Izina ryawe",
-    "yourEmail": "Imeyili yawe",
-    "subject": "Intego",
-    "message": "Ubutumwa",
-    "sendAction": "Ohereza ubutumwa",
-    "placeholders": {
-      "name": "Izina ryawe hano",
-      "email": "imeyili@urugero.com",
-      "subject": "Intego y'ubutumwa",
-      "message": "Andika ubutumwa bwawe hano..."
-    }
-  },
-  "footer": {
+      "title": "Twandikire",
+      "getInTouch": "Tuvugishe",
+      "description": "Ufite ikibazo cyangwa ukeneye ubufasha? Batwandikire ukoresheje bumwe mu buryo bukurikira:",
+      "email": "Imeyili",
+      "phone": "Telefoni",
+      "location": "Aho duherereye",
+      "sendMessage": "Twandikire ubutumwa",
+      "yourName": "Izina ryawe",
+      "yourEmail": "Imeyili yawe",
+      "subject": "Intego",
+      "message": "Ubutumwa",
+      "sendAction": "Ohereza ubutumwa",
+      "placeholders": {
+        "name": "Izina ryawe hano",
+        "email": "imeyili@urugero.com",
+        "subject": "Intego y'ubutumwa",
+        "message": "Andika ubutumwa bwawe hano..."
+      }
+    },
+    "footer": {
       "description": "Dufasha abahinzi b'u Rwanda binyuze mu buhinzi bwa digitale n'ibisubizo bya AI.",
       "about": {
         "title": "Ibyerekeye",

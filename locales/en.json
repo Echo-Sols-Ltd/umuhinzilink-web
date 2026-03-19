@@ -4,7 +4,7 @@
     "description": "UmuhinziLink is a platform for farmers to sell their products to buyers."
   },
   "common": {
-    "dashboard":"Dashboard",
+    "dashboard": "Dashboard",
     "back": "Back",
     "backToSettings": "Back to Settings",
     "goBack": "Go back",
@@ -225,15 +225,21 @@
       "ACCESSORIES": "Accessories"
     },
     "units": {
-      "KG": "KG",
-      "G": "G",
-      "TON": "TON",
-      "LITER": "LITER",
-      "ML": "ML",
-      "BAG": "Bag",
+      "KG": "Kilogram",
+      "G": "Gram",
+      "TON": "Metric Ton",
+      "LITER": "Liter",
+      "ML": "Milliliter",
+      "BAG_25KG": "25kg Bag",
+      "BAG_50KG": "50kg Bag",
+      "BAG_100KG": "100kg Bag",
       "CRATE": "Crate",
       "BUNDLE": "Bundle",
-      "PIECE": "Piece"
+      "BUNCH": "Bunch",
+      "PIECE": "Piece",
+      "DOZEN": "Dozen",
+      "JERRICAN": "Jerrican",
+      "SACK": "Sack"
     }
   },
   "sidebar": {
