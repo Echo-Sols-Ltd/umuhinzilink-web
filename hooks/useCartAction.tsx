@@ -11,6 +11,8 @@ import {
   PaymentMethod,
   Order,
 } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 /**
  * useCartAction owns ALL cart mutations (POST / PUT / DELETE).
@@ -24,22 +26,13 @@ import {
  * CartContext is intentionally kept GET-only after this separation.
  */
 export const useCartAction = () => {
+  const { user } = useAuth()
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter()
   const { fetchCart, refreshCart, getItemsReadyForCheckout } = useCart();
 
-  // ── Internal helper ─────────────────────────────────────────────────────
 
-  /**
-   * Wraps any async cart mutation with:
-   * - Loading/error state management
-   * - Automatic cart refresh on success
-   * - Consistent error notification
-   *
-   * Note: <T,> trailing comma is required in .tsx files to prevent the
-   * TypeScript generic from being parsed as a JSX element.
-   */
   const withMutation = async <T,>(
     fn: () => Promise<T>,
     fallbackError: string
@@ -67,6 +60,11 @@ export const useCartAction = () => {
     proposedPrice?: number,
     message?: string
   ) => {
+    if (!user) {
+      notify.info('You need to login to start purchasing', 'Login required')
+      router.push("/auth/signin")
+      return
+    }
     const request: CartItemRequest = {
       productId,
       quantity,
