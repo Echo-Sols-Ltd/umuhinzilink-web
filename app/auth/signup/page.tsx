@@ -1,13 +1,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { BiLogoFacebookCircle, BiLogoGoogle } from 'react-icons/bi';
-import { useSession, signIn } from "next-auth/react";
+import { BiLogoFacebookCircle} from 'react-icons/bi';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
@@ -80,7 +78,7 @@ export default function SignUp() {
       if (!googleToken) return
       await registerGoogle({ role, token: googleToken });
       setShowRoleModal(false);
-      notify.success(t('auth.signUp.success'), t('common.success'));
+      notify.success(t('auth.signUp.primary'), t('common.primary'));
     } catch (error) {
       notify.error(t('auth.googleSignUp.error'), t('common.error'));
     } finally {
@@ -214,9 +212,9 @@ export default function SignUp() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`mt-1 ${touched.firstName && fieldErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
+                className={`mt-1 ${touched.firstName && fieldErrors.firstName ? 'border-error focus:ring-error' : 'focus:ring-primary'}`}
               />
-              {touched.firstName && fieldErrors.firstName && <p className="text-xs text-red-500 mt-1">{fieldErrors.firstName}</p>}
+              {touched.firstName && fieldErrors.firstName && <p className="text-xs text-error mt-1">{fieldErrors.firstName}</p>}
             </Field>
             <Field label={t('auth.fields.lastName')}>
               <Input
@@ -285,7 +283,7 @@ export default function SignUp() {
                     onClick={() => setFormData(p => ({ ...p, role: type.value }))}
                     className={`py-2 rounded-xl text-sm font-medium border transition
                     ${formData.role === type.value
-                        ? 'bg-sucess border-sucess text-white'
+                        ? 'bg-primary border-border text-white'
                         : 'bg-white border-zinc-200 text-zinc-600 hover:border-green-400'}`}>
                     {t(type.labelKey)}
                   </button>
@@ -316,21 +314,21 @@ export default function SignUp() {
             <div className="flex items-start gap-3 cursor-pointer">
               <input id='agree' type="checkbox" checked={agreeToTerms}
                 onChange={e => setAgreeToTerms(e.target.checked)}
-                className="mt-0.5 accent-sucess" />
+                className="mt-0.5 accent-primary" />
               <Label htmlFor='agree' className="text-sm leading-relaxed text-foreground cursor-pointer">{
                 t('auth.signUp.agreeToTerms')}
               </Label>
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full bg-success hover:bg-success/90" disabled={loading}>
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
               {loading ? t('auth.signUp.creatingAccount') : t('auth.signUp.signUp')}
             </Button>
 
             {/* Sign In Link */}
             <p className="text-sm text-center text-muted-foreground">
               {t('auth.signUp.alreadyHaveAccount')}{' '}
-              <Link href="/auth/signin" className="text-success font-semibold">{t('auth.signUp.signIn')}</Link>
+              <Link href="/auth/signin" className="text-primary font-semibold">{t('auth.signUp.signIn')}</Link>
             </p>
           </form>
           {/* Language Selector at Bottom */}
