@@ -21,7 +21,7 @@ interface ProductDetailProps {
   onShareProduct?: (product: Product) => void;
   onEditProduct?: (product: Product) => void;
   onDeleteProduct?: (productId: string) => void;
-  onPurchaseProduct?: (product: Product) => void;
+  onPurchaseProduct?: (product: Product, quantity: number) => void;
   isSaved?: boolean;
   showActions?: boolean;
   className?: string;
@@ -29,6 +29,7 @@ interface ProductDetailProps {
 
 import { useI18n } from '@/contexts/I18nContext';
 import Footer from '../Footer';
+import { useCartAction } from '@/hooks/useCartAction';
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
   product,
@@ -48,17 +49,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
-
   const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
-  const isOutOfStock = product.quantity === 0;
-  const isLowStock = product.quantity > 0 && product.quantity <= 10;
+  const isOutOfStock = product.stockQuantity === 0;
+  const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 10;
   const isOwner = user?.id === product.owner.id;
 
   // 🚀 Chat with Product Owner functionality
   const handleChatWithOwner = () => {
     if (!user) {
       // Redirect to login if not authenticated
-      router.push('/login');
+      router.push('/auth/signin');
       return;
     }
 
@@ -71,9 +71,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       return { text: t('buyer.productDetail.stock.outOfStock'), color: 'text-red-600', bgColor: 'bg-red-100' };
     }
     if (isLowStock) {
-      return { text: t('buyer.productDetail.stock.lowStock', { count: product.quantity }), color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
+      return { text: t('buyer.productDetail.stock.lowStock', { count: product.stockQuantity }), color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
     }
-    return { text: t('buyer.productDetail.stock.available', { count: product.quantity }), color: 'text-green-600', bgColor: 'bg-green-100' };
+    return { text: t('buyer.productDetail.stock.available', { count: product.stockQuantity }), color: 'text-green-600', bgColor: 'bg-green-100' };
   };
 
   const stockStatus = getStockStatus();
@@ -109,7 +109,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       </div>
 
       {/* Product Header */}
-      
+
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Product Images */}
@@ -153,47 +153,47 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           )}
         </div>
 
-        
+
 
         {/* Right Column */}
         <div className="space-y-6">
           <div className="space-y-3">
-        <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
-        
-        {/* Badges */}
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-            {t('buyer.productDetail.badges.freshHarvest')}
-          </Badge>
-          <Badge variant="outline" className="border-green-200 text-green-700">
-            {product.category}
-          </Badge>
-          <Badge variant="outline" className="border-blue-200 text-blue-700">
-            {product.location}
-          </Badge>
-        </div>
+            <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
 
-        {/* Rating and Stock */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className={cn('w-4 h-4', i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300')} />
-              ))}
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
+                {t('buyer.productDetail.badges.freshHarvest')}
+              </Badge>
+              <Badge variant="outline" className="border-green-200 text-green-700">
+                {product.category}
+              </Badge>
+              <Badge variant="outline" className="border-blue-200 text-blue-700">
+                {product.location}
+              </Badge>
             </div>
-            <span className="font-semibold">{t('buyer.productDetail.overallRating')}</span>
-            <span className="text-muted-foreground">{t('buyer.productDetail.reviews')}</span>
-          </div>
-          <div className={cn('px-3 py-1 rounded-full text-sm font-medium', stockStatus.bgColor, stockStatus.color)}>
-            In stock - {product.quantity} {product.measurementUnit} available
-          </div>
-        </div>
 
-        {/* Price */}
-        <div className="text-2xl font-bold text-foreground">
-          {formatPrice(product.unitPrice)} per {product.measurementUnit}
-        </div>
-      </div>
+            {/* Rating and Stock */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={cn('w-4 h-4', i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300')} />
+                  ))}
+                </div>
+                <span className="font-semibold">{t('buyer.productDetail.overallRating')}</span>
+                <span className="text-muted-foreground">{t('buyer.productDetail.reviews')}</span>
+              </div>
+              <div className={cn('px-3 py-1 rounded-full text-sm font-medium', stockStatus.bgColor, stockStatus.color)}>
+                In stock - {product.stockQuantity} {product.measurementUnit} available
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="text-2xl font-bold text-foreground">
+              {formatPrice(product.unitPrice)} per {product.measurementUnit}
+            </div>
+          </div>
           {/* Description */}
           <div className="space-y-3">
             <h3 className="text-lg font-semibold">{t('buyer.productDetail.description')}</h3>
@@ -209,7 +209,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('buyer.productDetail.details.weight')}</span>
-                  <span className="font-medium">{product.quantity} kg</span>
+                  <span className="font-medium">{product.stockQuantity} kg</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('buyer.productDetail.details.harvestDate')}</span>
@@ -259,13 +259,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                   className="w-20 text-center"
                   min="1"
-                  max={product.quantity}
+                  max={product.stockQuantity}
                 />
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setQuantity(Math.min(product.quantity, quantity + 1))}
-                  disabled={quantity >= product.quantity}
+                  onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}
+                  disabled={quantity >= product.stockQuantity}
                   className="w-8 h-8 p-0"
                 >
                   <Plus className="w-4 h-4" />
@@ -277,7 +277,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             {showActions && (
               <div className="space-y-3">
                 <Button
-                  onClick={() => onPurchaseProduct?.(product)}
+                  onClick={() => onPurchaseProduct?.(product,quantity)}
                   disabled={isOutOfStock}
                   className="w-full h-12 font-semibold shadow-lg shadow-success/20 hover:shadow-success/40 transition-all"
                   size="lg"
@@ -309,57 +309,57 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </div>
             )}
           </div>
-           {/* Sold By Section */}
-      <Card className="shadow-sm border-border">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">{t('buyer.productDetail.soldBy')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center border border-success/20">
-              <User className="w-8 h-8 text-success" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg text-foreground">{product.owner.firstName} {product.owner.lastName}</h3>
-              <p className="text-muted-foreground mb-3">
-                {product.location} • {productType === 'farmer' ? t('buyer.productDetail.farmerSince') : t('buyer.productDetail.supplierSince')} 2021
-              </p>
-              
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">4.9</span>
+          {/* Sold By Section */}
+          <Card className="shadow-sm border-border">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">{t('buyer.productDetail.soldBy')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center border border-success/20">
+                  <User className="w-8 h-8 text-success" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg text-foreground">{product.owner.firstName} {product.owner.lastName}</h3>
+                  <p className="text-muted-foreground mb-3">
+                    {product.location} • {productType === 'farmer' ? t('buyer.productDetail.farmerSince') : t('buyer.productDetail.supplierSince')} 2021
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-semibold">4.9</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{t('buyer.productDetail.sellerRating')}</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-semibold mb-1">243</div>
+                      <p className="text-xs text-muted-foreground">{t('buyer.productDetail.sales')}</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-semibold mb-1">98%</div>
+                      <p className="text-xs text-muted-foreground">{t('buyer.productDetail.onTimeDelivery')}</p>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">{t('buyer.productDetail.sellerRating')}</p>
-                </div>
-                <div className="text-center">
-                  <div className="font-semibold mb-1">243</div>
-                  <p className="text-xs text-muted-foreground">{t('buyer.productDetail.sales')}</p>
-                </div>
-                <div className="text-center">
-                  <div className="font-semibold mb-1">98%</div>
-                  <p className="text-xs text-muted-foreground">{t('buyer.productDetail.onTimeDelivery')}</p>
+
+                  <Button
+                    variant="outline"
+                    onClick={handleChatWithOwner}
+                    className="w-full border-success/30 hover:border-success/60 text-success hover:bg-success/10 transition-all font-medium"
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    {t('buyer.productDetail.messageSeller')}
+                  </Button>
                 </div>
               </div>
-
-              <Button
-                variant="outline"
-                onClick={handleChatWithOwner}
-                className="w-full border-success/30 hover:border-success/60 text-success hover:bg-success/10 transition-all font-medium"
-              >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                {t('buyer.productDetail.messageSeller')}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
         </div>
-        
+
       </div>
-     
+
       {/* Customer Reviews */}
       <Card className="shadow-sm border-border">
         <CardHeader>
@@ -378,7 +378,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </div>
               <span className="text-muted-foreground">(124 reviews)</span>
             </div>
-            
+
             {/* Rating Distribution */}
             <div className="space-y-2">
               {[5, 4, 3, 2, 1].map((rating) => (
@@ -386,7 +386,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   <span className="text-sm w-3">{rating}</span>
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <div 
+                    <div
                       className="bg-yellow-400 h-full rounded-full"
                       style={{ width: `${rating === 5 ? 70 : rating === 4 ? 20 : rating === 3 ? 5 : rating === 2 ? 3 : 2}%` }}
                     />
@@ -415,7 +415,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 Very good quality maize. Delivered on time to Kigali. Will order again next season.
               </p>
             </div>
-            
+
             <div className="border-b border-border/50 pb-4">
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-semibold">Niyonzima</span>
@@ -430,7 +430,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 Exactly as described. Well dried, no mold. Seller responded quickly to my questions.
               </p>
             </div>
-            
+
             <div className="pb-4">
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-semibold">Uwera</span>
@@ -471,12 +471,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           ))}
         </div>
       </div>
-      <NegotiationModal 
+      <NegotiationModal
         product={product}
         isOpen={isNegotiateModalOpen}
         onClose={() => setIsNegotiateModalOpen(false)}
       />
-      <Footer/>
+      <Footer />
     </div>
   );
 };

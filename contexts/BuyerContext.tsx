@@ -15,7 +15,7 @@ interface BuyerContextType {
 
 const BuyerContext = createContext<BuyerContextType | null>(null);
 
-function useBuyer(): BuyerContextType {
+export function useBuyer(): BuyerContextType {
   const context = useContext(BuyerContext);
   if (!context) {
     throw new Error('useBuyer must be used within an BuyerProvider');
@@ -23,7 +23,7 @@ function useBuyer(): BuyerContextType {
   return context;
 }
 
-function BuyerProvider({ children }: { children: React.ReactNode }) {
+export function BuyerProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { fetchBuyerProducts } = useProduct();
   const { fetchBuyerOrders } = useOrder();
@@ -62,5 +62,3 @@ function BuyerProvider({ children }: { children: React.ReactNode }) {
 
   return <BuyerContext.Provider value={value}>{children}</BuyerContext.Provider>;
 }
-
-export { BuyerProvider };

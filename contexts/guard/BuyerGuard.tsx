@@ -11,10 +11,9 @@ export default function BuyerGuard({ children }: { children: React.ReactNode }) 
     const router = useRouter();
 
     useEffect(() => {
-        if (loading) return; // Still initializing — wait
-
+        if (loading) return; 
         if (!user) {
-            router.replace('/auth/buyer');
+            router.replace('/auth/signin');
             return;
         }
 

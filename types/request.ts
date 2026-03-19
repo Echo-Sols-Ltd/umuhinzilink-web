@@ -11,13 +11,9 @@ import {
 } from './user';
 
 
-import { User } from './user';
-
 export interface FarmerRequest {
-  userId: string;
   farmSize: FarmSizeCategory;
   experienceLevel: ExperienceLevel;
-  district: District
 }
 
 export interface BuyerRequest {

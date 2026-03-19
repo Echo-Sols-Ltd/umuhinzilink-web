@@ -10,16 +10,7 @@ const STORAGE_KEYS = {
   CART: 'cart',
 };
 
-// ─── Context Type ────────────────────────────────────────────────────────────
 
-/**
- * CartContext is responsible ONLY for:
- * - Cart state (cart, loading, error)
- * - Fetching / refreshing the cart (GETs)
- * - Computed utilities derived from cart state
- *
- * All mutations (POST / PUT / DELETE) live in useCartAction.
- */
 type CartContextValue = {
   // State
   cart: Cart | null;
@@ -72,7 +63,6 @@ export function CartProvider({ children }: CartProviderProps) {
     setLoading(true);
     setError(null);
     try {
-      // Auto-cleanup expired negotiations silently before fetching
       await cartService.cleanupExpiredNegotiations();
 
       const response = await cartService.getCart();
@@ -96,8 +86,6 @@ export function CartProvider({ children }: CartProviderProps) {
   const refreshCart = useCallback(async () => {
     await fetchCart();
   }, [fetchCart]);
-
-  // ── Read-only item queries (GET) ────────────────────────────────────────
 
   const getItemsReadyForCheckout = useCallback(async (): Promise<CartItem[]> => {
     if (!user) return [];

@@ -34,38 +34,23 @@ export default function FarmerSignUp() {
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
   ];
 
-  const [farmerData, setFarmerData] = useState<FarmerRequest & { province: Province; crops: string[] }>({
-    userId: user?.id!,
+  const [farmerData, setFarmerData] = useState<FarmerRequest>({
     farmSize: FarmSizeCategory.SMALLHOLDER,
     experienceLevel: ExperienceLevel.LESS_THAN_1Y,
-    district: District.GASABO,
-    province: Province.KIGALI_CITY,
-    crops: [],
+
   });
 
   const [fieldErrors, setFieldErrors] = useState({
     farmSize: '',
     experienceLevel: '',
-    province: '',
-    district: '',
-    crops: '',
   });
 
   const [touched, setTouched] = useState({
     farmSize: false,
     experienceLevel: false,
-    province: false,
-    district: false,
-    crops: false,
   });
 
-  const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    // Clear field error when user starts typing
-    if (fieldErrors[name as keyof typeof fieldErrors]) {
-      setFieldErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
+
 
   const handleFarmerInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -99,30 +84,11 @@ export default function FarmerSignUp() {
     }
   };
 
-  const handleCropChange = (crop: string, isChecked: boolean) => {
-    setFarmerData(prev => ({
-      ...prev,
-      crops: isChecked
-        ? [...prev.crops, crop]
-        : prev.crops.filter(c => c !== crop),
-    }));
 
-    // Clear crops error when user selects/deselects
-    if (fieldErrors.crops) {
-      setFieldErrors(prev => ({ ...prev, crops: '' }));
-    }
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name } = e.target;
-    setTouched(prev => ({ ...prev, [name]: true }));
-    validateField(name, farmerData[name as keyof typeof farmerData]);
-  };
 
   const validateField = (name: string, value: string | boolean | any) => {
     let error = '';
 
-    const stringValue = typeof value === 'string' ? value : '';
 
     switch (name) {
 
@@ -166,19 +132,13 @@ export default function FarmerSignUp() {
   const validateForm = () => {
     const farmSizeValid = validateField('farmSize', farmerData.farmSize);
     const experienceValid = validateField('experienceLevel', farmerData.experienceLevel);
-    const provinceValid = validateField('province', farmerData.province);
-    const districtValid = validateField('district', farmerData.district);
-    const cropsValid = validateField('crops', farmerData.crops);
 
     setTouched({
       farmSize: true,
       experienceLevel: true,
-      province: true,
-      district: true,
-      crops: true,
     });
 
-    return farmSizeValid && experienceValid && provinceValid && districtValid && cropsValid;
+    return farmSizeValid && experienceValid;
   };
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,8 +184,7 @@ export default function FarmerSignUp() {
       }
 
       // Then register the farmer
-      const { province, crops, ...requestData } = farmerData;
-      await registerFarmer(requestData);
+      await registerFarmer(farmerData);
 
       notify.success(t('auth.farmer.success.accountCreated'), t('common.success'));
 
@@ -236,20 +195,12 @@ export default function FarmerSignUp() {
     }
   };
 
-  // Get districts for selected province
-  const getDistrictsForProvince = (province: Province) => {
-    return districtOptions.filter(district => {
-      return true;
-    });
-  };
+
 
   // Common Rwanda crops for selection
 
   const farmSizeOptions = ['SMALLHOLDER', 'MEDIUM', 'LARGE'];
   const experienceLevelOptions = ['LESS_THAN_1Y', '1_TO_3Y', 'MORE_THAN_3Y'];
-  const provinceOptions = ['KIGALI_CITY', 'EAST', 'WEST', 'NORTH', 'SOUTH'];
-  const districtOptions = ['GASABO', 'KANOMBE', 'NYARUGENGE', 'KICUKIRO'];
-  const commonCrops = ['MAIZE', 'DRY_BEANS', 'IRISH_POTATO', 'CASSAVA', 'TOMATO', 'CABBAGE', 'ONION', 'CARROT', 'COFFEE', 'TEA'];
 
 
   return (<>
@@ -349,58 +300,6 @@ export default function FarmerSignUp() {
                 {touched.experienceLevel && fieldErrors.experienceLevel && <p className="text-red-500 text-xs mt-1">{fieldErrors.experienceLevel}</p>}
               </div>
             </div>
-          </div>
-
-          {/* Location */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.farmer.farmLocation')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-foreground font-medium text-sm">{t('auth.buyer.fields.province')}</Label>
-                <select
-                  name="province"
-                  value={farmerData.province}
-                  onChange={handleFarmerInputChange}
-                  className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
-                >
-                  <option value="">{t('auth.buyer.placeholders.selectProvince')}</option>
-                  {provinceOptions.map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
-                </select>
-                {touched.province && fieldErrors.province && <p className="text-red-500 text-xs mt-1">{fieldErrors.province}</p>}
-              </div>
-              <div>
-                <Label className="text-foreground font-medium text-sm">{t('auth.buyer.fields.district')}</Label>
-                <select
-                  name="district"
-                  value={farmerData.district}
-                  onChange={handleFarmerInputChange}
-                  className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
-                >
-                  <option value="">{t('auth.buyer.placeholders.selectDistrict')}</option>
-                  {districtOptions.map(option => <option key={option} value={option}>{option}</option>)}
-                </select>
-                {touched.district && fieldErrors.district && <p className="text-red-500 text-xs mt-1">{fieldErrors.district}</p>}
-              </div>
-            </div>
-          </div>
-
-          {/* Crops */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.farmer.cropsYouGrow')}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-              {commonCrops.map(crop => (
-                <div key={crop} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={farmerData.crops.includes(crop as any)}
-                    onChange={(e) => handleCropChange(crop as any, e.target.checked)}
-                    className="rounded border-border text-success focus:ring-success"
-                  />
-                  <Label className="text-sm text-foreground">{crop.replace(/_/g, ' ')}</Label>
-                </div>
-              ))}
-            </div>
-            {touched.crops && fieldErrors.crops && <p className="text-red-500 text-xs mt-2">{fieldErrors.crops}</p>}
           </div>
 
           {/* Submit */}

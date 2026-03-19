@@ -1,22 +1,34 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { BiLogoFacebookCircle, BiLogoGoogle } from 'react-icons/bi';
-import { useSession, signIn } from "next-auth/react";
+import { BiLogoFacebookCircle} from 'react-icons/bi';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { UserRequest, UserType } from '@/types';
-import LanguageSelector from '@/components/auth/LanguageSelector';
+import { District, UserRequest, UserType } from '@/types';
 import AuthFooter from '@/components/auth/AuthFooter';
 import GoogleRoleSelectionModal from '@/components/auth/GoogleRoleSelectionModal';
 import GoogleLogin from '@/components/GoogleLogin';
+
+function Field({
+  label, error, children,
+}: { label: string; error?: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1">
+      <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider">
+        {label}
+      </label>
+      {children}
+      {error && <p className="text-xs text-red-500">{error}</p>}
+    </div>
+  );
+}
+
 
 export default function SignUp() {
   const { register, registerGoogle, googleToken } = useAuth();
@@ -24,24 +36,38 @@ export default function SignUp() {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState<UserRequest>({
-    names: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phoneNumber: '',
     password: '',
     role: UserType.FARMER,
+    district: District.KICUKIRO
   });
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
-    names: '', email: '', phoneNumber: '', password: '', role: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    role: '',
+    district: ''
   });
   const [touched, setTouched] = useState({
-    names: false, email: false, phoneNumber: false, password: false, agreeToTerms: false, role: false,
+    firstName: false,
+    lastName: false,
+    email: false,
+    phoneNumber: false,
+    password: false,
+    agreeToTerms: false,
+    role: false,
+    district: false,
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (googleToken) {
-      console.log("wow is it working")
       setShowRoleModal(true);
     }
   }, [googleToken]);
@@ -52,7 +78,7 @@ export default function SignUp() {
       if (!googleToken) return
       await registerGoogle({ role, token: googleToken });
       setShowRoleModal(false);
-      notify.success(t('auth.signUp.success'), t('common.success'));
+      notify.success(t('auth.signUp.primary'), t('common.primary'));
     } catch (error) {
       notify.error(t('auth.googleSignUp.error'), t('common.error'));
     } finally {
@@ -66,10 +92,6 @@ export default function SignUp() {
 
   };
 
-  const socialLinks = [
-    { icon: <BiLogoFacebookCircle size={22} />, link: 'https://facebook.com' },
-    { icon: <BiLogoGoogle size={22} />, link: 'https://google.com' },
-  ];
 
   const accountTypes = [
     { value: UserType.FARMER, labelKey: 'auth.accountTypes.farmer' },
@@ -77,7 +99,7 @@ export default function SignUp() {
     { value: UserType.BUYER, labelKey: 'auth.accountTypes.buyer' },
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (fieldErrors[name as keyof typeof fieldErrors]) setFieldErrors(prev => ({ ...prev, [name]: '' }));
@@ -124,14 +146,15 @@ export default function SignUp() {
 
   const validateForm = () => {
     const ok =
-      validateField('names', formData.names) &&
+      validateField('firstName', formData.firstName) &&
+      validateField('lastName', formData.lastName) &&
       validateField('email', formData.email) &&
       validateField('phoneNumber', formData.phoneNumber) &&
       validateField('password', formData.password) &&
       validateField('agreeToTerms', agreeToTerms) &&
       validateField('role', formData.role);
     setTouched({
-      names: true, email: true, phoneNumber: true, password: true, agreeToTerms: true, role: true,
+      firstName: true, lastName: true, email: true, phoneNumber: true, district: true, password: true, agreeToTerms: true, role: true,
     });
     return ok;
   };
@@ -155,7 +178,7 @@ export default function SignUp() {
         <div className="w-full max-w-md flex flex-col justify-center">
           {/* Logo/Brand */}
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-linear-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 bg-linear-to-br from-green-400 to-sucess rounded-2xl flex items-center justify-center shadow-lg">
               <span className="text-white text-xl font-bold">UL</span>
             </div>
           </div>
@@ -179,25 +202,37 @@ export default function SignUp() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Names Field */}
-            <div>
-              <Label htmlFor="names" className="text-sm">{t('auth.fields.fullName')}</Label>
+            <Field label={t('auth.fields.firstName')}>
               <Input
-                id="names"
-                name="names"
+                id="firstName"
+                name="firstName"
                 type="text"
-                placeholder={t('auth.placeholders.fullName')}
-                value={formData.names}
+                placeholder={t('auth.placeholders.firstName')}
+                value={formData.firstName}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`mt-1 ${touched.names && fieldErrors.names ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
+                className={`mt-1 ${touched.firstName && fieldErrors.firstName ? 'border-error focus:ring-error' : 'focus:ring-primary'}`}
               />
-              {touched.names && fieldErrors.names && <p className="text-xs text-red-500 mt-1">{fieldErrors.names}</p>}
-            </div>
+              {touched.firstName && fieldErrors.firstName && <p className="text-xs text-error mt-1">{fieldErrors.firstName}</p>}
+            </Field>
+            <Field label={t('auth.fields.lastName')}>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder={t('auth.placeholders.lastName')}
+                value={formData.lastName}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                disabled={loading}
+                className={`mt-1 ${touched.lastName && fieldErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
+              />
+              {touched.lastName && fieldErrors.lastName && <p className="text-xs text-red-500 mt-1">{fieldErrors.lastName}</p>}
+            </Field>
 
             {/* Email Field */}
-            <div>
-              <Label htmlFor="email" className="text-sm">{t('auth.fields.email')}</Label>
+            <Field label={t('auth.fields.email')}>
               <Input
                 id="email"
                 name="email"
@@ -210,11 +245,10 @@ export default function SignUp() {
                 className={`mt-1 ${touched.email && fieldErrors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
               />
               {touched.email && fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
-            </div>
+            </Field>
 
             {/* Phone Field */}
-            <div>
-              <Label htmlFor="phoneNumber" className="text-sm">{t('auth.fields.phoneNumber')}</Label>
+            <Field label={t('auth.fields.phoneNumber')}>
               <Input
                 id="phoneNumber"
                 name="phoneNumber"
@@ -227,29 +261,38 @@ export default function SignUp() {
                 className={`mt-1 ${touched.phoneNumber && fieldErrors.phoneNumber ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
               />
               {touched.phoneNumber && fieldErrors.phoneNumber && <p className="text-xs text-red-500 mt-1">{fieldErrors.phoneNumber}</p>}
-            </div>
+            </Field>
+            <Field label={t('auth.farmer.fields.farmSize')}>
+              <select
+                name="district"
+                value={formData.district}
+                onChange={handleInputChange}
+                className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
+              >
+                <option value="">{t('auth.farmer.placeholders.selectFarmSize')}</option>
+                {Object.values(District).map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
+              </select>
+              {touched.district && fieldErrors.district && <p className="text-red-500 text-xs mt-1">{fieldErrors.district}</p>}
+            </Field>
 
             {/* Account Type */}
-            <div>
-              <Label className="text-sm">{t('auth.fields.accountType')}</Label>
-              <div className="flex gap-4 mt-2 mb-4">
+            <Field label={t('auth.fields.accountType')}>
+              <div className="grid grid-cols-3 gap-2">
                 {accountTypes.map(type => (
-                  <div key={type.value} className="flex items-center gap-2">
-                    <Switch
-                      id={type.value}
-                      checked={formData.role === type.value}
-                      onCheckedChange={() => setFormData(prev => ({ ...prev, role: type.value }))}
-                      className="data-[state=checked]:bg-green-600"
-                    />
-                    <span className="text-foreground text-sm">{t(type.labelKey)}</span>
-                  </div>
+                  <button key={type.value} type='button'
+                    onClick={() => setFormData(p => ({ ...p, role: type.value }))}
+                    className={`py-2 rounded-xl text-sm font-medium border transition
+                    ${formData.role === type.value
+                        ? 'bg-primary border-border text-white'
+                        : 'bg-white border-zinc-200 text-zinc-600 hover:border-green-400'}`}>
+                    {t(type.labelKey)}
+                  </button>
                 ))}
               </div>
-            </div>
+            </Field>
 
             {/* Password Field */}
-            <div className="relative">
-              <Label htmlFor="password" className="text-sm">{t('auth.fields.password')}</Label>
+            <Field label={t('auth.fields.password')}>
               <Input
                 id="password"
                 name="password"
@@ -265,23 +308,27 @@ export default function SignUp() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
               {touched.password && fieldErrors.password && <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>}
-            </div>
+            </Field>
 
             {/* Terms Agreement */}
-            <div className="flex items-center gap-2">
-              <Switch checked={agreeToTerms} onCheckedChange={setAgreeToTerms} className="data-[state=checked]:bg-green-600" />
-              <Label className="text-sm text-foreground">{t('auth.signUp.agreeToTerms')}</Label>
+            <div className="flex items-start gap-3 cursor-pointer">
+              <input id='agree' type="checkbox" checked={agreeToTerms}
+                onChange={e => setAgreeToTerms(e.target.checked)}
+                className="mt-0.5 accent-primary" />
+              <Label htmlFor='agree' className="text-sm leading-relaxed text-foreground cursor-pointer">{
+                t('auth.signUp.agreeToTerms')}
+              </Label>
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full bg-success hover:bg-success/90" disabled={loading}>
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
               {loading ? t('auth.signUp.creatingAccount') : t('auth.signUp.signUp')}
             </Button>
 
             {/* Sign In Link */}
             <p className="text-sm text-center text-muted-foreground">
               {t('auth.signUp.alreadyHaveAccount')}{' '}
-              <Link href="/auth/signin" className="text-success font-semibold">{t('auth.signUp.signIn')}</Link>
+              <Link href="/auth/signin" className="text-primary font-semibold">{t('auth.signUp.signIn')}</Link>
             </p>
           </form>
           {/* Language Selector at Bottom */}

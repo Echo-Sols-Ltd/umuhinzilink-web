@@ -6,7 +6,7 @@ import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2, ArrowLeft, Package, DollarSign, MapPin, ImageIcon, Eye, Info, Upload, Check } from 'lucide-react';
-import { CertificationType, FarmerProductRequest, MeasurementUnit, ProductCategory, UserType } from '@/types';
+import { CertificationType, MeasurementUnit, ProductCategory, ProductRequest, UserType } from '@/types';
 import { useProduct } from '@/contexts/ProductContext';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import {
@@ -22,13 +22,11 @@ function AddProduce() {
   const router = useRouter();
   const { user } = useAuth();
   const { createFarmerProduct } = useProduct();
-  const [formData, setFormData] = useState<FarmerProductRequest>({
+  const [formData, setFormData] = useState<ProductRequest>({
     name: '',
     quantity: 0,
     unitPrice: 0,
     measurementUnit: MeasurementUnit.KG,
-    location: '',
-    harvestDate: '',
     category: ProductCategory.FRUITS,
     description: '',
     isNegotiable: false,
@@ -97,7 +95,7 @@ function AddProduce() {
 
     try {
       // Create product object for context
-      const productData: FarmerProductRequest = {
+      const productData: ProductRequest = {
         name: formData.name.trim() as string,
         description: formData.description || '',
         unitPrice: Number(formData.unitPrice) || 0,
@@ -105,8 +103,6 @@ function AddProduce() {
         quantity: Number(formData.quantity) || 0,
         measurementUnit: formData.measurementUnit as MeasurementUnit,
         category: formData.category as ProductCategory,
-        harvestDate: formData.harvestDate ? new Date(formData.harvestDate).toISOString() : '',
-        location: formData.location,
         isNegotiable: formData.isNegotiable,
         certification: formData.certification as CertificationType,
       };
@@ -127,13 +123,13 @@ function AddProduce() {
         userType={UserType.FARMER}
         activeItem='Products'
       />
-      
+
       <main className="flex-1 overflow-hidden">
         {/* Header */}
         <div className="bg-card border-b border-border py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-            
+
               <div className="h-6 w-px bg-border"></div>
               <div>
                 <h1 className="text-2xl font-semibold text-foreground">Add New Produce</h1>
@@ -178,7 +174,7 @@ function AddProduce() {
                           className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Category <span className="text-destructive">*</span>
@@ -188,9 +184,9 @@ function AddProduce() {
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
-                            {Object.values(ProductCategory).map((category) => (
-                              <SelectItem key={category} value={category}>
-                                {category.replace(/_/g, ' ')}
+                            {Object.entries(ProductCategory).map(([key, value]) => (
+                              <SelectItem key={key} value={key}>
+                                {value.replace(/_/g, ' ')}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -241,7 +237,7 @@ function AddProduce() {
                           className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Measurement Unit <span className="text-destructive">*</span>
@@ -251,15 +247,15 @@ function AddProduce() {
                             <SelectValue placeholder="Select unit" />
                           </SelectTrigger>
                           <SelectContent>
-                            {Object.values(MeasurementUnit).map((unit) => (
-                              <SelectItem key={unit} value={unit}>
-                                {unit}
+                            {Object.entries(MeasurementUnit).map(([key, value]) => (
+                              <SelectItem key={key} value={key}>
+                                {value}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Unit Price (RWF) <span className="text-destructive">*</span>
@@ -302,36 +298,6 @@ function AddProduce() {
                       <div>
                         <h2 className="text-lg font-semibold text-foreground">Location & Timing</h2>
                         <p className="text-sm text-muted-foreground">Where and when your produce is available</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          Location <span className="text-destructive">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="location"
-                          value={formData.location}
-                          onChange={handleChange}
-                          placeholder="e.g., Kigali, Gasabo District"
-                          required
-                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          Harvest Date <span className="text-destructive">*</span>
-                        </label>
-                        <input
-                          type="date"
-                          name="harvestDate"
-                          value={formData.harvestDate}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
-                        />
                       </div>
                     </div>
 
@@ -382,7 +348,7 @@ function AddProduce() {
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="text-center">
                         <input
                           type="file"
@@ -413,7 +379,7 @@ function AddProduce() {
                     >
                       Cancel
                     </Link>
-                    
+
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
@@ -421,7 +387,7 @@ function AddProduce() {
                       >
                         Save as Draft
                       </button>
-                      
+
                       <button
                         type="submit"
                         disabled={submitting}
@@ -507,16 +473,6 @@ function AddProduce() {
                         </div>
 
                         <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Location:</span>
-                            <span className="font-medium text-foreground">{formData.location || '—'}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Harvested:</span>
-                            <span className="font-medium text-foreground">
-                              {formData.harvestDate ? new Date(formData.harvestDate).toLocaleDateString() : '—'}
-                            </span>
-                          </div>
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Negotiable:</span>
                             <span className="font-medium text-foreground">

@@ -12,6 +12,7 @@ import { useToast } from '@/components/ui/use-toast';
 
 import { useI18n } from '@/contexts/I18nContext';
 import Navbar from '@/components/Navbar';
+import { useCartAction } from '@/hooks/useCartAction';
 
 export default function BuyerProductDetailPage() {
   const { t } = useI18n();
@@ -19,7 +20,7 @@ export default function BuyerProductDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
-  const { 
+  const {
     marketplaceProducts,
     currentProduct: contextProduct,
     setCurrentProduct,
@@ -27,6 +28,7 @@ export default function BuyerProductDetailPage() {
     loading: contextLoading,
     showOrderModal
   } = useProduct();
+  const { addProductToCart } = useCartAction()
   const [loading, setLoading] = useState(true);
   const [productType, setProductType] = useState<'farmer' | 'supplier'>('farmer');
   const [error, setError] = useState<string | null>(null);
@@ -37,10 +39,10 @@ export default function BuyerProductDetailPage() {
     const loadProduct = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         let foundProduct = marketplaceProducts?.find((p: Product) => p.id === productId);
-        
+
         if (!foundProduct && contextProduct?.id === productId) {
           foundProduct = contextProduct;
         }
@@ -52,7 +54,7 @@ export default function BuyerProductDetailPage() {
         } else {
           const { productService } = await import('@/services/products');
           const response = await productService.getProductById(productId);
-          
+
           if (response.success && response.data) {
             const data = response.data;
             setCurrentProduct(data);
@@ -125,8 +127,8 @@ export default function BuyerProductDetailPage() {
     }
   };
 
-  const handlePurchaseProduct = (product: Product) => {
-    showOrderModal(product, product.productType === ProductType.FARMER_PRODUCT ? 'farmer' : 'supplier');
+  const handlePurchaseProduct = (product: Product, quantity: number) => {
+    addProductToCart(product.id, quantity)
   };
 
   const currentProduct = contextProduct;
@@ -134,7 +136,7 @@ export default function BuyerProductDetailPage() {
   if (loading) {
     return (
       <div className="flex h-screen bg-background">
-        <Navbar/>
+        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
@@ -148,7 +150,7 @@ export default function BuyerProductDetailPage() {
   if (error || !currentProduct) {
     return (
       <div className="flex h-screen bg-background">
-        <Navbar/>
+        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center p-6">
             <h1 className="text-2xl font-bold text-foreground mb-2">{t('buyer.productDetail.notFound')}</h1>
@@ -157,7 +159,7 @@ export default function BuyerProductDetailPage() {
               onClick={() => router.back()}
               className="px-6 py-2 bg-success text-primary-foreground rounded-lg hover:bg-success/90 transition-colors font-medium"
             >
-               {t('buyer.productDetail.goBack')}
+              {t('buyer.productDetail.goBack')}
             </button>
           </div>
         </main>
@@ -167,8 +169,8 @@ export default function BuyerProductDetailPage() {
 
   return (
     <div className="flex h-screen bg-background">
-      <Navbar/>
-      
+      <Navbar />
+
       <main className="flex-1 overflow-auto mt-20">
         <ProductDetail
           product={currentProduct}

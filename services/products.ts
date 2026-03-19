@@ -1,19 +1,18 @@
 import {
   Product,
-  FarmerProductRequest,
+  ProductRequest,
   ApiResponse,
   PaginatedResponse,
-  SupplierProductRequest,
 } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
 class ProductService {
-  async createProduct(payload: FarmerProductRequest | SupplierProductRequest): Promise<ApiResponse<Product>> {
+  async createProduct(payload: ProductRequest): Promise<ApiResponse<Product>> {
     return await apiClient.post<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.CREATE, payload);
   }
 
-  async updateProduct(id: string, payload: FarmerProductRequest | SupplierProductRequest): Promise<ApiResponse<Product>> {
+  async updateProduct(id: string, payload: ProductRequest): Promise<ApiResponse<Product>> {
     return await apiClient.put<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.UPDATE(id), payload);
   }
 
