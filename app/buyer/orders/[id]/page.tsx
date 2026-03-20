@@ -12,17 +12,18 @@ import { notify } from '@/lib/notify';
 import { ArrowLeft, Truck, Calendar, Package, User, MapPin, CreditCard } from 'lucide-react';
 
 import { useI18n } from '@/contexts/I18nContext';
+import Navbar from '@/components/Navbar';
 
 function BuyerOrderDetailPage() {
   const { t, locale } = useI18n();
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { 
-    buyingOrders: buyerOrders, 
-    currentOrder: currentBuyerOrder, 
+  const {
+    buyingOrders: buyerOrders,
+    currentOrder: currentBuyerOrder,
     setCurrentOrder: setCurrentBuyerOrder,
-    fetchBuyingOrders: fetchBuyerOrders 
+    fetchBuyingOrders: fetchBuyerOrders
   } = useOrder();
 
   const [loading, setLoading] = useState(true);
@@ -39,16 +40,16 @@ function BuyerOrderDetailPage() {
   useEffect(() => {
     const loadOrder = async () => {
       setLoading(true);
-      
+
       try {
         // Step 1: Check if order is already in context lists
         let foundOrder = buyerOrders?.find(o => o.id === orderId);
-        
+
         // Step 2: Check if it's the current context order
         if (!foundOrder && currentBuyerOrder?.id === orderId) {
           foundOrder = currentBuyerOrder;
         }
-        
+
         if (foundOrder) {
           // ✅ Found in context - use immediately
           setCurrentBuyerOrder(foundOrder);
@@ -57,11 +58,11 @@ function BuyerOrderDetailPage() {
           // ❌ Not in context - fetch from server
           const { orderService } = await import('@/services/orders');
           const response = await orderService.getOrderById(orderId);
-          
+
           if (response.success && response.data) {
             // Store in context for future use and real-time updates
             setCurrentBuyerOrder(response.data);
-            
+
             // Refresh the list to include this order for future navigation
             fetchBuyerOrders();
           } else {
@@ -88,7 +89,7 @@ function BuyerOrderDetailPage() {
   if (loading) {
     return (
       <div className="flex h-screen bg-background">
-        <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
+        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-success"></div>
         </main>
@@ -99,7 +100,7 @@ function BuyerOrderDetailPage() {
   if (!currentBuyerOrder) {
     return (
       <div className="flex h-screen bg-background">
-        <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
+        <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center p-6">
             <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -122,7 +123,7 @@ function BuyerOrderDetailPage() {
 
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar userType={UserType.BUYER} activeItem='Purchases' />
+      <Navbar />
 
       <main className="flex-1 overflow-auto">
         {/* Header */}
@@ -259,7 +260,7 @@ function BuyerOrderDetailPage() {
             {currentBuyerOrder.delivery ? (
               <DeliveryTracker
                 delivery={currentBuyerOrder.delivery}
-                onUpdateStatus={() => {}} // Buyer cannot update delivery status
+                onUpdateStatus={() => { }} // Buyer cannot update delivery status
                 isLoading={false}
                 orderType="buyer"
                 isOrderOwner={false}
