@@ -37,6 +37,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { SidebarProps, SidebarItem, UserType } from '@/types';
 import { imageUrl } from '@/lib/utils';
+import Navbar from '../Navbar';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface NavGroup {
@@ -276,6 +277,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
 
     return (
         <>
+        <Navbar/>
             {/* ── Mobile hamburger ─────────────────────────────────── */}
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
