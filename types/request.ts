@@ -23,8 +23,6 @@ export interface BuyerRequest {
 }
 
 export interface SupplierRequest {
-  userId: string;
   businessName: string;
-  district: District;
   supplierType: SupplierType;
 }
