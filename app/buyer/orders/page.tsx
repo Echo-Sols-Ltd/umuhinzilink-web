@@ -181,7 +181,7 @@ function MyPurchasesComponent() {
       <Navbar />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-auto">
+      <div className="flex-1 flex flex-col overflow-auto mt-20">
         {/* Header */}
         <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
           <div>
