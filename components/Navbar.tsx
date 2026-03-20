@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useI18n } from '@/contexts/I18nContext';
-import { Package, ShoppingCart, User as UserIcon } from 'lucide-react';
+import { Package, ShoppingCart, User as UserIcon, Wallet } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useRouter } from 'next/navigation';
@@ -66,12 +66,13 @@ export default function Navbar() {
           >
             {t('landing.nav.aboutUs') || 'About Us'}
           </Link>
+
         </div>
 
         {/* Actions */}
         <div className="flex items-center space-x-4">
 
-           <Link href={`${user?.role.toLowerCase()}/orders`} className="relative p-2 text-foreground hover:text-success transition-colors flex">
+          <Link href={`${user?.role.toLowerCase()}/orders`} className="relative p-2 text-foreground hover:text-success transition-colors flex">
             <Package className="w-6 h-6" />
             Orders
           </Link>
@@ -86,6 +87,9 @@ export default function Navbar() {
             )}
           </Link>
 
+          <Link href="/wallet" className="elative p-2 text-foreground hover:text-success transition-colors">
+            <Wallet className="w-6 h-6" />
+          </Link>
           {user ? (
             <Link
               href={`/${user?.role.toLowerCase()}/dashboard`}
