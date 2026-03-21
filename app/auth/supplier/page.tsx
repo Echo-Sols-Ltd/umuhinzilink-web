@@ -32,35 +32,22 @@ export default function SupplierSignUp() {
     { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
   ];
 
-  const [supplierData, setSupplierData] = useState<SupplierRequest & { province: Province }>({
-    userId: user?.id!,
+  const [supplierData, setSupplierData] = useState<SupplierRequest>({
     businessName: '',
     supplierType: SupplierType.WHOLESALER,
-    district: District.GASABO,
-    province: Province.KIGALI_CITY,
   });
 
   const [fieldErrors, setFieldErrors] = useState({
     businessName: '',
     supplierType: '',
-    province: '',
-    district: '',
   });
 
   const [touched, setTouched] = useState({
     businessName: false,
     supplierType: false,
-    province: false,
-    district: false,
   });
 
-  const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    // Clear field error when user starts typing
-    if (fieldErrors[name as keyof typeof fieldErrors]) {
-      setFieldErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
+
 
   const handleSupplierInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -144,17 +131,13 @@ export default function SupplierSignUp() {
   const validateForm = () => {
     const businessNameValid = validateField('businessName', supplierData.businessName);
     const supplierTypeValid = validateField('supplierType', supplierData.supplierType);
-    const provinceValid = validateField('province', supplierData.province);
-    const districtValid = validateField('district', supplierData.district);
 
     setTouched({
       businessName: true,
       supplierType: true,
-      province: true,
-      district: true,
     });
 
-    return businessNameValid && supplierTypeValid && provinceValid && districtValid;
+    return businessNameValid && supplierTypeValid;
   };
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -200,7 +183,7 @@ export default function SupplierSignUp() {
       }
 
       // Then register the supplier
-      const { province, ...requestData } = supplierData;
+      const requestData = supplierData;
       await registerSupplier(requestData);
 
       notify.success(t('auth.supplier.success.accountCreated'), t('common.success'));
@@ -339,65 +322,6 @@ export default function SupplierSignUp() {
               </div>
             </div>
           </div>
-
-          {/* Business Location Section */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.supplier.businessLocation')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="province" className="text-foreground font-medium text-sm">
-                  {t('auth.buyer.fields.province')}
-                </Label>
-                <select
-                  id="province"
-                  name="province"
-                  value={supplierData.province}
-                  onChange={handleSupplierInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.province && fieldErrors.province
-                    ? 'border-destructive focus:border-destructive focus:ring-destructive'
-                    : 'border-border focus:border-success focus:ring-success'
-                    }`}
-                  required
-                >
-                  <option value="">{t('auth.buyer.placeholders.selectProvince')}</option>
-                  {provinceOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label.replace(/_/g, ' ')}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="district" className="text-foreground font-medium text-sm">
-                  {t('auth.buyer.fields.district')}
-                </Label>
-                <select
-                  id="district"
-                  name="district"
-                  value={supplierData.district}
-                  onChange={handleSupplierInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.district && fieldErrors.district
-                    ? 'border-destructive focus:border-destructive focus:ring-destructive'
-                    : 'border-border focus:border-success focus:ring-success'
-                    }`}
-                  required
-                >
-                  <option value="">{t('auth.buyer.placeholders.selectDistrict')}</option>
-                  {districtOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
           {/* Submit Button */}
           <div className="space-y-4">
             <Button

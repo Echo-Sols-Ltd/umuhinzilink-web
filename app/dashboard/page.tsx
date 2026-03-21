@@ -10,8 +10,6 @@ import { ProductDisplay } from '@/components/products/ProductDisplay';
 import { useI18n } from '@/contexts/I18nContext';
 
 export default function Home() {
-  const router = useRouter()
-  const { user } = useAuth()
   const { t } = useI18n()
   const { 
     marketplaceProducts, 
