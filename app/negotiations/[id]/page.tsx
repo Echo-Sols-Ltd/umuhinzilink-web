@@ -104,8 +104,8 @@ export default function NegotiationPage() {
   const buyerOrSeller: 'buyer' | 'seller' = user?.role === 'BUYER' ? 'buyer' : 'seller';
 
   return (
-    <div className="min-h-screen bg-[#FBFBFB]">
-      <Navbar />
+    <div className="h-screen bg-[#FBFBFB] overflow-auto">
+      {/* <Navbar /> */}
       
       {/* Mobile Top Mini-Bar */}
       <div className="lg:hidden sticky top-16 z-30 bg-white border-b border-gray-100 p-4 flex items-center justify-between shadow-sm">
@@ -124,7 +124,7 @@ export default function NegotiationPage() {
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 ">
         <div className="hidden lg:flex items-center justify-between mb-8">
             <button 
               onClick={() => router.back()}

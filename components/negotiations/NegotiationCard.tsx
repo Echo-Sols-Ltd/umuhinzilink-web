@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Negotiation, NegotiationStatus, CounterOfferRequest } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
+import { formatCurrency } from '@/lib/negotiation-utils';
 import { 
   MessageCircle, 
   CheckCircle, 
@@ -141,7 +142,7 @@ export default function NegotiationCard({
 
     if (price < minPrice || price > maxPrice) {
       notify.error(
-        `Offer must be between ${minPrice.toLocaleString()} and ${maxPrice.toLocaleString()} RWF (50%-150% of original price)`, 
+        `Offer must be between ${formatCurrency(minPrice)} and ${formatCurrency(maxPrice)} (50%-150% of original price)`, 
         'Invalid Counter Offer'
       );
       return;
@@ -173,68 +174,78 @@ export default function NegotiationCard({
     ? (Math.abs(priceDifference) / negotiation.buyerProposedPrice) * 100
     : 0;
 
+  const { product, buyer, quantity } = negotiation.order;
+
   return (
-    <div className={`bg-white rounded-xl border ${statusInfo.border} p-6 space-y-4 hover:shadow-lg transition-shadow`}>
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <div className={`w-8 h-8 ${statusInfo.bg} rounded-full flex items-center justify-center`}>
-              <StatusIcon className={`w-4 h-4 ${statusInfo.color}`} />
+    <div className={`bg-white rounded-xl border ${statusInfo.border} p-6 space-y-4 hover:shadow-lg transition-all`}>
+      {/* Header with Product Image */}
+      <div className="flex items-start gap-4">
+        <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-100 shrink-0 shadow-sm">
+          {product.image ? (
+            <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 font-black text-xs">
+              {product.name.substring(0, 2).toUpperCase()}
             </div>
-            <span className={`text-sm font-semibold ${statusInfo.color}`}>
+          )}
+        </div>
+        
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className={`w-6 h-6 ${statusInfo.bg} rounded-full flex items-center justify-center`}>
+              <StatusIcon className={`w-3 h-3 ${statusInfo.color}`} />
+            </div>
+            <span className={`text-[10px] font-black uppercase tracking-widest ${statusInfo.color}`}>
               {statusInfo.text}
             </span>
             {negotiation.isExpired && (
-              <span className="text-xs text-gray-500">(Expired)</span>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none bg-gray-50 px-1.5 py-0.5 rounded-md">Expired</span>
             )}
           </div>
           
-          <h3 className="font-bold text-lg text-gray-900">
-            {negotiation.order.product.name}
+          <h3 className="font-extrabold text-lg text-gray-900 leading-tight">
+            {product.name}
           </h3>
           
-          <p className="text-sm text-gray-600">
-            Quantity: {negotiation.order.quantity} units
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+            {quantity} {product.measurementUnit}
           </p>
         </div>
 
         <div className="text-right">
-          <p className="text-sm text-gray-500">Time Remaining</p>
-          <p className="font-semibold text-gray-900">
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 leading-none">Expires In</p>
+          <p className="text-xs font-black text-gray-900 tabular-nums">
             {negotiation.timeRemaining}
           </p>
         </div>
       </div>
 
       {/* Price Information */}
-      <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+      <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50/80 rounded-2xl border border-gray-100">
         <div>
-          <p className="text-xs text-gray-500 uppercase tracking-wider">Buyer Offer</p>
-          <div className="flex items-center gap-1 mt-1">
-            <DollarSign className="w-4 h-4 text-gray-600" />
-            <span className="font-bold text-gray-900">
-              {negotiation.buyerProposedPrice.toLocaleString()} RWF
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Starting Offer</p>
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-black text-gray-900">
+              {formatCurrency(negotiation.buyerProposedPrice)}
             </span>
           </div>
         </div>
         
         {negotiation.sellerResponsePrice && (
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Seller Response</p>
-            <div className="flex items-center gap-1 mt-1">
-              <DollarSign className="w-4 h-4 text-gray-600" />
-              <span className="font-bold text-gray-900">
-                {negotiation.sellerResponsePrice.toLocaleString()} RWF
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Last Move</p>
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-black text-gray-900">
+                {formatCurrency(negotiation.sellerResponsePrice)}
               </span>
               {priceDifference !== 0 && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5 bg-white px-1.5 py-0.5 rounded-full border border-gray-100 shadow-sm">
                   {priceDifference > 0 ? (
-                    <TrendingUp className="w-3 h-3 text-red-500" />
+                    <TrendingUp className="w-2.5 h-2.5 text-red-500" />
                   ) : (
-                    <TrendingDown className="w-3 h-3 text-green-500" />
+                    <TrendingDown className="w-2.5 h-2.5 text-green-500" />
                   )}
-                  <span className={`text-xs font-semibold ${
+                  <span className={`text-[9px] font-black tabular-nums ${
                     priceDifference > 0 ? 'text-red-500' : 'text-green-500'
                   }`}>
                     {priceDifferencePercent.toFixed(1)}%
@@ -246,11 +257,11 @@ export default function NegotiationCard({
         )}
       </div>
 
-      {/* Last Message */}
+      {/* Last Message Information */}
       {negotiation.lastMessage && (
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <span className="font-semibold">Latest Message:</span> {negotiation.lastMessage}
+        <div className="p-3.5 bg-blue-50/50 border border-blue-100/50 rounded-2xl">
+          <p className="text-xs text-blue-900/70 font-medium italic">
+            "{negotiation.lastMessage}"
           </p>
         </div>
       )}
