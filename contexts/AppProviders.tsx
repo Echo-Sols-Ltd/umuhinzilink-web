@@ -15,6 +15,7 @@ import { BrowserNotificationProvider } from './BrowserNotificationContext';
 import { ThemeProvider } from './ThemeContext';
 import GlobalOrderModal from '@/components/orders/GlobalOrderModal';
 import { CartProvider } from './CartContext';
+import { NegotiationProvider } from './NegotiationContext';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -32,7 +33,8 @@ export function AppProviders({ children }: AppProvidersProps) {
                   <ProductProvider>
                     <WalletProvider>
                       <OrderProvider>
-                        <MessageProvider> 
+                        <NegotiationProvider>
+                        <MessageProvider>
                           <ProfileProvider>
                             <CartProvider>
                               {children}
@@ -40,6 +42,7 @@ export function AppProviders({ children }: AppProvidersProps) {
                             <GlobalOrderModal />
                           </ProfileProvider>
                         </MessageProvider>
+                        </NegotiationProvider>
                       </OrderProvider>
                     </WalletProvider>
                   </ProductProvider>

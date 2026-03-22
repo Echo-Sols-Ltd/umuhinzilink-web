@@ -59,7 +59,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
   const isExpired = negotiation.status === NegotiationStatus.EXPIRED;
   const isEnded = isAccepted || isRejected || isExpired;
 
-  const counterLimitReached = negotiation.counterCount >= 3;
+  const counterLimitReached = false; // Cannot track without backend support in DTO for now
 
   if (isAccepted) {
     return (

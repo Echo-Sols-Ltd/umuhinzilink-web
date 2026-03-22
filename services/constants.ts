@@ -12,7 +12,7 @@ export const API_CONFIG = {
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
-    GOOGLE_LOGIN:'/auth/login/google',
+    GOOGLE_LOGIN: '/auth/login/google',
     REGISTER: '/auth/register',
     REGISTER_FARMER: '/auth/register/farmer',
     REGISTER_SUPPLIER: '/auth/register/supplier',
@@ -87,6 +87,12 @@ export const API_ENDPOINTS = {
     ACCEPT_SUPPLIER: (id: string) => `/orders/${id}/accept`,
     CANCEL_SUPPLIER: (id: string) => `/orders/${id}/reject`,
     UPDATE_SUPPLIER_STATUS: (id: string) => `/orders/${id}/status`,
+
+    NEGOTIATION: {
+      BUYER: '/orders/negotiations/buyer',
+      SELLER: '/orders/negotiations/seller',
+      BY_ID: (id: string) => `/orders/${id}/negotiations`,
+    }
   },
   ADMIN: {
     USERS: '/admin/users',

@@ -13,7 +13,7 @@ class NegotiationService {
   // Accept negotiation (seller action)
   async acceptNegotiation(orderId: string): Promise<ApiResponse<Negotiation>> {
     return await apiClient.put<ApiResponse<Negotiation>>(
-      `${API_ENDPOINTS.ORDER.BY_ID(orderId)}/negotiation/accept`
+      `${API_ENDPOINTS.ORDER.NEGOTIATION.BY_ID(orderId)}/accept`
     );
   }
 
@@ -36,14 +36,14 @@ class NegotiationService {
   // Get all negotiations for authenticated buyer
   async getBuyerNegotiations(page = 0, size = 10): Promise<PaginatedResponse<Negotiation[]>> {
     return await apiClient.get<PaginatedResponse<Negotiation[]>>(
-      `/api/v1/orders/negotiations/buyer?page=${page}&size=${size}`
+      `${API_ENDPOINTS.ORDER.NEGOTIATION.BUYER}?page=${page}&size=${size}`
     );
   }
 
   // Get all negotiations for authenticated seller
   async getSellerNegotiations(page = 0, size = 10): Promise<PaginatedResponse<Negotiation[]>> {
     return await apiClient.get<PaginatedResponse<Negotiation[]>>(
-      `/api/v1/orders/negotiations/seller?page=${page}&size=${size}`
+      `${API_ENDPOINTS.ORDER.NEGOTIATION.SELLER}?page=${page}&size=${size}`
     );
   }
 }
