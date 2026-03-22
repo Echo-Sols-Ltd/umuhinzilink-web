@@ -115,7 +115,9 @@ export default function NegotiationPage() {
             </button>
             <div>
                 <h1 className="font-bold text-gray-900 text-sm">{negotiation.order.product.name}</h1>
-                <p className="text-[10px] text-green-600 font-bold uppercase">{negotiation.status}</p>
+                <p className="text-[10px] text-green-600 font-bold uppercase">
+                  {negotiation.status === 'EXPIRED' && !negotiation.isExpired ? 'ACTIVE' : negotiation.status}
+                </p>
             </div>
         </div>
         <div className="text-right">

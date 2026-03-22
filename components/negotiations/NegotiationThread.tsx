@@ -90,7 +90,12 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
     }
   }, [messages]);
 
-  const otherPartyName = currentUserType === 'buyer' ? 'Amina Uwase' : 'Jean de Dieu';
+  const seller = negotiation.order.product.owner;
+  const buyer = negotiation.order.buyer;
+  const otherPartyName = currentUserType === 'buyer' 
+    ? (seller?.firstName + ' ' + seller?.lastName) 
+    : (buyer?.firstName + ' ' + buyer?.lastName);
+
   const statusColors = {
     [NegotiationStatus.PENDING]: 'bg-yellow-100 text-yellow-700 border-yellow-200',
     [NegotiationStatus.COUNTERED]: 'bg-blue-100 text-blue-700 border-blue-200',
@@ -99,6 +104,14 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
     [NegotiationStatus.EXPIRED]: 'bg-gray-100 text-gray-700 border-gray-200',
   };
 
+  const effectiveStatus = (negotiation.status === NegotiationStatus.EXPIRED && !negotiation.isExpired) 
+    ? NegotiationStatus.PENDING 
+    : negotiation.status;
+
+  const statusText = effectiveStatus === NegotiationStatus.PENDING && negotiation.status === NegotiationStatus.EXPIRED 
+    ? 'ACTIVE' 
+    : effectiveStatus;
+
   return (
     <div className="flex flex-col h-[calc(100vh-12rem)] bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Status Bar */}
@@ -106,9 +119,9 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
         <div className="flex items-center gap-3">
           <div className={cn(
             "px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
-            statusColors[negotiation.status]
+            statusColors[effectiveStatus]
           )}>
-            {negotiation.status}
+            {statusText}
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200">

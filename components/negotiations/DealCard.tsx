@@ -88,10 +88,10 @@ export const DealCard: React.FC<DealCardProps> = ({ negotiation }) => {
             </div>
             <div>
               <div className="flex items-center gap-1">
-                <span className="font-bold text-gray-900">Amina Uwase</span>
+                <span className="font-bold text-gray-900">{product.owner.firstName} {product.owner.lastName}</span>
               <BadgeCheck className="w-4 h-4 text-primary fill-primary/10" />
               </div>
-              <p className="text-xs text-gray-500">Premium Farmer</p>
+              <p className="text-xs text-gray-500">{product.owner.role}</p>
             </div>
           </div>
           <div className="text-right">
@@ -115,7 +115,7 @@ export const DealCard: React.FC<DealCardProps> = ({ negotiation }) => {
             <p className="text-[10px] text-gray-400 uppercase font-bold mb-1">Certification</p>
             <div className="flex items-center gap-1 bg-white p-1 rounded-md border border-gray-100">
                <CheckCircle2 className="w-3 h-3 text-green-500" />
-               <span className="text-sm font-bold text-gray-700">RICA Cert</span>
+                <span className="text-sm font-bold text-gray-700">{product.certification || 'Verified'}</span>
             </div>
           </div>
         </div>

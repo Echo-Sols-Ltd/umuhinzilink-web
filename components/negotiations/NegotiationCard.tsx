@@ -36,7 +36,13 @@ export default function NegotiationCard({
 
   // Get status styling
   const getStatusInfo = () => {
-    switch (negotiation.status) {
+    // Priority: If the backend says EXPIRED status but isExpired is false and there's time remaining,
+    // we treat it as PENDING for the user's sake.
+    const effectiveStatus = (negotiation.status === NegotiationStatus.EXPIRED && !negotiation.isExpired) 
+      ? NegotiationStatus.PENDING 
+      : negotiation.status;
+
+    switch (effectiveStatus) {
       case NegotiationStatus.PENDING:
         return {
           color: 'text-yellow-600',
