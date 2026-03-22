@@ -19,7 +19,7 @@ export default function NegotiationPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { getNegotiation, acceptNegotiation, rejectNegotiation, counterOffer } = useNegotiation();
-  const { messages: socketMessages, lastStatusUpdate } = useNegotiationSocket(params.id as string);
+  const { messages: socketMessages, lastStatusUpdate, sendMessage } = useNegotiationSocket(params.id as string);
   
   const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,6 +73,15 @@ export default function NegotiationPage() {
         result = await rejectNegotiation(negotiation.order.id, data?.message || 'Negotiation declined');
       } else if (action === 'GO_TO_CART') {
         router.push('/cart');
+      } else if (action === 'CHAT') {
+        sendMessage({
+          id: Math.random().toString(36).substr(2, 9), 
+          content: data.message,
+          type: 'CHAT',
+          timestamp: Date.now(),
+          isBuyer: user?.role === 'BUYER'
+        } as any);
+        return;
       }
 
       if (result) {

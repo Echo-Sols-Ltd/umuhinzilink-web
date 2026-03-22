@@ -50,7 +50,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
   onAction,
   isMyTurn
 }) => {
-  const [message, setMessage] = useState('');
+  const [chatMessage, setChatMessage] = useState('');
   const [price, setPrice] = useState(negotiation.sellerResponsePrice || negotiation.buyerProposedPrice);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -59,133 +59,130 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
   const isExpired = negotiation.isExpired;
   const isEnded = isAccepted || isRejected || isExpired;
 
-  const counterLimitReached = false; // Cannot track without backend support in DTO for now
+  const counterLimitReached = false; 
 
-  if (isAccepted) {
-    return (
-      <div className="p-6 bg-green-50 border-t border-green-100 flex flex-col items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="flex items-center gap-3 text-green-700">
-            <CheckCircle className="w-6 h-6" />
-            <span className="text-sm font-black uppercase tracking-widest leading-none">Price agreed at {formatCurrency(negotiation.buyerProposedPrice)}</span>
-        </div>
-        <button 
-          onClick={() => onAction('GO_TO_CART')}
-          className="w-full max-w-md bg-green-600 text-white font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg hover:bg-green-700 flex items-center justify-center gap-2 group"
-        >
-          Proceed to Checkout
-          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-        </button>
-      </div>
-    );
-  }
-
-  if (isEnded) {
-    return (
-      <div className="p-6 bg-gray-50 border-t border-gray-100 flex flex-col items-center gap-4 text-center">
-        <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">This negotiation has ended</p>
-        <button 
-           onClick={() => onAction('START_NEW')}
-           className="text-primary font-black uppercase tracking-widest text-xs hover:underline decoration-2 underline-offset-4"
-        >
-          Start new negotiation
-        </button>
-      </div>
-    );
-  }
-
-  if (!isMyTurn) {
-    return (
-      <div className="p-8 bg-white border-t border-gray-50 flex items-center justify-center gap-3">
-        <div className="flex gap-1">
-            <div className="w-1.5 h-1.5 bg-gray-200 rounded-full animate-bounce [animation-delay:-0.3s]" />
-            <div className="w-1.5 h-1.5 bg-gray-200 rounded-full animate-bounce [animation-delay:-0.15s]" />
-            <div className="w-1.5 h-1.5 bg-gray-200 rounded-full animate-bounce" />
-        </div>
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Waiting for response...</span>
-      </div>
-    );
-  }
+  const handleSendChat = () => {
+    if (!chatMessage.trim()) return;
+    onAction('CHAT', { message: chatMessage });
+    setChatMessage('');
+  };
 
   return (
-    <div className="p-6 bg-white border-t border-gray-100 space-y-4">
-      <div className="flex gap-4 items-center">
-        {/* Price Input Wrapper */}
-        <div className="flex-[0.4] group">
-          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Price Move</label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">RWF</span>
-            <input 
-              type="number" 
-              value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
-              placeholder="0,000"
-              className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl font-black text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all"
-            />
-          </div>
-        </div>
-
-        {/* Message Input Wrapper */}
-        <div className="flex-[0.6]">
-           <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Add a message (optional)</label>
-           <div className="relative">
-             <input 
-               type="text" 
-               value={message}
-               onChange={(e) => setMessage(e.target.value)}
-               placeholder="Say something..."
-               className="w-full px-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all"
-               onKeyPress={(e) => e.key === 'Enter' && onAction('COUNTER', { price, message })}
-             />
+    <div className="bg-white border-t border-gray-100 flex flex-col">
+      {/* 1. Status / Action Panel (Only if turn or special state) */}
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+        {isAccepted ? (
+           <div className="p-4 bg-green-50 border-b border-green-100 flex items-center justify-between gap-4">
+             <div className="flex items-center gap-2 text-green-700">
+               <CheckCircle className="w-5 h-5" />
+               <span className="text-[10px] font-black uppercase tracking-widest">Price agreed at {formatCurrency(negotiation.buyerProposedPrice)}</span>
+             </div>
+             <button 
+               onClick={() => onAction('GO_TO_CART')}
+               className="bg-green-600 text-white font-black uppercase tracking-widest text-[10px] px-4 py-2 rounded-xl shadow-md hover:bg-green-700 flex items-center gap-2 group transition-all"
+             >
+               Checkout
+               <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+             </button>
            </div>
+        ) : isRejected || isExpired ? (
+          <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-center gap-4">
+             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">This negotiation has ended</p>
+             <button 
+               onClick={() => onAction('START_NEW')}
+               className="text-primary font-black uppercase tracking-widest text-[10px] hover:underline"
+             >
+               Start New
+             </button>
+          </div>
+        ) : !isMyTurn ? (
+          <div className="p-4 bg-white border-b border-gray-50 flex items-center justify-center gap-3">
+            <div className="flex gap-1">
+                <div className="w-1 h-1 bg-gray-200 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                <div className="w-1 h-1 bg-gray-200 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                <div className="w-1 h-1 bg-gray-200 rounded-full animate-bounce" />
+            </div>
+            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Waiting for {currentUserType === 'buyer' ? 'Seller' : 'Buyer'}...</span>
+          </div>
+        ) : (
+          <div className="p-6 space-y-4 border-b border-gray-50">
+            <div className="flex gap-4 items-end">
+              <div className="flex-[0.4]">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Your Price Move</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">RWF</span>
+                  <input 
+                    type="number" 
+                    value={price}
+                    onChange={(e) => setPrice(Number(e.target.value))}
+                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-black text-gray-900 focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-sm"
+                  />
+                </div>
+              </div>
+              <div className="flex-[0.6] flex gap-2">
+                <ActionButton 
+                  label="Counter" 
+                  onClick={() => onAction('COUNTER', { price, message: chatMessage })} 
+                  variant="primary" 
+                  disabled={price === (negotiation.sellerResponsePrice || negotiation.buyerProposedPrice) || counterLimitReached}
+                />
+                <ActionButton 
+                  label="Accept" 
+                  onClick={() => setShowConfirm(true)} 
+                  variant="outline"
+                  icon={<CheckCircle className="w-4 h-4" />}
+                />
+                <button 
+                  onClick={() => onAction('REJECT')}
+                  className="p-3 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                >
+                  <XCircle className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 2. Chat Input Bar (Always available unless ended) */}
+      <div className="p-4 flex gap-3 items-center bg-white">
+        <div className="relative flex-1">
+          <input 
+            type="text" 
+            value={chatMessage}
+            onChange={(e) => setChatMessage(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSendChat()}
+            placeholder={isEnded ? "Chat disabled" : "Type a message..."}
+            disabled={isEnded}
+            className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all disabled:opacity-50"
+          />
+          <button 
+            onClick={handleSendChat}
+            disabled={isEnded || !chatMessage.trim()}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-primary hover:bg-primary/10 rounded-full transition-all disabled:text-gray-300"
+          >
+            <Send className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
-      {/* Buttons */}
-      <div className="flex gap-3">
-        <ActionButton 
-          label={currentUserType === 'buyer' ? "Accept Price" : "Accept Offer"} 
-          onClick={() => setShowConfirm(true)} 
-          variant="primary" 
-          icon={<CheckCircle className="w-4 h-4" />}
-        />
-        <ActionButton 
-          label="Counter Offer" 
-          onClick={() => onAction('COUNTER', { price, message })} 
-          variant="outline" 
-          icon={<Send className="w-4 h-4" />}
-          disabled={price === (negotiation.sellerResponsePrice || negotiation.buyerProposedPrice) || counterLimitReached}
-        />
-        <ActionButton 
-          label={currentUserType === 'buyer' ? "Reject" : "Decline"} 
-          onClick={() => onAction('REJECT')} 
-          variant="red" 
-          icon={<XCircle className="w-4 h-4" />}
-        />
-      </div>
-      
-      {counterLimitReached && isMyTurn && (
-        <p className="text-[10px] text-center text-amber-600 font-bold uppercase tracking-widest mt-2">
-            Maximum counter offers reached
-        </p>
-      )}
-
-      {/* Confirmation Popover Mock */}
+      {/* 3. Confirmation Popover */}
       {showConfirm && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-[0_20px_50px_rgba(0,0,0,0.2)] text-center animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl text-center animate-in zoom-in-95 duration-300">
             <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
             <h3 className="text-2xl font-black text-gray-900 mb-2">Accept Offer?</h3>
             <p className="text-gray-500 text-sm font-medium mb-8 leading-relaxed">
-              Accept <span className="text-gray-900 font-bold">{formatCurrency(price)}</span> for <span className="text-gray-900 font-bold">{negotiation.order.quantity} {negotiation.order.product.unitPrice}</span> of {negotiation.order.product.name}?
+              Agree to <span className="text-gray-900 font-bold">{formatCurrency(price)}</span> for this item?
             </p>
             <div className="flex flex-col gap-2">
                <button 
                  onClick={() => { onAction('ACCEPT'); setShowConfirm(false); }}
                  className="w-full py-4 bg-green-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-green-200"
                >
-                 Confirm
+                 Yes, Confirm
                </button>
                <button 
                  onClick={() => setShowConfirm(false)}

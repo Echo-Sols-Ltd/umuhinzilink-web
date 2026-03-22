@@ -144,7 +144,7 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
             <MessageBubble 
               key={idx} 
               message={msg} 
-              isBuyer={msg.type === 'OFFER' || (msg.type === 'CHAT' && currentUserType === 'buyer')} // Simplified for demo
+              isBuyer={(msg as any).isBuyer ?? (msg.type === 'OFFER')} 
               currentUserType={currentUserType}
             />
           ))}
