@@ -1,114 +1,74 @@
+'use client';
+
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useI18n } from '@/contexts/I18nContext';
-import { Package, ShoppingCart, User as UserIcon, Wallet } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCart } from '@/contexts/CartContext';
-import { useRouter } from 'next/navigation';
+import { useI18n } from '@/contexts/I18nContext';
+import { UserType } from '@/types';
+
+// redirect logged-in users to their role dashboard
+function dashboardHref(role?: string) {
+  switch (role) {
+    case UserType.FARMER: return '/farmer/dashboard';
+    case UserType.BUYER: return '/buyer/dashboard';
+    case UserType.SUPPLIER: return '/supplier/dashboard';
+    case UserType.ADMIN: return '/admin/dashboard';
+    case UserType.GOVERNMENT: return '/government/dashboard';
+    default: return '/dashboard';
+  }
+}
 
 export default function Navbar() {
-  const [activeSection, setActiveSection] = useState('home');
-  const { t } = useI18n();
-  const router = useRouter()
   const { user } = useAuth();
-  const { getCartItemCount } = useCart();
-  const cartItemCount = getCartItemCount();
-
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = [
-        { id: 'home', offset: 0 },
-        { id: 'features', offset: 0 },
-        { id: 'agribusiness', offset: 0 },
-        { id: 'lenders', offset: 0 },
-        { id: 'contact', offset: 0 },
-      ];
-      let current = 'home';
-      for (const section of sections) {
-        const el = document.getElementById(section.id);
-        if (el) {
-          const top = el.getBoundingClientRect().top + window.scrollY - 80;
-          if (window.scrollY >= top) {
-            current = section.id;
-          }
-        }
-      }
-      setActiveSection(current);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const { t } = useI18n();
 
   return (
-    <nav className="w-full bg-card/80 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300 animate-fade-in border-b border-border/40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/dashboard" className="flex items-center space-x-2">
-          <span className="text-2xl font-extrabold text-success font-sans">
-            Umuhinzi
-            <span className="text-2xl font-extrabold text-foreground font-sans">
-              Link
-            </span>
-          </span>
+    <nav className="
+            w-full fixed top-0 left-0 right-0 z-50 h-16
+            flex items-center
+            bg-card/80 backdrop-blur-md border-b border-border/40
+        ">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+        {/* logo */}
+        <Link href="/" className="flex items-center gap-1.5">
+          <span className="text-xl font-extrabold text-primary">Umuhinzi</span>
+          <span className="text-xl font-extrabold text-foreground">Link</span>
         </Link>
 
-        <div className="hidden md:flex items-center space-x-6">
-          <Link
-            href="/dashboard"
-            className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
-          >
-            {t('landing.nav.marketplace') || 'Products'}
-          </Link>
-          <Link
-            href="/about"
-            className="px-3 py-2 rounded-md text-sm font-bold text-foreground hover:text-success transition-all"
-          >
-            {t('landing.nav.aboutUs') || 'About Us'}
-          </Link>
-
+        {/* centre links */}
+        <div className="hidden md:flex items-center gap-1">
+          {[
+            { label: t('landing.nav.marketplace') || 'Products', href: '/buyer/products' },
+            { label: t('landing.nav.aboutUs') || 'About Us', href: '/about' },
+          ].map(({ label, href }) => (
+            <Link key={href} href={href}
+              className="px-3 py-2 rounded-lg text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent transition-colors">
+              {label}
+            </Link>
+          ))}
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center space-x-4">
-
-          <Link href={`${user?.role.toLowerCase()}/orders`} className="relative p-2 text-foreground hover:text-success transition-colors flex">
-            <Package className="w-6 h-6" />
-            Orders
-          </Link>
-
-
-          <Link href="/cart" className="relative p-2 text-foreground hover:text-success transition-colors">
-            <ShoppingCart className="w-6 h-6" />
-            {cartItemCount > 0 && (
-              <span className="absolute top-0 right-0 bg-success text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-background">
-                {cartItemCount}
-              </span>
-            )}
-          </Link>
-
-          <Link href="/wallet" className="elative p-2 text-foreground hover:text-success transition-colors">
-            <Wallet className="w-6 h-6" />
-          </Link>
+        {/* right CTA */}
+        <div className="flex items-center gap-2">
           {user ? (
-            <Link
-              href={`/${user?.role.toLowerCase()}/dashboard`}
-              className="flex items-center space-x-2 bg-success/10 text-success border border-success/20 px-4 py-2 rounded-full hover:bg-success/20 transition-all"
-            >
-              <UserIcon className="w-4 h-4" />
-              <span className="text-sm font-semibold">{t('common.dashboard') || 'Dashboard'}</span>
+            <Link href={dashboardHref(user.role)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-semibold hover:bg-primary/20 transition-colors">
+              {t('common.dashboard') || 'Dashboard'}
             </Link>
           ) : (
-            <Link
-              href="/auth/signin"
-              className="bg-success text-white px-6 py-2 rounded-full hover:bg-success/90 transition-all shadow-lg shadow-success/20 font-semibold"
-            >
-              {t('auth.signIn.signIn')}
-            </Link>
+            <>
+              <Link href="/auth/signin"
+                className="px-4 py-2 rounded-full text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent transition-colors">
+                {t('auth.signIn.signIn') || 'Sign in'}
+              </Link>
+              <Link href="/auth/signup"
+                className="px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm">
+                Get started
+              </Link>
+            </>
           )}
         </div>
       </div>
     </nav>
   );
 }
-
