@@ -41,12 +41,14 @@ interface NegotiationActionBarProps {
   negotiation: Negotiation;
   currentUserType: 'buyer' | 'seller';
   onAction: (action: string, data?: any) => void;
+  isMyTurn: boolean;
 }
 
 export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({ 
   negotiation, 
   currentUserType,
-  onAction
+  onAction,
+  isMyTurn
 }) => {
   const [message, setMessage] = useState('');
   const [price, setPrice] = useState(negotiation.sellerResponsePrice || negotiation.buyerProposedPrice);
@@ -57,9 +59,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
   const isExpired = negotiation.status === NegotiationStatus.EXPIRED;
   const isEnded = isAccepted || isRejected || isExpired;
 
-  // Turn logic
-  const isMyTurn = (currentUserType === 'buyer' && negotiation.canBuyerRespond) || 
-                   (currentUserType === 'seller' && negotiation.canSellerRespond);
+  const counterLimitReached = negotiation.counterCount >= 3;
 
   if (isAccepted) {
     return (
@@ -153,7 +153,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
           onClick={() => onAction('COUNTER', { price, message })} 
           variant="outline" 
           icon={<Send className="w-4 h-4" />}
-          disabled={price === (negotiation.sellerResponsePrice || negotiation.buyerProposedPrice)}
+          disabled={price === (negotiation.sellerResponsePrice || negotiation.buyerProposedPrice) || counterLimitReached}
         />
         <ActionButton 
           label={currentUserType === 'buyer' ? "Reject" : "Decline"} 
@@ -162,6 +162,12 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
           icon={<XCircle className="w-4 h-4" />}
         />
       </div>
+      
+      {counterLimitReached && isMyTurn && (
+        <p className="text-[10px] text-center text-amber-600 font-bold uppercase tracking-widest mt-2">
+            Maximum counter offers reached
+        </p>
+      )}
 
       {/* Confirmation Popover Mock */}
       {showConfirm && (

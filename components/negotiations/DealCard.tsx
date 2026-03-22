@@ -108,7 +108,7 @@ export const DealCard: React.FC<DealCardProps> = ({ negotiation }) => {
             <p className="text-[10px] text-gray-400 uppercase font-bold mb-1">Quantity</p>
             <div className="flex items-center gap-1 bg-white p-1 rounded-md border border-gray-100">
                <Package className="w-3 h-3 text-primary" />
-               <span className="text-sm font-bold text-gray-700">{order.quantity} {product.unit}</span>
+               <span className="text-sm font-bold text-gray-700">{order.quantity} {product.measurementUnit}</span>
             </div>
           </div>
           <div className="p-3 bg-gray-50 rounded-xl">

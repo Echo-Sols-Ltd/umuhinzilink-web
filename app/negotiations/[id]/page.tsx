@@ -1,134 +1,92 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Negotiation, NegotiationMessage, NegotiationStatus } from '@/types';
+import { Negotiation, NegotiationStatus } from '@/types';
 import { DealCard } from '@/components/negotiations/DealCard';
 import { NegotiationThread } from '@/components/negotiations/NegotiationThread';
 import { NegotiationActionBar } from '@/components/negotiations/NegotiationActionBar';
 import { NegotiationEmptyState } from '@/components/negotiations/NegotiationEmptyState';
-import { Navbar } from '@/components/Navbar';
+import Navbar from '@/components/Navbar';
+import { useNegotiation } from '@/contexts/NegotiationContext';
+import { useNegotiationSocket } from '@/hooks/useNegotiationSocket';
+import { useAuth } from '@/contexts/AuthContext';
 import { notify } from '@/lib/notify';
-import { ChevronLeft, Info, Bell } from 'lucide-react';
-
-// Mock Data Generator
-const mockNegotiation: Negotiation = {
-  id: 'neg-123',
-  order: {
-    id: 'ord-456',
-    quantity: 10,
-    totalPrice: 40000,
-    status: 'PENDING',
-    buyer: { id: 'u-1', name: 'John Doe', email: 'john@example.com', role: 'BUYER' },
-    product: {
-      id: 'p-789',
-      name: 'Premium Maize (Grade A)',
-      description: 'High quality maize from Eastern Province.',
-      unitPrice: 4500,
-      unit: 'kg',
-      category: 'Cereals',
-      image: 'https://images.unsplash.com/photo-1551717743-49959800b146?auto=format&fit=crop&q=80&w=800',
-      stockQuantity: 500,
-      farmerId: 'f-1',
-      status: 'AVAILABLE',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  buyerProposedPrice: 4000,
-  sellerResponsePrice: 4500,
-  lastMessage: "I can do RWF 4,500 for 10kg",
-  status: NegotiationStatus.COUNTERED,
-  expiresAt: new Date(Date.now() + 86400000 * 2).toISOString(), // 2 days from now
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  isExpired: false,
-  timeRemaining: "2d 14h remaining",
-  canBuyerRespond: true,
-  canSellerRespond: false
-};
-
-const mockMessages: NegotiationMessage[] = [
-  {
-    type: 'SYSTEM',
-    content: 'Negotiation started',
-    timestamp: Date.now() - 3600000 * 5,
-  },
-  {
-    type: 'OFFER',
-    content: "I'd like to buy 10kg at RWF 4,000",
-    proposedPrice: 4000,
-    timestamp: Date.now() - 3600000 * 4,
-  },
-  {
-    type: 'COUNTER_OFFER',
-    content: "I can do RWF 4,500 for 10kg",
-    proposedPrice: 4500,
-    timestamp: Date.now() - 3600000 * 2,
-  },
-  {
-    type: 'SYSTEM',
-    content: 'Negotiation expires in 2 days',
-    timestamp: Date.now() - 3600000,
-  }
-];
+import { ChevronLeft } from 'lucide-react';
 
 export default function NegotiationPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
+  const { getNegotiation, acceptNegotiation, rejectNegotiation, counterOffer } = useNegotiation();
+  const { messages: socketMessages, lastStatusUpdate } = useNegotiationSocket(params.id as string);
+  
   const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
-  const [messages, setMessages] = useState<NegotiationMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userType] = useState<'buyer' | 'seller'>('buyer'); // In reality, get from session
+
+  const fetchNegotiation = useCallback(async () => {
+    if (!params.id) return;
+    const data = await getNegotiation(params.id as string);
+    if (data) {
+      setNegotiation(data);
+    }
+    setLoading(false);
+  }, [params.id, getNegotiation]);
 
   useEffect(() => {
-    // Simulate API fetch
-    const timer = setTimeout(() => {
-      setNegotiation(mockNegotiation);
-      setMessages(mockMessages);
-      setLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [params.id]);
+    fetchNegotiation();
+  }, [fetchNegotiation]);
 
-  const handleAction = (action: string, data?: any) => {
-    if (action === 'ACCEPT') {
-      notify.success('Offer accepted!', 'Success');
-      setNegotiation(prev => prev ? { ...prev, status: NegotiationStatus.ACCEPTED, canBuyerRespond: false, canSellerRespond: false } : null);
-      setMessages(prev => [...prev, { type: 'SYSTEM', content: 'Seller accepted your offer', timestamp: Date.now() }]);
-    } else if (action === 'COUNTER') {
-      notify.success('Counter offer sent', 'Success');
-      setNegotiation(prev => prev ? { ...prev, status: NegotiationStatus.COUNTERED, buyerProposedPrice: data.price, canBuyerRespond: false, canSellerRespond: true } : null);
-      setMessages(prev => [...prev, { type: 'OFFER', content: data.message || 'Counter offer', proposedPrice: data.price, timestamp: Date.now() }]);
+  // Handle real-time status updates
+  useEffect(() => {
+    if (lastStatusUpdate) {
+      fetchNegotiation();
       
-      // Simulate seller response after 3 seconds
-      setTimeout(() => {
-          const counterPrice = data.price + 200;
-          setNegotiation(prev => prev ? { ...prev, sellerResponsePrice: counterPrice, canBuyerRespond: true, canSellerRespond: false } : null);
-          setMessages(prev => [...prev, { type: 'COUNTER_OFFER', content: `I can go down to ${counterPrice}`, proposedPrice: counterPrice, timestamp: Date.now() }]);
-          
+      // Handle browser notifications for counter offers
+      if (lastStatusUpdate.action === 'COUNTER' && document.hidden) {
           if ("Notification" in window && Notification.permission === "granted") {
-              new Notification("Amina Uwase made a counter offer on Maize 10kg");
-          } else {
-              notify.info("Amina Uwase made a counter offer on Maize 10kg", "New Counter Offer");
+              new Notification(`New counter offer on ${negotiation?.order.product.name}`);
           }
-      }, 3000);
-    } else if (action === 'REJECT') {
-      notify.error('Negotiation rejected', 'Ended');
-      setNegotiation(prev => prev ? { ...prev, status: NegotiationStatus.REJECTED, canBuyerRespond: false, canSellerRespond: false } : null);
-      setMessages(prev => [...prev, { type: 'SYSTEM', content: 'Negotiation ended by buyer', timestamp: Date.now() }]);
-    } else if (action === 'GO_TO_CART') {
-      router.push('/cart');
+      }
+    }
+  }, [lastStatusUpdate, fetchNegotiation, negotiation?.order.product.name]);
+
+  const handleAction = async (action: string, data?: any) => {
+    if (!negotiation) return;
+
+    try {
+      let result: Negotiation | null = null;
+      if (action === 'ACCEPT') {
+        result = await acceptNegotiation(negotiation.order.id);
+      } else if (action === 'COUNTER') {
+        // Validate limits (backend also does this)
+        const originalPrice = negotiation.order.product.unitPrice;
+        if (data.price < originalPrice * 0.5 || data.price > originalPrice * 1.5) {
+            notify.error('Proposed price must be between 50% and 150% of listed price');
+            return;
+        }
+        result = await counterOffer(negotiation.order.id, {
+          counterPrice: data.price,
+          message: data.message || ''
+        });
+      } else if (action === 'REJECT') {
+        result = await rejectNegotiation(negotiation.order.id, data?.message || 'Negotiation declined');
+      } else if (action === 'GO_TO_CART') {
+        router.push('/cart');
+      }
+
+      if (result) {
+        setNegotiation(result);
+      }
+    } catch (error) {
+      console.error('Action failed:', error);
     }
   };
 
-  useEffect(() => {
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-  }, []);
+  const isMyTurn = negotiation && user && (
+    (user.role === 'BUYER' && negotiation.canBuyerRespond) ||
+    (['FARMER', 'SUPPLIER'].includes(user.role) && negotiation.canSellerRespond)
+  );
 
   if (loading) {
     return (
@@ -143,11 +101,13 @@ export default function NegotiationPage() {
 
   if (!negotiation) return <NegotiationEmptyState />;
 
+  const buyerOrSeller: 'buyer' | 'seller' = user?.role === 'BUYER' ? 'buyer' : 'seller';
+
   return (
     <div className="min-h-screen bg-[#FBFBFB]">
       <Navbar />
       
-      {/* Mobile Top Mini-Bar (Sticky) */}
+      {/* Mobile Top Mini-Bar */}
       <div className="lg:hidden sticky top-16 z-30 bg-white border-b border-gray-100 p-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
             <button onClick={() => router.back()} className="p-2 hover:bg-gray-50 rounded-full">
@@ -165,7 +125,6 @@ export default function NegotiationPage() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        {/* Breadcrumb / Back Navigation (Desktop) */}
         <div className="hidden lg:flex items-center justify-between mb-8">
             <button 
               onClick={() => router.back()}
@@ -176,34 +135,25 @@ export default function NegotiationPage() {
                 </div>
                 <span className="text-xs font-bold uppercase tracking-widest">Back to negotiations</span>
             </button>
-            <div className="flex items-center gap-4">
-               <button className="p-2 text-gray-400 hover:text-gray-600">
-                  <Bell className="w-5 h-5" />
-               </button>
-               <button className="p-2 text-gray-400 hover:text-gray-600">
-                  <Info className="w-5 h-5" />
-               </button>
-            </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-start">
-          {/* Left Column (40%) */}
           <div className="lg:col-span-4 hidden lg:block">
             <DealCard negotiation={negotiation} />
           </div>
 
-          {/* Right Column (60%) */}
           <div className="lg:col-span-6 flex flex-col h-full lg:min-h-[700px]">
             <NegotiationThread 
               negotiation={negotiation} 
-              messages={messages} 
-              currentUserType={userType} 
+              messages={socketMessages} 
+              currentUserType={buyerOrSeller} 
             />
             <div className="mt-4">
                 <NegotiationActionBar 
                     negotiation={negotiation} 
-                    currentUserType={userType} 
+                    currentUserType={buyerOrSeller} 
                     onAction={handleAction}
+                    isMyTurn={!!isMyTurn}
                 />
             </div>
           </div>
