@@ -46,34 +46,34 @@ interface NavGroup {
 }
 
 const SIDEBAR_ITEM_LABEL_KEYS: Record<string, string> = {
-  Dashboard: 'sidebar.items.dashboard',
-  'My Products': 'sidebar.items.myProducts',
-  'Supply Market': 'sidebar.items.supplyMarket',
-  'Customer Orders': 'sidebar.items.customerOrders',
-  'Supply Orders': 'sidebar.items.supplyOrders',
-  'Market Intelligence': 'sidebar.items.marketIntelligence',
-  'Advisory Insights': 'sidebar.items.advisoryInsights',
-  Messages: 'sidebar.items.messages',
-  Notifications: 'sidebar.items.notifications',
-  Alerts: 'sidebar.items.alerts',
-  Wallet: 'sidebar.items.wallet',
-  Profile: 'sidebar.items.profile',
-  Settings: 'sidebar.items.settings',
-  Marketplace: 'sidebar.items.marketplace',
-  'My Orders': 'sidebar.items.myOrders',
-  Favorites: 'sidebar.items.favorites',
-  'Farmer Orders': 'sidebar.items.farmerOrders',
-  'User Management': 'sidebar.items.userManagement',
-  'Order Management': 'sidebar.items.orderManagement',
-  'Product Management': 'sidebar.items.productManagement',
-  'Platform Analytics': 'sidebar.items.platformAnalytics',
-  'System Reports': 'sidebar.items.systemReports',
-  'Security Center': 'sidebar.items.securityCenter',
-  'Wallet Management': 'sidebar.items.walletManagement',
-  Overview: 'sidebar.items.overview',
-  'Farmer Output': 'sidebar.items.farmerOutput',
-  'Input Supply Monitoring': 'sidebar.items.inputSupplyMonitoring',
-  Home: 'sidebar.items.home',
+    Dashboard: 'sidebar.items.dashboard',
+    'My Products': 'sidebar.items.myProducts',
+    'Supply Market': 'sidebar.items.supplyMarket',
+    'Customer Orders': 'sidebar.items.customerOrders',
+    'Supply Orders': 'sidebar.items.supplyOrders',
+    'Market Intelligence': 'sidebar.items.marketIntelligence',
+    'Advisory Insights': 'sidebar.items.advisoryInsights',
+    Messages: 'sidebar.items.messages',
+    Notifications: 'sidebar.items.notifications',
+    Alerts: 'sidebar.items.alerts',
+    Wallet: 'sidebar.items.wallet',
+    Profile: 'sidebar.items.profile',
+    Settings: 'sidebar.items.settings',
+    Marketplace: 'sidebar.items.marketplace',
+    'My Orders': 'sidebar.items.myOrders',
+    Favorites: 'sidebar.items.favorites',
+    'Farmer Orders': 'sidebar.items.farmerOrders',
+    'User Management': 'sidebar.items.userManagement',
+    'Order Management': 'sidebar.items.orderManagement',
+    'Product Management': 'sidebar.items.productManagement',
+    'Platform Analytics': 'sidebar.items.platformAnalytics',
+    'System Reports': 'sidebar.items.systemReports',
+    'Security Center': 'sidebar.items.securityCenter',
+    'Wallet Management': 'sidebar.items.walletManagement',
+    Overview: 'sidebar.items.overview',
+    'Farmer Output': 'sidebar.items.farmerOutput',
+    'Input Supply Monitoring': 'sidebar.items.inputSupplyMonitoring',
+    Home: 'sidebar.items.home',
 };
 
 // ─── Navigation config ───────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.FARMER:
             return [
                 {
-          label: 'sidebar.groups.overview',
+                    label: 'sidebar.groups.overview',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/farmer/dashboard' },
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Products', href: '/farmer/products' },
@@ -95,14 +95,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-          label: 'sidebar.groups.communication',
+                    label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
-          label: 'sidebar.groups.account',
+                    label: 'sidebar.groups.account',
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/farmer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
@@ -114,7 +114,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.BUYER:
             return [
                 {
-          label: 'sidebar.groups.overview',
+                    label: 'sidebar.groups.overview',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/buyer/dashboard' },
                         { icon: <FilePlus className="w-4.5 h-4.5" />, label: 'Marketplace', href: '/buyer/products' },
@@ -123,14 +123,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-          label: 'sidebar.groups.communication',
+                    label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
-          label: 'sidebar.groups.account',
+                    label: 'sidebar.groups.account',
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/buyer/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
@@ -142,7 +142,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.SUPPLIER:
             return [
                 {
-          label: 'sidebar.groups.operations',
+                    label: 'sidebar.groups.operations',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/supplier/dashboard' },
                         { icon: <Package className="w-4.5 h-4.5" />, label: 'My Products', href: '/supplier/products' },
@@ -150,14 +150,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-          label: 'sidebar.groups.communication',
+                    label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
-          label: 'sidebar.groups.account',
+                    label: 'sidebar.groups.account',
                     items: [
                         { icon: <Wallet className="w-4.5 h-4.5" />, label: 'Wallet', href: '/supplier/wallet' },
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/profile' },
@@ -169,7 +169,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.ADMIN:
             return [
                 {
-          label: 'sidebar.groups.administration',
+                    label: 'sidebar.groups.administration',
                     items: [
                         { icon: <LayoutDashboard className="w-4.5 h-4.5" />, label: 'Dashboard', href: '/admin/dashboard' },
                         { icon: <Users className="w-4.5 h-4.5" />, label: 'User Management', href: '/admin/users' },
@@ -182,14 +182,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-          label: 'sidebar.groups.communication',
+                    label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
                         { icon: <Bell className="w-4.5 h-4.5" />, label: 'Notifications', href: '/notifications' },
                     ],
                 },
                 {
-          label: 'sidebar.groups.account',
+                    label: 'sidebar.groups.account',
                     items: [
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/admin/profile' },
                         { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/admin/settings' },
@@ -200,7 +200,7 @@ function getNavGroups(userType: UserType): NavGroup[] {
         case UserType.GOVERNMENT:
             return [
                 {
-          label: 'sidebar.groups.monitoring',
+                    label: 'sidebar.groups.monitoring',
                     items: [
                         { icon: <LayoutGrid className="w-4.5 h-4.5" />, label: 'Overview', href: '/government/dashboard' },
                         { icon: <Tractor className="w-4.5 h-4.5" />, label: 'Farmer Output', href: '/government/farmers-produce' },
@@ -208,14 +208,14 @@ function getNavGroups(userType: UserType): NavGroup[] {
                     ],
                 },
                 {
-          label: 'sidebar.groups.communication',
+                    label: 'sidebar.groups.communication',
                     items: [
                         { icon: <Mail className="w-4.5 h-4.5" />, label: 'Messages', href: '/chat' },
-            { icon: <Bell className="w-4.5 h-4.5" />, label: 'Alerts', href: '/notifications' },
+                        { icon: <Bell className="w-4.5 h-4.5" />, label: 'Alerts', href: '/notifications' },
                     ],
                 },
                 {
-          label: 'sidebar.groups.account',
+                    label: 'sidebar.groups.account',
                     items: [
                         { icon: <User className="w-4.5 h-4.5" />, label: 'Profile', href: '/government/profile' },
                         { icon: <Settings className="w-4.5 h-4.5" />, label: 'Settings', href: '/government/settings' },
@@ -237,11 +237,11 @@ function getNavGroups(userType: UserType): NavGroup[] {
 
 // ─── Role badge colours ───────────────────────────────────────────────────────
 const ROLE_BADGE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  FARMER: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', dot: 'bg-emerald-400', label: 'sidebar.roles.farmer' },
-  BUYER: { bg: 'bg-blue-500/15', text: 'text-blue-400', dot: 'bg-blue-400', label: 'sidebar.roles.buyer' },
-  SUPPLIER: { bg: 'bg-amber-500/15', text: 'text-amber-400', dot: 'bg-amber-400', label: 'sidebar.roles.supplier' },
-  ADMIN: { bg: 'bg-rose-500/15', text: 'text-rose-400', dot: 'bg-rose-400', label: 'sidebar.roles.administrator' },
-  GOVERNMENT: { bg: 'bg-violet-500/15', text: 'text-violet-400', dot: 'bg-violet-400', label: 'sidebar.roles.governmentOfficial' },
+    FARMER: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', dot: 'bg-emerald-400', label: 'sidebar.roles.farmer' },
+    BUYER: { bg: 'bg-blue-500/15', text: 'text-blue-400', dot: 'bg-blue-400', label: 'sidebar.roles.buyer' },
+    SUPPLIER: { bg: 'bg-amber-500/15', text: 'text-amber-400', dot: 'bg-amber-400', label: 'sidebar.roles.supplier' },
+    ADMIN: { bg: 'bg-rose-500/15', text: 'text-rose-400', dot: 'bg-rose-400', label: 'sidebar.roles.administrator' },
+    GOVERNMENT: { bg: 'bg-violet-500/15', text: 'text-violet-400', dot: 'bg-violet-400', label: 'sidebar.roles.governmentOfficial' },
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -251,12 +251,12 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
 
     const { navigate } = useNavigationWithLoading();
     const { user, logout } = useAuth();
-  const { t } = useI18n();
+    const { t } = useI18n();
 
     const currentUserType = (user?.role || userType) as UserType;
-  const userName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || t('common.user') : t('common.user');
+    const userName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || t('common.user') : t('common.user');
     const userEmail = user?.email || 'user@umuhinzilink.rw';
-    const userInitials = userName && userName !== t('common.user') 
+    const userInitials = userName && userName !== t('common.user')
         ? userName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
         : 'UL';
     const badge = ROLE_BADGE[currentUserType] ?? ROLE_BADGE.FARMER;
@@ -277,7 +277,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
 
     return (
         <>
-        <Navbar/>
+            <Navbar />
             {/* ── Mobile hamburger ─────────────────────────────────── */}
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
@@ -298,7 +298,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
             {/* ── Sidebar panel ─────────────────────────────────────── */}
             <aside
                 className={`
-                    fixed lg:static inset-y-0 left-0 z-50 w-64
+                    fixed lg:static inset-y-0 left-0 z-20 w-64
                     flex flex-col h-screen
                     bg-card text-foreground
                     shadow-lg
@@ -389,7 +389,7 @@ export default function Sidebar({ activeItem = 'Home', userType }: SidebarProps)
                             <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shadow-md">
                                 {user?.avatar ? <img
                                     src={imageUrl(user?.avatar)}
-                                alt={t('sidebar.user.avatarAlt')}
+                                    alt={t('sidebar.user.avatarAlt')}
                                     className="w-9 h-9 rounded-full object-cover"
                                 /> : <User className="w-4 h-4" />}
                             </div>

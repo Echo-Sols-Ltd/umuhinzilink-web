@@ -39,7 +39,7 @@ export default function MyProducts() {
   const {
     myProducts,
     loading,
-    fetchMyProducts: fetchFarmerProducts,
+    fetchMyProducts,
     myProductsTotalPages: totalPages,
     myProductsTotalElements: totalElements,
   } = useProduct();
@@ -50,7 +50,7 @@ export default function MyProducts() {
   const products = useMemo(() => myProducts || [], [myProducts]);
 
   useEffect(() => {
-    fetchFarmerProducts(currentPage - 1, ITEMS_PER_PAGE);
+    fetchMyProducts(currentPage - 1, ITEMS_PER_PAGE);
   }, [currentPage]);
 
   const filteredProducts = useMemo(() => {
@@ -85,7 +85,7 @@ export default function MyProducts() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={UserType.FARMER} activeItem="My Products" />
+      <Sidebar activeItem="My Products" />
 
       <div className="flex-1 flex flex-col overflow-auto">
         <header className="bg-card border-b flex items-center justify-between p-6 shadow-sm sticky top-0 z-10">
@@ -95,7 +95,7 @@ export default function MyProducts() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => fetchFarmerProducts()}
+              onClick={() => fetchMyProducts()}
               className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all"
               title="Refresh"
             >

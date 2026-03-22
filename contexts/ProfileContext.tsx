@@ -61,7 +61,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             setProfile(farmer);
           } else {
             // Fetch farmer profile if not in auth context
-            const farmerData = await userService.getFarmerById(user.id);
+            const farmerData = await userService.getFarmerMe();
             setFarmerProfile(farmerData.data || null);
             setProfile(farmerData.data || null);
           }
@@ -73,7 +73,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             setProfile(supplier);
           } else {
             // Fetch supplier profile if not in auth context
-            const supplierData = await userService.getSupplierById(user.id);
+            const supplierData = await userService.getSupplierMe();
             setSupplierProfile(supplierData.data || null);
             setProfile(supplierData.data || null);
           }
@@ -85,7 +85,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
             setProfile(buyer);
           } else {
             // Fetch buyer profile if not in auth context
-            const buyerData = await buyerService.getBuyerById(user.id);
+            const buyerData = await buyerService.getMe();
             setBuyerProfile(buyerData.data || null);
             setProfile(buyerData.data || null);
           }
