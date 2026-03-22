@@ -4,12 +4,7 @@ import React, { useState } from 'react';
 import { Negotiation, NegotiationStatus } from '@/types';
 import { formatCurrency } from '@/lib/negotiation-utils';
 import { Send, CheckCircle, XCircle, Trash2, ArrowRight } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { cn } from '@/lib/utils';
 
 interface ActionButtonProps {
   label: string;
@@ -170,7 +165,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
 
       {/* Confirmation Popover Mock */}
       {showConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-[0_20px_50px_rgba(0,0,0,0.2)] text-center animate-in zoom-in-95 duration-300">
             <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-8 h-8 text-green-600" />

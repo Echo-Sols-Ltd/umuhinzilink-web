@@ -3,13 +3,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Negotiation, NegotiationMessage, NegotiationStatus } from '@/types';
 import { formatCurrency } from '@/lib/negotiation-utils';
-import { User, Store, Clock } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { User, Store, Clock, CheckCircle2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface MessageBubbleProps {
   message: NegotiationMessage;
@@ -25,11 +20,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isBuyer, 
     return (
       <div className="flex items-center justify-center my-6 w-full">
         <div className="flex items-center gap-3 w-full">
-          <div className="h-[1px] flex-1 bg-gray-100" />
+          <div className="h-px flex-1 bg-gray-100" />
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
             {message.content}
           </span>
-          <div className="h-[1px] flex-1 bg-gray-100" />
+          <div className="h-px flex-1 bg-gray-100" />
         </div>
       </div>
     );
@@ -75,8 +70,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isBuyer, 
     </div>
   );
 };
-
-import { CheckCircle2 } from 'lucide-react';
 
 interface NegotiationThreadProps {
   negotiation: Negotiation;
@@ -131,7 +124,7 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
       {/* Message Area */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-6 scroll-smooth bg-[radial-gradient(#f1f1f1_1px,transparent_1px)] [background-size:20px_20px]"
+        className="flex-1 overflow-y-auto p-6 scroll-smooth bg-[radial-gradient(#f1f1f1_1px,transparent_1px)] bg-size-[20px_20px]"
       >
         <div className="space-y-2">
           {messages.map((msg, idx) => (

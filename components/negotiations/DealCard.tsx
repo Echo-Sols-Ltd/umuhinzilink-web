@@ -89,7 +89,7 @@ export const DealCard: React.FC<DealCardProps> = ({ negotiation }) => {
             <div>
               <div className="flex items-center gap-1">
                 <span className="font-bold text-gray-900">Amina Uwase</span>
-                <BadgeCheck className="w-4 h-4 text-primary fill-primary/10" title="Verified Seller" />
+              <BadgeCheck className="w-4 h-4 text-primary fill-primary/10" />
               </div>
               <p className="text-xs text-gray-500">Premium Farmer</p>
             </div>
