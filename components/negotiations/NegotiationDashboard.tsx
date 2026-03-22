@@ -117,23 +117,23 @@ export default function NegotiationDashboard({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {userType === 'buyer' ? 'My Negotiations' : 'Seller Negotiations'}
+          <h1 className="text-4xl font-black text-gray-900 tracking-tight leading-none mb-2">
+            {userType === 'buyer' ? 'My Negotiations' : 'Sales Negotiations'}
           </h1>
-          <p className="text-gray-600 mt-1">
-            Manage and track your price negotiations
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+            {negotiations.length} Active Threads • Real-time Updates Enabled
           </p>
         </div>
         
         <button
           onClick={refreshNegotiations}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl hover:shadow-md transition-all disabled:opacity-50 font-bold text-xs uppercase tracking-widest text-gray-600 active:scale-95"
         >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          Sync Data
         </button>
       </div>
 

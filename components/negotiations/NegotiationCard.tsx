@@ -390,16 +390,14 @@ export default function NegotiationCard({
         </div>
       )}
 
-      {/* Chat Button */}
-      {onChatOpen && (
-        <button
-          onClick={() => onChatOpen(negotiation.id)}
-          className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-        >
-          <MessageCircle className="w-4 h-4" />
-          Open Chat
-        </button>
-      )}
+      {/* View Thread Button */}
+      <button
+        onClick={() => window.location.href = `/negotiations/${negotiation.id}`}
+        className="w-full px-4 py-3 bg-gray-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-gray-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-200"
+      >
+        <MessageCircle className="w-3.5 h-3.5" />
+        View Negotiation Thread
+      </button>
     </div>
   );
 }
