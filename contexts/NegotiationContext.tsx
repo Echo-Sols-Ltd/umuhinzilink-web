@@ -41,7 +41,6 @@ interface NegotiationProviderProps {
 
 export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({ 
   children, 
-  userType = 'buyer' 
 }) => {
   const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
   const [loading, setLoading] = useState(false);
@@ -196,12 +195,12 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
 
   // Refresh negotiations
   const refreshNegotiations = useCallback(async () => {
-    if (userType === 'buyer') {
+    if (user?.role === 'BUYER') {
       await fetchBuyerNegotiations();
     } else {
       await fetchSellerNegotiations();
     }
-  }, [userType, fetchBuyerNegotiations, fetchSellerNegotiations]);
+  }, [user, fetchBuyerNegotiations, fetchSellerNegotiations]);
 
   // Get negotiations by status
   const getNegotiationsByStatus = useCallback((status: NegotiationStatus): Negotiation[] => {
