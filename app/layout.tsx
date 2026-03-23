@@ -4,6 +4,7 @@ import { AppProviders } from '@/contexts/AppProviders';
 import ModalToastContainer from '@/components/ui/modal-toast-container';
 import { OfflineIndicator } from '@/components/ui/progressive-loading';
 import './globals.css';
+import Navbar from '@/components/Navbar';
 
 const poppins = Poppins({
   variable: '--font-poppins',
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <OfflineIndicator />
         <AppProviders>
           <main id="main-content" tabIndex={-1}>
+            {/* <Navbar /> */}
             {children}
           </main>
           <ModalToastContainer />
