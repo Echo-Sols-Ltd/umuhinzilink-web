@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Negotiation, NegotiationStatus, CounterOfferRequest } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import { formatCurrency } from '@/lib/negotiation-utils';
@@ -13,7 +14,9 @@ import {
   TrendingDown,
   DollarSign,
   Send,
-  X
+  X,
+  AlertCircle,
+  ArrowRight
 } from 'lucide-react';
 import { notify } from '@/lib/notify';
 
@@ -408,13 +411,13 @@ export default function NegotiationCard({
       )}
 
       {/* View Thread Button */}
-      <button
-        onClick={() => window.location.href = `/negotiations/${negotiation.id}`}
-        className="w-full px-4 py-3 bg-gray-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-gray-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-200"
-      >
-        <MessageCircle className="w-3.5 h-3.5" />
-        View Negotiation Thread
-      </button>
+          <Link 
+            href={`/negotiations/${negotiation.id}`}
+            className="w-full flex items-center justify-center gap-2 py-3.5 bg-gray-50 hover:bg-primary hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 transition-all active:scale-[0.98] group"
+          >
+            View Negotiation Thread
+            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+          </Link>
     </div>
   );
 }

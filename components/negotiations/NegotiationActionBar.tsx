@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { Negotiation, NegotiationStatus } from '@/types';
 import { formatCurrency } from '@/lib/negotiation-utils';
-import { Send, CheckCircle, XCircle, Trash2, ArrowRight } from 'lucide-react';
+import { Send, CheckCircle, XCircle, Trash2, ArrowRight, AlertCircle } from 'lucide-react';
+import { notify } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 
 interface ActionButtonProps {
@@ -59,7 +60,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
   const isExpired = negotiation.isExpired;
   const isEnded = isAccepted || isRejected || isExpired;
 
-  const counterLimitReached = false; 
+  const counterLimitReached = ((negotiation as any).counterCount || 0) >= 3; 
 
   const handleSendChat = () => {
     if (!chatMessage.trim()) return;
@@ -67,9 +68,22 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
     setChatMessage('');
   };
 
+  const handleCounter = () => {
+    if (counterLimitReached) return;
+    
+    const originalPrice = negotiation.order.product.unitPrice;
+    if (price < originalPrice * 0.5 || price > originalPrice * 1.5) {
+        notify.error('Proposed price must be between 50% and 150% of the listed price');
+        return;
+    }
+
+    onAction('COUNTER', { price, message: chatMessage });
+    setChatMessage('');
+  };
+
   return (
     <div className="bg-white border-t border-gray-100 flex flex-col">
-      {/* 1. Status / Action Panel (Only if turn or special state) */}
+      {/* 1. Status / Action Panel */}
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
         {isAccepted ? (
            <div className="p-4 bg-green-50 border-b border-green-100 flex items-center justify-between gap-4">
@@ -86,8 +100,11 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
              </button>
            </div>
         ) : isRejected || isExpired ? (
-          <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-center gap-4">
-             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">This negotiation has ended</p>
+          <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-center gap-4 text-center">
+             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-none">
+                This negotiation has ended 
+                {isExpired && <span className="ml-2 bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded text-[8px]">EXPIRED</span>}
+             </p>
              <button 
                onClick={() => onAction('START_NEW')}
                className="text-primary font-black uppercase tracking-widest text-[10px] hover:underline"
@@ -107,7 +124,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
         ) : (
           <div className="p-6 space-y-4 border-b border-gray-50">
             <div className="flex gap-4 items-end">
-              <div className="flex-[0.4]">
+              <div className="flex-[0.3]">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Your Price Move</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">RWF</span>
@@ -115,14 +132,26 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                     type="number" 
                     value={price}
                     onChange={(e) => setPrice(Number(e.target.value))}
-                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-black text-gray-900 focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-sm"
+                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-black text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-sm outline-none"
                   />
                 </div>
               </div>
-              <div className="flex-[0.6] flex gap-2">
+
+              <div className="flex-[0.4]">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Move Message</label>
+                <input 
+                  type="text" 
+                  value={chatMessage}
+                  onChange={(e) => setChatMessage(e.target.value)}
+                  placeholder="Offer details..."
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-sm outline-none"
+                />
+              </div>
+
+              <div className="flex-[0.3] flex gap-2">
                 <ActionButton 
-                  label="Counter" 
-                  onClick={() => onAction('COUNTER', { price, message: chatMessage })} 
+                  label={counterLimitReached ? "Limit Hit" : "Counter"} 
+                  onClick={handleCounter} 
                   variant="primary" 
                   disabled={price === (negotiation.sellerResponsePrice || negotiation.buyerProposedPrice) || counterLimitReached}
                 />
@@ -140,6 +169,12 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                 </button>
               </div>
             </div>
+            {counterLimitReached && (
+                <p className="text-[9px] text-amber-600 font-black uppercase tracking-widest flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Maximum { (negotiation as any).counterCount }/3 counter offers reached
+                </p>
+            )}
           </div>
         )}
       </div>

@@ -15,14 +15,14 @@ import {
   XCircle,
   AlertCircle
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface NegotiationDashboardProps {
   userType?: 'buyer' | 'seller';
   onChatOpen?: (negotiationId: string) => void;
 }
 
-export default function NegotiationDashboard({ 
-  userType = 'buyer', 
+export default function NegotiationDashboard({
   onChatOpen 
 }: NegotiationDashboardProps) {
   const { 
@@ -34,6 +34,7 @@ export default function NegotiationDashboard({
     hasActiveNegotiations
   } = useNegotiation();
   
+  const {user}=useAuth()
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<NegotiationStatus | 'all'>('all');
   const [sortBy, setSortBy] = useState<'createdAt' | 'expiresAt'>('createdAt');
@@ -120,7 +121,7 @@ export default function NegotiationDashboard({
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-4xl font-black text-gray-900 tracking-tight leading-none mb-2">
-            {userType === 'buyer' ? 'My Negotiations' : 'Sales Negotiations'}
+            {user?.role === 'BUYER' ? 'My Negotiations' : 'Sales Negotiations'}
           </h1>
           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
             {negotiations.length} Active Threads • Real-time Updates Enabled
@@ -281,7 +282,7 @@ export default function NegotiationDashboard({
             <NegotiationCard
               key={negotiation.id}
               negotiation={negotiation}
-              userType={userType}
+              userType={user?.role==='BUYER'?'buyer':'seller'}
               onChatOpen={onChatOpen}
             />
           ))}

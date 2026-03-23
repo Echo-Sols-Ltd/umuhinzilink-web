@@ -4,666 +4,455 @@ import React, { useState, useMemo } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useCartAction } from '@/hooks/useCartAction';
 import { useAuth } from '@/contexts/AuthContext';
-import { useI18n } from '@/contexts/I18nContext';
-import { ShoppingCart, Truck, CreditCard, ChevronRight, Minus, Plus, Trash2, MapPin, Phone, Mail, User, CheckCircle2, AlertCircle, MessageCircle, Clock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import {
+    ShoppingBag, Truck, Wallet, ChevronRight, Minus, Plus,
+    Trash2, Clock, CheckCircle2, ArrowLeft, Package,
+    Phone, CreditCard, Leaf,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CartItem, CartItemType, PaymentMethod } from '@/types';
 import { notify } from '@/lib/notify';
+import { imageUrl } from '@/lib/utils';
 
-enum CheckoutStep {
-  SHIPPING = 0,
-  DELIVERY = 1,
-  PAYMENT = 2
+// ─── types ────────────────────────────────────────────────────────
+enum Step { REVIEW = 0, PAYMENT = 1 }
+
+// ─── helpers ──────────────────────────────────────────────────────
+function timeRemaining(expiresAt: string): string {
+    const diff = new Date(expiresAt).getTime() - Date.now();
+    if (diff <= 0) return 'Expired';
+    const h = Math.floor(diff / 3_600_000);
+    const m = Math.floor((diff % 3_600_000) / 60_000);
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-export default function CartPage() {
-  const { cart, loading, getCartTotal } = useCart();
-  const { updateCartItemQuantity, removeCartItem, negotiateSelectedItems, checkoutItems } = useCartAction();
-  const { user } = useAuth();
-  const { t } = useI18n();
-  const [step, setStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
+function fmt(n: number) {
+    return `RWF ${Math.round(n).toLocaleString()}`;
+}
 
-  // Helper functions for negotiation items
-  const isNegotiationItem = (item: CartItem) => item.type === CartItemType.NEGOTIATION_PENDING;
-  const isAcceptedNegotiation = (item: CartItem) => item.type === CartItemType.NEGOTIATION_ACCEPTED;
-  const getNegotiationStatus = (item: CartItem) => {
-    if (isAcceptedNegotiation(item)) return { text: 'Accepted', color: 'text-green-600', bg: 'bg-green-50' };
-    if (isNegotiationItem(item)) return { text: 'Pending', color: 'text-yellow-600', bg: 'bg-yellow-50' };
-    return null;
-  };
-  const getTimeRemaining = (expiresAt: string) => {
-    const now = new Date();
-    const expiry = new Date(expiresAt);
-    const diff = expiry.getTime() - now.getTime();
-    if (diff <= 0) return 'Expired';
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    return `${hours}h ${minutes}m`;
-  };
-
-  // Form states
-  const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    email: user?.email || '',
-    phone: user?.phoneNumber || '',
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    landmark: '',
-    deliveryOption: 'standard',
-    paymentMethod: 'pod' // pod: Pay on Delivery, card: Credit/Debit
-  });
-
-  const subtotal = getCartTotal();
-  const negotiationItemIds = useMemo(() => 
-    cart?.items.filter(item => item.type === CartItemType.NEGOTIATION_PENDING).map(item => item.id) || [], 
-  [cart]);
-
-  const hasPendingNegotiations = negotiationItemIds.length > 0;
-
-  const shippingFee = formData.deliveryOption === 'standard' ? 0 : formData.deliveryOption === 'express' ? 5000 : 15000;
-  const salesTax = subtotal * 0.18; // 18% VAT
-  const total = subtotal + shippingFee + salesTax;
-
-  const handleUpdateQuantity = (item: CartItem, delta: number) => {
-    const newQuantity = item.quantity + delta;
-    if (newQuantity <= 0) {
-      removeCartItem(item.id);
-    } else {
-      updateCartItemQuantity(item.id, newQuantity);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleNext = () => {
-    if (step < CheckoutStep.PAYMENT) {
-      setStep(step + 1);
-    } else {
-      handlePlaceOrder();
-    }
-  };
-
-  const handleBack = () => {
-    if (step > CheckoutStep.SHIPPING) {
-      setStep(step - 1);
-    }
-  };
-
-  const handlePlaceOrder = async () => {
-    if (!cart?.items.length) return;
-    
-    // Determine checkout type based on cart items
-    const hasNormalItems = cart.items.some(item => item.type === CartItemType.NORMAL);
-    const hasAcceptedNegotiations = cart.items.some(item => item.type === CartItemType.NEGOTIATION_ACCEPTED);
-    
-    let result;
-    const paymentMethod: PaymentMethod = formData.paymentMethod === 'pod' ? PaymentMethod.CASH : PaymentMethod.WALLET;
-    
-    if (hasNormalItems && hasAcceptedNegotiations) {
-      // Mixed checkout
-      const itemIds = cart.items
-        .filter(item => item.type === CartItemType.NORMAL || item.type === CartItemType.NEGOTIATION_ACCEPTED)
-        .map(item => item.id);
-      result = await checkoutItems(itemIds, paymentMethod);
-    } else if (hasAcceptedNegotiations) {
-      // Negotiated checkout only
-      const itemIds = cart.items
-        .filter(item => item.type === CartItemType.NEGOTIATION_ACCEPTED)
-        .map(item => item.id);
-      result = await checkoutItems(itemIds, paymentMethod);
-    } else {
-      // Normal checkout only
-      const itemIds = cart.items
-        .filter(item => item.type === CartItemType.NORMAL)
-        .map(item => item.id);
-      result = await checkoutItems(itemIds, paymentMethod);
-    }
-
-    if (result) {
-      notify.success('Your orders have been placed successfully!', 'Order Confirmed');
-      // In a real app, redirect to order confirmation or orders page
-    }
-  };
-
-  if (loading && !cart) {
+// ─── sub-components ───────────────────────────────────────────────
+function StepDot({ n, active, done }: { n: number; active: boolean; done: boolean }) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all
+            ${done  ? 'bg-green-600 text-white'
+            : active ? 'bg-foreground text-background'
+            :          'bg-muted text-muted-foreground'}`}>
+            {done ? <CheckCircle2 size={16} /> : n}
+        </div>
     );
-  }
+}
 
-  if (!cart || cart.items.length === 0) {
+function CartItemRow({
+    item,
+    onAdd, onRemove, onDelete,
+}: {
+    item: CartItem;
+    onAdd: () => void;
+    onRemove: () => void;
+    onDelete: () => void;
+}) {
+    const isPending  = item.type === CartItemType.NEGOTIATION_PENDING;
+    const isAccepted = item.type === CartItemType.NEGOTIATION_ACCEPTED;
+    const price      = (isAccepted && item.proposedPrice) ? item.proposedPrice : item.unitPrice;
+
     return (
-      <div className=" h-screen flex flex-col items-center justify-center bg-background p-4">
-        <div className="bg-muted/30 p-8 rounded-full mb-6">
-          <ShoppingCart className="w-16 h-16 text-muted-foreground" />
-        </div>
-        <h1 className="text-2xl font-bold mb-2">Your cart is empty</h1>
-        <p className="text-muted-foreground mb-8">Looks like you haven't added anything to your cart yet.</p>
-        <Link 
-          href="/dashboard"
-          className="bg-primary text-primary-foreground px-8 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors"
-        >
-          Start Shopping
-        </Link>
-      </div>
-    );
-  }
+        <div className={`flex gap-4 py-4 border-b border-border last:border-0
+            ${isPending ? 'opacity-70' : ''}`}>
 
-  return (
-    <div className="overflow-auto h-screen bg-[#F8F9FA] pb-20">
-      {/* Header / Stepper Overlay */}
-      <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-          <Link href="/dashboard" className="text-xl font-bold flex items-center gap-2">
-             <span className="text-primary truncate max-w-[120px]">UmuhinziLink</span>
-          </Link>
-          
-          <div className="hidden md:flex items-center gap-8">
-            <div className={`flex items-center gap-2 ${step >= CheckoutStep.SHIPPING ? 'text-primary' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= CheckoutStep.SHIPPING ? 'border-primary bg-primary/10' : 'border-gray-200'}`}>
-                {step > CheckoutStep.SHIPPING ? <CheckCircle2 className="w-5 h-5" /> : 1}
-              </div>
-              <span className="font-semibold">Shipping</span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-300" />
-            <div className={`flex items-center gap-2 ${step >= CheckoutStep.DELIVERY ? 'text-primary' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= CheckoutStep.DELIVERY ? 'border-primary bg-primary/10' : 'border-gray-200'}`}>
-                {step > CheckoutStep.DELIVERY ? <CheckCircle2 className="w-5 h-5" /> : 2}
-              </div>
-              <span className="font-semibold">Delivery</span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-300" />
-            <div className={`flex items-center gap-2 ${step >= CheckoutStep.PAYMENT ? 'text-primary' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= CheckoutStep.PAYMENT ? 'border-primary bg-primary/10' : 'border-gray-200'}`}>
-                3
-              </div>
-              <span className="font-semibold">Payment</span>
-            </div>
-          </div>
-
-          <div className="text-sm font-medium text-gray-500">
-            {cart.items.length} items in cart
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
-        
-        {/* Left Side: Order Summary (Consistent across steps) */}
-        <div className="lg:col-span-4 order-2 lg:order-1">
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 p-6 sticky top-28">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-primary" />
-              Order Summary
-            </h2>
-            
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 mb-8 custom-scrollbar">
-              {cart.items.map((item) => {
-                const status = getNegotiationStatus(item);
-                const isNegotiating = isNegotiationItem(item);
-                
-                return (
-                  <div key={item.id} className="flex gap-4 items-center group">
-                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-gray-50 shrink-0 border border-gray-100">
-                      <Image 
-                        src={item.product.image || '/placeholder-product.png'} 
-                        alt={item.product.name}
-                        fill
-                        className="object-cover"
-                      />
-                      {isNegotiating && (
-                        <div className="absolute top-1 right-1 bg-yellow-500 text-white rounded-full p-1">
-                          <MessageCircle className="w-3 h-3" />
-                        </div>
-                      )}
+            {/* image */}
+            <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted shrink-0">
+                <Image src={imageUrl(item.product.image) || '/placeholder.png'}
+                    alt={item.product.name} fill className="object-cover" />
+                {isPending && (
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <Clock size={18} className="text-white" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-bold text-gray-900 truncate">{item.product.name}</h3>
-                        {status && (
-                          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${status.bg} ${status.color}`}>
-                            {status.text}
-                          </span>
-                        )}
-                      </div>
-                      
-                      {/* Price Display */}
-                      <div className="space-y-1 mb-2">
-                        {isNegotiating ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-500 line-through">
-                              {item.unitPrice.toLocaleString()} RWF
-                            </span>
-                            <span className="text-sm font-bold text-primary">
-                              Proposed: {item.proposedPrice?.toLocaleString()} RWF
-                            </span>
-                            <span className="text-xs text-green-600 font-semibold">
-                              Save {((item.unitPrice - (item.proposedPrice || 0)) / item.unitPrice * 100).toFixed(0)}%
-                            </span>
-                          </div>
-                        ) : isAcceptedNegotiation(item) ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-500 line-through">
-                              {item.unitPrice.toLocaleString()} RWF
-                            </span>
-                            <span className="text-sm font-bold text-green-600">
-                              {item.proposedPrice?.toLocaleString()} RWF
-                            </span>
-                            <span className="text-xs text-green-600 font-semibold">
-                              ✓ Accepted
-                            </span>
-                          </div>
-                        ) : (
-                          <p className="text-sm text-gray-500">{item.unitPrice.toLocaleString()} RWF</p>
-                        )}
-                      </div>
-
-                      {/* Negotiation Timer */}
-                      {isNegotiating && item.negotiationExpiresAt && (
-                        <div className="flex items-center gap-1 text-xs text-yellow-600 mb-2">
-                          <Clock className="w-3 h-3" />
-                          <span>Expires in {getTimeRemaining(item.negotiationExpiresAt)}</span>
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
-                          <button 
-                            onClick={() => handleUpdateQuantity(item, -1)}
-                            className="p-1 hover:text-primary transition-colors"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
-                          <button 
-                            onClick={() => handleUpdateQuantity(item, 1)}
-                            className="p-1 hover:text-primary transition-colors"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
-                        <button 
-                          onClick={() => removeCartItem(item.id)}
-                          className="text-gray-300 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                )}
             </div>
 
-            <div className="border-t border-dashed border-gray-100 pt-6 space-y-3">
-              <div className="flex justify-between text-gray-500">
-                <span>Subtotal</span>
-                <span className="font-semibold text-gray-900">{subtotal.toLocaleString()} RWF</span>
-              </div>
-              <div className="flex justify-between text-gray-500">
-                <span>Sales Tax (18%)</span>
-                <span className="font-semibold text-gray-900">{salesTax.toLocaleString()} RWF</span>
-              </div>
-              <div className="flex justify-between text-gray-500">
-                <span>Shipping Fee</span>
-                <span className="font-semibold text-gray-900">{shippingFee === 0 ? 'FREE' : `${shippingFee.toLocaleString()} RWF`}</span>
-              </div>
-              <div className="flex justify-between text-xl font-black pt-4 border-t border-gray-100 text-primary">
-                <span>Total Due</span>
-                <span>{total.toLocaleString()} RWF</span>
-              </div>
-            </div>
-
-            {/* Promo Code */}
-            <div className="mt-8">
-               <div className="relative">
-                  <input 
-                    type="text" 
-                    placeholder="Discount Code"
-                    className="w-full bg-gray-50 border-none rounded-xl h-12 pl-4 pr-24 focus:ring-2 focus:ring-primary/20"
-                  />
-                  <button className="absolute right-2 top-2 bottom-2 px-4 bg-white text-primary text-xs font-bold rounded-lg shadow-sm hover:shadow-md transition-all active:scale-95 border border-primary/10">
-                    Apply
-                  </button>
-               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side: Step Content */}
-        <div className="lg:col-span-8 order-1 lg:order-2 space-y-8">
-          {hasPendingNegotiations && (
-            <div className="p-6 bg-linear-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-500 shadow-xl shadow-yellow-900/5">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
-                  <MessageCircle className="w-7 h-7 text-yellow-600" />
+            {/* details */}
+            <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                    <p className="font-semibold text-[14px] text-foreground leading-snug truncate">
+                        {item.product.name}
+                    </p>
+                    <button onClick={onDelete}
+                        className="shrink-0 p-1 text-muted-foreground hover:text-destructive transition-colors rounded-lg">
+                        <Trash2 size={14} />
+                    </button>
                 </div>
-                <div>
-                  <h4 className="font-black text-yellow-900 text-lg">Pending Negotiations</h4>
-                  <p className="text-sm text-yellow-700 font-medium">Some items in your cart need price review from sellers.</p>
-                </div>
-              </div>
-              <button
-                onClick={async () => {
-                  try {
-                    const negotiationItems = cart?.items
-                      .filter(item => item.type === CartItemType.NEGOTIATION_PENDING)
-                      .map(item => ({ cartItemId: item.id, proposedPrice: item.proposedPrice || item.unitPrice, message: '' })) || [];
-                    await negotiateSelectedItems(negotiationItems);
-                    notify.success('Negotiation requests sent to sellers', 'Success');
-                  } catch (error) {
-                    console.error('Failed to negotiate:', error);
-                  }
-                }}
-                className="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-black rounded-2xl transition-all shadow-lg shadow-yellow-500/30 active:scale-95 whitespace-nowrap"
-              >
-                Start Negotiations
-              </button>
-            </div>
-          )}
-          
-          {/* Step 1: Shipping */}
-          {step === CheckoutStep.SHIPPING && (
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div>
-                <h2 className="text-2xl font-black text-gray-900 mb-2">Step 1: Shipping</h2>
-                <p className="text-gray-400">Please provide your contact and shipping information.</p>
-              </div>
 
-              {/* Contact Details */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 text-primary">
-                  <User className="w-5 h-5" />
-                  <h3 className="font-bold text-lg">Contact Details</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">First Name</label>
-                    <input 
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className="w-full h-14 bg-[#F8F9FA] border-none rounded-2xl px-5 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                      placeholder="Jane"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Last Name</label>
-                    <input 
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className="w-full h-14 bg-[#F8F9FA] border-none rounded-2xl px-5 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                      placeholder="Doe"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Email Address</label>
-                    <div className="relative">
-                      <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
-                      <input 
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="w-full h-14 bg-[#F8F9FA] border-none rounded-2xl pl-12 pr-5 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                        placeholder="jane@example.com"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Phone Number</label>
-                    <div className="relative">
-                      <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
-                      <input 
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        className="w-full h-14 bg-[#F8F9FA] border-none rounded-2xl pl-12 pr-5 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                        placeholder="+250 7XX XXX XXX"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Shipping Details */}
-              <div className="space-y-6 pt-6 ">
-                 <div className="flex items-center gap-2 text-primary">
-                  <MapPin className="w-5 h-5" />
-                  <h3 className="font-bold text-lg">Shipping Details</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">Street Address</label>
-                    <input 
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      className="w-full h-14 bg-[#F8F9FA] border-none rounded-2xl px-5 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                      placeholder="Street name, house no, sector, cell..."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">City</label>
-                    <input 
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      className="w-full h-14 bg-[#F8F9FA] border-none rounded-2xl px-5 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                      placeholder="Kigali"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-500 uppercase tracking-wider">District / State</label>
-                    <input 
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      className="w-full h-14 bg-[#F8F9FA] border-none rounded-2xl px-5 focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                      placeholder="Nyarugenge"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-8">
-                <button 
-                  onClick={handleNext}
-                  className="bg-primary text-primary-foreground h-14 px-10 rounded-2xl font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 active:scale-95 transition-all flex items-center gap-2"
-                >
-                  Continue to Delivery
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Delivery */}
-          {step === CheckoutStep.DELIVERY && (
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div>
-                <h2 className="text-2xl font-black text-gray-900 mb-2">Step 2: Delivery Method</h2>
-                <p className="text-gray-400">Choose how you want your items delivered.</p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6">
-                {[
-                  { id: 'standard', title: 'Standard Delivery', time: '2-4 Business Days', price: 0, desc: 'Deliver within a few days for free.' },
-                  { id: 'express', title: 'Express Delivery', time: '1-2 Business Days', price: 5000, desc: 'Faster delivery for a small fee.' },
-                  { id: 'sameday', title: 'Same Day Delivery', time: 'Same Day (if ordered before 12PM)', price: 15000, desc: 'Get your products aujourd\'hui.' },
-                ].map((option) => (
-                  <label 
-                    key={option.id}
-                    className={`relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer group ${formData.deliveryOption === option.id ? 'border-primary bg-primary/5 shadow-md shadow-primary/5' : 'border-gray-100 hover:border-gray-200 bg-white'}`}
-                  >
-                    <input 
-                      type="radio"
-                      name="deliveryOption"
-                      value={option.id}
-                      checked={formData.deliveryOption === option.id}
-                      onChange={handleInputChange}
-                      className="hidden"
-                    />
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-6 transition-all ${formData.deliveryOption === option.id ? 'border-primary bg-primary' : 'border-gray-200 group-hover:border-gray-300'}`}>
-                      {formData.deliveryOption === option.id && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-lg text-gray-900">{option.title}</span>
-                        <span className={`font-black ${option.price === 0 ? 'text-green-600' : 'text-primary'}`}>
-                          {option.price === 0 ? 'FREE' : `${option.price.toLocaleString()} RWF`}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm">
-                        <span className="flex items-center gap-1.5 text-gray-500">
-                          <Truck className="w-4 h-4" />
-                          {option.time}
-                        </span>
-                        <span className="text-gray-300">|</span>
-                        <span className="text-gray-400">{option.desc}</span>
-                      </div>
-                    </div>
-                  </label>
-                ))}
-              </div>
-
-              <div className="flex justify-between pt-8">
-                <button 
-                  onClick={handleBack}
-                  className="h-14 px-8 rounded-2xl font-bold text-gray-500 hover:bg-gray-50 transition-all"
-                >
-                  Back
-                </button>
-                <button 
-                  onClick={handleNext}
-                  className="bg-primary text-primary-foreground h-14 px-10 rounded-2xl font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 active:scale-95 transition-all flex items-center gap-2"
-                >
-                  Continue to Payment
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Payment */}
-          {step === CheckoutStep.PAYMENT && (
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div>
-                <h2 className="text-2xl font-black text-gray-900 mb-2">Step 3: Payment</h2>
-                <p className="text-gray-400">Select a payment method and complete your order.</p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6">
-                {[
-                  { id: 'pod', title: 'Pay on Delivery', desc: 'Pay with cash or Mobile Money when items arrive.', icon: Truck },
-                  { id: 'card', title: 'Credit or Debit Card', desc: 'Pay securely using your card via Momo/Bank.', icon: CreditCard },
-                ].map((method) => (
-                  <div key={method.id} className="space-y-4">
-                    <label 
-                      className={`relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer group ${formData.paymentMethod === method.id ? 'border-primary bg-primary/5 shadow-md shadow-primary/5' : 'border-gray-100 hover:border-gray-200 bg-white'}`}
-                    >
-                      <input 
-                        type="radio"
-                        name="paymentMethod"
-                        value={method.id}
-                        checked={formData.paymentMethod === method.id}
-                        onChange={handleInputChange}
-                        className="hidden"
-                      />
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center mr-6 transition-all ${formData.paymentMethod === method.id ? 'border-primary bg-primary' : 'border-gray-200 group-hover:border-gray-300'}`}>
-                        {formData.paymentMethod === method.id && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                          <method.icon className={`w-5 h-5 ${formData.paymentMethod === method.id ? 'text-primary' : 'text-gray-400'}`} />
-                          <span className="font-bold text-lg text-gray-900">{method.title}</span>
-                        </div>
-                        <p className="text-sm text-gray-400">{method.desc}</p>
-                      </div>
-                    </label>
-
-                    {/* Card Details (Only if card selected) */}
-                    {formData.paymentMethod === 'card' && method.id === 'card' && (
-                      <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-4 mx-4 animate-in slide-in-from-top-4 duration-300">
-                        <div className="space-y-2">
-                          <label className="text-xs font-bold text-gray-500 uppercase">Card Number</label>
-                          <input 
-                            className="w-full h-12 bg-white border-none rounded-xl px-4 focus:ring-2 focus:ring-primary/20 transition-all font-mono"
-                            placeholder="xxxx xxxx xxxx xxxx"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase">Expiry Date</label>
-                            <input 
-                              className="w-full h-12 bg-white border-none rounded-xl px-4 focus:ring-2 focus:ring-primary/20 transition-all"
-                              placeholder="MM/YY"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase">CVV</label>
-                            <input 
-                              className="w-full h-12 bg-white border-none rounded-xl px-4 focus:ring-2 focus:ring-primary/20 transition-all"
-                              placeholder="123"
-                            />
-                          </div>
-                        </div>
-                      </div>
+                {/* price */}
+                <div className="mt-1 flex items-baseline gap-2">
+                    {(isPending || isAccepted) && item.proposedPrice ? (
+                        <>
+                            <span className="text-[13px] line-through text-muted-foreground">
+                                {fmt(item.unitPrice)}
+                            </span>
+                            <span className={`text-[13px] font-semibold
+                                ${isAccepted ? 'text-green-600' : 'text-amber-600'}`}>
+                                {fmt(item.proposedPrice)}
+                            </span>
+                        </>
+                    ) : (
+                        <span className="text-[13px] text-muted-foreground">{fmt(item.unitPrice)}</span>
                     )}
-                  </div>
-                ))}
-              </div>
+                </div>
 
-              <div className="bg-yellow-50 p-6 rounded-3xl border border-yellow-200 flex gap-4">
-                 <AlertCircle className="w-6 h-6 text-yellow-600 shrink-0" />
-                 <p className="text-sm text-yellow-800">
-                   By clicking "Pay", you agree to UmuhinziLink's <Link href="#" className="underline font-bold">Terms of Service</Link> and <Link href="#" className="underline font-bold">Privacy Policy</Link>.
-                 </p>
-              </div>
+                {/* status badges */}
+                <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+                    {isPending && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <Clock size={10} />
+                            Awaiting seller · {item.negotiationExpiresAt ? timeRemaining(item.negotiationExpiresAt) : '—'}
+                        </span>
+                    )}
+                    {isAccepted && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">
+                            <CheckCircle2 size={10} />
+                            Price agreed
+                        </span>
+                    )}
+                </div>
 
-              <div className="flex justify-between pt-8">
-                <button 
-                  onClick={handleBack}
-                  className="h-14 px-8 rounded-2xl font-bold text-gray-500 hover:bg-gray-50 transition-all"
-                >
-                  Back
-                </button>
-                <button 
-                  onClick={handleNext}
-                   className="bg-primary text-primary-foreground h-14 px-12 rounded-2xl font-black shadow-2xl shadow-primary/40 hover:shadow-primary/50 active:scale-95 transition-all text-lg flex items-center gap-2"
-                >
-                  Pay {total.toLocaleString()} RWF
-                </button>
-              </div>
+                {/* quantity controls — disabled for pending negotiations */}
+                {!isPending && (
+                    <div className="mt-2 flex items-center gap-2">
+                        <button onClick={onRemove}
+                            className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors">
+                            <Minus size={12} />
+                        </button>
+                        <span className="text-[13px] font-semibold w-6 text-center">{item.quantity}</span>
+                        <button onClick={onAdd}
+                            className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors">
+                            <Plus size={12} />
+                        </button>
+                        <span className="ml-auto text-[13px] font-semibold text-foreground">
+                            {fmt(price * item.quantity)}
+                        </span>
+                    </div>
+                )}
             </div>
-          )}
         </div>
-      </div>
+    );
+}
 
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+// ─── main page ────────────────────────────────────────────────────
+export default function CartPage() {
+    const { cart, loading, getCartTotal } = useCart();
+    const { updateCartItemQuantity, removeCartItem, checkoutItems } = useCartAction();
+    const { user } = useAuth();
+    const router   = useRouter();
+
+    const [step, setStep]   = useState<Step>(Step.REVIEW);
+    const [method, setMethod] = useState<'wallet' | 'mobile_money' | 'bank'>('wallet');
+    const [placing, setPlacing] = useState(false);
+
+    // separate items by type
+    const checkoutableItems = useMemo(() =>
+        cart?.items.filter(i => i.type === CartItemType.NORMAL || i.type === CartItemType.NEGOTIATION_ACCEPTED) ?? [],
+    [cart]);
+
+    const pendingItems = useMemo(() =>
+        cart?.items.filter(i => i.type === CartItemType.NEGOTIATION_PENDING) ?? [],
+    [cart]);
+
+    const subtotal = useMemo(() => checkoutableItems.reduce((sum, i) => {
+        const price = (i.type === CartItemType.NEGOTIATION_ACCEPTED && i.proposedPrice) ? i.proposedPrice : i.unitPrice;
+        return sum + price * i.quantity;
+    }, 0), [checkoutableItems]);
+
+    const handleQuantity = (item: CartItem, delta: number) => {
+        const next = item.quantity + delta;
+        if (next <= 0) removeCartItem(item.id);
+        else updateCartItemQuantity(item.id, next);
+    };
+
+    const handlePlaceOrder = async () => {
+        if (!checkoutableItems.length) {
+            notify.warning('No items ready to checkout', 'Nothing to checkout');
+            return;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
+        setPlacing(true);
+        const pm =
+            method === 'wallet'       ? PaymentMethod.WALLET :
+            method === 'mobile_money' ? PaymentMethod.MOBILE_MONEY :
+                                        PaymentMethod.BANK_TRANSFER;
+
+        const result = await checkoutItems(checkoutableItems.map(i => i.id), pm);
+        setPlacing(false);
+        if (result) {
+            notify.success('Orders placed successfully', 'Done');
+            router.push('/buyer/purchases');
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #ddd;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #ccc;
-        }
-      `}</style>
-    </div>
-  );
+    };
+
+    // ── loading ────────────────────────────────────────────────────
+    if (loading && !cart) {
+        return (
+            <div className="h-screen flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    // ── empty ──────────────────────────────────────────────────────
+    if (!cart || cart.items.length === 0) {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
+                <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center">
+                    <ShoppingBag size={28} className="text-muted-foreground" />
+                </div>
+                <h2 className="text-xl font-semibold text-foreground">Your cart is empty</h2>
+                <p className="text-sm text-muted-foreground max-w-xs">
+                    Browse the marketplace and add products to get started.
+                </p>
+                <Link href="/buyer/products"
+                    className="mt-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
+                    Browse products
+                </Link>
+            </div>
+        );
+    }
+
+    // ── main ───────────────────────────────────────────────────────
+    return (
+        <div className="min-h-screen bg-background">
+
+            {/* topbar */}
+            <div className="sticky top-0 z-20 bg-card border-b border-border h-14 flex items-center px-4 lg:px-8 gap-4">
+                <Link href="/buyer/products"
+                    className="p-1.5 rounded-xl hover:bg-accent transition-colors text-muted-foreground hover:text-foreground">
+                    <ArrowLeft size={18} />
+                </Link>
+                <div className="flex items-center gap-1.5">
+                    <Leaf size={16} className="text-green-600" />
+                    <span className="font-semibold text-[14px] text-foreground">Checkout</span>
+                </div>
+
+                {/* steps */}
+                <div className="hidden sm:flex items-center gap-2 ml-auto text-[13px]">
+                    <StepDot n={1} active={step === Step.REVIEW}  done={step > Step.REVIEW} />
+                    <span className={step === Step.REVIEW ? 'font-medium text-foreground' : 'text-muted-foreground'}>
+                        Review
+                    </span>
+                    <ChevronRight size={14} className="text-muted-foreground/40" />
+                    <StepDot n={2} active={step === Step.PAYMENT} done={false} />
+                    <span className={step === Step.PAYMENT ? 'font-medium text-foreground' : 'text-muted-foreground'}>
+                        Payment
+                    </span>
+                </div>
+            </div>
+
+            <div className="max-w-5xl mx-auto px-4 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
+
+                {/* ── left col ──────────────────────────────────── */}
+                <div className="space-y-6">
+
+                    {/* pending negotiation notice */}
+                    {pendingItems.length > 0 && (
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 flex gap-3">
+                            <Clock size={18} className="text-amber-600 shrink-0 mt-0.5" />
+                            <div>
+                                <p className="text-[13px] font-semibold text-amber-800">
+                                    {pendingItems.length} item{pendingItems.length > 1 ? 's' : ''} awaiting seller response
+                                </p>
+                                <p className="text-[12px] text-amber-700 mt-0.5">
+                                    These will be available to checkout once the seller accepts your price.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STEP 1 — review */}
+                    {step === Step.REVIEW && (
+                        <div className="rounded-2xl border border-border bg-card p-6">
+                            <h2 className="font-semibold text-[15px] text-foreground mb-4 flex items-center gap-2">
+                                <Package size={16} className="text-muted-foreground" />
+                                Your items
+                            </h2>
+
+                            {/* checkouteable */}
+                            <div>
+                                {checkoutableItems.map(item => (
+                                    <CartItemRow key={item.id} item={item}
+                                        onAdd={() => handleQuantity(item, 1)}
+                                        onRemove={() => handleQuantity(item, -1)}
+                                        onDelete={() => removeCartItem(item.id)} />
+                                ))}
+                            </div>
+
+                            {/* pending — read only section */}
+                            {pendingItems.length > 0 && (
+                                <div className="mt-4 pt-4 border-t border-dashed border-border">
+                                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                                        Pending negotiations (not included in total)
+                                    </p>
+                                    {pendingItems.map(item => (
+                                        <CartItemRow key={item.id} item={item}
+                                            onAdd={() => {}}
+                                            onRemove={() => {}}
+                                            onDelete={() => removeCartItem(item.id)} />
+                                    ))}
+                                </div>
+                            )}
+
+                            {checkoutableItems.length === 0 && (
+                                <div className="py-8 text-center">
+                                    <p className="text-[13px] text-muted-foreground">
+                                        No items ready to checkout yet.
+                                        {pendingItems.length > 0 && ' Waiting for sellers to respond.'}
+                                    </p>
+                                </div>
+                            )}
+
+                            {checkoutableItems.length > 0 && (
+                                <div className="mt-6 flex justify-end">
+                                    <button onClick={() => setStep(Step.PAYMENT)}
+                                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-[13px] font-semibold hover:bg-primary/90 transition-colors">
+                                        Continue to payment
+                                        <ChevronRight size={15} />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* STEP 2 — payment */}
+                    {step === Step.PAYMENT && (
+                        <div className="rounded-2xl border border-border bg-card p-6 space-y-6">
+                            <div className="flex items-center gap-3">
+                                <button onClick={() => setStep(Step.REVIEW)}
+                                    className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground">
+                                    <ArrowLeft size={16} />
+                                </button>
+                                <h2 className="font-semibold text-[15px] text-foreground">Payment method</h2>
+                            </div>
+
+                            {/* payment options */}
+                            <div className="space-y-3">
+                                {[
+                                    { id: 'wallet',       icon: Wallet,      label: 'Wallet balance',     sub: `Available: ${fmt(0)}` },
+                                    { id: 'mobile_money', icon: Phone,       label: 'Mobile Money',       sub: 'MTN or Airtel' },
+                                    { id: 'bank',         icon: CreditCard,  label: 'Bank transfer',      sub: 'Any Rwandan bank' },
+                                ].map(opt => (
+                                    <label key={opt.id}
+                                        className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all
+                                            ${method === opt.id
+                                                ? 'border-primary bg-primary/5'
+                                                : 'border-border hover:border-border/80 hover:bg-accent/50'}`}>
+                                        <input type="radio" name="method" value={opt.id}
+                                            checked={method === opt.id as typeof method}
+                                            onChange={() => setMethod(opt.id as typeof method)}
+                                            className="sr-only" />
+                                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0
+                                            ${method === opt.id ? 'bg-primary/10' : 'bg-muted'}`}>
+                                            <opt.icon size={16} className={method === opt.id ? 'text-primary' : 'text-muted-foreground'} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-[13px] font-semibold text-foreground">{opt.label}</p>
+                                            <p className="text-[12px] text-muted-foreground">{opt.sub}</p>
+                                        </div>
+                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0
+                                            ${method === opt.id ? 'border-primary' : 'border-border'}`}>
+                                            {method === opt.id && <div className="w-2 h-2 rounded-full bg-primary" />}
+                                        </div>
+                                    </label>
+                                ))}
+                            </div>
+
+                            {/* contact info — pre-filled, read only */}
+                            <div className="pt-2 border-t border-border">
+                                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                                    Order contact
+                                </p>
+                                <div className="grid grid-cols-2 gap-3 text-[13px]">
+                                    <div>
+                                        <p className="text-muted-foreground">Name</p>
+                                        <p className="font-medium text-foreground">{user?.firstName} {user?.lastName}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-muted-foreground">Phone</p>
+                                        <p className="font-medium text-foreground">{user?.phoneNumber || '—'}</p>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <p className="text-muted-foreground">Email</p>
+                                        <p className="font-medium text-foreground">{user?.email}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onClick={handlePlaceOrder} disabled={placing}
+                                className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold text-[14px] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                {placing
+                                    ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Placing order…</>
+                                    : <>Place order · {fmt(subtotal)}</>}
+                            </button>
+
+                            <p className="text-center text-[11px] text-muted-foreground">
+                                By placing this order you agree to our{' '}
+                                <Link href="/terms" className="underline">Terms of Service</Link>
+                            </p>
+                        </div>
+                    )}
+                </div>
+
+                {/* ── right col — order summary ──────────────────── */}
+                <div className="lg:sticky lg:top-20 h-fit">
+                    <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+                        <h3 className="font-semibold text-[14px] text-foreground">Order summary</h3>
+
+                        {/* line items */}
+                        <div className="space-y-2">
+                            {checkoutableItems.map(item => {
+                                const price = (item.type === CartItemType.NEGOTIATION_ACCEPTED && item.proposedPrice)
+                                    ? item.proposedPrice : item.unitPrice;
+                                return (
+                                    <div key={item.id} className="flex justify-between text-[13px]">
+                                        <span className="text-muted-foreground truncate pr-2 max-w-[180px]">
+                                            {item.product.name} × {item.quantity}
+                                        </span>
+                                        <span className="font-medium text-foreground shrink-0">
+                                            {fmt(price * item.quantity)}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="pt-3 border-t border-border space-y-2">
+                            <div className="flex justify-between text-[13px] text-muted-foreground">
+                                <span>Subtotal</span>
+                                <span className="text-foreground font-medium">{fmt(subtotal)}</span>
+                            </div>
+                            <div className="flex justify-between text-[13px] text-muted-foreground">
+                                <span>Delivery</span>
+                                <span className="text-green-600 font-medium">Free</span>
+                            </div>
+                            <div className="flex justify-between text-[13px] text-muted-foreground">
+                                <span>VAT (incl.)</span>
+                                <span className="text-foreground font-medium">{fmt(subtotal * 0.18)}</span>
+                            </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-border flex justify-between">
+                            <span className="font-semibold text-foreground">Total</span>
+                            <span className="font-bold text-[16px] text-foreground">{fmt(subtotal)}</span>
+                        </div>
+
+                        {pendingItems.length > 0 && (
+                            <div className="pt-2 border-t border-dashed border-border">
+                                <p className="text-[11px] text-muted-foreground">
+                                    <span className="font-medium text-amber-600">{pendingItems.length} item{pendingItems.length > 1 ? 's' : ''}</span>{' '}
+                                    not included — awaiting seller approval
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }

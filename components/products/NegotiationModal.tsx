@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Product, CartItemType } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
 import { useCartAction } from '@/hooks/useCartAction';
@@ -15,6 +16,7 @@ interface NegotiationModalProps {
 
 export default function NegotiationModal({ product, isOpen, onClose }: NegotiationModalProps) {
     const { t } = useI18n();
+    const router = useRouter();
     const { addProductToCart } = useCartAction();
     const [proposedPrice, setProposedPrice] = useState(product.unitPrice.toString());
     const [quantity, setQuantity] = useState(1);
@@ -50,7 +52,9 @@ export default function NegotiationModal({ product, isOpen, onClose }: Negotiati
         setLoading(true);
         try {
             await addProductToCart(product.id, quantity, price);
+            notify.success('Negotiation request sent — waiting for seller response', 'Success');
             onClose();
+            router.push('/negotiations');
         } catch (error) {
             console.error('Negotiation failed:', error);
         } finally {
