@@ -2,174 +2,289 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Negotiation, NegotiationStatus } from '@/types';
+import { Negotiation, NegotiationStatus, UserType } from '@/types';
 import { DealCard } from '@/components/negotiations/DealCard';
 import { NegotiationThread } from '@/components/negotiations/NegotiationThread';
 import { NegotiationActionBar } from '@/components/negotiations/NegotiationActionBar';
 import { NegotiationEmptyState } from '@/components/negotiations/NegotiationEmptyState';
-import Navbar from '@/components/Navbar';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import { useNegotiationSocket } from '@/hooks/useNegotiationSocket';
 import { useAuth } from '@/contexts/AuthContext';
 import { notify } from '@/lib/notify';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, WifiOff } from 'lucide-react';
+
+// ─── terminal statuses — no further actions allowed ───────────────
+const TERMINAL: NegotiationStatus[] = [
+    NegotiationStatus.ACCEPTED,
+    NegotiationStatus.REJECTED,
+    NegotiationStatus.EXPIRED,
+];
 
 export default function NegotiationPage() {
-  const params = useParams();
-  const router = useRouter();
-  const { user } = useAuth();
-  const { getNegotiation, acceptNegotiation, rejectNegotiation, counterOffer } = useNegotiation();
-  const { messages: socketMessages, lastStatusUpdate, sendMessage } = useNegotiationSocket(params.id as string);
-  
-  const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
-  const [loading, setLoading] = useState(true);
+    const params = useParams();
+    const router = useRouter();
+    const { user } = useAuth();
 
-  const fetchNegotiation = useCallback(async () => {
-    if (!params.id) return;
-    const data = await getNegotiation(params.id as string);
-    if (data) {
-      setNegotiation(data);
-    }
-    setLoading(false);
-  }, [params.id, getNegotiation]);
+    // orderId comes from the URL — negotiation page is at /[role]/negotiations/[orderId]
+    const orderId = params.id as string;
 
-  useEffect(() => {
-    fetchNegotiation();
-  }, [fetchNegotiation]);
+    const {
+        getNegotiation,
+        acceptNegotiation,
+        rejectNegotiation,
+        counterOffer,
+    } = useNegotiation();
 
-  // Handle real-time status updates
-  useEffect(() => {
-    if (lastStatusUpdate) {
-      fetchNegotiation();
-      
-      // Handle browser notifications for counter offers
-      if (lastStatusUpdate.action === 'COUNTER' && document.hidden) {
-          if ("Notification" in window && Notification.permission === "granted") {
-              new Notification(`New counter offer on ${negotiation?.order.product.name}`);
-          }
-      }
-    }
-  }, [lastStatusUpdate, fetchNegotiation, negotiation?.order.product.name]);
+    const {
+        messages: socketMessages,
+        lastStatusUpdate,
+        sendMessage,
+        isConnected,
+    } = useNegotiationSocket(orderId);
 
-  const handleAction = async (action: string, data?: any) => {
-    if (!negotiation) return;
+    const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
+    const [loading, setLoading]         = useState(true);
+    const [acting, setActing]           = useState(false);
 
-    try {
-      let result: Negotiation | null = null;
-      if (action === 'ACCEPT') {
-        result = await acceptNegotiation(negotiation.order.id);
-      } else if (action === 'COUNTER') {
-        // Validate limits (backend also does this)
-        const originalPrice = negotiation.order.product.unitPrice;
-        if (data.price < originalPrice * 0.5 || data.price > originalPrice * 1.5) {
-            notify.error('Proposed price must be between 50% and 150% of listed price');
+    // ── fetch ──────────────────────────────────────────────────────
+    const fetchNegotiation = useCallback(async () => {
+        if (!orderId) return;
+        // getNegotiation takes the orderId — backend returns the Negotiation for that order
+        const data = await getNegotiation(orderId);
+        if (data) setNegotiation(data);
+        setLoading(false);
+    }, [orderId, getNegotiation]);
+
+    useEffect(() => { fetchNegotiation(); }, [fetchNegotiation]);
+
+    // ── real-time status update via WebSocket ──────────────────────
+    useEffect(() => {
+        if (!lastStatusUpdate) return;
+        fetchNegotiation();
+
+        // browser notification when tab is hidden and counter offer arrives
+        if (
+            lastStatusUpdate.action === 'COUNTER' &&
+            document.hidden &&
+            'Notification' in window &&
+            Notification.permission === 'granted' &&
+            negotiation
+        ) {
+            new Notification(
+                `New counter offer on ${negotiation.order.product.name}`,
+                { body: `Check your negotiation for ${negotiation.order.product.name}` }
+            );
+        }
+    }, [lastStatusUpdate]);
+
+    // ── fallback polling when WebSocket is disconnected ────────────
+    useEffect(() => {
+        if (isConnected) return;
+        const interval = setInterval(fetchNegotiation, 30_000);
+        return () => clearInterval(interval);
+    }, [isConnected, fetchNegotiation]);
+
+    // ── turn detection ─────────────────────────────────────────────
+    const isBuyer  = user?.role === UserType.BUYER;
+    const isSeller = user?.role === UserType.FARMER || user?.role === UserType.SUPPLIER;
+
+    const isMyTurn = !!negotiation && (
+        (isBuyer  && negotiation.canBuyerRespond)  ||
+        (isSeller && negotiation.canSellerRespond)
+    );
+
+    const isTerminal = !!negotiation && TERMINAL.includes(negotiation.status);
+
+    // ── action handler ─────────────────────────────────────────────
+    const handleAction = async (action: string, data?: {
+        price?: number;
+        message?: string;
+    }) => {
+        if (!negotiation || acting) return;
+
+        // guard: only the party whose turn it is can act
+        if (action !== 'GO_TO_CART' && !isMyTurn) {
+            notify.error('It is not your turn to respond', 'Not your turn');
             return;
         }
-        result = await counterOffer(negotiation.order.id, {
-          counterPrice: data.price,
-          message: data.message || ''
-        });
-      } else if (action === 'REJECT') {
-        result = await rejectNegotiation(negotiation.order.id, data?.message || 'Negotiation declined');
-      } else if (action === 'GO_TO_CART') {
-        router.push('/cart');
-      } else if (action === 'CHAT') {
-        sendMessage({
-          id: Math.random().toString(36).substr(2, 9), 
-          content: data.message,
-          type: 'CHAT',
-          timestamp: Date.now(),
-          isBuyer: user?.role === 'BUYER'
-        } as any);
-        return;
-      }
 
-      if (result) {
-        setNegotiation(result);
-      }
-    } catch (error) {
-      console.error('Action failed:', error);
+        setActing(true);
+        try {
+            // orderId lives on negotiation.order.id — order is still fully embedded in NegotiationDTO
+            const nOrderId = negotiation.order.id;
+
+            if (action === 'ACCEPT') {
+                const result = await acceptNegotiation(nOrderId);
+                if (result) {
+                    setNegotiation(result);
+                    notify.success('Price agreed — you can now proceed to checkout', 'Accepted');
+                }
+
+            } else if (action === 'COUNTER') {
+                if (!data?.price) {
+                    notify.error('Please enter a price', 'Missing price');
+                    return;
+                }
+
+                // frontend price range guard (backend also validates)
+                const listed = negotiation.order.product.unitPrice;
+                const min    = listed * 0.5;
+                const max    = listed * 1.5;
+                if (data.price < min || data.price > max) {
+                    notify.error(
+                        `Price must be between RWF ${Math.round(min).toLocaleString()} and RWF ${Math.round(max).toLocaleString()}`,
+                        'Price out of range'
+                    );
+                    return;
+                }
+
+                // frontend counter limit guard
+                if ((negotiation as any).counterCount >= 3) {
+                    notify.error('Maximum counter offers reached — you can only Accept or Reject', 'Limit reached');
+                    return;
+                }
+
+                const result = await counterOffer(nOrderId, {
+                    counterPrice: data.price,
+                    message: data.message ?? '',
+                });
+                if (result) {
+                    setNegotiation(result);
+                    notify.success('Counter offer sent', 'Sent');
+                }
+
+            } else if (action === 'REJECT') {
+                const result = await rejectNegotiation(nOrderId, data?.message ?? 'Negotiation declined');
+                if (result) {
+                    setNegotiation(result);
+                    notify.info('Negotiation declined', 'Declined');
+                }
+
+            } else if (action === 'GO_TO_CART') {
+                // only buyers go to cart after acceptance
+                if (isBuyer) {
+                    router.push('/cart');
+                }
+
+            } else if (action === 'NEW_NEGOTIATION') {
+                router.push('/buyer/products');
+            }
+
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Action failed';
+            notify.error(msg, 'Error');
+        } finally {
+            setActing(false);
+        }
+    };
+
+    // ── derived label for mobile bar ───────────────────────────────
+    const statusLabel = negotiation?.isExpired
+        ? 'Expired'
+        : negotiation?.status ?? '';
+
+    const statusColor =
+        negotiation?.status === NegotiationStatus.ACCEPTED ? 'text-green-600' :
+        negotiation?.status === NegotiationStatus.REJECTED  ? 'text-red-500'   :
+        negotiation?.status === NegotiationStatus.EXPIRED   ? 'text-gray-400'  :
+        negotiation?.status === NegotiationStatus.COUNTERED ? 'text-blue-600'  :
+        'text-amber-600'; // PENDING
+
+    // ── loading ────────────────────────────────────────────────────
+    if (loading) {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center gap-4 bg-background">
+                <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                <p className="text-sm text-muted-foreground">Loading negotiation…</p>
+            </div>
+        );
     }
-  };
 
-  const isMyTurn = negotiation && user && (
-    (user.role === 'BUYER' && negotiation.canBuyerRespond) ||
-    (['FARMER', 'SUPPLIER'].includes(user.role) && negotiation.canSellerRespond)
-  );
+    if (!negotiation) return <NegotiationEmptyState />;
 
-  if (loading) {
+    const buyerOrSeller: 'buyer' | 'seller' = isBuyer ? 'buyer' : 'seller';
+
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-           <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-           <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Loading Negotiation...</p>
-        </div>
-      </div>
-    );
-  }
+        <div className="h-screen bg-background overflow-auto">
 
-  if (!negotiation) return <NegotiationEmptyState />;
-
-  const buyerOrSeller: 'buyer' | 'seller' = user?.role === 'BUYER' ? 'buyer' : 'seller';
-
-  return (
-    <div className="h-screen bg-[#FBFBFB] overflow-auto">
-      {/* <Navbar /> */}
-      
-      {/* Mobile Top Mini-Bar */}
-      <div className="lg:hidden sticky top-16 z-30 bg-white border-b border-gray-100 p-4 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="p-2 hover:bg-gray-50 rounded-full">
-                <ChevronLeft className="w-5 h-5 text-gray-900" />
-            </button>
-            <div>
-                <h1 className="font-bold text-gray-900 text-sm">{negotiation.order.product.name}</h1>
-                <p className="text-[10px] text-green-600 font-bold uppercase">
-                  {negotiation.status === 'EXPIRED' && !negotiation.isExpired ? 'ACTIVE' : negotiation.status}
-                </p>
-            </div>
-        </div>
-        <div className="text-right">
-            <p className="text-[10px] text-gray-400 font-bold uppercase">Price</p>
-            <p className="font-black text-gray-900 text-sm">RWF {negotiation.buyerProposedPrice.toLocaleString()}</p>
-        </div>
-      </div>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 ">
-        <div className="hidden lg:flex items-center justify-between mb-8">
-            <button 
-              onClick={() => router.back()}
-              className="group flex items-center gap-2 text-gray-400 hover:text-gray-900 transition-colors"
-            >
-                <div className="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-white group-hover:shadow-md transition-all">
-                    <ChevronLeft className="w-4 h-4" />
+            {/* ── disconnected banner ────────────────────────────── */}
+            {!isConnected && (
+                <div className="w-full bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2">
+                    <WifiOff size={14} className="text-amber-600" />
+                    <span className="text-[12px] text-amber-700 font-medium">
+                        Connection lost — refreshing every 30s
+                    </span>
                 </div>
-                <span className="text-xs font-bold uppercase tracking-widest">Back to negotiations</span>
-            </button>
-        </div>
+            )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-start">
-          <div className="lg:col-span-4 hidden lg:block">
-            <DealCard negotiation={negotiation} />
-          </div>
-
-          <div className="lg:col-span-6 flex flex-col h-full lg:min-h-[700px]">
-            <NegotiationThread 
-              negotiation={negotiation} 
-              messages={socketMessages} 
-              currentUserType={buyerOrSeller} 
-            />
-            <div className="mt-4">
-                <NegotiationActionBar 
-                    negotiation={negotiation} 
-                    currentUserType={buyerOrSeller} 
-                    onAction={handleAction}
-                    isMyTurn={!!isMyTurn}
-                />
+            {/* ── mobile mini-bar ────────────────────────────────── */}
+            <div className="lg:hidden sticky top-0 z-30 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => router.back()}
+                        className="p-1.5 hover:bg-accent rounded-xl transition-colors text-muted-foreground"
+                    >
+                        <ChevronLeft size={18} />
+                    </button>
+                    <div>
+                        <p className="font-semibold text-[13px] text-foreground leading-tight">
+                            {negotiation.order.product.name}
+                        </p>
+                        <p className={`text-[10px] font-semibold uppercase tracking-wide ${statusColor}`}>
+                            {statusLabel}
+                        </p>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <p className="text-[10px] text-muted-foreground">Proposed</p>
+                    <p className="font-bold text-[13px] text-foreground">
+                        RWF {negotiation.buyerProposedPrice.toLocaleString()}
+                    </p>
+                </div>
             </div>
-          </div>
+
+            {/* ── main ───────────────────────────────────────────── */}
+            <main className="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-10">
+
+                {/* desktop back button */}
+                <button
+                    onClick={() => router.back()}
+                    className="hidden lg:flex items-center gap-2 mb-6 text-muted-foreground hover:text-foreground transition-colors group"
+                >
+                    <div className="w-7 h-7 rounded-full border border-border flex items-center justify-center group-hover:bg-accent transition-colors">
+                        <ChevronLeft size={14} />
+                    </div>
+                    <span className="text-[12px] font-medium uppercase tracking-wider">Back to negotiations</span>
+                </button>
+
+                <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 items-start">
+
+                    {/* ── deal card (desktop only) ──────────────── */}
+                    <div className="lg:col-span-4 hidden lg:block">
+                        <DealCard negotiation={negotiation} />
+                    </div>
+
+                    {/* ── thread + action bar ───────────────────── */}
+                    <div className="lg:col-span-6 flex flex-col lg:min-h-[680px]">
+                        <NegotiationThread
+                            negotiation={negotiation}
+                            messages={socketMessages}
+                            currentUserType={buyerOrSeller}
+                        />
+
+                        <div className="mt-3">
+                            <NegotiationActionBar
+                                negotiation={negotiation}
+                                currentUserType={buyerOrSeller}
+                                onAction={handleAction}
+                                isMyTurn={isMyTurn}
+                                // isTerminal={isTerminal}
+                                // acting={acting}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
-      </main>
-    </div>
-  );
+    );
 }
