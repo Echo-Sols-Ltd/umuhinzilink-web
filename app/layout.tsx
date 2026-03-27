@@ -32,7 +32,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="bg-background text-foreground overflow-hidden">
         <OfflineIndicator />
         <AppProviders>
-          <main id="main-content" tabIndex={-1}>
+          <main id="main-content" tabIndex={-1} >
             {/* <Navbar /> */}
             {children}
           </main>

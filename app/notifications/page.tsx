@@ -148,7 +148,7 @@ export default function NotificationsPage() {
         <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={user.role as UserType} activeItem="Notifications" />
 
-            <main className="flex-1 overflow-auto">
+            <main className="flex-1 overflow-auto pb-14">
                 <div className="p-6 lg:p-8 max-w-full space-y-6">
 
                     {/* ── Header ──────────────────────────────────────────── */}

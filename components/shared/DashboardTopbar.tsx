@@ -26,20 +26,20 @@ const notifHref = (role?: string) =>
     role === UserType.GOVERNMENT ? '/government/notifications' : '/notifications';
 
 export default function DashboardTopbar({ onMenuClick, title }: Props) {
-    const { user }             = useAuth();
+    const { user } = useAuth();
     const { getCartItemCount } = useCart();
-    const { unreadCount }      = useNotificationContext();
-    const pathname             = usePathname();
+    const { unreadCount } = useNotificationContext();
+    const pathname = usePathname();
 
     const cartCount = getCartItemCount();
-    const showCart  = user?.role === UserType.BUYER;
+    const showCart = user?.role === UserType.BUYER;
     const pageTitle = title ?? getPageTitle(pathname);
     const firstName = user?.firstName ?? '';
-    const initials  = firstName ? firstName[0].toUpperCase() : 'U';
+    const initials = firstName ? firstName[0].toUpperCase() : 'U';
 
     return (
         <header className="
-            sticky top-0 z-30 w-full h-14
+            fixed top-0 z-50 w-full h-14
             flex items-center justify-between px-4 lg:px-6
             bg-card border-b border-border shrink-0
         ">
