@@ -36,8 +36,6 @@ export default function NegotiationPage() {
         counterOffer,
     } = useNegotiationAction();
 
-
-
     const {
         messages: socketMessages,
         isConnected,
@@ -55,7 +53,10 @@ export default function NegotiationPage() {
         const fetchNegotiation = async () => {
             if (!negotiationId) return;
 
+     
             const data = await getNegotiation(negotiationId);
+
+            console.log("this is the data from the backend",data)
             if (data) {
                 setNegotiation(data);
                 setCurrentNegotiation(data)
@@ -65,14 +66,6 @@ export default function NegotiationPage() {
         fetchNegotiation();
     }, [negotiationId]);
 
-    useEffect(() => {
-        // We can just rely on socket messages to trigger fetch or standard polling
-        // Re-fetching negotiation on new message is optional but good
-        if (socketMessages.length > 0) {
-            // we could fetch here, but let's just let polling or explicit actions handle it
-        }
-
-    }, [socketMessages.length]);
 
 
     // ── turn detection ─────────────────────────────────────────────

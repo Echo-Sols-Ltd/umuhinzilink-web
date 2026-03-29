@@ -12,8 +12,8 @@ export default function useNegotiationAction() {
 
   // Get specific negotiation
   const getNegotiation = useCallback(async (orderId: string): Promise<Negotiation | null> => {
-    if (!user) return null;
-    
+    console.log("wow user are you there")
+ 
     setLoading(true);
     try {
       const response = await negotiationService.getNegotiation(orderId);

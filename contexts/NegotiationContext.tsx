@@ -179,7 +179,7 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
     }
     fetchNegotiationMessages()
 
-  })
+  },[currentNegotiation])
 
   const value = useMemo(
     () => ({
