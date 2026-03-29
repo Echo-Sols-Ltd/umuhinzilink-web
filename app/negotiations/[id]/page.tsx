@@ -24,10 +24,10 @@ export default function NegotiationPage() {
     const params = useParams();
     const router = useRouter();
     const { user } = useAuth();
-    const {setCurrentNegotiation } = useNegotiation()
+    const { setCurrentNegotiation } = useNegotiation()
 
-    // orderId comes from the URL — negotiation page is at /[role]/negotiations/[orderId]
-    const orderId = params.id as string;
+    const negotiationId = params.id as string;
+
 
     const {
         getNegotiation,
@@ -35,6 +35,8 @@ export default function NegotiationPage() {
         rejectNegotiation,
         counterOffer,
     } = useNegotiationAction();
+
+
 
     const {
         messages: socketMessages,
@@ -46,16 +48,22 @@ export default function NegotiationPage() {
     const [loading, setLoading] = useState(true);
     const [acting, setActing] = useState(false);
 
-    // ── fetch ──────────────────────────────────────────────────────
-    const fetchNegotiation = useCallback(async () => {
-        if (!orderId) return;
-        // getNegotiation takes the orderId — backend returns the Negotiation for that order
-        const data = await getNegotiation(orderId);
-        if (data) setNegotiation(data);
-        setLoading(false);
-    }, [orderId, getNegotiation]);
 
-    useEffect(() => { fetchNegotiation(); }, [fetchNegotiation]);
+
+    useEffect(() => {
+        // ── fetch ──────────────────────────────────────────────────────
+        const fetchNegotiation = async () => {
+            if (!negotiationId) return;
+
+            const data = await getNegotiation(negotiationId);
+            if (data) {
+                setNegotiation(data);
+                setCurrentNegotiation(data)
+            }
+            setLoading(false);
+        }
+        fetchNegotiation();
+    }, [negotiationId]);
 
     useEffect(() => {
         // We can just rely on socket messages to trigger fetch or standard polling
@@ -66,12 +74,6 @@ export default function NegotiationPage() {
 
     }, [socketMessages.length]);
 
-    // ── fallback polling when WebSocket is disconnected ────────────
-    useEffect(() => {
-        if (isConnected) return;
-        const interval = setInterval(fetchNegotiation, 30_000);
-        return () => clearInterval(interval);
-    }, [isConnected, fetchNegotiation]);
 
     // ── turn detection ─────────────────────────────────────────────
     const isBuyer = user?.role === UserType.BUYER;

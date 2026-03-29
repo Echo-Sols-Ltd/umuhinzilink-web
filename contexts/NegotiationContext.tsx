@@ -177,6 +177,7 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
 
       }
     }
+    fetchNegotiationMessages()
 
   })
 
