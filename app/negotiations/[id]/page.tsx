@@ -7,7 +7,7 @@ import { DealCard } from '@/components/negotiations/DealCard';
 import { NegotiationThread } from '@/components/negotiations/NegotiationThread';
 import { NegotiationActionBar } from '@/components/negotiations/NegotiationActionBar';
 import { NegotiationEmptyState } from '@/components/negotiations/NegotiationEmptyState';
-import { useNegotiation } from '@/contexts/NegotiationContext';
+import useNegotiationAction from '@/hooks/useNegotiationAction';
 import { useNegotiationSocket } from '@/hooks/useNegotiationSocket';
 import { useAuth } from '@/contexts/AuthContext';
 import { notify } from '@/lib/notify';
@@ -33,7 +33,7 @@ export default function NegotiationPage() {
         acceptNegotiation,
         rejectNegotiation,
         counterOffer,
-    } = useNegotiation();
+    } = useNegotiationAction();
 
     const {
         messages: socketMessages,

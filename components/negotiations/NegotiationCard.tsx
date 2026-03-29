@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Negotiation, NegotiationStatus, CounterOfferRequest } from '@/types';
-import { useNegotiation } from '@/contexts/NegotiationContext';
+import useNegotiationAction from '@/hooks/useNegotiationAction';
 import { formatCurrency } from '@/lib/negotiation-utils';
 import { 
   MessageCircle, 
@@ -31,7 +31,7 @@ export default function NegotiationCard({
   userType = 'buyer', 
   onChatOpen 
 }: NegotiationCardProps) {
-  const { acceptNegotiation, rejectNegotiation, counterOffer } = useNegotiation();
+  const { acceptNegotiation, rejectNegotiation, counterOffer } = useNegotiationAction();
   const [showCounterOffer, setShowCounterOffer] = useState(false);
   const [counterPrice, setCounterPrice] = useState('');
   const [counterMessage, setCounterMessage] = useState('');

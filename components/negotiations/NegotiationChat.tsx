@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Negotiation, NegotiationMessage } from '@/types';
-import { useNegotiation } from '@/contexts/NegotiationContext';
 import { useNegotiationSocket } from '@/hooks/useNegotiationSocket';
 import { 
   Send, 
@@ -105,10 +104,10 @@ export default function NegotiationChat({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
       <div className="bg-white w-full max-w-2xl h-[600px] rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-primary/5 to-primary/10">
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-linear-to-r from-primary/5 to-primary/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
               <MessageCircle className="w-5 h-5 text-primary" />
@@ -188,7 +187,7 @@ export default function NegotiationChat({
 
                 return (
                   <div key={index} className="flex gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                       isCurrentUser ? 'bg-primary/20' : 'bg-gray-200'
                     }`}>
                       {isCurrentUser ? (
