@@ -15,7 +15,7 @@ type NegotiationContextValue = {
   currentNegotiation: Negotiation | null
 
   // Actions
-  sendNegotiationMessage: (negotiationId: string, content: string, type?: MessageType) => void;
+  sendNegotiationMessage: (negotiationId: string, content: string) => void;
   fetchBuyerNegotiations: (page?: number, size?: number) => Promise<void>;
   fetchSellerNegotiations: (page?: number, size?: number) => Promise<void>;
   updateNegotiation: (negotiation: Negotiation) => void;
@@ -65,7 +65,7 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
 
   }, [socket])
 
-  const sendNegotiationMessage = useCallback((negotiationId: string, content: string, type: MessageType = MessageType.TEXT) => {
+  const sendNegotiationMessage = useCallback((negotiationId: string, content: string) => {
     if (!socket || !user) return;
 
     const negotiation = negotiations.find(n => n.id === negotiationId);
@@ -77,7 +77,7 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
 
     const finalRequest: SendMessageRequest = {
       content,
-      type,
+      type:MessageType.TEXT,
       senderId: user.id,
       receiverId,
       negotiationId

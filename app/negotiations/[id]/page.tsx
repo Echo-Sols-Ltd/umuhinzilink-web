@@ -39,7 +39,7 @@ export default function NegotiationPage() {
     const {
         messages: socketMessages,
         isConnected,
-        sendNegotiationMessage: sendMessage
+        sendNegotiationMessage
     } = useNegotiation();
 
     const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
@@ -53,10 +53,10 @@ export default function NegotiationPage() {
         const fetchNegotiation = async () => {
             if (!negotiationId) return;
 
-     
+
             const data = await getNegotiation(negotiationId);
 
-            console.log("this is the data from the backend",data)
+            console.log("this is the data from the backend", data)
             if (data) {
                 setNegotiation(data);
                 setCurrentNegotiation(data)
@@ -146,6 +146,9 @@ export default function NegotiationPage() {
 
             } else if (action === 'NEW_NEGOTIATION') {
                 router.push('/buyer/products');
+            }
+            else {
+                sendNegotiationMessage(negotiationId, data?.message!)
             }
 
         } catch (err) {
