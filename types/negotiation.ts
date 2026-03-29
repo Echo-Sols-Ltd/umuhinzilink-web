@@ -14,6 +14,7 @@ export interface Negotiation {
     order: Order;
     buyerProposedPrice: number;
     sellerResponsePrice: number;
+    agreedPrice: number;
     lastMessage: string;
     status: NegotiationStatus;
     expiresAt: string;

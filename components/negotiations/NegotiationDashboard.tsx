@@ -283,7 +283,7 @@ export default function NegotiationDashboard({
               key={negotiation.id}
               negotiation={negotiation}
               userType={user?.role==='BUYER'?'buyer':'seller'}
-              onChatOpen={onChatOpen}
+              // onChatOpen={onChatOpen}
             />
           ))}
         </div>

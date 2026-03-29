@@ -2,233 +2,257 @@
 
 import React, { useState } from 'react';
 import { Negotiation, NegotiationStatus } from '@/types';
-import { formatCurrency } from '@/lib/negotiation-utils';
-import { Send, CheckCircle, XCircle, Trash2, ArrowRight, AlertCircle } from 'lucide-react';
-import { notify } from '@/lib/notify';
+import { Send, CheckCircle, XCircle, DollarSign, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface ActionButtonProps {
-  label: string;
-  onClick: () => void;
-  variant?: 'primary' | 'outline' | 'ghost' | 'red';
-  icon?: React.ReactNode;
-  disabled?: boolean;
-}
-
-const ActionButton: React.FC<ActionButtonProps> = ({ label, onClick, variant = 'primary', icon, disabled }) => {
-  const variants = {
-    primary: "bg-green-600 text-white hover:bg-green-700 shadow-md",
-    outline: "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50",
-    ghost: "bg-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50",
-    red: "bg-transparent text-red-500 hover:text-red-700 hover:bg-red-50",
-  };
-
-  return (
-    <button 
-      onClick={label === 'Confirm' || !disabled ? onClick : undefined}
-      disabled={disabled}
-      className={cn(
-        "flex-1 flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
-        variants[variant]
-      )}
-    >
-      {icon}
-      {label}
-    </button>
-  );
-};
-
 interface NegotiationActionBarProps {
-  negotiation: Negotiation;
-  currentUserType: 'buyer' | 'seller';
-  onAction: (action: string, data?: any) => void;
-  isMyTurn: boolean;
+    negotiation: Negotiation;
+    currentUserType: 'buyer' | 'seller';
+    onAction: (action: string, data?: { price?: number; message?: string }) => void;
+    isMyTurn: boolean;
+    isTerminal: boolean;
+    acting: boolean;
 }
 
-export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({ 
-  negotiation, 
-  currentUserType,
-  onAction,
-  isMyTurn
+export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
+    negotiation,
+    currentUserType,
+    onAction,
+    isMyTurn,
+    isTerminal,
+    acting,
 }) => {
-  const [chatMessage, setChatMessage] = useState('');
-  const [price, setPrice] = useState(negotiation.sellerResponsePrice || negotiation.buyerProposedPrice);
-  const [showConfirm, setShowConfirm] = useState(false);
+    const [message, setMessage]       = useState('');
+    const [showPriceInput, setShowPriceInput] = useState(false);
+    const [agreedPrice, setAgreedPrice] = useState('');
+    const [showRejectConfirm, setShowRejectConfirm] = useState(false);
+    const [showAcceptConfirm, setShowAcceptConfirm] = useState(false);
 
-  const isAccepted = negotiation.status === NegotiationStatus.ACCEPTED;
-  const isRejected = negotiation.status === NegotiationStatus.REJECTED;
-  const isExpired = negotiation.isExpired;
-  const isEnded = isAccepted || isRejected || isExpired;
+    const handleSendMessage = () => {
+        if (!message.trim()) return;
+        onAction('CHAT', { message: message.trim() });
+        setMessage('');
+    };
 
-  const counterLimitReached = ((negotiation as any).counterCount || 0) >= 3; 
+    const handleSetPrice = () => {
+        const price = parseFloat(agreedPrice);
+        if (!price || price <= 0) return;
+        onAction('SET_PRICE', { price, message: message.trim() });
+        setAgreedPrice('');
+        setMessage('');
+        setShowPriceInput(false);
+    };
 
-  const handleSendChat = () => {
-    if (!chatMessage.trim()) return;
-    onAction('CHAT', { message: chatMessage });
-    setChatMessage('');
-  };
+    const handleAccept = () => {
+        onAction('ACCEPT');
+        setShowAcceptConfirm(false);
+    };
 
-  const handleCounter = () => {
-    if (counterLimitReached) return;
-    
-    const originalPrice = negotiation.order.product.unitPrice;
-    if (price < originalPrice * 0.5 || price > originalPrice * 1.5) {
-        notify.error('Proposed price must be between 50% and 150% of the listed price');
-        return;
+    const handleReject = () => {
+        onAction('REJECT', { message: 'Negotiation declined' });
+        setShowRejectConfirm(false);
+    };
+
+    // ── terminal states ────────────────────────────────────────────
+    if (isTerminal) {
+        if (negotiation.status === NegotiationStatus.ACCEPTED) {
+            return (
+                <div className="rounded-2xl border border-green-200 bg-green-50 p-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <CheckCircle size={20} className="text-green-600 shrink-0" />
+                        <div>
+                            <p className="text-[13px] font-semibold text-green-800">
+                                Price agreed at RWF {negotiation.agreedPrice?.toLocaleString()}
+                            </p>
+                            <p className="text-[11px] text-green-600">Proceed to checkout to complete your order</p>
+                        </div>
+                    </div>
+                    {currentUserType === 'buyer' && (
+                        <button
+                            onClick={() => onAction('GO_TO_CART')}
+                            className="shrink-0 px-5 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors"
+                        >
+                            Go to cart
+                        </button>
+                    )}
+                </div>
+            );
+        }
+
+        if (negotiation.status === NegotiationStatus.REJECTED) {
+            return (
+                <div className="rounded-2xl border border-border bg-muted/30 p-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <XCircle size={18} className="text-muted-foreground shrink-0" />
+                        <p className="text-[13px] text-muted-foreground">This negotiation has ended</p>
+                    </div>
+                    {currentUserType === 'buyer' && (
+                        <button
+                            onClick={() => onAction('NEW_NEGOTIATION')}
+                            className="shrink-0 px-4 py-2 rounded-xl border border-border bg-background hover:bg-accent text-[13px] font-medium transition-colors"
+                        >
+                            Browse products
+                        </button>
+                    )}
+                </div>
+            );
+        }
+
+        if (negotiation.isExpired) {
+            return (
+                <div className="rounded-2xl border border-border bg-muted/30 p-4 text-center">
+                    <p className="text-[13px] text-muted-foreground">This negotiation has expired</p>
+                </div>
+            );
+        }
     }
 
-    onAction('COUNTER', { price, message: chatMessage });
-    setChatMessage('');
-  };
-
-  return (
-    <div className="bg-white border-t border-gray-100 flex flex-col">
-      {/* 1. Status / Action Panel */}
-      <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-        {isAccepted ? (
-           <div className="p-4 bg-green-50 border-b border-green-100 flex items-center justify-between gap-4">
-             <div className="flex items-center gap-2 text-green-700">
-               <CheckCircle className="w-5 h-5" />
-               <span className="text-[10px] font-black uppercase tracking-widest">Price agreed at {formatCurrency(negotiation.buyerProposedPrice)}</span>
-             </div>
-             <button 
-               onClick={() => onAction('GO_TO_CART')}
-               className="bg-green-600 text-white font-black uppercase tracking-widest text-[10px] px-4 py-2 rounded-xl shadow-md hover:bg-green-700 flex items-center gap-2 group transition-all"
-             >
-               Checkout
-               <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
-             </button>
-           </div>
-        ) : isRejected || isExpired ? (
-          <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-center gap-4 text-center">
-             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-none">
-                This negotiation has ended 
-                {isExpired && <span className="ml-2 bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded text-[8px]">EXPIRED</span>}
-             </p>
-             <button 
-               onClick={() => onAction('START_NEW')}
-               className="text-primary font-black uppercase tracking-widest text-[10px] hover:underline"
-             >
-               Start New
-             </button>
-          </div>
-        ) : !isMyTurn ? (
-          <div className="p-4 bg-white border-b border-gray-50 flex items-center justify-center gap-3">
-            <div className="flex gap-1">
-                <div className="w-1 h-1 bg-gray-200 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                <div className="w-1 h-1 bg-gray-200 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                <div className="w-1 h-1 bg-gray-200 rounded-full animate-bounce" />
-            </div>
-            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Waiting for {currentUserType === 'buyer' ? 'Seller' : 'Buyer'}...</span>
-          </div>
-        ) : (
-          <div className="p-6 space-y-4 border-b border-gray-50">
-            <div className="flex gap-4 items-end">
-              <div className="flex-[0.3]">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Your Price Move</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">RWF</span>
-                  <input 
-                    type="number" 
-                    value={price}
-                    onChange={(e) => setPrice(Number(e.target.value))}
-                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-black text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-sm outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex-[0.4]">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Move Message</label>
-                <input 
-                  type="text" 
-                  value={chatMessage}
-                  onChange={(e) => setChatMessage(e.target.value)}
-                  placeholder="Offer details..."
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-medium text-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all text-sm outline-none"
-                />
-              </div>
-
-              <div className="flex-[0.3] flex gap-2">
-                <ActionButton 
-                  label={counterLimitReached ? "Limit Hit" : "Counter"} 
-                  onClick={handleCounter} 
-                  variant="primary" 
-                  disabled={price === (negotiation.sellerResponsePrice || negotiation.buyerProposedPrice) || counterLimitReached}
-                />
-                <ActionButton 
-                  label="Accept" 
-                  onClick={() => setShowConfirm(true)} 
-                  variant="outline"
-                  icon={<CheckCircle className="w-4 h-4" />}
-                />
-                <button 
-                  onClick={() => onAction('REJECT')}
-                  className="p-3 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                >
-                  <XCircle className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-            {counterLimitReached && (
-                <p className="text-[9px] text-amber-600 font-black uppercase tracking-widest flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" />
-                    Maximum { (negotiation as any).counterCount }/3 counter offers reached
+    // ── waiting for other party ────────────────────────────────────
+    if (!isMyTurn) {
+        return (
+            <div className="rounded-2xl border border-border bg-card p-4 flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                <p className="text-[13px] text-muted-foreground">
+                    Waiting for {currentUserType === 'buyer' ? 'seller' : 'buyer'} to respond…
                 </p>
+            </div>
+        );
+    }
+
+    // ── SELLER action bar — chat + set agreed price + decline ──────
+    if (currentUserType === 'seller') {
+        return (
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
+
+                {/* confirm dialogs */}
+                {showRejectConfirm && (
+                    <div className="p-3 rounded-xl border border-destructive/30 bg-destructive/5 flex items-center justify-between gap-3">
+                        <p className="text-[13px] text-foreground">Decline this negotiation?</p>
+                        <div className="flex gap-2 shrink-0">
+                            <button onClick={() => setShowRejectConfirm(false)}
+                                className="px-3 py-1.5 rounded-lg border border-border text-[12px] hover:bg-accent transition-colors">
+                                Cancel
+                            </button>
+                            <button onClick={handleReject} disabled={acting}
+                                className="px-3 py-1.5 rounded-lg bg-destructive text-white text-[12px] hover:bg-destructive/90 transition-colors disabled:opacity-60">
+                                {acting ? <Loader2 size={12} className="animate-spin" /> : 'Confirm'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* agreed price input */}
+                {showPriceInput && (
+                    <div className="p-3 rounded-xl border border-green-200 bg-green-50 space-y-2">
+                        <p className="text-[12px] font-medium text-green-800">Set final agreed price</p>
+                        <div className="flex gap-2">
+                            <div className="relative flex-1">
+                                <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                    type="number"
+                                    value={agreedPrice}
+                                    onChange={e => setAgreedPrice(e.target.value)}
+                                    placeholder={`Buyer proposed: ${negotiation.buyerProposedPrice.toLocaleString()}`}
+                                    className="w-full pl-8 pr-3 py-2 rounded-xl border border-green-200 bg-white text-[13px] focus:outline-none focus:ring-2 focus:ring-green-500/30"
+                                />
+                            </div>
+                            <button onClick={() => setShowPriceInput(false)}
+                                className="px-3 rounded-xl border border-border bg-background hover:bg-accent text-[13px] transition-colors">
+                                Cancel
+                            </button>
+                            <button onClick={handleSetPrice} disabled={acting || !agreedPrice}
+                                className="px-4 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-medium transition-colors disabled:opacity-60 flex items-center gap-1.5">
+                                {acting
+                                    ? <Loader2 size={13} className="animate-spin" />
+                                    : <><CheckCircle size={13} /> Confirm</>}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* chat input row */}
+                <div className="flex gap-2">
+                    <input
+                        value={message}
+                        onChange={e => setMessage(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
+                        placeholder="Type a message…"
+                        className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-background text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                    />
+                    <button onClick={handleSendMessage} disabled={!message.trim() || acting}
+                        className="px-3 rounded-xl border border-border bg-background hover:bg-accent transition-colors disabled:opacity-40">
+                        <Send size={15} className="text-muted-foreground" />
+                    </button>
+                </div>
+
+                {/* seller action buttons */}
+                {!showPriceInput && !showRejectConfirm && (
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowPriceInput(true)}
+                            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors"
+                        >
+                            <DollarSign size={14} />
+                            Set agreed price
+                        </button>
+                        <button
+                            onClick={() => setShowRejectConfirm(true)}
+                            className="px-4 py-2.5 rounded-xl border border-border hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 text-muted-foreground text-[13px] transition-colors"
+                        >
+                            Decline
+                        </button>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    // ── BUYER action bar — chat only (seller sets the price) ───────
+    return (
+        <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
+
+            {showAcceptConfirm && negotiation.agreedPrice && (
+                <div className="p-3 rounded-xl border border-green-200 bg-green-50 flex items-center justify-between gap-3">
+                    <p className="text-[13px] text-green-800">
+                        Accept RWF {negotiation.agreedPrice.toLocaleString()} for {negotiation.order.quantity} {negotiation.order.product.measurementUnit}?
+                    </p>
+                    <div className="flex gap-2 shrink-0">
+                        <button onClick={() => setShowAcceptConfirm(false)}
+                            className="px-3 py-1.5 rounded-lg border border-border text-[12px] hover:bg-accent transition-colors">
+                            Cancel
+                        </button>
+                        <button onClick={handleAccept} disabled={acting}
+                            className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-[12px] hover:bg-green-700 transition-colors disabled:opacity-60 flex items-center gap-1">
+                            {acting ? <Loader2 size={12} className="animate-spin" /> : <><CheckCircle size={12} /> Accept</>}
+                        </button>
+                    </div>
+                </div>
             )}
-          </div>
-        )}
-      </div>
 
-      {/* 2. Chat Input Bar (Always available unless ended) */}
-      <div className="p-4 flex gap-3 items-center bg-white">
-        <div className="relative flex-1">
-          <input 
-            type="text" 
-            value={chatMessage}
-            onChange={(e) => setChatMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSendChat()}
-            placeholder={isEnded ? "Chat disabled" : "Type a message..."}
-            disabled={isEnded}
-            className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all disabled:opacity-50"
-          />
-          <button 
-            onClick={handleSendChat}
-            disabled={isEnded || !chatMessage.trim()}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-primary hover:bg-primary/10 rounded-full transition-all disabled:text-gray-300"
-          >
-            <Send className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
+            <div className="flex gap-2">
+                <input
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
+                    placeholder="Type a message to the seller…"
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-background text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                />
+                <button onClick={handleSendMessage} disabled={!message.trim() || acting}
+                    className="px-3 rounded-xl border border-border bg-background hover:bg-accent transition-colors disabled:opacity-40">
+                    <Send size={15} className="text-muted-foreground" />
+                </button>
+            </div>
 
-      {/* 3. Confirmation Popover */}
-      {showConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl text-center animate-in zoom-in-95 duration-300">
-            <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-green-600" />
-            </div>
-            <h3 className="text-2xl font-black text-gray-900 mb-2">Accept Offer?</h3>
-            <p className="text-gray-500 text-sm font-medium mb-8 leading-relaxed">
-              Agree to <span className="text-gray-900 font-bold">{formatCurrency(price)}</span> for this item?
-            </p>
-            <div className="flex flex-col gap-2">
-               <button 
-                 onClick={() => { onAction('ACCEPT'); setShowConfirm(false); }}
-                 className="w-full py-4 bg-green-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-green-200"
-               >
-                 Yes, Confirm
-               </button>
-               <button 
-                 onClick={() => setShowConfirm(false)}
-                 className="w-full py-4 text-gray-400 font-black uppercase tracking-widest text-xs hover:text-gray-600"
-               >
-                 Cancel
-               </button>
-            </div>
-          </div>
+            {/* if seller has set an agreed price, buyer can accept */}
+            {negotiation.agreedPrice && !showAcceptConfirm && (
+                <button
+                    onClick={() => setShowAcceptConfirm(true)}
+                    className="w-full py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                    <CheckCircle size={14} />
+                    Accept RWF {negotiation.agreedPrice.toLocaleString()}
+                </button>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 };
