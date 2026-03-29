@@ -46,6 +46,11 @@ class NegotiationService {
       `${API_ENDPOINTS.ORDER.NEGOTIATION.SELLER}?page=${page}&size=${size}`
     );
   }
+
+  async getNegotiationMessages(id: string, page = 0, size = 10): Promise<PaginatedResponse<Negotiation[]>> {
+    return await apiClient.get<PaginatedResponse<Negotiation[]>>(`${API_ENDPOINTS.ORDER.NEGOTIATION.BY_ID(id)}/messages?page=${page}&size=${size}`)
+  }
 }
+
 
 export const negotiationService = new NegotiationService();

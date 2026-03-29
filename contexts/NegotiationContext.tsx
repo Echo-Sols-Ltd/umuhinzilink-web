@@ -12,12 +12,14 @@ type NegotiationContextValue = {
   error: string | null;
   messages: Message[];
   isConnected: boolean;
-  
+  currentNegotiation: Negotiation | null
+
   // Actions
   sendNegotiationMessage: (negotiationId: string, content: string, type?: MessageType) => void;
   fetchBuyerNegotiations: (page?: number, size?: number) => Promise<void>;
   fetchSellerNegotiations: (page?: number, size?: number) => Promise<void>;
   updateNegotiation: (negotiation: Negotiation) => void;
+  setCurrentNegotiation: (data: Negotiation) => void
 
   // Utilities
   refreshNegotiations: () => Promise<void>;
@@ -51,7 +53,7 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   const [currentNegotiation, setCurrentNegotiation] = useState<Negotiation | null>(null);
 
   const socket = useSocket()
-  
+
   const isConnected = !!socket?.isConnected();
 
   useEffect(() => {
@@ -65,12 +67,12 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
 
   const sendNegotiationMessage = useCallback((negotiationId: string, content: string, type: MessageType = MessageType.TEXT) => {
     if (!socket || !user) return;
-    
+
     const negotiation = negotiations.find(n => n.id === negotiationId);
     if (!negotiation) return;
 
-    const receiverId = user.id === negotiation.order.buyer.id 
-      ? negotiation.order.product.owner.id 
+    const receiverId = user.id === negotiation.order.buyer.id
+      ? negotiation.order.product.owner.id
       : negotiation.order.buyer.id;
 
     const finalRequest: SendMessageRequest = {
@@ -163,6 +165,11 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
     }
   }, [user, refreshNegotiations]);
 
+
+  useEffect(()=>{
+    
+  })
+
   const value = useMemo(
     () => ({
       negotiations,
@@ -176,7 +183,9 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
       hasActiveNegotiations,
       messages,
       sendNegotiationMessage,
-      isConnected
+      isConnected,
+      currentNegotiation,
+      setCurrentNegotiation
     }),
     [
       negotiations,
@@ -190,7 +199,9 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
       hasActiveNegotiations,
       messages,
       sendNegotiationMessage,
-      isConnected
+      isConnected,
+      setCurrentNegotiation,
+      currentNegotiation
     ]
   );
 

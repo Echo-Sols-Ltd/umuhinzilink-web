@@ -24,6 +24,7 @@ export default function NegotiationPage() {
     const params = useParams();
     const router = useRouter();
     const { user } = useAuth();
+    const {setCurrentNegotiation } = useNegotiation()
 
     // orderId comes from the URL — negotiation page is at /[role]/negotiations/[orderId]
     const orderId = params.id as string;
@@ -42,8 +43,8 @@ export default function NegotiationPage() {
     } = useNegotiation();
 
     const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
-    const [loading, setLoading]         = useState(true);
-    const [acting, setActing]           = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [acting, setActing] = useState(false);
 
     // ── fetch ──────────────────────────────────────────────────────
     const fetchNegotiation = useCallback(async () => {
@@ -73,11 +74,11 @@ export default function NegotiationPage() {
     }, [isConnected, fetchNegotiation]);
 
     // ── turn detection ─────────────────────────────────────────────
-    const isBuyer  = user?.role === UserType.BUYER;
+    const isBuyer = user?.role === UserType.BUYER;
     const isSeller = user?.role === UserType.FARMER || user?.role === UserType.SUPPLIER;
 
     const isMyTurn = !!negotiation && (
-        (isBuyer  && negotiation.canBuyerRespond)  ||
+        (isBuyer && negotiation.canBuyerRespond) ||
         (isSeller && negotiation.canSellerRespond)
     );
 
@@ -89,12 +90,6 @@ export default function NegotiationPage() {
         message?: string;
     }) => {
         if (!negotiation || acting) return;
-
-        // guard: only the party whose turn it is can act
-        if (action !== 'GO_TO_CART' && !isMyTurn) {
-            notify.error('It is not your turn to respond', 'Not your turn');
-            return;
-        }
 
         setActing(true);
         try {
@@ -116,8 +111,8 @@ export default function NegotiationPage() {
 
                 // frontend price range guard (backend also validates)
                 const listed = negotiation.order.product.unitPrice;
-                const min    = listed * 0.5;
-                const max    = listed * 1.5;
+                const min = listed * 0.5;
+                const max = listed * 1.5;
                 if (data.price < min || data.price > max) {
                     notify.error(
                         `Price must be between RWF ${Math.round(min).toLocaleString()} and RWF ${Math.round(max).toLocaleString()}`,
@@ -173,10 +168,10 @@ export default function NegotiationPage() {
 
     const statusColor =
         negotiation?.status === NegotiationStatus.ACCEPTED ? 'text-green-600' :
-        negotiation?.status === NegotiationStatus.REJECTED  ? 'text-red-500'   :
-        negotiation?.status === NegotiationStatus.EXPIRED   ? 'text-gray-400'  :
-        negotiation?.status === NegotiationStatus.COUNTERED ? 'text-blue-600'  :
-        'text-amber-600'; // PENDING
+            negotiation?.status === NegotiationStatus.REJECTED ? 'text-red-500' :
+                negotiation?.status === NegotiationStatus.EXPIRED ? 'text-gray-400' :
+                    negotiation?.status === NegotiationStatus.COUNTERED ? 'text-blue-600' :
+                        'text-amber-600'; // PENDING
 
     // ── loading ────────────────────────────────────────────────────
     if (loading) {
@@ -265,9 +260,7 @@ export default function NegotiationPage() {
                                 negotiation={negotiation}
                                 currentUserType={buyerOrSeller}
                                 onAction={handleAction}
-                                isMyTurn={isMyTurn}
-                                // isTerminal={isTerminal}
-                                // acting={acting}
+                                acting={acting}
                             />
                         </div>
                     </div>

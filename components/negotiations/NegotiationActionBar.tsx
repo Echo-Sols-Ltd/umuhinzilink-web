@@ -9,8 +9,6 @@ interface NegotiationActionBarProps {
     negotiation: Negotiation;
     currentUserType: 'buyer' | 'seller';
     onAction: (action: string, data?: { price?: number; message?: string }) => void;
-    isMyTurn: boolean;
-    isTerminal: boolean;
     acting: boolean;
 }
 
@@ -18,8 +16,6 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
     negotiation,
     currentUserType,
     onAction,
-    isMyTurn,
-    isTerminal,
     acting,
 }) => {
     const [message, setMessage]       = useState('');
@@ -53,71 +49,9 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
         setShowRejectConfirm(false);
     };
 
-    // ── terminal states ────────────────────────────────────────────
-    if (isTerminal) {
-        if (negotiation.status === NegotiationStatus.ACCEPTED) {
-            return (
-                <div className="rounded-2xl border border-green-200 bg-green-50 p-4 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <CheckCircle size={20} className="text-green-600 shrink-0" />
-                        <div>
-                            <p className="text-[13px] font-semibold text-green-800">
-                                Price agreed at RWF {negotiation.agreedPrice?.toLocaleString()}
-                            </p>
-                            <p className="text-[11px] text-green-600">Proceed to checkout to complete your order</p>
-                        </div>
-                    </div>
-                    {currentUserType === 'buyer' && (
-                        <button
-                            onClick={() => onAction('GO_TO_CART')}
-                            className="shrink-0 px-5 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors"
-                        >
-                            Go to cart
-                        </button>
-                    )}
-                </div>
-            );
-        }
+  
 
-        if (negotiation.status === NegotiationStatus.REJECTED) {
-            return (
-                <div className="rounded-2xl border border-border bg-muted/30 p-4 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <XCircle size={18} className="text-muted-foreground shrink-0" />
-                        <p className="text-[13px] text-muted-foreground">This negotiation has ended</p>
-                    </div>
-                    {currentUserType === 'buyer' && (
-                        <button
-                            onClick={() => onAction('NEW_NEGOTIATION')}
-                            className="shrink-0 px-4 py-2 rounded-xl border border-border bg-background hover:bg-accent text-[13px] font-medium transition-colors"
-                        >
-                            Browse products
-                        </button>
-                    )}
-                </div>
-            );
-        }
-
-        if (negotiation.isExpired) {
-            return (
-                <div className="rounded-2xl border border-border bg-muted/30 p-4 text-center">
-                    <p className="text-[13px] text-muted-foreground">This negotiation has expired</p>
-                </div>
-            );
-        }
-    }
-
-    // ── waiting for other party ────────────────────────────────────
-    if (!isMyTurn) {
-        return (
-            <div className="rounded-2xl border border-border bg-card p-4 flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
-                <p className="text-[13px] text-muted-foreground">
-                    Waiting for {currentUserType === 'buyer' ? 'seller' : 'buyer'} to respond…
-                </p>
-            </div>
-        );
-    }
+  
 
     // ── SELLER action bar — chat + set agreed price + decline ──────
     if (currentUserType === 'seller') {
