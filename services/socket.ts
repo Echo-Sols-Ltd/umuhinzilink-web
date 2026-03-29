@@ -18,7 +18,7 @@ class SocketService {
     private orderDeliveryChangeListeners: ((data: SocketResponse<Order>) => void)[] = []
     private orderNewListeners: ((data: SocketResponse<Order>) => void)[] = []
     private orderSatisfactionListeners: ((data: SocketResponse<Order>) => void)[] = []
-    private negotiationMessageListeners: ((message: NegotiationMessage) => void)[] = []
+    private negotiationMessageListeners: ((message: Message) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
@@ -191,7 +191,7 @@ class SocketService {
 
     private handleNegotiationMessage(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as NegotiationMessage
+            const body = JSON.parse(message.body) as Message
             this.negotiationMessageListeners.forEach(cb => cb(body))
         } catch (error) {
             console.error('Failed to parse negotiation message:', error)
@@ -435,11 +435,11 @@ class SocketService {
         this.typingListeners = this.typingListeners.filter(cb => cb !== callback)
     }
 
-    public onNegotiationMessage(callback: (message: NegotiationMessage) => void) {
+    public onNegotiationMessage(callback: (message: Message) => void) {
         this.negotiationMessageListeners.push(callback)
     }
 
-    public removeNegotiationMessageListener(callback: (message: NegotiationMessage) => void) {
+    public removeNegotiationMessageListener(callback: (message: Message) => void) {
         this.negotiationMessageListeners = this.negotiationMessageListeners.filter(cb => cb !== callback)
     }
 

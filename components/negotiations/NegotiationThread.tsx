@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { Negotiation, NegotiationMessage, NegotiationStatus } from '@/types';
+import { Negotiation, Message, NegotiationStatus } from '@/types';
 import { formatCurrency } from '@/lib/negotiation-utils';
 import { User, Store, Clock, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MessageBubbleProps {
-  message: NegotiationMessage;
+  message: Message;
   isBuyer: boolean;
   currentUserType: 'buyer' | 'seller';
 }
@@ -15,22 +15,25 @@ interface MessageBubbleProps {
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isBuyer, currentUserType }) => {
   const isMe = (currentUserType === 'buyer' && isBuyer) || (currentUserType === 'seller' && !isBuyer);
   
-  // System messages are centered
-  if (message.type === 'SYSTEM') {
+  // Extract proposed price if injected in content
+  const priceMatch = message.content?.match(/Proposed Price: RWF ([\d,.]+)/);
+  const proposedPrice = priceMatch ? priceMatch[1] : null;
+  const isOffer = !!proposedPrice;
+  const cleanContent = isOffer ? message.content.replace(/Proposed Price: RWF [\d,.]+\s*\n*/, '') : message.content;
+  
+  if (message.type === ('SYSTEM' as any)) {
     return (
       <div className="flex items-center justify-center my-6 w-full">
         <div className="flex items-center gap-3 w-full">
           <div className="h-px flex-1 bg-gray-100" />
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
-            {message.content}
+            {cleanContent}
           </span>
           <div className="h-px flex-1 bg-gray-100" />
         </div>
       </div>
     );
   }
-
-  const isOffer = message.type === 'OFFER' || message.type === 'COUNTER_OFFER';
 
   return (
     <div className={cn(
@@ -52,14 +55,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isBuyer, 
                "text-[10px] uppercase font-black tracking-tighter mb-1",
                isMe ? "text-white/70" : "text-gray-400"
             )}>
-                {message.type === 'OFFER' ? 'Buyer Offer' : 'Seller Counter'}
+                {isBuyer ? 'Buyer Offer' : 'Seller Counter'}
             </span>
             <span className="text-xl font-black">
-              {formatCurrency(message.proposedPrice || 0)}
+              RWF {proposedPrice}
             </span>
           </div>
         )}
-        <p className="text-sm leading-relaxed">{message.content}</p>
+        <p className="text-sm leading-relaxed">{cleanContent}</p>
       </div>
       <div className="flex items-center gap-1.5 mt-1.5 px-1">
         <span className="text-[10px] font-medium text-gray-400">
@@ -73,7 +76,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isBuyer, 
 
 interface NegotiationThreadProps {
   negotiation: Negotiation;
-  messages: NegotiationMessage[];
+  messages: Message[];
   currentUserType: 'buyer' | 'seller';
 }
 
@@ -144,7 +147,7 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
             <MessageBubble 
               key={idx} 
               message={msg} 
-              isBuyer={(msg as any).isBuyer ?? (msg.type === 'OFFER')} 
+              isBuyer={msg.sender?.role === 'BUYER' || ((msg as any).isBuyer ?? false)} 
               currentUserType={currentUserType}
             />
           ))}

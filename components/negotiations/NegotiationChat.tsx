@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Negotiation, NegotiationMessage } from '@/types';
-import { useNegotiationSocket } from '@/hooks/useNegotiationSocket';
+import { Negotiation, Message, MessageType } from '@/types';
+import { useNegotiation } from '@/contexts/NegotiationContext';
 import { 
   Send, 
   X, 
@@ -27,7 +27,7 @@ export default function NegotiationChat({
   onClose,
   userType = 'buyer'
 }: NegotiationChatProps) {
-  const { messages, isConnected, sendMessage } = useNegotiationSocket(negotiation.id);
+  const { messages, isConnected, sendNegotiationMessage } = useNegotiation();
   const [newMessage, setNewMessage] = useState('');
   const [proposedPrice, setProposedPrice] = useState('');
   const [loading, setLoading] = useState(false);
@@ -51,15 +51,17 @@ export default function NegotiationChat({
 
     setLoading(true);
     try {
-      const message: NegotiationMessage = {
-        type: proposedPrice ? 'OFFER' : 'CHAT',
-        content: newMessage.trim() || (proposedPrice ? 'Price proposal' : ''),
-        proposedPrice: proposedPrice ? parseFloat(proposedPrice) : undefined,
-        timestamp: Date.now(),
-      };
+      const isOffer = !!proposedPrice;
+      const content = isOffer 
+        ? `Proposed Price: RWF ${parseFloat(proposedPrice).toLocaleString()}\n\n${newMessage.trim()}`
+        : newMessage.trim();
 
       // Send message via socket service
-      sendMessage(message);
+      sendNegotiationMessage(
+        negotiation.id,
+        content,
+        MessageType.TEXT
+      );
       
       // Clear inputs
       setNewMessage('');
@@ -81,12 +83,12 @@ export default function NegotiationChat({
     }
   };
 
-  const formatTime = (timestamp: number) => {
+  const formatTime = (timestamp: string | number) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const formatDate = (timestamp: number) => {
+  const formatDate = (timestamp: string | number) => {
     const date = new Date(timestamp);
     const today = new Date();
     const yesterday = new Date(today);
@@ -182,8 +184,12 @@ export default function NegotiationChat({
             <>
               {messages.map((message, index) => {
                 const isCurrentUser = userType === 'buyer' ? 
-                  message.type !== 'COUNTER_OFFER' : 
-                  message.type === 'COUNTER_OFFER';
+                  message.sender?.role === 'BUYER' : 
+                  message.sender?.role !== 'BUYER';
+
+                const priceMatch = message.content?.match(/Proposed Price: RWF ([\d,.]+)/);
+                const proposedPriceMatch = priceMatch ? priceMatch[1] : null;
+                const cleanContent = proposedPriceMatch ? message.content.replace(/Proposed Price: RWF [\d,.]+\s*\n*/, '') : message.content;
 
                 return (
                   <div key={index} className="flex gap-3">
@@ -205,18 +211,18 @@ export default function NegotiationChat({
                           ? 'bg-primary text-primary-foreground ml-auto'
                           : 'bg-gray-100 text-gray-900'
                       }`}>
-                        {message.content && (
-                          <p className="text-sm leading-relaxed">{message.content}</p>
+                        {cleanContent && (
+                          <p className="text-sm leading-relaxed">{cleanContent}</p>
                         )}
                         
-                        {message.proposedPrice && (
+                        {proposedPriceMatch && (
                           <div className={`mt-2 p-2 rounded-lg ${
                             isCurrentUser ? 'bg-primary-foreground/10' : 'bg-blue-50'
                           }`}>
                             <div className="flex items-center gap-1">
                               <DollarSign className="w-4 h-4" />
                               <span className="font-bold">
-                                {message.proposedPrice.toLocaleString()} RWF
+                                {proposedPriceMatch} RWF
                               </span>
                             </div>
                           </div>

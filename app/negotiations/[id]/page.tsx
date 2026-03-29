@@ -8,8 +8,8 @@ import { NegotiationThread } from '@/components/negotiations/NegotiationThread';
 import { NegotiationActionBar } from '@/components/negotiations/NegotiationActionBar';
 import { NegotiationEmptyState } from '@/components/negotiations/NegotiationEmptyState';
 import useNegotiationAction from '@/hooks/useNegotiationAction';
-import { useNegotiationSocket } from '@/hooks/useNegotiationSocket';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNegotiation } from '@/contexts/NegotiationContext';
 import { notify } from '@/lib/notify';
 import { ChevronLeft, WifiOff } from 'lucide-react';
 
@@ -37,10 +37,9 @@ export default function NegotiationPage() {
 
     const {
         messages: socketMessages,
-        lastStatusUpdate,
-        sendMessage,
         isConnected,
-    } = useNegotiationSocket(orderId);
+        sendNegotiationMessage: sendMessage
+    } = useNegotiation();
 
     const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
     const [loading, setLoading]         = useState(true);
@@ -57,25 +56,14 @@ export default function NegotiationPage() {
 
     useEffect(() => { fetchNegotiation(); }, [fetchNegotiation]);
 
-    // ── real-time status update via WebSocket ──────────────────────
     useEffect(() => {
-        if (!lastStatusUpdate) return;
-        fetchNegotiation();
-
-        // browser notification when tab is hidden and counter offer arrives
-        if (
-            lastStatusUpdate.action === 'COUNTER' &&
-            document.hidden &&
-            'Notification' in window &&
-            Notification.permission === 'granted' &&
-            negotiation
-        ) {
-            new Notification(
-                `New counter offer on ${negotiation.order.product.name}`,
-                { body: `Check your negotiation for ${negotiation.order.product.name}` }
-            );
+        // We can just rely on socket messages to trigger fetch or standard polling
+        // Re-fetching negotiation on new message is optional but good
+        if (socketMessages.length > 0) {
+            // we could fetch here, but let's just let polling or explicit actions handle it
         }
-    }, [lastStatusUpdate]);
+
+    }, [socketMessages.length]);
 
     // ── fallback polling when WebSocket is disconnected ────────────
     useEffect(() => {
