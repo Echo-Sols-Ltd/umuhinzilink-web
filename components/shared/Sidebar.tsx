@@ -299,7 +299,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
 
             {/* ── sidebar panel ─────────────────────────────────────── */}
             <aside className={`
-                fixed lg:static inset-y-0 left-0 z-50 w-60
+                fixed lg:static inset-y-0 left-0 z-30 w-60
                 flex flex-col h-screen bg-card border-r border-border
                 transition-transform duration-250 ease-in-out
                 ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
