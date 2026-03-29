@@ -87,7 +87,6 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   // Fetch buyer negotiations
   const fetchBuyerNegotiations = useCallback(async (page = 0, size = 10) => {
     if (!user) return;
-
     setLoading(true);
     setError(null);
     try {

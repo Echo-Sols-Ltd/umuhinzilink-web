@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useCartAction } from '@/hooks/useCartAction';
 import { useAuth } from '@/contexts/AuthContext';
@@ -150,10 +150,25 @@ export default function CartPage() {
     const [method, setMethod] = useState<'wallet' | 'mobile_money' | 'bank'>('wallet');
     const [placing, setPlacing] = useState(false);
 
-    // separate items by type
-    const checkoutableItems = useMemo(() =>
-        cart?.items.filter(i => i.type === CartItemType.NORMAL || i.type === CartItemType.NEGOTIATION_ACCEPTED) ?? [],
-    [cart]);
+    const [checkoutableItems, setCheckoutableItems] = useState<CartItem[]>([]);
+    const [fetchingReady, setFetchingReady] = useState(true);
+
+    const { getItemsReadyForCheckout } = useCart();
+
+    useEffect(() => {
+        const fetchReady = async () => {
+            if (!cart) {
+                setCheckoutableItems([]);
+                setFetchingReady(false);
+                return;
+            }
+            setFetchingReady(true);
+            const readyItems = await getItemsReadyForCheckout();
+            setCheckoutableItems(readyItems);
+            setFetchingReady(false);
+        };
+        fetchReady();
+    }, [cart, getItemsReadyForCheckout]);
 
     const pendingItems = useMemo(() =>
         cart?.items.filter(i => i.type === CartItemType.NEGOTIATION_PENDING) ?? [],
@@ -183,14 +198,16 @@ export default function CartPage() {
 
         const result = await checkoutItems(checkoutableItems.map(i => i.id), pm);
         setPlacing(false);
-        if (result) {
+        if (result && result.length > 0) {
             notify.success('Orders placed successfully', 'Done');
-            router.push('/buyer/purchases');
+            const orderIds = result.map(o => o.id).join(',');
+            // If the payment method was Mobile Money, you might open a modal here using order details
+            router.push(`/orders/success?ids=${orderIds}`);
         }
     };
 
     // ── loading ────────────────────────────────────────────────────
-    if (loading && !cart) {
+    if ((loading && !cart) || fetchingReady) {
         return (
             <div className="h-screen flex items-center justify-center">
                 <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
