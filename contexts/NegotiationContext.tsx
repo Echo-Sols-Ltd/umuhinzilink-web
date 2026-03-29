@@ -166,8 +166,18 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   }, [user, refreshNegotiations]);
 
 
-  useEffect(()=>{
-    
+  useEffect(() => {
+
+    if (!currentNegotiation) return
+    const fetchNegotiationMessages = async () => {
+      try {
+        const response = await negotiationService.getNegotiationMessages(currentNegotiation.id)
+        setMessages(response.data)
+      } catch (error) {
+
+      }
+    }
+
   })
 
   const value = useMemo(

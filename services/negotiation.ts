@@ -1,4 +1,4 @@
-import { ApiResponse, Negotiation, CounterOfferRequest, PaginatedResponse } from '@/types';
+import { ApiResponse, Negotiation, CounterOfferRequest, PaginatedResponse, Message } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -47,8 +47,8 @@ class NegotiationService {
     );
   }
 
-  async getNegotiationMessages(id: string, page = 0, size = 10): Promise<PaginatedResponse<Negotiation[]>> {
-    return await apiClient.get<PaginatedResponse<Negotiation[]>>(`${API_ENDPOINTS.ORDER.NEGOTIATION.BY_ID(id)}/messages?page=${page}&size=${size}`)
+  async getNegotiationMessages(id: string, page = 0, size = 10): Promise<PaginatedResponse<Message[]>> {
+    return await apiClient.get<PaginatedResponse<Message[]>>(`${API_ENDPOINTS.ORDER.NEGOTIATION.BY_ID(id)}/messages?page=${page}&size=${size}`)
   }
 }
 
