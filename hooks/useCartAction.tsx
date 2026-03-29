@@ -194,15 +194,17 @@ export const useCartAction = () => {
         paymentMethod,
         itemIds: normalItems.map(item => item.id),
         negotiationItemIds: negotiatedItems.map(item => item.id),
-        // Build NegotiationItemRequest from CartItem data for accepted negotiations
-        negotiationItems: negotiatedItems.map(item => ({
-          cartItemId: item.id,
-          proposedPrice: item.proposedPrice ?? item.unitPrice,
-          message: '',
-        })),
+        negotiationItems: []
       };
 
-      const response = await cartService.checkoutNormal(request);
+      let response;
+      if (normalItems.length > 0 && negotiatedItems.length > 0) {
+        response = await cartService.checkoutMixed(request);
+      } else if (negotiatedItems.length > 0) {
+        response = await cartService.checkoutNegotiated(request);
+      } else {
+        response = await cartService.checkoutNormal(request);
+      }
 
       if (!response.success || !response.data) {
         throw new Error(response.message || 'Checkout failed');
