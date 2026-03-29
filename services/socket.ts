@@ -2,7 +2,6 @@ import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
 import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping, Order } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants';
-import { OrderChangeResponse, OrderDeliveryChange } from './websocket';
 import { NegotiationMessage, NegotiationStatusUpdate } from '@/types';
 
 class SocketService {
@@ -19,11 +18,9 @@ class SocketService {
     private orderDeliveryChangeListeners: ((data: SocketResponse<Order>) => void)[] = []
     private orderNewListeners: ((data: SocketResponse<Order>) => void)[] = []
     private orderSatisfactionListeners: ((data: SocketResponse<Order>) => void)[] = []
-    private negotiationMessageListeners: ((negotiationId: string, message: NegotiationMessage) => void)[] = []
-    private negotiationStatusListeners: ((negotiationId: string, status: NegotiationStatusUpdate) => void)[] = []
+    private negotiationMessageListeners: ((message: NegotiationMessage) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
-    private negotiationSubscriptions: Map<string, any> = new Map()
 
     // Queue for messages sent while disconnected
     private messageQueue: { destination: string; body: string }[] = []
@@ -163,11 +160,7 @@ class SocketService {
     }
 
     public async disconnect() {
-        // Unsubscribe from all negotiations
-        for (const [negotiationId] of this.negotiationSubscriptions) {
-            this.unsubscribeFromNegotiation(negotiationId)
-        }
-        
+
         await this.stompClient.deactivate()
         this.onlineUsers = new Set()
         this.onlineUserListeners.forEach(cb => cb(new Set()))
@@ -190,10 +183,21 @@ class SocketService {
             this.stompClient.subscribe('/user/queue/orderDeliveryChange', (msg) => this.handleOrderDeliveryChange(msg))
             this.stompClient.subscribe('/user/queue/newOrder', (msg) => this.handleNewOrder(msg))
             this.stompClient.subscribe('/user/queue/orderSatisfaction', (msg) => this.handleOrderSatisfaction(msg))
+            this.stompClient.subscribe('/user/queue/negotiationMessage', (msg) => this.handleNegotiationMessage(msg))
         } catch (error) {
             console.error('❌ Error subscribing to topics:', error)
         }
     }
+
+    private handleNegotiationMessage(message: IMessage) {
+        try {
+            const body = JSON.parse(message.body) as NegotiationMessage
+            this.negotiationMessageListeners.forEach(cb => cb(body))
+        } catch (error) {
+            console.error('Failed to parse negotiation message:', error)
+        }
+    }
+
 
     private handleNewOrder(message: IMessage) {
         try {
@@ -431,97 +435,14 @@ class SocketService {
         this.typingListeners = this.typingListeners.filter(cb => cb !== callback)
     }
 
-    // Negotiation methods
-    public subscribeToNegotiation(negotiationId: string) {
-        if (!this.stompClient.connected) {
-            console.warn('Cannot subscribe to negotiation: WebSocket not connected')
-            return
-        }
-
-        // Unsubscribe from existing negotiation if any
-        this.unsubscribeFromNegotiation(negotiationId)
-
-        try {
-            // Subscribe to negotiation messages
-            const messageSub = this.stompClient.subscribe(
-                SOCKET_EVENTS.NEGOTIATION.SUBSCRIBE_MESSAGE.replace('{negotiationId}', negotiationId),
-                (msg) => this.handleNegotiationMessage(negotiationId, msg)
-            )
-
-            // Subscribe to negotiation status updates
-            const statusSub = this.stompClient.subscribe(
-                SOCKET_EVENTS.NEGOTIATION.SUBSCRIBE_STATUS,
-                (msg) => this.handleNegotiationStatus(negotiationId, msg)
-            )
-
-            this.negotiationSubscriptions.set(negotiationId, {
-                message: messageSub,
-                status: statusSub
-            })
-
-            console.log(`Subscribed to negotiation: ${negotiationId}`)
-        } catch (error) {
-            console.error('Failed to subscribe to negotiation:', error)
-        }
-    }
-
-    public unsubscribeFromNegotiation(negotiationId: string) {
-        const subscriptions = this.negotiationSubscriptions.get(negotiationId)
-        if (subscriptions) {
-            try {
-                subscriptions.message?.unsubscribe()
-                subscriptions.status?.unsubscribe()
-                this.negotiationSubscriptions.delete(negotiationId)
-                console.log(`Unsubscribed from negotiation: ${negotiationId}`)
-            } catch (error) {
-                console.error('Failed to unsubscribe from negotiation:', error)
-            }
-        }
-    }
-
-    public sendNegotiationMessage(negotiationId: string, message: NegotiationMessage) {
-        const destination = SOCKET_EVENTS.NEGOTIATION.SEND_MESSAGE.replace('{negotiationId}', negotiationId)
-        this.enqueueOrPublish(destination, JSON.stringify(message))
-    }
-
-    public sendNegotiationStatusUpdate(negotiationId: string, status: NegotiationStatusUpdate) {
-        const destination = SOCKET_EVENTS.NEGOTIATION.STATUS_UPDATE.replace('{negotiationId}', negotiationId)
-        this.enqueueOrPublish(destination, JSON.stringify(status))
-    }
-
-    public onNegotiationMessage(callback: (negotiationId: string, message: NegotiationMessage) => void) {
+    public onNegotiationMessage(callback: (message: NegotiationMessage) => void) {
         this.negotiationMessageListeners.push(callback)
     }
 
-    public removeNegotiationMessageListener(callback: (negotiationId: string, message: NegotiationMessage) => void) {
+    public removeNegotiationMessageListener(callback: (message: NegotiationMessage) => void) {
         this.negotiationMessageListeners = this.negotiationMessageListeners.filter(cb => cb !== callback)
     }
 
-    public onNegotiationStatus(callback: (negotiationId: string, status: NegotiationStatusUpdate) => void) {
-        this.negotiationStatusListeners.push(callback)
-    }
-
-    public removeNegotiationStatusListener(callback: (negotiationId: string, status: NegotiationStatusUpdate) => void) {
-        this.negotiationStatusListeners = this.negotiationStatusListeners.filter(cb => cb !== callback)
-    }
-
-    private handleNegotiationMessage(negotiationId: string, message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as NegotiationMessage
-            this.negotiationMessageListeners.forEach(cb => cb(negotiationId, body))
-        } catch (error) {
-            console.error('Failed to parse negotiation message:', error)
-        }
-    }
-
-    private handleNegotiationStatus(negotiationId: string, message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as NegotiationStatusUpdate
-            this.negotiationStatusListeners.forEach(cb => cb(negotiationId, body))
-        } catch (error) {
-            console.error('Failed to parse negotiation status:', error)
-        }
-    }
 }
 
 export const socketService = new SocketService()

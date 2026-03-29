@@ -201,8 +201,7 @@ export const SOCKET_EVENTS = {
     TYPING: '/app/chat.typing'
   },
   NEGOTIATION: {
-    SEND_MESSAGE: '/app/negotiation/{negotiationId}/message',
-    STATUS_UPDATE: '/app/negotiation/{negotiationId}/status',
+    SUBSCRIBE_NEGOTIATION: '/topic/negotiation',
     SUBSCRIBE_MESSAGE: '/topic/negotiation/{negotiationId}',
     SUBSCRIBE_STATUS: '/queue/negotiationAccepted',
     SUBSCRIBE_REJECTED: '/queue/negotiationRejected'
