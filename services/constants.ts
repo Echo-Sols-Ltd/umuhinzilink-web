@@ -87,12 +87,11 @@ export const API_ENDPOINTS = {
     ACCEPT_SUPPLIER: (id: string) => `/orders/${id}/accept`,
     CANCEL_SUPPLIER: (id: string) => `/orders/${id}/reject`,
     UPDATE_SUPPLIER_STATUS: (id: string) => `/orders/${id}/status`,
-
-    NEGOTIATION: {
-      BUYER: '/orders/negotiations/buyer',
-      SELLER: '/orders/negotiations/seller',
-      BY_ID: (id: string) => `/orders/${id}/negotiations`,
-    }
+  },
+  NEGOTIATION: {
+    BUYER: '/negotiations/buyer',
+    SELLER: '/negotiations/seller',
+    BY_ID: (id: string) => `/negotiations/${id}`,
   },
   ADMIN: {
     USERS: '/admin/users',
