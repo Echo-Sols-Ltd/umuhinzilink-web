@@ -90,8 +90,10 @@ export const API_ENDPOINTS = {
   },
   NEGOTIATION: {
     BUYER: '/negotiations/buyer',
-    SELLER: '/negotiations/seller',
+    SELLER: '/negotiations/seller', 
     BY_ID: (id: string) => `/negotiations/${id}`,
+    MESSAGES: (id: string) => `/negotiations/${id}/messages`,
+    SET_AGREED_PRICE: (id: string) => `/negotiations/${id}/set-price`,
   },
   ADMIN: {
     USERS: '/admin/users',
