@@ -33,7 +33,7 @@ export default function NegotiationPage() {
         getNegotiation,
         acceptNegotiation,
         rejectNegotiation,
-        counterOffer,
+        setAgreedPrice,
     } = useNegotiationAction();
 
     const {
@@ -122,9 +122,8 @@ export default function NegotiationPage() {
                     return;
                 }
 
-                const result = await counterOffer(nOrderId, {
-                    counterPrice: data.price,
-                    message: data.message ?? '',
+                const result = await setAgreedPrice(negotiation.id, {
+                    agreedPrice: data.price,
                 });
                 if (result) {
                     setNegotiation(result);

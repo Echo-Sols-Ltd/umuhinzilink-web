@@ -26,9 +26,8 @@ export interface Negotiation {
     canSellerRespond: boolean;
 }
 
-export interface CounterOfferRequest {
-    counterPrice: number;
-    message: string;
+export interface SetAgreedPriceRequest {
+    agreedPrice: number;
 }
 
 export interface NegotiationMessage {

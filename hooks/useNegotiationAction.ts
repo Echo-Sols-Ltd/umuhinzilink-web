@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import { negotiationService } from '@/services/negotiation';
-import { Negotiation, CounterOfferRequest } from '@/types';
+import { Negotiation, SetAgreedPriceRequest } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { notify } from '@/lib/notify';
 
@@ -12,8 +12,7 @@ export default function useNegotiationAction() {
 
   // Get specific negotiation
   const getNegotiation = useCallback(async (orderId: string): Promise<Negotiation | null> => {
-    console.log("wow user are you there")
- 
+
     setLoading(true);
     try {
       const response = await negotiationService.getNegotiation(orderId);
@@ -80,12 +79,12 @@ export default function useNegotiationAction() {
   }, [user, updateNegotiation]);
 
   // Make counter offer
-  const counterOffer = useCallback(async (orderId: string, request: CounterOfferRequest): Promise<Negotiation | null> => {
+  const setAgreedPrice = useCallback(async (negotiationId: string, request:SetAgreedPriceRequest): Promise<Negotiation | null> => {
     if (!user) return null;
     
     setLoading(true);
     try {
-      const response = await negotiationService.counterOffer(orderId, request);
+      const response = await negotiationService.setAgreedPrice(negotiationId, request);
       if (response.success && response.data) {
         // Update the negotiation in the context list
         updateNegotiation(response.data);
@@ -108,6 +107,6 @@ export default function useNegotiationAction() {
     getNegotiation,
     acceptNegotiation,
     rejectNegotiation,
-    counterOffer,
+    setAgreedPrice
   };
 }
