@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode, useEffect } from 'react';
 import { negotiationService } from '@/services/negotiation';
-import { Negotiation, CounterOfferRequest, NegotiationStatus, Message, SendMessageRequest, MessageType } from '@/types';
+import { Negotiation, NegotiationStatus, Message, SendMessageRequest, MessageType } from '@/types';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
 import { useSocket } from './SocketContext';
@@ -55,12 +55,16 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   const socket = useSocket()
 
   const isConnected = !!socket?.isConnected();
+  const handleNewMessage = (data: Message) => {
+    setMessages(prev => [...prev, data]);
+  }
 
   useEffect(() => {
-    if (socket) {
-      socket.onNegotiationMessage((message: Message) => {
-        setMessages(prev => [...prev, message]);
-      })
+    if (!socket) return
+    socket.onNegotiationMessage(handleNewMessage)
+
+    return () => {
+      socket.removeNegotiationMessageListener(handleNewMessage)
     }
 
   }, [socket])
@@ -77,7 +81,7 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
 
     const finalRequest: SendMessageRequest = {
       content,
-      type:MessageType.TEXT,
+      type: MessageType.TEXT,
       senderId: user.id,
       receiverId,
       negotiationId
@@ -179,7 +183,7 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
     }
     fetchNegotiationMessages()
 
-  },[currentNegotiation])
+  }, [currentNegotiation])
 
   const value = useMemo(
     () => ({

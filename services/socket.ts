@@ -183,7 +183,7 @@ class SocketService {
             this.stompClient.subscribe('/user/queue/orderDeliveryChange', (msg) => this.handleOrderDeliveryChange(msg))
             this.stompClient.subscribe('/user/queue/newOrder', (msg) => this.handleNewOrder(msg))
             this.stompClient.subscribe('/user/queue/orderSatisfaction', (msg) => this.handleOrderSatisfaction(msg))
-            this.stompClient.subscribe('/user/queue/negotiationMessage', (msg) => this.handleNegotiationMessage(msg))
+            this.stompClient.subscribe('/user/queue/negotiations', (msg) => this.handleNegotiationMessage(msg))
         } catch (error) {
             console.error('❌ Error subscribing to topics:', error)
         }
