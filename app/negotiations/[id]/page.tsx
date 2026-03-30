@@ -98,7 +98,7 @@ export default function NegotiationPage() {
                     notify.success('Price agreed — you can now proceed to checkout', 'Accepted');
                 }
 
-            } else if (action === 'COUNTER') {
+            } else if (action === 'SET_PRICE') {
                 if (!data?.price) {
                     notify.error('Please enter a price', 'Missing price');
                     return;

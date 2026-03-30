@@ -33,9 +33,8 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
     const handleSetPrice = () => {
         const price = parseFloat(agreedPrice);
         if (!price || price <= 0) return;
-        onAction('SET_PRICE', { price, message: message.trim() });
+        onAction('SET_PRICE', { price });
         setAgreedPrice('');
-        setMessage('');
         setShowPriceInput(false);
     };
 
