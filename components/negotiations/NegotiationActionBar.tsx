@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { Negotiation, NegotiationStatus } from '@/types';
-import { Send, CheckCircle, XCircle, DollarSign, Loader2 } from 'lucide-react';
+import { Send, CheckCircle, XCircle, DollarSign, Loader2, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { NegotiationActionConfirm } from './NegotiationActionConfirm';
 
 interface NegotiationActionBarProps {
     negotiation: Negotiation;
@@ -18,34 +19,43 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
     onAction,
     acting,
 }) => {
-    const [message, setMessage]       = useState('');
+    const [message, setMessage] = useState('');
     const [showPriceInput, setShowPriceInput] = useState(false);
     const [agreedPrice, setAgreedPrice] = useState('');
     const [showRejectConfirm, setShowRejectConfirm] = useState(false);
     const [showAcceptConfirm, setShowAcceptConfirm] = useState(false);
+    const [showCounterConfirm, setShowCounterConfirm] = useState(false);
+    const [showMessageConfirm, setShowMessageConfirm] = useState(false);
 
     const handleSendMessage = () => {
         if (!message.trim()) return;
-        onAction('CHAT', { message: message.trim() });
-        setMessage('');
+        setShowMessageConfirm(true);
     };
 
     const handleSetPrice = () => {
         const price = parseFloat(agreedPrice);
         if (!price || price <= 0) return;
-        onAction('SET_PRICE', { price });
-        setAgreedPrice('');
-        setShowPriceInput(false);
+        setShowCounterConfirm(true);
     };
 
     const handleAccept = () => {
-        onAction('ACCEPT');
-        setShowAcceptConfirm(false);
+        setShowAcceptConfirm(true);
     };
 
     const handleReject = () => {
-        onAction('REJECT', { message: 'Negotiation declined' });
+        setShowRejectConfirm(true);
+    };
+
+    const handleConfirmAction = (type: string, data?: { price?: number; message?: string }) => {
+        onAction(type, data);
+        // Reset all confirmation states
+        setShowAcceptConfirm(false);
         setShowRejectConfirm(false);
+        setShowCounterConfirm(false);
+        setShowMessageConfirm(false);
+        setShowPriceInput(false);
+        setAgreedPrice('');
+        setMessage('');
     };
 
   
@@ -57,24 +67,48 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
         return (
             <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
 
-                {/* confirm dialogs */}
+                {/* Confirmation Dialogs */}
                 {showRejectConfirm && (
-                    <div className="p-3 rounded-xl border border-destructive/30 bg-destructive/5 flex items-center justify-between gap-3">
-                        <p className="text-[13px] text-foreground">Decline this negotiation?</p>
-                        <div className="flex gap-2 shrink-0">
-                            <button onClick={() => setShowRejectConfirm(false)}
-                                className="px-3 py-1.5 rounded-lg border border-border text-[12px] hover:bg-accent transition-colors">
-                                Cancel
-                            </button>
-                            <button onClick={handleReject} disabled={acting}
-                                className="px-3 py-1.5 rounded-lg bg-destructive text-white text-[12px] hover:bg-destructive/90 transition-colors disabled:opacity-60">
-                                {acting ? <Loader2 size={12} className="animate-spin" /> : 'Confirm'}
-                            </button>
-                        </div>
-                    </div>
+                    <NegotiationActionConfirm
+                        type="REJECT"
+                        onConfirm={(data) => handleConfirmAction('REJECT', data)}
+                        onCancel={() => setShowRejectConfirm(false)}
+                        loading={acting}
+                        negotiationData={{
+                            buyerProposedPrice: negotiation.buyerProposedPrice,
+                            productName: negotiation.order.product.name,
+                            quantity: negotiation.order.quantity
+                        }}
+                    />
                 )}
 
-                {/* agreed price input */}
+                {showCounterConfirm && (
+                    <NegotiationActionConfirm
+                        type="COUNTER"
+                        onConfirm={(data) => handleConfirmAction('SET_PRICE', data)}
+                        onCancel={() => setShowCounterConfirm(false)}
+                        loading={acting}
+                        negotiationData={{
+                            buyerProposedPrice: negotiation.buyerProposedPrice,
+                            productName: negotiation.order.product.name,
+                            quantity: negotiation.order.quantity
+                        }}
+                    />
+                )}
+
+                {showMessageConfirm && (
+                    <NegotiationActionConfirm
+                        type="MESSAGE"
+                        onConfirm={(data) => handleConfirmAction('CHAT', data)}
+                        onCancel={() => setShowMessageConfirm(false)}
+                        loading={acting}
+                        negotiationData={{
+                            productName: negotiation.order.product.name
+                        }}
+                    />
+                )}
+
+                {/* Legacy price input */}
                 {showPriceInput && (
                     <div className="p-3 rounded-xl border border-green-200 bg-green-50 space-y-2">
                         <p className="text-[12px] font-medium text-green-800">Set final agreed price</p>
@@ -111,28 +145,45 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                         onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
                         placeholder="Type a message…"
                         className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-background text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                        disabled={acting}
                     />
                     <button onClick={handleSendMessage} disabled={!message.trim() || acting}
                         className="px-3 rounded-xl border border-border bg-background hover:bg-accent transition-colors disabled:opacity-40">
-                        <Send size={15} className="text-muted-foreground" />
+                        {acting ? (
+                            <Loader2 size={15} className="text-muted-foreground animate-spin" />
+                        ) : (
+                            <Send size={15} className="text-muted-foreground" />
+                        )}
                     </button>
                 </div>
 
                 {/* seller action buttons */}
-                {!showPriceInput && !showRejectConfirm && (
+                {!showPriceInput && !showRejectConfirm && !showCounterConfirm && !showMessageConfirm && (
                     <div className="flex gap-2">
                         <button
                             onClick={() => setShowPriceInput(true)}
-                            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors"
+                            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors disabled:opacity-50"
+                            disabled={acting}
                         >
-                            <DollarSign size={14} />
-                            Set agreed price
+                            {acting ? (
+                                <Loader2 size={14} className="animate-spin" />
+                            ) : (
+                                <>
+                                    <DollarSign size={14} />
+                                    Set agreed price
+                                </>
+                            )}
                         </button>
                         <button
-                            onClick={() => setShowRejectConfirm(true)}
-                            className="px-4 py-2.5 rounded-xl border border-border hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 text-muted-foreground text-[13px] transition-colors"
+                            onClick={handleReject}
+                            className="px-4 py-2.5 rounded-xl border border-border hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 text-muted-foreground text-[13px] transition-colors disabled:opacity-50"
+                            disabled={acting}
                         >
-                            Decline
+                            {acting ? (
+                                <Loader2 size={14} className="animate-spin" />
+                            ) : (
+                                'Decline'
+                            )}
                         </button>
                     </div>
                 )}
@@ -144,22 +195,33 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
     return (
         <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
 
+            {/* Accept Confirmation */}
             {showAcceptConfirm && negotiation.agreedPrice && (
-                <div className="p-3 rounded-xl border border-green-200 bg-green-50 flex items-center justify-between gap-3">
-                    <p className="text-[13px] text-green-800">
-                        Accept RWF {negotiation.agreedPrice.toLocaleString()} for {negotiation.order.quantity} {negotiation.order.product.measurementUnit}?
-                    </p>
-                    <div className="flex gap-2 shrink-0">
-                        <button onClick={() => setShowAcceptConfirm(false)}
-                            className="px-3 py-1.5 rounded-lg border border-border text-[12px] hover:bg-accent transition-colors">
-                            Cancel
-                        </button>
-                        <button onClick={handleAccept} disabled={acting}
-                            className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-[12px] hover:bg-green-700 transition-colors disabled:opacity-60 flex items-center gap-1">
-                            {acting ? <Loader2 size={12} className="animate-spin" /> : <><CheckCircle size={12} /> Accept</>}
-                        </button>
-                    </div>
-                </div>
+                <NegotiationActionConfirm
+                    type="ACCEPT"
+                    onConfirm={() => handleConfirmAction('ACCEPT')}
+                    onCancel={() => setShowAcceptConfirm(false)}
+                    loading={acting}
+                    negotiationData={{
+                        buyerProposedPrice: negotiation.buyerProposedPrice,
+                        sellerResponsePrice: negotiation.agreedPrice,
+                        productName: negotiation.order.product.name,
+                        quantity: negotiation.order.quantity
+                    }}
+                />
+            )}
+
+            {/* Message Confirmation */}
+            {showMessageConfirm && (
+                <NegotiationActionConfirm
+                    type="MESSAGE"
+                    onConfirm={(data) => handleConfirmAction('CHAT', data)}
+                    onCancel={() => setShowMessageConfirm(false)}
+                    loading={acting}
+                    negotiationData={{
+                        productName: negotiation.order.product.name
+                    }}
+                />
             )}
 
             <div className="flex gap-2">
@@ -169,21 +231,33 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
                     placeholder="Type a message to the seller…"
                     className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-background text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                    disabled={acting}
                 />
                 <button onClick={handleSendMessage} disabled={!message.trim() || acting}
                     className="px-3 rounded-xl border border-border bg-background hover:bg-accent transition-colors disabled:opacity-40">
-                    <Send size={15} className="text-muted-foreground" />
+                    {acting ? (
+                        <Loader2 size={15} className="text-muted-foreground animate-spin" />
+                    ) : (
+                        <Send size={15} className="text-muted-foreground" />
+                    )}
                 </button>
             </div>
 
             {/* if seller has set an agreed price, buyer can accept */}
-            {negotiation.agreedPrice && !showAcceptConfirm && (
+            {negotiation.agreedPrice && !showAcceptConfirm && !showMessageConfirm && (
                 <button
-                    onClick={() => setShowAcceptConfirm(true)}
-                    className="w-full py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors flex items-center justify-center gap-2"
+                    onClick={handleAccept}
+                    className="w-full py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                    disabled={acting}
                 >
-                    <CheckCircle size={14} />
-                    Accept RWF {negotiation.agreedPrice.toLocaleString()}
+                    {acting ? (
+                        <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                        <>
+                            <CheckCircle size={14} />
+                            Accept RWF {negotiation.agreedPrice.toLocaleString()}
+                        </>
+                    )}
                 </button>
             )}
         </div>

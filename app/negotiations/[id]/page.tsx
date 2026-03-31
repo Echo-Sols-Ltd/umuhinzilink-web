@@ -56,7 +56,6 @@ export default function NegotiationPage() {
 
             const data = await getNegotiation(negotiationId);
 
-            console.log("this is the data from the backend", data)
             if (data) {
                 setNegotiation(data);
                 setCurrentNegotiation(data)
@@ -72,12 +71,6 @@ export default function NegotiationPage() {
     const isBuyer = user?.role === UserType.BUYER;
     const isSeller = user?.role === UserType.FARMER || user?.role === UserType.SUPPLIER;
 
-    const isMyTurn = !!negotiation && (
-        (isBuyer && negotiation.canBuyerRespond) ||
-        (isSeller && negotiation.canSellerRespond)
-    );
-
-    const isTerminal = !!negotiation && TERMINAL.includes(negotiation.status);
 
     // ── action handler ─────────────────────────────────────────────
     const handleAction = async (action: string, data?: {

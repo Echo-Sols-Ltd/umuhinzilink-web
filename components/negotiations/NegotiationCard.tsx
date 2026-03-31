@@ -3,13 +3,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Negotiation, NegotiationStatus } from '@/types';
-import { Clock, CheckCircle, XCircle, ArrowRight, DollarSign } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, ArrowRight, DollarSign, ShoppingCart, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { NegotiationStatusBadge } from './NegotiationStatusBadge';
+import { NegotiationProgressIndicator } from './NegotiationProgressIndicator';
 
 interface NegotiationCardProps {
   negotiation: Negotiation;
   userType?: 'buyer' | 'seller';
-
+  showProgress?: boolean;
+  isInCart?: boolean;
 }
 
 function fmt(n: number) {
@@ -21,7 +24,12 @@ function timeLabel(t: string) {
   return { label: t, urgent: t.includes('h') && parseInt(t) < 3 };
 }
 
-export default function NegotiationCard({ negotiation, userType = 'buyer' }: NegotiationCardProps) {
+export default function NegotiationCard({ 
+  negotiation, 
+  userType = 'buyer', 
+  showProgress = false,
+  isInCart = false
+}: NegotiationCardProps) {
   const { order, buyerProposedPrice, agreedPrice, status, isExpired, timeRemaining } = negotiation;
   const { product } = order;
 
@@ -45,6 +53,9 @@ export default function NegotiationCard({ negotiation, userType = 'buyer' }: Neg
     ((userType === 'seller' && negotiation.canSellerRespond) ||
       (userType === 'buyer' && negotiation.canBuyerRespond));
 
+  // checkout readiness
+  const canCheckout = status === NegotiationStatus.ACCEPTED && userType === 'buyer';
+
   return (
     <div className={cn(
       'bg-card border rounded-2xl p-5 space-y-4 hover:shadow-sm transition-all',
@@ -65,9 +76,19 @@ export default function NegotiationCard({ negotiation, userType = 'buyer' }: Neg
           <p className="text-[12px] text-muted-foreground mt-0.5">
             {order.quantity} {product.measurementUnit}
           </p>
-          <span className={cn('inline-block mt-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-full border', cfg.cls)}>
-            {cfg.label}
-          </span>
+          <div className="flex items-center gap-2 mt-1.5">
+            <NegotiationStatusBadge
+              status={effectiveStatus}
+              isExpired={isExpired}
+              size="sm"
+            />
+            {isInCart && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-medium">
+                <ShoppingCart size={10} />
+                In Cart
+              </span>
+            )}
+          </div>
         </div>
         {!isExpired && status !== NegotiationStatus.ACCEPTED && (
           <div className={cn('text-right shrink-0', urgent ? 'text-red-500' : 'text-muted-foreground')}>
@@ -109,8 +130,17 @@ export default function NegotiationCard({ negotiation, userType = 'buyer' }: Neg
         </div>
       )}
 
+      {/* Progress Indicator */}
+      {showProgress && (
+        <NegotiationProgressIndicator
+          currentStatus={effectiveStatus}
+          isExpired={isExpired}
+          compact={true}
+        />
+      )}
+
       {/* accepted — checkout prompt for buyer */}
-      {status === NegotiationStatus.ACCEPTED && userType === 'buyer' && (
+      {canCheckout && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-green-50 border border-green-200">
           <CheckCircle size={14} className="text-green-600 shrink-0" />
           <p className="text-[12px] text-green-700 font-medium flex-1">Price agreed — ready to checkout</p>
@@ -121,13 +151,25 @@ export default function NegotiationCard({ negotiation, userType = 'buyer' }: Neg
       )}
 
       {/* view thread link */}
-      <Link
-        href={`/negotiations/${negotiation.id}`}
-        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border hover:bg-accent transition-colors text-[12px] font-medium text-muted-foreground hover:text-foreground group"
-      >
-        Open negotiation
-        <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
-      </Link>
+      <div className="flex gap-2">
+        <Link
+          href={`/negotiations/${negotiation.id}`}
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border hover:bg-accent transition-colors text-[12px] font-medium text-muted-foreground hover:text-foreground group"
+        >
+          <MessageCircle size={13} />
+          Open negotiation
+          <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+        </Link>
+        {canCheckout && (
+          <Link
+            href="/cart"
+            className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[12px] font-medium transition-colors"
+          >
+            <ShoppingCart size={13} />
+            Checkout
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

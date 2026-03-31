@@ -8,13 +8,14 @@ import { useRouter } from 'next/navigation';
 import {
     ShoppingBag, Truck, Wallet, ChevronRight, Minus, Plus,
     Trash2, Clock, CheckCircle2, ArrowLeft, Package,
-    Phone, CreditCard, Leaf,
+    Phone, CreditCard, Leaf, MessageCircle,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CartItem, CartItemType, PaymentMethod } from '@/types';
 import { notify } from '@/lib/notify';
 import { imageUrl } from '@/lib/utils';
+import { CartNegotiationLink } from '@/components/negotiations/CartNegotiationLink';
 
 // ─── types ────────────────────────────────────────────────────────
 enum Step { REVIEW = 0, PAYMENT = 1 }
