@@ -3,11 +3,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Negotiation, Message, MessageType } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
-import { 
-  Send, 
-  X, 
-  MessageCircle, 
-  User, 
+import {
+  Send,
+  X,
+  MessageCircle,
+  User,
   Store,
   Clock,
   DollarSign
@@ -21,9 +21,9 @@ interface NegotiationChatProps {
   userType?: 'buyer' | 'seller';
 }
 
-export default function NegotiationChat({ 
-  negotiation, 
-  isOpen, 
+export default function NegotiationChat({
+  negotiation,
+  isOpen,
   onClose,
   userType = 'buyer'
 }: NegotiationChatProps) {
@@ -33,6 +33,15 @@ export default function NegotiationChat({
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Determine if chat should be disabled (final state)
+  const isFinalState = negotiation.status === 'ACCEPTED' || negotiation.status === 'REJECTED';
+
+  // Determine if seller has set final price (buyer can't chat)
+  const hasSellerSetFinalPrice = negotiation.status === 'COUNTERED' &&
+    negotiation.sellerResponsePrice > 0 &&
+    negotiation.agreedPrice > 0 &&
+    userType === 'buyer';
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -52,21 +61,20 @@ export default function NegotiationChat({
     setLoading(true);
     try {
       const isOffer = !!proposedPrice;
-      const content = isOffer 
+      const content = isOffer
         ? `Proposed Price: RWF ${parseFloat(proposedPrice).toLocaleString()}\n\n${newMessage.trim()}`
         : newMessage.trim();
 
       // Send message via socket service
       sendNegotiationMessage(
         negotiation.id,
-        content,
-        MessageType.TEXT
+        content
       );
-      
+
       // Clear inputs
       setNewMessage('');
       setProposedPrice('');
-      
+
       notify.success('Message sent', 'Success');
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -123,7 +131,7 @@ export default function NegotiationChat({
               </p>
             </div>
           </div>
-          
+
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -183,8 +191,8 @@ export default function NegotiationChat({
           ) : (
             <>
               {messages.map((message, index) => {
-                const isCurrentUser = userType === 'buyer' ? 
-                  message.sender?.role === 'BUYER' : 
+                const isCurrentUser = userType === 'buyer' ?
+                  message.sender?.role === 'BUYER' :
                   message.sender?.role !== 'BUYER';
 
                 const priceMatch = message.content?.match(/Proposed Price: RWF ([\d,.]+)/);
@@ -193,32 +201,28 @@ export default function NegotiationChat({
 
                 return (
                   <div key={index} className="flex gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                      isCurrentUser ? 'bg-primary/20' : 'bg-gray-200'
-                    }`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isCurrentUser ? 'bg-primary/20' : 'bg-gray-200'
+                      }`}>
                       {isCurrentUser ? (
                         <User className="w-4 h-4 text-primary" />
                       ) : (
                         <Store className="w-4 h-4 text-gray-600" />
                       )}
                     </div>
-                    
-                    <div className={`flex-1 space-y-1 ${
-                      isCurrentUser ? 'items-end' : 'items-start'
-                    }`}>
-                      <div className={`max-w-[70%] p-3 rounded-2xl ${
-                        isCurrentUser
-                          ? 'bg-primary text-primary-foreground ml-auto'
-                          : 'bg-gray-100 text-gray-900'
+
+                    <div className={`flex-1 space-y-1 ${isCurrentUser ? 'items-end' : 'items-start'
                       }`}>
+                      <div className={`max-w-[70%] p-3 rounded-2xl ${isCurrentUser
+                        ? 'bg-primary text-primary-foreground ml-auto'
+                        : 'bg-gray-100 text-gray-900'
+                        }`}>
                         {cleanContent && (
                           <p className="text-sm leading-relaxed">{cleanContent}</p>
                         )}
-                        
+
                         {proposedPriceMatch && (
-                          <div className={`mt-2 p-2 rounded-lg ${
-                            isCurrentUser ? 'bg-primary-foreground/10' : 'bg-blue-50'
-                          }`}>
+                          <div className={`mt-2 p-2 rounded-lg ${isCurrentUser ? 'bg-primary-foreground/10' : 'bg-blue-50'
+                            }`}>
                             <div className="flex items-center gap-1">
                               <DollarSign className="w-4 h-4" />
                               <span className="font-bold">
@@ -228,10 +232,9 @@ export default function NegotiationChat({
                           </div>
                         )}
                       </div>
-                      
-                      <div className={`flex items-center gap-2 text-xs text-gray-500 ${
-                        isCurrentUser ? 'justify-end' : 'justify-start'
-                      }`}>
+
+                      <div className={`flex items-center gap-2 text-xs text-gray-500 ${isCurrentUser ? 'justify-end' : 'justify-start'
+                        }`}>
                         <Clock className="w-3 h-3" />
                         <span>{formatTime(message.timestamp)}</span>
                         <span>{formatDate(message.timestamp)}</span>
@@ -247,61 +250,93 @@ export default function NegotiationChat({
 
         {/* Input */}
         <div className="p-4 border-t border-gray-200 bg-gray-50">
-          {proposedPrice && (
-            <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-800">
-                    Proposed Price: {parseFloat(proposedPrice).toLocaleString()} RWF
-                  </span>
+          {/* Show disabled message when chat is not allowed */}
+          {(isFinalState || hasSellerSetFinalPrice) && (
+            <div className="text-center py-4 text-sm text-gray-500">
+              {isFinalState ? (
+                <div>
+                  <MessageCircle className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                  <p className="font-medium">
+                    {negotiation.status === 'ACCEPTED' ? 'Negotiation Accepted' : 'Negotiation Rejected'}
+                  </p>
+                  <p className="text-xs mt-1">
+                    {negotiation.status === 'ACCEPTED'
+                      ? 'Proceed to checkout to complete your order'
+                      : 'This negotiation has ended'}
+                  </p>
                 </div>
-                <button
-                  onClick={() => setProposedPrice('')}
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+              ) : (
+                <div>
+                  <DollarSign className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+                  <p className="font-medium">Final Price Set</p>
+                  <p className="text-xs mt-1">
+                    Seller has set the final price of RWF {negotiation.agreedPrice.toLocaleString()}
+                  </p>
+                  <p className="text-xs mt-1">Use the action buttons below to accept or reject</p>
+                </div>
+              )}
             </div>
           )}
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => setProposedPrice(negotiation.buyerProposedPrice.toString())}
-              className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium"
-            >
-              Add Price
-            </button>
-            
-            <input
-              ref={inputRef}
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
-              disabled={loading}
-            />
-            
-            <button
-              onClick={handleSendMessage}
-              disabled={loading || (!newMessage.trim() && !proposedPrice.trim()) || !isConnected}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  {isConnected ? 'Send' : 'Connecting...'}
-                </>
+          {/* Normal chat input - only show when chat is allowed */}
+          {!isFinalState && !hasSellerSetFinalPrice && (
+            <>
+              {proposedPrice && (
+                <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-800">
+                        Proposed Price: {parseFloat(proposedPrice).toLocaleString()} RWF
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setProposedPrice('')}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
               )}
-            </button>
-          </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setProposedPrice(negotiation.buyerProposedPrice.toString())}
+                  className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium"
+                >
+                  Add Price
+                </button>
+
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type your message..."
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+                  disabled={loading}
+                />
+
+                <button
+                  onClick={handleSendMessage}
+                  disabled={loading || (!newMessage.trim() && !proposedPrice.trim()) || !isConnected}
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {loading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      {isConnected ? 'Send' : 'Connecting...'}
+                    </>
+                  )}
+                </button>
+              </div>
+            </>)}
         </div>
       </div>
-    </div>
+    </div >
   );
 }
