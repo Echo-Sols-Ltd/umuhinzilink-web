@@ -22,6 +22,41 @@ export const NegotiationStatusBadge: React.FC<NegotiationStatusBadgeProps> = ({
 }) => {
   const effectiveStatus = isExpired ? NegotiationStatus.EXPIRED : status;
 
+  const sizeClasses = {
+    sm: 'px-2 py-1 text-xs',
+    md: 'px-3 py-1.5 text-sm',
+    lg: 'px-4 py-2 text-base'
+  };
+
+  const iconSizes = {
+    sm: 12,
+    md: 14,
+    lg: 16
+  };
+
+  // Handle undefined/null status
+  if (!effectiveStatus) {
+    return (
+      <div
+        className={cn(
+          'inline-flex items-center gap-2 rounded-full border font-medium transition-colors',
+          sizeClasses[size],
+          'bg-muted text-muted-foreground border-border',
+          className
+        )}
+        title="Status not available"
+      >
+        {showIcon && <AlertCircle size={iconSizes[size]} className="shrink-0" />}
+        <span>No Status</span>
+      </div>
+    );
+  }
+
+  // Debug log to identify what status is being passed
+  if (process.env.NODE_ENV === 'development') {
+    console.log('NegotiationStatusBadge:', { status, isExpired, effectiveStatus });
+  }
+
   const statusConfig = {
     [NegotiationStatus.PENDING]: {
       label: 'Pending seller',
@@ -56,19 +91,26 @@ export const NegotiationStatusBadge: React.FC<NegotiationStatusBadgeProps> = ({
   };
 
   const config = statusConfig[effectiveStatus];
+  
+  // Fallback for unknown status
+  if (!config) {
+    return (
+      <div
+        className={cn(
+          'inline-flex items-center gap-2 rounded-full border font-medium transition-colors',
+          sizeClasses[size],
+          'bg-muted text-muted-foreground border-border',
+          className
+        )}
+        title="Unknown status"
+      >
+        {showIcon && <AlertCircle size={iconSizes[size]} className="shrink-0" />}
+        <span>Unknown</span>
+      </div>
+    );
+  }
+
   const Icon = config.icon;
-
-  const sizeClasses = {
-    sm: 'px-2 py-1 text-xs',
-    md: 'px-3 py-1.5 text-sm',
-    lg: 'px-4 py-2 text-base'
-  };
-
-  const iconSizes = {
-    sm: 12,
-    md: 14,
-    lg: 16
-  };
 
   const colorClasses = {
     amber: 'bg-amber-50 text-amber-700 border-amber-200',

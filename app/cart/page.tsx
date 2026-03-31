@@ -56,6 +56,7 @@ function CartItemRow({
 }) {
     const isPending  = item.type === CartItemType.NEGOTIATION_PENDING;
     const isAccepted = item.type === CartItemType.NEGOTIATION_ACCEPTED;
+    const isNegotiation = isPending || isAccepted;
     const price      = (isAccepted && item.proposedPrice) ? item.proposedPrice : item.unitPrice;
 
     return (
@@ -76,9 +77,21 @@ function CartItemRow({
             {/* details */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                    <p className="font-semibold text-[14px] text-foreground leading-snug truncate">
-                        {item.product.name}
-                    </p>
+                    <div className="flex-1">
+                        <p className="font-semibold text-[14px] text-foreground leading-snug truncate">
+                            {item.product.name}
+                        </p>
+                        {/* Negotiation Status and Link */}
+                        {isNegotiation && (
+                            <div className="mt-2">
+                                <CartNegotiationLink
+                                    cartItem={item}
+                                    compact={true}
+                                    showStatus={true}
+                                />
+                            </div>
+                        )}
+                    </div>
                     <button onClick={onDelete}
                         className="shrink-0 p-1 text-muted-foreground hover:text-destructive transition-colors rounded-lg">
                         <Trash2 size={14} />
@@ -86,7 +99,7 @@ function CartItemRow({
                 </div>
 
                 {/* price */}
-                <div className="mt-1 flex items-baseline gap-2">
+                <div className="mt-2 flex items-baseline gap-2">
                     {(isPending || isAccepted) && item.proposedPrice ? (
                         <>
                             <span className="text-[13px] line-through text-muted-foreground">
@@ -95,6 +108,8 @@ function CartItemRow({
                             <span className={`text-[13px] font-semibold
                                 ${isAccepted ? 'text-green-600' : 'text-amber-600'}`}>
                                 {fmt(item.proposedPrice)}
+                                {isAccepted && ' (agreed)'}
+                                {isPending && ' (proposed)'}
                             </span>
                         </>
                     ) : (
@@ -119,20 +134,27 @@ function CartItemRow({
                 </div>
 
                 {/* quantity controls — disabled for pending negotiations */}
-                {!isPending && (
-                    <div className="mt-2 flex items-center gap-2">
-                        <button onClick={onRemove}
-                            className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors">
-                            <Minus size={12} />
-                        </button>
-                        <span className="text-[13px] font-semibold w-6 text-center">{item.quantity}</span>
-                        <button onClick={onAdd}
-                            className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors">
-                            <Plus size={12} />
-                        </button>
-                        <span className="ml-auto text-[13px] font-semibold text-foreground">
-                            {fmt(price * item.quantity)}
-                        </span>
+                <div className="mt-2 flex items-center gap-2">
+                    <button onClick={onRemove}
+                        className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isPending}>
+                        <Minus size={12} />
+                    </button>
+                    <span className="text-[13px] font-semibold w-6 text-center">{item.quantity}</span>
+                    <button onClick={onAdd}
+                        className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isPending}>
+                        <Plus size={12} />
+                    </button>
+                    <span className="ml-auto text-[13px] font-semibold text-foreground">
+                        {fmt(price * item.quantity)}
+                    </span>
+                </div>
+                
+                {/* Negotiation notice */}
+                {isPending && (
+                    <div className="mt-2 text-xs text-muted-foreground">
+                        Quantity cannot be modified during negotiation
                     </div>
                 )}
             </div>

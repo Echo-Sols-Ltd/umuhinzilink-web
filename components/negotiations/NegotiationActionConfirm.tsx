@@ -15,7 +15,7 @@ import {
 import { cn } from '@/lib/utils';
 
 interface NegotiationActionConfirmProps {
-  type: 'ACCEPT' | 'REJECT' | 'COUNTER' | 'MESSAGE';
+  type: 'ACCEPT' | 'REJECT' | 'COUNTER' | 'MESSAGE' | 'REJECT_FINAL';
   onConfirm: (data?: { price?: number; message?: string }) => void;
   onCancel: () => void;
   loading?: boolean;
@@ -104,6 +104,16 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
           color: 'gray',
           confirmText: 'Send Message',
           requiresMessage: true,
+          requiresPrice: false
+        };
+      case 'REJECT_FINAL':
+        return {
+          title: 'Reject Final Price',
+          description: 'Reject the seller\'s final agreed price. This will end the negotiation.',
+          icon: XCircle,
+          color: 'red',
+          confirmText: 'Reject Price',
+          requiresMessage: false,
           requiresPrice: false
         };
       default:

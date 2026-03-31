@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode, useEffect, useRef } from 'react';
 import { negotiationService } from '@/services/negotiation';
 import { Negotiation, NegotiationStatus, Message, SendMessageRequest, MessageType } from '@/types';
 import { useAuth } from './AuthContext';
@@ -51,8 +51,10 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentNegotiation, setCurrentNegotiation] = useState<Negotiation | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  const socket = useSocket()
+  const socket = useSocket();
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const isConnected = !!socket?.isConnected();
   const handleNewMessage = (data: Message) => {
@@ -170,8 +172,45 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   }, [user, refreshNegotiations]);
 
 
-  useEffect(() => {
+  // Polling fallback for real-time updates
+  const startPolling = useCallback(() => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+    }
 
+    // Poll every 30 seconds when socket is disconnected
+    pollingIntervalRef.current = setInterval(() => {
+      if (!isConnected && user) {
+        refreshNegotiations();
+        setLastUpdated(new Date());
+      }
+    }, 30000);
+  }, [isConnected, user, refreshNegotiations]);
+
+  const stopPolling = useCallback(() => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+  }, []);
+
+  // Start/stop polling based on connection status
+  useEffect(() => {
+    if (!isConnected) {
+      startPolling();
+    } else {
+      stopPolling();
+    }
+
+    return stopPolling;
+  }, [isConnected, startPolling, stopPolling]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return stopPolling;
+  }, [stopPolling]);
+
+  useEffect(() => {
     if (!currentNegotiation) return
     const fetchNegotiationMessages = async () => {
       try {
@@ -200,7 +239,8 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
       sendNegotiationMessage,
       isConnected,
       currentNegotiation,
-      setCurrentNegotiation
+      setCurrentNegotiation,
+      lastUpdated
     }),
     [
       negotiations,
@@ -216,7 +256,8 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
       sendNegotiationMessage,
       isConnected,
       setCurrentNegotiation,
-      currentNegotiation
+      currentNegotiation,
+      lastUpdated
     ]
   );
 
