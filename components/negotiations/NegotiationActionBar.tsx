@@ -42,7 +42,8 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
 
     const handleSendMessage = () => {
         if (!message.trim()) return;
-        setShowMessageConfirm(true);
+        onAction('CHAT', { message });
+        setMessage('');
     };
 
     const handleSetPrice = () => {
@@ -171,7 +172,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                 </div>
 
                 {/* seller action buttons */}
-                {!showPriceInput && !showRejectConfirm && !showCounterConfirm && !showMessageConfirm && (
+                {!showPriceInput && !showRejectConfirm && !showCounterConfirm && (
                     <div className="flex gap-2">
                         <button
                             onClick={() => setShowPriceInput(true)}
@@ -306,7 +307,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
             )}
 
             {/* Legacy accept button - only show when not in final state and no seller final price */}
-            {!showBuyerFinalActions && negotiation.agreedPrice && !showAcceptConfirm && !showMessageConfirm && (
+            {!showBuyerFinalActions && negotiation.agreedPrice && !showAcceptConfirm && (
                 <button
                     onClick={handleAccept}
                     className="w-full py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50"

@@ -77,8 +77,6 @@ export default function NegotiationChat({
       // Clear inputs
       setNewMessage('');
       setProposedPrice('');
-
-      notify.success('Message sent', 'Success');
     } catch (error) {
       console.error('Failed to send message:', error);
       notify.error('Failed to send message', 'Error');
