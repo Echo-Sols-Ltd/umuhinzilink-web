@@ -29,9 +29,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSupplier } from '@/contexts/SupplierContext';
 import { useSupplierAction } from '@/hooks/useSupplierAction';
 import Sidebar from '@/components/shared/Sidebar';
-import { SupplierPages, UserType } from '@/types';
+import { SupplierPages, UserType, ProductRequest, ProductCategory, ProductType, MeasurementUnit, CertificationType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
-import { ProductCategory, ProductType, MeasurementUnit, CertificationType } from '@/types';
 import { useProduct } from '@/contexts/ProductContext';
 import ProductCard from '@/components/products/ProductCard';
 import { Pagination } from '@/components/ui/pagination';
@@ -111,18 +110,16 @@ function ProductsPageComponent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const productData = {
+    const productData: ProductRequest = {
       name: formData.name,
-      category: formData.category,
+      category: formData.category as ProductCategory,
       description: formData.description,
       unitPrice: parseFloat(formData.unitPrice),
       measurementUnit: formData.measurementUnit,
       quantity: parseInt(formData.quantity),
-      location: formData.location,
       isNegotiable: formData.isNegotiable,
       certification: formData.certification as CertificationType,
       image: formData.imageUrl || '/placeholder.png',
-      harvestDate: new Date().toISOString(),
     };
 
     try {

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { CartItem } from '@/types';
+import { CartItem, NegotiationStatus } from '@/types';
 import { MessageCircle, ExternalLink, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NegotiationStatusBadge } from './NegotiationStatusBadge';
@@ -26,7 +26,7 @@ export const CartNegotiationLink: React.FC<CartNegotiationLinkProps> = ({
     return null;
   }
 
-  const isExpired = cartItem.negotiationExpiresAt && new Date(cartItem.negotiationExpiresAt) < new Date();
+  const isExpired = !!(cartItem.negotiationExpiresAt && new Date(cartItem.negotiationExpiresAt) < new Date());
   
   const getTimeRemaining = () => {
     if (!cartItem.negotiationExpiresAt) return null;
@@ -45,7 +45,7 @@ export const CartNegotiationLink: React.FC<CartNegotiationLinkProps> = ({
   };
 
   const timeRemaining = getTimeRemaining();
-  const isUrgent = timeRemaining && !isExpired && timeRemaining.includes('h') && parseInt(timeRemaining) < 3;
+  const isUrgent = !!(timeRemaining && !isExpired && timeRemaining.includes('h') && parseInt(timeRemaining) < 3);
 
   return (
     <div className={cn('space-y-2', className)}>
@@ -53,7 +53,7 @@ export const CartNegotiationLink: React.FC<CartNegotiationLinkProps> = ({
       {showStatus && (
         <div className="flex items-center justify-between">
           <NegotiationStatusBadge
-            status={cartItem.type === 'NEGOTIATION_ACCEPTED' ? 'ACCEPTED' : 'PENDING'}
+            status={cartItem.type === 'NEGOTIATION_ACCEPTED' ? NegotiationStatus.ACCEPTED : NegotiationStatus.PENDING}
             isExpired={isExpired}
             size="sm"
           />

@@ -195,11 +195,11 @@ function SupplierProductManagement() {
                                                 <Badge variant="outline">{product.category}</Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <p className="font-medium text-foreground">{(product as any).price || 0} RWF</p>
+                                                <p className="font-medium text-foreground">{product.unitPrice || 0} RWF</p>
                                                 <p className="text-sm text-muted-foreground">per {product.measurementUnit}</p>
                                             </TableCell>
                                             <TableCell>
-                                                <p className="font-medium text-foreground">{product.quantity}</p>
+                                                <p className="font-medium text-foreground">{product.stockQuantity}</p>
                                                 <p className="text-sm text-muted-foreground">{product.measurementUnit}</p>
                                             </TableCell>
                                             <TableCell>
@@ -272,7 +272,7 @@ function SupplierProductManagement() {
                                             </div>
                                             <div>
                                                 <p className="text-sm text-muted-foreground">Stock</p>
-                                                <p className="font-medium text-foreground">{selectedProduct.quantity} {selectedProduct.measurementUnit}</p>
+                                                <p className="font-medium text-foreground">{selectedProduct.stockQuantity} {selectedProduct.measurementUnit}</p>
                                             </div>
                                         </div>
                                         <div>

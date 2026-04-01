@@ -29,8 +29,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
 
     // Determine if seller has set final agreed price
     const hasSellerSetFinalPrice = negotiation.status === NegotiationStatus.COUNTERED && 
-                                  negotiation.sellerResponsePrice > 0 && 
-                                  negotiation.agreedPrice > 0;
+                                  !!negotiation.agreedPrice;
 
     // Determine final state - no actions allowed
     const isFinalState = negotiation.status === NegotiationStatus.ACCEPTED || 
@@ -218,7 +217,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                     loading={acting}
                     negotiationData={{
                         buyerProposedPrice: negotiation.buyerProposedPrice,
-                        sellerResponsePrice: negotiation.agreedPrice,
+                        sellerResponsePrice: negotiation.agreedPrice || 0,
                         productName: negotiation.order.product.name,
                         quantity: negotiation.order.quantity
                     }}
@@ -233,7 +232,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                     onCancel={() => setShowRejectConfirm(false)}
                     loading={acting}
                     negotiationData={{
-                        sellerResponsePrice: negotiation.agreedPrice,
+                        sellerResponsePrice: negotiation.agreedPrice || 0,
                         productName: negotiation.order.product.name,
                         quantity: negotiation.order.quantity
                     }}
@@ -288,7 +287,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                         ) : (
                             <>
                                 <CheckCircle size={14} />
-                                Accept RWF {negotiation.agreedPrice.toLocaleString()}
+                                  Accept RWF {negotiation.agreedPrice?.toLocaleString() || '0'}
                             </>
                         )}
                     </button>

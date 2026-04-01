@@ -18,13 +18,14 @@ type NegotiationContextValue = {
   sendNegotiationMessage: (negotiationId: string, content: string) => void;
   fetchBuyerNegotiations: (page?: number, size?: number) => Promise<void>;
   fetchSellerNegotiations: (page?: number, size?: number) => Promise<void>;
-  updateNegotiation: (negotiation: Negotiation) => void;
+  updateNegotiation: (negotiation: Partial<Negotiation> & { id: string }) => void;
   setCurrentNegotiation: (data: Negotiation) => void
 
   // Utilities
   refreshNegotiations: () => Promise<void>;
   getNegotiationsByStatus: (status: NegotiationStatus) => Negotiation[];
   hasActiveNegotiations: () => boolean;
+  lastUpdated: Date;
 };
 
 const NegotiationContext = createContext<NegotiationContextValue | undefined>(undefined);
@@ -136,9 +137,9 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   }, [user]);
 
   // Update single negotiation
-  const updateNegotiation = useCallback((updatedNegotiation: Negotiation) => {
+  const updateNegotiation = useCallback((updatedNegotiation: Partial<Negotiation> & { id: string }) => {
     setNegotiations(prev =>
-      prev.map(n => n.id === updatedNegotiation.id ? updatedNegotiation : n)
+      prev.map(n => n.id === updatedNegotiation.id ? { ...n, ...updatedNegotiation } as Negotiation : n)
     );
   }, []);
 

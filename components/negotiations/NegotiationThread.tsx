@@ -74,12 +74,15 @@ interface NegotiationThreadProps {
     currentUserType: 'buyer' | 'seller';
 }
 
+import { getNegotiationUtils } from '@/lib/negotiation-utils';
+
 export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
     negotiation,
     messages,
     currentUserType,
 }) => {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const { isExpired, timeRemaining } = getNegotiationUtils(negotiation);
 
     // filter to only messages for THIS negotiation
     const threadMessages = messages.filter(
@@ -122,9 +125,9 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
                 </div>
                 <span className={cn(
                     'text-[10px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full border',
-                    statusStyle[negotiation.isExpired ? NegotiationStatus.EXPIRED : negotiation.status]
+                    statusStyle[isExpired ? NegotiationStatus.EXPIRED : negotiation.status]
                 )}>
-                    {negotiation.isExpired ? 'Expired' : negotiation.status}
+                    {isExpired ? 'Expired' : negotiation.status}
                 </span>
             </div>
 
@@ -156,7 +159,7 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
                 )}
                 <div className="ml-auto flex items-center gap-1 text-muted-foreground">
                     <Clock size={11} />
-                    <span>{negotiation.timeRemaining}</span>
+                    <span>{timeRemaining}</span>
                 </div>
             </div>
 

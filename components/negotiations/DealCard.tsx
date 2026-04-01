@@ -21,9 +21,12 @@ function proximity(listed: number, proposed: number): number {
     return Math.min(100, Math.max(0, pct));
 }
 
+import { getNegotiationUtils } from '@/lib/negotiation-utils';
+
 export const DealCard: React.FC<DealCardProps> = ({ negotiation }) => {
-    const { order, buyerProposedPrice, agreedPrice, timeRemaining, isExpired } = negotiation;
+    const { order, buyerProposedPrice, agreedPrice } = negotiation;
     const { product, buyer, quantity } = order;
+    const { isExpired, timeRemaining } = getNegotiationUtils(negotiation);
 
     const prox      = proximity(product.unitPrice, buyerProposedPrice);
     const barColor  = prox >= 90 ? 'bg-green-500' : prox >= 70 ? 'bg-amber-500' : 'bg-red-500';

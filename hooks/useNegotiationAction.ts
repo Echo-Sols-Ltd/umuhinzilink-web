@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import { useCart } from '@/contexts/CartContext';
 import { negotiationService } from '@/services/negotiation';
-import { Negotiation, SetAgreedPriceRequest, CartItemType } from '@/types';
+import { Negotiation, NegotiationStatus, SetAgreedPriceRequest, CartItemType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { notify } from '@/lib/notify';
 
@@ -13,7 +13,7 @@ export default function useNegotiationAction() {
   const { fetchCart } = useCart();
 
   // Temporary optimistic update helper
-  const optimisticUpdateNegotiation = useCallback((updatedNegotiation: Negotiation) => {
+  const optimisticUpdateNegotiation = useCallback((updatedNegotiation: Partial<Negotiation> & { id: string }) => {
     updateNegotiation(updatedNegotiation);
     // Trigger cart refresh to sync with negotiation changes
     setTimeout(() => {
@@ -50,10 +50,9 @@ export default function useNegotiationAction() {
       // Optimistic update - create temporary accepted negotiation
       const tempNegotiation = {
         id: orderId,
-        status: 'ACCEPTED' as any,
-        agreedPrice: 0, // Will be updated from API response
+        status: NegotiationStatus.ACCEPTED,
         updatedAt: new Date().toISOString()
-      } as Negotiation;
+      };
       
       optimisticUpdateNegotiation(tempNegotiation);
       
@@ -85,9 +84,9 @@ export default function useNegotiationAction() {
       // Optimistic update - create temporary rejected negotiation
       const tempNegotiation = {
         id: orderId,
-        status: 'REJECTED' as any,
+        status: NegotiationStatus.REJECTED,
         updatedAt: new Date().toISOString()
-      } as Negotiation;
+      };
       
       optimisticUpdateNegotiation(tempNegotiation);
       
@@ -119,11 +118,10 @@ export default function useNegotiationAction() {
       // Optimistic update - create temporary countered negotiation
       const tempNegotiation = {
         id: negotiationId,
-        status: 'COUNTERED' as any,
-        sellerResponsePrice: request.agreedPrice,
+        status: NegotiationStatus.COUNTERED,
         agreedPrice: request.agreedPrice,
         updatedAt: new Date().toISOString()
-      } as Negotiation;
+      };
       
       optimisticUpdateNegotiation(tempNegotiation);
       

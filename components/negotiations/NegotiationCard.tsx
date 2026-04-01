@@ -24,14 +24,17 @@ function timeLabel(t: string) {
   return { label: t, urgent: t.includes('h') && parseInt(t) < 3 };
 }
 
+import { getNegotiationUtils } from '@/lib/negotiation-utils';
+
 export default function NegotiationCard({ 
   negotiation, 
   userType = 'buyer', 
   showProgress = false,
   isInCart = false
 }: NegotiationCardProps) {
-  const { order, buyerProposedPrice, agreedPrice, status, isExpired, timeRemaining } = negotiation;
+  const { order, buyerProposedPrice, agreedPrice, status } = negotiation;
   const { product } = order;
+  const { isExpired, timeRemaining, canSellerRespond, canBuyerRespond } = getNegotiationUtils(negotiation, userType);
 
   const effectiveStatus = isExpired ? NegotiationStatus.EXPIRED : status;
   const { label: timeLabel2, urgent } = timeLabel(timeRemaining);
@@ -50,8 +53,8 @@ export default function NegotiationCard({
   const needsAction =
     !isExpired &&
     status === NegotiationStatus.PENDING &&
-    ((userType === 'seller' && negotiation.canSellerRespond) ||
-      (userType === 'buyer' && negotiation.canBuyerRespond));
+    ((userType === 'seller' && canSellerRespond) ||
+      (userType === 'buyer' && canBuyerRespond));
 
   // checkout readiness
   const canCheckout = status === NegotiationStatus.ACCEPTED && userType === 'buyer';

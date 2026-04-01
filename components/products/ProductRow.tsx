@@ -88,7 +88,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                         <h3 className="font-semibold text-lg text-foreground">{product.name}</h3>
                         <p className="text-green-600 font-semibold text-lg">{product.unitPrice} RWF / {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` ? product.measurementUnit : t(`enums.units.${product.measurementUnit}`)}</p>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{t('productRow.available')} {product.quantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` ? product.measurementUnit : t(`enums.units.${product.measurementUnit}`)}</p>
+                    <p className="text-sm text-gray-500 mt-1">{t('productRow.available')} {product.stockQuantity} {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}` ? product.measurementUnit : t(`enums.units.${product.measurementUnit}`)}</p>
                     <div className="flex items-center text-sm text-gray-500 mt-1">
                         <UserIcon className="w-4 h-4 mr-1" /> {product.owner.firstName} {product.owner.lastName}
                         <span className="mx-2">•</span>

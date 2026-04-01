@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import Link from 'next/link';
 import { Loader2, ArrowLeft, Package, DollarSign, MapPin, ImageIcon, Eye, Info, Upload, Check } from 'lucide-react';
-import { CertificationType, FarmerProductRequest, MeasurementUnit, ProductCategory, UserType } from '@/types';
+import { CertificationType, ProductRequest, MeasurementUnit, ProductCategory, UserType } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import { productService } from '@/services/products';
 import {
@@ -29,13 +29,11 @@ function EditProduct() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [product, setProduct] = useState<any>(null);
-  const [formData, setFormData] = useState<FarmerProductRequest>({
+  const [formData, setFormData] = useState<ProductRequest>({
     name: 'AVOCADO',
     quantity: 0,
     unitPrice: 0,
     measurementUnit: MeasurementUnit.KG,
-    location: '',
-    harvestDate: '',
     category: ProductCategory.FRUITS,
     description: '',
     isNegotiable: false,
@@ -53,11 +51,9 @@ function EditProduct() {
       setProduct(foundProduct);
       setFormData({
         name: foundProduct.name,
-        quantity: foundProduct.quantity,
+        quantity: foundProduct.stockQuantity,
         unitPrice: foundProduct.unitPrice,
         measurementUnit: foundProduct.measurementUnit,
-        location: foundProduct.location,
-        harvestDate: (foundProduct as any).harvestDate || '',
         category: foundProduct.category as any,
         description: foundProduct.description,
         isNegotiable: foundProduct.isNegotiable,
@@ -345,67 +341,6 @@ function EditProduct() {
                     </div>
                   </div>
 
-                  {/* Location & Timing */}
-                  <div className="bg-card rounded-xl border border-border p-6">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                        <MapPin className="w-5 h-5 text-accent" />
-                      </div>
-                      <div>
-                        <h2 className="text-lg font-semibold text-foreground">Location & Timing</h2>
-                        <p className="text-sm text-muted-foreground">Where and when your produce is available</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          Location <span className="text-destructive">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="location"
-                          value={formData.location}
-                          onChange={handleChange}
-                          placeholder="e.g., Kigali, Gasabo District"
-                          required
-                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          Harvest Date <span className="text-destructive">*</span>
-                        </label>
-                        <input
-                          type="date"
-                          name="harvestDate"
-                          value={formData.harvestDate ? new Date(formData.harvestDate).toISOString().split('T')[0] : ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-6">
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        Certification
-                      </label>
-                      <Select value={formData.certification} onValueChange={(value) => handleSelectChange('certification', value)}>
-                        <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
-                          <SelectValue placeholder="Select certification (optional)" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(CertificationType).map((cert) => (
-                            <SelectItem key={cert} value={cert}>
-                              {cert.replace(/_/g, ' ')}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
                   {/* Image Upload */}
                   <div className="bg-card rounded-xl border border-border p-6">
                     <div className="flex items-center gap-3 mb-6">
@@ -562,16 +497,6 @@ function EditProduct() {
                         </div>
 
                         <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Location:</span>
-                            <span className="font-medium text-foreground">{formData.location || '—'}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Harvested:</span>
-                            <span className="font-medium text-foreground">
-                              {formData.harvestDate ? new Date(formData.harvestDate).toLocaleDateString() : '—'}
-                            </span>
-                          </div>
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Negotiable:</span>
                             <span className="font-medium text-foreground">

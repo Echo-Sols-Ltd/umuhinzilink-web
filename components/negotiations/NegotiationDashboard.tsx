@@ -88,8 +88,7 @@ export default function NegotiationDashboard({
     // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(n =>
-        n.order.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        n.lastMessage?.toLowerCase().includes(searchTerm.toLowerCase())
+        n.order.product.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 

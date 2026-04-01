@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Negotiation, Message, MessageType } from '@/types';
+import { Negotiation, Message, MessageType, NegotiationStatus } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
+import { getNegotiationUtils } from '@/lib/negotiation-utils';
 import { 
   Send, 
   X, 
@@ -15,6 +16,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { notify } from '@/lib/notify';
+import { NegotiationStatusBadge } from './NegotiationStatusBadge';
 
 interface NegotiationChatProps {
   negotiation: Negotiation;
@@ -36,13 +38,12 @@ export default function NegotiationChat({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Determine if chat should be disabled (final state)
-  const isFinalState = negotiation.status === 'ACCEPTED' || negotiation.status === 'REJECTED';
+  const { isExpired, timeRemaining } = getNegotiationUtils(negotiation);
+  const isFinalState = negotiation.status === NegotiationStatus.ACCEPTED || negotiation.status === NegotiationStatus.REJECTED;
 
   // Determine if seller has set final price (buyer can't chat)
-  const hasSellerSetFinalPrice = negotiation.status === 'COUNTERED' &&
-    negotiation.sellerResponsePrice > 0 &&
-    negotiation.agreedPrice > 0 &&
+  const hasSellerSetFinalPrice = negotiation.status === NegotiationStatus.COUNTERED &&
+    !!negotiation.agreedPrice &&
     userType === 'buyer';
 
   // Auto-scroll to bottom when new messages arrive
@@ -154,13 +155,13 @@ export default function NegotiationChat({
                     {negotiation.buyerProposedPrice.toLocaleString()} RWF
                   </span>
                 </div>
-                {negotiation.sellerResponsePrice && (
+                {negotiation.agreedPrice && (
                   <>
                     <span className="text-blue-600">→</span>
                     <div className="flex items-center gap-1">
                       <DollarSign className="w-4 h-4 text-blue-600" />
                       <span className="font-bold text-blue-900">
-                        {negotiation.sellerResponsePrice.toLocaleString()} RWF
+                        {negotiation.agreedPrice.toLocaleString()} RWF
                       </span>
                     </div>
                   </>
@@ -169,7 +170,7 @@ export default function NegotiationChat({
             </div>
             <div className="text-right">
               <p className="text-xs text-blue-600">Time Remaining</p>
-              <p className="font-semibold text-blue-900">{negotiation.timeRemaining}</p>
+              <p className="font-semibold text-blue-900">{timeRemaining}</p>
             </div>
           </div>
         </div>
@@ -270,7 +271,8 @@ export default function NegotiationChat({
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">
-                      {negotiation.status === 'ACCEPTED' ? '🎉 Negotiation Accepted!' : '❌ Negotiation Rejected'}
+                      <NegotiationStatusBadge status={negotiation.status === 'ACCEPTED' ? NegotiationStatus.ACCEPTED : NegotiationStatus.PENDING} />
+                      {negotiation.status === 'ACCEPTED' ? ' Negotiation Accepted!' : ' Negotiation Rejected'}
                     </h3>
                     <p className="text-sm text-gray-600 mb-2">
                       {negotiation.status === 'ACCEPTED' 

@@ -50,7 +50,7 @@ function SuppliersProducePage() {
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.length === 0 ? <p>No products found</p> : products.map(product => {
-            const isDone = product.quantity === 0;
+            const isDone = product.stockQuantity === 0;
 
             return (
               <div
@@ -77,7 +77,7 @@ function SuppliersProducePage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="text-lg font-semibold text-green-600">${product.unitPrice.toFixed(1)}</p>
-                    <p className="text-sm text-gray-500">Stock: {product.quantity}</p>
+                    <p className="text-sm text-gray-500">Stock: {product.stockQuantity}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
