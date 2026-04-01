@@ -13,12 +13,6 @@ import { useNegotiation } from '@/contexts/NegotiationContext';
 import { notify } from '@/lib/notify';
 import { ChevronLeft, WifiOff } from 'lucide-react';
 
-// ─── terminal statuses — no further actions allowed ───────────────
-const TERMINAL: NegotiationStatus[] = [
-    NegotiationStatus.ACCEPTED,
-    NegotiationStatus.REJECTED,
-    NegotiationStatus.EXPIRED,
-];
 
 export default function NegotiationPage() {
     const params = useParams();
@@ -151,8 +145,10 @@ export default function NegotiationPage() {
         }
     };
 
+    const isExpired = negotiation?.status === NegotiationStatus.EXPIRED;
+
     // ── derived label for mobile bar ───────────────────────────────
-    const statusLabel = negotiation?.isExpired
+    const statusLabel = isExpired
         ? 'Expired'
         : negotiation?.status ?? '';
 
