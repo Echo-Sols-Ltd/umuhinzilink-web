@@ -3,14 +3,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Negotiation, Message, MessageType } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
-import {
-  Send,
-  X,
-  MessageCircle,
-  User,
+import { 
+  Send, 
+  X, 
+  MessageCircle, 
+  User, 
   Store,
   Clock,
-  DollarSign
+  DollarSign,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import { notify } from '@/lib/notify';
 
@@ -252,27 +254,57 @@ export default function NegotiationChat({
         <div className="p-4 border-t border-gray-200 bg-gray-50">
           {/* Show disabled message when chat is not allowed */}
           {(isFinalState || hasSellerSetFinalPrice) && (
-            <div className="text-center py-4 text-sm text-gray-500">
+            <div className="text-center py-6 px-4">
               {isFinalState ? (
-                <div>
-                  <MessageCircle className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                  <p className="font-medium">
-                    {negotiation.status === 'ACCEPTED' ? 'Negotiation Accepted' : 'Negotiation Rejected'}
-                  </p>
-                  <p className="text-xs mt-1">
-                    {negotiation.status === 'ACCEPTED'
-                      ? 'Proceed to checkout to complete your order'
-                      : 'This negotiation has ended'}
-                  </p>
+                <div className="space-y-3">
+                  <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center ${
+                    negotiation.status === 'ACCEPTED' 
+                      ? 'bg-green-100 text-green-600' 
+                      : 'bg-red-100 text-red-600'
+                  }`}>
+                    {negotiation.status === 'ACCEPTED' ? (
+                      <CheckCircle className="w-6 h-6" />
+                    ) : (
+                      <XCircle className="w-6 h-6" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">
+                      {negotiation.status === 'ACCEPTED' ? '🎉 Negotiation Accepted!' : '❌ Negotiation Rejected'}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {negotiation.status === 'ACCEPTED' 
+                        ? `Great! You've both agreed on RWF ${negotiation.agreedPrice?.toLocaleString()}. Complete your order by proceeding to checkout.` 
+                        : 'This negotiation has been rejected and cannot be continued.'}
+                    </p>
+                    {negotiation.status === 'ACCEPTED' && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <p className="text-xs font-medium text-blue-800">
+                          💡 <strong>Next Step:</strong> Go to your cart to complete checkout and finalize this order
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : (
-                <div>
-                  <DollarSign className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-                  <p className="font-medium">Final Price Set</p>
-                  <p className="text-xs mt-1">
-                    Seller has set the final price of RWF {negotiation.agreedPrice.toLocaleString()}
-                  </p>
-                  <p className="text-xs mt-1">Use the action buttons below to accept or reject</p>
+                <div className="space-y-3">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-blue-100 flex items-center justify-center">
+                    <DollarSign className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">💰 Final Price Set</h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      The seller has set their <strong>final price</strong> of <strong>RWF {negotiation.agreedPrice?.toLocaleString()}</strong>
+                    </p>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                      <p className="text-xs font-medium text-amber-800">
+                        ⚠️ <strong>Important:</strong> This is the seller's final offer. You can only accept or reject this price - no further negotiation is possible.
+                      </p>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Use the action buttons below to make your decision
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
