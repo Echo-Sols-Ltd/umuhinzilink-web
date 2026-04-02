@@ -331,7 +331,7 @@ function FarmerSupplierOrders() {
                       ? `${order.buyer.district || ''}${order.buyer.province ? `, ${order.buyer.province}` : ''}`.trim()
                       : '—';
                     const quantity =
-                      Number(order.quantity) || Number(order.product?.quantity) || 0;
+                      Number(order.quantity) || Number(order.product?.stockQuantity) || 0;
                     const amount =
                       Number(order.totalPrice) ||
                       (Number(order.product?.unitPrice) || 0) * quantity;

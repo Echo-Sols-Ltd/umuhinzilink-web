@@ -3,7 +3,9 @@
 import React, { useState, useMemo } from 'react';
 import { Negotiation, NegotiationStatus } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
+import { useCart } from '@/contexts/CartContext';
 import NegotiationCard from './NegotiationCard';
+import { NegotiationLastUpdated } from './NegotiationLastUpdated';
 import { 
   MessageCircle, 
   Filter, 
@@ -13,17 +15,22 @@ import {
   TrendingUp,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  ShoppingCart,
+  Grid3X3,
+  List
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface NegotiationDashboardProps {
   userType?: 'buyer' | 'seller';
   onChatOpen?: (negotiationId: string) => void;
+  showCartConnections?: boolean;
 }
 
 export default function NegotiationDashboard({
-  onChatOpen 
+  onChatOpen,
+  showCartConnections = true
 }: NegotiationDashboardProps) {
   const { 
     negotiations, 
@@ -34,10 +41,40 @@ export default function NegotiationDashboard({
     hasActiveNegotiations
   } = useNegotiation();
   
-  const {user}=useAuth()
+  const { cart } = useCart();
+  const {user} = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<NegotiationStatus | 'all'>('all');
   const [sortBy, setSortBy] = useState<'createdAt' | 'expiresAt'>('createdAt');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [selectedNegotiations, setSelectedNegotiations] = useState<string[]>([]);
+
+  // Check if negotiation is in cart
+  const isNegotiationInCart = (negotiationId: string) => {
+    return cart?.items.some(item => item.negotiationId === negotiationId);
+  };
+
+  // Get cart item for negotiation
+  const getCartItemForNegotiation = (negotiationId: string) => {
+    return cart?.items.find(item => item.negotiationId === negotiationId);
+  };
+
+  // Handle selection for bulk actions
+  const handleSelectNegotiation = (negotiationId: string, selected: boolean) => {
+    setSelectedNegotiations(prev => 
+      selected 
+        ? [...prev, negotiationId]
+        : prev.filter(id => id !== negotiationId)
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedNegotiations.length === filteredNegotiations.length) {
+      setSelectedNegotiations([]);
+    } else {
+      setSelectedNegotiations(filteredNegotiations.map(n => n.id));
+    }
+  };
 
   // Filter and sort negotiations
   const filteredNegotiations = useMemo(() => {
@@ -51,8 +88,7 @@ export default function NegotiationDashboard({
     // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(n =>
-        n.order.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        n.lastMessage?.toLowerCase().includes(searchTerm.toLowerCase())
+        n.order.product.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -89,7 +125,15 @@ export default function NegotiationDashboard({
     return counts;
   };
 
+  // Get cart connection stats
+  const getCartStats = () => {
+    const inCart = negotiations.filter(n => isNegotiationInCart(n.id)).length;
+    const notInCart = negotiations.length - inCart;
+    return { inCart, notInCart };
+  };
+
   const statusCounts = getStatusCounts();
+  const cartStats = getCartStats();
 
   if (loading && negotiations.length === 0) {
     return (
@@ -126,6 +170,7 @@ export default function NegotiationDashboard({
           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
             {negotiations.length} Active Threads • Real-time Updates Enabled
           </p>
+          <NegotiationLastUpdated compact={true} className="mt-1" />
         </div>
         
         <button
@@ -139,7 +184,7 @@ export default function NegotiationDashboard({
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -187,6 +232,34 @@ export default function NegotiationDashboard({
             </div>
           </div>
         </div>
+
+        {showCartConnections && (
+          <>
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <ShoppingCart className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">In Cart</p>
+                  <p className="text-xl font-bold text-gray-900">{cartStats.inCart}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                  <Grid3X3 className="w-5 h-5 text-gray-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Selected</p>
+                  <p className="text-xl font-bold text-gray-900">{selectedNegotiations.length}</p>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Filters and Search */}
@@ -231,33 +304,89 @@ export default function NegotiationDashboard({
           </div>
         </div>
 
-        {/* Sort Options */}
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">Sort by:</span>
-          <div className="flex gap-2">
+        {/* Sort Options and View Controls */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">Sort by:</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSortBy('createdAt')}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  sortBy === 'createdAt'
+                    ? 'bg-primary/10 text-primary'
+                    : 'hover:bg-gray-100'
+                }`}
+              >
+                Created Date
+              </button>
+              <button
+                onClick={() => setSortBy('expiresAt')}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  sortBy === 'expiresAt'
+                    ? 'bg-primary/10 text-primary'
+                    : 'hover:bg-gray-100'
+                }`}
+              >
+                Expiry Date
+              </button>
+            </div>
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => setSortBy('createdAt')}
-              className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                sortBy === 'createdAt'
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'grid'
                   ? 'bg-primary/10 text-primary'
-                  : 'hover:bg-gray-100'
+                  : 'hover:bg-gray-100 text-gray-600'
               }`}
+              title="Grid View"
             >
-              Created Date
+              <Grid3X3 size={16} />
             </button>
             <button
-              onClick={() => setSortBy('expiresAt')}
-              className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                sortBy === 'expiresAt'
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'list'
                   ? 'bg-primary/10 text-primary'
-                  : 'hover:bg-gray-100'
+                  : 'hover:bg-gray-100 text-gray-600'
               }`}
+              title="List View"
             >
-              Expiry Date
+              <List size={16} />
             </button>
           </div>
         </div>
       </div>
+
+      {/* Bulk Actions */}
+      {selectedNegotiations.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-blue-800">
+              {selectedNegotiations.length} negotiation{selectedNegotiations.length > 1 ? 's' : ''} selected
+            </span>
+            <button
+              onClick={handleSelectAll}
+              className="text-xs text-blue-600 hover:text-blue-800 underline"
+            >
+              {selectedNegotiations.length === filteredNegotiations.length ? 'Clear all' : 'Select all'}
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <button className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+              Message All
+            </button>
+            <button 
+              onClick={() => setSelectedNegotiations([])}
+              className="px-3 py-1.5 bg-white border border-blue-200 text-blue-600 text-sm rounded-lg hover:bg-blue-50 transition-colors"
+            >
+              Clear Selection
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Negotiations List */}
       {filteredNegotiations.length === 0 ? (
@@ -277,15 +406,32 @@ export default function NegotiationDashboard({
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredNegotiations.map((negotiation) => (
-            <NegotiationCard
-              key={negotiation.id}
-              negotiation={negotiation}
-              userType={user?.role==='BUYER'?'buyer':'seller'}
-              onChatOpen={onChatOpen}
-            />
-          ))}
+        <div className={viewMode === 'grid' ? 'grid gap-4 md:grid-cols-2 lg:grid-cols-3' : 'space-y-4'}>
+          {filteredNegotiations.map((negotiation) => {
+            const isInCart = isNegotiationInCart(negotiation.id);
+            const isSelected = selectedNegotiations.includes(negotiation.id);
+            
+            return (
+              <div key={negotiation.id} className="relative">
+                {/* Selection Checkbox */}
+                <div className="absolute top-2 left-2 z-10">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={(e) => handleSelectNegotiation(negotiation.id, e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0"
+                  />
+                </div>
+                
+                <NegotiationCard
+                  negotiation={negotiation}
+                  userType={user?.role==='BUYER'?'buyer':'seller'}
+                  showProgress={true}
+                  isInCart={isInCart}
+                />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

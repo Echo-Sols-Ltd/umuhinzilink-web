@@ -36,9 +36,8 @@ function EditInput() {
     unitPrice: '',
     measurementUnit: '',
     quantity: '',
-    location: '',
     isNegotiable: false,
-    certification: '',
+    certification: CertificationType.NONE,
     imageUrl: '',
   });
 
@@ -58,8 +57,7 @@ function EditInput() {
           description: input.description || '',
           unitPrice: input.unitPrice?.toString() || '',
           measurementUnit: input.measurementUnit || '',
-          quantity: input.quantity?.toString() || '',
-          location: input.location || '',
+          quantity: input.stockQuantity?.toString() || '',
           isNegotiable: input.isNegotiable || false,
           certification: input.certification || '',
           imageUrl: input.image || '',
@@ -151,11 +149,9 @@ function EditInput() {
         unitPrice: parseFloat(formData.unitPrice) || 0,
         measurementUnit: formData.measurementUnit,
         quantity: parseInt(formData.quantity) || 0,
-        location: formData.location,
         isNegotiable: formData.isNegotiable,
-        certification: formData.certification,
+        certification: formData.certification as any,
         image: finalImageUrl || '/placeholder.png',
-        harvestDate: new Date().toISOString(),
       };
 
       await updateProduct(inputId, productData);
@@ -356,54 +352,6 @@ function EditInput() {
                     </div>
                   </div>
 
-                  {/* Location & Availability */}
-                  <div className="bg-card rounded-xl border border-border p-6">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                        <MapPin className="w-5 h-5 text-accent" />
-                      </div>
-                      <div>
-                        <h2 className="text-lg font-semibold text-foreground">Location & Availability</h2>
-                        <p className="text-sm text-muted-foreground">Where your input is available for delivery</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          Location <span className="text-destructive">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="location"
-                          value={formData.location}
-                          onChange={handleChange}
-                          placeholder="e.g., Kigali, Rwanda"
-                          required
-                          className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          Certification
-                        </label>
-                        <Select value={formData.certification} onValueChange={(value) => handleSelectChange('certification', value)}>
-                          <SelectTrigger className="w-full px-4 py-3 border border-border bg-card rounded-lg focus:outline-none focus:ring-2 focus:ring-success focus:border-success transition-colors">
-                            <SelectValue placeholder="Select certification (optional)" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(CertificationType).map((cert) => (
-                              <SelectItem key={cert} value={cert}>
-                                {cert.replace(/_/g, ' ')}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Image Upload */}
                   <div className="bg-card rounded-xl border border-border p-6">
                     <div className="flex items-center gap-3 mb-6">
@@ -557,10 +505,6 @@ function EditInput() {
                         </div>
 
                         <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Location:</span>
-                            <span className="font-medium text-foreground">{formData.location || '—'}</span>
-                          </div>
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Negotiable:</span>
                             <span className="font-medium text-foreground">

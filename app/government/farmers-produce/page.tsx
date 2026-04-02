@@ -111,7 +111,7 @@ function FarmersProducePage() {
               <p className="text-gray-600 text-lg">No products found</p>
             </div>
           ) : products?.map(product => {
-            const isDone = product.quantity === 0;
+            const isDone = product.stockQuantity === 0;
 
             return (
               <div

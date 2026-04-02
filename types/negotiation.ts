@@ -1,4 +1,4 @@
-import { Order } from ".";
+import { Order, User } from ".";
 
 export enum NegotiationStatus {
     PENDING = 'PENDING',
@@ -13,21 +13,20 @@ export interface Negotiation {
     id: string;
     order: Order;
     buyerProposedPrice: number;
-    sellerResponsePrice: number;
-    lastMessage: string;
+    agreedPrice: number | null;
     status: NegotiationStatus;
+    rejectedBy: User | null;
+    rejectionReason: string | null;
+    sellerNote: string | null;
     expiresAt: string;
+    priceSetAt: string | null;
+    closedAt: string | null;
     createdAt: string;
     updatedAt: string;
-    isExpired: boolean;
-    timeRemaining: string;
-    canBuyerRespond: boolean;
-    canSellerRespond: boolean;
 }
 
-export interface CounterOfferRequest {
-    counterPrice: number;
-    message: string;
+export interface SetAgreedPriceRequest {
+    agreedPrice: number;
 }
 
 export interface NegotiationMessage {

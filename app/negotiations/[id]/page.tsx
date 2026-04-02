@@ -7,93 +7,66 @@ import { DealCard } from '@/components/negotiations/DealCard';
 import { NegotiationThread } from '@/components/negotiations/NegotiationThread';
 import { NegotiationActionBar } from '@/components/negotiations/NegotiationActionBar';
 import { NegotiationEmptyState } from '@/components/negotiations/NegotiationEmptyState';
-import { useNegotiation } from '@/contexts/NegotiationContext';
-import { useNegotiationSocket } from '@/hooks/useNegotiationSocket';
+import useNegotiationAction from '@/hooks/useNegotiationAction';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNegotiation } from '@/contexts/NegotiationContext';
 import { notify } from '@/lib/notify';
 import { ChevronLeft, WifiOff } from 'lucide-react';
+import { useI18n } from '@/contexts/I18nContext';
 
-// ─── terminal statuses — no further actions allowed ───────────────
-const TERMINAL: NegotiationStatus[] = [
-    NegotiationStatus.ACCEPTED,
-    NegotiationStatus.REJECTED,
-    NegotiationStatus.EXPIRED,
-];
 
 export default function NegotiationPage() {
     const params = useParams();
     const router = useRouter();
     const { user } = useAuth();
+    const { t } = useI18n();
+    const { setCurrentNegotiation } = useNegotiation()
 
-    // orderId comes from the URL — negotiation page is at /[role]/negotiations/[orderId]
-    const orderId = params.id as string;
+    const negotiationId = params.id as string;
+
 
     const {
         getNegotiation,
         acceptNegotiation,
         rejectNegotiation,
-        counterOffer,
-    } = useNegotiation();
+        setAgreedPrice,
+    } = useNegotiationAction();
 
     const {
         messages: socketMessages,
-        lastStatusUpdate,
-        sendMessage,
         isConnected,
-    } = useNegotiationSocket(orderId);
+        sendNegotiationMessage
+    } = useNegotiation();
 
     const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
-    const [loading, setLoading]         = useState(true);
-    const [acting, setActing]           = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [acting, setActing] = useState(false);
 
-    // ── fetch ──────────────────────────────────────────────────────
-    const fetchNegotiation = useCallback(async () => {
-        if (!orderId) return;
-        // getNegotiation takes the orderId — backend returns the Negotiation for that order
-        const data = await getNegotiation(orderId);
-        if (data) setNegotiation(data);
-        setLoading(false);
-    }, [orderId, getNegotiation]);
 
-    useEffect(() => { fetchNegotiation(); }, [fetchNegotiation]);
 
-    // ── real-time status update via WebSocket ──────────────────────
     useEffect(() => {
-        if (!lastStatusUpdate) return;
-        fetchNegotiation();
+        // ── fetch ──────────────────────────────────────────────────────
+        const fetchNegotiation = async () => {
+            if (!negotiationId) return;
 
-        // browser notification when tab is hidden and counter offer arrives
-        if (
-            lastStatusUpdate.action === 'COUNTER' &&
-            document.hidden &&
-            'Notification' in window &&
-            Notification.permission === 'granted' &&
-            negotiation
-        ) {
-            new Notification(
-                `New counter offer on ${negotiation.order.product.name}`,
-                { body: `Check your negotiation for ${negotiation.order.product.name}` }
-            );
+
+            const data = await getNegotiation(negotiationId);
+
+            if (data) {
+                setNegotiation(data);
+                setCurrentNegotiation(data)
+            }
+            setLoading(false);
         }
-    }, [lastStatusUpdate]);
+        fetchNegotiation();
+    }, [negotiationId]);
 
-    // ── fallback polling when WebSocket is disconnected ────────────
-    useEffect(() => {
-        if (isConnected) return;
-        const interval = setInterval(fetchNegotiation, 30_000);
-        return () => clearInterval(interval);
-    }, [isConnected, fetchNegotiation]);
+
 
     // ── turn detection ─────────────────────────────────────────────
-    const isBuyer  = user?.role === UserType.BUYER;
+    const isBuyer = user?.role === UserType.BUYER;
     const isSeller = user?.role === UserType.FARMER || user?.role === UserType.SUPPLIER;
 
-    const isMyTurn = !!negotiation && (
-        (isBuyer  && negotiation.canBuyerRespond)  ||
-        (isSeller && negotiation.canSellerRespond)
-    );
-
-    const isTerminal = !!negotiation && TERMINAL.includes(negotiation.status);
 
     // ── action handler ─────────────────────────────────────────────
     const handleAction = async (action: string, data?: {
@@ -101,12 +74,6 @@ export default function NegotiationPage() {
         message?: string;
     }) => {
         if (!negotiation || acting) return;
-
-        // guard: only the party whose turn it is can act
-        if (action !== 'GO_TO_CART' && !isMyTurn) {
-            notify.error('It is not your turn to respond', 'Not your turn');
-            return;
-        }
 
         setActing(true);
         try {
@@ -117,47 +84,49 @@ export default function NegotiationPage() {
                 const result = await acceptNegotiation(nOrderId);
                 if (result) {
                     setNegotiation(result);
-                    notify.success('Price agreed — you can now proceed to checkout', 'Accepted');
+                    notify.success(t('negotiations.notifications.priceAgreed'), t('negotiations.accept'));
                 }
 
-            } else if (action === 'COUNTER') {
+            } else if (action === 'SET_PRICE') {
                 if (!data?.price) {
-                    notify.error('Please enter a price', 'Missing price');
+                    notify.error(t('negotiations.notifications.enterPrice'), t('common.error'));
                     return;
                 }
 
                 // frontend price range guard (backend also validates)
                 const listed = negotiation.order.product.unitPrice;
-                const min    = listed * 0.5;
-                const max    = listed * 1.5;
+                const min = listed * 0.5;
+                const max = listed * 1.5;
                 if (data.price < min || data.price > max) {
                     notify.error(
-                        `Price must be between RWF ${Math.round(min).toLocaleString()} and RWF ${Math.round(max).toLocaleString()}`,
-                        'Price out of range'
+                        t('negotiations.notifications.priceRange', { 
+                            min: Math.round(min).toLocaleString(), 
+                            max: Math.round(max).toLocaleString() 
+                        }),
+                        t('common.error')
                     );
                     return;
                 }
 
                 // frontend counter limit guard
                 if ((negotiation as any).counterCount >= 3) {
-                    notify.error('Maximum counter offers reached — you can only Accept or Reject', 'Limit reached');
+                    notify.error(t('negotiations.notifications.limitReached'), t('common.warning'));
                     return;
                 }
 
-                const result = await counterOffer(nOrderId, {
-                    counterPrice: data.price,
-                    message: data.message ?? '',
+                const result = await setAgreedPrice(negotiation.id, {
+                    agreedPrice: data.price,
                 });
                 if (result) {
                     setNegotiation(result);
-                    notify.success('Counter offer sent', 'Sent');
+                    notify.success(t('negotiations.notifications.counterSent'), t('negotiations.confirm'));
                 }
 
             } else if (action === 'REJECT') {
                 const result = await rejectNegotiation(nOrderId, data?.message ?? 'Negotiation declined');
                 if (result) {
                     setNegotiation(result);
-                    notify.info('Negotiation declined', 'Declined');
+                    notify.info(t('negotiations.notifications.negotiationDeclined'), t('negotiations.decline'));
                 }
 
             } else if (action === 'GO_TO_CART') {
@@ -169,33 +138,38 @@ export default function NegotiationPage() {
             } else if (action === 'NEW_NEGOTIATION') {
                 router.push('/buyer/products');
             }
+            else {
+                sendNegotiationMessage(negotiationId, data?.message!)
+            }
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : 'Action failed';
-            notify.error(msg, 'Error');
+            const msg = err instanceof Error ? err.message : t('errors.unknown');
+            notify.error(msg, t('common.error'));
         } finally {
             setActing(false);
         }
     };
 
+    const isExpired = negotiation?.status === NegotiationStatus.EXPIRED;
+
     // ── derived label for mobile bar ───────────────────────────────
-    const statusLabel = negotiation?.isExpired
-        ? 'Expired'
-        : negotiation?.status ?? '';
+    const statusLabel = isExpired
+        ? t('negotiations.expired')
+        : (negotiation?.status ? t(`common.status.${negotiation.status.toLowerCase()}`) : '');
 
     const statusColor =
         negotiation?.status === NegotiationStatus.ACCEPTED ? 'text-green-600' :
-        negotiation?.status === NegotiationStatus.REJECTED  ? 'text-red-500'   :
-        negotiation?.status === NegotiationStatus.EXPIRED   ? 'text-gray-400'  :
-        negotiation?.status === NegotiationStatus.COUNTERED ? 'text-blue-600'  :
-        'text-amber-600'; // PENDING
+            negotiation?.status === NegotiationStatus.REJECTED ? 'text-red-500' :
+                negotiation?.status === NegotiationStatus.EXPIRED ? 'text-gray-400' :
+                    negotiation?.status === NegotiationStatus.COUNTERED ? 'text-blue-600' :
+                        'text-amber-600'; // PENDING
 
     // ── loading ────────────────────────────────────────────────────
     if (loading) {
         return (
             <div className="h-screen flex flex-col items-center justify-center gap-4 bg-background">
                 <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm text-muted-foreground">Loading negotiation…</p>
+                <p className="text-sm text-muted-foreground">{t('negotiations.loading')}</p>
             </div>
         );
     }
@@ -212,7 +186,7 @@ export default function NegotiationPage() {
                 <div className="w-full bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2">
                     <WifiOff size={14} className="text-amber-600" />
                     <span className="text-[12px] text-amber-700 font-medium">
-                        Connection lost — refreshing every 30s
+                        {t('negotiations.connectionLost')}
                     </span>
                 </div>
             )}
@@ -236,7 +210,7 @@ export default function NegotiationPage() {
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-[10px] text-muted-foreground">Proposed</p>
+                    <p className="text-[10px] text-muted-foreground">{t('negotiations.proposed')}</p>
                     <p className="font-bold text-[13px] text-foreground">
                         RWF {negotiation.buyerProposedPrice.toLocaleString()}
                     </p>
@@ -254,7 +228,7 @@ export default function NegotiationPage() {
                     <div className="w-7 h-7 rounded-full border border-border flex items-center justify-center group-hover:bg-accent transition-colors">
                         <ChevronLeft size={14} />
                     </div>
-                    <span className="text-[12px] font-medium uppercase tracking-wider">Back to negotiations</span>
+                    <span className="text-[12px] font-medium uppercase tracking-wider">{t('negotiations.backToNegotiations')}</span>
                 </button>
 
                 <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 items-start">
@@ -277,9 +251,7 @@ export default function NegotiationPage() {
                                 negotiation={negotiation}
                                 currentUserType={buyerOrSeller}
                                 onAction={handleAction}
-                                isMyTurn={isMyTurn}
-                                // isTerminal={isTerminal}
-                                // acting={acting}
+                                acting={acting}
                             />
                         </div>
                     </div>

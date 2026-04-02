@@ -79,7 +79,7 @@ function FarmerProducts() {
     const total = products.length;
     const active = products.filter(p => p.status?.toUpperCase() === 'IN_STOCK').length;
     const outOfStock = products.filter(p => p.status?.toUpperCase() === 'OUT_OF_STOCK').length;
-    const inventory = products.reduce((acc, p) => acc + (Number(p.quantity) || 0), 0);
+    const inventory = products.reduce((acc, p) => acc + (Number(p.stockQuantity) || 0), 0);
     return { total, active, outOfStock, inventory };
   }, [products]);
 

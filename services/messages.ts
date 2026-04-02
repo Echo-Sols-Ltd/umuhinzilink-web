@@ -3,17 +3,6 @@ import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 import { AxiosProgressEvent, CancelToken } from 'axios';
 
-interface ChatMessageReply {
-  messageId: string;
-  senderId: string;
-  receiverId: string;
-  content: string;
-}
-
-interface ChatMessageEdit {
-  messageId: string;
-  newContent: string;
-}
 
 class MessageService {
   // Get conversation messages between two users (paginated)

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { productService } from '@/services/products';
 import { orderService } from '@/services/orders';
 import { dashboardService } from '@/services/dashboardService';
-import { Product, Order, SupplierProductRequest } from '@/types';
+import { Product, Order, ProductRequest } from '@/types';
 import { notify } from '@/lib/notify';
 import { useProduct } from '@/contexts/ProductContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -14,7 +14,7 @@ export const useSupplierAction = () => {
   const { updateOrderState: editSupplierOrder } = useOrder();
 
   // Product Management Actions (sync with ProductContext)
-  const createProduct = async (productData: SupplierProductRequest): Promise<Product | null> => {
+  const createProduct = async (productData: ProductRequest): Promise<Product | null> => {
     setLoading(true);
     setError(null);
     try {
@@ -110,7 +110,7 @@ export const useSupplierAction = () => {
     }
   };
 
-  const updateProduct = async (id: string, productData: Partial<SupplierProductRequest>): Promise<Product | null> => {
+  const updateProduct = async (id: string, productData: Partial<ProductRequest>): Promise<Product | null> => {
     setLoading(true);
     setError(null);
     try {

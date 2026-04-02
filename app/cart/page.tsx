@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useCartAction } from '@/hooks/useCartAction';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,13 +8,14 @@ import { useRouter } from 'next/navigation';
 import {
     ShoppingBag, Truck, Wallet, ChevronRight, Minus, Plus,
     Trash2, Clock, CheckCircle2, ArrowLeft, Package,
-    Phone, CreditCard, Leaf,
+    Phone, CreditCard, Leaf, MessageCircle,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CartItem, CartItemType, PaymentMethod } from '@/types';
 import { notify } from '@/lib/notify';
 import { imageUrl } from '@/lib/utils';
+import { CartNegotiationLink } from '@/components/negotiations/CartNegotiationLink';
 
 // ─── types ────────────────────────────────────────────────────────
 enum Step { REVIEW = 0, PAYMENT = 1 }
@@ -55,6 +56,7 @@ function CartItemRow({
 }) {
     const isPending  = item.type === CartItemType.NEGOTIATION_PENDING;
     const isAccepted = item.type === CartItemType.NEGOTIATION_ACCEPTED;
+    const isNegotiation = isPending || isAccepted;
     const price      = (isAccepted && item.proposedPrice) ? item.proposedPrice : item.unitPrice;
 
     return (
@@ -75,9 +77,21 @@ function CartItemRow({
             {/* details */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                    <p className="font-semibold text-[14px] text-foreground leading-snug truncate">
-                        {item.product.name}
-                    </p>
+                    <div className="flex-1">
+                        <p className="font-semibold text-[14px] text-foreground leading-snug truncate">
+                            {item.product.name}
+                        </p>
+                        {/* Negotiation Status and Link */}
+                        {isNegotiation && (
+                            <div className="mt-2">
+                                <CartNegotiationLink
+                                    cartItem={item}
+                                    compact={true}
+                                    showStatus={true}
+                                />
+                            </div>
+                        )}
+                    </div>
                     <button onClick={onDelete}
                         className="shrink-0 p-1 text-muted-foreground hover:text-destructive transition-colors rounded-lg">
                         <Trash2 size={14} />
@@ -85,7 +99,7 @@ function CartItemRow({
                 </div>
 
                 {/* price */}
-                <div className="mt-1 flex items-baseline gap-2">
+                <div className="mt-2 flex items-baseline gap-2">
                     {(isPending || isAccepted) && item.proposedPrice ? (
                         <>
                             <span className="text-[13px] line-through text-muted-foreground">
@@ -94,6 +108,8 @@ function CartItemRow({
                             <span className={`text-[13px] font-semibold
                                 ${isAccepted ? 'text-green-600' : 'text-amber-600'}`}>
                                 {fmt(item.proposedPrice)}
+                                {isAccepted && ' (agreed)'}
+                                {isPending && ' (proposed)'}
                             </span>
                         </>
                     ) : (
@@ -118,20 +134,27 @@ function CartItemRow({
                 </div>
 
                 {/* quantity controls — disabled for pending negotiations */}
-                {!isPending && (
-                    <div className="mt-2 flex items-center gap-2">
-                        <button onClick={onRemove}
-                            className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors">
-                            <Minus size={12} />
-                        </button>
-                        <span className="text-[13px] font-semibold w-6 text-center">{item.quantity}</span>
-                        <button onClick={onAdd}
-                            className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors">
-                            <Plus size={12} />
-                        </button>
-                        <span className="ml-auto text-[13px] font-semibold text-foreground">
-                            {fmt(price * item.quantity)}
-                        </span>
+                <div className="mt-2 flex items-center gap-2">
+                    <button onClick={onRemove}
+                        className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isPending}>
+                        <Minus size={12} />
+                    </button>
+                    <span className="text-[13px] font-semibold w-6 text-center">{item.quantity}</span>
+                    <button onClick={onAdd}
+                        className="w-7 h-7 rounded-lg border border-border flex items-center justify-center hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isPending}>
+                        <Plus size={12} />
+                    </button>
+                    <span className="ml-auto text-[13px] font-semibold text-foreground">
+                        {fmt(price * item.quantity)}
+                    </span>
+                </div>
+                
+                {/* Negotiation notice */}
+                {isPending && (
+                    <div className="mt-2 text-xs text-muted-foreground">
+                        Quantity cannot be modified during negotiation
                     </div>
                 )}
             </div>
@@ -150,10 +173,25 @@ export default function CartPage() {
     const [method, setMethod] = useState<'wallet' | 'mobile_money' | 'bank'>('wallet');
     const [placing, setPlacing] = useState(false);
 
-    // separate items by type
-    const checkoutableItems = useMemo(() =>
-        cart?.items.filter(i => i.type === CartItemType.NORMAL || i.type === CartItemType.NEGOTIATION_ACCEPTED) ?? [],
-    [cart]);
+    const [checkoutableItems, setCheckoutableItems] = useState<CartItem[]>([]);
+    const [fetchingReady, setFetchingReady] = useState(true);
+
+    const { getItemsReadyForCheckout } = useCart();
+
+    useEffect(() => {
+        const fetchReady = async () => {
+            if (!cart) {
+                setCheckoutableItems([]);
+                setFetchingReady(false);
+                return;
+            }
+            setFetchingReady(true);
+            const readyItems = await getItemsReadyForCheckout();
+            setCheckoutableItems(readyItems);
+            setFetchingReady(false);
+        };
+        fetchReady();
+    }, [cart, getItemsReadyForCheckout]);
 
     const pendingItems = useMemo(() =>
         cart?.items.filter(i => i.type === CartItemType.NEGOTIATION_PENDING) ?? [],
@@ -183,14 +221,16 @@ export default function CartPage() {
 
         const result = await checkoutItems(checkoutableItems.map(i => i.id), pm);
         setPlacing(false);
-        if (result) {
+        if (result && result.length > 0) {
             notify.success('Orders placed successfully', 'Done');
-            router.push('/buyer/purchases');
+            const orderIds = result.map(o => o.id).join(',');
+            // If the payment method was Mobile Money, you might open a modal here using order details
+            router.push(`/orders/success?ids=${orderIds}`);
         }
     };
 
     // ── loading ────────────────────────────────────────────────────
-    if (loading && !cart) {
+    if ((loading && !cart) || fetchingReady) {
         return (
             <div className="h-screen flex items-center justify-center">
                 <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />

@@ -29,7 +29,7 @@ function getNavGroups(role: UserType): NavGroup[] {
                     { icon: <LayoutGrid size={16} />, label: 'Dashboard',        href: '/farmer/dashboard' },
                     { icon: <Package     size={16} />, label: 'My Products',     href: '/farmer/products' },
                     { icon: <ShoppingCart size={16}/>, label: 'Customer Orders', href: '/farmer/orders' },
-                    { icon: <MessageSquare size={16}/>,label: 'Negotiations',    href: '/farmer/negotiations' },
+                    { icon: <MessageSquare size={16}/>,label: 'Negotiations',    href: '/negotiations' },
                 ],
             },
             {
@@ -60,7 +60,7 @@ function getNavGroups(role: UserType): NavGroup[] {
                     { icon: <LayoutGrid  size={16} />, label: 'Dashboard',       href: '/buyer/dashboard' },
                     { icon: <FilePlus    size={16} />, label: 'Browse Products', href: '/buyer/products' },
                     { icon: <ShoppingCart size={16}/>, label: 'My Orders',       href: '/buyer/purchases' },
-                    { icon: <MessageSquare size={16}/>, label: 'Negotiations',   href: '/buyer/negotiations' },
+                    { icon: <MessageSquare size={16}/>, label: 'Negotiations',   href: '/negotiations' },
                     { icon: <Heart       size={16} />, label: 'Saved',           href: '/buyer/saved' },
                 ],
             },
@@ -80,7 +80,7 @@ function getNavGroups(role: UserType): NavGroup[] {
                     { icon: <LayoutGrid  size={16} />, label: 'Dashboard',       href: '/supplier/dashboard' },
                     { icon: <Package     size={16} />, label: 'My Products',     href: '/supplier/products' },
                     { icon: <ShoppingCart size={16}/>, label: 'Orders',          href: '/supplier/orders' },
-                    { icon: <MessageSquare size={16}/>, label: 'Negotiations',   href: '/supplier/negotiations' },
+                    { icon: <MessageSquare size={16}/>, label: 'Negotiations',   href: '/negotiations' },
                 ],
             },
             {

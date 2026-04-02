@@ -1,21 +1,41 @@
-/**
- * Formats a number as Rwandan Francs (RWF)
- * Example: 4000 -> "RWF 4,000"
- */
-export const formatCurrency = (amount: number): string => {
-  return `RWF ${amount.toLocaleString('en-RW', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  })}`;
-};
+import { Negotiation, NegotiationStatus } from '@/types';
 
 /**
- * Calculates the percentage proximity between two prices
- * for the progress bar.
+ * Derives utility properties from a Negotiation object
  */
-export const getPriceProximity = (original: number, current: number): number => {
-  if (original === 0) return 100;
-  const diff = Math.abs(original - current);
-  const percent = (1 - diff / original) * 100;
-  return Math.max(0, Math.min(100, percent));
+export const getNegotiationUtils = (negotiation: Negotiation, userType?: 'buyer' | 'seller') => {
+  const now = new Date();
+  const expiresAt = new Date(negotiation.expiresAt);
+  const isExpired = expiresAt < now;
+
+  // Calculate time remaining string
+  const diffMs = expiresAt.getTime() - now.getTime();
+  let timeRemaining = 'Expired';
+  
+  if (diffMs > 0) {
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (diffHours > 0) {
+      timeRemaining = `${diffHours}h ${diffMins}m`;
+    } else {
+      timeRemaining = `${diffMins}m`;
+    }
+  }
+
+  // Actionable states
+  const canSellerRespond = !isExpired && 
+    (negotiation.status === NegotiationStatus.PENDING || negotiation.status === NegotiationStatus.COUNTERED) &&
+    userType === 'seller';
+
+  const canBuyerRespond = !isExpired && 
+    (negotiation.status === NegotiationStatus.PENDING || negotiation.status === NegotiationStatus.COUNTERED) &&
+    userType === 'buyer';
+
+  return {
+    isExpired,
+    timeRemaining,
+    canSellerRespond,
+    canBuyerRespond
+  };
 };

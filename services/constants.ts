@@ -87,12 +87,13 @@ export const API_ENDPOINTS = {
     ACCEPT_SUPPLIER: (id: string) => `/orders/${id}/accept`,
     CANCEL_SUPPLIER: (id: string) => `/orders/${id}/reject`,
     UPDATE_SUPPLIER_STATUS: (id: string) => `/orders/${id}/status`,
-
-    NEGOTIATION: {
-      BUYER: '/orders/negotiations/buyer',
-      SELLER: '/orders/negotiations/seller',
-      BY_ID: (id: string) => `/orders/${id}/negotiations`,
-    }
+  },
+  NEGOTIATION: {
+    BUYER: '/negotiations/buyer',
+    SELLER: '/negotiations/seller', 
+    BY_ID: (id: string) => `/negotiations/${id}`,
+    MESSAGES: (id: string) => `/negotiations/${id}/messages`,
+    SET_AGREED_PRICE: (id: string) => `/negotiations/${id}/set-price`,
   },
   ADMIN: {
     USERS: '/admin/users',
@@ -201,8 +202,7 @@ export const SOCKET_EVENTS = {
     TYPING: '/app/chat.typing'
   },
   NEGOTIATION: {
-    SEND_MESSAGE: '/app/negotiation/{negotiationId}/message',
-    STATUS_UPDATE: '/app/negotiation/{negotiationId}/status',
+    SUBSCRIBE_NEGOTIATION: '/topic/negotiation',
     SUBSCRIBE_MESSAGE: '/topic/negotiation/{negotiationId}',
     SUBSCRIBE_STATUS: '/queue/negotiationAccepted',
     SUBSCRIBE_REJECTED: '/queue/negotiationRejected'

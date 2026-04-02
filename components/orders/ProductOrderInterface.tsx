@@ -30,17 +30,17 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
-  const isOutOfStock = product.quantity === 0;
-  const isLowStock = product.quantity > 0 && product.quantity <= 10;
+  const isOutOfStock = product.stockQuantity === 0;
+  const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 10;
 
   const getStockStatus = () => {
     if (isOutOfStock) {
       return { text: 'Out of Stock', color: 'text-red-600', bgColor: 'bg-red-100' };
     }
     if (isLowStock) {
-      return { text: `Only ${product.quantity} left`, color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
+      return { text: `Only ${product.stockQuantity} left`, color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
     }
-    return { text: `${product.quantity} available`, color: 'text-green-600', bgColor: 'bg-green-100' };
+    return { text: `${product.stockQuantity} available`, color: 'text-green-600', bgColor: 'bg-green-100' };
   };
 
   const stockStatus = getStockStatus();

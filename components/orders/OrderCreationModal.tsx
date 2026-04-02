@@ -50,7 +50,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   if (orderType !== 'supplier' && !product) return null;
 
   const totalPrice = unitPrice * quantity;
-  const maxQuantity = product?.quantity || 1000; // Default high limit for custom orders
+  const maxQuantity = product?.stockQuantity || 1000; // Default high limit for custom orders
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
