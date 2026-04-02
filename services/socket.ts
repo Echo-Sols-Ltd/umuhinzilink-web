@@ -1,8 +1,7 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
 import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping, Order } from '@/types'
-import { API_CONFIG, SOCKET_EVENTS } from './constants';
-import { NegotiationMessage, NegotiationStatusUpdate } from '@/types';
+import { API_CONFIG, SOCKET_EVENTS } from './constants'
 
 class SocketService {
     public stompClient: Client
@@ -191,8 +190,8 @@ class SocketService {
 
     private handleNegotiationMessage(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as Message
-            this.negotiationMessageListeners.forEach(cb => cb(body))
+            const body = JSON.parse(message.body) as SocketResponse<Message>
+            this.negotiationMessageListeners.forEach(cb => cb(body.data!))
         } catch (error) {
             console.error('Failed to parse negotiation message:', error)
         }

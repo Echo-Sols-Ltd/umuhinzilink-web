@@ -58,19 +58,26 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const isConnected = !!socket?.isConnected();
-  const handleNewMessage = (data: Message) => {
-    setMessages(prev => [...prev, data]);
-  }
-
+  const handleNewMessage = useCallback((data: Message) => {
+    setMessages(prev => {
+      console.log("this thing is coming", data)
+      // Avoid duplicate messages if they arrive via both history fetch and socket
+      if (prev.some(m => m.id === data.id)) return prev;
+      return [...prev, data];
+    });
+    setLastUpdated(new Date());
+  }, []);
+  
   useEffect(() => {
-    if (!socket) return
-    socket.onNegotiationMessage(handleNewMessage)
+    if (!socket) return;
+    
+    // Check if we're already listening to avoid redundant attachments
+    socket.onNegotiationMessage(handleNewMessage);
 
     return () => {
-      socket.removeNegotiationMessageListener(handleNewMessage)
-    }
-
-  }, [socket])
+      socket.removeNegotiationMessageListener(handleNewMessage);
+    };
+  }, [socket, handleNewMessage]);
 
   const sendNegotiationMessage = useCallback((negotiationId: string, content: string) => {
     if (!socket || !user) return;
@@ -212,21 +219,37 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
   }, [stopPolling]);
 
   useEffect(() => {
-    if (!currentNegotiation) return
+    if (!currentNegotiation) return;
     const fetchNegotiationMessages = async () => {
       try {
-        const response = await negotiationService.getNegotiationMessages(currentNegotiation.id)
-        setMessages(response.data)
+        const response = await negotiationService.getNegotiationMessages(currentNegotiation.id);
+        if (response.success && response.data) {
+          setMessages(prev => {
+            // Merge existing (potentially live) messages with historical ones
+            const historical = response.data;
+            const combined = [...historical];
+            
+            prev.forEach(pm => {
+              if (!combined.some(hm => hm.id === pm.id)) {
+                combined.push(pm);
+              }
+            });
+            
+            // Sort by timestamp
+            return combined.sort((a, b) => 
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            );
+          });
+          setLastUpdated(new Date());
+        }
       } catch (error) {
-
+        console.error('Failed to fetch negotiation messages:', error);
       }
     }
-    fetchNegotiationMessages()
+    fetchNegotiationMessages();
+  }, [currentNegotiation]);
 
-  }, [currentNegotiation])
-
-  const value = useMemo(
-    () => ({
+  const value ={
       negotiations,
       loading,
       error,
@@ -242,25 +265,7 @@ export const NegotiationProvider: React.FC<NegotiationProviderProps> = ({
       currentNegotiation,
       setCurrentNegotiation,
       lastUpdated
-    }),
-    [
-      negotiations,
-      loading,
-      error,
-      fetchBuyerNegotiations,
-      fetchSellerNegotiations,
-      updateNegotiation,
-      refreshNegotiations,
-      getNegotiationsByStatus,
-      hasActiveNegotiations,
-      messages,
-      sendNegotiationMessage,
-      isConnected,
-      setCurrentNegotiation,
-      currentNegotiation,
-      lastUpdated
-    ]
-  );
+    }
 
   return <NegotiationContext.Provider value={value}>{children}</NegotiationContext.Provider>;
 };

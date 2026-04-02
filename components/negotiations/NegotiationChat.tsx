@@ -48,6 +48,7 @@ export default function NegotiationChat({
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
+    console.log("messages are some how good", messages)
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 

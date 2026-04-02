@@ -85,9 +85,10 @@ export const NegotiationThread: React.FC<NegotiationThreadProps> = ({
     const { isExpired, timeRemaining } = getNegotiationUtils(negotiation);
 
     // filter to only messages for THIS negotiation
-    const threadMessages = messages.filter(
-        m => (m as any).negotiationId === negotiation.id
-    );
+    const threadMessages = messages.filter(m => {
+        const mid = (m as any).negotiationId || (m as any).negotiation_id;
+        return mid === negotiation.id;
+    });
 
     useEffect(() => {
         if (scrollRef.current) {
