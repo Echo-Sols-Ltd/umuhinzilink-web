@@ -5,6 +5,7 @@ import { Negotiation, NegotiationStatus } from '@/types';
 import { Send, CheckCircle, XCircle, DollarSign, Loader2, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NegotiationActionConfirm } from './NegotiationActionConfirm';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface NegotiationActionBarProps {
     negotiation: Negotiation;
@@ -19,6 +20,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
     onAction,
     acting,
 }) => {
+    const { t } = useI18n();
     const [message, setMessage] = useState('');
     const [showPriceInput, setShowPriceInput] = useState(false);
     const [agreedPrice, setAgreedPrice] = useState('');
@@ -125,7 +127,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                 {/* Legacy price input */}
                 {showPriceInput && (
                     <div className="p-3 rounded-xl border border-green-200 bg-green-50 space-y-2">
-                        <p className="text-[12px] font-medium text-green-800">Set final agreed price</p>
+                        <p className="text-[12px] font-medium text-green-800">{t('negotiations.setAgreedPrice')}</p>
                         <div className="flex gap-2">
                             <div className="relative flex-1">
                                 <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -133,19 +135,19 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                                     type="number"
                                     value={agreedPrice}
                                     onChange={e => setAgreedPrice(e.target.value)}
-                                    placeholder={`Buyer proposed: ${negotiation.buyerProposedPrice.toLocaleString()}`}
+                                    placeholder={`${t('negotiations.proposed')}: ${negotiation.buyerProposedPrice.toLocaleString()}`}
                                     className="w-full pl-8 pr-3 py-2 rounded-xl border border-green-200 bg-white text-[13px] focus:outline-none focus:ring-2 focus:ring-green-500/30"
                                 />
                             </div>
                             <button onClick={() => setShowPriceInput(false)}
                                 className="px-3 rounded-xl border border-border bg-background hover:bg-accent text-[13px] transition-colors">
-                                Cancel
+                                {t('negotiations.cancel')}
                             </button>
                             <button onClick={handleSetPrice} disabled={acting || !agreedPrice}
                                 className="px-4 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[13px] font-medium transition-colors disabled:opacity-60 flex items-center gap-1.5">
                                 {acting
                                     ? <Loader2 size={13} className="animate-spin" />
-                                    : <><CheckCircle size={13} /> Confirm</>}
+                                    : <><CheckCircle size={13} /> {t('negotiations.confirm')}</>}
                             </button>
                         </div>
                     </div>
@@ -157,7 +159,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                         value={message}
                         onChange={e => setMessage(e.target.value)}
                         onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
-                        placeholder="Type a message…"
+                        placeholder={t('negotiations.typeMessage')}
                         className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-background text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                         disabled={acting}
                     />
@@ -184,7 +186,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                             ) : (
                                 <>
                                     <DollarSign size={14} />
-                                    Set agreed price
+                                    {t('negotiations.setAgreedPrice')}
                                 </>
                             )}
                         </button>
@@ -196,7 +198,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                             {acting ? (
                                 <Loader2 size={14} className="animate-spin" />
                             ) : (
-                                'Decline'
+                                t('negotiations.decline')
                             )}
                         </button>
                     </div>
@@ -260,7 +262,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                         value={message}
                         onChange={e => setMessage(e.target.value)}
                         onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
-                        placeholder="Type a message to seller…"
+                        placeholder={t('negotiations.typeMessageSeller')}
                         className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-background text-[13px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                         disabled={acting}
                     />
@@ -288,7 +290,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                         ) : (
                             <>
                                 <CheckCircle size={14} />
-                                  Accept RWF {negotiation.agreedPrice?.toLocaleString() || '0'}
+                                  {t('negotiations.acceptPrice', { price: negotiation.agreedPrice?.toLocaleString() || '0' })}
                             </>
                         )}
                     </button>
@@ -300,7 +302,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                         {acting ? (
                             <Loader2 size={14} className="animate-spin" />
                         ) : (
-                            'Reject'
+                            t('negotiations.reject')
                         )}
                     </button>
                 </div>
@@ -318,7 +320,7 @@ export const NegotiationActionBar: React.FC<NegotiationActionBarProps> = ({
                     ) : (
                         <>
                             <CheckCircle size={14} />
-                            Accept RWF {negotiation.agreedPrice.toLocaleString()}
+                            {t('negotiations.acceptPrice', { price: negotiation.agreedPrice.toLocaleString() })}
                         </>
                     )}
                 </button>

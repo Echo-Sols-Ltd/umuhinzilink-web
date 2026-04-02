@@ -12,12 +12,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import { notify } from '@/lib/notify';
 import { ChevronLeft, WifiOff } from 'lucide-react';
+import { useI18n } from '@/contexts/I18nContext';
 
 
 export default function NegotiationPage() {
     const params = useParams();
     const router = useRouter();
     const { user } = useAuth();
+    const { t } = useI18n();
     const { setCurrentNegotiation } = useNegotiation()
 
     const negotiationId = params.id as string;
@@ -82,12 +84,12 @@ export default function NegotiationPage() {
                 const result = await acceptNegotiation(nOrderId);
                 if (result) {
                     setNegotiation(result);
-                    notify.success('Price agreed — you can now proceed to checkout', 'Accepted');
+                    notify.success(t('negotiations.notifications.priceAgreed'), t('negotiations.accept'));
                 }
 
             } else if (action === 'SET_PRICE') {
                 if (!data?.price) {
-                    notify.error('Please enter a price', 'Missing price');
+                    notify.error(t('negotiations.notifications.enterPrice'), t('common.error'));
                     return;
                 }
 
@@ -97,15 +99,18 @@ export default function NegotiationPage() {
                 const max = listed * 1.5;
                 if (data.price < min || data.price > max) {
                     notify.error(
-                        `Price must be between RWF ${Math.round(min).toLocaleString()} and RWF ${Math.round(max).toLocaleString()}`,
-                        'Price out of range'
+                        t('negotiations.notifications.priceRange', { 
+                            min: Math.round(min).toLocaleString(), 
+                            max: Math.round(max).toLocaleString() 
+                        }),
+                        t('common.error')
                     );
                     return;
                 }
 
                 // frontend counter limit guard
                 if ((negotiation as any).counterCount >= 3) {
-                    notify.error('Maximum counter offers reached — you can only Accept or Reject', 'Limit reached');
+                    notify.error(t('negotiations.notifications.limitReached'), t('common.warning'));
                     return;
                 }
 
@@ -114,14 +119,14 @@ export default function NegotiationPage() {
                 });
                 if (result) {
                     setNegotiation(result);
-                    notify.success('Counter offer sent', 'Sent');
+                    notify.success(t('negotiations.notifications.counterSent'), t('negotiations.confirm'));
                 }
 
             } else if (action === 'REJECT') {
                 const result = await rejectNegotiation(nOrderId, data?.message ?? 'Negotiation declined');
                 if (result) {
                     setNegotiation(result);
-                    notify.info('Negotiation declined', 'Declined');
+                    notify.info(t('negotiations.notifications.negotiationDeclined'), t('negotiations.decline'));
                 }
 
             } else if (action === 'GO_TO_CART') {
@@ -138,8 +143,8 @@ export default function NegotiationPage() {
             }
 
         } catch (err) {
-            const msg = err instanceof Error ? err.message : 'Action failed';
-            notify.error(msg, 'Error');
+            const msg = err instanceof Error ? err.message : t('errors.unknown');
+            notify.error(msg, t('common.error'));
         } finally {
             setActing(false);
         }
@@ -149,8 +154,8 @@ export default function NegotiationPage() {
 
     // ── derived label for mobile bar ───────────────────────────────
     const statusLabel = isExpired
-        ? 'Expired'
-        : negotiation?.status ?? '';
+        ? t('negotiations.expired')
+        : (negotiation?.status ? t(`common.status.${negotiation.status.toLowerCase()}`) : '');
 
     const statusColor =
         negotiation?.status === NegotiationStatus.ACCEPTED ? 'text-green-600' :
@@ -164,7 +169,7 @@ export default function NegotiationPage() {
         return (
             <div className="h-screen flex flex-col items-center justify-center gap-4 bg-background">
                 <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm text-muted-foreground">Loading negotiation…</p>
+                <p className="text-sm text-muted-foreground">{t('negotiations.loading')}</p>
             </div>
         );
     }
@@ -181,7 +186,7 @@ export default function NegotiationPage() {
                 <div className="w-full bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2">
                     <WifiOff size={14} className="text-amber-600" />
                     <span className="text-[12px] text-amber-700 font-medium">
-                        Connection lost — refreshing every 30s
+                        {t('negotiations.connectionLost')}
                     </span>
                 </div>
             )}
@@ -205,7 +210,7 @@ export default function NegotiationPage() {
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-[10px] text-muted-foreground">Proposed</p>
+                    <p className="text-[10px] text-muted-foreground">{t('negotiations.proposed')}</p>
                     <p className="font-bold text-[13px] text-foreground">
                         RWF {negotiation.buyerProposedPrice.toLocaleString()}
                     </p>
@@ -223,7 +228,7 @@ export default function NegotiationPage() {
                     <div className="w-7 h-7 rounded-full border border-border flex items-center justify-center group-hover:bg-accent transition-colors">
                         <ChevronLeft size={14} />
                     </div>
-                    <span className="text-[12px] font-medium uppercase tracking-wider">Back to negotiations</span>
+                    <span className="text-[12px] font-medium uppercase tracking-wider">{t('negotiations.backToNegotiations')}</span>
                 </button>
 
                 <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 items-start">
