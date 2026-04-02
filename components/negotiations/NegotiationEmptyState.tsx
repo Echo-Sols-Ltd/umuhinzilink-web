@@ -3,8 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { ShoppingBag, Search } from 'lucide-react';
+import { useI18n } from '@/contexts/I18nContext';
 
 export const NegotiationEmptyState: React.FC = () => {
+  const { t } = useI18n();
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center animate-in fade-in zoom-in-95 duration-700">
       <div className="relative mb-12">
@@ -28,9 +31,9 @@ export const NegotiationEmptyState: React.FC = () => {
         </div>
       </div>
 
-      <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">No active negotiations</h2>
+      <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">{t('negotiations.emptyStateTitle')}</h2>
       <p className="text-gray-500 max-w-sm mb-10 font-medium leading-relaxed">
-        Start a conversation with a seller to get the best price for your agricultural products.
+        {t('negotiations.emptyStateDescription')}
       </p>
 
       <Link 
@@ -38,7 +41,7 @@ export const NegotiationEmptyState: React.FC = () => {
         className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] hover:shadow-none hover:translate-y-1 transition-all flex items-center gap-3"
       >
         <Search className="w-4 h-4" />
-        Browse products to start negotiating
+        {t('negotiations.browseProducts')}
       </Link>
     </div>
   );

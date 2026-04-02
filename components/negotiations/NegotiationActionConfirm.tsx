@@ -13,6 +13,7 @@ import {
   Loader2 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface NegotiationActionConfirmProps {
   type: 'ACCEPT' | 'REJECT' | 'COUNTER' | 'MESSAGE' | 'REJECT_FINAL';
@@ -36,6 +37,7 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
   negotiationData,
   className
 }) => {
+  const { t } = useI18n();
   const [price, setPrice] = useState('');
   const [message, setMessage] = useState('');
 
@@ -68,11 +70,11 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
     switch (type) {
       case 'ACCEPT':
         return {
-          title: 'Accept Negotiation',
-          description: 'Agree to the proposed price and proceed to checkout',
+          title: t('negotiations.confirmActions.acceptTitle'),
+          description: t('negotiations.confirmActions.acceptDesc'),
           icon: CheckCircle,
           color: 'green',
-          confirmText: 'Accept Price',
+          confirmText: t('negotiations.confirmActions.acceptTitle'),
           requiresMessage: false,
           requiresPrice: false
         };
@@ -88,11 +90,11 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
         };
       case 'COUNTER':
         return {
-          title: 'Make Counter Offer',
-          description: 'Propose a different price',
+          title: t('negotiations.confirmActions.counterTitle'),
+          description: t('negotiations.confirmActions.counterDesc'),
           icon: DollarSign,
           color: 'blue',
-          confirmText: 'Send Counter Offer',
+          confirmText: t('negotiations.confirmActions.counterTitle'),
           requiresMessage: false,
           requiresPrice: true
         };
@@ -108,11 +110,11 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
         };
       case 'REJECT_FINAL':
         return {
-          title: 'Reject Final Price',
-          description: 'Reject the seller\'s final agreed price. This will end the negotiation.',
+          title: t('negotiations.confirmActions.rejectFinalTitle'),
+          description: t('negotiations.confirmActions.rejectFinalDesc'),
           icon: XCircle,
           color: 'red',
-          confirmText: 'Reject Price',
+          confirmText: t('negotiations.reject'),
           requiresMessage: false,
           requiresPrice: false
         };
@@ -173,7 +175,7 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
       {/* Price Display for Accept/Counter */}
       {(type === 'ACCEPT' || type === 'COUNTER') && negotiationData && (
         <div className="bg-white/50 rounded-lg p-3 space-y-2">
-          <div className="text-sm font-medium">Price Details</div>
+          <div className="text-sm font-medium">{t('negotiations.confirmActions.priceDetails')}</div>
           <div className="space-y-1">
             <div className="flex justify-between text-sm">
               <span>Buyer proposed:</span>
@@ -183,7 +185,7 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
             </div>
             {negotiationData.sellerResponsePrice && (
               <div className="flex justify-between text-sm">
-                <span>Your counter:</span>
+                <span>{t('negotiations.confirmActions.yourCounter')}</span>
                 <span className="font-medium">
                   RWF {negotiationData.sellerResponsePrice.toLocaleString()}
                 </span>
@@ -191,7 +193,7 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
             )}
             {negotiationData.quantity && negotiationData.productName && (
               <div className="flex justify-between text-sm pt-1 border-t border-white/30">
-                <span>Total ({negotiationData.quantity} units):</span>
+                <span>{t('negotiations.confirmActions.total', { count: negotiationData.quantity })}</span>
                 <span className="font-bold">
                   RWF {((negotiationData.buyerProposedPrice || 0) * negotiationData.quantity).toLocaleString()}
                 </span>
@@ -204,21 +206,23 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
       {/* Price Input for Counter */}
       {config.requiresPrice && (
         <div className="space-y-2">
-          <label className="text-sm font-medium">Your Counter Price (per unit)</label>
+          <label className="text-sm font-medium">{t('negotiations.confirmActions.counterPriceLabel')}</label>
           <div className="relative">
             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="number"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              placeholder="Enter your price..."
+              placeholder={t('negotiations.confirmActions.enterPrice')}
               className="pl-9"
             />
           </div>
           {price && parseFloat(price) > 0 && negotiationData?.buyerProposedPrice && (
             <div className="text-xs text-muted-foreground">
-              Difference: RWF {Math.abs(parseFloat(price) - negotiationData.buyerProposedPrice).toLocaleString()} 
-              {parseFloat(price) > negotiationData.buyerProposedPrice ? ' higher' : ' lower'} than proposal
+              {t('negotiations.confirmActions.difference', {
+                amount: Math.abs(parseFloat(price) - negotiationData.buyerProposedPrice).toLocaleString(),
+                direction: parseFloat(price) > negotiationData.buyerProposedPrice ? t('negotiations.confirmActions.higher') : t('negotiations.confirmActions.lower')
+              })}
             </div>
           )}
         </div>
@@ -228,14 +232,14 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
       {config.requiresMessage && (
         <div className="space-y-2">
           <label className="text-sm font-medium">
-            {type === 'REJECT' ? 'Reason for declining (optional)' : 'Message'}
+            {type === 'REJECT' ? t('negotiations.confirmActions.reasonLabel') : t('negotiations.confirmActions.messageLabel')}
           </label>
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={type === 'REJECT' 
-              ? 'Optional: Let the buyer know why you\'re declining...' 
-              : 'Type your message...'
+              ? t('negotiations.confirmActions.reasonPlaceholder') 
+              : t('negotiations.confirmActions.messagePlaceholder')
             }
             rows={3}
             className="resize-none"
@@ -251,7 +255,7 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
           disabled={loading}
           className="flex-1"
         >
-          Cancel
+          {t('negotiations.cancel')}
         </Button>
         <Button
           onClick={handleConfirm}
@@ -261,7 +265,7 @@ export const NegotiationActionConfirm: React.FC<NegotiationActionConfirmProps> =
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Processing...
+              {t('common.processing')}
             </>
           ) : (
             config.confirmText
