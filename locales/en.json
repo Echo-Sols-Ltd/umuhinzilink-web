@@ -318,7 +318,8 @@
       "emailAddress": "Email Address",
       "phoneNumber": "Phone Number",
       "accountType": "Account Type",
-      "password": "Password"
+      "password": "Password",
+      "district": "District"
     },
     "placeholders": {
       "firstName": "John",
@@ -347,7 +348,9 @@
       "mustContainUppercase": "Must contain uppercase",
       "mustContainNumber": "Must contain number",
       "mustContainSpecialChar": "Must contain special char",
-      "mustAgreeToTerms": "You must agree to terms"
+      "mustAgreeToTerms": "You must agree to terms",
+      "districtRequired": "District is required",
+      "roleRequired": "Account type is required"
     },
     "signIn": {
       "title": "Welcome Back",
@@ -594,6 +597,19 @@
       "chooseImage": "Choose Image",
       "creatingAccount": "Creating Account...",
       "finishCreatingAccount": "Finish Creating Account"
+    },
+    "googleRoleModal": {
+      "title": "Complete Your Profile",
+      "subtitle": "Almost there! Please select your account type and district to continue.",
+      "completeRegistration": "Complete Registration",
+      "termsNote": "By completing registration, you agree to our Terms and Conditions."
+    },
+    "location": {
+      "notSupported": "Geolocation is not supported by your browser",
+      "detected": "Location detected: {{district}}",
+      "notFound": "Could not determine your district from location",
+      "error": "Error detecting location",
+      "denied": "Location access denied"
     }
   },
   "dashboard": {

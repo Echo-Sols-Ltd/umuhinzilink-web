@@ -1,13 +1,8 @@
 import {
-  PaymentMethod,
-} from './order';
-
-import {
   BuyerType,
   SupplierType,
   ExperienceLevel,
   FarmSizeCategory,
-  District,
 } from './user';
 
 
@@ -18,7 +13,6 @@ export interface FarmerRequest {
 
 export interface BuyerRequest {
   userId: string;
-  district: District;
   buyerType: BuyerType;
 }
 
