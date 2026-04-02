@@ -1,4 +1,4 @@
-import { User } from './user';
+import { District, User } from './user';
 
 export interface LoginRequest {
   email: string;
@@ -14,4 +14,5 @@ export interface AuthResponse {
 export interface GoogleAuthRequest {
   token: string;
   role: string;
+  district: District;
 }
