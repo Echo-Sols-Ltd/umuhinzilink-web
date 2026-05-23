@@ -1,10 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { BiLogoFacebookCircle, BiLogoGoogle } from 'react-icons/bi';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
@@ -93,12 +91,12 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-muted/40 dark:bg-background p-4">
       {/* Floating card */}
-      <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col sm:flex-row min-h-[560px]">
+      <div className="w-full max-w-4xl bg-card border border-border rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[500px]">
 
-        {/* LEFT – Green hero panel */}
-        <div className="relative w-full sm:w-[45%] bg-green-600 rounded-2xl m-3 overflow-hidden flex flex-col justify-between p-8 min-h-[260px] sm:min-h-0">
+        {/* LEFT – Hero panel */}
+        <div className="hidden md:flex relative md:w-[42%] bg-gradient-to-br from-primary to-secondary rounded-2xl m-3 overflow-hidden flex-col justify-between p-8">
           {/* Background image */}
           <Image
             src="/hero.png"
@@ -108,7 +106,7 @@ export default function SignIn() {
           />
           {/* Text */}
           <div className="relative z-10">
-            <h2 className="text-white text-3xl sm:text-4xl font-extrabold leading-tight">
+            <h2 className="text-white text-3xl font-extrabold leading-tight">
               {t('auth.signIn.heroTitle')}
             </h2>
             <div className="mt-2 w-16 h-1 bg-white/60 rounded-full" />
@@ -116,14 +114,10 @@ export default function SignIn() {
               {t('auth.signIn.heroSubtitle.line1')} {t('auth.signIn.heroSubtitle.line2')}
             </p>
           </div>
-          {/* Bottom illustration area */}
-          {/* <div className="relative z-10 flex justify-center mt-6">
-            <img src="/" alt="illustration" className="h-24 object-contain opacity-90" />
-          </div> */}
         </div>
 
         {/* RIGHT – Form panel */}
-        <div className="w-full sm:w-[55%] flex flex-col justify-center px-8 py-10">
+        <div className="w-full md:w-[58%] flex flex-col justify-center px-6 py-8 sm:px-10">
           {/* Logo + brand */}
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full flex items-center justify-center">
@@ -151,12 +145,12 @@ export default function SignIn() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`bg-gray-50 dark:bg-gray-700 border-0 h-12 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-green-500 ${
-                  touched.email && fieldErrors.email ? 'ring-2 ring-red-500' : ''
+                className={`bg-muted/50 border border-border h-12 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${
+                  touched.email && fieldErrors.email ? 'border-destructive focus-visible:ring-destructive' : ''
                 }`}
               />
               {touched.email && fieldErrors.email && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+                <p className="text-xs text-destructive mt-1">{fieldErrors.email}</p>
               )}
             </div>
 
@@ -171,8 +165,8 @@ export default function SignIn() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`bg-gray-50 dark:bg-gray-700 border-0 h-12 rounded-xl text-sm pr-10 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-green-500 ${
-                  touched.password && fieldErrors.password ? 'ring-2 ring-red-500' : ''
+                className={`bg-muted/50 border border-border h-12 rounded-xl text-sm pr-10 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${
+                  touched.password && fieldErrors.password ? 'border-destructive focus-visible:ring-destructive' : ''
                 }`}
               />
               <button
@@ -183,13 +177,13 @@ export default function SignIn() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
               {touched.password && fieldErrors.password && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>
+                <p className="text-xs text-destructive mt-1">{fieldErrors.password}</p>
               )}
             </div>
 
             {/* Forgot password */}
             <div className="flex justify-end">
-              <Link href="/auth/forgot-password" className="text-sm text-muted-foreground hover:text-green-600">
+              <Link href="/auth/forgot-password" className="text-sm text-muted-foreground hover:text-primary font-medium hover:underline">
                 {t('auth.signIn.forgot')}
               </Link>
             </div>
@@ -198,7 +192,7 @@ export default function SignIn() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold text-base"
+              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-base shadow-sm transition-colors"
             >
               {loading ? t('auth.signIn.signingIn') : t('auth.signIn.signIn')}
             </Button>
@@ -216,13 +210,12 @@ export default function SignIn() {
             <div className="flex justify-center">
               <GoogleLogin />
             </div>
-           
           </div>
 
           {/* Sign up link */}
           <p className="text-sm text-center text-muted-foreground mt-6">
             {t('auth.signIn.noAccount')}{' '}
-            <Link href="/auth/signup" className="text-green-600 font-semibold hover:underline">
+            <Link href="/auth/signup" className="text-primary font-semibold hover:underline">
               {t('auth.signIn.signUp')}
             </Link>
           </p>

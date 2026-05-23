@@ -21,6 +21,28 @@ export default function Navbar() {
   const { user } = useAuth();
   const { t } = useI18n();
 
+  const isAuthenticated = !!user;
+
+  const getNavs = () => {
+    if (!user) return [
+      { label: 'Login', href: '/auth/signin' },
+      { label: 'Sign Up', href: '/auth/signup' },
+    ]
+    if (user.role === UserType.BUYER) {
+      return [
+        { label: 'My Negotiations', href: '/dashboard' },
+        { label: 'Notifications', href: '/dashboard/notifications' }
+      ]
+    }
+    else if (user.role === UserType.FARMER) {
+      return [
+        { label: 'My Products', href: '/dashboard' },
+        { label: 'Orders', href: '/dashboard/orders' },
+        { label: 'Notifications', href: '/dashboard/notifications' }
+      ]
+    }
+  }
+
   return (
     <nav className="
             w-full fixed top-0 left-0 right-0 z-50 h-16
@@ -50,7 +72,7 @@ export default function Navbar() {
 
         {/* right CTA */}
         <div className="flex items-center gap-2">
-          {user ? (
+          {isAuthenticated ? (
             <Link href={dashboardHref(user.role)}
               className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-semibold hover:bg-primary/20 transition-colors">
               {t('common.dashboard') || 'Dashboard'}

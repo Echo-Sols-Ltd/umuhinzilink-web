@@ -342,6 +342,8 @@
       "passwordRequired": "Password is required",
       "minimumCharacters": "Minimum {{count}} characters",
       "fullNameRequired": "Full name is required",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
       "nameMinCharacters": "Name must be at least {{count}} characters",
       "phoneNumberRequired": "Phone number required",
       "minimumDigits": "Minimum {{count}} digits",

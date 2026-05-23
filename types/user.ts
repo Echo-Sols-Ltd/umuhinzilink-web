@@ -1,10 +1,8 @@
 // User-related enums
 export enum UserType {
-  FARMER = 'FARMER',
+  SELLER = 'SELLER',
   BUYER = 'BUYER',
-  SUPPLIER = 'SUPPLIER',
   ADMIN = 'ADMIN',
-  GOVERNMENT = 'GOVERNMENT',
 }
 
 export enum BuyerType {
