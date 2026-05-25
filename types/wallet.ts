@@ -28,7 +28,7 @@ export interface Wallet {
   updatedAt: string;
 }
 
-export interface TransactionDTO {
+export interface Transaction {
   id: string;
   transactionId: string;
   user: User;

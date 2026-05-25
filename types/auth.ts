@@ -24,3 +24,7 @@ export interface GoogleAuthRequest {
   role: string;
   district: District;
 }
+
+export interface ResetPasswordRequest {
+  newPassword: string
+}

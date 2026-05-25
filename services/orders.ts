@@ -1,4 +1,4 @@
-import { ApiResponse, DeliveryStatus, Order, OrderRequest, PaginatedResponse } from '@/types';
+import { ApiResponse, Order, OrderRequest, OrderStatus, PaginatedResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -33,7 +33,7 @@ class OrderService {
 
   async updateOrderStatus(
     id: string,
-    status: DeliveryStatus
+    status: OrderStatus
   ): Promise<ApiResponse<Order>> {
     return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.UPDATE_STATUS(id), status);
   }

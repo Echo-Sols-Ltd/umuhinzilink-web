@@ -1,4 +1,4 @@
-import { ApiResponse, PaginatedResponse, Order, Product, User, WalletDTO, WalletTransactionDTO } from '@/types';
+import { ApiResponse, PaginatedResponse, Order, Product, User, Wallet, Transaction } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -54,10 +54,10 @@ export const adminService = {
   },
 
   // Get all farmer products (paginated)
-  getAllFarmerProducts: async (page = 0, size = 10): Promise<PaginatedResponse<Product[]>> => {
+  getAllProducts: async (page = 0, size = 10): Promise<PaginatedResponse<Product[]>> => {
     try {
       return await apiClient.get<PaginatedResponse<Product[]>>(
-        `${API_ENDPOINTS.ADMIN.FARMER_PRODUCTS}?page=${page}&size=${size}`
+        `${API_ENDPOINTS.ADMIN.PRODUCTS}?page=${page}&size=${size}`
       );
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -80,10 +80,10 @@ export const adminService = {
   },
 
   // Get all farmer orders (paginated)
-  getAllFarmerOrders: async (page = 0, size = 10): Promise<PaginatedResponse<Order[]>> => {
+  getAllOrders: async (page = 0, size = 10): Promise<PaginatedResponse<Order[]>> => {
     try {
       return await apiClient.get<PaginatedResponse<Order[]>>(
-        `${API_ENDPOINTS.ADMIN.FARMER_ORDERS}?page=${page}&size=${size}`
+        `${API_ENDPOINTS.ADMIN.ORDERS}?page=${page}&size=${size}`
       );
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -150,9 +150,9 @@ export const adminService = {
   },
 
   // Get transaction monitoring data (paginated)
-  getTransactionMonitoring: async (page = 0, size = 20): Promise<PaginatedResponse<WalletTransactionDTO[]>> => {
+  getTransactionMonitoring: async (page = 0, size = 20): Promise<PaginatedResponse<Transaction[]>> => {
     try {
-      return await apiClient.get<PaginatedResponse<WalletTransactionDTO[]>>(
+      return await apiClient.get<PaginatedResponse<Transaction[]>>(
         `${API_ENDPOINTS.WALLET.ADMIN_ALL_TRANSACTIONS}?page=${page}&size=${size}`
       );
     } catch (error) {
@@ -172,34 +172,12 @@ export const adminService = {
     }
   },
 
-  // Get all supplier products (paginated)
-  getAllSupplierProducts: async (page = 0, size = 10): Promise<PaginatedResponse<Product[]>> => {
-    try {
-      return await apiClient.get<PaginatedResponse<Product[]>>(
-        `${API_ENDPOINTS.ADMIN.SUPPLIER_PRODUCTS}?page=${page}&size=${size}`
-      );
-    } catch (error) {
-      console.error('Error fetching supplier products:', error);
-      throw error;
-    }
-  },
-
-  // Get all supplier orders (paginated)
-  getAllSupplierOrders: async (page = 0, size = 10): Promise<PaginatedResponse<Order[]>> => {
-    try {
-      return await apiClient.get<PaginatedResponse<Order[]>>(
-        `${API_ENDPOINTS.ADMIN.SUPPLIER_ORDERS}?page=${page}&size=${size}`
-      );
-    } catch (error) {
-      console.error('Error fetching supplier orders:', error);
-      throw error;
-    }
-  },
 
 
-  getSystemWallet: async (): Promise<WalletDTO> => {
+
+  getSystemWallet: async (): Promise<Wallet> => {
     try {
-      const response = await apiClient.get<ApiResponse<WalletDTO>>(API_ENDPOINTS.WALLET.SYSTEM_WALLET);
+      const response = await apiClient.get<ApiResponse<Wallet>>(API_ENDPOINTS.WALLET.SYSTEM_WALLET);
       return response.data!;
     } catch (error) {
       console.error('Error fetching system wallet:', error);

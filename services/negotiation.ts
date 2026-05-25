@@ -1,4 +1,4 @@
-import { ApiResponse, Negotiation, SetAgreedPriceRequest, PaginatedResponse, Message } from '@/types';
+import { ApiResponse, Negotiation, PaginatedResponse, NegotiationMessage } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 
@@ -25,13 +25,7 @@ class NegotiationService {
     );
   }
 
-  // Make counter offer (seller action)
-  async setAgreedPrice(negotiationId: string, request: SetAgreedPriceRequest): Promise<ApiResponse<Negotiation>> {
-    return await apiClient.put<ApiResponse<Negotiation>>(
-      `${API_ENDPOINTS.NEGOTIATION.SET_AGREED_PRICE(negotiationId)}`,
-      request
-    );
-  }
+
 
   // Get all negotiations for authenticated buyer
   async getBuyerNegotiations(page = 0, size = 10): Promise<PaginatedResponse<Negotiation[]>> {
@@ -47,8 +41,8 @@ class NegotiationService {
     );
   }
 
-  async getNegotiationMessages(id: string, page = 0, size = 10): Promise<PaginatedResponse<Message[]>> {
-    return await apiClient.get<PaginatedResponse<Message[]>>(
+  async getNegotiationMessages(id: string, page = 0, size = 10): Promise<PaginatedResponse<NegotiationMessage[]>> {
+    return await apiClient.get<PaginatedResponse<NegotiationMessage[]>>(
       `${API_ENDPOINTS.NEGOTIATION.BY_ID(id)}/messages?page=${page}&size=${size}`)
   }
 }
