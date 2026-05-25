@@ -1,23 +1,19 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
-import { Message, SendMessageRequest, SocketResponse, EditMessageRequest, ChatReaction, ChatTyping, Order } from '@/types'
+import { SocketResponse, ChatTyping, Order } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants'
 
 class SocketService {
     public stompClient: Client
     private onlineUsers: Set<string> = new Set()
     private onlineUserListeners: ((users: Set<string>) => void)[] = []
-    private messageListeners: ((message: Message) => void)[] = []
-    private reactionListeners: ((reaction: ChatReaction) => void)[] = []
     private messageDeletionListeners: ((id: string) => void)[] = []
-    private messageEditionListeners: ((message: Message) => void)[] = []
     private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
     private orderStatusChangeListeners: ((data: SocketResponse<Order>) => void)[] = []
     private orderDeliveryChangeListeners: ((data: SocketResponse<Order>) => void)[] = []
     private orderNewListeners: ((data: SocketResponse<Order>) => void)[] = []
     private orderSatisfactionListeners: ((data: SocketResponse<Order>) => void)[] = []
-    private negotiationMessageListeners: ((message: Message) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
@@ -173,27 +169,13 @@ class SocketService {
         try {
 
             this.stompClient.subscribe('/topic/onlineUsers', (msg) => this.handleOnlineUsers(msg))
-            this.stompClient.subscribe('/user/queue/messages', (msg) => this.handleMessage(msg))
-            this.stompClient.subscribe('/user/queue/messageDeletion', (msg) => this.handleMessageDeletion(msg))
-            this.stompClient.subscribe('/user/queue/messageEdition', (msg) => this.handleMessageEdition(msg))
-            this.stompClient.subscribe('/user/queue/messageReaction', (msg) => this.handleReaction(msg))
             this.stompClient.subscribe('/user/queue/typing', (msg) => this.handleTyping(msg))
             this.stompClient.subscribe('/user/queue/orderStatusChange', (msg) => this.handleOrderStatusChange(msg))
             this.stompClient.subscribe('/user/queue/orderDeliveryChange', (msg) => this.handleOrderDeliveryChange(msg))
             this.stompClient.subscribe('/user/queue/newOrder', (msg) => this.handleNewOrder(msg))
             this.stompClient.subscribe('/user/queue/orderSatisfaction', (msg) => this.handleOrderSatisfaction(msg))
-            this.stompClient.subscribe('/user/queue/negotiations', (msg) => this.handleNegotiationMessage(msg))
         } catch (error) {
-            console.error('❌ Error subscribing to topics:', error)
-        }
-    }
-
-    private handleNegotiationMessage(message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as SocketResponse<Message>
-            this.negotiationMessageListeners.forEach(cb => cb(body.data!))
-        } catch (error) {
-            console.error('Failed to parse negotiation message:', error)
+            console.error('Error subscribing to topics:', error)
         }
     }
 
@@ -255,42 +237,7 @@ class SocketService {
         }
     }
 
-    private handleMessageDeletion(message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as SocketResponse<string>
-            this.messageDeletionListeners.forEach(cb => cb(body.data!))
-        } catch (error) {
-            console.error('error parsing deleted message', error)
-        }
-    }
 
-    private handleMessageEdition(message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as SocketResponse<Message>
-            this.messageEditionListeners.forEach(cb => cb(body.data!))
-        } catch (error) {
-            console.error('error parsing edited message', error)
-        }
-    }
-
-    private handleMessage(message: IMessage) {
-        try {
-
-            const body = JSON.parse(message.body) as SocketResponse<Message>
-            this.messageListeners.forEach(cb => cb(body.data!))
-        } catch (error) {
-            console.error('Failed to parse message:', error)
-        }
-    }
-
-    private handleReaction(message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as SocketResponse<ChatReaction>
-            this.reactionListeners.forEach(cb => cb(body.data!))
-        } catch (error) {
-            console.error('Failed to parse reaction:', error)
-        }
-    }
 
     private handleOnlineUsers(message: IMessage) {
         try {
@@ -358,24 +305,8 @@ class SocketService {
         this.orderSatisfactionListeners = this.orderSatisfactionListeners.filter(cb => cb !== callback)
     }
 
-    public sendMessage(data: SendMessageRequest) {
-        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.SEND_MESSAGE, JSON.stringify(data))
-    }
-
-    public messageReply(data: SendMessageRequest) {
-        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.REPLY_MESSAGE, JSON.stringify(data))
-    }
-
-    public messageEdition(data: EditMessageRequest) {
-        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.EDIT_MESSAGE, JSON.stringify(data))
-    }
-
     public messageDeletion(id: string) {
         this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.DELETE_MESSAGE, JSON.stringify(id))
-    }
-
-    public messageReact(data: ChatReaction) {
-        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.REACT_MESSAGE, JSON.stringify(data))
     }
 
     public sendTyping(data: ChatTyping) {
@@ -394,21 +325,6 @@ class SocketService {
         this.onlineUserListeners = this.onlineUserListeners.filter(cb => cb !== callback)
     }
 
-    public onMessage(callback: (message: Message) => void) {
-        this.messageListeners.push(callback)
-    }
-
-    public removeMessageListener(callback: (message: Message) => void) {
-        this.messageListeners = this.messageListeners.filter(cb => cb !== callback)
-    }
-
-    public onReaction(callback: (reaction: ChatReaction) => void) {
-        this.reactionListeners.push(callback)
-    }
-
-    public removeReactionListener(callback: (reaction: ChatReaction) => void) {
-        this.reactionListeners = this.reactionListeners.filter(cb => cb !== callback)
-    }
 
     public onMessageDeletion(callback: (id: string) => void) {
         this.messageDeletionListeners.push(callback)
@@ -418,13 +334,6 @@ class SocketService {
         this.messageDeletionListeners = this.messageDeletionListeners.filter(cb => cb !== callback)
     }
 
-    public onMessageEdition(callback: (message: Message) => void) {
-        this.messageEditionListeners.push(callback)
-    }
-
-    public removeMessageEditionListener(callback: (message: Message) => void) {
-        this.messageEditionListeners = this.messageEditionListeners.filter(cb => cb !== callback)
-    }
 
     public onTyping(callback: (typing: ChatTyping) => void) {
         this.typingListeners.push(callback)
@@ -434,13 +343,6 @@ class SocketService {
         this.typingListeners = this.typingListeners.filter(cb => cb !== callback)
     }
 
-    public onNegotiationMessage(callback: (message: Message) => void) {
-        this.negotiationMessageListeners.push(callback)
-    }
-
-    public removeNegotiationMessageListener(callback: (message: Message) => void) {
-        this.negotiationMessageListeners = this.negotiationMessageListeners.filter(cb => cb !== callback)
-    }
 
 }
 

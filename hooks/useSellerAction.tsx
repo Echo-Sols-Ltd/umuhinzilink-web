@@ -40,7 +40,7 @@ export const useSellerAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await productService.getPrivateProducts();
+      const response = await productService.getSellerProducts();
       if (response.success && response.data) {
         return response.data;
       } else {
@@ -65,7 +65,7 @@ export const useSellerAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await productService.getPublicProducts(params?.page, params?.size);
+      const response = await productService.getProducts(params?.page, params?.size);
       if (response.success) {
         return response.data;
       } else {
@@ -266,7 +266,7 @@ export const useSellerAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await productService.getSupplierStats();
+      const response = await productService.getSellerStats();
       if (response.success) {
         return response.data;
       } else {

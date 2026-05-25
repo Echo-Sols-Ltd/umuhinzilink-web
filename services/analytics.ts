@@ -76,13 +76,6 @@ class AnalyticsService {
     return response.data as T;
   }
 
-  async getFarmerDashboardMetrics(filters?: AnalyticsFilters): Promise<DashboardMetrics> {
-    return this.fetchWithCache<DashboardMetrics>(
-      API_ENDPOINTS.DASHBOARD.FARMER_STATS,
-      filters
-    );
-  }
-
   async getBuyerDashboardMetrics(filters?: AnalyticsFilters): Promise<DashboardMetrics> {
     return this.fetchWithCache<DashboardMetrics>(
       API_ENDPOINTS.DASHBOARD.BUYER_STATS,
@@ -90,9 +83,9 @@ class AnalyticsService {
     );
   }
 
-  async getSupplierDashboardMetrics(filters?: AnalyticsFilters): Promise<DashboardMetrics> {
+  async getSellerDashboardMetrics(filters?: AnalyticsFilters): Promise<DashboardMetrics> {
     return this.fetchWithCache<DashboardMetrics>(
-      API_ENDPOINTS.DASHBOARD.SUPPLIER_STATS,
+      API_ENDPOINTS.DASHBOARD.SELLER_STATS,
       filters
     );
   }

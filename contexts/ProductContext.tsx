@@ -122,7 +122,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const fetchMyProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
-      const res = await productService.getPrivateProducts(page, size);
+      const res = await productService.getSellerProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
         setMyProducts(Array.isArray(list) ? list : []);
@@ -140,7 +140,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const fetchMarketplaceProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
-      const res = await productService.getPublicProducts(page, size);
+      const res = await productService.getProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
         setMarketplaceProducts(Array.isArray(list) ? list : []);
@@ -160,7 +160,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       // Fetch both for now or based on role if needed, but unify into myStats
-      const res = await productService.getFarmerStats()
+      const res = await productService.getSellerStats()
       if (res.success) {
         setMyStats(res.data ?? []);
       }
@@ -254,25 +254,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     [marketplaceProducts]
   );
 
-  const fetchFarmerStats = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await productService.getFarmerStats();
-      if (res.success) setMyStats(res.data || []);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  
 
-  const fetchSupplierStats = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await productService.getSupplierStats();
-      if (res.success) setMyStats(res.data || []);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+
 
   const value: ProductContextValue = {
     addMyProduct,
