@@ -1,38 +1,10 @@
 // User-related enums
-export enum UserType {
+export enum UserRole {
   SELLER = 'SELLER',
   BUYER = 'BUYER',
   ADMIN = 'ADMIN',
 }
 
-export enum BuyerType {
-  INDIVIDUAL = 'INDIVIDUAL',
-  BUSINESS = 'BUSINESS',
-  INSTITUTION = 'INSTITUTION',
-  NGO = 'NGO',
-}
-
-export enum SupplierType {
-  WHOLESALER = 'WHOLESALER',
-  RETAILER = 'RETAILER',
-  COOPERATIVE = 'COOPERATIVE',
-  PROCESSOR = 'PROCESSOR',
-}
-
-export enum FarmSizeCategory {
-  SMALLHOLDER = 'SMALLHOLDER',
-  MEDIUM = 'MEDIUM',
-  LARGE = 'LARGE',
-  COOPERATIVE = 'COOPERATIVE',
-}
-
-export enum ExperienceLevel {
-  LESS_THAN_1Y = "Less than 1 year",
-  Y1_TO_3 = "1 to 3 years",
-  Y3_TO_5 = "3 to 5 years",
-  Y5_TO_10 = "5 to 10 years",
-  MORE_THAN_10 = "More than 10 years"
-}
 
 export enum Language {
   KINYARWANDA = 'KINYARWANDA',
@@ -90,54 +62,55 @@ export enum District {
   RUTSIRO = 'RUTSIRO',
 }
 
+export interface OtpCode {
+  token: string;
+  expiresAt: string;
+
+}
+
 
 export interface User {
-  avatar: string;
-  createdAt: string;
   id: string;
-  lastLogin: string;
-  updatedAt: string;
-  isVerified: boolean;
   firstName: string;
   lastName: string;
-  isGoogleUser: boolean;
-  language: Language;
   email: string;
-  district: District;
-  province: Province;
-  phoneNumber: string;
   password: string;
-  role: UserType;
-}
-
-export interface Farmer {
-  id: string
-  user: User
-  farmSize: FarmSizeCategory
-  experienceLevel: ExperienceLevel
-}
-
-export interface Buyer {
-  id: string;
-  user: User;
-  buyerType: BuyerType;
+  phoneNumber: string;
+  profilePicture: string;
+  language: Language;
+  role: UserRole;
   savedProducts: string[];
+  active: boolean;
+  emailVerified: boolean;
+  otpCode: OtpCode;
+  googleId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Supplier {
+
+export interface Seller {
   id: string;
   user: User;
-  businessName: string;
-  supplierType: SupplierType;
-  businessRegistrationNumber: string;
+  displayName: string;
+  location: string;
+  description: string;
+  phone: string;
 }
 
 export interface UserRequest {
   firstName: string;
-  lastName: string
+  lastName: string;
   email: string;
   phoneNumber: string;
   password: string;
-  role: UserType;
+  role: UserRole;
   district: District;
+}
+
+export interface SellerRegistration {
+  displayName: string;
+  location: string;
+  description: string;
+  phone: string;
 }

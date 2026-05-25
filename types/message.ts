@@ -1,5 +1,5 @@
 // Import dependencies
-import { UserType } from ".";
+import { Negotiation } from ".";
 import type { User } from "./user"
 
 export enum MessageType {
@@ -14,54 +14,30 @@ export enum MessageType {
 /**
  * Represents a direct message between users.
  */
-export interface Message {
+export interface NegotiationMessage {
   id: string;
+  negotiation: Negotiation;
   sender: User;
-  receiver: User;
   content: string;
-  timestamp: string;
-  isEdited: boolean;
+  type: MessageType; // TEXT, IMAGE, OFFER
+  fileName: string;
+  replyTo: NegotiationMessage;
   isRead: boolean;
-  type: MessageType;
-  replyTo?: Message;
-  fileName?: string;
-  reactions?: Reaction[];
-  productRef?: ProductRef;
-}
-
-export interface ProductRef {
-  productId: string
-  productType: UserType
-}
-
-export interface Reaction {
-  userId: string;
-  emoji: string;
-}
-
-export interface ChatReaction {
-  messageId: string;
-  reactions: Reaction[];
+  createdAt: string;
 }
 
 /**
  * Request payload for sending a direct message.
  */
-export interface SendMessageRequest {
+export interface NegotiationMessageRequest {
+  negotiationId: string;
   content: string;
-  receiverId: string;
-  senderId: string;
   type: MessageType;
-  fileName?: string;
-  replyToId?: string;
-  productRef?: ProductRef;
-  negotiationId?: string;
+  fileName: string;
+  replyToId: string;
+  offeredPrice: number;
 }
 
-export interface EditMessageRequest {
-  newMessage: string;
-  id: string;
-}
 export interface ChatTyping {
   userId: string;
   receiverId: string;

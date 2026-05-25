@@ -1,4 +1,4 @@
-import { PaymentMethod } from ".";
+import { PaymentMethod, User } from ".";
 
 export enum TransactionType {
   DEPOSIT = 'DEPOSIT',
@@ -18,11 +18,9 @@ export enum TransactionStatus {
   CANCELLED = 'CANCELLED'
 }
 
-export interface WalletDTO {
-  id: string;
-  userId: string;
-  userEmail: string;
-  userName: string;
+export interface Wallet {
+  id: string
+  user: User;
   balance: number;
   currency: string;
   isActive: boolean;
@@ -30,23 +28,24 @@ export interface WalletDTO {
   updatedAt: string;
 }
 
-
-export interface WalletTransactionDTO {
+export interface TransactionDTO {
   id: string;
   transactionId: string;
-  userId: string;
-  userEmail: string;
-  type: TransactionType;
+  user: User;
+  wallet: Wallet;
+  orderId: string;
+  recipient: User;
   amount: number;
   balanceBefore: number;
   balanceAfter: number;
-  description: string;
-  orderId: string;
-  recipientId: string;
-  recipientEmail: string;
-  reference: string;
+  type: TransactionType;
+  paymentMethod: PaymentMethod;
   status: TransactionStatus;
+  phoneNumber: string; // mobile money
+  reference: string; // from provider
+  description: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface PaymentRequest {
@@ -56,17 +55,4 @@ export interface PaymentRequest {
   accountNumber?: string;
   bankName?: string;
   notes?: string;
-}
-
-export interface PaymentResponseDTO {
-  transactionId: string;
-  orderId: string;
-  amount: number;
-  paymentMethod: string;
-  status: TransactionStatus;
-  reference: string;
-  message: string;
-  createdAt: string;
-  paidAt?: string;
-  phoneNumber?: string;
 }

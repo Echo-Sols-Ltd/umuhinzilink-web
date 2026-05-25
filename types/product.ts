@@ -1,12 +1,7 @@
-// Product-related enums
-export enum ProductType {
-  FARMER_PRODUCT = 'FARMER_PRODUCT',
-  SUPPLIER_PRODUCT = 'SUPPLIER_PRODUCT'
-}
+import { District, User } from './user';
 
 export enum ProductCategory {
 
-  // ── FARMER CATEGORIES ────────────────────────────────────────
   CEREALS = "Cereals",
   LEGUMES_PULSES = "Legumes & Pulses",
   ROOTS_TUBERS = "Roots & Tubers",
@@ -17,8 +12,6 @@ export enum ProductCategory {
   OILSEEDS = "Oilseeds",
   SPICES_HERBS = "Spices & Herbs",
   FODDER_FORAGE = "Fodder & Forage",
-
-  // ── SUPPLIER CATEGORIES ──────────────────────────────────────
   FERTILISER = "Fertiliser",
   PESTICIDE = "Pesticide",
   HERBICIDE = "Herbicide",
@@ -31,8 +24,6 @@ export enum ProductCategory {
   PACKAGING = "Packaging Material",
   ANIMAL_FEED = "Animal Feed",
   VETERINARY = "Veterinary Products",
-
-  // ── SHARED ───────────────────────────────────────────────────
   OTHER = "Other"
 }
 
@@ -77,56 +68,33 @@ export enum MeasurementUnit {
   SACK = "Sack"
 }
 
-export enum CertificationType {
-  NONE = 'NONE',
-  RSB = 'RSB',
-  RWANDA_GAP = 'RWANDA_GAP',
-  NAEB = 'NAEB',
-  COOPERATIVE_CERT = 'COOPERATIVE_CERT',
-  OTHER = 'OTHER',
-}
-
-import { District, User } from './user';
-
-export interface Statistics {
-  month: Month;
-  quantity: number;
-  money: number;
-}
-
-export interface Trend {
-  rising: boolean;
-  percentage: number;
-}
 
 export interface Product {
   id: string;
   owner: User;
   name: string;
-  category: ProductCategory;
   description: string;
+  category: ProductCategory;
   unitPrice: number;
-  measurementUnit: MeasurementUnit;
-  image: string;
-  location: string;
-  district: District;
   stockQuantity: number;
+  measurementUnit: MeasurementUnit;
+  district: District;
   isNegotiable: boolean;
-  productType: ProductType;
-  certification: CertificationType;
+  image: string;
   status: ProductStatus;
+  viewCount: number;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface ProductRequest {
   name: string;
-  category: ProductCategory;
   description: string;
+  category: ProductCategory;
   unitPrice: number;
-  measurementUnit: string;
+  stockQuantity: number;
+  measurementUnit: MeasurementUnit;
+  district: District;
   image: string;
-  quantity: number;
   isNegotiable: boolean;
-  certification: CertificationType;
 }
