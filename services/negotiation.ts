@@ -28,18 +28,12 @@ class NegotiationService {
 
 
   // Get all negotiations for authenticated buyer
-  async getBuyerNegotiations(page = 0, size = 10): Promise<PaginatedResponse<Negotiation[]>> {
+  async getNegotiations(page = 0, size = 10): Promise<PaginatedResponse<Negotiation[]>> {
     return await apiClient.get<PaginatedResponse<Negotiation[]>>(
-      `${API_ENDPOINTS.NEGOTIATION.BUYER}?page=${page}&size=${size}`
+      `${API_ENDPOINTS.NEGOTIATION.ALL}?page=${page}&size=${size}`
     );
   }
 
-  // Get all negotiations for authenticated seller
-  async getSellerNegotiations(page = 0, size = 10): Promise<PaginatedResponse<Negotiation[]>> {
-    return await apiClient.get<PaginatedResponse<Negotiation[]>>(
-      `${API_ENDPOINTS.NEGOTIATION.SELLER}?page=${page}&size=${size}`
-    );
-  }
 
   async getNegotiationMessages(id: string, page = 0, size = 10): Promise<PaginatedResponse<NegotiationMessage[]>> {
     return await apiClient.get<PaginatedResponse<NegotiationMessage[]>>(

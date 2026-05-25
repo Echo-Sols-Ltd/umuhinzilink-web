@@ -61,8 +61,7 @@ export const API_ENDPOINTS = {
     SATISFACTION: (id: string) => `/orders/${id}/satisfaction`,
   },
   NEGOTIATION: {
-    BUYER: '/negotiations/buyer',
-    SELLER: '/negotiations/seller',
+    ALL: '/negotiations',
     BY_ID: (id: string) => `/negotiations/${id}`,
     MESSAGES: (id: string) => `/negotiations/${id}/messages`,
   },
