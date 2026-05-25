@@ -7,7 +7,6 @@ import { ProductProvider } from '@/contexts/ProductContext';
 import { OrderProvider } from '@/contexts/OrderContext';
 import { UserProvider } from '@/contexts/UserContext';
 import { WalletProvider } from '@/contexts/WalletContext';
-import { ProfileProvider } from '@/contexts/ProfileContext';
 import { SocketProvider } from './SocketContext';
 import { NotificationProvider } from './NotificationContext';
 import { BrowserNotificationProvider } from './BrowserNotificationContext';
@@ -32,10 +31,8 @@ export function AppProviders({ children }: AppProvidersProps) {
                     <WalletProvider>
                       <OrderProvider>
                         <NegotiationProvider>
-                            <ProfileProvider>
-                              {children}
-                              <GlobalOrderModal />
-                            </ProfileProvider>
+                          {children}
+                          <GlobalOrderModal />
                         </NegotiationProvider>
                       </OrderProvider>
                     </WalletProvider>

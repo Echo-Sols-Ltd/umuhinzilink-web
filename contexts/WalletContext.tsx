@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { walletService } from '@/services/wallet';
 import { paymentService } from '@/services/payments';
-import { WalletDTO, WalletTransactionDTO, PaymentRequest, PaymentResponseDTO, TransactionStatus } from '@/types';
+import { Wallet, Transaction, PaymentRequest, TransactionStatus } from '@/types';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
 
@@ -14,26 +14,26 @@ const STORAGE_KEYS = {
 type WalletContextValue = {
   loading: boolean;
   error?: string | null;
-  wallet: WalletDTO | null;
-  transactions: WalletTransactionDTO[];
-  paymentHistory: PaymentResponseDTO[];
+  wallet: Wallet | null;
+  transactions: Transaction[];
+  paymentHistory: Transaction[];
 
   // Wallet operations
-  fetchWallet: () => Promise<WalletDTO | null>;
-  fetchTransactions: () => Promise<WalletTransactionDTO[] | null>;
-  fetchPaymentHistory: () => Promise<PaymentResponseDTO[] | null>;
+  fetchWallet: () => Promise<Wallet | null>;
+  fetchTransactions: () => Promise<Transaction[] | null>;
+  fetchPaymentHistory: () => Promise<Transaction[] | null>;
 
-  deposit: (amount: number, description?: string) => Promise<WalletTransactionDTO | null>;
-  payOrder: (orderId: string, description?: string) => Promise<WalletTransactionDTO | null>;
-  processPayment: (request: PaymentRequest) => Promise<PaymentResponseDTO | null>;
+  deposit: (amount: number, description?: string) => Promise<Transaction | null>;
+  payOrder: (orderId: string, description?: string) => Promise<Transaction | null>;
+  processPayment: (request: PaymentRequest) => Promise<Transaction | null>;
 
   refreshWalletData: () => Promise<void>;
-  getPaymentStatus: (transactionId: string) => Promise<PaymentResponseDTO | null>;
+  getPaymentStatus: (transactionId: string) => Promise<Transaction | null>;
 
-  handleDeposit: (amount: number, description?: string) => Promise<WalletTransactionDTO | null>;
-  handleWalletPayment: (orderId: string, description?: string) => Promise<WalletTransactionDTO | null>;
-  handleExternalPayment: (request: PaymentRequest) => Promise<PaymentResponseDTO | null>;
-  checkPaymentStatus: (transactionId: string) => Promise<PaymentResponseDTO | null>;
+  handleDeposit: (amount: number, description?: string) => Promise<Transaction | null>;
+  handleWalletPayment: (orderId: string, description?: string) => Promise<Transaction | null>;
+  handleExternalPayment: (request: PaymentRequest) => Promise<Transaction | null>;
+  checkPaymentStatus: (transactionId: string) => Promise<Transaction | null>;
   refreshData: () => Promise<void>;
 };
 
@@ -43,9 +43,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [wallet, setWallet] = useState<WalletDTO | null>(null);
-  const [transactions, setTransactions] = useState<WalletTransactionDTO[]>([]);
-  const [paymentHistory, setPaymentHistory] = useState<PaymentResponseDTO[]>([]);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [paymentHistory, setPaymentHistory] = useState<Transaction[]>([]);
   // Load cached data on mount
   useEffect(() => {
     const loadCachedData = () => {
@@ -66,7 +66,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Fetch wallet data
-  const fetchWallet = async (): Promise<WalletDTO | null> => {
+  const fetchWallet = async (): Promise<Wallet | null> => {
     try {
       setLoading(true);
       setError(null);
@@ -93,7 +93,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Fetch wallet transactions
-  const fetchTransactions = async (): Promise<WalletTransactionDTO[] | null> => {
+  const fetchTransactions = async (): Promise<Transaction[] | null> => {
     try {
       setLoading(true);
       setError(null);
@@ -121,7 +121,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Fetch payment history
-  const fetchPaymentHistory = async (): Promise<PaymentResponseDTO[] | null> => {
+  const fetchPaymentHistory = async (): Promise<Transaction[] | null> => {
     try {
       setLoading(true);
       setError(null);
@@ -152,7 +152,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Deposit money to wallet
-  const deposit = async (amount: number, description?: string): Promise<WalletTransactionDTO | null> => {
+  const deposit = async (amount: number, description?: string): Promise<Transaction | null> => {
     try {
       setLoading(true);
       setError(null);
@@ -196,7 +196,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Pay for order using wallet
-  const payOrder = async (orderId: string, description?: string): Promise<WalletTransactionDTO | null> => {
+  const payOrder = async (orderId: string, description?: string): Promise<Transaction | null> => {
     try {
       setLoading(true);
       setError(null);
@@ -240,7 +240,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Process payment using external methods
-  const processPayment = async (request: PaymentRequest): Promise<PaymentResponseDTO | null> => {
+  const processPayment = async (request: PaymentRequest): Promise<Transaction | null> => {
     try {
       setLoading(true);
       setError(null);
@@ -253,7 +253,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
 
-      const payment = res.data as PaymentResponseDTO;
+      const payment = res.data as Transaction;
       if (payment) {
         // Add to payment history
         setPaymentHistory(prev => [payment, ...prev]);
@@ -281,14 +281,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Get payment status
-  const getPaymentStatus = async (transactionId: string): Promise<PaymentResponseDTO | null> => {
+  const getPaymentStatus = async (transactionId: string): Promise<Transaction | null> => {
     try {
       const res = await paymentService.getPaymentStatus(transactionId);
       if (!res.success) {
         return null;
       }
 
-      const payment = res.data as PaymentResponseDTO;
+      const payment = res.data as Transaction;
       if (payment) {
         // Update payment in history
         setPaymentHistory(prev =>
@@ -312,25 +312,25 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     ]);
   };
 
-  const handleDeposit = async (amount: number, description?: string): Promise<WalletTransactionDTO | null> => {
+  const handleDeposit = async (amount: number, description?: string): Promise<Transaction | null> => {
     const result = await deposit(amount, description);
     if (result) await refreshWalletData();
     return result;
   };
 
-  const handleWalletPayment = async (orderId: string, description?: string): Promise<WalletTransactionDTO | null> => {
+  const handleWalletPayment = async (orderId: string, description?: string): Promise<Transaction | null> => {
     const result = await payOrder(orderId, description);
     if (result) await refreshWalletData();
     return result;
   };
 
-  const handleExternalPayment = async (request: PaymentRequest): Promise<PaymentResponseDTO | null> => {
+  const handleExternalPayment = async (request: PaymentRequest): Promise<Transaction | null> => {
     const result = await processPayment(request);
     if (result) await refreshWalletData();
     return result;
   };
 
-  const checkPaymentStatus = async (transactionId: string): Promise<PaymentResponseDTO | null> => {
+  const checkPaymentStatus = async (transactionId: string): Promise<Transaction | null> => {
     return getPaymentStatus(transactionId);
   };
 

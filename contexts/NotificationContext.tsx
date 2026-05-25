@@ -5,7 +5,6 @@ import { Notification, NotificationFilter, NotificationType } from '@/types';
 import { notificationService } from '@/services/notification';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { PaginatedResponse } from '@/types';
 
 interface NotificationContextType {
     notifications: Notification[];
@@ -24,7 +23,6 @@ interface NotificationContextType {
     productNotifications: Notification[]
     orderNotifications: Notification[]
     systemNotifications: Notification[]
-    messageNotifications: Notification[]
     unreadNotifications: Notification[]
 }
 
@@ -47,30 +45,16 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 // Support both direct array and nested paginated data structures
                 const data = response.data || [];
 
-                if (data) {
-                    const normalizedNotifications = data.map((n) => ({
-                        ...n,
-                        id: String(n.id)
-                    }));
-                    setNotifications(normalizedNotifications);
-                    setTotalElements(data.length);
-                    setTotalPages(1);
-                    setCurrentPage(0);
-                } else {
-                    // Handle PaginatedResponse
-                    // const rawNotifications = data ? data : [];
-                    // const normalizedNotifications = rawNotifications.map((n) => ({
-                    //     ...n,
-                    //     id: String(n.id)
-                    // }));
-                    // setNotifications(normalizedNotifications);
 
-                    // // Use totalElements/totalPages if they exist in the response
-                    // const paginated = response as unknown as PaginatedResponse<Notification[]>;
-                    // setTotalElements(paginated.totalElements || rawNotifications.length);
-                    // setTotalPages(paginated.totalPages || 1);
-                    // setCurrentPage(paginated.pageNumber || 0);
-                }
+                const normalizedNotifications = data.map((n) => ({
+                    ...n,
+                    id: String(n.id)
+                }));
+                setNotifications(normalizedNotifications);
+                setTotalElements(data.length);
+                setTotalPages(1);
+                setCurrentPage(0);
+
             }
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
@@ -147,7 +131,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const productNotifications = notifications.filter(n => n.type === NotificationType.PRODUCT)
     const orderNotifications = notifications.filter(n => n.type === NotificationType.ORDER)
     const systemNotifications = notifications.filter(n => n.type === NotificationType.SYSTEM)
-    const messageNotifications = notifications.filter(n => n.type === NotificationType.MESSAGE)
     const unreadNotifications = notifications.filter(n => n.isRead === false)
 
     return (
@@ -169,7 +152,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 productNotifications,
                 orderNotifications,
                 systemNotifications,
-                messageNotifications,
                 unreadNotifications,
             }}
         >

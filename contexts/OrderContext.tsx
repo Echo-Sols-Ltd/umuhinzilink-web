@@ -1,12 +1,9 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
-import { Order, OrderStatus, Product, UserRole, SocketResponse } from '@/types';
-import type { OrderRequest } from '@/types';
+import { Order, OrderStatus, Product,SocketResponse } from '@/types';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
-import { socketService } from '@/services/socket';
 import { useSocket } from './SocketContext';
-import { OrderChangeResponse, OrderDeliveryChange } from '@/services/websocket';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 
 
