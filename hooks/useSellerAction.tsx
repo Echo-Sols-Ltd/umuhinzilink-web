@@ -11,7 +11,7 @@ export const useSellerAction = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { addMyProduct: addSupplierProduct, updateProductState: updateSupplierProduct, removeMyProduct: removeSupplierProduct } = useProduct();
-  const { updateOrderState: editSupplierOrder } = useOrder();
+  const { updateOrder } = useOrder();
 
   // Product Management Actions (sync with ProductContext)
   const createProduct = async (productData: ProductRequest): Promise<Product | null> => {
@@ -181,7 +181,7 @@ export const useSellerAction = () => {
     try {
       const response = await orderService.acceptOrder(id);
       if (response.success && response.data) {
-        editSupplierOrder(response.data);
+        updateOrder(response.data);
         notify.success('Order accepted successfully', 'Success');
         return response.data;
       } else {
@@ -203,7 +203,7 @@ export const useSellerAction = () => {
     try {
       const response = await orderService.cancelOrder(id);
       if (response.success && response.data) {
-        editSupplierOrder(response.data);
+        updateOrder(response.data);
         notify.success('Order rejected successfully', 'Success');
         return response.data;
       } else {
@@ -225,7 +225,7 @@ export const useSellerAction = () => {
     try {
       const response = await orderService.updateOrderStatus(id, status as any);
       if (response.success && response.data) {
-        editSupplierOrder(response.data);
+        updateOrder(response.data);
         notify.success('Order status updated successfully', 'Success');
         return response.data;
       } else {
@@ -246,7 +246,7 @@ export const useSellerAction = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await dashboardService.getSupplierDashboard();
+      const response = await dashboardService.getSellerDashboard();
       if (response.success) {
         return response.data;
       } else {

@@ -1,28 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserType } from '@/types';
-import { 
-  dashboardService, 
+import { UserRole } from '@/types';
+import {
+  dashboardService,
   cachedDashboardService,
   handleDashboardError,
-  dashboardCache 
+  dashboardCache
 } from '@/services/dashboardService';
 import {
   BuyerDashboardData,
-  FarmerDashboardData,
-  SupplierDashboardData,
   AdminDashboardData,
-  GovernmentDashboardData,
-  NotificationResponse
+  NotificationResponse,
+  SellerDashboardData,
 } from '@/types';
 
 // Union type for all dashboard data
-type DashboardData = 
+type DashboardData =
   | BuyerDashboardData
-  | FarmerDashboardData
-  | SupplierDashboardData
+  | SellerDashboardData
   | AdminDashboardData
-  | GovernmentDashboardData;
 
 interface UseDashboardReturn {
   data: DashboardData | null;
@@ -54,20 +50,15 @@ export const useDashboard = (useCache = true): UseDashboardReturn => {
       let response;
 
       switch (user.role) {
-        case UserType.BUYER:
+        case UserRole.BUYER:
           response = await service.getBuyerDashboard();
           break;
-        case UserType.FARMER:
-          response = await service.getFarmerDashboard();
+        case UserRole.SELLER:
+          response = await service.getSellerDashboard();
           break;
-        case UserType.SUPPLIER:
-          response = await service.getSupplierDashboard();
-          break;
-        case UserType.ADMIN:
+        
+        case UserRole.ADMIN:
           response = await service.getAdminDashboard();
-          break;
-        case UserType.GOVERNMENT:
-          response = await service.getGovernmentDashboard();
           break;
         default:
           throw new Error(`Unsupported user role: ${user.role}`);
@@ -136,68 +127,9 @@ export const useNotifications = () => {
   };
 };
 
-// Hook for real-time dashboard updates
-export const useRealtimeDashboard = (userRole: string) => {
-  const [realtimeData, setRealtimeData] = useState<any>(null);
-  const [isConnected, setIsConnected] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = dashboardService.subscribeToDashboardUpdates(
-      userRole,
-      (data) => {
-        setRealtimeData(data);
-        setIsConnected(true);
-      }
-    );
 
-    return () => {
-      // Cleanup function placeholder
-    };
-  }, [userRole]);
 
-  return {
-    realtimeData,
-    isConnected,
-  };
-};
-
-// Hook for dashboard export functionality
-export const useDashboardExport = () => {
-  const [exporting, setExporting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const exportData = useCallback(async (
-    userRole: string,
-    format: 'pdf' | 'excel' | 'csv'
-  ) => {
-    setExporting(true);
-    setError(null);
-
-    try {
-      const blob = await dashboardService.exportDashboardData(userRole, format);
-      
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `dashboard-${userRole}-${new Date().toISOString().split('T')[0]}.${format}`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (err) {
-      setError('Failed to export dashboard data');
-    } finally {
-      setExporting(false);
-    }
-  }, []);
-
-  return {
-    exportData,
-    exporting,
-    error,
-  };
-};
 
 // Hook for custom dashboard metrics
 export const useCustomMetrics = (userRole: string, metrics: string[]) => {

@@ -15,9 +15,7 @@ export default function useOrderAction() {
   const [loading, setLoading] = useState(false)
   const { user } = useAuth();
   const {
-    addOrder,
-    editOrder,
-    fetchOrders,
+    addOrder,updateOrder
   } = useOrder();
   const { payOrder: payWithWallet } = useWallet();
 
@@ -27,7 +25,7 @@ export default function useOrderAction() {
       setLoading(true);
       const response = await orderService.updateOrderStatus(id, status);
       if (response.success && response.data) {
-        editOrder({ ...response.data, id } as Order);
+        updateOrder({ ...response.data, id } as Order);
         notify.success('Delivery status has been updated.', 'Order status updated successfully');
       } else {
         notify.error(response.message || 'Failed to update', 'Failed to update order status');
@@ -81,7 +79,7 @@ export default function useOrderAction() {
         notify.error('Empty response', 'Failed to accept order');
         return null;
       }
-      editOrder(updated);
+      updateOrder(updated);
       notify.success('The order has been accepted.', 'Order accepted successfully');
       return updated;
     } catch (err: unknown) {
@@ -107,7 +105,7 @@ export default function useOrderAction() {
         notify.error('Empty response', 'Failed to cancel order');
         return null;
       }
-      editOrder(updated);
+      updateOrder(updated);
       notify.success('The order has been cancelled.', 'Order cancelled successfully');
       return updated;
     } catch (err: unknown) {

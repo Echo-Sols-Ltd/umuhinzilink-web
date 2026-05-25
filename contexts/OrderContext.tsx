@@ -21,7 +21,7 @@ type OrderContextValue = {
   setCurrentProduct: (product: Product | null) => void;
 
   addOrder: (data: Order) => void;
-  updateOrderState: (data: Order) => void;
+  updateOrder: (data: Order) => void;
 
   // State management functions
   setMutationLoading: (loading: boolean) => void;
@@ -114,7 +114,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentOrder(data);
   }, [updateProductState]);
 
-  const updateOrderState = useCallback((data: Order) => {
+  const updateOrder = useCallback((data: Order) => {
     const updater = (prev: Order[] | null) => {
       if (!prev) return [data];
       return prev.map(order => (order.id === data.id ? data : order));
@@ -123,7 +123,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setSellingOrders(updater);
     if (currentOrder?.id === data.id) setCurrentOrder(data);
   }, [currentOrder]);
-
 
 
   const setMutationLoading = (loading: boolean) => {
@@ -272,7 +271,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentOrder,
     setCurrentProduct,
     addOrder,
-    updateOrderState,
+    updateOrder,
     setMutationLoading,
     mutationLoading: mutationLoadingState,
     fetchBuyingOrders,

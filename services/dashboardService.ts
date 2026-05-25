@@ -2,11 +2,9 @@ import { API_ENDPOINTS } from './constants';
 import { apiClient } from './client';
 import {
   BuyerDashboardResponse,
-  FarmerDashboardResponse,
-  SupplierDashboardResponse,
+  SellerDashboardResponse,
   AdminDashboardResponse,
-  GovernmentDashboardResponse,
-  NotificationResponse
+  NotificationResponse,
 } from '@/types';
 
 // Dashboard Service using the existing API client
@@ -16,61 +14,25 @@ export const dashboardService = {
     return apiClient.get(API_ENDPOINTS.DASHBOARD.BUYER_STATS);
   },
 
-  // Farmer Dashboard
-  getFarmerDashboard: async (): Promise<FarmerDashboardResponse> => {
-    return apiClient.get(API_ENDPOINTS.DASHBOARD.FARMER_STATS);
+  // Seller Dashboard
+  getSellerDashboard: async (): Promise<SellerDashboardResponse> => {
+    return apiClient.get(API_ENDPOINTS.DASHBOARD.SELLER_STATS);
   },
 
-  // Supplier Dashboard
-  getSupplierDashboard: async (): Promise<SupplierDashboardResponse> => {
-    return apiClient.get(API_ENDPOINTS.DASHBOARD.SUPPLIER_STATS);
-  },
 
   // Admin Dashboard
   getAdminDashboard: async (): Promise<AdminDashboardResponse> => {
     return apiClient.get(API_ENDPOINTS.DASHBOARD.ADMIN_STATS);
   },
 
-  // Government Dashboard
-  getGovernmentDashboard: async (): Promise<GovernmentDashboardResponse> => {
-    return apiClient.get(API_ENDPOINTS.DASHBOARD.GOVERNMENT_STATS);
-  },
+
 
   // Notifications
   getNotifications: async (): Promise<NotificationResponse> => {
     return apiClient.get('/notifications');
   },
 
-  // Real-time dashboard updates (WebSocket implementation placeholder)
-  subscribeToDashboardUpdates: (userRole: string, callback: (data: any) => void) => {
-    // This would implement WebSocket connection for real-time updates
-    // For now, it's a placeholder for future implementation
 
-    // Example WebSocket implementation:
-    // const ws = new WebSocket(`${API_CONFIG.BASE_URL.replace('http', 'ws')}/dashboard/${userRole}`);
-    // ws.onmessage = (event) => {
-    //   const data = JSON.parse(event.data);
-    //   callback(data);
-    // };
-    // 
-    // return () => ws.close();
-  },
-
-  // Dashboard export functionality
-  exportDashboardData: async (userRole: string, format: 'pdf' | 'excel' | 'csv'): Promise<Blob> => {
-    const endpoint = `/dashboard/${userRole}/export?format=${format}`;
-    
-    // Use the client's file download capability
-    const response = await apiClient.get(endpoint, {}, { timeout: 60000 }); // 60 second timeout for exports
-    
-    // Convert response to blob if it's not already
-    if (response instanceof Blob) {
-      return response;
-    }
-    
-    // If response is JSON data, convert to blob
-    return new Blob([JSON.stringify(response)], { type: 'application/json' });
-  },
 
   // Dashboard analytics and insights
   getDashboardInsights: async (userRole: string, timeRange: string): Promise<any> => {
@@ -89,14 +51,10 @@ export const dashboardService = {
     switch (userRole) {
       case 'BUYER':
         return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.BUYER_STATS);
-      case 'FARMER':
-        return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.FARMER_STATS);
-      case 'SUPPLIER':
-        return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.SUPPLIER_STATS);
+      case 'SELLER':
+        return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.SELLER_STATS);
       case 'ADMIN':
         return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.ADMIN_STATS);
-      case 'GOVERNMENT':
-        return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.GOVERNMENT_STATS);
       default:
         throw new Error(`Unsupported user role: ${userRole}`);
     }
@@ -106,11 +64,11 @@ export const dashboardService = {
 // Error handling utilities
 export const handleDashboardError = (error: any, userRole: string) => {
   console.error(`Dashboard error for ${userRole}:`, error);
-  
+
   // The API client already handles most errors, but we can add specific dashboard error handling here
   if (error.response) {
     const status = error.response.status;
-    
+
     switch (status) {
       case 401:
         return {
@@ -150,7 +108,7 @@ export const handleDashboardError = (error: any, userRole: string) => {
         };
     }
   }
-  
+
   if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
     return {
       success: false,
@@ -158,7 +116,7 @@ export const handleDashboardError = (error: any, userRole: string) => {
       error: 'TIMEOUT',
     };
   }
-  
+
   if (error.message?.includes('Network Error')) {
     return {
       success: false,
@@ -166,7 +124,7 @@ export const handleDashboardError = (error: any, userRole: string) => {
       error: 'NETWORK_ERROR',
     };
   }
-  
+
   return {
     success: false,
     message: `Failed to load ${userRole} dashboard data`,
@@ -189,12 +147,12 @@ class DashboardCache {
   get(key: string): any | null {
     const cached = this.cache.get(key);
     if (!cached) return null;
-    
+
     if (Date.now() - cached.timestamp > this.CACHE_DURATION) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return cached.data;
   }
 
@@ -210,13 +168,13 @@ class DashboardCache {
   getError(key: string): any | null {
     const cached = this.cache.get(key);
     if (!cached || !cached.error) return null;
-    
+
     // Cache errors for only 1 minute
     if (Date.now() - cached.timestamp > 60 * 1000) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return cached.error;
   }
 
@@ -241,22 +199,22 @@ export const dashboardCache = new DashboardCache();
 // Enhanced dashboard service with caching and better error handling
 export const cachedDashboardService = {
   ...dashboardService,
-  
+
   async getBuyerDashboard(): Promise<BuyerDashboardResponse> {
     const cacheKey = 'buyer-dashboard';
-    
+
     // Check for cached error first
     const cachedError = dashboardCache.getError(cacheKey);
     if (cachedError) {
       throw cachedError;
     }
-    
+
     // Check for cached data
     const cached = dashboardCache.get(cacheKey);
     if (cached) {
       return cached;
     }
-    
+
     try {
       const data = await dashboardService.getBuyerDashboard();
       dashboardCache.set(cacheKey, data);
@@ -267,44 +225,22 @@ export const cachedDashboardService = {
     }
   },
 
-  async getFarmerDashboard(): Promise<FarmerDashboardResponse> {
-    const cacheKey = 'farmer-dashboard';
-    
-    const cachedError = dashboardCache.getError(cacheKey);
-    if (cachedError) {
-      throw cachedError;
-    }
-    
-    const cached = dashboardCache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-    
-    try {
-      const data = await dashboardService.getFarmerDashboard();
-      dashboardCache.set(cacheKey, data);
-      return data;
-    } catch (error) {
-      dashboardCache.setError(cacheKey, error);
-      throw error;
-    }
-  },
 
-  async getSupplierDashboard(): Promise<SupplierDashboardResponse> {
-    const cacheKey = 'supplier-dashboard';
-    
+  async getSellerDashboard(): Promise<SellerDashboardResponse> {
+    const cacheKey = 'seller-dashboard';
+
     const cachedError = dashboardCache.getError(cacheKey);
     if (cachedError) {
       throw cachedError;
     }
-    
+
     const cached = dashboardCache.get(cacheKey);
     if (cached) {
       return cached;
     }
-    
+
     try {
-      const data = await dashboardService.getSupplierDashboard();
+      const data = await dashboardService.getSellerDashboard();
       dashboardCache.set(cacheKey, data);
       return data;
     } catch (error) {
@@ -315,42 +251,19 @@ export const cachedDashboardService = {
 
   async getAdminDashboard(): Promise<AdminDashboardResponse> {
     const cacheKey = 'admin-dashboard';
-    
+
     const cachedError = dashboardCache.getError(cacheKey);
     if (cachedError) {
       throw cachedError;
     }
-    
+
     const cached = dashboardCache.get(cacheKey);
     if (cached) {
       return cached;
     }
-    
+
     try {
       const data = await dashboardService.getAdminDashboard();
-      dashboardCache.set(cacheKey, data);
-      return data;
-    } catch (error) {
-      dashboardCache.setError(cacheKey, error);
-      throw error;
-    }
-  },
-
-  async getGovernmentDashboard(): Promise<GovernmentDashboardResponse> {
-    const cacheKey = 'government-dashboard';
-    
-    const cachedError = dashboardCache.getError(cacheKey);
-    if (cachedError) {
-      throw cachedError;
-    }
-    
-    const cached = dashboardCache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-    
-    try {
-      const data = await dashboardService.getGovernmentDashboard();
       dashboardCache.set(cacheKey, data);
       return data;
     } catch (error) {
