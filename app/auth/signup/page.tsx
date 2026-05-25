@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, MapPin, Loader2 } from 'lucide-react';
 import { BiLogoFacebookCircle} from 'react-icons/bi';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -65,6 +65,54 @@ export default function SignUp() {
     district: false,
   });
   const [loading, setLoading] = useState(false);
+  const [locating, setLocating] = useState(false);
+
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      notify.error(t('auth.location.notSupported'), t('common.error'));
+      return;
+    }
+
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        console.log(position)
+        const { latitude, longitude } = position.coords;
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
+          );
+          const data = await response.json();
+          
+          // Nominatim address fields vary: county, city_district, or suburb for Rwandan districts
+          const address = data.address || {};
+          const districtName = (address.county || address.city_district || address.suburb || address.city || '')
+            .split(' ')[0] // Extract first word like "Gasabo" from "Gasabo District"
+            .toUpperCase();
+
+          const foundDistrict = Object.values(District).find(d => 
+            d.toUpperCase() === districtName || districtName.includes(d.toUpperCase())
+          );
+
+          if (foundDistrict) {
+            setFormData(prev => ({ ...prev, district: foundDistrict as District }));
+            notify.success(t('auth.location.detected', { district: foundDistrict }), t('common.success'));
+          } else {
+            notify.error(t('auth.location.notFound'), t('common.error'));
+          }
+        } catch (error) {
+          notify.error(t('auth.location.error'), t('common.error'));
+        } finally {
+          setLocating(false);
+        }
+      },
+      (error) => {
+        notify.error(t('auth.location.denied'), t('common.error'));
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
 
   useEffect(() => {
     if (googleToken) {
@@ -73,10 +121,10 @@ export default function SignUp() {
   }, [googleToken]);
 
 
-  const handleGoogleRoleSubmit = async (role: UserType) => {
+  const handleGoogleRoleSubmit = async (role: UserType, district: District) => {
     try {
       if (!googleToken) return
-      await registerGoogle({ role, token: googleToken });
+      await registerGoogle({ role, token: googleToken, district });
       setShowRoleModal(false);
       notify.success(t('auth.signUp.primary'), t('common.primary'));
     } catch (error) {
@@ -172,9 +220,9 @@ export default function SignUp() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col sm:flex-row bg-background overflow-hidden">
+    <div className="w-full min-h-screen flex flex-col sm:flex-row bg-background">
       {/* LEFT – Form Section */}
-      <div className="w-full sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-card overflow-auto">
+      <div className="w-full sm:w-1/2 flex items-start justify-center p-6 sm:p-10 bg-card sm:h-screen sm:overflow-auto">
         <div className="w-full max-w-md flex flex-col justify-center">
           {/* Logo/Brand */}
           <div className="flex justify-center mb-6">
@@ -262,16 +310,27 @@ export default function SignUp() {
               />
               {touched.phoneNumber && fieldErrors.phoneNumber && <p className="text-xs text-red-500 mt-1">{fieldErrors.phoneNumber}</p>}
             </Field>
-            <Field label={t('auth.farmer.fields.farmSize')}>
-              <select
-                name="district"
-                value={formData.district}
-                onChange={handleInputChange}
-                className="w-full text-foreground font-medium text-sm border rounded-md px-3 py-2"
-              >
-                <option value="">{t('auth.farmer.placeholders.selectFarmSize')}</option>
-                {Object.values(District).map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
-              </select>
+            <Field label={t('auth.fields.district')}>
+              <div className="flex gap-2">
+                <select
+                  name="district"
+                  value={formData.district}
+                  onChange={handleInputChange}
+                  className="flex-1 text-foreground font-medium text-sm border rounded-md px-3 py-2 bg-background ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">{t('auth.farmer.placeholders.selectFarmSize')}</option>
+                  {Object.values(District).map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
+                </select>
+                <button
+                  type="button"
+                  onClick={detectLocation}
+                  disabled={locating}
+                  className="p-2 border rounded-md hover:bg-zinc-50 transition-colors flex items-center justify-center min-w-[40px] text-zinc-500 hover:text-primary"
+                  title="Detect Location"
+                >
+                  {locating ? <Loader2 size={18} className="animate-spin text-primary" /> : <MapPin size={18} />}
+                </button>
+              </div>
               {touched.district && fieldErrors.district && <p className="text-red-500 text-xs mt-1">{fieldErrors.district}</p>}
             </Field>
 

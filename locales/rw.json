@@ -319,7 +319,8 @@
       "emailAddress": "Aderesi ya imeri",
       "phoneNumber": "Nimero ya telefone",
       "accountType": "Ubwoko bwa konti",
-      "password": "Ijambo banga"
+      "password": "Ijambo banga",
+      "district": "Akarere"
     },
     "placeholders": {
       "firstName": "Yohana",
@@ -348,7 +349,9 @@
       "mustContainUppercase": "Igomba kuba harimo inyuguti nkuru",
       "mustContainNumber": "Igomba kuba harimo umubare",
       "mustContainSpecialChar": "Igomba kuba harimo ikimenyetso cyihariye",
-      "mustAgreeToTerms": "Ugomba kwemera amabwiriza"
+      "mustAgreeToTerms": "Ugomba kwemera amabwiriza",
+      "districtRequired": "Akarere arakenewe",
+      "roleRequired": "Ubwoko bwa konti burakenewe"
     },
     "signIn": {
       "title": "Murakaza neza",
@@ -595,6 +598,19 @@
       "chooseImage": "Hitamo ifoto",
       "creatingAccount": "Irimo gukora konti...",
       "finishCreatingAccount": "Ihora gukora konti"
+    },
+    "googleRoleModal": {
+      "title": "Uzuza Umwirondoro Wawe",
+      "subtitle": "Komeza uhitemo ubwoko bwa konti n'akarere kugira ngo urangize.",
+      "completeRegistration": "RANGIZA KWIYANDIKISHA",
+      "termsNote": "Wemeje kwiyandikisha, ushyize umukono ku masezerano n'amategeko yacu."
+    },
+    "location": {
+      "notSupported": "Iyi mugaragaza ntishobora kumenya aho uherereye",
+      "detected": "Aho uherereye hamenyekanye: {{district}}",
+      "notFound": "Ntitubashije kumenya Akarere kawe",
+      "error": "Habaye ikibazo mu kumenya aho uherereye",
+      "denied": "Wanze ko tumenya aho uherereye"
     }
   },
   "dashboard": {

@@ -23,10 +23,10 @@ export default function GoogleLogin() {
 
             window.google.accounts.id.renderButton(
                 document.getElementById("googleBtn"),
-                { theme: "outline", size: "large" }
+                { theme: "outline", size: "large" },
             );
         };
     }, []);
 
-    return <div id="googleBtn" />;
+    return <div id="googleBtn" className="w-full" />;
 }
