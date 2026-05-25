@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Loader2, ArrowLeft, Package, DollarSign, MapPin, ImageIcon, Eye, Info, Upload, Check, Truck } from 'lucide-react';
 import { CertificationType, MeasurementUnit, ProductCategory, UserType } from '@/types';
-import { useSupplierAction } from '@/hooks/useSupplierAction';
+import { useSupplierAction } from '@/hooks/useSellerAction';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';
 import {
   Select,

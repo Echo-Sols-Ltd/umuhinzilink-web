@@ -7,7 +7,7 @@ import { notify } from '@/lib/notify';
 import { useProduct } from '@/contexts/ProductContext';
 import { useOrder } from '@/contexts/OrderContext';
 
-export const useSupplierAction = () => {
+export const useSellerAction = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { addMyProduct: addSupplierProduct, updateProductState: updateSupplierProduct, removeMyProduct: removeSupplierProduct } = useProduct();

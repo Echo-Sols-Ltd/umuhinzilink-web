@@ -27,7 +27,7 @@ import { Input } from '@/components/ui/input';
 import FileUpload from '@/components/ui/file-upload';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSupplier } from '@/contexts/SupplierContext';
-import { useSupplierAction } from '@/hooks/useSupplierAction';
+import { useSupplierAction } from '@/hooks/useSellerAction';
 import Sidebar from '@/components/shared/Sidebar';
 import { SupplierPages, UserType, ProductRequest, ProductCategory, ProductType, MeasurementUnit, CertificationType } from '@/types';
 import SupplierGuard from '@/contexts/guard/SupplierGuard';

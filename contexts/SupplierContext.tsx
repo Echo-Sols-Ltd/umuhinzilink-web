@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { Supplier, User, UserType } from '@/types';
-import { useSupplierAction } from '@/hooks/useSupplierAction';
+import { useSupplierAction } from '@/hooks/useSellerAction';
 import { userService } from '@/services/users';
 import { useProduct } from './ProductContext';
 import { useOrder } from './OrderContext';

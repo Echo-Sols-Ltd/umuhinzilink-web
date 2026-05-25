@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
-import { Order, OrderStatus, Product, DeliveryStatus, UserType, SocketResponse } from '@/types';
+import { Order, OrderStatus, Product, UserRole, SocketResponse } from '@/types';
 import type { OrderRequest } from '@/types';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
@@ -10,19 +10,12 @@ import { OrderChangeResponse, OrderDeliveryChange } from '@/services/websocket';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 
 
-const STORAGE_KEYS = {
-  BUYER: 'buyerOrders',
-  FARMER: 'farmerOrders',
-  SUPPLIER: 'supplierOrders',
-  FARMER_BUYER: 'farmerBuyerOrders',
-};
 
 type OrderContextValue = {
   loading: boolean;
   error?: string | null;
-  buyingOrders: Order[] | null;
-  sellingOrders: Order[] | null;
-
+  orders: Order[] | null;
+  
   currentOrder: Order | null;
   currentProduct: Product | null;
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ProgressiveImage } from '@/components/ui/progressive-loading';
 import { MessageSquare, Package, AlertCircle } from 'lucide-react';
-import { useProductById } from '@/hooks/useProductById';
+import { useProductById } from '@/hooks/useProductAction';
 import { imageUrl } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';

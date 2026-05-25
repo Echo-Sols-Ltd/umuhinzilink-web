@@ -2,8 +2,8 @@ import { useOrder } from '@/contexts/OrderContext';
 import { orderService } from '@/services/orders';
 import { useWallet } from '@/contexts/WalletContext';
 import { notify } from '@/lib/notify';
-import { Order, DeliveryStatus, UserType } from '@/types';
-import type { OrderRequest } from '@/types';
+import { Order, OrderStatus } from '@/types';
+import { OrderRequest } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 
@@ -16,21 +16,19 @@ export default function useOrderAction() {
   const { user } = useAuth();
   const {
     addOrder,
-    updateOrderState: editFarmerOrder,
-    updateOrderState: editSupplierOrder,
-    updateOrderState: editFarmerBuyerOrder,
-    fetchBuyingOrders: fetchFarmerBuyerOrders,
+    editOrder,
+    fetchOrders,
   } = useOrder();
   const { payOrder: payWithWallet } = useWallet();
 
 
-  const updateFarmerOrderStatus = async (id: string, status: DeliveryStatus) => {
+  const updateOrderStatus = async (id: string, status: OrderStatus) => {
     try {
       setLoading(true);
       const response = await orderService.updateOrderStatus(id, status);
       if (response.success && response.data) {
-        editFarmerOrder({ ...response.data, id } as Order);
-        notify.success('Delivery status has been updated.', 'Order status updated successfully' );
+        editOrder({ ...response.data, id } as Order);
+        notify.success('Delivery status has been updated.', 'Order status updated successfully');
       } else {
         notify.error(response.message || 'Failed to update', 'Failed to update order status');
       }
@@ -43,30 +41,6 @@ export default function useOrderAction() {
     }
   };
 
-  const updateSupplierOrderStatus = async (id: string, status: DeliveryStatus): Promise<Order | null> => {
-    try {
-      setLoading(true);
-      const res = await orderService.updateOrderStatus(id, status);
-      if (!res.success) {
-        notify.error(res.message || 'Failed to update order status', 'Failed to update order status');
-        return null;
-      }
-      const updated = res.data;
-      if (!updated) {
-        notify.error('Empty response', 'Failed to update order status');
-        return null;
-      }
-      editSupplierOrder(updated);
-      notify.success('Delivery status has been updated.', 'Order status updated successfully' );
-      return updated;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to update order status';
-      notify.error(msg, 'Failed to update order status');
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const createOrder = async (payload: OrderRequest) => {
     try {
@@ -81,15 +55,11 @@ export default function useOrderAction() {
         notify.error('Failed to create order: empty response', 'Failed to create order');
         return;
       }
-      
+
       addOrder(newOrder);
-      notify.success('Initiating payment...', 'Order created successfully' );
-      
-      // If payment depends on role, logic can be added here
-      if (user?.role === UserType.FARMER) {
-          const paymentRes = await payWithWallet(newOrder.id, 'Order Payment');
-          // Update order locally if needed
-      }
+      notify.success('Initiating payment...', 'Order created successfully');
+
+
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to create order';
       notify.error(msg, 'Failed to create order');
@@ -98,7 +68,7 @@ export default function useOrderAction() {
     }
   };
 
-  const acceptFarmerOrder = async (id: string): Promise<Order | null> => {
+  const acceptOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
       const res = await orderService.acceptOrder(id);
@@ -111,8 +81,8 @@ export default function useOrderAction() {
         notify.error('Empty response', 'Failed to accept order');
         return null;
       }
-      editFarmerOrder(updated);
-      notify.success('The order has been accepted.', 'Order accepted successfully' );
+      editOrder(updated);
+      notify.success('The order has been accepted.', 'Order accepted successfully');
       return updated;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to accept order';
@@ -123,32 +93,8 @@ export default function useOrderAction() {
     }
   };
 
-  const acceptSupplierOrder = async (id: string): Promise<Order | null> => {
-    try {
-      setLoading(true);
-      const res = await orderService.acceptOrder(id);
-      if (!res.success) {
-        notify.error(res.message || 'Failed to accept order', 'Failed to accept order');
-        return null;
-      }
-      const updated = res.data;
-      if (!updated) {
-        notify.error('Empty response', 'Failed to accept order');
-        return null;
-      }
-      editSupplierOrder(updated);
-      notify.success('The order has been accepted.', 'Order accepted successfully' );
-      return updated;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to accept order';
-      notify.error(msg, 'Failed to accept order');
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const cancelFarmerOrder = async (id: string): Promise<Order | null> => {
+  const cancelOrder = async (id: string): Promise<Order | null> => {
     try {
       setLoading(true);
       const res = await orderService.cancelOrder(id);
@@ -161,8 +107,8 @@ export default function useOrderAction() {
         notify.error('Empty response', 'Failed to cancel order');
         return null;
       }
-      editFarmerOrder(updated);
-      notify.success('The order has been cancelled.', 'Order cancelled successfully' );
+      editOrder(updated);
+      notify.success('The order has been cancelled.', 'Order cancelled successfully');
       return updated;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to cancel order';
@@ -173,30 +119,6 @@ export default function useOrderAction() {
     }
   };
 
-  const cancelSupplierOrder = async (id: string): Promise<Order | null> => {
-    try {
-      setLoading(true);
-      const res = await orderService.cancelOrder(id);
-      if (!res.success) {
-        notify.error(res.message || 'Failed to cancel order', 'Failed to cancel order');
-        return null;
-      }
-      const updated = res.data;
-      if (!updated) {
-        notify.error('Empty response', 'Failed to cancel order');
-        return null;
-      }
-      editSupplierOrder(updated);
-      notify.success('The order has been cancelled.', 'Order cancelled successfully' );
-      return updated;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to cancel order';
-      notify.error(msg, 'Failed to cancel order');
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const processOrderPayment = async (orderId: string, _paymentMethod?: unknown): Promise<unknown> => {
     try {
@@ -219,12 +141,9 @@ export default function useOrderAction() {
 
   return {
     createOrder,
-    acceptFarmerOrder,
-    acceptSupplierOrder,
-    cancelFarmerOrder,
-    cancelSupplierOrder,
-    updateFarmerOrderStatus,
-    updateSupplierOrderStatus,
+    acceptOrder,
+    cancelOrder,
+    updateOrderStatus,
     processOrderPayment,
     loading,
   };
