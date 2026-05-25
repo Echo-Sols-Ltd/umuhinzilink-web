@@ -6,10 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, Order } from '@/types';
+import { UserRole, Order } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
-import DeliveryTracker from '@/components/delivery/DeliveryTracker';
-import { DeliveryStatus } from '@/types';
 import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard } from 'lucide-react';
 import { orderService } from '@/services/orders';
@@ -25,7 +23,7 @@ function FarmerOrderDetailPage() {
     setCurrentOrder,
     fetchSellingOrders
   } = useOrder();
-  const { updateFarmerOrderStatus } = useOrderAction();
+  const { updateOrderStatus } = useOrderAction();
   const { t } = useI18n();
 
   const [loading, setLoading] = useState(true);
@@ -70,19 +68,7 @@ function FarmerOrderDetailPage() {
     }
   }, [orderId, sellingOrders, currentOrder, setCurrentOrder, fetchSellingOrders]);
 
-  const handleUpdateDeliveryStatus = async (newStatus: DeliveryStatus) => {
-    if (!currentOrder) return;
 
-    setUpdatingStatus(true);
-    try {
-      await updateFarmerOrderStatus(currentOrder.id, newStatus);
-    } catch (error) {
-      console.error('Failed to update delivery status:', error);
-      notify.error(t('farmer.orders.toasts.updateFailed'), t('common.error'));
-    } finally {
-      setUpdatingStatus(false);
-    }
-  };
 
   const handleBack = () => {
     router.push('/farmer/orders');
@@ -91,7 +77,6 @@ function FarmerOrderDetailPage() {
   if (loading) {
     return (
       <div className="flex h-screen bg-background">
-        <Sidebar userType={UserType.FARMER} activeItem='Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </main>
@@ -102,7 +87,6 @@ function FarmerOrderDetailPage() {
   if (!currentOrder) {
     return (
       <div className="flex h-screen bg-background">
-        <Sidebar userType={UserType.FARMER} activeItem='Orders' />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -119,7 +103,6 @@ function FarmerOrderDetailPage() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={UserType.FARMER} activeItem='Customer Orders' />
 
       <main className="flex-1 h-full bg-background overflow-auto">
         {/* Header */}
@@ -201,14 +184,6 @@ function FarmerOrderDetailPage() {
                     <p className="text-foreground">{buyer.phoneNumber}</p>
                   </div>
                 )}
-                {buyer && (
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.deliveryAddress')}</label>
-                    <p className="text-foreground">
-                      {buyer.district}, {buyer.province}
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -241,28 +216,12 @@ function FarmerOrderDetailPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.paymentStatus')}</label>
-                  <p className={`font-medium ${currentOrder.isPaid ? 'text-success' : 'text-destructive'}`}>
-                    {currentOrder.isPaid ? t('farmer.orders.detail.paid') : t('farmer.orders.detail.unpaid')}
+                  <p className={`font-medium ${currentOrder.status === 'COMPLETED' ? 'text-success' : 'text-destructive'}`}>
+                    {currentOrder.status === 'COMPLETED' ? t('farmer.orders.detail.paid') : t('farmer.orders.detail.unpaid')}
                   </p>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Delivery Tracking Section */}
-          <div className="bg-card rounded-lg p-6 border border-border">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
-              <Calendar className="w-5 h-5 mr-2 text-success" />
-              {t('farmer.orders.detail.deliveryTracking')}
-            </h2>
-            <DeliveryTracker
-              delivery={currentOrder.delivery}
-              onUpdateStatus={handleUpdateDeliveryStatus}
-              isLoading={updatingStatus}
-              orderType="farmer"
-              isOrderOwner={true}
-              isPaid={currentOrder.isPaid}
-            />
           </div>
         </div>
       </main>

@@ -4,17 +4,16 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
-import { useProfile } from '@/contexts/ProfileContext';
+import { UserRole } from '@/types';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 // Import role-specific profile components
 import FarmerProfileComponent from '@/components/profile/FarmerProfile';
-import SupplierProfileComponent from '@/components/profile/SupplierProfile';
+import SupplierProfileComponent from '@/components/profile/SellerProfile';
 import BuyerProfileComponent from '@/components/profile/BuyerProfile';
-import GovernmentProfileComponent from '@/components/profile/GovernmentProfile';
 import AdminProfileComponent from '@/components/profile/AdminProfile';
+import { useUser } from '@/contexts/UserContext';
 
 const Logo = () => (
   <span className="font-extrabold text-2xl ">
@@ -24,11 +23,10 @@ const Logo = () => (
 );
 
 function GlobalProfileComponent() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, } = useAuth();
   const router = useRouter();
-  const { profile, farmerProfile, supplierProfile, buyerProfile, loading: profileLoading, error, getRoleInfo } = useProfile();
-
-  const loading = authLoading || profileLoading;
+  const { loading: userLoading } = useUser()
+  const loading = authLoading || userLoading
 
   if (loading) {
     return (
@@ -48,7 +46,7 @@ function GlobalProfileComponent() {
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <div className="text-destructive mb-4">Error loading profile: {error}</div>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-success text-white rounded hover:bg-success/90"
           >
@@ -66,7 +64,7 @@ function GlobalProfileComponent() {
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <div className={cn("hidden md:block shrink-0")}>
           <Sidebar
-            userType={user?.role as UserType}
+            userType={user?.role as UserRole}
             activeItem='Profile'
           />
         </div>
@@ -92,19 +90,14 @@ function GlobalProfileComponent() {
 
           {/* Role-specific profile content */}
           <div className="p-6">
-            {user.role === UserType.FARMER && (
-              <FarmerProfileComponent profile={farmerProfile} />
-            )}
-            {user.role === UserType.SUPPLIER && (
+            {user.role === UserRole.SELLER && (
               <SupplierProfileComponent profile={supplierProfile} />
             )}
-            {user.role === UserType.BUYER && (
+            {user.role === UserRole.BUYER && (
               <BuyerProfileComponent profile={buyerProfile} />
             )}
-            {user.role === UserType.GOVERNMENT && (
-              <GovernmentProfileComponent profile={user} />
-            )}
-            {user.role === UserType.ADMIN && (
+
+            {user.role === UserRole.ADMIN && (
               <AdminProfileComponent profile={user} />
             )}
           </div>

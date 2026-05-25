@@ -4,9 +4,8 @@ import { Bell, ShoppingCart, Menu, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCart } from '@/contexts/CartContext';
 import { useNotificationContext } from '@/contexts/NotificationContext';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
 
 interface Props {
@@ -22,17 +21,11 @@ function getPageTitle(pathname: string): string {
         .replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const notifHref = (role?: string) =>
-    role === UserType.GOVERNMENT ? '/government/notifications' : '/notifications';
 
 export default function DashboardTopbar({ onMenuClick, title }: Props) {
     const { user } = useAuth();
-    const { getCartItemCount } = useCart();
     const { unreadCount } = useNotificationContext();
     const pathname = usePathname();
-
-    const cartCount = getCartItemCount();
-    const showCart = user?.role === UserType.BUYER;
     const pageTitle = title ?? getPageTitle(pathname);
     const firstName = user?.firstName ?? '';
     const initials = firstName ? firstName[0].toUpperCase() : 'U';
@@ -61,25 +54,14 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
 
             {/* right */}
             <div className="flex items-center gap-1">
-                {showCart && (
-                    <Link href="/cart"
-                        className="relative p-2 text-muted-foreground hover:text-foreground rounded-xl hover:bg-accent transition-colors"
-                        title="Cart">
-                        <ShoppingCart size={18} />
-                        {cartCount > 0 && (
-                            <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 flex items-center justify-center bg-primary text-primary-foreground text-[9px] font-bold rounded-full">
-                                {cartCount > 99 ? '99+' : cartCount}
-                            </span>
-                        )}
-                    </Link>
-                )}
 
-                <Link href={notifHref(user?.role)}
+
+                <Link href={'/notifications'}
                     className="relative p-2 text-muted-foreground hover:text-foreground rounded-xl hover:bg-accent transition-colors"
                     title="Notifications">
                     <Bell size={18} />
                     {unreadCount > 0 && (
-                        <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 flex items-center justify-center bg-destructive text-white text-[9px] font-bold rounded-full">
+                        <span className="absolute top-1 right-1 min-w-4 h-4 px-1 flex items-center justify-center bg-destructive text-white text-[9px] font-bold rounded-full">
                             {unreadCount > 99 ? '99+' : unreadCount}
                         </span>
                     )}
@@ -89,8 +71,8 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
                     className="ml-1 flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-accent transition-colors"
                     title="Profile">
                     <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center overflow-hidden shrink-0">
-                        {user?.avatar
-                            ? <img src={imageUrl(user.avatar)} alt={firstName} className="w-7 h-7 object-cover" />
+                        {user?.profilePicture
+                            ? <img src={imageUrl(user.profilePicture)} alt={firstName} className="w-7 h-7 object-cover" />
                             : <span className="text-[11px] font-semibold text-primary-foreground">{initials}</span>}
                     </div>
                     <span className="hidden lg:block text-[13px] font-medium text-foreground/80">

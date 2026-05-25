@@ -13,25 +13,25 @@ import {
 import Link from 'next/link';
 import MetricCard from '../common/MetricCard';
 import { DashboardSection } from '../common/DashboardGrid';
-import { SupplierDashboardData } from '@/types';
+import { SellerDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
 import DashboardChart from '../common/DashboardChart';
 import { useI18n } from '@/contexts/I18nContext';
 
-export default function SupplierDashboard() {
-  const [dashboardData, setDashboardData] = useState<SupplierDashboardData | null>(null);
+export default function SellerDashboard() {
+  const [dashboardData, setDashboardData] = useState<SellerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const { t, locale } = useI18n();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await dashboardService.getSupplierDashboard();
+        const response = await dashboardService.getSellerDashboard();
         if (response.success) {
           setDashboardData(response.data);
         }
       } catch (error) {
-        console.error('Failed to fetch supplier dashboard data:', error);
+        console.error('Failed to fetch seller dashboard data:', error);
       } finally {
         setLoading(false);
       }

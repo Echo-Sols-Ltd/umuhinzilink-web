@@ -15,7 +15,7 @@ import {
   Eye,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, Order, DeliveryStatus } from '@/types';
+import { UserRole, Order, OrderStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/FarmerGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';
@@ -46,8 +46,8 @@ function SummaryCard({ title, value, caption, accent, color }: SummaryCardProps)
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm p-5 flex flex-col gap-2 transition-all hover:shadow-md group">
       <div className="flex items-center justify-between">
-         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{title}</p>
-         <div className={`w-2 h-2 rounded-full ${color}`}></div>
+        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{title}</p>
+        <div className={`w-2 h-2 rounded-full ${color}`}></div>
       </div>
       <p className="text-2xl font-bold text-foreground">{value}</p>
       <p className={`text-[10px] font-medium ${accent ?? 'text-muted-foreground'} uppercase tracking-tight`}>{caption}</p>
@@ -65,13 +65,12 @@ function FarmerOrders() {
     fetchSellingOrders: fetchFarmerOrders,
     sellingOrdersTotalPages: totalPages,
     sellingOrdersTotalElements: totalElements,
-    markOrderSatisfaction: markFarmerOrderSatisfaction,
     setMutationLoading,
   } = useOrder();
   const {
-    acceptFarmerOrder,
-    cancelFarmerOrder,
-    updateFarmerOrderStatus,
+    acceptOrder,
+    cancelOrder,
+    updateOrderStatus,
     loading: actionLoading,
   } = useOrderAction();
 
@@ -142,13 +141,13 @@ function FarmerOrders() {
   const metrics = useMemo(() => {
     const total = totalElements;
     const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0);
-    const paid = orders.filter(order => order.isPaid).length;
+    const paid = orders.filter(order => order.status === OrderStatus.CONFIRMED).length;
     const pending = orders.filter(order => (order.status || '').toLowerCase() === 'pending').length;
     return { total, totalRevenue, paid, pending };
   }, [orders, totalElements]);
 
   const handleAcceptOrder = async (orderId: string) => {
-    await acceptFarmerOrder(orderId);
+    await acceptOrder(orderId);
     if (selectedOrder?.id === orderId) {
       setIsDetailsModalOpen(false);
     }
@@ -156,48 +155,23 @@ function FarmerOrders() {
 
   const handleCancelOrder = async (orderId: string) => {
     if (window.confirm(t('farmer.orders.toasts.confirmCancel'))) {
-      await cancelFarmerOrder(orderId);
+      await cancelOrder(orderId);
       if (selectedOrder?.id === orderId) {
         setIsDetailsModalOpen(false);
       }
     }
   };
 
-  const handleUpdateStatus = async (orderId: string, status: DeliveryStatus) => {
-    await updateFarmerOrderStatus(orderId, status);
+  const handleUpdateStatus = async (orderId: string, status: OrderStatus) => {
+    await updateOrderStatus(orderId, status);
   };
 
-  const handleSatisfactionConfirm = async () => {
-    if (!selectedOrderForSatisfaction) return;
 
-    try {
-      setSatisfactionLoading(selectedOrderForSatisfaction.id);
-      setMutationLoading(true);
-
-      await markFarmerOrderSatisfaction(selectedOrderForSatisfaction.id);
-
-      alert(t('farmer.orders.toasts.confirmSuccess'));
-
-      setSatisfactionModalOpen(false);
-      setSelectedOrderForSatisfaction(null);
-
-      await fetchFarmerOrders(currentPage - 1, ITEMS_PER_PAGE);
-    } catch (error) {
-      console.error('Satisfaction confirmation error:', error);
-      alert(t('farmer.orders.toasts.confirmFailed'));
-    } finally {
-      setSatisfactionLoading(null);
-      setMutationLoading(false);
-    }
-  };
 
   const displayName = user?.firstName || t('common.farmer'); // Use i18n for default 'Farmer'
 
   return (
     <div className="flex h-screen bg-background overflow-hidden text-foreground">
-      <Sidebar
-        userType={UserType.FARMER}
-        activeItem={t('sidebar.customerOrders')} /> {/* Use i18n */}
 
       <main className="flex-1 h-full bg-background overflow-auto">
         <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm sticky top-0 z-10">
@@ -302,7 +276,7 @@ function FarmerOrders() {
                     <TableCell colSpan={8} className="py-24 text-center">
                       <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                           <Package className="w-8 h-8 opacity-40" />
+                          <Package className="w-8 h-8 opacity-40" />
                         </div>
                         <p className="text-xl font-bold text-foreground">{t('farmer.orders.table.noOrders')}</p>
                         <p className="text-sm">{t('farmer.orders.table.noOrdersDesc')}</p>
@@ -314,10 +288,6 @@ function FarmerOrders() {
                     const statusKey = (order.status || 'PENDING').toUpperCase();
                     const statusLabel = ORDER_STATUS_TRANSLATIONS[statusKey] || ORDER_STATUS_TRANSLATIONS.PENDING;
                     const statusVariant = ORDER_STATUS_VARIANTS[statusKey] || 'secondary';
-
-                    const buyerAddress = order.buyer
-                      ? `${order.buyer.district || ''}${order.buyer.province ? `, ${order.buyer.province}` : ''}`.trim()
-                      : '—';
                     const quantity =
                       Number(order.quantity) || Number(order.product?.stockQuantity) || 0;
                     const amount =
@@ -332,11 +302,8 @@ function FarmerOrders() {
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col gap-0.5">
-                            <span className="font-bold text-foreground truncate max-w-[150px]">
+                            <span className="font-bold text-foreground truncate max-w-37.5">
                               {order.buyer?.firstName ? `${order.buyer?.firstName} ${order.buyer?.lastName}` : order.buyer?.email || t('farmer.orders.table.unknownBuyer')}
-                            </span>
-                            <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[150px]">
-                              {buyerAddress || '—'}
                             </span>
                           </div>
                         </TableCell>
@@ -344,9 +311,9 @@ function FarmerOrders() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 bg-success/10 rounded-lg flex items-center justify-center border border-success/20 shrink-0">
-                               <Leaf className="w-4 h-4 text-success" />
+                              <Leaf className="w-4 h-4 text-success" />
                             </div>
-                            <span className="font-bold text-foreground truncate max-w-[120px]">{order.product?.name || '—'}</span>
+                            <span className="font-bold text-foreground truncate max-w-30">{order.product?.name || '—'}</span>
                           </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground font-semibold">
@@ -380,15 +347,6 @@ function FarmerOrders() {
                             >
                               <Eye className="w-5 h-5" />
                             </button>
-                            {order.delivery && statusKey !== 'PENDING' && statusKey !== 'CANCELLED' && (
-                              <button
-                                onClick={() => router.push('/farmer/delivery')}
-                                className="p-2 text-muted-foreground hover:text-warning hover:bg-warning/10 rounded-xl transition-all"
-                                title={t('farmer.orders.table.tracking')}
-                              >
-                                <Truck className="w-5 h-5" />
-                              </button>
-                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -422,17 +380,6 @@ function FarmerOrders() {
         onCancel={handleCancelOrder}
         onUpdateStatus={handleUpdateStatus}
         loading={actionLoading}
-      />
-
-      <SatisfactionConfirmationModal
-        order={selectedOrderForSatisfaction}
-        isOpen={satisfactionModalOpen}
-        onClose={() => {
-          setSatisfactionModalOpen(false);
-          setSelectedOrderForSatisfaction(null);
-        }}
-        onConfirm={handleSatisfactionConfirm}
-        loading={satisfactionLoading !== null}
       />
     </div>
   );
