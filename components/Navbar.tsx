@@ -5,12 +5,53 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { UserRole } from '@/types';
 
+interface Navlink {
+  label: string,
+  href: string,
+}
+
 
 export default function Navbar() {
   const { user } = useAuth();
   const { t } = useI18n();
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = user;
+
+  const navlinks = () => {
+    if (user?.role === UserRole.ADMIN) {
+      return [
+        {
+          label: t('landing.nav.marketplace') || 'Products',
+          href: '/admin/dashboard'
+        },
+        {
+          label: t('landing.nav.aboutUs') || 'About Us',
+          href: '/about'
+        }
+      ]
+    }
+    if (user?.role === UserRole.BUYER) {
+      return [
+        {
+          label: t('landing.nav.marketplace') || 'Products',
+          href: '/buyer/products'
+        },
+        {
+          label: t('landing.nav.aboutUs') || 'About Us',
+          href: '/about'
+        }
+      ]
+    }
+    return [{
+      label: t('landing.nav.marketplace') || 'Products',
+      href: '/buyer/products'
+    },
+    {
+      label: t('landing.nav.aboutUs') || 'About Us',
+      href: '/about'
+    }]
+
+  }
 
 
   return (

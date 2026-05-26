@@ -3,8 +3,6 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
 import { useProduct } from '@/contexts/ProductContext';
 import { ProductDisplay } from '@/components/products/ProductDisplay';
 import { useI18n } from '@/contexts/I18nContext';

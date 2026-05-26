@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <OfflineIndicator />
         <AppProviders>
           <main id="main-content" tabIndex={-1} >
-            {/* <Navbar /> */}
+            <Navbar />
             {children}
           </main>
           <ModalToastContainer />
