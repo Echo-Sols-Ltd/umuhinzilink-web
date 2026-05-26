@@ -3,19 +3,8 @@
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 
-// redirect logged-in users to their role dashboard
-function dashboardHref(role?: string) {
-  switch (role) {
-    case UserType.FARMER: return '/farmer/dashboard';
-    case UserType.BUYER: return '/buyer/dashboard';
-    case UserType.SUPPLIER: return '/supplier/dashboard';
-    case UserType.ADMIN: return '/admin/dashboard';
-    case UserType.GOVERNMENT: return '/government/dashboard';
-    default: return '/dashboard';
-  }
-}
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -23,25 +12,6 @@ export default function Navbar() {
 
   const isAuthenticated = !!user;
 
-  const getNavs = () => {
-    if (!user) return [
-      { label: 'Login', href: '/auth/signin' },
-      { label: 'Sign Up', href: '/auth/signup' },
-    ]
-    if (user.role === UserType.BUYER) {
-      return [
-        { label: 'My Negotiations', href: '/dashboard' },
-        { label: 'Notifications', href: '/dashboard/notifications' }
-      ]
-    }
-    else if (user.role === UserType.FARMER) {
-      return [
-        { label: 'My Products', href: '/dashboard' },
-        { label: 'Orders', href: '/dashboard/orders' },
-        { label: 'Notifications', href: '/dashboard/notifications' }
-      ]
-    }
-  }
 
   return (
     <nav className="
@@ -73,7 +43,7 @@ export default function Navbar() {
         {/* right CTA */}
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
-            <Link href={dashboardHref(user.role)}
+            <Link href={''}
               className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-semibold hover:bg-primary/20 transition-colors">
               {t('common.dashboard') || 'Dashboard'}
             </Link>

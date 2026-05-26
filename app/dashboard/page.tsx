@@ -11,13 +11,13 @@ import { useI18n } from '@/contexts/I18nContext';
 
 export default function Home() {
   const { t } = useI18n()
-  const { 
-    marketplaceProducts, 
-    fetchMarketplaceProducts, 
-    loading, 
-    marketplaceProductsTotalPages 
+  const {
+    marketplaceProducts,
+    fetchMarketplaceProducts,
+    loading,
+    marketplaceProductsTotalPages
   } = useProduct()
-  
+
   const [currentPage, setCurrentPage] = useState(1)
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -39,9 +39,9 @@ export default function Home() {
               {t('landing.hero.subtitle')}
             </p>
           </header>
-          
+
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-            <ProductDisplay 
+            <ProductDisplay
               products={marketplaceProducts || []}
               loading={loading}
               currentPage={currentPage}
