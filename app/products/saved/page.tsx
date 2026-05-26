@@ -7,20 +7,10 @@ import {
   Mail,
   User as UserIcon,
   Phone,
-  Settings,
-  LogOut,
   Heart,
   Trash2,
-  CheckCircle,
-  LayoutGrid as GridIcon,
-  Loader2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/shared/Sidebar';
-import { BuyerPages, UserType } from '@/types';
-import BuyerGuard from '@/contexts/guard/BuyerGuard';
-
-
 
 const products = [
   {
@@ -82,7 +72,7 @@ const Logo = () => (
 
 import { useI18n } from '@/contexts/I18nContext';
 
-function SavedItemsComponent() {
+export default function SavedItemsComponent() {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<'all' | 'expected' | 'available'>('all');
   const [sortBy, setSortBy] = useState('Newest');
@@ -103,12 +93,8 @@ function SavedItemsComponent() {
 
 
   return (
-    <div className="flex  h-screen overflow bg-background">
-      {/* Sidebar */}
-      <Sidebar
-        userType={UserType.BUYER}
-        activeItem='Favorites'
-      />
+    <div className="flex h-screen overflow bg-background">
+    
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full overflow-auto">
@@ -168,13 +154,5 @@ function SavedItemsComponent() {
         </main>
       </div>
     </div>
-  );
-}
-
-export default function SavedItems() {
-  return (
-    <BuyerGuard>
-      <SavedItemsComponent />
-    </BuyerGuard>
   );
 }

@@ -14,11 +14,9 @@ import {
   Truck,
   Eye,
 } from 'lucide-react';
-import Sidebar from '@/components/shared/Sidebar';
 import { UserRole, Order, OrderStatus } from '@/types';
 import FarmerGuard from '@/contexts/guard/SellerGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
-import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';
 import { Pagination } from '@/components/ui/pagination';
 import {
   Table,
@@ -55,7 +53,7 @@ function SummaryCard({ title, value, caption, accent, color }: SummaryCardProps)
   );
 }
 
-function FarmerOrders() {
+export default function Orders() {
   const router = useRouter();
   const { t, locale } = useI18n();
   const { user } = useAuth();
@@ -166,24 +164,10 @@ function FarmerOrders() {
     await updateOrderStatus(orderId, status);
   };
 
-
-
-  const displayName = user?.firstName || t('common.farmer'); // Use i18n for default 'Farmer'
-
   return (
     <div className="flex h-screen bg-background overflow-hidden text-foreground">
 
       <main className="flex-1 h-full bg-background overflow-auto">
-        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm sticky top-0 z-10">
-          <div>
-            <h1 className="text-xl font-bold">{t('farmer.orders.title')}</h1>
-            <p className="text-xs text-muted-foreground">{t('farmer.orders.subtitle')} {displayName.split(' ')[0]}</p>
-          </div>
-          <button className="bg-warning text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-warning/90 transition-all shadow-md active:scale-95">
-            <Download className="w-4 h-4" /> {t('farmer.orders.export')}
-          </button>
-        </header>
-
         <div className="p-4 sm:p-6 space-y-8 max-w-7xl mx-auto">
           <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             <SummaryCard
@@ -382,13 +366,5 @@ function FarmerOrders() {
         loading={actionLoading}
       />
     </div>
-  );
-}
-
-export default function FarmerOrderPage() {
-  return (
-    <FarmerGuard>
-      <FarmerOrders />
-    </FarmerGuard>
   );
 }
