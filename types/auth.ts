@@ -16,7 +16,7 @@ export interface AskOtpRequest {
 
 export interface VerifyOtpRequest {
   email: string;
-  otp: string;
+  code: string;
 }
 
 export interface GoogleAuthRequest {

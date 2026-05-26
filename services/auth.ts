@@ -71,8 +71,8 @@ class AuthService {
     }
   }
 
-  async verifyOtp(data: VerifyOtpRequest): Promise<ApiResponse<User>> {
-    const response = await apiClient.post<ApiResponse<User>>(API_ENDPOINTS.AUTH.VERIFY_OTP, data);
+  async verifyOtp(data: VerifyOtpRequest): Promise<ApiResponse<AuthResponse>> {
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.VERIFY_OTP, data);
     return response;
   }
 

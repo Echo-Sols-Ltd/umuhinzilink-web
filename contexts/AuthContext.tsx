@@ -141,6 +141,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setSeller(supplierData);
       }
+      router.replace('/');
 
       setLoading(false);
     } catch {
@@ -306,10 +307,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      if (res.data && user) {
-        const updatedUser = { ...user, isVerified: true };
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
-        setUser(updatedUser);
+      if (res.data) {
+        const user = res.data.user;
+        const token = res.data.token;
+
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+        setUser(user);
         notify.success('Verify Success', 'User verified successfully');
         await loadAuthState();
       }
