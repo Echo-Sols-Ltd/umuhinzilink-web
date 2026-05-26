@@ -5,7 +5,6 @@ import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info } from 'luci
 import Image from 'next/image';
 import { Product } from '@/types';
 import { cn } from '@/lib/utils';
-import OrderCreationModal from './OrderCreationModal';
 
 interface ProductOrderInterfaceProps {
   product: Product;
@@ -64,7 +63,7 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
     );
   };
 
-  const sellerInfo = 'farmer' in product ? product.owner : product.owner;
+  const sellerInfo = product.owner
 
   return (
     <>
@@ -160,7 +159,7 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
               <div className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Location:</span>
-                <span className="text-sm font-medium text-foreground">{product.location}</span>
+                <span className="text-sm font-medium text-foreground">{product.district}</span>
               </div>
 
               <div className="flex items-center space-x-2">
@@ -178,13 +177,6 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
                 <span className="text-sm text-muted-foreground">Category:</span>
                 <span className="text-sm font-medium text-foreground">{product.category}</span>
               </div>
-
-              {getCertificationBadge(product.certification) && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-muted-foreground">Certification:</span>
-                  {getCertificationBadge(product.certification)}
-                </div>
-              )}
             </div>
           </div>
 
@@ -202,11 +194,6 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
               <div>
                 <p className="font-medium text-foreground">{sellerInfo.firstName} {sellerInfo.lastName}</p>
                 <p className="text-sm text-muted-foreground">{sellerInfo.email}</p>
-                {sellerInfo.district && (
-                  <p className="text-sm text-muted-foreground">
-                    {sellerInfo.district}, {sellerInfo.province}
-                  </p>
-                )}
               </div>
             </div>
           </div>

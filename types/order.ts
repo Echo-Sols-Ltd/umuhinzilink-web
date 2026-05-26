@@ -39,5 +39,5 @@ export interface OrderRequest {
     productId: string;
     quantity: number;
     paymentMethod: PaymentMethod;
-    proposedPrice: number;
+    proposedPrice?: number;
 }

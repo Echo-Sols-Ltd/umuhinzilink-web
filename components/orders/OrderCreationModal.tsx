@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingCart, Calculator, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
-import { Product, PaymentMethod, OrderType } from '@/types';
+import { Product, PaymentMethod, OrderRequest } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
@@ -12,16 +12,12 @@ interface OrderCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
   product?: Product | null;
-  productType?: 'farmer' | 'supplier';
-  orderType?: 'buyer' | 'supplier';
 }
 
 const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   isOpen,
   onClose,
   product,
-  productType,
-  orderType = 'buyer',
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.MOBILE_MONEY);
@@ -46,23 +42,12 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
 
   if (!isOpen) return null;
 
-  // For supplier order type (farmer requesting from supplier), no product is required
-  if (orderType !== 'supplier' && !product) return null;
 
   const totalPrice = unitPrice * quantity;
   const maxQuantity = product?.stockQuantity || 1000; // Default high limit for custom orders
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-
-    if (orderType === 'supplier') {
-      if (!productName.trim()) {
-        newErrors.productName = 'Product name is required';
-      }
-      if (unitPrice <= 0) {
-        newErrors.unitPrice = 'Unit price must be greater than 0';
-      }
-    }
 
     if (quantity < 1) {
       newErrors.quantity = 'Quantity must be at least 1';
@@ -83,16 +68,10 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
 
     if (!validateForm()) return;
 
-    const orderData = {
+    const orderData: OrderRequest = {
       productId: product?.id || '',
       quantity,
-      totalPrice,
-      orderType: OrderType.NORMAL, paymentMethod, notes: notes.trim() || undefined,
-      // For supplier orders, include product details
-      ...(orderType === 'supplier' && {
-        productName: productName.trim(),
-        unitPrice,
-      }),
+      paymentMethod,
     };
 
     try {
@@ -135,92 +114,41 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
 
         {/* Product Info */}
         <div className="p-6 border-b bg-card">
-          {orderType === 'supplier' ? (
-            // Custom product input for supplier orders
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-foreground">Request Agricultural Input</h3>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Input Name *
-                </label>
-                <input
-                  type="text"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
-                  placeholder="e.g., Fertilizer, Seeds, Pesticides"
-                  className={cn(
-                    'w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent',
-                    errors.productName && 'border-destructive'
-                  )}
-                />
-                {errors.productName && (
-                  <p className="mt-1 text-sm text-destructive flex items-center">
-                    <AlertCircle size={16} className="mr-1" />
-                    {errors.productName}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Estimated Unit Price (RWF) *
-                </label>
-                <input
-                  type="number"
-                  value={unitPrice}
-                  onChange={(e) => setUnitPrice(Number(e.target.value))}
-                  placeholder="0"
-                  min="0"
-                  className={cn(
-                    'w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent',
-                    errors.unitPrice && 'border-destructive'
-                  )}
-                />
-                {errors.unitPrice && (
-                  <p className="mt-1 text-sm text-destructive flex items-center">
-                    <AlertCircle size={16} className="mr-1" />
-                    {errors.unitPrice}
-                  </p>
-                )}
-              </div>
+          <div className="flex space-x-4">
+            <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden shrink-0">
+              <Image
+                src={imageUrl(product?.image) || '/placeholder.png'}
+                alt={product?.name || ''}
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
             </div>
-          ) : (
-            // Existing product display
-            <div className="flex space-x-4">
-              <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden shrink-0">
-                <Image
-                  src={imageUrl(product?.image) || '/placeholder.png'}
-                  alt={product?.name || ''}
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-foreground">{product?.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{product?.description}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center space-x-4">
-                    <span className="text-lg font-semibold text-primary">
-                      {product?.unitPrice?.toLocaleString()} RWF
-                    </span>
-                    <span className="text-sm text-muted-foreground">per {product?.measurementUnit}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className={cn(
-                      'w-2 h-2 rounded-full',
-                      isOutOfStock ? 'bg-destructive' : isLowStock ? 'bg-warning' : 'bg-success'
-                    )} />
-                    <span className={cn(
-                      'text-sm font-medium',
-                      isOutOfStock ? 'text-destructive' : isLowStock ? 'text-warning' : 'text-success'
-                    )}>
-                      {isOutOfStock ? 'Out of Stock' : `${maxQuantity} available`}
-                    </span>
-                  </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-foreground">{product?.name}</h3>
+              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{product?.description}</p>
+              <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center space-x-4">
+                  <span className="text-lg font-semibold text-primary">
+                    {product?.unitPrice?.toLocaleString()} RWF
+                  </span>
+                  <span className="text-sm text-muted-foreground">per {product?.measurementUnit}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className={cn(
+                    'w-2 h-2 rounded-full',
+                    isOutOfStock ? 'bg-destructive' : isLowStock ? 'bg-warning' : 'bg-success'
+                  )} />
+                  <span className={cn(
+                    'text-sm font-medium',
+                    isOutOfStock ? 'text-destructive' : isLowStock ? 'text-warning' : 'text-success'
+                  )}>
+                    {isOutOfStock ? 'Out of Stock' : `${maxQuantity} available`}
+                  </span>
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Order Form */}
@@ -261,7 +189,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                 +
               </button>
               <span className="text-sm text-muted-foreground">
-                {orderType === 'supplier' ? 'units' : product?.measurementUnit}
+                {product?.measurementUnit}
               </span>
             </div>
             {errors.quantity && (
@@ -343,7 +271,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Quantity:</span>
-                <span className="font-medium">{quantity} {orderType === 'supplier' ? 'units' : product?.measurementUnit}</span>
+                <span className="font-medium">{quantity} {product?.measurementUnit}</span>
               </div>
               <div className="border-t pt-2 flex justify-between">
                 <span className="font-semibold text-foreground">Total:</span>
@@ -365,16 +293,16 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={loading || (orderType !== 'supplier' && isOutOfStock)}
+              disabled={loading || isOutOfStock}
               className={cn(
                 'flex-1 px-4 py-2 rounded-lg font-medium transition-colors',
-                (orderType !== 'supplier' && isOutOfStock)
+                (isOutOfStock)
                   ? 'bg-muted text-muted-foreground cursor-not-allowed'
                   : 'bg-primary text-primary-foreground hover:bg-primary/90',
                 loading && 'opacity-50 cursor-not-allowed'
               )}
             >
-              {loading ? 'Creating Order...' : (orderType === 'supplier' ? 'Send Request' : (isOutOfStock ? 'Out of Stock' : 'Create Order'))}
+              {loading ? 'Creating Order...' : (isOutOfStock ? 'Out of Stock' : 'Create Order')}
             </button>
           </div>
         </form>

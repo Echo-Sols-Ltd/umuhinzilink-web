@@ -1,17 +1,13 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { cn, imageUrl } from "@/lib/utils";
-import { Product, MessageType, ProductRef } from "@/types";
+import { Product } from "@/types";
 import { MapPin, Package, CheckCircle2, ShoppingCart, ArrowRight, Edit, MessageSquare } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useProduct } from "@/contexts/ProductContext";
-import { useChat } from "@/hooks/useChat";
 import { useI18n } from "@/contexts/I18nContext";
-import { useCartAction } from "@/hooks/useCartAction";
-import { CartItemType } from "@/types";
-import NegotiationModal from "./NegotiationModal";
 import { useState } from "react";
 
 interface ProductCardProps {
@@ -22,8 +18,6 @@ interface ProductCardProps {
 export default function ProductCard({ product, featured = false }: ProductCardProps) {
     const { user } = useAuth();
     const { showOrderModal } = useProduct();
-    const { handleUserClick, handleSendMessage } = useChat();
-    const { addProductToCart } = useCartAction();
     const router = useRouter();
     const { t } = useI18n();
     const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
@@ -31,7 +25,6 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
     const isProductOwner = user?.id === product.owner?.id;
     const isAvailable = product.status === 'IN_STOCK';
     const isLowStock = product.status === 'LOW_STOCK';
-    const isCertified = product.certification && product.certification !== 'NONE';
 
     const handleCardClick = () => {
         if (isProductOwner) {
@@ -56,8 +49,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                 router.push('/auth/signin');
                 return;
             }
-            await addProductToCart(product.id, 1);
-            router.push(`/cart`);
+
         }
     }
 
@@ -107,14 +99,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                     </span>
                 </div>
 
-                {/* Certification Badge */}
-                {isCertified && (
-                    <div className="absolute top-3 right-3 pointer-events-none">
-                        <div className="bg-primary/90 text-white p-1.5 rounded-lg shadow-sm backdrop-blur-md border border-white/20">
-                            <CheckCircle2 className="w-4 h-4" />
-                        </div>
-                    </div>
-                )}
+
             </div>
 
             {/* 2️⃣ Info Section */}
@@ -142,7 +127,7 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
 
                     <div className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground/80">
                         <MapPin className="w-3.5 h-3.5 text-primary/60" />
-                        <span className="truncate">{product.location || 'Rwanda'}</span>
+                        <span className="truncate">{product.district || 'Rwanda'}</span>
                     </div>
                 </div>
 
@@ -158,8 +143,8 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                                 </span>/
                                 <span className="font-bold text-foreground">
                                     {t(`enums.units.${product.measurementUnit}`) === `enums.units.${product.measurementUnit}`
-                                    ? product.measurementUnit
-                                    : t(`enums.units.${product.measurementUnit}`)}</span>
+                                        ? product.measurementUnit
+                                        : t(`enums.units.${product.measurementUnit}`)}</span>
                             </div>
                         </div>
 
@@ -197,15 +182,6 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                     </div>
                 </div>
             </div>
-
-            {createPortal(
-                <NegotiationModal
-                    product={product}
-                    isOpen={isNegotiateModalOpen}
-                    onClose={() => setIsNegotiateModalOpen(false)}
-                />,
-                document.body
-            )}
         </div>
     );
 }
