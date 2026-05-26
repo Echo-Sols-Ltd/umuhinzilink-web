@@ -3,10 +3,10 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import { useRouter } from 'next/navigation';
-import { UserType } from '@/types';
+import { UserRole} from '@/types';
 import { Loader2 } from 'lucide-react';
 
-const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const SellerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -18,7 +18,7 @@ const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       return;
     }
 
-    if (user.role !== UserType.FARMER) {
+    if (user.role !== UserRole.SELLER) {
       router.replace('/unauthorized');
     }
   }, [user, loading, router]);
@@ -36,11 +36,11 @@ const FarmerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
 
   // Don't render children until we know user is the right role
-  if (!user || user.role !== UserType.FARMER) {
+  if (!user || user.role !== UserRole.SELLER) {
     return null;
   }
 
   return <>{children}</>;
 };
 
-export default FarmerGuard;
+export default SellerGuard;

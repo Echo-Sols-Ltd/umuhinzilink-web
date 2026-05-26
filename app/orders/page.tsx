@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserRole, Order, OrderStatus } from '@/types';
-import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import FarmerGuard from '@/contexts/guard/SellerGuard';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import SatisfactionConfirmationModal from '@/components/orders/SatisfactionConfirmationModal';
 import { Pagination } from '@/components/ui/pagination';

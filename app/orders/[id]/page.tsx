@@ -7,7 +7,7 @@ import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import Sidebar from '@/components/shared/Sidebar';
 import { UserRole, Order } from '@/types';
-import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import FarmerGuard from '@/contexts/guard/SellerGuard';
 import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard } from 'lucide-react';
 import { orderService } from '@/services/orders';

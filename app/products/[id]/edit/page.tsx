@@ -8,7 +8,7 @@ import { useProduct } from '@/contexts/ProductContext';
 import Link from 'next/link';
 import { Loader2, ArrowLeft, Package, DollarSign, MapPin, ImageIcon, Eye, Info, Upload, Check } from 'lucide-react';
 import { CertificationType, ProductRequest, MeasurementUnit, ProductCategory, UserType } from '@/types';
-import FarmerGuard from '@/contexts/guard/FarmerGuard';
+import FarmerGuard from '@/contexts/guard/SellerGuard';
 import { productService } from '@/services/products';
 import {
   Select,

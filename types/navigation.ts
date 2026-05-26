@@ -62,7 +62,7 @@ export enum BuyerPages {
 
 // Component props and UI-related type definitions
 
-import { UserType } from './user';
+import { UserRole } from './user';
 
 export interface SidebarItem {
   icon: any;
@@ -75,5 +75,5 @@ export interface SidebarItem {
 
 export interface SidebarProps {
   activeItem?: string;
-  userType?: UserType;
+  userType?: UserRole;
 }
