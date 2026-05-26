@@ -39,7 +39,7 @@ class PaymentService {
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
 
-    const url = `${API_ENDPOINTS.PAYMENT.MY_TRANSACTIONS}?${queryParams.toString()}`;
+    const url = `${API_ENDPOINTS.WALLET.TRANSACTIONS}?${queryParams.toString()}`;
     return await apiClient.get<ApiResponse<{ content: Transaction[]; totalElements: number; totalPages: number; size: number; number: number }>>(url);
   }
 

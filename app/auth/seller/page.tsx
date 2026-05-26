@@ -1,357 +1,401 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import { BiLogoFacebookCircle, BiLogoGoogle } from 'react-icons/bi';
+import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { notify } from '@/lib/notify';
-import { useAuth } from '@/contexts/AuthContext';
-import { useI18n } from '@/contexts/I18nContext';
-import { SupplierRequest, SupplierType, Province, District } from '@/types';
-import { supplierTypeOptions, provinceOptions, districtOptions } from '@/types';
-import useUserAction from '@/hooks/useUserAction';
-import { Upload, X } from 'lucide-react';
-import AuthFooter from '@/components/auth/AuthFooter';
+import {
+    Sprout, MapPin, Phone, FileText, ChevronRight,
+    ChevronLeft, CheckCircle, Package, TrendingUp,
+    Users, ArrowRight, Wheat, Leaf, ShoppingBag
+} from 'lucide-react';
 
-export default function SupplierSignUp() {
-  const { registerSupplier, user } = useAuth();
-  const { t } = useI18n();
-  const { uploadFile, uploadingFiles, loading: uploadLoading } = useUserAction();
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [profilePreview, setProfilePreview] = useState<string>('');
-  const socialLinks = [
-    { icon: <BiLogoFacebookCircle size={25} />, link: 'https://facebook.com' },
-    { icon: <BiLogoGoogle size={25} />, link: 'https://google.com' },
-  ];
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-  const [supplierData, setSupplierData] = useState<SupplierRequest>({
-    businessName: '',
-    supplierType: SupplierType.WHOLESALER,
-  });
+interface SellerFormData {
+    displayName: string;
+    location: string;
+    district: string;
+    phone: string;
+    description: string;
+}
 
-  const [fieldErrors, setFieldErrors] = useState({
-    businessName: '',
-    supplierType: '',
-  });
+// ── Rwanda Districts ───────────────────────────────────────────────────────────
 
-  const [touched, setTouched] = useState({
-    businessName: false,
-    supplierType: false,
-  });
+const DISTRICTS = [
+    'Bugesera', 'Burera', 'Gakenke', 'Gasabo', 'Gatsibo',
+    'Gicumbi', 'Gisagara', 'Huye', 'Kamonyi', 'Karongi',
+    'Kayonza', 'Kicukiro', 'Kirehe', 'Muhanga', 'Musanze',
+    'Ngoma', 'Ngororero', 'Nyabihu', 'Nyagatare', 'Nyamasheke',
+    'Nyanza', 'Nyarugenge', 'Nyaruguru', 'Rubavu', 'Ruhango',
+    'Rulindo', 'Rusizi', 'Rutsiro', 'Rwamagana',
+];
 
+// ── Benefit cards data ────────────────────────────────────────────────────────
 
+const BENEFITS = [
+    {
+        icon: TrendingUp,
+        title: 'Earn more',
+        body: 'Sell directly to buyers across Rwanda. No middlemen, full price.',
+    },
+    {
+        icon: Users,
+        title: 'Reach buyers',
+        body: 'Your listings are visible to thousands of buyers from day one.',
+    },
+    {
+        icon: ShoppingBag,
+        title: 'Negotiate freely',
+        body: 'Chat and agree on prices that work for both you and your buyer.',
+    },
+];
 
-  const handleSupplierInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+// ── Step indicator ────────────────────────────────────────────────────────────
 
-    if (name === 'businessName') {
-      setSupplierData(prev => ({
-        ...prev,
-        businessName: value,
-      }));
-    } else if (name === 'province') {
-      setSupplierData(prev => ({
-        ...prev,
-        province: value as Province,
-        district: District.GASABO,
-      }));
-    } else if (name === 'district') {
-      setSupplierData(prev => ({
-        ...prev,
-        district: value as District,
-      }));
-    } else if (name === 'supplierType') {
-      setSupplierData(prev => ({
-        ...prev,
-        supplierType: value as SupplierType,
-      }));
-    }
-
-    // Clear field error when user starts typing
-    if (fieldErrors[name as keyof typeof fieldErrors]) {
-      setFieldErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name } = e.target;
-    setTouched(prev => ({ ...prev, [name]: true }));
-    const value = supplierData[name as keyof typeof supplierData];
-    validateField(name, value);
-  };
-
-  const validateField = (name: string, value: string | boolean | any) => {
-    let error = '';
-
-    const stringValue = typeof value === 'string' ? value : '';
-
-    switch (name) {
-      case 'businessName':
-        if (!value || stringValue.trim() === '') {
-          error = t('auth.supplier.validation.businessNameRequired');
-        } else if (stringValue.length < 2) {
-          error = t('auth.supplier.validation.businessNameMinLength');
-        }
-        break;
-      case 'supplierType':
-        if (!value) {
-          error = t('auth.supplier.validation.supplierTypeRequired');
-        }
-        break;
-      case 'province':
-        if (!value) {
-          error = t('auth.supplier.validation.provinceRequired');
-        }
-        break;
-      case 'district':
-        if (!value) {
-          error = t('auth.supplier.validation.districtRequired');
-        }
-        break;
-      default:
-        break;
-    }
-
-    setFieldErrors(prev => ({
-      ...prev,
-      [name]: error,
-    }));
-
-    return error === '';
-  };
-
-  const validateForm = () => {
-    const businessNameValid = validateField('businessName', supplierData.businessName);
-    const supplierTypeValid = validateField('supplierType', supplierData.supplierType);
-
-    setTouched({
-      businessName: true,
-      supplierType: true,
-    });
-
-    return businessNameValid && supplierTypeValid;
-  };
-
-  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        notify.error(t('auth.signUp.validation.fileTooLarge'), t('common.error'));
-        return;
-      }
-      if (!file.type.startsWith('image/')) {
-        notify.error(t('auth.signUp.validation.invalidFileType'), t('common.error'));
-        return;
-      }
-      setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const removeProfileImage = () => {
-    setProfileImage(null);
-    setProfilePreview('');
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    // Validate form data
-    if (!validateForm()) {
-      notify.error(t('auth.supplier.validation.fixErrorsBelow'), t('common.error'));
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // First upload profile image if selected
-      if (profileImage) {
-        await uploadFile(profileImage);
-      }
-
-      // Then register the supplier
-      const requestData = supplierData;
-      await registerSupplier(requestData);
-
-      notify.success(t('auth.supplier.success.accountCreated'), t('common.success'));
-
-    } catch (error) {
-      notify.error(t('auth.supplier.error.accountCreationFailed'), t('auth.register.error'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Get districts for selected province
-  const getDistrictsForProvince = (province: Province) => {
-    return districtOptions.filter(district => {
-      return true;
-    });
-  };
-
-  return (
-    <div className="w-full h-screen bg-background flex items-center">
-      <div className="w-full overflow-scroll h-full bg-card rounded-lg p-6 sm:p-6 z-20 relative py-20">
-        <h1 className="text-center text-foreground font-extrabold text-xl sm:text-2xl mb-4">{t('auth.signUp.createSupplierAccount')}</h1>
-
-        <div className="flex gap-4 justify-center mb-6">
-          {socialLinks.map((linkItem, idx) => (
-            <Link
-              key={idx}
-              href={linkItem.link}
-              target="_blank"
-              className="p-3 text-muted-foreground transition border border-border rounded-md hover:bg-muted"
-            >
-              {linkItem.icon}
-            </Link>
-          ))}
-        </div>
-
-        <p className="text-center text-muted-foreground text-sm mb-6">{t('auth.signUp.subtitle')}</p>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Profile Image Section */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.signUp.profileImage')}</h2>
-            <div className="flex items-center space-x-6">
-              <div className="relative">
-                {profilePreview ? (
-                  <div className="relative">
-                    <Image
-                      src={profilePreview}
-                      alt={t('auth.signUp.alt.profilePreview')}
-                      width={120}
-                      height={120}
-                      className="w-30 h-30 rounded-full object-cover border-4 border-border"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeProfileImage}
-                      className="absolute -top-2 -right-2 bg-destructive text-primary-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-30 h-30 rounded-full bg-muted border-4 border-muted flex items-center justify-center">
-                    <Upload className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                )}
-              </div>
-              <Button
-                type="button"
-                onClick={() => document.getElementById('profileImage')?.click()}
-                disabled={loading || uploadLoading}
-                variant="outline"
-              >
-                {t('auth.supplier.chooseImage')}
-              </Button>
-              <input
-                id="profileImage"
-                type="file"
-                accept="image/*"
-                onChange={handleProfileImageChange}
-                className="hidden"
-                disabled={loading || uploadLoading}
-              />
-            </div>
-          </div>
-
-          {/* Business Information Section */}
-          <div className="border-b pb-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t('auth.supplier.businessInformation')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="businessName" className="text-foreground font-medium text-sm">
-                  {t('auth.supplier.fields.businessName')}
-                </Label>
-                <Input
-                  id="businessName"
-                  name="businessName"
-                  type="text"
-                  value={supplierData.businessName}
-                  onChange={handleSupplierInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  placeholder={t('auth.supplier.placeholders.businessName')}
-                  className={`text-foreground font-medium text-sm ${touched.businessName && fieldErrors.businessName
-                    ? 'border-destructive focus:border-destructive focus:ring-destructive'
-                    : 'border-border focus:border-success focus:ring-success'
+function StepDots({ current, total }: { current: number; total: number }) {
+    return (
+        <div className="flex items-center gap-2">
+            {Array.from({ length: total }).map((_, i) => (
+                <div
+                    key={i}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                        i === current
+                            ? 'w-6 bg-green-600'
+                            : i < current
+                            ? 'w-3 bg-green-300'
+                            : 'w-3 bg-gray-200 dark:bg-gray-700'
                     }`}
-                  required
                 />
-              </div>
+            ))}
+        </div>
+    );
+}
 
-              <div>
-                <Label htmlFor="supplierType" className="text-foreground font-medium text-sm">
-                  {t('auth.supplier.fields.supplierType')}
-                </Label>
-                <select
-                  id="supplierType"
-                  name="supplierType"
-                  value={supplierData.supplierType}
-                  onChange={handleSupplierInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className={`w-full text-foreground font-medium text-sm border rounded-md px-3 py-2 ${touched.supplierType && fieldErrors.supplierType
-                    ? 'border-destructive focus:border-destructive focus:ring-destructive'
-                    : 'border-border focus:border-success focus:ring-success'
-                    }`}
-                  required
-                >
-                  <option value="">{t('auth.supplier.placeholders.selectSupplierType')}</option>
-                  {supplierTypeOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label.replace(/_/g, ' ')}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-          {/* Submit Button */}
-          <div className="space-y-4">
-            <Button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm"
-              disabled={loading || uploadLoading}
-            >
-              {loading || uploadLoading ? t('auth.supplier.creatingAccount') : t('auth.supplier.finishCreatingAccount')}
-            </Button>
-          </div>
-        </form>
-        <AuthFooter />
-      </div>
+// ── Field component ───────────────────────────────────────────────────────────
 
-      {/* Hero Section */}
-      <div className="relative w-full h-full flex flex-col justify-center items-center text-center ">
-        <Image
-          src="/Image.png"
-          alt="background"
-          fill
-          className="absolute top-0 left-0 object-cover w-full h-full dark:brightness-50 dark:contrast-110 transition-all duration-300"
-        />
-        <h1 className="text-white text-4xl sm:text-5xl font-extrabold z-10 relative mt-8">
-          {t('auth.signUp.supplierRegistration')}
-        </h1>
-        <p className="text-white z-10 relative mt-2 text-sm sm:text-base px-4 sm:px-0">
-          {t('auth.signUp.joinMarketplace.supplier')}
-        </p>
-      </div>
+function Field({
+    label,
+    error,
+    children,
+}: {
+    label: string;
+    error?: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-foreground">{label}</label>
+            {children}
+            {error && <p className="text-xs text-red-500">{error}</p>}
+        </div>
+    );
+}
 
-    </div>
-  );
+// ── Main Component ────────────────────────────────────────────────────────────
+
+export default function BecomeSeller() {
+    const [step, setStep] = useState(0); // 0 = intro, 1 = form, 2 = success
+    const [formData, setFormData] = useState<SellerFormData>({
+        displayName: '',
+        location: '',
+        district: '',
+        phone: '',
+        description: '',
+    });
+    const [errors, setErrors] = useState<Partial<SellerFormData>>({});
+    const [loading, setLoading] = useState(false);
+
+    // ── Validation ─────────────────────────────────────────────────────────
+
+    const validate = (): boolean => {
+        const e: Partial<SellerFormData> = {};
+        if (!formData.displayName.trim())
+            e.displayName = 'Farm or business name is required';
+        if (!formData.district)
+            e.district = 'Please select your district';
+        if (!formData.phone.trim())
+            e.phone = 'Phone number is required';
+        else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(formData.phone.replace(/\s/g, '')))
+            e.phone = 'Enter a valid Rwandan phone number';
+        setErrors(e);
+        return Object.keys(e).length === 0;
+    };
+
+    // ── Submit ──────────────────────────────────────────────────────────────
+
+    const handleSubmit = async () => {
+        if (!validate()) return;
+        setLoading(true);
+        try {
+            // TODO: call POST /api/sellers/onboard with formData
+            // await sellerService.onboard(formData);
+            await new Promise(r => setTimeout(r, 1200)); // remove when wired
+            setStep(2);
+        } catch {
+            // handle error
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleChange = (field: keyof SellerFormData, value: string) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+        if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
+    };
+
+    // ── Input shared className ──────────────────────────────────────────────
+
+    const inputCls = (field: keyof SellerFormData) =>
+        `w-full h-11 px-3.5 rounded-xl border text-sm text-foreground bg-gray-50 dark:bg-gray-800/50 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${
+            errors[field]
+                ? 'border-red-400 focus:ring-red-400'
+                : 'border-border'
+        }`;
+
+    // ── Render ──────────────────────────────────────────────────────────────
+
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
+
+            {/* Top bar */}
+            <header className="fixed top-0 left-0 right-0 z-40 h-14 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border flex items-center px-4">
+                <Link href="/" className="flex items-center gap-1.5">
+                    <Sprout size={18} className="text-green-600" />
+                    <span className="font-extrabold text-base">
+                        <span className="text-green-600">Umuhinzi</span>
+                        <span className="text-foreground">Link</span>
+                    </span>
+                </Link>
+            </header>
+
+            <main className="flex-1 pt-14 flex items-center justify-center px-4 py-12">
+                <div className="w-full max-w-md">
+
+                    {/* ── STEP 0: Intro ─────────────────────────────────── */}
+                    {step === 0 && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+                            {/* Hero illustration area */}
+                            <div className="relative mb-8 h-52 rounded-2xl bg-green-600 overflow-hidden flex items-end px-6 pb-6">
+                                {/* Dot pattern */}
+                                <div className="absolute inset-0 opacity-10"
+                                    style={{
+                                        backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+                                        backgroundSize: '20px 20px',
+                                    }}
+                                />
+                                {/* Decorative icons */}
+                                <Wheat size={80} className="absolute top-4 right-6 text-green-400 opacity-30 rotate-12" />
+                                <Leaf size={48} className="absolute top-10 right-28 text-green-300 opacity-20 -rotate-6" />
+                                <Package size={36} className="absolute top-6 left-6 text-green-300 opacity-20 rotate-6" />
+
+                                <div className="relative z-10">
+                                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mb-3">
+                                        <Sprout size={22} className="text-white" />
+                                    </div>
+                                    <h1 className="text-2xl font-extrabold text-white leading-tight">
+                                        Start selling<br />on UmuhinziLink
+                                    </h1>
+                                    <p className="text-green-200 text-sm mt-1">
+                                        Reach buyers across Rwanda
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Benefits */}
+                            <div className="space-y-3 mb-8">
+                                {BENEFITS.map(({ icon: Icon, title, body }) => (
+                                    <div
+                                        key={title}
+                                        className="flex items-start gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl border border-border">
+                                        <div className="w-9 h-9 rounded-lg bg-green-50 dark:bg-green-950/40 flex items-center justify-center shrink-0">
+                                            <Icon size={17} className="text-green-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-semibold text-foreground">{title}</p>
+                                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{body}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* CTA */}
+                            <button
+                                onClick={() => setStep(1)}
+                                className="w-full h-12 bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all">
+                                Get started
+                                <ArrowRight size={16} />
+                            </button>
+
+                            <p className="text-center text-xs text-muted-foreground mt-4">
+                                Already a seller?{' '}
+                                <Link href="/seller/dashboard" className="text-green-600 font-medium hover:underline">
+                                    Go to dashboard
+                                </Link>
+                            </p>
+                        </div>
+                    )}
+
+                    {/* ── STEP 1: Form ──────────────────────────────────── */}
+                    {step === 1 && (
+                        <div className="animate-in fade-in slide-in-from-right-4 duration-400">
+
+                            {/* Header */}
+                            <div className="flex items-center justify-between mb-6">
+                                <button
+                                    onClick={() => setStep(0)}
+                                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                                    <ChevronLeft size={16} />
+                                    Back
+                                </button>
+                                <StepDots current={0} total={1} />
+                            </div>
+
+                            <div className="mb-6">
+                                <h2 className="text-xl font-bold text-foreground">Your seller profile</h2>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    This is what buyers will see when they view your listings.
+                                </p>
+                            </div>
+
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5 space-y-4">
+
+                                <Field label="Farm or business name" error={errors.displayName}>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Mugisha's Farm, AgriSupplies Kigali"
+                                        value={formData.displayName}
+                                        onChange={e => handleChange('displayName', e.target.value)}
+                                        className={inputCls('displayName')}
+                                    />
+                                </Field>
+
+                                <Field label="District" error={errors.district}>
+                                    <select
+                                        value={formData.district}
+                                        onChange={e => handleChange('district', e.target.value)}
+                                        className={inputCls('district')}>
+                                        <option value="">Select your district</option>
+                                        {DISTRICTS.map(d => (
+                                            <option key={d} value={d.toUpperCase()}>{d}</option>
+                                        ))}
+                                    </select>
+                                </Field>
+
+                                <Field label="Business phone" error={errors.phone}>
+                                    <div className="relative">
+                                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground select-none">
+                                            +250
+                                        </span>
+                                        <input
+                                            type="tel"
+                                            placeholder="078 000 0000"
+                                            value={formData.phone}
+                                            onChange={e => handleChange('phone', e.target.value)}
+                                            className={`${inputCls('phone')} pl-14`}
+                                        />
+                                    </div>
+                                </Field>
+
+                                <Field label="What do you sell? (optional)" error={errors.description}>
+                                    <textarea
+                                        rows={3}
+                                        placeholder="e.g. Fresh maize, beans, and vegetables from Musanze. Also seeds and fertilizer."
+                                        value={formData.description}
+                                        onChange={e => handleChange('description', e.target.value)}
+                                        className={`${inputCls('description')} h-auto py-3 resize-none`}
+                                    />
+                                </Field>
+                            </div>
+
+                            {/* Info note */}
+                            <div className="flex items-start gap-2.5 mt-4 px-1">
+                                <CheckCircle size={14} className="text-green-500 mt-0.5 shrink-0" />
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    You can still buy products as a buyer after becoming a seller. Your account works for both.
+                                </p>
+                            </div>
+
+                            {/* Submit */}
+                            <button
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className="w-full h-12 mt-6 bg-green-600 hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all">
+                                {loading ? (
+                                    <>
+                                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="32" strokeDashoffset="12" />
+                                        </svg>
+                                        Setting up your profile…
+                                    </>
+                                ) : (
+                                    <>
+                                        Become a seller
+                                        <ChevronRight size={16} />
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    )}
+
+                    {/* ── STEP 2: Success ───────────────────────────────── */}
+                    {step === 2 && (
+                        <div className="animate-in fade-in zoom-in-95 duration-500 text-center">
+
+                            {/* Success badge */}
+                            <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/40 flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle size={40} className="text-green-600" />
+                            </div>
+
+                            <h2 className="text-2xl font-extrabold text-foreground">
+                                You're a seller! 🌱
+                            </h2>
+                            <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-xs mx-auto">
+                                Your seller profile is ready. Start by adding your first listing — it only takes a minute.
+                            </p>
+
+                            {/* Profile preview card */}
+                            <div className="mt-6 p-4 bg-white dark:bg-gray-900 rounded-2xl border border-border text-left">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                                        <Sprout size={22} className="text-green-600" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-foreground text-sm">{formData.displayName}</p>
+                                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                                            <MapPin size={11} />
+                                            {formData.district ? formData.district.charAt(0) + formData.district.slice(1).toLowerCase() : ''}
+                                        </p>
+                                    </div>
+                                    <span className="ml-auto text-xs text-green-600 bg-green-50 dark:bg-green-950/40 px-2 py-1 rounded-full font-medium border border-green-200 dark:border-green-800">
+                                        Verified
+                                    </span>
+                                </div>
+                                {formData.description && (
+                                    <p className="text-xs text-muted-foreground mt-3 leading-relaxed border-t border-border pt-3">
+                                        {formData.description}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Actions */}
+                            <div className="space-y-3 mt-6">
+                                <Link
+                                    href="/seller/listings/new"
+                                    className="w-full h-12 bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all">
+                                    <Package size={16} />
+                                    Add your first listing
+                                </Link>
+                                <Link
+                                    href="/seller/dashboard"
+                                    className="w-full h-11 bg-white dark:bg-gray-900 border border-border hover:bg-gray-50 dark:hover:bg-gray-800/50 text-foreground font-medium text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
+                                    Go to seller dashboard
+                                </Link>
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+            </main>
+        </div>
+    );
 }

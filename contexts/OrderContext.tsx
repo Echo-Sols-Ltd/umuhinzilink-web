@@ -6,8 +6,6 @@ import { useProduct } from './ProductContext';
 import { useSocket } from './SocketContext';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 
-
-
 type OrderContextValue = {
   loading: boolean;
   error?: string | null;

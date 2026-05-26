@@ -21,7 +21,6 @@ type WalletContextValue = {
   // Wallet operations
   fetchWallet: () => Promise<Wallet | null>;
   fetchTransactions: () => Promise<Transaction[] | null>;
-  fetchPaymentHistory: () => Promise<Transaction[] | null>;
 
   deposit: (amount: number, description?: string) => Promise<Transaction | null>;
   payOrder: (orderId: string, description?: string) => Promise<Transaction | null>;
@@ -92,36 +91,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Fetch wallet transactions
-  const fetchTransactions = async (): Promise<Transaction[] | null> => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const res = await walletService.getTransactions({ page: 0, size: 50, sortBy: 'createdAt', sortDir: 'desc' });
-      if (!res.success) {
-        setError(res.message || 'Failed to fetch transactions');
-        return null;
-      }
-
-      const transactionData = res.data;
-      const transactionList = transactionData ? transactionData : [];
-
-      setTransactions(transactionList as any);
-      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactionList));
-
-      return transactionList;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch transactions';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Fetch payment history
-  const fetchPaymentHistory = async (): Promise<Transaction[] | null> => {
+  const fetchTransactions= async (): Promise<Transaction[] | null> => {
     try {
       setLoading(true);
       setError(null);
@@ -308,7 +279,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     await Promise.all([
       fetchWallet(),
       fetchTransactions(),
-      fetchPaymentHistory(),
     ]);
   };
 
@@ -352,7 +322,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     paymentHistory,
     fetchWallet,
     fetchTransactions,
-    fetchPaymentHistory,
     deposit,
     payOrder,
     processPayment,

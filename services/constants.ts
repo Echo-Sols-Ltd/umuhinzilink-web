@@ -82,13 +82,11 @@ export const API_ENDPOINTS = {
     UPLOAD_GENERIC: '/upload',
   },
   WALLET: {
-    BALANCE: '/wallet/balance',
+    ME: '/wallet/me',
     DEPOSIT: '/wallet/deposit',
     PAY_ORDER: '/wallet/pay-order',
     TRANSACTIONS: '/wallet/transactions',
     TRANSACTION_BY_ID: (id: string) => `/wallet/transaction/${id}`,
-    ADMIN_CREATE_WALLET: (userId: string) => `/wallet/admin/create-wallet/${userId}`,
-    // Admin endpoints
     ADMIN_ALL_WALLETS: '/admin/wallets',
     ADMIN_ALL_TRANSACTIONS: '/admin/transactions',
     SYSTEM_WALLET: '/admin/wallet/system',

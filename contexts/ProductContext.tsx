@@ -254,10 +254,6 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     [marketplaceProducts]
   );
 
-  
-
-
-
   const value: ProductContextValue = {
     addMyProduct,
     updateProductState,

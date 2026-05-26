@@ -25,6 +25,7 @@ const STORAGE_KEYS = {
 } as const;
 
 interface AuthContextType {
+  isAuthenticated: boolean
   login: (data: LoginRequest) => Promise<void>;
   googleLogin: (data: string) => Promise<void>
   googleToken: string | null
@@ -59,6 +60,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [seller, setSeller] = useState<Seller | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 
   useEffect(() => {
     // Register logout listener to handle token expiry and unauthorized access
@@ -142,7 +144,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setSeller(supplierData);
       }
       router.replace('/');
-
+      setIsAuthenticated(true)
       setLoading(false);
     } catch {
       notify.error('Please try again later', 'Loading auth state failed');
@@ -168,14 +170,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
         setUser(res.data.user);
+        if (!res.data.user.emailVerified) {
+          await askOtpCode({ email: res.data.user.email });
+          router.replace('/auth/verify-otp');
+          setLoading(false);
+          return;
+        }
 
-        // Fetch role-specific profile data
-        const roleFetchers = {
-          [UserRole.SELLER]: fetchSeller,
-        };
-
-        const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
-        if (fetcher) await fetcher();
         router.replace('/');
       }
     } catch {
@@ -384,6 +385,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         verifyOtp,
         askOtpCode,
         updateAvatar,
+        isAuthenticated,
       }}
     >
       {children}

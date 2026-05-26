@@ -127,7 +127,7 @@ export default function Navbar() {
                           />
                         ) : (
                           <DropdownLink
-                            href="/become-seller"
+                            href="/auth/seller"
                             icon={<Sprout size={15} />}
                             label="Become a Seller"
                             onClick={() => setAvatarOpen(false)}

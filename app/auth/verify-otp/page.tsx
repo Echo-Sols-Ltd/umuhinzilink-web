@@ -174,12 +174,12 @@ export default function VerifyPage() {
                             </form>
 
                             {/* Sign in link */}
-                            <p className="mt-6 text-sm text-muted-foreground">
+                            <div className="mt-6 text-sm text-muted-foreground">
                                 {t('auth.verifyOtp.haveAccount')}{' '}
                                 <div onClick={() => handleSignin()} className="text-success cursor-pointer hover:text-success/80 font-medium">
                                     {t('auth.signIn.signIn')}
                                 </div>
-                            </p>
+                            </div>
                         </div>
                     </div>
                     <AuthFooter />
