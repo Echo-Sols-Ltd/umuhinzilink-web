@@ -12,7 +12,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { SidebarProps, UserType } from '@/types';
+import { SidebarProps, UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
 import DashboardTopbar from './DashboardTopbar';
 
@@ -21,79 +21,46 @@ interface NavItem { icon: React.ReactNode; label: string; href: string; badge?: 
 interface NavGroup { label?: string; items: NavItem[] }
 
 // ─── nav config ───────────────────────────────────────────────────
-function getNavGroups(role: UserType): NavGroup[] {
+function getNavGroups(role: UserRole): NavGroup[] {
     switch (role) {
-        case UserType.FARMER: return [
+        case UserRole.SELLER: return [
             {
                 label: 'Sell', items: [
-                    { icon: <LayoutGrid size={16} />, label: 'Dashboard',        href: '/farmer/dashboard' },
-                    { icon: <Package     size={16} />, label: 'My Products',     href: '/farmer/products' },
-                    { icon: <ShoppingCart size={16}/>, label: 'Customer Orders', href: '/farmer/orders' },
-                    { icon: <MessageSquare size={16}/>,label: 'Negotiations',    href: '/negotiations' },
-                ],
-            },
-            {
-                label: 'Buy', items: [
-                    { icon: <Store       size={16} />, label: 'Supply Market',   href: '/farmer/requests' },
-                    { icon: <ShoppingCart size={16}/>, label: 'Supply Orders',   href: '/farmer/supplier-orders' },
-                ],
-            },
-            {
-                label: 'Insights', items: [
-                    { icon: <BarChart2   size={16} />, label: 'Market Prices',   href: '/farmer/market_analysis' },
-                    { icon: <MessageSquare size={16}/>, label: 'AI Tips',        href: '/farmer/ai' },
+                    { icon: <LayoutGrid size={16} />, label: 'Dashboard',        href: '/dashboard' },
+                    { icon: <Package     size={16} />, label: 'My Products',     href: '/products/mine' },
+                    { icon: <ShoppingCart size={16}/>, label: 'Customer Orders', href: '/orders' },
                 ],
             },
             {
                 label: 'Account', items: [
-                    { icon: <Wallet      size={16} />, label: 'Wallet',          href: '/farmer/wallet' },
+                    { icon: <Wallet      size={16} />, label: 'Wallet',          href: '/wallet' },
                     { icon: <Mail        size={16} />, label: 'Messages',        href: '/chat' },
-                    { icon: <User        size={16} />, label: 'Profile',         href: '/farmer/profile' },
+                    { icon: <User        size={16} />, label: 'Profile',         href: '/profile' },
                     { icon: <Settings    size={16} />, label: 'Settings',        href: '/settings' },
                 ],
             },
         ];
 
-        case UserType.BUYER: return [
+        case UserRole.BUYER: return [
             {
                 label: 'Shop', items: [
-                    { icon: <LayoutGrid  size={16} />, label: 'Dashboard',       href: '/buyer/dashboard' },
-                    { icon: <FilePlus    size={16} />, label: 'Browse Products', href: '/buyer/products' },
-                    { icon: <ShoppingCart size={16}/>, label: 'My Orders',       href: '/buyer/purchases' },
-                    { icon: <MessageSquare size={16}/>, label: 'Negotiations',   href: '/negotiations' },
-                    { icon: <Heart       size={16} />, label: 'Saved',           href: '/buyer/saved' },
+                    { icon: <LayoutGrid  size={16} />, label: 'Dashboard',       href: '/dashboard' },
+                    { icon: <FilePlus    size={16} />, label: 'Browse Products', href: '/dashboard' },
+                    { icon: <ShoppingCart size={16}/>, label: 'My Orders',       href: '/orders' },
+                    { icon: <Heart       size={16} />, label: 'Saved',           href: '/products/saved' },
                 ],
             },
             {
                 label: 'Account', items: [
-                    { icon: <Wallet      size={16} />, label: 'Wallet',          href: '/buyer/wallet' },
+                    { icon: <Wallet      size={16} />, label: 'Wallet',          href: '/wallet' },
                     { icon: <Mail        size={16} />, label: 'Messages',        href: '/chat' },
-                    { icon: <User        size={16} />, label: 'Profile',         href: '/buyer/profile' },
+                    { icon: <User        size={16} />, label: 'Profile',         href: '/profile' },
                     { icon: <Settings    size={16} />, label: 'Settings',        href: '/settings' },
                 ],
             },
         ];
 
-        case UserType.SUPPLIER: return [
-            {
-                label: 'Sell', items: [
-                    { icon: <LayoutGrid  size={16} />, label: 'Dashboard',       href: '/supplier/dashboard' },
-                    { icon: <Package     size={16} />, label: 'My Products',     href: '/supplier/products' },
-                    { icon: <ShoppingCart size={16}/>, label: 'Orders',          href: '/supplier/orders' },
-                    { icon: <MessageSquare size={16}/>, label: 'Negotiations',   href: '/negotiations' },
-                ],
-            },
-            {
-                label: 'Account', items: [
-                    { icon: <Wallet      size={16} />, label: 'Wallet',          href: '/supplier/wallet' },
-                    { icon: <Mail        size={16} />, label: 'Messages',        href: '/chat' },
-                    { icon: <User        size={16} />, label: 'Profile',         href: '/supplier/profile' },
-                    { icon: <Settings    size={16} />, label: 'Settings',        href: '/settings' },
-                ],
-            },
-        ];
-
-        case UserType.ADMIN: return [
+        case UserRole.ADMIN: return [
             {
                 label: 'Administration', items: [
                     { icon: <LayoutDashboard size={16}/>, label: 'Dashboard',    href: '/admin/dashboard' },
@@ -109,25 +76,8 @@ function getNavGroups(role: UserType): NavGroup[] {
             {
                 label: 'Account', items: [
                     { icon: <Mail        size={16} />, label: 'Messages',        href: '/chat' },
-                    { icon: <User        size={16} />, label: 'Profile',         href: '/admin/profile' },
-                    { icon: <Settings    size={16} />, label: 'Settings',        href: '/admin/settings' },
-                ],
-            },
-        ];
-
-        case UserType.GOVERNMENT: return [
-            {
-                label: 'Monitoring', items: [
-                    { icon: <LayoutGrid  size={16} />, label: 'Overview',               href: '/government/dashboard' },
-                    { icon: <Tractor     size={16} />, label: 'Farmer Output',          href: '/government/farmers-produce' },
-                    { icon: <Package     size={16} />, label: 'Input Supply',           href: '/government/suppliers-produce' },
-                ],
-            },
-            {
-                label: 'Account', items: [
-                    { icon: <Bell        size={16} />, label: 'Alerts',                 href: '/government/notifications' },
-                    { icon: <User        size={16} />, label: 'Profile',                href: '/government/profile' },
-                    { icon: <Settings    size={16} />, label: 'Settings',               href: '/government/settings' },
+                    { icon: <User        size={16} />, label: 'Profile',         href: '/profile' },
+                    { icon: <Settings    size={16} />, label: 'Settings',        href: '/settings' },
                 ],
             },
         ];
@@ -142,12 +92,10 @@ function getNavGroups(role: UserType): NavGroup[] {
 }
 
 // ─── role badge ───────────────────────────────────────────────────
-const ROLE_BADGE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-    FARMER:     { bg: 'bg-emerald-500/15', text: 'text-emerald-500', dot: 'bg-emerald-400', label: 'Farmer' },
-    BUYER:      { bg: 'bg-blue-500/15',    text: 'text-blue-500',    dot: 'bg-blue-400',    label: 'Buyer' },
-    SUPPLIER:   { bg: 'bg-amber-500/15',   text: 'text-amber-500',   dot: 'bg-amber-400',   label: 'Supplier' },
-    ADMIN:      { bg: 'bg-rose-500/15',    text: 'text-rose-500',    dot: 'bg-rose-400',    label: 'Admin' },
-    GOVERNMENT: { bg: 'bg-violet-500/15',  text: 'text-violet-500',  dot: 'bg-violet-400',  label: 'Government' },
+const ROLE_BADGE: Record<UserRole, { bg: string; text: string; dot: string; label: string }> = {
+    [UserRole.SELLER]: { bg: 'bg-emerald-500/15', text: 'text-emerald-500', dot: 'bg-emerald-400', label: 'Seller' },
+    [UserRole.BUYER]:  { bg: 'bg-blue-500/15',    text: 'text-blue-500',    dot: 'bg-blue-400',    label: 'Buyer' },
+    [UserRole.ADMIN]:  { bg: 'bg-rose-500/15',    text: 'text-rose-500',    dot: 'bg-rose-400',    label: 'Admin' },
 };
 
 // ─── component ────────────────────────────────────────────────────
@@ -159,7 +107,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
     const { user, logout } = useAuth();
     const { t }           = useI18n();
 
-    const role      = (user?.role || userType) as UserType;
+    const role      = (user?.role || userType) as UserRole;
     const firstName = user?.firstName || '';
     const lastName  = user?.lastName  || '';
     const fullName  = `${firstName} ${lastName}`.trim() || 'User';
@@ -167,7 +115,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
         ? fullName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
         : 'UL';
     const email     = user?.email || '';
-    const badge     = ROLE_BADGE[role] ?? ROLE_BADGE.FARMER;
+    const badge     = ROLE_BADGE[role] ?? ROLE_BADGE[UserRole.SELLER];
     const groups    = getNavGroups(role);
 
     useEffect(() => { setCurrentActive(activeItem); }, [activeItem]);

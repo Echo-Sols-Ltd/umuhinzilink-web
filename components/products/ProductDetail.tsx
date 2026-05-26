@@ -46,7 +46,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
   const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
   const isOutOfStock = product.stockQuantity === 0;
   const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 10;
@@ -280,21 +279,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   className="w-full h-12 font-semibold shadow-lg shadow-success/20 hover:shadow-success/40 transition-all"
                   size="lg"
                 >
-                  <ShoppingCart className="w-5 h-5 mr-2" />
-                  {t('buyer.productDetail.addToCart')} - {formatPrice(product.unitPrice * quantity)}
+                  <ArrowRight className="w-5 h-5 mr-2" />
+                  {t('productCard.buy')} - {formatPrice(product.unitPrice * quantity)}
                 </Button>
-
-                {product.isNegotiable && (
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsNegotiateModalOpen(true)}
-                    className="w-full h-12 border-primary/30 text-primary hover:bg-primary/5 transition-all font-semibold"
-                    size="lg"
-                  >
-                    <MessageSquare className="w-5 h-5 mr-2" />
-                    {t('productCard.negotiatePrice')}
-                  </Button>
-                )}
 
                 <Button
                   variant="outline"

@@ -20,7 +20,6 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
     const { showOrderModal } = useProduct();
     const router = useRouter();
     const { t } = useI18n();
-    const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
 
     const isProductOwner = user?.id === product.owner?.id;
     const isAvailable = product.status === 'IN_STOCK';
@@ -49,24 +48,8 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                 router.push('/auth/signin');
                 return;
             }
-
+            showOrderModal(product, 1);
         }
-    }
-
-    const handleNegotiate = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (!user) {
-            notify.error(t('productCard.loginToNegotiate'), t('productCard.authRequired'));
-            router.push('/auth/signin');
-            return;
-        }
-
-        if (!product.owner) {
-            notify.error(t('productCard.noProducerInfo'), t('productCard.unavailable'));
-            return;
-        }
-
-        setIsNegotiateModalOpen(true);
     };
 
     return (
@@ -160,20 +143,11 @@ export default function ProductCard({ product, featured = false }: ProductCardPr
                                 </button>
                             ) : (
                                 <>
-                                    {product.isNegotiable && (
-                                        <button
-                                            onClick={handleNegotiate}
-                                            className="flex items-center justify-center bg-muted hover:bg-muted/80 text-foregroun px-6 py-2 rounded-xl transition-all active:scale-95 border border-border/50"
-                                            title={t('productCard.negotiatePrice')}
-                                        >
-                                            <MessageSquare className="w-4 h-4 text-primary" />
-                                        </button>
-                                    )}
                                     <button
                                         onClick={handleAction}
                                         className="flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground  px-6 py-2 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95 group/btn"
                                     >
-                                        <ShoppingCart className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform" />
+                                        <ArrowRight className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform" />
                                         <span className="text-[11px] font-black uppercase ">{t('productCard.buy')}</span>
                                     </button>
                                 </>

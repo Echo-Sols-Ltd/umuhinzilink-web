@@ -27,13 +27,11 @@ export default function Navbar() {
 
   const buyerLinks = [
     { label: 'Browse', href: '/products' },
-    { label: 'My Negotiations', href: '/buyer/negotiations' },
   ];
 
   const sellerLinks = [
     { label: 'Browse', href: '/products' },
     { label: 'My Listings', href: '/seller/listings' },
-    { label: 'Negotiations', href: '/seller/negotiations' },
   ];
 
   const navLinks = !user ? guestLinks : isSeller ? sellerLinks : buyerLinks;
@@ -135,13 +133,6 @@ export default function Navbar() {
                             onClick={() => setAvatarOpen(false)}
                           />
                         )}
-
-                        <DropdownLink
-                          href="/buyer/negotiations"
-                          icon={<ListChecks size={15} />}
-                          label="My Negotiations"
-                          onClick={() => setAvatarOpen(false)}
-                        />
 
                         <DropdownLink
                           href="/wallet"
