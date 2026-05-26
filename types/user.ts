@@ -105,7 +105,6 @@ export interface UserRequest {
   phoneNumber: string;
   password: string;
   role: UserRole;
-  district: District;
 }
 
 export interface SellerRegistration {

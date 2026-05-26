@@ -21,8 +21,6 @@ export interface VerifyOtpRequest {
 
 export interface GoogleAuthRequest {
   token: string;
-  role: string;
-  district: District;
 }
 
 export interface ResetPasswordRequest {

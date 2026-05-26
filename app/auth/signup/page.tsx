@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, MapPin, Loader2 } from 'lucide-react';
-import { BiLogoFacebookCircle } from 'react-icons/bi';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
@@ -10,9 +9,8 @@ import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { District, UserRequest, UserType } from '@/types';
+import { UserRequest, UserRole } from '@/types';
 import AuthFooter from '@/components/auth/AuthFooter';
-import GoogleRoleSelectionModal from '@/components/auth/GoogleRoleSelectionModal';
 import GoogleLogin from '@/components/GoogleLogin';
 
 function Field({
@@ -33,7 +31,6 @@ function Field({
 export default function SignUp() {
   const { register, registerGoogle, googleToken } = useAuth();
   const { t } = useI18n();
-  const [showRoleModal, setShowRoleModal] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState<UserRequest>({
     firstName: '',
@@ -41,8 +38,7 @@ export default function SignUp() {
     email: '',
     phoneNumber: '',
     password: '',
-    role: UserType.FARMER,
-    district: District.KICUKIRO
+    role: UserRole.BUYER,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
@@ -52,7 +48,6 @@ export default function SignUp() {
     phoneNumber: '',
     password: '',
     role: '',
-    district: ''
   });
   const [touched, setTouched] = useState({
     firstName: false,
@@ -65,67 +60,14 @@ export default function SignUp() {
     district: false,
   });
   const [loading, setLoading] = useState(false);
-  const [locating, setLocating] = useState(false);
-
-  const detectLocation = () => {
-    if (!navigator.geolocation) {
-      notify.error(t('auth.location.notSupported'), t('common.error'));
-      return;
-    }
-
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        console.log(position)
-        const { latitude, longitude } = position.coords;
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
-          );
-          const data = await response.json();
-
-          // Nominatim address fields vary: county, city_district, or suburb for Rwandan districts
-          const address = data.address || {};
-          const districtName = (address.county || address.city_district || address.suburb || address.city || '')
-            .split(' ')[0] // Extract first word like "Gasabo" from "Gasabo District"
-            .toUpperCase();
-
-          const foundDistrict = Object.values(District).find(d =>
-            d.toUpperCase() === districtName || districtName.includes(d.toUpperCase())
-          );
-
-          if (foundDistrict) {
-            setFormData(prev => ({ ...prev, district: foundDistrict as District }));
-            notify.success(t('auth.location.detected', { district: foundDistrict }), t('common.success'));
-          } else {
-            notify.error(t('auth.location.notFound'), t('common.error'));
-          }
-        } catch (error) {
-          notify.error(t('auth.location.error'), t('common.error'));
-        } finally {
-          setLocating(false);
-        }
-      },
-      (error) => {
-        notify.error(t('auth.location.denied'), t('common.error'));
-        setLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-  };
-
-  useEffect(() => {
-    if (googleToken) {
-      setShowRoleModal(true);
-    }
-  }, [googleToken]);
 
 
-  const handleGoogleRoleSubmit = async (role: UserType, district: District) => {
+
+  const handleGoogleRegister = async () => {
     try {
       if (!googleToken) return
-      await registerGoogle({ role, token: googleToken, district });
-      setShowRoleModal(false);
+      await registerGoogle({ token: googleToken, });
+
       notify.success(t('auth.signUp.primary'), t('common.primary'));
     } catch (error) {
       notify.error(t('auth.googleSignUp.error'), t('common.error'));
@@ -134,16 +76,10 @@ export default function SignUp() {
     }
   };
 
-  const handleRoleModalClose = () => {
-    setShowRoleModal(false);
-  };
-
-
-  const accountTypes = [
-    { value: UserType.FARMER, labelKey: 'auth.accountTypes.farmer' },
-    { value: UserType.SUPPLIER, labelKey: 'auth.accountTypes.supplier' },
-    { value: UserType.BUYER, labelKey: 'auth.accountTypes.buyer' },
-  ];
+  useEffect(() => {
+    if (!googleToken) return
+    handleGoogleRegister()
+  }, [googleToken])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -334,48 +270,6 @@ export default function SignUp() {
               </Field>
             </div>
 
-            {/* District & Location */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label={t('auth.fields.district')} error={touched.district && fieldErrors.district ? fieldErrors.district : undefined}>
-                <div className="flex gap-2">
-                  <select
-                    name="district"
-                    value={formData.district}
-                    onChange={handleInputChange}
-                    className="flex-1 text-foreground font-medium text-sm border border-border rounded-xl px-3 h-11 bg-muted/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                  >
-                    <option value="">{t('auth.farmer.placeholders.selectFarmSize')}</option>
-                    {Object.values(District).map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
-                  </select>
-                  <button
-                    type="button"
-                    onClick={detectLocation}
-                    disabled={locating}
-                    className="p-2 border border-border rounded-xl bg-background hover:bg-muted transition-colors flex items-center justify-center min-w-[44px] h-11 text-muted-foreground hover:text-primary"
-                    title="Detect Location"
-                  >
-                    {locating ? <Loader2 size={18} className="animate-spin text-primary" /> : <MapPin size={18} />}
-                  </button>
-                </div>
-              </Field>
-
-              {/* Account Type */}
-              <Field label={t('auth.fields.accountType')}>
-                <div className="grid grid-cols-3 gap-2 h-11">
-                  {accountTypes.map(type => (
-                    <button key={type.value} type='button'
-                      onClick={() => setFormData(p => ({ ...p, role: type.value }))}
-                      className={`rounded-xl text-xs font-semibold border transition h-11 flex items-center justify-center
-                      ${formData.role === type.value
-                          ? 'bg-primary border-primary text-primary-foreground font-bold'
-                          : 'bg-muted/50 border-border text-muted-foreground hover:border-primary hover:text-primary'}`}>
-                      {t(type.labelKey)}
-                    </button>
-                  ))}
-                </div>
-              </Field>
-            </div>
-
             {/* Password Field */}
             <Field label={t('auth.fields.password')} error={touched.password && fieldErrors.password ? fieldErrors.password : undefined}>
               <div className="relative">
@@ -423,14 +317,6 @@ export default function SignUp() {
           </div>
         </div>
       </div>
-
-      {/* Google Role Selection Modal */}
-      <GoogleRoleSelectionModal
-        isOpen={showRoleModal}
-        onClose={handleRoleModalClose}
-        onSubmit={handleGoogleRoleSubmit}
-        loading={loading}
-      />
     </div>
   );
 }
