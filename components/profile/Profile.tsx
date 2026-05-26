@@ -50,7 +50,7 @@ function StatCard({ icon: Icon, label, value, sub }: {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export default function BuyerProfile({
+export default function Profile({
     user,
     walletBalance,
     totalOrders,
@@ -180,7 +180,7 @@ export default function BuyerProfile({
                             activeNegotiations.length > 0 ? (
                                 <div className="space-y-1">
                                     <Link
-                                        href="/buyer/negotiations"
+                                        href="/negotiations"
                                         className="flex items-center justify-center gap-1.5 py-3 text-sm text-green-600 font-medium hover:underline">
                                         View all negotiations
                                         <ChevronRight size={14} />
@@ -210,8 +210,8 @@ export default function BuyerProfile({
                 {/* Quick actions */}
                 <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border shadow-sm divide-y divide-border">
                     {[
-                        { label: 'Order history', href: '/buyer/orders', icon: Package },
-                        { label: 'Saved products', href: '/buyer/saved', icon: Heart },
+                        { label: 'Order history', href: '/orders', icon: Package },
+                        { label: 'Saved products', href: '/products/saved', icon: Heart },
                         { label: 'Account settings', href: '/settings', icon: User },
                     ].map(({ label, href, icon: Icon }) => (
                         <Link

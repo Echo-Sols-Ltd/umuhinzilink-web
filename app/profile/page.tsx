@@ -1,14 +1,11 @@
 'use client';
 
-import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/shared/Sidebar';
-import { Negotiation, UserRole } from '@/types';
-import { cn } from '@/lib/utils';
+import { Negotiation } from '@/types';
 import { Loader2 } from 'lucide-react';
 
-import BuyerProfileComponent from '@/components/profile/BuyerProfile';
+import ProfileComponent from '@/components/profile/Profile';
 import { useUser } from '@/contexts/UserContext';
 import { useWallet } from '@/contexts/WalletContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -45,7 +42,7 @@ function GlobalProfileComponent() {
   return (
     <div className="flex  h-screen bg-background overflow-hidden">
       <div className="flex-1 overflow-auto pb-20">
-        <BuyerProfileComponent
+        <ProfileComponent
           user={user}
           walletBalance={walletBalance}
           totalOrders={totalOrders}
