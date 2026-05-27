@@ -73,7 +73,7 @@ export default function ProductCard({
 
     const handleEdit = (e: React.MouseEvent) => {
         e.stopPropagation();
-        router.push(`/seller/listings/${product.id}/edit`);
+        router.push(`/products/${product.id}/edit`);
     };
 
     const handleDelete = (e: React.MouseEvent) => {

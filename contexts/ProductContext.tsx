@@ -29,14 +29,14 @@ type ProductContextValue = {
   // States
   myProductsTotalPages: number;
   myProductsTotalElements: number;
-  marketplaceProductsTotalPages: number;
-  marketplaceProductsTotalElements: number;
+  productsTotalPages: number;
+  productsTotalElements: number;
 
   loading: boolean;
   error: string | null;
 
-  myProducts: Product[] | null;
-  marketplaceProducts: Product[] | null;
+  myProducts: Product[];
+  products:Product[]
   myStats: any[] | null;
 
   currentProduct: Product | null;
@@ -50,27 +50,26 @@ type ProductContextValue = {
   outOfStockMyProducts: Product[] | null;
   lowStockMyProducts: Product[] | null;
 
-  inStockMarketplaceProducts: Product[] | null;
-  outOfStockMarketplaceProducts: Product[] | null;
-  lowStockMarketplaceProducts: Product[] | null;
+  inStockProducts: Product[] | null;
+  outOfStockProducts: Product[] | null;
+  lowStockProducts: Product[] | null;
 };
 
 const ProductContext = createContext<ProductContextValue | undefined>(undefined);
 
 export function ProductProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const socket = useSocket();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [myProducts, setMyProducts] = useState<Product[] | null>([]);
-  const [marketplaceProducts, setMarketplaceProducts] = useState<Product[] | null>([]);
+  const [myProducts, setMyProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [myStats, setMyStats] = useState<any[] | null>([]);
 
   const [myProductsTotalPages, setMyProductsTotalPages] = useState(0);
   const [myProductsTotalElements, setMyProductsTotalElements] = useState(0);
-  const [marketplaceProductsTotalPages, setMarketplaceProductsTotalPages] = useState(0);
-  const [marketplaceProductsTotalElements, setMarketplaceProductsTotalElements] = useState(0);
+  const [productsTotalPages, setProductsTotalPages] = useState(0);
+  const [productsTotalElements, setProductsTotalElements] = useState(0);
 
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
@@ -87,7 +86,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       if (!prev) return [];
       return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
-    setMarketplaceProducts(prev => {
+    setProducts(prev => {
       if (!prev) return [];
       return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
@@ -113,7 +112,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     const productId = productData.id;
 
     setMyProducts(prev => prev?.filter(p => p.id !== productId) ?? []);
-    setMarketplaceProducts(prev => prev?.filter(p => p.id !== productId) ?? []);
+    setProducts(prev => prev?.filter(p => p.id !== productId) ?? []);
 
     if (currentProduct?.id === productId) setCurrentProduct(null);
     if (editProduct?.id === productId) setEditProduct(null);
@@ -143,9 +142,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       const res = await productService.getProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
-        setMarketplaceProducts(Array.isArray(list) ? list : []);
-        setMarketplaceProductsTotalPages(res.totalPages ?? 0);
-        setMarketplaceProductsTotalElements(res.totalElements ?? 0);
+        setProducts(Array.isArray(list) ? list : []);
+        setProductsTotalPages(res.totalPages ?? 0);
+        setProductsTotalElements(res.totalElements ?? 0);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch marketplace products');
@@ -211,8 +210,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       const updated = prev?.map(p => (p.id === id ? { ...p, ...data } : p)) ?? [];
       return updated;
     });
-    setMarketplaceProducts(prev => {
-      const updated = prev?.map(p => (p.id === id ? { ...p, ...data } : p)) ?? [];
+    setProducts(prev => {
+      const updated  = prev?.map(p => (p.id === id ? { ...p, ...data } : p)) ?? [];
       return updated;
     });
     // Update current/edit products if they match
@@ -242,16 +241,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   );
 
   const inStockMarketplaceProducts = useMemo(
-    () => marketplaceProducts?.filter(p => p.status === ProductStatus.IN_STOCK) ?? [],
-    [marketplaceProducts]
+    () => products?.filter(p => p.status === ProductStatus.IN_STOCK) ?? [],
+    [products]
   );
   const outOfStockMarketplaceProducts = useMemo(
-    () => marketplaceProducts?.filter(p => p.status === ProductStatus.OUT_OF_STOCK) ?? [],
-    [marketplaceProducts]
+    () => products?.filter(p => p.status === ProductStatus.OUT_OF_STOCK) ?? [],
+    [products]
   );
   const lowStockMarketplaceProducts = useMemo(
-    () => marketplaceProducts?.filter(p => p.status === ProductStatus.LOW_STOCK) ?? [],
-    [marketplaceProducts]
+    () => products?.filter(p => p.status === ProductStatus.LOW_STOCK) ?? [],
+    [products]
   );
 
   const value: ProductContextValue = {
@@ -269,12 +268,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     orderModalProductType,
     myProductsTotalPages,
     myProductsTotalElements,
-    marketplaceProductsTotalPages,
-    marketplaceProductsTotalElements,
+    productsTotalPages,
+    productsTotalElements,
     loading,
     error,
     myProducts,
-    marketplaceProducts,
+    products,
     myStats,
     currentProduct,
     editProduct,
@@ -283,9 +282,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     inStockMyProducts,
     outOfStockMyProducts,
     lowStockMyProducts,
-    inStockMarketplaceProducts,
-    outOfStockMarketplaceProducts,
-    lowStockMarketplaceProducts,
+    inStockProducts: inStockMarketplaceProducts,
+    outOfStockProducts: outOfStockMarketplaceProducts,
+    lowStockProducts: lowStockMarketplaceProducts,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

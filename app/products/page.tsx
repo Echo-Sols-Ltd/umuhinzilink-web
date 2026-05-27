@@ -9,6 +9,9 @@ import {
     LayoutGrid, List, Sprout, ArrowUpDown,
     CheckCircle, Clock, PauseCircle,
 } from 'lucide-react';
+import { useProduct } from '@/contexts/ProductContext';
+import { Product } from '@/types';
+import ProductCard from '@/components/products/ProductCard';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -16,31 +19,6 @@ type ProductStatus = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK' | 'DRAFT' | 'DISC
 type SortKey = 'name' | 'unitPrice' | 'stockQuantity' | 'viewCount' | 'createdAt';
 type ViewMode = 'grid' | 'list';
 
-interface Listing {
-    id: string;
-    name: string;
-    image?: string;
-    category: string;
-    unitPrice: number;
-    stockQuantity: number;
-    measurementUnit: string;
-    status: ProductStatus;
-    isNegotiable: boolean;
-    viewCount: number;
-    activeNegotiations: number;
-    createdAt: string;
-}
-
-// ── Mock data — replace with API call ─────────────────────────────────────────
-
-const MOCK_LISTINGS: Listing[] = [
-    { id: '1', name: 'Fresh Maize', category: 'CEREALS', unitPrice: 15000, stockQuantity: 200, measurementUnit: 'BAG_50KG', status: 'IN_STOCK', isNegotiable: true, viewCount: 142, activeNegotiations: 3, createdAt: '2024-03-01' },
-    { id: '2', name: 'Irish Potatoes', category: 'ROOTS_TUBERS', unitPrice: 8000, stockQuantity: 8, measurementUnit: 'BAG_25KG', status: 'LOW_STOCK', isNegotiable: true, viewCount: 89, activeNegotiations: 1, createdAt: '2024-03-05' },
-    { id: '3', name: 'NPK Fertiliser', category: 'FERTILISER', unitPrice: 42000, stockQuantity: 0, measurementUnit: 'BAG_50KG', status: 'OUT_OF_STOCK', isNegotiable: false, viewCount: 210, activeNegotiations: 0, createdAt: '2024-02-20' },
-    { id: '4', name: 'Tomatoes', category: 'VEGETABLES', unitPrice: 3000, stockQuantity: 50, measurementUnit: 'CRATE', status: 'IN_STOCK', isNegotiable: true, viewCount: 67, activeNegotiations: 2, createdAt: '2024-03-10' },
-    { id: '5', name: 'Banana Bunch', category: 'BANANAS_PLANTAINS', unitPrice: 2500, stockQuantity: 30, measurementUnit: 'BUNCH', status: 'IN_STOCK', isNegotiable: false, viewCount: 44, activeNegotiations: 0, createdAt: '2024-03-08' },
-    { id: '6', name: 'Maize Seeds (OPV)', category: 'SEEDS_SEEDLINGS', unitPrice: 12000, stockQuantity: 100, measurementUnit: 'KG', status: 'DRAFT', isNegotiable: false, viewCount: 0, activeNegotiations: 0, createdAt: '2024-03-12' },
-];
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -98,7 +76,7 @@ function StatPill({ icon: Icon, value, label }: { icon: React.ElementType; value
 
 // ── Action menu ───────────────────────────────────────────────────────────────
 
-function ActionMenu({ listing, onDelete }: { listing: Listing; onDelete: (id: string) => void }) {
+function ActionMenu({ listing, onDelete }: { listing: Product; onDelete: (id: string) => void }) {
     const [open, setOpen] = useState(false);
     return (
         <div className="relative">
@@ -112,7 +90,7 @@ function ActionMenu({ listing, onDelete }: { listing: Listing; onDelete: (id: st
                     <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
                     <div className="absolute right-0 mt-1 w-44 bg-white dark:bg-gray-900 border border-border rounded-xl shadow-lg z-20 py-1 overflow-hidden">
                         <Link
-                            href={`/seller/listings/${listing.id}/edit`}
+                            href={`/products/${listing.id}/edit`}
                             onClick={() => setOpen(false)}
                             className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                             <Edit3 size={13} className="text-muted-foreground" /> Edit listing
@@ -136,72 +114,10 @@ function ActionMenu({ listing, onDelete }: { listing: Listing; onDelete: (id: st
     );
 }
 
-// ── Grid card ────────────────────────────────────────────────────────────────
-
-function GridCard({ listing, onDelete }: { listing: Listing; onDelete: (id: string) => void }) {
-    const { dot } = STATUS_CONFIG[listing.status];
-    return (
-        <div className="group bg-white dark:bg-gray-900 rounded-2xl border border-border overflow-hidden hover:shadow-md hover:border-green-200 dark:hover:border-green-800 transition-all duration-200">
-            {/* Image */}
-            <div className="relative h-40 bg-gray-100 dark:bg-gray-800 overflow-hidden">
-                {listing.image ? (
-                    <img src={listing.image} alt={listing.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                        <Package size={32} className="text-gray-300 dark:text-gray-600" />
-                    </div>
-                )}
-                {/* Status dot */}
-                <div className={`absolute top-2.5 left-2.5 w-2.5 h-2.5 rounded-full ${dot} ring-2 ring-white dark:ring-gray-900`} />
-                {/* Negotiable badge */}
-                {listing.isNegotiable && (
-                    <span className="absolute top-2.5 right-2.5 text-xs font-semibold text-white bg-green-600/90 px-2 py-0.5 rounded-full backdrop-blur-sm">
-                        Negotiable
-                    </span>
-                )}
-                {/* Action menu */}
-                <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ActionMenu listing={listing} onDelete={onDelete} />
-                </div>
-            </div>
-
-            {/* Body */}
-            <div className="p-3.5">
-                <div className="flex items-start justify-between gap-2 mb-1">
-                    <p className="text-sm font-bold text-foreground leading-snug line-clamp-1">{listing.name}</p>
-                </div>
-                <p className="text-xs text-muted-foreground mb-2">{CATEGORY_LABELS[listing.category] ?? listing.category}</p>
-
-                <div className="flex items-baseline justify-between mb-3">
-                    <p className="text-base font-extrabold text-green-700 dark:text-green-400">
-                        {fmt(listing.unitPrice)}
-                    </p>
-                    <p className="text-xs text-muted-foreground">/ {UNIT_LABELS[listing.measurementUnit] ?? listing.measurementUnit}</p>
-                </div>
-
-                <StatusBadge status={listing.status} />
-
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-                    <div className="flex items-center gap-3">
-                        <StatPill icon={Eye} value={listing.viewCount} label="views" />
-                        {listing.activeNegotiations > 0 && (
-                            <StatPill icon={TrendingUp} value={listing.activeNegotiations} label="active" />
-                        )}
-                    </div>
-                    <Link
-                        href={`/seller/listings/${listing.id}`}
-                        className="flex items-center gap-1 text-xs text-green-600 font-semibold hover:underline">
-                        Manage <ChevronRight size={12} />
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
-}
 
 // ── List row ──────────────────────────────────────────────────────────────────
 
-function ListRow({ listing, onDelete }: { listing: Listing; onDelete: (id: string) => void }) {
+function ListRow({ listing, onDelete }: { listing: Product; onDelete: (id: string) => void }) {
     return (
         <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
             {/* Thumbnail */}
@@ -232,21 +148,10 @@ function ListRow({ listing, onDelete }: { listing: Listing; onDelete: (id: strin
                 </div>
             </div>
 
-            {/* Price + stats */}
-            <div className="hidden sm:flex flex-col items-end gap-1 shrink-0">
-                <p className="text-sm font-extrabold text-green-700 dark:text-green-400">{fmt(listing.unitPrice)}</p>
-                <div className="flex items-center gap-3">
-                    <StatPill icon={Eye} value={listing.viewCount} label="views" />
-                    {listing.activeNegotiations > 0 && (
-                        <StatPill icon={TrendingUp} value={listing.activeNegotiations} label="negotiating" />
-                    )}
-                </div>
-            </div>
-
             {/* Actions */}
             <div className="flex items-center gap-1 shrink-0">
                 <Link
-                    href={`/seller/listings/${listing.id}/edit`}
+                    href={`/products/${listing.id}/edit`}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors opacity-0 group-hover:opacity-100">
                     <Edit3 size={14} />
                 </Link>
@@ -285,14 +190,11 @@ function EmptyState({ filtered }: { filtered: boolean }) {
 
 // ── Summary bar ───────────────────────────────────────────────────────────────
 
-function SummaryBar({ listings }: { listings: Listing[] }) {
+function SummaryBar({ listings }: { listings: Product[] }) {
     const total = listings.length;
     const inStock = listings.filter(l => l.status === 'IN_STOCK').length;
     const lowStock = listings.filter(l => l.status === 'LOW_STOCK').length;
     const outOfStock = listings.filter(l => l.status === 'OUT_OF_STOCK').length;
-    const totalViews = listings.reduce((a, l) => a + l.viewCount, 0);
-    const totalNeg = listings.reduce((a, l) => a + l.activeNegotiations, 0);
-
     return (
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {[
@@ -300,7 +202,6 @@ function SummaryBar({ listings }: { listings: Listing[] }) {
                 { label: 'In stock', value: inStock, color: 'text-emerald-600 dark:text-emerald-400' },
                 { label: 'Low stock', value: lowStock, color: 'text-amber-600 dark:text-amber-400' },
                 { label: 'Out of stock', value: outOfStock, color: 'text-red-500' },
-                { label: 'Active negotiations', value: totalNeg, color: 'text-green-600' },
             ].map(({ label, value, color }) => (
                 <div key={label} className="bg-white dark:bg-gray-900 border border-border rounded-xl px-3 py-2.5 text-center">
                     <p className={`text-xl font-extrabold ${color}`}>{value}</p>
@@ -314,7 +215,7 @@ function SummaryBar({ listings }: { listings: Listing[] }) {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function Products() {
-    const [listings, setListings] = useState<Listing[]>(MOCK_LISTINGS);
+    const { products, loading, error, } = useProduct()
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<ProductStatus | 'ALL'>('ALL');
     const [sortKey, setSortKey] = useState<SortKey>('createdAt');
@@ -323,17 +224,8 @@ export default function Products() {
     const [page, setPage] = useState(1);
     const PAGE_SIZE = 6;
 
-    // ── Delete handler ────────────────────────────────────────────────────
-
-    const handleDelete = (id: string) => {
-        // TODO: call DELETE /api/v1/products/:id then refetch
-        setListings(prev => prev.filter(l => l.id !== id));
-    };
-
-    // ── Filter + sort ─────────────────────────────────────────────────────
-
     const filtered = useMemo(() => {
-        let result = listings;
+        let result = products || [];
         if (search.trim()) {
             const q = search.toLowerCase();
             result = result.filter(l =>
@@ -350,7 +242,8 @@ export default function Products() {
                 : av > bv ? -1 : av < bv ? 1 : 0;
         });
         return result;
-    }, [listings, search, statusFilter, sortKey, sortAsc]);
+    }, [products, search, statusFilter, sortKey, sortAsc]);
+
 
     const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -384,7 +277,7 @@ export default function Products() {
             <main className="max-w-5xl mx-auto px-4 py-6 space-y-5">
 
                 {/* Summary */}
-                <SummaryBar listings={listings} />
+                <SummaryBar listings={products} />
 
                 {/* Toolbar */}
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -425,7 +318,6 @@ export default function Products() {
                             <option value="name">Name</option>
                             <option value="unitPrice">Price</option>
                             <option value="stockQuantity">Stock</option>
-                            <option value="viewCount">Views</option>
                         </select>
                         <button
                             onClick={() => setSortAsc(v => !v)}
@@ -462,13 +354,13 @@ export default function Products() {
                 ) : viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {paginated.map(l => (
-                            <GridCard key={l.id} listing={l} onDelete={handleDelete} />
+                            <ProductCard key={l.id} product={l} />
                         ))}
                     </div>
                 ) : (
                     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border divide-y divide-border overflow-hidden">
                         {paginated.map(l => (
-                            <ListRow key={l.id} listing={l} onDelete={handleDelete} />
+                            <ProductCard key={l.id} product={l} />
                         ))}
                     </div>
                 )}
