@@ -4,7 +4,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import { useProduct } from '@/contexts/ProductContext';
-import { ProductDisplay } from '@/components/products/ProductDisplay';
 import { useI18n } from '@/contexts/I18nContext';
 
 export default function Home() {
@@ -39,17 +38,7 @@ export default function Home() {
           </header>
 
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-            <ProductDisplay
-              products={marketplaceProducts || []}
-              loading={loading}
-              currentPage={currentPage}
-              totalPages={marketplaceProductsTotalPages}
-              onPageChange={setCurrentPage}
-              search={search}
-              onSearchChange={setSearch}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
-            />
+            
           </div>
         </div>
         <Footer />

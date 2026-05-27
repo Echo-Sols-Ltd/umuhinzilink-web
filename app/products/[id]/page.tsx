@@ -1,185 +1,216 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Product } from '@/types';
-import Sidebar from '@/components/shared/Sidebar';
-import { ProductType } from '@/types';
-import { useAuth } from '@/contexts/AuthContext';
-import { useProduct } from '@/contexts/ProductContext';
-import ProductDetail from '@/components/products/ProductDetail';
-import { useToast } from '@/components/ui/use-toast';
-
-import { useI18n } from '@/contexts/I18nContext';
+import { Sprout, ArrowLeft, Share2 } from 'lucide-react';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import ProductDetail from '@/components/products/ProductDetail';
+import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
+import { Product } from '@/types';
+import { notify } from '@/lib/notify';
 
-export default function BuyerProductDetailPage() {
-  const { t } = useI18n();
-  const params = useParams();
-  const router = useRouter();
-  const { user } = useAuth();
-  const { toast: showToast } = useToast();
-  const {
-    marketplaceProducts,
-    currentProduct: contextProduct,
-    setCurrentProduct,
-    fetchMarketplaceProducts,
-    loading: contextLoading,
-    showOrderModal
-  } = useProduct();
-  const [loading, setLoading] = useState(true);
-  const [productType, setProductType] = useState<'farmer' | 'supplier'>('farmer');
-  const [error, setError] = useState<string | null>(null);
-  const [savedProducts, setSavedProducts] = useState<Set<string>>(new Set());
-  const productId = params.id as string;
+// ── Skeleton ──────────────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const loadProduct = async () => {
-      setLoading(true);
-      setError(null);
+function ProductSkeleton() {
+    return (
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 animate-pulse">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Image */}
+                <div className="aspect-square rounded-2xl bg-gray-200 dark:bg-gray-800" />
+                {/* Info */}
+                <div className="space-y-4">
+                    <div className="h-8 w-3/4 rounded-xl bg-gray-200 dark:bg-gray-800" />
+                    <div className="h-4 w-1/3 rounded-lg bg-gray-200 dark:bg-gray-800" />
+                    <div className="h-6 w-1/2 rounded-lg bg-gray-200 dark:bg-gray-800" />
+                    <div className="space-y-2 mt-4">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="h-4 rounded-lg bg-gray-200 dark:bg-gray-800" />
+                        ))}
+                    </div>
+                    <div className="h-12 rounded-xl bg-gray-200 dark:bg-gray-800 mt-6" />
+                </div>
+            </div>
+        </div>
+    );
+}
 
-      try {
-        let foundProduct = marketplaceProducts?.find((p: Product) => p.id === productId);
+// ── Error state ───────────────────────────────────────────────────────────────
 
-        if (!foundProduct && contextProduct?.id === productId) {
-          foundProduct = contextProduct;
+function ProductError({ message, onBack }: { message: string; onBack: () => void }) {
+    return (
+        <div className="min-h-[60vh] flex items-center justify-center px-4">
+            <div className="text-center max-w-sm">
+                <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-4">
+                    <Sprout size={28} className="text-red-400" />
+                </div>
+                <h1 className="text-xl font-bold text-foreground mb-2">Product not found</h1>
+                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{message}</p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button
+                        onClick={onBack}
+                        className="flex items-center justify-center gap-2 h-10 px-5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <ArrowLeft size={15} /> Go back
+                    </button>
+                    <Link
+                        href="/products"
+                        className="flex items-center justify-center gap-2 h-10 px-5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors">
+                        Browse products
+                    </Link>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+export default function ProductDetailPage() {
+    const params = useParams();
+    const router = useRouter();
+    const { user } = useAuth();
+    const { t } = useI18n();
+
+    const productId = params.id as string;
+
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+
+    // ── Load saved products from localStorage ─────────────────────────────
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem('savedProducts');
+            if (raw) setSavedIds(new Set(JSON.parse(raw)));
+        } catch {
+            // ignore parse errors
         }
+    }, []);
 
-        if (foundProduct) {
-          setCurrentProduct(foundProduct);
-          setProductType(foundProduct.productType === ProductType.FARMER_PRODUCT ? 'farmer' : 'supplier');
-          setLoading(false);
-        } else {
-          const { productService } = await import('@/services/products');
-          const response = await productService.getProductById(productId);
+    // ── Fetch product ─────────────────────────────────────────────────────
 
-          if (response.success && response.data) {
-            const data = response.data;
-            setCurrentProduct(data);
-            setProductType(data.productType === ProductType.FARMER_PRODUCT ? 'farmer' : 'supplier');
-            fetchMarketplaceProducts();
-          } else {
-            throw new Error('Product not found');
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch product:', err);
-        setError(t('buyer.productDetail.notFoundDesc'));
-        showToast({
-          title: t('common.error'),
-          description: t('buyer.productDetail.notFoundDesc'),
-          variant: "error"
+    useEffect(() => {
+        if (!productId) return;
+
+        const load = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                // TODO: replace with your productService call
+                // const res = await productService.getProductById(productId);
+                // setProduct(res.data);
+                await new Promise(r => setTimeout(r, 800)); // remove when wired
+                // setProduct(res.data);
+            } catch {
+                setError('This product could not be found or may have been removed.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        load();
+    }, [productId]);
+
+    // ── Handlers ──────────────────────────────────────────────────────────
+
+    const handleSave = (id: string) => {
+        setSavedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+                next.delete(id);
+                notify.success('Removed from saved');
+            } else {
+                next.add(id);
+                notify.success(`${product?.name} saved`);
+            }
+            try {
+                localStorage.setItem('savedProducts', JSON.stringify([...next]));
+            } catch {
+                // ignore storage errors
+            }
+            return next;
         });
-      } finally {
-        setLoading(false);
-      }
     };
 
-    if (productId) {
-      loadProduct();
-    }
-  }, [productId, marketplaceProducts, contextProduct, setCurrentProduct, fetchMarketplaceProducts, showToast, t]);
+    const handleShare = () => {
+        const url = window.location.href;
+        if (navigator.share) {
+            navigator.share({
+                title: product?.name,
+                text: product?.description,
+                url,
+            }).catch(() => null);
+        } else {
+            navigator.clipboard.writeText(url).then(() => {
+                notify.success('Link copied to clipboard');
+            }).catch(() => {
+                notify.error('Could not copy link');
+            });
+        }
+    };
 
+    // ── Render ────────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    // Load saved products
-    const saved = localStorage.getItem('savedProducts');
-    if (saved) {
-      setSavedProducts(new Set(JSON.parse(saved)));
-    }
-  }, []);
-
-  const handleSaveProduct = (productId: string) => {
-    const newSaved = new Set(savedProducts);
-    if (newSaved.has(productId)) {
-      newSaved.delete(productId);
-      showToast({
-        description: t('buyer.productDetail.toasts.removedFromFavorites'),
-        variant: 'default',
-      });
-    } else {
-      newSaved.add(productId);
-      showToast({
-        description: t('buyer.productDetail.toasts.addedToFavorites'),
-        variant: 'default',
-      });
-    }
-    setSavedProducts(newSaved);
-    localStorage.setItem('savedProducts', JSON.stringify([...newSaved]));
-  };
-
-  const handleShareProduct = (product: Product) => {
-    if (navigator.share) {
-      navigator.share({
-        title: product.name,
-        text: product.description,
-        url: window.location.href,
-      });
-    } else {
-      // Fallback - copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      showToast({
-        description: t('buyer.productDetail.toasts.linkCopied'),
-        variant: 'default',
-      });
-    }
-  };
-
-  const handlePurchaseProduct = (product: Product, quantity: number) => {
-    showOrderModal(product, quantity);
-  };
-
-  const currentProduct = contextProduct;
-
-  if (loading) {
     return (
-      <div className="flex h-screen bg-background">
-        <Navbar />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
-            <p className="text-muted-foreground">{t('buyer.productDetail.loading')}</p>
-          </div>
-        </main>
-      </div>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+            <Navbar />
+
+            {/* Sticky breadcrumb bar */}
+            <div className="sticky top-14 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 h-11 flex items-center justify-between">
+                    <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+                        <span>/</span>
+                        <Link href="/products" className="hover:text-foreground transition-colors">Products</Link>
+                        {product && (
+                            <>
+                                <span>/</span>
+                                <span className="text-foreground font-medium truncate max-w-[160px]">
+                                    {product.name}
+                                </span>
+                            </>
+                        )}
+                    </nav>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => router.back()}
+                            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                            <ArrowLeft size={13} /> Back
+                        </button>
+                        {product && (
+                            <button
+                                onClick={handleShare}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                <Share2 size={14} />
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Content */}
+            <main className="pt-4 pb-16">
+                {loading ? (
+                    <ProductSkeleton />
+                ) : error || !product ? (
+                    <ProductError
+                        message={error ?? 'Product not found'}
+                        onBack={() => router.back()}
+                    />
+                ) : (
+                    <ProductDetail
+                        product={product}
+                        onSaveProduct={handleSave}
+                        onShareProduct={handleShare}
+                        isSaved={savedIds.has(product.id)}
+                        showActions={true}
+                    />
+                )}
+            </main>
+        </div>
     );
-  }
-
-  if (error || !currentProduct) {
-    return (
-      <div className="flex h-screen bg-background">
-        <Navbar />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center p-6">
-            <h1 className="text-2xl font-bold text-foreground mb-2">{t('buyer.productDetail.notFound')}</h1>
-            <p className="text-muted-foreground mb-6">{error || t('buyer.productDetail.notFoundDesc')}</p>
-            <button
-              onClick={() => router.back()}
-              className="px-6 py-2 bg-success text-primary-foreground rounded-lg hover:bg-success/90 transition-colors font-medium"
-            >
-              {t('buyer.productDetail.goBack')}
-            </button>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex h-screen bg-background">
-      <Navbar />
-
-      <main className="flex-1 overflow-auto mt-20">
-        <ProductDetail
-          product={currentProduct}
-          productType={productType}
-          onSaveProduct={handleSaveProduct}
-          onShareProduct={handleShareProduct}
-          onPurchaseProduct={handlePurchaseProduct}
-          isSaved={savedProducts.has(currentProduct.id)}
-          showActions={true}
-        />
-      </main>
-    </div>
-  );
 }

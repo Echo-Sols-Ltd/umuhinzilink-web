@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare, Star, Minus, Plus, Home, ChevronRight, User, Clock, Truck } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare, Star, Minus, Plus, Home, ChevronRight, User, Clock, Truck, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
@@ -15,7 +15,6 @@ import { Input } from '@/components/ui/input';
 
 interface ProductDetailProps {
   product: Product;
-  productType: 'farmer' | 'supplier';
   onSaveProduct?: (productId: string) => void;
   onShareProduct?: (product: Product) => void;
   onEditProduct?: (product: Product) => void;
@@ -31,7 +30,6 @@ import Footer from '../Footer';
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
   product,
-  productType,
   onSaveProduct,
   onShareProduct,
   onEditProduct,
@@ -211,7 +209,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('buyer.productDetail.details.harvestDate')}</span>
                   <span className="font-medium">
-                    {productType === 'farmer' && 'harvestDate' in product ? formatDate((product as any).harvestDate) : 'Oct 2025'}
+                    {formatDate(product.createdAt)}  
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -307,7 +305,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg text-foreground">{product.owner.firstName} {product.owner.lastName}</h3>
                   <p className="text-muted-foreground mb-3">
-                    {product.district} • {productType === 'farmer' ? t('buyer.productDetail.farmerSince') : t('buyer.productDetail.supplierSince')} 2021
+                    {product.district}
                   </p>
 
                   <div className="grid grid-cols-3 gap-4 mb-4">
