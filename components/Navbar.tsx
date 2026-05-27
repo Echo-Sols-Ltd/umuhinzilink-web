@@ -31,7 +31,7 @@ export default function Navbar() {
 
   const sellerLinks = [
     { label: 'Browse', href: '/products' },
-    { label: 'My Listings', href: '/seller/listings' },
+    { label: 'My Listings', href: '/products/seller' },
   ];
 
   const navLinks = !user ? guestLinks : isSeller ? sellerLinks : buyerLinks;
