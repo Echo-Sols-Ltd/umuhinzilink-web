@@ -108,8 +108,8 @@ export interface UserRequest {
 }
 
 export interface SellerRegistration {
-  displayName: string;
+  businessName: string;
   location: string;
   description: string;
-  phone: string;
+  phoneNumber: string;
 }

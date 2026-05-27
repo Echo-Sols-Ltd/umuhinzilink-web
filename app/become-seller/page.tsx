@@ -7,6 +7,8 @@ import {
     ChevronLeft, CheckCircle, Package, TrendingUp,
     Users, ArrowRight, Wheat, Leaf, ShoppingBag
 } from 'lucide-react';
+import { SellerRegistration } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -57,13 +59,12 @@ function StepDots({ current, total }: { current: number; total: number }) {
             {Array.from({ length: total }).map((_, i) => (
                 <div
                     key={i}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                        i === current
+                    className={`h-1.5 rounded-full transition-all duration-300 ${i === current
                             ? 'w-6 bg-green-600'
                             : i < current
-                            ? 'w-3 bg-green-300'
-                            : 'w-3 bg-gray-200 dark:bg-gray-700'
-                    }`}
+                                ? 'w-3 bg-green-300'
+                                : 'w-3 bg-gray-200 dark:bg-gray-700'
+                        }`}
                 />
             ))}
         </div>
@@ -94,28 +95,28 @@ function Field({
 
 export default function BecomeSeller() {
     const [step, setStep] = useState(0); // 0 = intro, 1 = form, 2 = success
-    const [formData, setFormData] = useState<SellerFormData>({
-        displayName: '',
+    const [formData, setFormData] = useState<SellerRegistration>({
+        businessName: '',
         location: '',
-        district: '',
-        phone: '',
         description: '',
+        phoneNumber: '',
     });
-    const [errors, setErrors] = useState<Partial<SellerFormData>>({});
-    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<Partial<SellerRegistration>>({});
+
+    const { registerSeller, loading} = useAuth();
 
     // ── Validation ─────────────────────────────────────────────────────────
 
     const validate = (): boolean => {
-        const e: Partial<SellerFormData> = {};
-        if (!formData.displayName.trim())
-            e.displayName = 'Farm or business name is required';
-        if (!formData.district)
-            e.district = 'Please select your district';
-        if (!formData.phone.trim())
-            e.phone = 'Phone number is required';
-        else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(formData.phone.replace(/\s/g, '')))
-            e.phone = 'Enter a valid Rwandan phone number';
+        const e: Partial<SellerRegistration> = {};
+        if (!formData.businessName.trim())
+            e.businessName = 'Farm or business name is required';
+        if (!formData.location)
+            e.location = 'Please select your district';
+        if (!formData.phoneNumber.trim())
+            e.phoneNumber = 'Phone number is required';
+        else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(formData.phoneNumber.replace(/\s/g, '')))
+            e.phoneNumber = 'Enter a valid Rwandan phone number';
         setErrors(e);
         return Object.keys(e).length === 0;
     };
@@ -124,31 +125,25 @@ export default function BecomeSeller() {
 
     const handleSubmit = async () => {
         if (!validate()) return;
-        setLoading(true);
         try {
-            // TODO: call POST /api/sellers/onboard with formData
-            // await sellerService.onboard(formData);
-            await new Promise(r => setTimeout(r, 1200)); // remove when wired
+            await registerSeller(formData)
             setStep(2);
         } catch {
             // handle error
-        } finally {
-            setLoading(false);
         }
     };
 
-    const handleChange = (field: keyof SellerFormData, value: string) => {
+    const handleChange = (field: keyof SellerRegistration, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }));
     };
 
     // ── Input shared className ──────────────────────────────────────────────
 
-    const inputCls = (field: keyof SellerFormData) =>
-        `w-full h-11 px-3.5 rounded-xl border text-sm text-foreground bg-gray-50 dark:bg-gray-800/50 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${
-            errors[field]
-                ? 'border-red-400 focus:ring-red-400'
-                : 'border-border'
+    const inputCls = (field: keyof SellerRegistration) =>
+        `w-full h-11 px-3.5 rounded-xl border text-sm text-foreground bg-gray-50 dark:bg-gray-800/50 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${errors[field]
+            ? 'border-red-400 focus:ring-red-400'
+            : 'border-border'
         }`;
 
     // ── Render ──────────────────────────────────────────────────────────────
@@ -259,21 +254,21 @@ export default function BecomeSeller() {
 
                             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5 space-y-4">
 
-                                <Field label="Farm or business name" error={errors.displayName}>
+                                <Field label="Farm or business name" error={errors.businessName}>
                                     <input
                                         type="text"
                                         placeholder="e.g. Mugisha's Farm, AgriSupplies Kigali"
-                                        value={formData.displayName}
-                                        onChange={e => handleChange('displayName', e.target.value)}
-                                        className={inputCls('displayName')}
+                                        value={formData.businessName}
+                                        onChange={e => handleChange('businessName', e.target.value)}
+                                        className={inputCls('businessName')}
                                     />
                                 </Field>
 
-                                <Field label="District" error={errors.district}>
+                                <Field label="District" error={errors.location}>
                                     <select
-                                        value={formData.district}
-                                        onChange={e => handleChange('district', e.target.value)}
-                                        className={inputCls('district')}>
+                                        value={formData.location}
+                                        onChange={e => handleChange('location', e.target.value)}
+                                        className={inputCls('location')}>
                                         <option value="">Select your district</option>
                                         {DISTRICTS.map(d => (
                                             <option key={d} value={d.toUpperCase()}>{d}</option>
@@ -281,17 +276,17 @@ export default function BecomeSeller() {
                                     </select>
                                 </Field>
 
-                                <Field label="Business phone" error={errors.phone}>
+                                <Field label="Business phone" error={errors.phoneNumber}>
                                     <div className="relative">
                                         <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground select-none">
                                             +250
                                         </span>
                                         <input
                                             type="tel"
-                                            placeholder="078 000 0000"
-                                            value={formData.phone}
-                                            onChange={e => handleChange('phone', e.target.value)}
-                                            className={`${inputCls('phone')} pl-14`}
+                                            placeholder="78 000 0000"
+                                            value={formData.phoneNumber}
+                                            onChange={e => handleChange('phoneNumber', e.target.value)}
+                                            className={`${inputCls('phoneNumber')} pl-14`}
                                         />
                                     </div>
                                 </Field>
@@ -360,10 +355,10 @@ export default function BecomeSeller() {
                                         <Sprout size={22} className="text-green-600" />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-foreground text-sm">{formData.displayName}</p>
+                                        <p className="font-bold text-foreground text-sm">{formData.businessName}</p>
                                         <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                                             <MapPin size={11} />
-                                            {formData.district ? formData.district.charAt(0) + formData.district.slice(1).toLowerCase() : ''}
+                                            {formData.location ? formData.location.charAt(0) + formData.location.slice(1).toLowerCase() : ''}
                                         </p>
                                     </div>
                                     <span className="ml-auto text-xs text-green-600 bg-green-50 dark:bg-green-950/40 px-2 py-1 rounded-full font-medium border border-green-200 dark:border-green-800">

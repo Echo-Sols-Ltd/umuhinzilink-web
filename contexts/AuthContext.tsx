@@ -287,7 +287,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data) {
         localStorage.setItem(STORAGE_KEYS.SELLER, JSON.stringify(res.data));
         setSeller(res.data);
-        notify.success('Register Success', 'User registered successfully');
+        notify.success('Register Success', 'Seller registered successfully');
         router.replace('/');
       }
     } catch {
