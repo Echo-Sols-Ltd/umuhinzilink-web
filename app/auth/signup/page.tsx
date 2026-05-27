@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, MapPin, Loader2 } from 'lucide-react';
-import { BiLogoFacebookCircle} from 'react-icons/bi';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
@@ -10,21 +9,20 @@ import { Button } from '@/components/ui/button';
 import { notify } from '@/lib/notify';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { District, UserRequest, UserType } from '@/types';
+import { UserRequest, UserRole } from '@/types';
 import AuthFooter from '@/components/auth/AuthFooter';
-import GoogleRoleSelectionModal from '@/components/auth/GoogleRoleSelectionModal';
 import GoogleLogin from '@/components/GoogleLogin';
 
 function Field({
   label, error, children,
 }: { label: string; error?: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1">
-      <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider">
+    <div className="space-y-1 relative">
+      <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
         {label}
       </label>
       {children}
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
 }
@@ -33,7 +31,6 @@ function Field({
 export default function SignUp() {
   const { register, registerGoogle, googleToken } = useAuth();
   const { t } = useI18n();
-  const [showRoleModal, setShowRoleModal] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState<UserRequest>({
     firstName: '',
@@ -41,8 +38,7 @@ export default function SignUp() {
     email: '',
     phoneNumber: '',
     password: '',
-    role: UserType.FARMER,
-    district: District.KICUKIRO
+    role: UserRole.BUYER,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
@@ -52,7 +48,6 @@ export default function SignUp() {
     phoneNumber: '',
     password: '',
     role: '',
-    district: ''
   });
   const [touched, setTouched] = useState({
     firstName: false,
@@ -65,67 +60,14 @@ export default function SignUp() {
     district: false,
   });
   const [loading, setLoading] = useState(false);
-  const [locating, setLocating] = useState(false);
-
-  const detectLocation = () => {
-    if (!navigator.geolocation) {
-      notify.error(t('auth.location.notSupported'), t('common.error'));
-      return;
-    }
-
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        console.log(position)
-        const { latitude, longitude } = position.coords;
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
-          );
-          const data = await response.json();
-          
-          // Nominatim address fields vary: county, city_district, or suburb for Rwandan districts
-          const address = data.address || {};
-          const districtName = (address.county || address.city_district || address.suburb || address.city || '')
-            .split(' ')[0] // Extract first word like "Gasabo" from "Gasabo District"
-            .toUpperCase();
-
-          const foundDistrict = Object.values(District).find(d => 
-            d.toUpperCase() === districtName || districtName.includes(d.toUpperCase())
-          );
-
-          if (foundDistrict) {
-            setFormData(prev => ({ ...prev, district: foundDistrict as District }));
-            notify.success(t('auth.location.detected', { district: foundDistrict }), t('common.success'));
-          } else {
-            notify.error(t('auth.location.notFound'), t('common.error'));
-          }
-        } catch (error) {
-          notify.error(t('auth.location.error'), t('common.error'));
-        } finally {
-          setLocating(false);
-        }
-      },
-      (error) => {
-        notify.error(t('auth.location.denied'), t('common.error'));
-        setLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-  };
-
-  useEffect(() => {
-    if (googleToken) {
-      setShowRoleModal(true);
-    }
-  }, [googleToken]);
 
 
-  const handleGoogleRoleSubmit = async (role: UserType, district: District) => {
+
+  const handleGoogleRegister = async () => {
     try {
       if (!googleToken) return
-      await registerGoogle({ role, token: googleToken, district });
-      setShowRoleModal(false);
+      await registerGoogle({ token: googleToken, });
+
       notify.success(t('auth.signUp.primary'), t('common.primary'));
     } catch (error) {
       notify.error(t('auth.googleSignUp.error'), t('common.error'));
@@ -134,18 +76,10 @@ export default function SignUp() {
     }
   };
 
-  const handleRoleModalClose = () => {
-
-    setShowRoleModal(false);
-
-  };
-
-
-  const accountTypes = [
-    { value: UserType.FARMER, labelKey: 'auth.accountTypes.farmer' },
-    { value: UserType.SUPPLIER, labelKey: 'auth.accountTypes.supplier' },
-    { value: UserType.BUYER, labelKey: 'auth.accountTypes.buyer' },
-  ];
+  useEffect(() => {
+    if (!googleToken) return
+    handleGoogleRegister()
+  }, [googleToken])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -164,8 +98,12 @@ export default function SignUp() {
     const strVal = typeof value === 'string' ? value : '';
 
     switch (name) {
-      case 'names':
-        if (!strVal.trim()) error = t('auth.validation.fullNameRequired');
+      case 'firstName':
+        if (!strVal.trim()) error = t('auth.validation.firstNameRequired');
+        else if (strVal.trim().length < 2) error = t('auth.validation.nameMinCharacters', { count: 2 });
+        break;
+      case 'lastName':
+        if (!strVal.trim()) error = t('auth.validation.lastNameRequired');
         else if (strVal.trim().length < 2) error = t('auth.validation.nameMinCharacters', { count: 2 });
         break;
       case 'email':
@@ -220,26 +158,49 @@ export default function SignUp() {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col sm:flex-row bg-background">
-      {/* LEFT – Form Section */}
-      <div className="w-full sm:w-1/2 flex items-start justify-center p-6 sm:p-10 bg-card sm:h-screen sm:overflow-auto">
-        <div className="w-full max-w-md flex flex-col justify-center">
-          {/* Logo/Brand */}
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-linear-to-br from-green-400 to-sucess rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-xl font-bold">UL</span>
-            </div>
+    <div className="h-screen w-full flex items-center justify-center bg-muted/40 dark:bg-background p-4 sm:p-6 md:p-8">
+      {/* Floating card */}
+      <div className="w-full max-w-5xl bg-card border border-border rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row h-[600px]">
+
+        {/* LEFT – Hero panel */}
+        <div className="hidden md:flex relative md:w-[42%] bg-gradient-to-br from-primary to-secondary rounded-2xl m-3 overflow-hidden flex-col justify-between p-8">
+          {/* Background image */}
+          <Image
+            src="/hero.png"
+            alt="background"
+            fill
+            className="absolute inset-0 object-cover opacity-20"
+          />
+          {/* Text */}
+          <div className="relative z-10">
+            <h2 className="text-white text-3xl font-extrabold leading-tight">
+              {t('auth.signIn.heroTitle')}
+            </h2>
+            <div className="mt-2 w-16 h-1 bg-white/60 rounded-full" />
+            <p className="text-white/80 text-sm mt-4 leading-relaxed">
+              {t('auth.signIn.heroSubtitle.line1')} {t('auth.signIn.heroSubtitle.line2')}
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground text-center mb-2">{t('auth.signUp.title')}</h1>
-          <p className="text-muted-foreground text-sm sm:text-base text-center mb-6">{t('auth.signUp.subtitle')}</p>
+        </div>
+
+        {/* RIGHT – Form Section */}
+        <div className="w-full md:w-[62%] flex flex-col px-6 py-8 sm:px-10 overflow-y-scroll">
+          {/* Logo/Brand */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center">
+              <img src="/icon.png" alt="Logo" className="w-10 h-10 object-contain" />
+            </div>
+            <span className="font-bold text-lg text-foreground">UmuhinziLink</span>
+          </div>
+
+          <h1 className="text-2xl font-extrabold text-foreground mb-1">{t('auth.signUp.title')}</h1>
+          <p className="text-muted-foreground text-sm mb-6">{t('auth.signUp.subtitle')}</p>
 
           {/* Social Login Buttons */}
-          <div className="space-y-3 mb-6">
-            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-              <BiLogoFacebookCircle size={20} className="mr-2 text-blue-600" />
-              <span>{t('auth.signUp.continueWithFacebook')}</span>
-            </button>
-            <GoogleLogin />
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="flex-1 flex justify-center items-center">
+              <GoogleLogin />
+            </div>
           </div>
 
           <div className="flex items-center gap-3 mb-6">
@@ -250,174 +211,112 @@ export default function SignUp() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Names Field */}
-            <Field label={t('auth.fields.firstName')}>
-              <Input
-                id="firstName"
-                name="firstName"
-                type="text"
-                placeholder={t('auth.placeholders.firstName')}
-                value={formData.firstName}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className={`mt-1 ${touched.firstName && fieldErrors.firstName ? 'border-error focus:ring-error' : 'focus:ring-primary'}`}
-              />
-              {touched.firstName && fieldErrors.firstName && <p className="text-xs text-error mt-1">{fieldErrors.firstName}</p>}
-            </Field>
-            <Field label={t('auth.fields.lastName')}>
-              <Input
-                id="lastName"
-                name="lastName"
-                type="text"
-                placeholder={t('auth.placeholders.lastName')}
-                value={formData.lastName}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className={`mt-1 ${touched.lastName && fieldErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
-              />
-              {touched.lastName && fieldErrors.lastName && <p className="text-xs text-red-500 mt-1">{fieldErrors.lastName}</p>}
-            </Field>
-
-            {/* Email Field */}
-            <Field label={t('auth.fields.email')}>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder={t('auth.placeholders.email')}
-                value={formData.email}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className={`mt-1 ${touched.email && fieldErrors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
-              />
-              {touched.email && fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>}
-            </Field>
-
-            {/* Phone Field */}
-            <Field label={t('auth.fields.phoneNumber')}>
-              <Input
-                id="phoneNumber"
-                name="phoneNumber"
-                type="tel"
-                placeholder={t('auth.placeholders.phoneNumber')}
-                value={formData.phoneNumber}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className={`mt-1 ${touched.phoneNumber && fieldErrors.phoneNumber ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
-              />
-              {touched.phoneNumber && fieldErrors.phoneNumber && <p className="text-xs text-red-500 mt-1">{fieldErrors.phoneNumber}</p>}
-            </Field>
-            <Field label={t('auth.fields.district')}>
-              <div className="flex gap-2">
-                <select
-                  name="district"
-                  value={formData.district}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label={t('auth.fields.firstName')} error={touched.firstName && fieldErrors.firstName ? fieldErrors.firstName : undefined}>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  placeholder={t('auth.placeholders.firstName')}
+                  value={formData.firstName}
                   onChange={handleInputChange}
-                  className="flex-1 text-foreground font-medium text-sm border rounded-md px-3 py-2 bg-background ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <option value="">{t('auth.farmer.placeholders.selectFarmSize')}</option>
-                  {Object.values(District).map(option => <option key={option} value={option}>{option.replace(/_/g, ' ')}</option>)}
-                </select>
-                <button
-                  type="button"
-                  onClick={detectLocation}
-                  disabled={locating}
-                  className="p-2 border rounded-md hover:bg-zinc-50 transition-colors flex items-center justify-center min-w-[40px] text-zinc-500 hover:text-primary"
-                  title="Detect Location"
-                >
-                  {locating ? <Loader2 size={18} className="animate-spin text-primary" /> : <MapPin size={18} />}
-                </button>
-              </div>
-              {touched.district && fieldErrors.district && <p className="text-red-500 text-xs mt-1">{fieldErrors.district}</p>}
-            </Field>
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.firstName && fieldErrors.firstName ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                />
+              </Field>
+              <Field label={t('auth.fields.lastName')} error={touched.lastName && fieldErrors.lastName ? fieldErrors.lastName : undefined}>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  placeholder={t('auth.placeholders.lastName')}
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.lastName && fieldErrors.lastName ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                />
+              </Field>
+            </div>
 
-            {/* Account Type */}
-            <Field label={t('auth.fields.accountType')}>
-              <div className="grid grid-cols-3 gap-2">
-                {accountTypes.map(type => (
-                  <button key={type.value} type='button'
-                    onClick={() => setFormData(p => ({ ...p, role: type.value }))}
-                    className={`py-2 rounded-xl text-sm font-medium border transition
-                    ${formData.role === type.value
-                        ? 'bg-primary border-border text-white'
-                        : 'bg-white border-zinc-200 text-zinc-600 hover:border-green-400'}`}>
-                    {t(type.labelKey)}
-                  </button>
-                ))}
-              </div>
-            </Field>
+            {/* Email & Phone Field */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label={t('auth.fields.email')} error={touched.email && fieldErrors.email ? fieldErrors.email : undefined}>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder={t('auth.placeholders.email')}
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.email && fieldErrors.email ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                />
+              </Field>
+              <Field label={t('auth.fields.phoneNumber')} error={touched.phoneNumber && fieldErrors.phoneNumber ? fieldErrors.phoneNumber : undefined}>
+                <Input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  placeholder={t('auth.placeholders.phoneNumber')}
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.phoneNumber && fieldErrors.phoneNumber ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                />
+              </Field>
+            </div>
 
             {/* Password Field */}
-            <Field label={t('auth.fields.password')}>
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder={t('auth.placeholders.passwordDots')}
-                value={formData.password}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className={`mt-1 pr-10 ${touched.password && fieldErrors.password ? 'border-red-500 focus:ring-red-500' : 'focus:ring-green-500'}`}
-              />
-              <button type="button" className="absolute right-3 top-9 text-muted-foreground hover:text-foreground" onClick={() => setShowPassword(v => !v)}>
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-              {touched.password && fieldErrors.password && <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>}
+            <Field label={t('auth.fields.password')} error={touched.password && fieldErrors.password ? fieldErrors.password : undefined}>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={t('auth.placeholders.passwordDots')}
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm pr-10 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.password && fieldErrors.password ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                />
+                <button type="button" className="absolute right-3 top-3 text-muted-foreground hover:text-foreground" onClick={() => setShowPassword(v => !v)}>
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </Field>
 
             {/* Terms Agreement */}
             <div className="flex items-start gap-3 cursor-pointer">
               <input id='agree' type="checkbox" checked={agreeToTerms}
                 onChange={e => setAgreeToTerms(e.target.checked)}
-                className="mt-0.5 accent-primary" />
-              <Label htmlFor='agree' className="text-sm leading-relaxed text-foreground cursor-pointer">{
-                t('auth.signUp.agreeToTerms')}
+                className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary" />
+              <Label htmlFor='agree' className="text-sm leading-normal text-muted-foreground cursor-pointer select-none">
+                {t('auth.signUp.agreeToTerms')}
               </Label>
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
+            <Button type="submit" className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm transition-colors shadow-sm" disabled={loading}>
               {loading ? t('auth.signUp.creatingAccount') : t('auth.signUp.signUp')}
             </Button>
 
             {/* Sign In Link */}
-            <p className="text-sm text-center text-muted-foreground">
+            <p className="text-sm text-center text-muted-foreground mt-4">
               {t('auth.signUp.alreadyHaveAccount')}{' '}
-              <Link href="/auth/signin" className="text-primary font-semibold">{t('auth.signUp.signIn')}</Link>
+              <Link href="/auth/signin" className="text-primary font-semibold hover:underline">{t('auth.signUp.signIn')}</Link>
             </p>
           </form>
-          {/* Language Selector at Bottom */}
-          <AuthFooter />
+
+          <div className="mt-4">
+            <AuthFooter />
+          </div>
         </div>
       </div>
-
-      {/* RIGHT – Hero Section */}
-      <div className="w-full sm:w-1/2 relative flex flex-col justify-center items-center text-center overflow-hidden h-64 sm:h-auto">
-        <Image
-          src="/Image.png"
-          alt="background"
-          fill
-          className="absolute object-cover dark:brightness-50 dark:contrast-110 transition-all duration-300"
-        />
-        <h1 className="text-white text-3xl sm:text-5xl font-extrabold z-10 mt-6 sm:mt-8 px-4">
-          {t('auth.signUp.heroTitle')}
-        </h1>
-        <p className="text-white z-10 mt-2 text-sm sm:text-base px-6 sm:px-0">
-          {t('auth.signUp.heroSubtitle.line1')} <br /> {t('auth.signUp.heroSubtitle.line2')}
-        </p>
-      </div>
-
-      {/* Google Role Selection Modal */}
-      <GoogleRoleSelectionModal
-        isOpen={showRoleModal}
-        onClose={handleRoleModalClose}
-        onSubmit={handleGoogleRoleSubmit}
-        loading={loading}
-      />
     </div>
   );
 }

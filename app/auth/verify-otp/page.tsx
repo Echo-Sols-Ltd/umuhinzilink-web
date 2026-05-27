@@ -9,9 +9,8 @@ import AuthFooter from '@/components/auth/AuthFooter';
 
 export default function VerifyPage() {
     const { verifyOtp, user, askOtpCode, loadAuthState, logout } = useAuth()
-    const router = useRouter();
     const { t } = useI18n();
-    const [otp, setOtp] = useState(['', '', '', '']);
+    const [otp, setOtp] = useState(['', '', '', '', '', '',]);
     const [timer, setTimer] = useState(120);
     const [error, setError] = useState('');
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -33,7 +32,7 @@ export default function VerifyPage() {
         setOtp(newOtp);
 
         // Move to next input
-        if (value && index < 3) {
+        if (value && index < 5) {
             inputRefs.current[index + 1]?.focus();
         }
     };
@@ -46,31 +45,36 @@ export default function VerifyPage() {
 
     const handlePaste = (e: React.ClipboardEvent) => {
         e.preventDefault();
-        const pastedData = e.clipboardData.getData('text').trim().slice(0, 4);
+        const pastedData = e.clipboardData.getData('text').trim().slice(0, 6);
         if (!/^\d+$/.test(pastedData)) return;
 
         const newOtp = [...otp];
         pastedData.split('').forEach((char, index) => {
-            if (index < 4) newOtp[index] = char;
+            if (index < 6) newOtp[index] = char;
         });
         setOtp(newOtp);
-        inputRefs.current[Math.min(pastedData.length, 3)]?.focus();
+        inputRefs.current[Math.min(pastedData.length, 5)]?.focus();
     };
 
     const handleContinue = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         const otpValue = otp.join('');
-        if (otpValue.length !== 4) {
+        if (otpValue.length !== 6) {
             setError(t('auth.verifyOtp.validation.completeCode'));
             return;
         }
-        await verifyOtp(otpValue)
+        await verifyOtp({
+            code: otpValue,
+            email: user?.email!,
+        })
     };
 
     const handleResend = async () => {
-        await askOtpCode();
-        setOtp(['', '', '', '']);
+        await askOtpCode({
+            email: user?.email!,
+        });
+        setOtp(['', '', '', '', '', '']);
         setTimer(120);
     };
 
@@ -170,12 +174,12 @@ export default function VerifyPage() {
                             </form>
 
                             {/* Sign in link */}
-                            <p className="mt-6 text-sm text-muted-foreground">
+                            <div className="mt-6 text-sm text-muted-foreground">
                                 {t('auth.verifyOtp.haveAccount')}{' '}
                                 <div onClick={() => handleSignin()} className="text-success cursor-pointer hover:text-success/80 font-medium">
                                     {t('auth.signIn.signIn')}
                                 </div>
-                            </p>
+                            </div>
                         </div>
                     </div>
                     <AuthFooter />

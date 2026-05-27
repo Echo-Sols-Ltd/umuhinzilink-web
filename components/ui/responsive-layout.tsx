@@ -5,7 +5,6 @@ import { Menu, X } from 'lucide-react';
 import { Button } from './button';
 
 interface ResponsiveLayoutProps {
-  sidebar: React.ReactNode;
   header?: React.ReactNode;
   children: React.ReactNode;
   sidebarWidth?: string;
@@ -13,7 +12,6 @@ interface ResponsiveLayoutProps {
 }
 
 export function ResponsiveLayout({
-  sidebar,
   header,
   children,
   sidebarWidth = 'w-64',
@@ -41,61 +39,12 @@ export function ResponsiveLayout({
 
   return (
     <div className={`flex flex-col h-screen bg-background ${className}`}>
-      {/* Mobile Header */}
-      {isMobile && (
-        <div className="lg:hidden bg-background border-b border-border px-4 py-3 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleMobileMenu}
-            className="p-2"
-          >
-            <Menu className="w-6 h-6" />
-          </Button>
-          {header && <div className="flex-1 ml-4">{header}</div>}
-        </div>
-      )}
+     
 
       <div className="flex flex-1 min-h-0">
-        {/* Desktop Sidebar */}
-        <aside className={`hidden lg:flex lg:flex-col ${sidebarWidth} bg-background border-r border-border`}>
-          {sidebar}
-        </aside>
-
-        {/* Mobile Sidebar Overlay */}
-        {isMobile && isMobileMenuOpen && (
-          <>
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-            <aside className="fixed inset-y-0 left-0 w-64 bg-background border-r border-border z-50 lg:hidden">
-              <div className="flex items-center justify-between p-4 border-b border-border">
-                <h2 className="text-lg font-semibold text-foreground">Menu</h2>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-              <div className="flex-1 overflow-y-auto">
-                {sidebar}
-              </div>
-            </aside>
-          </>
-        )}
-
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
-          {/* Desktop Header */}
-          {!isMobile && header && (
-            <div className="bg-background border-b border-border">
-              {header}
-            </div>
-          )}
+        
 
           <div className="p-4 lg:p-6">
             {children}

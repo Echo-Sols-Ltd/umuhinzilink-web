@@ -15,7 +15,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import Image from 'next/image';
-import { Order, OrderStatus, DeliveryStatus } from '@/types';
+import { Order, OrderStatus } from '@/types';
 import { cn } from '@/lib/utils';
 import OrderStatusTracker from './OrderStatusTracker';
 import { useI18n } from '@/contexts/I18nContext';
@@ -29,7 +29,7 @@ interface OrderManagementDashboardProps {
   onViewOrder?: (order: Order) => void;
   onAcceptOrder?: (orderId: string) => void;
   onRejectOrder?: (orderId: string) => void;
-  onUpdateStatus?: (orderId: string, status: DeliveryStatus) => void;
+  onUpdateStatus?: (orderId: string, status: OrderStatus) => void;
 }
 
 type FilterType = 'all' | 'pending' | 'active' | 'completed' | 'cancelled';
@@ -91,7 +91,7 @@ export default function OrderManagementDashboard({
   const stats = useMemo(() => {
     const total = orders.length;
     const pending = orders.filter(o => o.status === OrderStatus.PENDING).length;
-    const active = orders.filter(o => o.status === OrderStatus.ACTIVE).length;
+    const active = orders.filter(o => o.status === OrderStatus.CONFIRMED).length;
     const completed = orders.filter(o => o.status === OrderStatus.COMPLETED).length;
     const cancelled = orders.filter(o => o.status === OrderStatus.CANCELLED).length;
     const totalValue = orders.reduce((sum, o) => sum + o.totalPrice, 0);
@@ -103,7 +103,7 @@ export default function OrderManagementDashboard({
     switch (status) {
       case OrderStatus.PENDING:
         return <Clock className="w-4 h-4 text-warning" />;
-      case OrderStatus.ACTIVE:
+      case OrderStatus.CONFIRMED:
         return <Truck className="w-4 h-4 text-info" />;
       case OrderStatus.COMPLETED:
         return <CheckCircle className="w-4 h-4 text-success" />;
@@ -118,7 +118,7 @@ export default function OrderManagementDashboard({
     switch (status) {
       case OrderStatus.PENDING:
         return 'bg-warning/10 text-warning';
-      case OrderStatus.ACTIVE:
+      case OrderStatus.CONFIRMED:
         return 'bg-info/10 text-info';
       case OrderStatus.COMPLETED:
         return 'bg-success/10 text-success';
@@ -136,7 +136,7 @@ export default function OrderManagementDashboard({
 
   const canUpdateStatus = (order: Order) => {
     return (orderType === 'farmer' || orderType === 'supplier') &&
-      order.status === OrderStatus.ACTIVE;
+      order.status === OrderStatus.CONFIRMED;
   };
 
   const formatCurrency = (amount: number) => {
@@ -461,26 +461,8 @@ export default function OrderManagementDashboard({
 
               <OrderStatusTracker
                 orderStatus={selectedOrder.status}
-                deliveryStatus={(() => {
-                  if (!selectedOrder.delivery?.trackingSteps || selectedOrder.delivery.trackingSteps.length === 0) {
-                    return undefined;
-                  }
-                  const latestCompletedStep = selectedOrder.delivery.trackingSteps
-                    .filter(step => step.completed)
-                    .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
-                  return latestCompletedStep?.status;
-                })()}
                 createdAt={selectedOrder.createdAt}
                 updatedAt={selectedOrder.updatedAt}
-                deliveryDate={(() => {
-                  if (!selectedOrder.delivery?.trackingSteps || selectedOrder.delivery.trackingSteps.length === 0) {
-                    return undefined;
-                  }
-                  const latestCompletedStep = selectedOrder.delivery.trackingSteps
-                    .filter(step => step.completed)
-                    .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0];
-                  return latestCompletedStep?.completedAt;
-                })()}
               />
             </div>
           </div>

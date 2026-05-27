@@ -1,28 +1,22 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, UserType } from '@/types';
+import { User, UserRole} from '@/types';
 import { notify } from '@/lib/notify';
 import { userService } from '@/services/users';
 import { useAuth } from './AuthContext';
-import { ChatUser } from '@/types';
-import { chatService } from '@/services/chat';
 
 interface UserContextType {
   users: User[];
-  chatUsers: ChatUser[]
   loading: boolean;
   setCurrentUser: (user: User) => void;
   currentUser: User | null;
-  farmerUsers: User[];
   buyerUsers: User[];
-  supplierUsers: User[];
-  resetUnreadCountForUser: (id: string) => void
+  sellerUsers: User[];
 }
 
 const UserContext = createContext<UserContextType | null>(null);
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const [chatUsers, setChatUsers] = useState<ChatUser[]>([])
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -50,52 +44,25 @@ function UserProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
       }
     };
-    const fetchChatUsers = async () => {
-      if (!user) return;
-
-      setLoading(true);
-      try {
-        const res = await chatService.getAllChatUsers();
-
-        if (!res.success) {
-          notify.error('Users cannot be fetched', 'Server error');
-          return;
-        }
-
-        if (res.data) {
-          setChatUsers(res.data);
-        }
-      } catch {
-        notify.error('Users cannot be fetched', 'Server error');
-      } finally {
-        setLoading(false);
-      }
-    };
+  
     fetchUsers();
-    fetchChatUsers()
   }, [user]);
 
-  const resetUnreadCountForUser = async (id: string) => {
-    setChatUsers(chatUsers.map(u => u.id === id ? { ...u, unreadMessage: 0 } : u))
-  }
+
 
   // Filter users by role
-  const farmerUsers = users.filter(u => u.role === UserType.FARMER);
-  const buyerUsers = users.filter(u => u.role === UserType.BUYER);
-  const supplierUsers = users.filter(u => u.role === UserType.SUPPLIER);
+  const buyerUsers = users.filter(u => u.role === UserRole.BUYER);
+  const sellerUsers = users.filter(u => u.role === UserRole.SELLER);
 
   return (
     <UserContext.Provider
       value={{
         users,
-        chatUsers,
         loading,
         setCurrentUser,
         currentUser,
-        farmerUsers,
+        sellerUsers,
         buyerUsers,
-        supplierUsers,
-        resetUnreadCountForUser
       }}
     >
       {children}

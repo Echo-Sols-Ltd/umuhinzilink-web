@@ -1,21 +1,10 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
-import { Order, OrderStatus, Product, DeliveryStatus, UserType, SocketResponse } from '@/types';
-import type { OrderRequest } from '@/types';
+import { Order, OrderStatus, Product,SocketResponse } from '@/types';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
-import { socketService } from '@/services/socket';
 import { useSocket } from './SocketContext';
-import { OrderChangeResponse, OrderDeliveryChange } from '@/services/websocket';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
-
-
-const STORAGE_KEYS = {
-  BUYER: 'buyerOrders',
-  FARMER: 'farmerOrders',
-  SUPPLIER: 'supplierOrders',
-  FARMER_BUYER: 'farmerBuyerOrders',
-};
 
 type OrderContextValue = {
   loading: boolean;
@@ -30,10 +19,7 @@ type OrderContextValue = {
   setCurrentProduct: (product: Product | null) => void;
 
   addOrder: (data: Order) => void;
-  updateOrderState: (data: Order) => void;
-
-  // Satisfaction methods
-  markOrderSatisfaction: (id: string) => Promise<void>;
+  updateOrder: (data: Order) => void;
 
   // State management functions
   setMutationLoading: (loading: boolean) => void;
@@ -57,18 +43,6 @@ type OrderContextValue = {
   completedSellingOrders: Order[];
   cancelledSellingOrders: Order[];
   activeSellingOrders: Order[];
-
-  // Legacy compatibility aliases
-  buyerOrders: Order[] | null;
-  farmerOrders: Order[] | null;
-  supplierOrders: Order[] | null;
-  fetchBuyerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
-  fetchFarmerOrders: (page?: number, size?: number) => Promise<Order[] | null>;
-  fetchSupplierOrders: (page?: number, size?: number) => Promise<Order[] | null>;
-  editFarmerOrder: (data: Order) => void;
-  editSupplierOrder: (data: Order) => void;
-  markFarmerOrderSatisfaction: (id: string) => Promise<void>;
-  markSupplierOrderSatisfaction: (id: string) => Promise<void>;
 };
 
 const OrderContext = createContext<OrderContextValue | undefined>(undefined);
@@ -102,7 +76,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setBuyingOrders(Array.isArray(list) ? list : []);
       setBuyingOrdersTotalPages(res.totalPages ?? 0);
       setBuyingOrdersTotalElements(res.totalElements ?? 0);
-      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(Array.isArray(list) ? list : []));
       return Array.isArray(list) ? list : null;
     } catch {
       return null;
@@ -120,7 +93,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       setSellingOrders(Array.isArray(list) ? list : []);
       setSellingOrdersTotalPages(res.totalPages ?? 0);
       setSellingOrdersTotalElements(res.totalElements ?? 0);
-      localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(Array.isArray(list) ? list : []));
       return Array.isArray(list) ? list : null;
     } catch {
       return null;
@@ -129,25 +101,18 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Legacy fetchers kept for compatibility
-  const fetchBuyerOrders = fetchBuyingOrders;
-  const fetchFarmerOrders = fetchSellingOrders;
-  const fetchSupplierOrders = fetchSellingOrders;
-  const fetchFarmerBuyerOrders = fetchBuyingOrders;
-
 
 
   const addOrder = useCallback((data: Order) => {
     setBuyingOrders(prev => {
       const updated = prev ? [data, ...prev] : [data];
-      localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(updated));
       return updated;
     });
     updateProductState(data.product.id, data.product);
     setCurrentOrder(data);
   }, [updateProductState]);
 
-  const updateOrderState = useCallback((data: Order) => {
+  const updateOrder = useCallback((data: Order) => {
     const updater = (prev: Order[] | null) => {
       if (!prev) return [data];
       return prev.map(order => (order.id === data.id ? data : order));
@@ -157,45 +122,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     if (currentOrder?.id === data.id) setCurrentOrder(data);
   }, [currentOrder]);
 
-  // Legacy aliases
-  const addFarmerOrder = addOrder;
-  const addFarmerBuyerOrder = addOrder;
-  const editFarmerOrder = updateOrderState;
-  const editSupplierOrder = updateOrderState;
-  const editFarmerBuyerOrder = updateOrderState;
-
-  const markOrderSatisfaction = async (id: string) => {
-    try {
-      setMutationLoadingState(true);
-      const response = await orderService.markOrderSatisfaction(id);
-
-      if (response.success && response.data) {
-        const updatedOrder = response.data;
-        const updater = (prev: Order[] | null) => {
-          if (!prev) return prev;
-          return prev.map(order =>
-            order.id === id ? { ...order, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : order
-          );
-        };
-
-        setSellingOrders(updater);
-        setBuyingOrders(updater);
-
-        if (currentOrder?.id === id) {
-          setCurrentOrder(prev => prev ? { ...prev, isBuyerSatisfied: updatedOrder.isBuyerSatisfied } : null);
-        }
-      }
-    } catch (error) {
-      console.error('Error marking order satisfaction:', error);
-      throw error;
-    } finally {
-      setMutationLoadingState(false);
-    }
-  };
-
-  // Legacy aliases
-  const markFarmerOrderSatisfaction = markOrderSatisfaction;
-  const markSupplierOrderSatisfaction = markOrderSatisfaction;
 
   const setMutationLoading = (loading: boolean) => {
     setMutationLoadingState(loading);
@@ -215,6 +141,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
     if (currentOrder?.id === orderId) setCurrentOrder(order);
   }, [currentOrder]);
+
+
   // Socket event handlers
   const handleNewOrder = useCallback((response: SocketResponse<Order>) => {
     // Add null check to prevent undefined errors
@@ -261,7 +189,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       });
     }
     handleOrderChange(data);
-  }, [isEnabled, showNotification, handleOrderChange]);  const handleOrderDeliveryChange = useCallback((response: SocketResponse<Order>) => {
+  }, [isEnabled, showNotification, handleOrderChange]); const handleOrderDeliveryChange = useCallback((response: SocketResponse<Order>) => {
     const data = response.data;
     if (!data) return;
 
@@ -278,39 +206,13 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     handleOrderChange(data);
   }, [showNotification, handleOrderChange]);
 
-  const handleOrderSatisfaction = useCallback((response: SocketResponse<Order>) => {
-    // Add null check to prevent undefined errors
-    const data = response.data
-    if (!data) {
-      console.error('Satisfaction change data is undefined');
-      return;
-    }
-
-    // Show notification for seller when buyer confirms satisfaction
-    if (user?.role !== UserType.BUYER && data.isBuyerSatisfied) {
-      showNotification({
-        type: 'order',
-        title: 'Order Delivered Safely',
-        body: `${data.buyer.firstName} ${data.buyer.lastName} confirmed safe delivery of ${data.product.name}`,
-        icon: data.product.image,
-        onClick: () => {
-          // Navigate to orders page
-          window.location.href = user?.role === UserType.FARMER ? '/farmer/orders' : '/supplier/orders';
-        },
-      });
-    }
-
-    handleOrderChange(data);
-
-  }, [user, showNotification, handleOrderChange]);
 
   const cleanupSocketListeners = useCallback(() => {
     if (!socket) return;
     socket.removeNewOrderListener(handleNewOrder);
     socket.removeOrderStatusChangeListener(handleOrderStatusChange);
     socket.removeOrderDeliveryChangeListener(handleOrderDeliveryChange);
-    socket.removeOrderSatisfactionListener(handleOrderSatisfaction);
-  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, handleOrderSatisfaction]);
+  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange]);
 
   useEffect(() => {
     if (!socket) return;
@@ -318,10 +220,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     socket.onNewOrder(handleNewOrder);
     socket.onOrderStatusChange(handleOrderStatusChange);
     socket.onOrderDeliveryChange(handleOrderDeliveryChange);
-    socket.onOrderSatisfaction(handleOrderSatisfaction);
 
     return cleanupSocketListeners;
-  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, handleOrderSatisfaction, cleanupSocketListeners]);
+  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, cleanupSocketListeners]);
 
   // 🔹 Derived Orders
   const pendingBuyingOrders = useMemo(
@@ -358,23 +259,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     [sellingOrders]
   );
 
-  // Legacy derived aliases
-  const pendingBuyerOrders = pendingBuyingOrders;
-  const completedBuyerOrders = completedBuyingOrders;
-  const cancelledBuyerOrders = cancelledBuyingOrders;
-  const activeBuyerOrders = activeBuyingOrders;
-  const pendingFarmerOrders = pendingSellingOrders;
-  const completedFarmerOrders = completedSellingOrders;
-  const cancelledFarmerOrders = cancelledSellingOrders;
-  const activeFarmerOrders = activeSellingOrders;
-  const pendingSupplierOrders = pendingSellingOrders;
-  const completedSupplierOrders = completedSellingOrders;
-  const cancelledSupplierOrders = cancelledSellingOrders;
-  const activeSupplierOrders = activeSellingOrders;
-  const pendingFarmerBuyerOrders = pendingBuyingOrders;
-  const completedFarmerBuyerOrders = completedBuyingOrders;
-  const cancelledFarmerBuyerOrders = cancelledBuyingOrders;
-  const activeFarmerBuyerOrders = activeBuyingOrders;
 
   const value: OrderContextValue = {
     loading,
@@ -385,8 +269,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     setCurrentOrder,
     setCurrentProduct,
     addOrder,
-    updateOrderState,
-    markOrderSatisfaction,
+    updateOrder,
     setMutationLoading,
     mutationLoading: mutationLoadingState,
     fetchBuyingOrders,
@@ -403,18 +286,6 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     completedSellingOrders,
     cancelledSellingOrders,
     activeSellingOrders,
-
-    // Legacy aliases
-    buyerOrders: buyingOrders,
-    farmerOrders: sellingOrders,
-    supplierOrders: sellingOrders,
-    fetchBuyerOrders,
-    fetchFarmerOrders,
-    fetchSupplierOrders,
-    editFarmerOrder,
-    editSupplierOrder,
-    markFarmerOrderSatisfaction,
-    markSupplierOrderSatisfaction,
   };
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;

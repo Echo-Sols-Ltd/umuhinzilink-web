@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Product } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, ProductType } from '@/types';
+import { ProductType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import ProductDetail from '@/components/products/ProductDetail';
@@ -12,7 +12,6 @@ import { useToast } from '@/components/ui/use-toast';
 
 import { useI18n } from '@/contexts/I18nContext';
 import Navbar from '@/components/Navbar';
-import { useCartAction } from '@/hooks/useCartAction';
 
 export default function BuyerProductDetailPage() {
   const { t } = useI18n();
@@ -28,7 +27,6 @@ export default function BuyerProductDetailPage() {
     loading: contextLoading,
     showOrderModal
   } = useProduct();
-  const { addProductToCart } = useCartAction()
   const [loading, setLoading] = useState(true);
   const [productType, setProductType] = useState<'farmer' | 'supplier'>('farmer');
   const [error, setError] = useState<string | null>(null);
@@ -128,7 +126,7 @@ export default function BuyerProductDetailPage() {
   };
 
   const handlePurchaseProduct = (product: Product, quantity: number) => {
-    addProductToCart(product.id, quantity)
+    showOrderModal(product, quantity);
   };
 
   const currentProduct = contextProduct;

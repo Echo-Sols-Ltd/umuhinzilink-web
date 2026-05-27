@@ -8,4 +8,3 @@ export * from './products';
 export * from './orders';
 export * from './users';
 export * from './auth';
-export * from './farmers';

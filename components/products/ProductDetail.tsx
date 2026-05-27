@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare, Star, Minus, Plus, Home, ChevronRight, User, Clock, Truck } from 'lucide-react';
 import Image from 'next/image';
 import { Product } from '@/types';
-import NegotiationModal from './NegotiationModal';
 import { cn, imageUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +28,6 @@ interface ProductDetailProps {
 
 import { useI18n } from '@/contexts/I18nContext';
 import Footer from '../Footer';
-import { useCartAction } from '@/hooks/useCartAction';
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
   product,
@@ -48,13 +46,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
   const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
   const isOutOfStock = product.stockQuantity === 0;
   const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 10;
   const isOwner = user?.id === product.owner.id;
 
-  // 🚀 Chat with Product Owner functionality
+  // Chat with Product Owner functionality
   const handleChatWithOwner = () => {
     if (!user) {
       // Redirect to login if not authenticated
@@ -169,7 +166,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 {product.category}
               </Badge>
               <Badge variant="outline" className="border-blue-200 text-blue-700">
-                {product.location}
+                {product.district}
               </Badge>
             </div>
 
@@ -219,7 +216,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('buyer.productDetail.details.location')}</span>
-                  <span className="font-medium">{product.location}</span>
+                  <span className="font-medium">{product.district}</span>
                 </div>
               </div>
               <div className="space-y-2">
@@ -277,26 +274,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             {showActions && (
               <div className="space-y-3">
                 <Button
-                  onClick={() => onPurchaseProduct?.(product,quantity)}
+                  onClick={() => onPurchaseProduct?.(product, quantity)}
                   disabled={isOutOfStock}
                   className="w-full h-12 font-semibold shadow-lg shadow-success/20 hover:shadow-success/40 transition-all"
                   size="lg"
                 >
-                  <ShoppingCart className="w-5 h-5 mr-2" />
-                  {t('buyer.productDetail.addToCart')} - {formatPrice(product.unitPrice * quantity)}
+                  <ArrowRight className="w-5 h-5 mr-2" />
+                  {t('productCard.buy')} - {formatPrice(product.unitPrice * quantity)}
                 </Button>
-
-                {product.isNegotiable && (
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsNegotiateModalOpen(true)}
-                    className="w-full h-12 border-primary/30 text-primary hover:bg-primary/5 transition-all font-semibold"
-                    size="lg"
-                  >
-                    <MessageSquare className="w-5 h-5 mr-2" />
-                    {t('productCard.negotiatePrice')}
-                  </Button>
-                )}
 
                 <Button
                   variant="outline"
@@ -322,7 +307,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg text-foreground">{product.owner.firstName} {product.owner.lastName}</h3>
                   <p className="text-muted-foreground mb-3">
-                    {product.location} • {productType === 'farmer' ? t('buyer.productDetail.farmerSince') : t('buyer.productDetail.supplierSince')} 2021
+                    {product.district} • {productType === 'farmer' ? t('buyer.productDetail.farmerSince') : t('buyer.productDetail.supplierSince')} 2021
                   </p>
 
                   <div className="grid grid-cols-3 gap-4 mb-4">
@@ -471,11 +456,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           ))}
         </div>
       </div>
-      <NegotiationModal
-        product={product}
-        isOpen={isNegotiateModalOpen}
-        onClose={() => setIsNegotiateModalOpen(false)}
-      />
+
       <Footer />
     </div>
   );

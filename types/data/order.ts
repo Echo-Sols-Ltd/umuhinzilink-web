@@ -1,4 +1,4 @@
-import { OrderStatus, PaymentMethod, DeliveryStatus } from '../order';
+import { OrderStatus, PaymentMethod } from '../order';
 
 // Order status options for UI components
 export const orderStatusOptions = [
@@ -15,9 +15,3 @@ export const paymentMethodOptions = [
   { label: 'CASH', value: PaymentMethod.CASH },
 ];
 
-export const deliveryStatusOptions = [
-  { label: 'SCHEDULED', value: DeliveryStatus.SCHEDULED },
-  { label: 'IN_TRANSIT', value: DeliveryStatus.IN_TRANSIT },
-  { label: 'DELIVERED', value: DeliveryStatus.DELIVERED },
-  { label: 'FAILED', value: DeliveryStatus.FAILED },
-];

@@ -1,34 +1,31 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
-  BuyerRequest,
-  FarmerRequest,
+  SellerRegistration,
   LoginRequest,
-  SupplierRequest,
   User,
   UserRequest,
-  Farmer,
-  Supplier,
-  Buyer,
+  Seller,
   GoogleAuthRequest,
+  UserRole,
+  VerifyOtpRequest,
+  AskOtpRequest
 } from '@/types';
-import { UserType } from '@/types';
 import { authService } from '@/services/auth';
-import { farmerService } from '@/services/farmers';
-import { buyerService } from '@/services/buyers';
 import { useRouter } from 'next/navigation';
 import { notify } from '@/lib/notify';
 import { apiClient } from '@/services/client';
+import { userService } from '@/services/users';
 
 // Storage keys for localStorage
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
   USER: 'user',
-  FARMER: 'farmer',
-  SUPPLIER: 'supplier',
+  SELLER: 'seller',
   BUYER: 'buyer',
 } as const;
 
 interface AuthContextType {
+  isAuthenticated: boolean
   login: (data: LoginRequest) => Promise<void>;
   googleLogin: (data: string) => Promise<void>
   googleToken: string | null
@@ -36,17 +33,13 @@ interface AuthContextType {
   loading: boolean;
   loadAuthState: () => Promise<void>;
   user: User | null;
-  farmer: Farmer | null;
-  supplier: Supplier | null;
-  buyer: Buyer | null;
+  seller: Seller | null;
   logout: () => Promise<void>;
   registerGoogle: (data: GoogleAuthRequest) => Promise<void>
   register: (data: UserRequest) => Promise<void>;
-  registerBuyer: (data: BuyerRequest) => Promise<void>;
-  registerSupplier: (data: SupplierRequest) => Promise<void>;
-  registerFarmer: (data: FarmerRequest) => Promise<void>;
-  verifyOtp: (data: string) => Promise<void>;
-  askOtpCode: () => Promise<void>;
+  registerSeller: (data: SellerRegistration) => Promise<void>;
+  verifyOtp: (data: VerifyOtpRequest) => Promise<void>;
+  askOtpCode: (data: AskOtpRequest) => Promise<void>;
   updateAvatar: (data: string) => Promise<void>;
 }
 
@@ -66,18 +59,15 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [googleToken, setGoogleToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [farmer, setFarmer] = useState<Farmer | null>(null);
-  const [supplier, setSupplier] = useState<Supplier | null>(null);
-  const [buyer, setBuyer] = useState<Buyer | null>(null);
+  const [seller, setSeller] = useState<Seller | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 
   useEffect(() => {
     // Register logout listener to handle token expiry and unauthorized access
     const handleLogout = () => {
       // Clear all auth state
       setUser(null);
-      setFarmer(null);
-      setSupplier(null);
-      setBuyer(null);
+      setSeller(null);
       setLoading(false);
 
       // Redirect to login page
@@ -93,45 +83,24 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [router]);
 
-  // Fetch farmer profile from API and store in state/localStorage
-  const fetchFarmer = async () => {
+  // Fetch seller profile from API and store in state/localStorage
+  const fetchSeller = async () => {
     try {
-      const res = await farmerService.getMe();
+      const res = await userService.getSellerMe();
       if (!res.success) {
-        router.replace('/auth/farmer');
+        router.replace('/auth/seller');
         return;
       }
       if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(res.data));
-        setFarmer(res.data);
+        localStorage.setItem(STORAGE_KEYS.SELLER, JSON.stringify(res.data));
+        setSeller(res.data);
       }
     } catch {
-      notify.error('Please try again later', 'Fetching farmer failed');
+      notify.error('Please try again later', 'Fetching seller failed');
     }
   };
 
-  // Fetch buyer profile from API and store in state/localStorage
-  const fetchBuyer = async () => {
-    try {
-      const res = await buyerService.getMe();
-      if (!res.success) {
-        router.replace('/auth/signin');
-        return;
-      }
-      if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(res.data));
-        setBuyer(res.data);
-      }
-    } catch {
-      notify.error('Please try again later', 'Fetching buyer failed');
-    }
-  };
 
-  // Fetch supplier profile from API and store in state/localStorage
-  const fetchSupplier = async () => {
-    // For now, supplier profile is fetched via auth check or similar
-    // If there was a specific supplierService.getMe(), it should be moved to a unified approach
-  };
 
   // Retrieve user data from localStorage
   const getStoredData = <T,>(key: string): T | null => {
@@ -158,45 +127,29 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(user);
 
       // Redirect to OTP verification if user is not verified
-      if (!user.isVerified) {
-        await askOtpCode();
+      if (!user.emailVerified) {
+        await askOtpCode({ email: user.email });
         router.replace('/auth/verify-otp');
         setLoading(false);
         return;
       }
 
-      // Load role-specific data based on user type
-      if (user.role === UserType.BUYER) {
-        const buyerData = getStoredData<Buyer>(STORAGE_KEYS.BUYER);
-        if (!buyerData) {
-          router.replace('/auth/signin');
-          setLoading(false);
-          return;
-        }
-        setBuyer(buyerData);
-      } else if (user.role === UserType.FARMER) {
-        const farmerData = getStoredData<Farmer>(STORAGE_KEYS.FARMER);
-        if (!farmerData) {
-          router.replace('/auth/farmer');
-          setLoading(false);
-          return;
-        }
-        setFarmer(farmerData);
-      } else if (user.role === UserType.SUPPLIER) {
-        const supplierData = getStoredData<Supplier>(STORAGE_KEYS.SUPPLIER);
+      if (user.role === UserRole.SELLER) {
+        const supplierData = getStoredData<Seller>(STORAGE_KEYS.SELLER);
         if (!supplierData) {
-          router.replace('/auth/supplier');
+          router.replace('/auth/seller');
           setLoading(false);
           return;
         }
-        setSupplier(supplierData);
+        setSeller(supplierData);
       }
-
+      router.replace('/');
+      setIsAuthenticated(true)
       setLoading(false);
     } catch {
       notify.error('Please try again later', 'Loading auth state failed');
       setLoading(false);
-    } finally{
+    } finally {
       setLoading(false)
     }
   };
@@ -217,16 +170,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
         setUser(res.data.user);
+        if (!res.data.user.emailVerified) {
+          await askOtpCode({ email: res.data.user.email });
+          router.replace('/auth/verify-otp');
+          setLoading(false);
+          return;
+        }
 
-        // Fetch role-specific profile data
-        const roleFetchers = {
-          [UserType.BUYER]: fetchBuyer,
-          [UserType.FARMER]: fetchFarmer,
-          [UserType.SUPPLIER]: fetchSupplier,
-        };
-
-        const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
-        if (fetcher) await fetcher();
         router.replace('/');
       }
     } catch {
@@ -256,15 +206,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Fetch role-specific profile data
         const roleFetchers = {
-          [UserType.BUYER]: fetchBuyer,
-          [UserType.FARMER]: fetchFarmer,
-          [UserType.SUPPLIER]: fetchSupplier,
+          [UserRole.SELLER]: fetchSeller,
         };
 
         const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
         if (fetcher) await fetcher();
 
-      router.replace('/');
+        router.replace('/');
       }
     } catch {
       notify.error('Please try again', 'Error logging in');
@@ -324,11 +272,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Register buyer profile
-  const registerBuyer = async (data: BuyerRequest) => {
+
+  // Register seller profile
+  const registerSeller = async (data: SellerRegistration) => {
     try {
       setLoading(true);
-      const res = await authService.registerBuyer(data);
+      const res = await authService.registerSeller(data);
 
       if (!res.success) {
         notify.error(res.message, 'Register Failed');
@@ -336,68 +285,19 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.BUYER, JSON.stringify(res.data));
-        setBuyer(res.data);
-        notify.success('Register Success', 'User registered successfully');
-        router.replace('/');
+        localStorage.setItem(STORAGE_KEYS.SELLER, JSON.stringify(res.data));
+        setUser(res.data);
+        notify.success('Register Success', 'Seller registered successfully');
       }
     } catch {
-      notify.error('Please try again', 'Error registering buyer');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Register supplier profile
-  const registerSupplier = async (data: SupplierRequest) => {
-    try {
-      setLoading(true);
-      const res = await authService.registerSupplier(data);
-
-      if (!res.success) {
-        notify.error(res.message, 'Register Failed');
-        return;
-      }
-
-      if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.SUPPLIER, JSON.stringify(res.data));
-        setSupplier(res.data);
-        notify.success('Register Success', 'User registered successfully');
-        router.replace('/');
-      }
-    } catch {
-      notify.error('Please try again', 'Error registering supplier');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Register farmer profile
-  const registerFarmer = async (data: FarmerRequest) => {
-    try {
-      setLoading(true);
-      const res = await authService.registerFarmer(data);
-
-      if (!res.success) {
-        notify.error(res.message, 'Register Failed');
-        return;
-      }
-
-      if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.FARMER, JSON.stringify(res.data));
-        setFarmer(res.data);
-        notify.success('Register Success', 'User registered successfully');
-        router.replace('/');
-      }
-    } catch {
-      notify.error('Please try again', 'Error registering farmer');
+      notify.error('Please try again', 'Error registering seller');
     } finally {
       setLoading(false);
     }
   };
 
   // Verify OTP code for account verification
-  const verifyOtp = async (data: string) => {
+  const verifyOtp = async (data: VerifyOtpRequest) => {
     try {
       setLoading(true);
       const res = await authService.verifyOtp(data);
@@ -407,10 +307,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      if (res.data && user) {
-        const updatedUser = { ...user, isVerified: true };
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
-        setUser(updatedUser);
+      if (res.data) {
+        const user = res.data.user;
+        const token = res.data.token;
+
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+        setUser(user);
         notify.success('Verify Success', 'User verified successfully');
         await loadAuthState();
       }
@@ -422,10 +325,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Request OTP code to be sent to user
-  const askOtpCode = async () => {
+  const askOtpCode = async (data: AskOtpRequest) => {
     try {
       setLoading(true);
-      const res = await authService.askOtpCode();
+      const res = await authService.askOtpCode(data);
 
       if (!res.success) {
         notify.error(res.message, 'Ask OTP Failed');
@@ -444,9 +347,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.clear();
 
     setUser(null);
-    setFarmer(null);
-    setSupplier(null);
-    setBuyer(null);
+    setSeller(null);
 
     router.replace('/');
   };
@@ -475,18 +376,15 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         googleLogin,
         loadAuthState,
         user,
-        farmer,
-        supplier,
-        buyer,
+        seller,
         logout,
         register,
         registerGoogle,
-        registerBuyer,
-        registerSupplier,
-        registerFarmer,
+        registerSeller,
         verifyOtp,
         askOtpCode,
         updateAvatar,
+        isAuthenticated,
       }}
     >
       {children}

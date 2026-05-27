@@ -343,6 +343,8 @@
       "passwordRequired": "Ijambo banga rirakenewe",
       "minimumCharacters": "Nibura inyuguti {{count}}",
       "fullNameRequired": "Amazina yuzuye arakenewe",
+      "firstNameRequired": "Izina rya mbere rirakenewe",
+      "lastNameRequired": "Izina rya kabiri rirakenewe",
       "nameMinCharacters": "Izina rigomba kuba nibura inyuguti {{count}}",
       "phoneNumberRequired": "Nimero ya telefone irakenewe",
       "minimumDigits": "Nibura imibare {{count}}",

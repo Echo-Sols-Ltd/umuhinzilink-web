@@ -1,13 +1,13 @@
 import { imageUrl } from "@/lib/utils";
-import { Product, MessageType, ProductRef } from "@/types";
+import { Product, MessageType } from "@/types";
 import { Heart, MessageSquare, Trash2, UserIcon } from "lucide-react";
 import { notify } from "@/lib/notify";
 import { useAuth } from "@/contexts/AuthContext";
-import { useChat, userToChatUser } from "@/hooks/useChat";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useProduct } from "@/contexts/ProductContext";
 import { useI18n } from "@/contexts/I18nContext";
+import { useProductAction } from "@/hooks/useProductAction";
 
 interface ProductRowProps {
     product: Product
@@ -18,8 +18,7 @@ interface ProductRowProps {
 
 export default function ProductRow({ product, onSelect, onPurchase, onContact }: ProductRowProps) {
     const { user } = useAuth()
-    const { deleteProduct } = useProduct()
-    const { handleUserClick, handleSendMessage } = useChat()
+    const { deleteProduct, loading } = useProductAction()
     const router = useRouter()
     const { t } = useI18n()
 
@@ -36,19 +35,10 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
 
         try {
             const farmerUser = product.owner;
-            handleUserClick(userToChatUser(farmerUser));
 
-            const productRef: ProductRef = {
-                productId: product.id,
-                productType: product.owner.role
-            }
+
             const farmerName = `${product.owner.firstName} ${product.owner.lastName}`;
-            await handleSendMessage(
-                t('productRow.contactMessage').replace('{productName}', product.name),
-                MessageType.PRODUCT,
-                farmerName,
-                productRef
-            );
+
 
             notify.success(t('productRow.chatWithFarmer').replace('{farmerName}', farmerName).replace('{productName}', product.name), t('productRow.messageSent'));
 
@@ -92,7 +82,7 @@ export default function ProductRow({ product, onSelect, onPurchase, onContact }:
                     <div className="flex items-center text-sm text-gray-500 mt-1">
                         <UserIcon className="w-4 h-4 mr-1" /> {product.owner.firstName} {product.owner.lastName}
                         <span className="mx-2">•</span>
-                        {product.location}
+                        {product.district}
                     </div>
                     <p className="text-sm text-gray-600 mt-2 line-clamp-2">{product.description}</p>
                 </div>

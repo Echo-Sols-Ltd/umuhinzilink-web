@@ -4,16 +4,12 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { Product, User, Order, WalletTransactionDTO, PaginatedResponse, WalletDTO, UserType, ProductStatus, OrderStatus } from '@/types';
+import { Product, User, Order, Transaction, PaginatedResponse, Wallet, UserRole, ProductStatus, OrderStatus } from '@/types';
 
 interface AdminContextType {
   users: PaginatedResponse<User[]> | null;
-  farmerProducts: Product[];
-  supplierProducts: Product[];
-  farmerOrders: Order[];
-  supplierOrders: Order[];
-  systemWallet: WalletDTO | null
-  systemTransactions: WalletTransactionDTO[]
+  systemWallet: Wallet | null
+  transactions: Transaction[]
   products: Product[]; // Aggregate for dashboard/generic views
   orders: Order[]; // Aggregate for dashboard/generic views
   loading: boolean;
@@ -26,9 +22,8 @@ interface AdminContextType {
   deleteOrder: (orderId: string) => Promise<void>;
   userStats: {
     totalUsers: number;
-    farmerCount: number;
+    sellerCount: number;
     buyerCount: number;
-    supplierCount: number;
   };
   productStats: {
     totalProducts: number;
@@ -50,17 +45,12 @@ const AdminContext = createContext<AdminContextType | null>(null);
 export function AdminProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [users, setUsers] = useState<PaginatedResponse<User[]> | null>(null);
-  const [farmerProducts, setFarmerProducts] = useState<Product[]>([]);
-  const [supplierProducts, setSupplierProducts] = useState<Product[]>([]);
-  const [farmerOrders, setFarmerOrders] = useState<Order[]>([]);
-  const [supplierOrders, setSupplierOrders] = useState<Order[]>([]);
-  const [systemTransactions, setSystemTransactions] = useState<WalletTransactionDTO[]>([])
-  // Derived state for backward compatibility or aggregation
-  const products = [...farmerProducts, ...supplierProducts];
-  const orders = [...farmerOrders, ...supplierOrders];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [systemWallet, setSystemWallet] = useState<WalletDTO | null>(null);
+  const [systemWallet, setSystemWallet] = useState<Wallet | null>(null);
 
   const toList = <T,>(r: { data?: T[]; content?: T[] }): T[] =>
     Array.isArray((r as { content?: T[] }).content) ? (r as { content: T[] }).content : (Array.isArray(r.data) ? r.data : []);
@@ -73,22 +63,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const [usersRes, farmerProductsRes, supplierProductsRes, farmerOrdersRes, supplierOrdersRes, transactionsRes, sysWallet] = await Promise.all([
-        adminService.getAllUsers(0, 4),
-        adminService.getAllFarmerProducts(0, 50),
-        adminService.getAllSupplierProducts(0, 50),
-        adminService.getAllFarmerOrders(0, 50),
-        adminService.getAllSupplierOrders(0, 50),
+      const [usersRes, ProductsRes, ordersRes, transactionsRes, sysWallet] = await Promise.all([
+        adminService.getAllUsers(0, 20),
+        adminService.getAllProducts(0, 50),
+        adminService.getAllOrders(0, 50),
         adminService.getTransactionMonitoring(0, 50),
         adminService.getSystemWallet()
       ]);
 
-      setSystemTransactions(toList(transactionsRes));
+      setTransactions(toList(transactionsRes));
       setUsers(usersRes ?? null);
-      setFarmerProducts(toList(farmerProductsRes));
-      setSupplierProducts(toList(supplierProductsRes));
-      setFarmerOrders(toList(farmerOrdersRes));
-      setSupplierOrders(toList(supplierOrdersRes));
+      setProducts(toList(ProductsRes));
+      setOrders(toList(ordersRes));
       setSystemWallet(sysWallet)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch admin data';
@@ -103,7 +89,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const refreshUsers = async () => {
     try {
 
-      const usersRes = await adminService.getAllUsers(0, 4);
+      const usersRes = await adminService.getAllUsers(0, 20);
       setUsers(usersRes || null);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh users';
@@ -114,12 +100,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const refreshProducts = async () => {
     try {
-      const [farmerRes, supplierRes] = await Promise.all([
-        adminService.getAllFarmerProducts(0, 50),
-        adminService.getAllSupplierProducts(0, 50)
-      ]);
-      setFarmerProducts(toList(farmerRes));
-      setSupplierProducts(toList(supplierRes));
+      const response = await adminService.getAllProducts(0, 50)
+      setProducts(toList(response));
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh products';
       setError(message);
@@ -129,12 +111,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const refreshOrders = async () => {
     try {
-      const [farmerRes, supplierRes] = await Promise.all([
-        adminService.getAllFarmerOrders(0, 50),
-        adminService.getAllSupplierOrders(0, 50)
-      ]);
-      setFarmerOrders(toList(farmerRes));
-      setSupplierOrders(toList(supplierRes));
+      const orders = await adminService.getAllOrders(0, 50)
+      setOrders(toList(orders));
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh orders';
       setError(message);
@@ -157,8 +135,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const deleteProduct = async (productId: string) => {
     try {
       await adminService.deleteProduct(productId);
-      setFarmerProducts(farmerProducts.filter(p => p.id !== productId));
-      setSupplierProducts(supplierProducts.filter(p => p.id !== productId));
+      setProducts(products.filter(p => p.id !== productId));
       notify.success('Product deleted successfully', 'Success');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to delete product';
@@ -169,8 +146,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const deleteOrder = async (orderId: string) => {
     try {
       await adminService.deleteOrder(orderId);
-      setFarmerOrders(farmerOrders.filter(o => o.id !== orderId));
-      setSupplierOrders(supplierOrders.filter(o => o.id !== orderId));
+      setOrders(orders.filter(o => o.id !== orderId));
       notify.success('Order deleted successfully', 'Success');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to delete order';
@@ -180,9 +156,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const userStats = {
     totalUsers: users?.data?.length || 0,
-    farmerCount: users?.data?.filter(u => u.role === UserType.FARMER).length || 0,
-    buyerCount: users?.data?.filter(u => u.role === UserType.BUYER).length || 0,
-    supplierCount: users?.data?.filter(u => u.role === UserType.SUPPLIER).length || 0,
+    buyerCount: users?.data?.filter(u => u.role === UserRole.BUYER).length || 0,
+    sellerCount: users?.data?.filter(u => u.role === UserRole.SELLER).length || 0,
   };
 
   const productStats = {
@@ -200,7 +175,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const startFetchingResources = useCallback(async () => {
-    if (!user || user.role !== UserType.ADMIN) {
+    if (!user || user.role !== UserRole.ADMIN) {
       throw new Error('Unauthorized access');
     }
     await fetchAllData(user);
@@ -216,13 +191,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
-        systemTransactions,
+        transactions,
         systemWallet,
         users,
-        farmerProducts,
-        supplierProducts,
-        farmerOrders,
-        supplierOrders,
         products,
         orders,
         loading,

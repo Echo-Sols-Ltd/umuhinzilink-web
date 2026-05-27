@@ -9,8 +9,6 @@ import {
     MessageSquare,
     User,
     Users,
-    ShieldAlert,
-    Cpu,
     Trash2,
     Check,
     Search,
@@ -24,47 +22,32 @@ import Sidebar from '@/components/shared/Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { useNotification } from '@/hooks/useNotification';
-import { UserType } from '@/types';
-import { NotificationType, Notification } from '@/types';
+import { NotificationType, Notification, UserRole } from '@/types';
 import { format, formatDistanceToNow } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 15;
 
-// Type tabs: 'ALL' + the types that make sense to surface separately
+// Type tabs: 'ALL' + the valid NotificationTypes
 type TabValue = 'ALL' | 'UNREAD' | NotificationType;
+
 // ─── Icon / colour helpers ────────────────────────────────────────────────────
 const TYPE_META: Record<NotificationType, { icon: React.ReactNode; dot: string; badge: string }> = {
     [NotificationType.PAYMENT]: { icon: <CheckCircle className="w-5 h-5" />, dot: 'bg-emerald-500', badge: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
-    [NotificationType.DELIVERY]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-sky-500', badge: 'text-sky-700 bg-sky-50 border-sky-200' },
     [NotificationType.NEGOTIATION]: { icon: <Info className="w-5 h-5" />, dot: 'bg-amber-500', badge: 'text-amber-700 bg-amber-50 border-amber-200' },
     [NotificationType.SYSTEM]: { icon: <AlertCircle className="w-5 h-5" />, dot: 'bg-red-500', badge: 'text-red-700 bg-red-50 border-red-200' },
-    [NotificationType.MESSAGE]: { icon: <MessageSquare className="w-5 h-5" />, dot: 'bg-violet-500', badge: 'text-violet-700 bg-violet-50 border-violet-200' },
     [NotificationType.PRODUCT]: { icon: <User className="w-5 h-5" />, dot: 'bg-teal-500', badge: 'text-teal-700 bg-teal-50 border-teal-200' },
     [NotificationType.ORDER]: { icon: <Users className="w-5 h-5" />, dot: 'bg-sky-500', badge: 'text-sky-700 bg-sky-50 border-sky-200' },
 };
 
 const iconBgClass: Record<NotificationType | string, string> = {
     [NotificationType.PAYMENT]: 'bg-emerald-50 text-emerald-600',
-    [NotificationType.DELIVERY]: 'bg-sky-50 text-sky-600',
     [NotificationType.NEGOTIATION]: 'bg-amber-50 text-amber-600',
     [NotificationType.SYSTEM]: 'bg-red-50 text-red-600',
-    [NotificationType.MESSAGE]: 'bg-violet-50 text-violet-600',
     [NotificationType.PRODUCT]: 'bg-teal-50 text-teal-600',
     [NotificationType.ORDER]: 'bg-sky-50 text-sky-600',
 };
-
-function NotificationIcon({ type }: { type: NotificationType }) {
-    const meta = TYPE_META[type] ?? TYPE_META.SYSTEM;
-    const bg = iconBgClass[type] ?? 'bg-card text-muted-foreground';
-    return (
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${bg}`}>
-            {meta.icon}
-        </div>
-    );
-}
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function NotificationsPage() {
@@ -85,45 +68,37 @@ export default function NotificationsPage() {
         productNotifications,
         orderNotifications,
         systemNotifications,
-        messageNotifications,
         unreadNotifications
     } = useNotification();
 
     const [activeTab, setActiveTab] = useState<TabValue>('ALL');
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(0);
-    const [notifications, setNotifications] = useState<Notification[]>(allNotifications)
+    const [notifications, setNotifications] = useState<Notification[]>(allNotifications);
 
     const TABS: { value: TabValue; label: string }[] = useMemo(() => [
         { value: 'ALL', label: t('common.notificationPage.tabs.all') },
         { value: 'UNREAD', label: t('common.notificationPage.tabs.unread') },
         { value: NotificationType.PAYMENT, label: 'Payment' },
-        { value: NotificationType.MESSAGE, label: t('common.notificationPage.tabs.messages') },
-        { value: NotificationType.DELIVERY, label: 'Delivery' },
-        { value: NotificationType.NEGOTIATION, label: 'Negotiations' },
         { value: NotificationType.SYSTEM, label: t('common.notificationPage.tabs.system') },
         { value: NotificationType.PRODUCT, label: t('common.notificationPage.tabs.products') },
-        { value: NotificationType.ORDER, label: t('common.notificationPage.tabs.orders') }
+        { value: NotificationType.ORDER, label: t('common.notificationPage.tabs.orders') },
     ], [t]);
 
     // ── Load data when tab or page changes ────────────────────────────────────
     const load = useCallback(async (tab: TabValue, p: number) => {
-        if (tab === NotificationType.SYSTEM) setNotifications(systemNotifications)
-        if (tab === NotificationType.MESSAGE) setNotifications(messageNotifications)
-        if (tab === NotificationType.PRODUCT) setNotifications(productNotifications)
-        if (tab === NotificationType.ORDER) setNotifications(orderNotifications)
-        if (tab === NotificationType.PAYMENT || tab === NotificationType.DELIVERY || tab === NotificationType.NEGOTIATION) {
-          setNotifications(allNotifications.filter(n => n.type === tab))
-        }
-        if (tab === 'ALL') setNotifications(allNotifications)
-        if (tab === 'UNREAD') setNotifications(unreadNotifications)
-    }, [activeTab]);
+        if (tab === NotificationType.SYSTEM) setNotifications(systemNotifications);
+        else if (tab === NotificationType.PRODUCT) setNotifications(productNotifications);
+        else if (tab === NotificationType.ORDER) setNotifications(orderNotifications);
+        else if (tab === NotificationType.PAYMENT) setNotifications(allNotifications.filter(n => n.type === tab));
+        else if (tab === 'ALL') setNotifications(allNotifications);
+        else if (tab === 'UNREAD') setNotifications(unreadNotifications);
+    }, [allNotifications, systemNotifications, productNotifications, orderNotifications, unreadNotifications]);
 
     useEffect(() => {
-
         load(activeTab, page);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeTab, page]);
+    }, [activeTab, page, allNotifications]);
 
     // ── Client-side filter: UNREAD tab + search ───────────────────────────────
     const visible = useMemo(() => {
@@ -146,7 +121,7 @@ export default function NotificationsPage() {
 
     return (
         <div className="flex h-screen bg-background overflow-hidden">
-            <Sidebar userType={user.role as UserType} activeItem="Notifications" />
+            {/* <Sidebar userType={user.role as UserRole} activeItem="Notifications" /> */}
 
             <main className="flex-1 overflow-auto pb-14">
                 <div className="p-6 lg:p-8 max-w-full space-y-6">
@@ -161,7 +136,7 @@ export default function NotificationsPage() {
                                 <h1 className="text-xl font-semibold text-foreground leading-tight">{t('common.notificationPage.title')}</h1>
                                 <p className="text-xs text-muted-foreground mt-0.5">
                                     {unreadCount > 0
-                                        ? (unreadCount > 1 
+                                        ? (unreadCount > 1
                                             ? t('common.notificationPage.unreadPlural').replace('{{count}}', String(unreadCount))
                                             : t('common.notificationPage.unreadSingular'))
                                         : t('common.notificationPage.caughtUp')}
@@ -262,7 +237,7 @@ export default function NotificationsPage() {
                                 </div>
                             ) : (
                                 visible.map(n => {
-                                    const meta = TYPE_META[n.type] ?? TYPE_META.SYSTEM;
+                                    const meta = TYPE_META[n.type] ?? TYPE_META[NotificationType.SYSTEM];
                                     const bg = iconBgClass[n.type] ?? 'bg-white text-gray-500';
                                     return (
                                         <div
@@ -287,14 +262,14 @@ export default function NotificationsPage() {
                                                         <span className={`text-sm ${n.isRead ? 'text-muted-foreground' : 'text-foreground'}`}>
                                                             {n.title}
                                                         </span>
-                                                        <span className={`inline-flex items-center border text-[10px] font-semibold uppercase  px-2 py-0.5 rounded-full ${meta.badge}`}>
+                                                        <span className={`inline-flex items-center border text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${meta.badge}`}>
                                                             {n.type.replace('_', ' ')}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
                                                         <Clock className="w-3 h-3" />
-                                                        <span title={format(new Date(n.timestamp), 'PPpp')}>
-                                                            {formatDistanceToNow(new Date(n.timestamp), { addSuffix: true })}
+                                                        <span title={format(new Date(n.createdAt), 'PPpp')}>
+                                                            {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -304,12 +279,12 @@ export default function NotificationsPage() {
                                             </div>
 
                                             {/* Actions — visible on hover */}
-                                            <div className="flex items-center gap-1 self-center  transition-opacity shrink-0">
+                                            <div className="flex items-center gap-1 self-center transition-opacity shrink-0">
                                                 {!n.isRead && (
                                                     <button
                                                         onClick={() => markAsRead(n.id)}
                                                         title="Mark as read"
-                                                        className="text-muted-foreground hover:text-foreground transition-colors bg-success/10 rounded-lg transition-colors"
+                                                        className="text-muted-foreground hover:text-foreground transition-colors bg-success/10 rounded-lg"
                                                     >
                                                         <Check className="w-4 h-4" />
                                                     </button>
@@ -330,23 +305,23 @@ export default function NotificationsPage() {
 
                         {/* ── Pagination ────────────────────────────────────── */}
                         {!loading && totalPages > 1 && (
-                            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-white/40">
-                                <span className="text-xs text-gray-500">
+                            <div className="flex items-center justify-between px-4 py-3 border-t border-border/50 bg-card/40">
+                                <span className="text-xs text-muted-foreground">
                                     {t('common.notificationPage.pageOf').replace('{{current}}', String(currentPage + 1)).replace('{{total}}', String(totalPages))}
-                                    <span className="text-gray-400 ml-1">{t('common.notificationPage.totalElements').replace('{{total}}', String(totalElements))}</span>
+                                    <span className="text-muted-foreground/60 ml-1">{t('common.notificationPage.totalElements').replace('{{total}}', String(totalElements))}</span>
                                 </span>
                                 <div className="flex items-center gap-1">
                                     <button
                                         disabled={page === 0}
                                         onClick={() => setPage(p => p - 1)}
-                                        className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-white transition-all disabled:opacity-40"
+                                        className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-card transition-all disabled:opacity-40"
                                     >
                                         <ChevronLeft className="w-4 h-4" />
                                     </button>
                                     <button
                                         disabled={page >= totalPages - 1}
                                         onClick={() => setPage(p => p + 1)}
-                                        className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-white transition-all disabled:opacity-40"
+                                        className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-card transition-all disabled:opacity-40"
                                     >
                                         <ChevronRight className="w-4 h-4" />
                                     </button>

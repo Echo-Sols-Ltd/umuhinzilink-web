@@ -70,31 +70,9 @@ export interface BuyerDashboardResponse {
   message: string;
 }
 
-// Farmer Dashboard Types
-export interface FarmerRecentOrder {
-  id: string;
-  buyer: string;
-  status: 'Pending' | 'Active' | 'Completed' | 'Cancelled' | 'Processing';
-  amount: number;
-  date: string;
-}
 
-export interface FarmerDashboardData {
-  totalEarnings: number;
-  pendingOrders: number;
-  totalOrders: number;
-  lowStockProducts: number;
-  recentOrders: FarmerRecentOrder[];
-}
-
-export interface FarmerDashboardResponse {
-  success: boolean;
-  data: FarmerDashboardData;
-  message: string;
-}
-
-// Supplier Dashboard Types
-export interface SupplierRecentOrder {
+// Seller Dashboard Types
+export interface SellerRecentOrder {
   id: string;
   farmer: string;
   product: string;
@@ -103,27 +81,27 @@ export interface SupplierRecentOrder {
   deliveryDate: string;
 }
 
-export interface SupplierLowStockProduct {
+export interface SellerLowStockProduct {
   id: string;
   name: string;
   currentStock: number;
   minThreshold: number;
 }
 
-export interface SupplierDashboardData {
+export interface SellerDashboardData {
   totalRevenue: number;
   activeOrders: number;
   lowStockProducts: number;
   onTimeDeliveryRate: number;
-  recentOrders?: SupplierRecentOrder[];
-  lowStockItems?: SupplierLowStockProduct[];
+  recentOrders?: SellerRecentOrder[];
+  lowStockItems?: SellerLowStockProduct[];
   revenueTrend?: ChartConfig;
   [key: string]: any;
 }
 
-export interface SupplierDashboardResponse {
+export interface SellerDashboardResponse {
   success: boolean;
-  data: SupplierDashboardData;
+  data: SellerDashboardData;
   message: string;
 }
 
@@ -132,7 +110,7 @@ export interface AdminDashboardData {
   totalUsers: number;
   totalFarmers: number;
   totalBuyers: number;
-  totalSuppliers: number;
+  totalSellers: number;
   totalOrders: number;
   transactionVolume: number;
   platformRevenue: number;
@@ -176,22 +154,20 @@ export interface GovernmentDashboardResponse {
 // Union type for all dashboard responses
 export type DashboardResponse =
   | BuyerDashboardResponse
-  | FarmerDashboardResponse
-  | SupplierDashboardResponse
+  | SellerDashboardResponse
   | AdminDashboardResponse
   | GovernmentDashboardResponse;
 
 // Union type for all dashboard data
 export type DashboardData =
   | BuyerDashboardData
-  | FarmerDashboardData
-  | SupplierDashboardData
+  | SellerDashboardData
   | AdminDashboardData
   | GovernmentDashboardData;
 
 // Dashboard component props
 export interface DashboardProps {
-  userType: 'BUYER' | 'FARMER' | 'SUPPLIER' | 'ADMIN' | 'GOVERNMENT';
+  userType: 'BUYER' | 'FARMER' | 'Seller' | 'ADMIN' | 'GOVERNMENT';
 }
 
 // Metric card component props

@@ -2,25 +2,21 @@
 
 import React from 'react';
 import { CheckCircle, Clock, Truck, Package, XCircle, AlertCircle, DollarSign } from 'lucide-react';
-import { OrderStatus, DeliveryStatus } from '@/types';
+import { OrderStatus } from '@/types';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';
 
 interface OrderStatusTrackerProps {
   orderStatus: OrderStatus;
-  deliveryStatus?: DeliveryStatus;
   createdAt: string;
   updatedAt: string;
-  deliveryDate?: string;
   className?: string;
 }
 
 const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
   orderStatus,
-  deliveryStatus,
   createdAt,
   updatedAt,
-  deliveryDate,
   className,
 }) => {
   const { t } = useI18n();
@@ -68,44 +64,10 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
         labelKey: 'orderStatus.tracker.orderConfirmed.label',
         descriptionKey: 'orderStatus.tracker.orderConfirmed.description',
         icon: CheckCircle,
-        status: orderStatus === OrderStatus.ACTIVE || orderStatus === OrderStatus.COMPLETED ? 'completed' : 'pending' as const,
-        timestamp: orderStatus === OrderStatus.ACTIVE || orderStatus === OrderStatus.COMPLETED ? updatedAt : undefined,
+        status: orderStatus === OrderStatus.CONFIRMED || orderStatus === OrderStatus.COMPLETED ? 'completed' : 'pending' as const,
+        timestamp: orderStatus === OrderStatus.CONFIRMED || orderStatus === OrderStatus.COMPLETED ? updatedAt : undefined,
       },
     ];
-
-    // Add delivery steps if we have delivery status
-    if (deliveryStatus) {
-      const deliverySteps = [
-        {
-          id: 'processing',
-          labelKey: 'orderStatus.tracker.processing.label',
-          descriptionKey: 'orderStatus.tracker.processing.description',
-          icon: Package,
-          status: [DeliveryStatus.SCHEDULED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' : 'pending' as const,
-          timestamp: [DeliveryStatus.SCHEDULED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? updatedAt : undefined,
-        },
-        {
-          id: 'shipped',
-          labelKey: 'orderStatus.tracker.shipped.label',
-          descriptionKey: 'orderStatus.tracker.shipped.description',
-          icon: Truck,
-          status: [DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? 'completed' :
-            deliveryStatus === DeliveryStatus.SCHEDULED ? 'active' : 'pending' as const,
-          timestamp: [DeliveryStatus.IN_TRANSIT, DeliveryStatus.DELIVERED].includes(deliveryStatus) ? updatedAt : undefined,
-        },
-        {
-          id: 'delivered',
-          labelKey: 'orderStatus.tracker.delivered.label',
-          descriptionKey: 'orderStatus.tracker.delivered.description',
-          icon: CheckCircle,
-          status: deliveryStatus === DeliveryStatus.DELIVERED ? 'completed' :
-            deliveryStatus === DeliveryStatus.FAILED ? 'error' : 'pending' as const,
-          timestamp: deliveryStatus === DeliveryStatus.DELIVERED ? (deliveryDate || updatedAt) : undefined,
-        },
-      ];
-
-      return [...activeSteps, ...deliverySteps];
-    }
 
     // Simple completion step for orders without delivery tracking
     if (orderStatus === OrderStatus.COMPLETED) {
@@ -221,34 +183,14 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
           <div className={cn(
             'w-3 h-3 rounded-full',
             orderStatus === OrderStatus.COMPLETED ? 'bg-success' :
-              orderStatus === OrderStatus.ACTIVE ? 'bg-info' :
+              orderStatus === OrderStatus.CONFIRMED ? 'bg-info' :
                 orderStatus === OrderStatus.CANCELLED ? 'bg-destructive' : 'bg-warning'
           )} />
           <span className="text-sm font-medium text-foreground">
             {t('orderStatus.tracker.currentStatus', { status: orderStatus.replace('_', ' ') })}
           </span>
         </div>
-        {deliveryStatus && (
-          <div className="flex items-center space-x-2">
-            <Truck className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              {deliveryStatus.replace('_', ' ')}
-            </span>
-          </div>
-        )}
       </div>
-
-      {/* Estimated Delivery */}
-      {deliveryDate && deliveryStatus !== DeliveryStatus.DELIVERED && (
-        <div className="mt-3 p-3 bg-info/10 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 text-info" />
-            <span className="text-sm font-medium text-foreground">
-              {t('delivery.tracking.estimatedDelivery', { date: formatTimestamp(deliveryDate) })}
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

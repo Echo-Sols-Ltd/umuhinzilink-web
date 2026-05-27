@@ -1,4 +1,4 @@
-import { ApiResponse, Message, PaginatedResponse } from '@/types';
+import { ApiResponse, NegotiationMessage, PaginatedResponse } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 import { AxiosProgressEvent, CancelToken } from 'axios';
@@ -11,15 +11,15 @@ class MessageService {
     receiverId: string,
     page = 0,
     size = 20
-  ): Promise<PaginatedResponse<Message[]>> {
-    return await apiClient.get<PaginatedResponse<Message[]>>(
+  ): Promise<PaginatedResponse<NegotiationMessage[]>> {
+    return await apiClient.get<PaginatedResponse<NegotiationMessage[]>>(
       `${API_ENDPOINTS.MESSAGES.CONVERSATION(senderId, receiverId)}?page=${page}&size=${size}`
     );
   }
 
   // Get message by ID
-  async getMessageById(conversationId: string): Promise<ApiResponse<Message>> {
-    return await apiClient.get<ApiResponse<Message>>(API_ENDPOINTS.MESSAGES.BY_ID(conversationId));
+  async getMessageById(conversationId: string): Promise<ApiResponse<NegotiationMessage>> {
+    return await apiClient.get<ApiResponse<NegotiationMessage>>(API_ENDPOINTS.MESSAGES.BY_ID(conversationId));
   }
 
   async markMessagesAsRead(conversationId: string): Promise<ApiResponse<void>> {

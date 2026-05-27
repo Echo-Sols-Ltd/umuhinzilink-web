@@ -7,15 +7,11 @@ import { ProductProvider } from '@/contexts/ProductContext';
 import { OrderProvider } from '@/contexts/OrderContext';
 import { UserProvider } from '@/contexts/UserContext';
 import { WalletProvider } from '@/contexts/WalletContext';
-import { MessageProvider } from '@/contexts/MessageContext';
-import { ProfileProvider } from '@/contexts/ProfileContext';
 import { SocketProvider } from './SocketContext';
 import { NotificationProvider } from './NotificationContext';
 import { BrowserNotificationProvider } from './BrowserNotificationContext';
 import { ThemeProvider } from './ThemeContext';
 import GlobalOrderModal from '@/components/orders/GlobalOrderModal';
-import { CartProvider } from './CartContext';
-import { NegotiationProvider } from './NegotiationContext';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -33,16 +29,8 @@ export function AppProviders({ children }: AppProvidersProps) {
                   <ProductProvider>
                     <WalletProvider>
                       <OrderProvider>
-                        <NegotiationProvider>
-                        <MessageProvider>
-                          <ProfileProvider>
-                            <CartProvider>
-                              {children}
-                            </CartProvider>
-                            <GlobalOrderModal />
-                          </ProfileProvider>
-                        </MessageProvider>
-                        </NegotiationProvider>
+                        {children}
+                        <GlobalOrderModal />
                       </OrderProvider>
                     </WalletProvider>
                   </ProductProvider>

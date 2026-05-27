@@ -20,24 +20,22 @@ class ProductService {
     return await apiClient.delete<ApiResponse<Product>>(API_ENDPOINTS.PRODUCT.DELETE(id));
   }
 
-  async getPrivateProducts(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
+  async getProducts(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
     return await apiClient.get<PaginatedResponse<Product[]>>(
-      `${API_ENDPOINTS.PRODUCT.PRIVATE_ALL}?page=${page}&size=${size}`
+      `${API_ENDPOINTS.PRODUCT.ALL}?page=${page}&size=${size}`
     );
   }
 
-  async getPublicProducts(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
+  async getSellerProducts(page = 0, size = 10): Promise<PaginatedResponse<Product[]>> {
     return await apiClient.get<PaginatedResponse<Product[]>>(
-      `${API_ENDPOINTS.PRODUCT.PUBLIC_ALL}?page=${page}&size=${size}`
+      `${API_ENDPOINTS.PRODUCT.SELLER}?page=${page}&size=${size}`
     );
   }
 
-  async getFarmerStats(): Promise<ApiResponse<any[]>> {
-    return await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.PRODUCT.FARMER_STATS);
-  }
 
-  async getSupplierStats(): Promise<ApiResponse<any[]>> {
-    return await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.PRODUCT.SUPPLIER_STATS);
+
+  async getSellerStats(): Promise<ApiResponse<any[]>> {
+    return await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.PRODUCT.SELLER_STATS);
   }
 
   async searchProducts(params: {

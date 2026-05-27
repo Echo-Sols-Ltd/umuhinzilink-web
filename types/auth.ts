@@ -10,9 +10,19 @@ export interface AuthResponse {
   token: string;
 }
 
+export interface AskOtpRequest {
+  email: string;
+}
+
+export interface VerifyOtpRequest {
+  email: string;
+  code: string;
+}
 
 export interface GoogleAuthRequest {
   token: string;
-  role: string;
-  district: District;
+}
+
+export interface ResetPasswordRequest {
+  newPassword: string
 }

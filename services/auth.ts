@@ -4,13 +4,12 @@ import {
   LoginRequest,
   AuthResponse,
   UserRequest,
-  FarmerRequest,
-  SupplierRequest,
-  BuyerRequest,
-  Buyer,
-  Supplier,
-  Farmer,
+  Seller,
+  SellerRegistration,
   GoogleAuthRequest,
+  VerifyOtpRequest,
+  AskOtpRequest,
+  ResetPasswordRequest
 } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
@@ -45,20 +44,11 @@ class AuthService {
     return response;
   }
 
-  async registerFarmer(userData: FarmerRequest): Promise<ApiResponse<Farmer>> {
-    const response = await apiClient.post<ApiResponse<Farmer>>(API_ENDPOINTS.AUTH.REGISTER_FARMER, userData);
+  async registerSeller(userData: SellerRegistration): Promise<ApiResponse<User>> {
+    const response = await apiClient.post<ApiResponse<User>>(API_ENDPOINTS.AUTH.REGISTER_SELLER, userData);
     return response;
   }
 
-  async registerSupplier(userData: SupplierRequest): Promise<ApiResponse<Supplier>> {
-    const response = await apiClient.post<ApiResponse<Supplier>>(API_ENDPOINTS.AUTH.REGISTER_SUPPLIER, userData);
-    return response;
-  }
-
-  async registerBuyer(userData: BuyerRequest): Promise<ApiResponse<Buyer>> {
-    const response = await apiClient.post<ApiResponse<Buyer>>(API_ENDPOINTS.AUTH.REGISTER_BUYER, userData);
-    return response;
-  }
 
   /**
    * Verify logged in user
@@ -81,41 +71,23 @@ class AuthService {
     }
   }
 
-  async verifyOtp(data: string): Promise<ApiResponse<User>> {
-    const response = await apiClient.post<ApiResponse<User>>(API_ENDPOINTS.AUTH.CHECK_OTP, data);
+  async verifyOtp(data: VerifyOtpRequest): Promise<ApiResponse<AuthResponse>> {
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.VERIFY_OTP, data);
     return response;
   }
 
-  async askOtpCode(): Promise<ApiResponse<User>> {
-    const response = await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.AUTH.ASK_OTP_CODE);
+  async askOtpCode(data: AskOtpRequest): Promise<ApiResponse<User>> {
+    const response = await apiClient.post<ApiResponse<User>>(API_ENDPOINTS.AUTH.ASK_OTP_CODE, data);
     return response;
   }
 
-  /**
-   * Request password reset with email
-   */
-  async requestPasswordReset(email: string): Promise<ApiResponse<void>> {
-    const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email }, { timeout: 20000 });
-    return response;
-  }
 
-  /**
-   * Verify reset code with email
-   */
-  async verifyResetCode(email: string, code: string): Promise<ApiResponse<void>> {
-    const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.CHECK_RESET_CODE, { email, code });
-    return response;
-  }
 
   /**
    * Reset password with email, reset code, and new password
    */
-  async resetPassword(email: string, resetCode: string, newPassword: string): Promise<ApiResponse<void>> {
-    const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.RESET_PASSWORD, {
-      email,
-      resetCode,
-      newPassword
-    });
+  async resetPassword(data: ResetPasswordRequest): Promise<ApiResponse<void>> {
+    const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.RESET_PASSWORD, data)
     return response;
   }
 }
