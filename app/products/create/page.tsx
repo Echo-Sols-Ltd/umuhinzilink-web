@@ -8,6 +8,8 @@ import {
     DollarSign, Info, ImagePlus, AlertCircle,
     ToggleLeft, ToggleRight,
 } from 'lucide-react';
+import { District, MeasurementUnit, ProductCategory, ProductRequest } from '@/types';
+import { useProductAction } from '@/hooks/useProductAction';
 
 // ── Enums (mirror backend) ────────────────────────────────────────────────────
 
@@ -47,10 +49,10 @@ const UNITS = [
 ];
 
 const DISTRICTS = [
-    'BUGESERA','BURERA','GAKENKE','GASABO','GATSIBO','GICUMBI','GISAGARA','HUYE',
-    'KAMONYI','KARONGI','KAYONZA','KICUKIRO','KIREHE','MUHANGA','MUSANZE','NGOMA',
-    'NGORORERO','NYABIHU','NYAGATARE','NYAMASHEKE','NYANZA','NYARUGENGE',
-    'NYARUGURU','RUBAVU','RUHANGO','RULINDO','RUSIZI','RUTSIRO','RWAMAGANA',
+    'BUGESERA', 'BURERA', 'GAKENKE', 'GASABO', 'GATSIBO', 'GICUMBI', 'GISAGARA', 'HUYE',
+    'KAMONYI', 'KARONGI', 'KAYONZA', 'KICUKIRO', 'KIREHE', 'MUHANGA', 'MUSANZE', 'NGOMA',
+    'NGORORERO', 'NYABIHU', 'NYAGATARE', 'NYAMASHEKE', 'NYANZA', 'NYARUGENGE',
+    'NYARUGURU', 'RUBAVU', 'RUHANGO', 'RULINDO', 'RUSIZI', 'RUTSIRO', 'RWAMAGANA',
 ];
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -72,8 +74,7 @@ type FieldErrors = Partial<Record<keyof ProductFormData, string>>;
 // ── Helper ────────────────────────────────────────────────────────────────────
 
 const inputCls = (err?: string) =>
-    `w-full h-11 px-3.5 rounded-xl border text-sm text-foreground bg-gray-50 dark:bg-gray-800/60 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${
-        err ? 'border-red-400' : 'border-border'
+    `w-full h-11 px-3.5 rounded-xl border text-sm text-foreground bg-gray-50 dark:bg-gray-800/60 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${err ? 'border-red-400' : 'border-border'
     }`;
 
 function Field({ label, hint, error, children }: {
@@ -98,10 +99,17 @@ function Field({ label, hint, error, children }: {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function CreateProduct() {
-    const [form, setForm] = useState<ProductFormData>({
-        name: '', description: '', category: '', unitPrice: '',
-        stockQuantity: '', measurementUnit: '', district: '',
-        isNegotiable: false, image: '',
+    const { createProduct} = useProductAction()
+    const [form, setForm] = useState<ProductRequest>({
+        name: '',
+        description: '',
+        category: ProductCategory.ANIMAL_FEED,
+        unitPrice: 0,
+        stockQuantity: 0,
+        measurementUnit: MeasurementUnit.KG,
+        district: District.BUGESERA,
+        image: '',
+        isNegotiable: false,
     });
     const [errors, setErrors] = useState<FieldErrors>({});
     const [loading, setLoading] = useState(false);
@@ -109,6 +117,7 @@ export default function CreateProduct() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [catOpen, setCatOpen] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
+    const [image,setImage]=useState<File|null>(null)
 
     // ── Validation ────────────────────────────────────────────────────────
 
@@ -137,11 +146,13 @@ export default function CreateProduct() {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+        
         if (!file) return;
         if (file.size > 5 * 1024 * 1024) {
             setErrors(p => ({ ...p, image: 'Image must be under 5 MB' }));
             return;
         }
+        setImage(file)
         const reader = new FileReader();
         reader.onload = ev => {
             const result = ev.target?.result as string;
@@ -155,9 +166,7 @@ export default function CreateProduct() {
         if (!validate()) return;
         setLoading(true);
         try {
-            // TODO: POST /api/v1/products with form data
-            // await productService.create({ ...form, unitPrice: new BigDecimal(form.unitPrice), stockQuantity: ... });
-            await new Promise(r => setTimeout(r, 1400));
+            await createProduct(form,image!);
             setSuccess(true);
         } catch {
             // handle error
@@ -195,7 +204,7 @@ export default function CreateProduct() {
 
                     <div className="space-y-3 mt-6">
                         <button
-                            onClick={() => { setForm({ name:'',description:'',category:'',unitPrice:'',stockQuantity:'',measurementUnit:'',district:'',isNegotiable:false,image:'' }); setImagePreview(null); setSuccess(false); }}
+                            onClick={() => { setForm({ name: '', description: '', category: ProductCategory.ANIMAL_FEED, unitPrice: 0, stockQuantity: 0, measurementUnit: MeasurementUnit.KG, district: District.BUGESERA, image: '', isNegotiable: false }); setImagePreview(null); setSuccess(false); }}
                             className="w-full h-12 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
                             <Package size={16} /> Add another listing
                         </button>
@@ -213,7 +222,7 @@ export default function CreateProduct() {
     // ── Form ──────────────────────────────────────────────────────────────
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+        <div className="h-screen bg-gray-50 dark:bg-gray-950">
 
             {/* Sticky header */}
             <header className="sticky top-0 z-40 h-14 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4">
@@ -234,18 +243,17 @@ export default function CreateProduct() {
                 </button>
             </header>
 
-            <main className="max-w-lg mx-auto px-4 py-6 space-y-4 pb-24">
+            <main className="max-w-lg mx-auto px-4 py-6 space-y-4 pb-60 h-full overflow-y-scroll">
 
                 {/* Image upload */}
                 <div
                     onClick={() => fileRef.current?.click()}
-                    className={`relative w-full h-52 rounded-2xl overflow-hidden border-2 border-dashed cursor-pointer transition-colors ${
-                        errors.image
-                            ? 'border-red-400 bg-red-50 dark:bg-red-950/10'
-                            : imagePreview
+                    className={`relative w-full h-52 rounded-2xl overflow-hidden border-2 border-dashed cursor-pointer transition-colors ${errors.image
+                        ? 'border-red-400 bg-red-50 dark:bg-red-950/10'
+                        : imagePreview
                             ? 'border-transparent'
                             : 'border-border bg-white dark:bg-gray-900 hover:border-green-400 hover:bg-green-50/50 dark:hover:bg-green-950/10'
-                    }`}>
+                        }`}>
                     {imagePreview ? (
                         <>
                             <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
@@ -328,9 +336,8 @@ export default function CreateProduct() {
                                                     key={item}
                                                     type="button"
                                                     onClick={() => { set('category', item); setCatOpen(false); }}
-                                                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-green-50 dark:hover:bg-green-950/20 ${
-                                                        form.category === item ? 'text-green-600 font-semibold' : 'text-foreground'
-                                                    }`}>
+                                                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-green-50 dark:hover:bg-green-950/20 ${form.category === item ? 'text-green-600 font-semibold' : 'text-foreground'
+                                                        }`}>
                                                     {CATEGORY_LABELS[item]}
                                                 </button>
                                             ))}

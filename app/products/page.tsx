@@ -1,209 +1,402 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import {
-    LayoutGrid,
-    List,
-    X,
-    Filter,
+    Plus, Search, Package, Eye, Edit3, Trash2,
+    ChevronRight, MoreVertical, TrendingUp,
+    AlertTriangle, XCircle, FileText, Filter,
+    LayoutGrid, List, Sprout, ArrowUpDown,
+    CheckCircle, Clock, PauseCircle,
 } from 'lucide-react';
-import { notify } from '@/lib/notify';
-import Sidebar from '@/components/shared/Sidebar';
-import { Product, UserRole } from '@/types';
 import { useProduct } from '@/contexts/ProductContext';
-import { useAuth } from '@/contexts/AuthContext';
-import { MessageType } from '@/types';
-import { ProductDisplay } from '@/components/products/ProductDisplay';
-import { useI18n } from '@/contexts/I18nContext';
-import { Button } from '@/components/ui/button';
-import { ResponsiveLayout } from '@/components/ui/responsive-layout';
-import { useUser } from '@/contexts/UserContext';
+import { Product } from '@/types';
+import ProductCard from '@/components/products/ProductCard';
 
-const Logo = () => (
-    <span className="font-extrabold text-2xl ">
-        <span className="text-green-700">Umuhinzi</span>
-        <span className="text-foreground">Link</span>
-    </span>
-);
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-export default function ProductsPage() {
-    const router = useRouter();
-    const { user: buyer } = useAuth();
-    const { t } = useI18n();
-    const { marketplaceProducts: products, loading: productsLoading } = useProduct();
-    const [isPurchasing, setIsPurchasing] = useState(false);
-
-    // State for filters and search
-    const [search, setSearch] = useState('');
-    const [cropFilter, setCropFilter] = useState<string>('all');
-    const [categoryFilter, setCategoryFilter] = useState<string>('');
-    const [locationFilter, setLocationFilter] = useState<string>('');
-    const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
-    const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
-    const [sortBy, setSortBy] = useState('newest');
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [showFilters, setShowFilters] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [savedSearches, setSavedSearches] = useState<string[]>([]);
-
-    // Filter and sort products
-    const filteredProducts = useMemo(() => {
-        let filtered = products || [];
-
-        // Search filter
-        if (search) {
-            filtered = filtered.filter(product =>
-                product.name.toLowerCase().includes(search.toLowerCase()) ||
-                product.description.toLowerCase().includes(search.toLowerCase())
-            );
-        }
-
-        // Category filter
-        if (categoryFilter) {
-            filtered = filtered.filter(product => product.category === categoryFilter);
-        }
-
-        // Location filter
-        if (locationFilter) {
-            filtered = filtered.filter(product =>
-                product.district?.toLowerCase().includes(locationFilter.toLowerCase())
-            );
-        }
-
-        // Price range filter
-        if (minPrice !== undefined || maxPrice !== undefined) {
-            filtered = filtered.filter(product => {
-                const price = Number(product.unitPrice);
-                const minOk = minPrice === undefined || price >= minPrice;
-                const maxOk = maxPrice === undefined || price <= maxPrice;
-                return minOk && maxOk;
-            });
-        }
-
-        // Sort products
-        filtered.sort((a, b) => {
-            switch (sortBy) {
-                case 'price-low':
-                    return Number(a.unitPrice) - Number(b.unitPrice);
-                case 'price-high':
-                    return Number(b.unitPrice) - Number(a.unitPrice);
-                case 'name':
-                    return a.name.localeCompare(b.name);
-                case 'newest':
-                default:
-                    return 0;
-            }
-        });
-
-        return filtered;
-    }, [products, search, categoryFilter, locationFilter, minPrice, maxPrice, sortBy]);
-
-    // Pagination
-    const itemsPerPage = 12;
-    const totalPages = Math.ceil((filteredProducts?.length || 0) / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedProducts = filteredProducts?.slice(startIndex, endIndex) || [];
-
-    const handleContactFarmer = async (product: Product) => {
-        if (!buyer) {
-            notify.error(t('marketplace.toasts.authRequired.body'), t('marketplace.toasts.authRequired.title'));
-            return;
-        }
-
-        if (!product.owner) {
-            notify.error(t('marketplace.toasts.farmerNotAvailable.body'), t('marketplace.toasts.farmerNotAvailable.title'));
-            return;
-        }
+type ProductStatus = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK' | 'DRAFT' | 'DISCONTINUED';
+type SortKey = 'name' | 'unitPrice' | 'stockQuantity' | 'viewCount' | 'createdAt';
+type ViewMode = 'grid' | 'list';
 
 
-    };
+// ── Constants ─────────────────────────────────────────────────────────────────
 
-    const clearFilters = () => {
-        setSearch('');
-        setCropFilter('all');
-        setCategoryFilter('');
-        setLocationFilter('');
-        setMinPrice(undefined);
-        setMaxPrice(undefined);
-        setCurrentPage(1);
-    };
+const STATUS_CONFIG: Record<ProductStatus, { label: string; icon: React.ElementType; cls: string; dot: string }> = {
+    IN_STOCK: { label: 'In stock', icon: CheckCircle, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400', dot: 'bg-emerald-500' },
+    LOW_STOCK: { label: 'Low stock', icon: AlertTriangle, cls: 'text-amber-600  bg-amber-50  dark:bg-amber-950/30  dark:text-amber-400', dot: 'bg-amber-500' },
+    OUT_OF_STOCK: { label: 'Out of stock', icon: XCircle, cls: 'text-red-500    bg-red-50    dark:bg-red-950/30    dark:text-red-400', dot: 'bg-red-500' },
+    DRAFT: { label: 'Draft', icon: FileText, cls: 'text-gray-500   bg-gray-100  dark:bg-gray-800      dark:text-gray-400', dot: 'bg-gray-400' },
+    DISCONTINUED: { label: 'Discontinued', icon: PauseCircle, cls: 'text-gray-400   bg-gray-100  dark:bg-gray-800      dark:text-gray-500', dot: 'bg-gray-300' },
+};
 
-    const handleSearch = () => {
-        setCurrentPage(1);
-    };
+const UNIT_LABELS: Record<string, string> = {
+    KG: 'kg', G: 'g', TON: 'ton', LITER: 'L', ML: 'ml',
+    BAG_25KG: '25kg bag', BAG_50KG: '50kg bag', BAG_100KG: '100kg bag',
+    CRATE: 'crate', BUNDLE: 'bundle', BUNCH: 'bunch',
+    PIECE: 'pc', DOZEN: 'doz', JERRICAN: 'jerrican', SACK: 'sack',
+};
 
-    const header = (
-        <div className="bg-card shadow-sm border-b border-border px-4 py-3">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                    <h1 className="text-2xl font-semibold text-foreground">{t('marketplace.title')}</h1>
-                    <div className="flex items-center space-x-2">
-                        <Button
-                            variant={viewMode === 'grid' ? 'default' : 'outline'}
-                            size="sm"
-                            onClick={() => setViewMode('grid')}
-                        >
-                            <LayoutGrid className="w-4 h-4" />
-                        </Button>
-                        <Button
-                            variant={viewMode === 'list' ? 'default' : 'outline'}
-                            size="sm"
-                            onClick={() => setViewMode('list')}
-                        >
-                            <List className="w-4 h-4" />
-                        </Button>
+const CATEGORY_LABELS: Record<string, string> = {
+    CEREALS: 'Cereals', LEGUMES_PULSES: 'Legumes', ROOTS_TUBERS: 'Roots & Tubers',
+    BANANAS_PLANTAINS: 'Bananas', VEGETABLES: 'Vegetables', FRUITS: 'Fruits',
+    CASH_CROPS: 'Cash Crops', OILSEEDS: 'Oilseeds', SPICES_HERBS: 'Spices',
+    FODDER_FORAGE: 'Fodder', FERTILISER: 'Fertiliser', PESTICIDE: 'Pesticide',
+    HERBICIDE: 'Herbicide', FUNGICIDE: 'Fungicide', SEEDS_SEEDLINGS: 'Seeds',
+    IRRIGATION: 'Irrigation', HAND_TOOLS: 'Tools', MACHINERY: 'Machinery',
+    STORAGE_EQUIPMENT: 'Storage', PACKAGING: 'Packaging',
+    ANIMAL_FEED: 'Animal Feed', VETERINARY: 'Veterinary', OTHER: 'Other',
+};
+
+function fmt(n: number) {
+    return new Intl.NumberFormat('rw-RW').format(n) + ' RWF';
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function StatusBadge({ status }: { status: ProductStatus }) {
+    const { label, icon: Icon, cls } = STATUS_CONFIG[status];
+    return (
+        <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>
+            <Icon size={10} />
+            {label}
+        </span>
+    );
+}
+
+function StatPill({ icon: Icon, value, label }: { icon: React.ElementType; value: number; label: string }) {
+    return (
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Icon size={12} />
+            <span className="font-semibold text-foreground">{value}</span>
+            <span>{label}</span>
+        </div>
+    );
+}
+
+// ── Action menu ───────────────────────────────────────────────────────────────
+
+function ActionMenu({ listing, onDelete }: { listing: Product; onDelete: (id: string) => void }) {
+    const [open, setOpen] = useState(false);
+    return (
+        <div className="relative">
+            <button
+                onClick={e => { e.preventDefault(); setOpen(v => !v); }}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <MoreVertical size={14} />
+            </button>
+            {open && (
+                <>
+                    <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+                    <div className="absolute right-0 mt-1 w-44 bg-white dark:bg-gray-900 border border-border rounded-xl shadow-lg z-20 py-1 overflow-hidden">
+                        <Link
+                            href={`/products/${listing.id}/edit`}
+                            onClick={() => setOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                            <Edit3 size={13} className="text-muted-foreground" /> Edit listing
+                        </Link>
+                        <Link
+                            href={`/products/${listing.id}`}
+                            onClick={() => setOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                            <Eye size={13} className="text-muted-foreground" /> View as buyer
+                        </Link>
+                        <div className="border-t border-border my-1" />
+                        <button
+                            onClick={() => { onDelete(listing.id); setOpen(false); }}
+                            className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors">
+                            <Trash2 size={13} /> Delete listing
+                        </button>
                     </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <span>{t('marketplace.tagline')}</span>
-                        <div className="w-2 h-2 bg-success rounded-full mr-2" />
-                        <span className="font-medium">{t('marketplace.verifiedFarmers')}</span>
+                </>
+            )}
+        </div>
+    );
+}
+
+
+// ── List row ──────────────────────────────────────────────────────────────────
+
+function ListRow({ listing, onDelete }: { listing: Product; onDelete: (id: string) => void }) {
+    return (
+        <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
+            {/* Thumbnail */}
+            <div className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0">
+                {listing.image ? (
+                    <img src={listing.image} alt={listing.name} className="w-full h-full object-cover" />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                        <Package size={20} className="text-gray-300 dark:text-gray-600" />
                     </div>
-                    <Button variant="outline" size="sm">
-                        <Filter className="w-4 h-4 mr-2" />
-                        {t('marketplace.filters')}
-                    </Button>
+                )}
+            </div>
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-bold text-foreground truncate">{listing.name}</p>
+                    {listing.isNegotiable && (
+                        <span className="text-xs text-green-600 dark:text-green-400 font-semibold shrink-0">Negotiable</span>
+                    )}
                 </div>
+                <p className="text-xs text-muted-foreground mt-0.5">{CATEGORY_LABELS[listing.category]}</p>
+                <div className="flex items-center gap-3 mt-1.5">
+                    <StatusBadge status={listing.status} />
+                    <span className="text-xs text-muted-foreground">
+                        {listing.stockQuantity} {UNIT_LABELS[listing.measurementUnit] ?? listing.measurementUnit} left
+                    </span>
+                </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-1 shrink-0">
+                <Link
+                    href={`/products/${listing.id}/edit`}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors opacity-0 group-hover:opacity-100">
+                    <Edit3 size={14} />
+                </Link>
+                <ActionMenu listing={listing} onDelete={onDelete} />
             </div>
         </div>
     );
+}
 
+// ── Empty state ───────────────────────────────────────────────────────────────
+
+function EmptyState({ filtered }: { filtered: boolean }) {
+    return (
+        <div className="py-20 flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mb-4">
+                <Package size={28} className="text-green-400" />
+            </div>
+            <h3 className="text-base font-bold text-foreground">
+                {filtered ? 'No listings match your filters' : 'No listings yet'}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                {filtered
+                    ? 'Try adjusting your search or filter to find what you are looking for.'
+                    : 'Add your first product and start selling to buyers across Rwanda.'}
+            </p>
+            {!filtered && (
+                <Link
+                    href="/products/create"
+                    className="mt-5 flex items-center gap-2 h-10 px-5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors">
+                    <Plus size={15} /> Add first listing
+                </Link>
+            )}
+        </div>
+    );
+}
+
+// ── Summary bar ───────────────────────────────────────────────────────────────
+
+function SummaryBar({ listings }: { listings: Product[] }) {
+    const total = listings.length;
+    const inStock = listings.filter(l => l.status === 'IN_STOCK').length;
+    const lowStock = listings.filter(l => l.status === 'LOW_STOCK').length;
+    const outOfStock = listings.filter(l => l.status === 'OUT_OF_STOCK').length;
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {[
+                { label: 'Total', value: total, color: 'text-foreground' },
+                { label: 'In stock', value: inStock, color: 'text-emerald-600 dark:text-emerald-400' },
+                { label: 'Low stock', value: lowStock, color: 'text-amber-600 dark:text-amber-400' },
+                { label: 'Out of stock', value: outOfStock, color: 'text-red-500' },
+            ].map(({ label, value, color }) => (
+                <div key={label} className="bg-white dark:bg-gray-900 border border-border rounded-xl px-3 py-2.5 text-center">
+                    <p className={`text-xl font-extrabold ${color}`}>{value}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
+
+export default function Products() {
+    const { products, loading, error, } = useProduct()
+    const [search, setSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState<ProductStatus | 'ALL'>('ALL');
+    const [sortKey, setSortKey] = useState<SortKey>('createdAt');
+    const [sortAsc, setSortAsc] = useState(false);
+    const [viewMode, setViewMode] = useState<ViewMode>('grid');
+    const [page, setPage] = useState(1);
+    const PAGE_SIZE = 6;
+
+    const filtered = useMemo(() => {
+        let result = products || [];
+        if (search.trim()) {
+            const q = search.toLowerCase();
+            result = result.filter(l =>
+                l.name.toLowerCase().includes(q) ||
+                (CATEGORY_LABELS[l.category] ?? '').toLowerCase().includes(q)
+            );
+        }
+        if (statusFilter !== 'ALL') result = result.filter(l => l.status === statusFilter);
+        result = [...result].sort((a, b) => {
+            const av = a[sortKey] as number | string;
+            const bv = b[sortKey] as number | string;
+            return sortAsc
+                ? av < bv ? -1 : av > bv ? 1 : 0
+                : av > bv ? -1 : av < bv ? 1 : 0;
+        });
+        return result;
+    }, [products, search, statusFilter, sortKey, sortAsc]);
+
+
+    const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+
+    const toggleSort = (key: SortKey) => {
+        if (sortKey === key) setSortAsc(v => !v);
+        else { setSortKey(key); setSortAsc(false); }
+        setPage(1);
+    };
+
+    // ── Render ────────────────────────────────────────────────────────────
 
     return (
-        <ResponsiveLayout  header={header}>
-            <div className="space-y-6">
-                {/* Search and Filters */}
-                <ProductDisplay
-                    products={paginatedProducts}
-                    loading={productsLoading}
-                    viewMode={viewMode}
-                    showFilters={showFilters}
-                    showSearch={true}
-                    showPagination={true}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                    onViewModeChange={setViewMode}
-                    onSearchChange={setSearch}
-                    onFilterChange={(filters) => {
-                        if ('category' in filters) setCategoryFilter(filters.category);
-                        if ('location' in filters) setLocationFilter(filters.location);
-                    }}
-                    onProductSelect={(product) => {
-                        router.push(`/buyer/products/${product.id}`);
-                    }}
-                    onProductPurchase={(product) => {
-                        router.push(`/buyer/products/${product.id}`);
-                    }}
-                    onProductContact={handleContactFarmer}
-                    selectedCategory={categoryFilter}
-                    selectedLocation={locationFilter}
-                    search={search}
-                />
-            </div>
-        </ResponsiveLayout>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+
+            {/* Header */}
+            <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border">
+                <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Sprout size={18} className="text-green-600" />
+                        <span className="text-sm font-bold text-foreground">My Listings</span>
+                    </div>
+                    <Link
+                        href="/products/create"
+                        className="flex items-center gap-1.5 h-8 px-4 bg-green-600 hover:bg-green-700 active:scale-[0.97] text-white text-xs font-semibold rounded-full transition-all">
+                        <Plus size={13} /> New listing
+                    </Link>
+                </div>
+            </header>
+
+            <main className="max-w-5xl mx-auto px-4 py-6 space-y-5">
+
+                {/* Summary */}
+                <SummaryBar listings={products} />
+
+                {/* Toolbar */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                    {/* Search */}
+                    <div className="relative flex-1">
+                        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Search listings…"
+                            value={search}
+                            onChange={e => { setSearch(e.target.value); setPage(1); }}
+                            className="w-full h-10 pl-9 pr-4 text-sm bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                        />
+                    </div>
+
+                    {/* Status filter */}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                        {(['ALL', 'IN_STOCK', 'LOW_STOCK', 'OUT_OF_STOCK', 'DRAFT'] as const).map(s => (
+                            <button
+                                key={s}
+                                onClick={() => { setStatusFilter(s); setPage(1); }}
+                                className={`h-9 px-3 text-xs font-medium rounded-xl border transition-colors ${statusFilter === s
+                                    ? 'bg-green-600 border-green-600 text-white'
+                                    : 'bg-white dark:bg-gray-900 border-border text-muted-foreground hover:text-foreground hover:border-green-300'
+                                    }`}>
+                                {s === 'ALL' ? 'All' : STATUS_CONFIG[s].label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Sort + view mode */}
+                    <div className="flex items-center gap-2">
+                        <select
+                            value={sortKey}
+                            onChange={e => { setSortKey(e.target.value as SortKey); setPage(1); }}
+                            className="h-9 px-2.5 text-xs bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option value="createdAt">Newest</option>
+                            <option value="name">Name</option>
+                            <option value="unitPrice">Price</option>
+                            <option value="stockQuantity">Stock</option>
+                        </select>
+                        <button
+                            onClick={() => setSortAsc(v => !v)}
+                            className="w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-900 border border-border rounded-xl text-muted-foreground hover:text-foreground transition-colors">
+                            <ArrowUpDown size={14} />
+                        </button>
+                        <div className="flex items-center bg-white dark:bg-gray-900 border border-border rounded-xl overflow-hidden">
+                            {(['grid', 'list'] as const).map(m => (
+                                <button
+                                    key={m}
+                                    onClick={() => setViewMode(m)}
+                                    className={`w-9 h-9 flex items-center justify-center transition-colors ${viewMode === m
+                                        ? 'bg-green-600 text-white'
+                                        : 'text-muted-foreground hover:text-foreground'
+                                        }`}>
+                                    {m === 'grid' ? <LayoutGrid size={14} /> : <List size={14} />}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Results count */}
+                {search || statusFilter !== 'ALL' ? (
+                    <p className="text-xs text-muted-foreground">
+                        {filtered.length} listing{filtered.length !== 1 ? 's' : ''} found
+                        {search && <> for "<span className="font-medium text-foreground">{search}</span>"</>}
+                    </p>
+                ) : null}
+
+                {/* Listings */}
+                {paginated.length === 0 ? (
+                    <EmptyState filtered={!!(search || statusFilter !== 'ALL')} />
+                ) : viewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {paginated.map(l => (
+                            <ProductCard key={l.id} product={l} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border divide-y divide-border overflow-hidden">
+                        {paginated.map(l => (
+                            <ProductCard key={l.id} product={l} />
+                        ))}
+                    </div>
+                )}
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 pt-2">
+                        <button
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="h-9 px-4 text-sm font-medium bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                            Prev
+                        </button>
+                        <div className="flex items-center gap-1">
+                            {Array.from({ length: totalPages }).map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setPage(i + 1)}
+                                    className={`w-9 h-9 text-sm font-medium rounded-xl transition-colors ${page === i + 1
+                                        ? 'bg-green-600 text-white'
+                                        : 'bg-white dark:bg-gray-900 border border-border text-foreground hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                                        }`}>
+                                    {i + 1}
+                                </button>
+                            ))}
+                        </div>
+                        <button
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="h-9 px-4 text-sm font-medium bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                            Next
+                        </button>
+                    </div>
+                )}
+
+            </main>
+        </div>
     );
 }
