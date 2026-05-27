@@ -134,16 +134,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      if (user.role === UserRole.SELLER) {
-        const supplierData = getStoredData<Seller>(STORAGE_KEYS.SELLER);
-        if (!supplierData) {
-          router.replace('/auth/seller');
-          setLoading(false);
-          return;
-        }
-        setSeller(supplierData);
-      }
-      router.replace('/');
       setIsAuthenticated(true)
       setLoading(false);
     } catch {
