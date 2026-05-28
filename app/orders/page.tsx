@@ -280,7 +280,7 @@ export default function SellerOrdersPage() {
                                                     </>
                                                 )}
                                                 <Link
-                                                    href={`/seller/orders/${order.id}`}
+                                                    href={`/orders/${order.id}`}
                                                     className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                                                     <Eye size={14} />
                                                 </Link>

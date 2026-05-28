@@ -27,11 +27,13 @@ export default function Navbar() {
 
   const buyerLinks = [
     { label: 'Browse', href: '/products' },
+    { label: 'My Orders', href: '/orders' },
   ];
 
   const sellerLinks = [
     { label: 'Browse', href: '/products' },
     { label: 'My Listings', href: '/products/seller' },
+    { label: 'My Orders', href: '/orders' },
   ];
 
   const navLinks = !user ? guestLinks : isSeller ? sellerLinks : buyerLinks;

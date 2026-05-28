@@ -354,7 +354,7 @@ function EditProductForm() {
       {/* Header */}
       <header className="sticky top-0 z-40 h-14 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border flex items-center justify-between px-4">
         <Link
-          href="/seller/listings"
+          href="/products/seller"
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ChevronLeft size={16} /> My listings
         </Link>
