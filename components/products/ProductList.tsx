@@ -5,6 +5,7 @@ import { AlertTriangle, CheckCircle, Eye, FileText, MoreVertical, Package, Pause
 import Link from "next/link";
 import { Edit3 } from "lucide-react";
 import { useState } from "react";
+import { imageUrl } from "@/lib/utils";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -88,7 +89,7 @@ export default function ProductList({ listing, onDelete }: { listing: Product; o
             {/* Thumbnail */}
             <div className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0">
                 {listing.image ? (
-                    <img src={listing.image} alt={listing.name} className="w-full h-full object-cover" />
+                    <img src={imageUrl(listing.image)} alt={listing.name} className="w-full h-full object-cover" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
                         <Package size={20} className="text-gray-300 dark:text-gray-600" />

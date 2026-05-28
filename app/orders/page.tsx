@@ -136,7 +136,7 @@ export default function SellerOrdersPage() {
                     <span className="text-sm font-bold text-foreground">My Orders</span>
                 </div>
                 <Link
-                    href="/seller/dashboard"
+                    href="/dashboard"
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
                     Dashboard <ChevronRight size={12} />
                 </Link>

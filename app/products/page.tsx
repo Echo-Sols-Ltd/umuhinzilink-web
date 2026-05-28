@@ -13,6 +13,7 @@ import { useProduct } from '@/contexts/ProductContext';
 import { Product } from '@/types';
 import ProductCard from '@/components/products/ProductCard';
 import Navbar from '@/components/Navbar';
+import ProductList from '@/components/products/ProductList';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -171,7 +172,7 @@ export default function Products() {
                 ) : (
                     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border divide-y divide-border overflow-hidden">
                         {paginated.map(l => (
-                            <ProductCard key={l.id} product={l} />
+                            <ProductList key={l.id} listing={l} onDelete={() => { }} />
                         ))}
                     </div>
                 )}

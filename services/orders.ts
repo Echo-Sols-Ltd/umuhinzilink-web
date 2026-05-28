@@ -16,7 +16,7 @@ class OrderService {
   async getSellerOrders(page = 0, size = 10): Promise<PaginatedResponse<Order[]>> {
     return await apiClient.get<PaginatedResponse<Order[]>>(
       `${API_ENDPOINTS.ORDER.SELLER_ALL}?page=${page}&size=${size}`
-    );
+    );  
   }
 
   async getOrderById(id: string): Promise<ApiResponse<Order>> {
@@ -24,11 +24,11 @@ class OrderService {
   }
 
   async cancelOrder(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CANCEL(id));
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.REJECT(id));
   }
 
   async acceptOrder(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.ACCEPT(id));
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CONFIRM(id));
   }
 
   async updateOrderStatus(
