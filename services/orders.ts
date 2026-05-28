@@ -9,7 +9,7 @@ class OrderService {
 
   async getBuyerOrders(page = 0, size = 10): Promise<PaginatedResponse<Order[]>> {
     return await apiClient.get<PaginatedResponse<Order[]>>(
-      `${API_ENDPOINTS.ORDER.BUYER_ALL}?page=${page}&size=${size}`
+      `${API_ENDPOINTS.ORDER.ALL}?page=${page}&size=${size}`
     );
   }
 

@@ -51,7 +51,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { updateProductState } = useProduct();
   const socket = useSocket()
-  const { isEnabled, shouldUseInAppNotifications, shouldUseBrowserNotifications, showNotification } = useBrowserNotification();
+  const { isEnabled,  showNotification } = useBrowserNotification();
 
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);

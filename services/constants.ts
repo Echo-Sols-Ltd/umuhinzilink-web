@@ -51,6 +51,7 @@ export const API_ENDPOINTS = {
   },
   ORDER: {
     CREATE: '/orders',
+    ALL: '/orders',
     BY_ID: (id: string) => `/orders/${id}`,
     CANCEL: (id: string) => `/orders/${id}/reject`,
     ACCEPT: (id: string) => `/orders/${id}/accept`,

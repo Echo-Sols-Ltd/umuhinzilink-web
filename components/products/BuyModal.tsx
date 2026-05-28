@@ -10,8 +10,9 @@ import {
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
-import { Product } from '@/types';
+import { OrderRequest, PaymentMethod, Product } from '@/types';
 import { notify } from '@/lib/notify';
+import useOrderAction from '@/hooks/useOrderAction';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -55,8 +56,8 @@ function Stepper({ step }: { step: Step }) {
                     <div className={cn(
                         'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all',
                         i < current ? 'bg-green-600 text-white' :
-                        i === current ? 'bg-green-600 text-white ring-4 ring-green-100 dark:ring-green-900' :
-                        'bg-gray-100 dark:bg-gray-800 text-muted-foreground'
+                            i === current ? 'bg-green-600 text-white ring-4 ring-green-100 dark:ring-green-900' :
+                                'bg-gray-100 dark:bg-gray-800 text-muted-foreground'
                     )}>
                         {i < current ? <CheckCircle size={14} /> : i + 1}
                     </div>
@@ -78,7 +79,7 @@ function Stepper({ step }: { step: Step }) {
 export default function BuyModal({ product, onClose }: BuyModalProps) {
     const { user } = useAuth();
     const router = useRouter();
-
+    const { createOrder } = useOrderAction()
     const [mode, setMode] = useState<Mode>(product.isNegotiable ? 'negotiate' : 'buy');
     const [step, setStep] = useState<Step>('config');
     const [quantity, setQuantity] = useState(1);
@@ -137,9 +138,13 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
         setLoading(true);
         try {
             if (mode === 'buy') {
-                // TODO: POST /api/v1/orders
-                // { productId: product.id, quantity, paymentMethod: 'WALLET' }
-                await new Promise(r => setTimeout(r, 1200));
+                const requestData: OrderRequest = {
+                    productId: product.id,
+                    quantity,
+                    paymentMethod: PaymentMethod.WALLET
+                }
+
+                await createOrder(requestData)
             } else {
                 // TODO: POST /api/v1/orders
                 // { productId: product.id, quantity, proposedPrice: proposedPriceNum }
@@ -160,7 +165,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
 
     const handleGoToOrders = () => {
         onClose();
-        router.push('/buyer/orders');
+        router.push('orders');
     };
 
     // ── Modal content ─────────────────────────────────────────────────────

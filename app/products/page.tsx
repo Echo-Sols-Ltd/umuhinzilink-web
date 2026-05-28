@@ -175,15 +175,8 @@ function EmptyState({ filtered }: { filtered: boolean }) {
             <p className="text-sm text-muted-foreground mt-1 max-w-xs">
                 {filtered
                     ? 'Try adjusting your search or filter to find what you are looking for.'
-                    : 'Add your first product and start selling to buyers across Rwanda.'}
+                    : ''}
             </p>
-            {!filtered && (
-                <Link
-                    href="/products/create"
-                    className="mt-5 flex items-center gap-2 h-10 px-5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors">
-                    <Plus size={15} /> Add first listing
-                </Link>
-            )}
         </div>
     );
 }
@@ -259,25 +252,7 @@ export default function Products() {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
 
-            {/* Header */}
-            <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border">
-                <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Sprout size={18} className="text-green-600" />
-                        <span className="text-sm font-bold text-foreground">My Listings</span>
-                    </div>
-                    <Link
-                        href="/products/create"
-                        className="flex items-center gap-1.5 h-8 px-4 bg-green-600 hover:bg-green-700 active:scale-[0.97] text-white text-xs font-semibold rounded-full transition-all">
-                        <Plus size={13} /> New listing
-                    </Link>
-                </div>
-            </header>
-
             <main className="max-w-5xl mx-auto px-4 py-6 space-y-5">
-
-                {/* Summary */}
-                <SummaryBar listings={products} />
 
                 {/* Toolbar */}
                 <div className="flex flex-col sm:flex-row gap-3">
