@@ -347,7 +347,7 @@ function EditProductForm() {
   // ── Render ────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="h-screen bg-gray-50 dark:bg-gray-950">
 
       {/* Header */}
       <header className="sticky top-0 z-40 h-14 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border flex items-center justify-between px-4">
@@ -371,7 +371,7 @@ function EditProductForm() {
         </button>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-6">
+      <main className="max-w-5xl mx-auto px-4 py-6 h-screen overflow-auto pb-40">
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

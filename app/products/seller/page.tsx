@@ -363,6 +363,12 @@ export default function SellerListings() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-sm font-bold text-foreground hover:text-success transition-colors">
+            <Sprout size={18} className="text-green-600" />
+            UmuhinziLink
+          </Link>
           <div className="flex items-center gap-2">
             <Sprout size={18} className="text-green-600" />
             <span className="text-sm font-bold text-foreground">My Listings</span>
