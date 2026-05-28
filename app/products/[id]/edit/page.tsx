@@ -16,6 +16,7 @@ import { productService } from '@/services/products';
 import SellerGuard from '@/contexts/guard/SellerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { District, MeasurementUnit, Product, ProductCategory } from '@/types';
+import { useProductAction } from '@/hooks/useProductAction';
 
 // ── Enums (mirror backend) ────────────────────────────────────────────────────
 
@@ -209,16 +210,17 @@ function EditProductForm() {
   const router = useRouter();
   const { user } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
-  const { fetchProductById} = useProduct()
+  const { fetchProductById } = useProduct()
   const productId = params.id as string;
 
-  const [originalProduct, setOriginalProduct] = useState<Product|null>(null);
+  const [originalProduct, setOriginalProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
 
+  const { updateProduct } = useProductAction()
   const [form, setForm] = useState<Partial<Product>>({
     name: '', description: '',
     category: ProductCategory.VEGETABLES,
@@ -308,18 +310,18 @@ function EditProductForm() {
     if (!validate()) return;
     setSubmitting(true);
     try {
-      let imageUrl = form.image;
-      if (imageFile) {
-        // TODO: const imgRes = await productService.uploadProductPhoto(imageFile);
-        // imageUrl = imgRes.data;
-      }
 
-      // TODO: await productService.updateProduct(productId, {
-      //     ...form,
-      //     unitPrice: new BigDecimal(form.unitPrice),
-      //     stockQuantity: new BigDecimal(form.stockQuantity),
-      //     image: imageUrl,
-      // });
+      await updateProduct(productId, {
+        name: form.name!,
+        description: form.description!,
+        category: form.category!,
+        district: form.district!,
+        unitPrice: form.unitPrice!,
+        stockQuantity: form.stockQuantity!,
+        measurementUnit: form.measurementUnit!,
+        isNegotiable: form.isNegotiable!,
+        image: form.image!,
+      }, imageFile!);
 
       await new Promise(r => setTimeout(r, 1200));
       notify.success('Product updated successfully');
@@ -389,8 +391,8 @@ function EditProductForm() {
                 <div
                   onClick={() => fileRef.current?.click()}
                   className={`relative h-44 rounded-xl overflow-hidden border-2 border-dashed cursor-pointer transition-colors ${previewUrl || (originalProduct?.image)
-                      ? 'border-transparent'
-                      : 'border-border hover:border-green-400 bg-gray-50 dark:bg-gray-800/50'
+                    ? 'border-transparent'
+                    : 'border-border hover:border-green-400 bg-gray-50 dark:bg-gray-800/50'
                     }`}>
                   {previewUrl || originalProduct?.image ? (
                     <>
