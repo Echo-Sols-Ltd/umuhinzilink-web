@@ -1,11 +1,10 @@
-import React, { createContext, useContext, useMemo, useState, ReactNode, useCallback, useEffect } from 'react';
+import { createContext, useContext, useMemo, useState, ReactNode, useCallback, useEffect } from 'react';
 import { productService } from '@/services/products';
 import {
   Product,
   ProductStatus,
 } from '@/types';
 import { useAuth } from './AuthContext';
-import { useSocket } from './SocketContext';
 
 type ProductContextValue = {
   // Mutation methods
@@ -13,10 +12,6 @@ type ProductContextValue = {
   updateProductState: (id: string, data: Partial<Product>) => void;
   removeMyProduct: (id: string) => void;
 
-  // Fetching methods
-  fetchMyProducts: (page?: number, size?: number) => Promise<void>;
-  fetchMarketplaceProducts: (page?: number, size?: number) => Promise<void>;
-  fetchMyStats: () => Promise<void>;
   fetchProductById: (id: string) => Promise<Product | null>;
 
   // Order modal management
@@ -27,16 +22,13 @@ type ProductContextValue = {
   orderModalProductType: 'farmer' | 'supplier' | null;
 
   // States
-  myProductsTotalPages: number;
-  myProductsTotalElements: number;
   productsTotalPages: number;
   productsTotalElements: number;
 
   loading: boolean;
   error: string | null;
 
-  myProducts: Product[];
-  products:Product[]
+  products: Product[];
   myStats: any[] | null;
 
   currentProduct: Product | null;
@@ -62,12 +54,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [myProducts, setMyProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [myStats, setMyStats] = useState<any[] | null>([]);
 
-  const [myProductsTotalPages, setMyProductsTotalPages] = useState(0);
-  const [myProductsTotalElements, setMyProductsTotalElements] = useState(0);
   const [productsTotalPages, setProductsTotalPages] = useState(0);
   const [productsTotalElements, setProductsTotalElements] = useState(0);
 
@@ -82,7 +71,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const handleProductChange = useCallback((data: Product) => {
     const productId = data.id;
 
-    setMyProducts(prev => {
+    setProducts(prev => {
       if (!prev) return [];
       return prev.map(p => p.id === productId ? { ...p, ...data } : p);
     });
@@ -111,22 +100,21 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     if (!productData) return;
     const productId = productData.id;
 
-    setMyProducts(prev => prev?.filter(p => p.id !== productId) ?? []);
     setProducts(prev => prev?.filter(p => p.id !== productId) ?? []);
 
     if (currentProduct?.id === productId) setCurrentProduct(null);
     if (editProduct?.id === productId) setEditProduct(null);
   }, [currentProduct, editProduct]);
 
-  const fetchMyProducts = useCallback(async (page = 0, size = 10) => {
+  const fetchProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
       const res = await productService.getSellerProducts(page, size);
       if (res.success) {
         const list = res.data ?? [];
-        setMyProducts(Array.isArray(list) ? list : []);
-        setMyProductsTotalPages(res.totalPages ?? 0);
-        setMyProductsTotalElements(res.totalElements ?? 0);
+        setProducts(Array.isArray(list) ? list : []);
+        setProductsTotalPages(res.totalPages ?? 0);
+        setProductsTotalElements(res.totalElements ?? 0);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch my products');
@@ -199,19 +187,19 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
 
   const addMyProduct = useCallback((data: Product) => {
-    setMyProducts(prev => {
+    setProducts(prev => {
       const updated = prev ? [...prev, data] : [data];
       return updated;
     });
   }, []);
 
   const updateProductState = useCallback((id: string, data: Partial<Product>) => {
-    setMyProducts(prev => {
+    setProducts(prev => {
       const updated = prev?.map(p => (p.id === id ? { ...p, ...data } : p)) ?? [];
       return updated;
     });
     setProducts(prev => {
-      const updated  = prev?.map(p => (p.id === id ? { ...p, ...data } : p)) ?? [];
+      const updated = prev?.map(p => (p.id === id ? { ...p, ...data } : p)) ?? [];
       return updated;
     });
     // Update current/edit products if they match
@@ -220,7 +208,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const removeMyProduct = useCallback((id: string) => {
-    setMyProducts(prev => {
+    setProducts(prev => {
       const updated = prev?.filter(p => p.id !== id) ?? [];
       return updated;
     });
@@ -228,16 +216,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   // 🔹 Filters
   const inStockMyProducts = useMemo(
-    () => myProducts?.filter(p => p.status === ProductStatus.IN_STOCK) ?? [],
-    [myProducts]
+    () => products?.filter(p => p.status === ProductStatus.IN_STOCK) ?? [],
+    [products]
   );
   const outOfStockMyProducts = useMemo(
-    () => myProducts?.filter(p => p.status === ProductStatus.OUT_OF_STOCK) ?? [],
-    [myProducts]
+    () => products?.filter(p => p.status === ProductStatus.OUT_OF_STOCK) ?? [],
+    [products]
   );
   const lowStockMyProducts = useMemo(
-    () => myProducts?.filter(p => p.status === ProductStatus.LOW_STOCK) ?? [],
-    [myProducts]
+    () => products?.filter(p => p.status === ProductStatus.LOW_STOCK) ?? [],
+    [products]
   );
 
   const inStockMarketplaceProducts = useMemo(
@@ -257,22 +245,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     addMyProduct,
     updateProductState,
     removeMyProduct,
-    fetchMyProducts,
-    fetchMarketplaceProducts,
-    fetchMyStats,
     fetchProductById,
     showOrderModal,
     hideOrderModal,
     isOrderModalOpen,
     orderModalProduct,
     orderModalProductType,
-    myProductsTotalPages,
-    myProductsTotalElements,
     productsTotalPages,
     productsTotalElements,
     loading,
     error,
-    myProducts,
     products,
     myStats,
     currentProduct,

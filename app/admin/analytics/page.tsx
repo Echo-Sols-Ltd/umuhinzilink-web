@@ -18,7 +18,7 @@ import {
   Filter,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { UserRole as UserType } from '@/types';
 
 interface AnalyticsData {
   revenue: {

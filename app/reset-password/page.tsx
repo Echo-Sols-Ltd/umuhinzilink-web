@@ -15,12 +15,8 @@ type ResetStep = 'code' | 'password' | 'success';
 
 function ResetPassword() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { t } = useI18n();
-  const emailFromQuery = searchParams.get('email') || '';
 
-  const [email, setEmail] = useState(emailFromQuery);
-  const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,37 +24,9 @@ function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
 
   const validatePassword = (password: string) => {
     return password.length >= 8;
-  };
-
-  const handleVerifyCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateEmail(email)) {
-      notify.error(t('auth.resetPassword.toast.invalidEmail.body'), t('auth.resetPassword.toast.invalidEmail.title'));
-      return;
-    }
-
-    if (resetCode.length !== 6) {
-      notify.error(t('auth.resetPassword.toast.invalidCode.body'), t('auth.resetPassword.toast.invalidCode.title'));
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await authService.verifyResetCode(email, resetCode);
-      setStep('password');
-      notify.success(t('auth.resetPassword.toast.codeVerified.body'), t('auth.resetPassword.toast.codeVerified.title'));
-    } catch (error: any) {
-      notify.error(error.message || t('auth.resetPassword.toast.verificationFailed.body'), t('auth.resetPassword.toast.verificationFailed.title'));
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -76,7 +44,7 @@ function ResetPassword() {
 
     setLoading(true);
     try {
-      await authService.resetPassword(email, resetCode, newPassword);
+      await authService.resetPassword({ newPassword });
       setStep('success');
       notify.success(t('auth.resetPassword.toast.resetSuccessful.body'), t('auth.resetPassword.toast.resetSuccessful.title'));
     } catch (error: any) {
@@ -122,121 +90,73 @@ function ResetPassword() {
             {t('auth.forgotPassword.backToSignIn')}
           </Link>
           <h2 className="text-3xl font-semibold text-gray-900 mb-2">
-            {step === 'code' ? t('auth.resetPassword.verifyCode.title') : t('auth.resetPassword.resetPassword.title')}
+            {t('auth.resetPassword.resetPassword.title')}
           </h2>
           <p className="text-gray-600">
-            {step === 'code'
-              ? t('auth.resetPassword.verifyCode.description')
-              : t('auth.resetPassword.resetPassword.description')
-            }
+            {t('auth.resetPassword.resetPassword.description')}
           </p>
         </div>
 
-        {step === 'code' ? (
-          <form onSubmit={handleVerifyCode} className="space-y-6">
-            <div>
-              <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                {t('auth.fields.emailAddress')}
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  placeholder={t('auth.placeholders.enterYourEmail')}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="resetCode" className="block text-sm font-medium text-gray-700 mb-2">
-                {t('auth.resetPassword.fields.resetCode')}
-              </Label>
+        <form onSubmit={handleResetPassword} className="space-y-6">
+          <div>
+            <Label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('auth.resetPassword.fields.newPassword')}
+            </Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
-                id="resetCode"
-                type="text"
-                value={resetCode}
-                onChange={(e) => setResetCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                className="text-center text-lg font-mono"
-                placeholder={t('auth.resetPassword.placeholders.resetCode')}
-                maxLength={6}
+                id="newPassword"
+                type={showPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="pl-10 pr-10"
+                placeholder={t('auth.resetPassword.placeholders.newPassword')}
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
+          </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3"
-              disabled={loading}
-            >
-              {loading ? t('auth.resetPassword.verifying') : t('auth.resetPassword.verifyCode.cta')}
-            </Button>
-          </form>
-        ) : (
-          <form onSubmit={handleResetPassword} className="space-y-6">
-            <div>
-              <Label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                {t('auth.resetPassword.fields.newPassword')}
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input
-                  id="newPassword"
-                  type={showPassword ? 'text' : 'password'}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  placeholder={t('auth.resetPassword.placeholders.newPassword')}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
+          <div>
+            <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('auth.resetPassword.fields.confirmNewPassword')}
+            </Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="pl-10 pr-10"
+                placeholder={t('auth.resetPassword.placeholders.confirmNewPassword')}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
+          </div>
 
-            <div>
-              <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                {t('auth.resetPassword.fields.confirmNewPassword')}
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  placeholder={t('auth.resetPassword.placeholders.confirmNewPassword')}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
+          <Button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3"
+            disabled={loading}
+          >
+            {loading ? t('auth.resetPassword.resetting') : t('auth.resetPassword.resetPassword.cta')}
+          </Button>
+        </form>
 
-            <Button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3"
-              disabled={loading}
-            >
-              {loading ? t('auth.resetPassword.resetting') : t('auth.resetPassword.resetPassword.cta')}
-            </Button>
-          </form>
-        )}
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">

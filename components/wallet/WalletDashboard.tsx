@@ -20,14 +20,14 @@ import {
   XCircle,
   AlertCircle
 } from 'lucide-react';
-import { WalletDTO, WalletTransactionDTO } from '@/types';
+import { Wallet as IWallet, Transaction } from '@/types';
 import { cn } from '@/lib/utils';
 
 import { useI18n } from '@/contexts/I18nContext';
 
 interface WalletDashboardProps {
-  wallet: WalletDTO | null;
-  transactions: WalletTransactionDTO[];
+  wallet: IWallet | null;
+  transactions: Transaction[];
   loading?: boolean;
   onDeposit?: (amount: number, description?: string) => void;
   onPayOrder?: (orderId: string, description?: string) => void;

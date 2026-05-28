@@ -11,7 +11,6 @@ import { SocketProvider } from './SocketContext';
 import { NotificationProvider } from './NotificationContext';
 import { BrowserNotificationProvider } from './BrowserNotificationContext';
 import { ThemeProvider } from './ThemeContext';
-import GlobalOrderModal from '@/components/orders/GlobalOrderModal';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -30,7 +29,6 @@ export function AppProviders({ children }: AppProvidersProps) {
                     <WalletProvider>
                       <OrderProvider>
                         {children}
-                        <GlobalOrderModal />
                       </OrderProvider>
                     </WalletProvider>
                   </ProductProvider>

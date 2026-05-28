@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 import { walletService } from '@/services/wallet';
-import { WalletDTO, WalletTransactionDTO } from '@/types';
+import { Wallet as IWallet, Transaction} from '@/types';
 import {
     Wallet,
     Search,
@@ -35,7 +35,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 
 export default function AdminWalletsPage() {
     const router = useRouter();
-    const [wallets, setWallets] = useState<WalletDTO[]>([]);
+    const [wallets, setWallets] = useState<IWallet[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(0);
@@ -69,7 +69,7 @@ export default function AdminWalletsPage() {
     };
 
 
-    const handleWalletClick = (wallet: WalletDTO) => {
+    const handleWalletClick = (wallet: IWallet) => {
         router.push(`/admin/wallets/${wallet.id}`);
     };
 
@@ -79,15 +79,16 @@ export default function AdminWalletsPage() {
 
     const filteredWallets = wallets.filter(
         (wallet) =>
-            wallet.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            wallet.userEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            wallet.user?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            wallet.user?.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            wallet.user?.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             wallet.id?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
 
     return (
         <div className="flex h-screen bg-background overflow-hidden">
-            <Sidebar userType={UserType.ADMIN} activeItem="Wallets" />
+            <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
 
             <main className="flex-1 overflow-auto bg-background/30">
                 <div className="p-8 max-w-7xl mx-auto space-y-8">
@@ -197,8 +198,8 @@ export default function AdminWalletsPage() {
                                                         <User className="w-5 h-5" />
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-foreground font-semibold group-hover:text-success transition-colors uppercase ">{wallet.userName || 'Unknown User'}</span>
-                                                        <span className="text-[11px] text-muted-foreground font-medium">{wallet.userEmail}</span>
+                                                        <span className="text-foreground font-semibold group-hover:text-success transition-colors uppercase ">{wallet.user.firstName + ' ' + wallet.user.lastName || 'Unknown User'}</span>
+                                                        <span className="text-[11px] text-muted-foreground font-medium">{wallet.user.email}</span>
                                                     </div>
                                                 </div>
                                             </TableCell>

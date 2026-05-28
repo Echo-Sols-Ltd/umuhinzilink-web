@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Product, ProductStatus } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import ProductDetail from '@/components/products/ProductDetail';
@@ -20,9 +20,8 @@ export default function AdminProductDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
-  const { fetchProductById, loading, deleteProduct } = useProduct();
+  const { fetchProductById, loading } = useProduct();
   const [product, setProduct] = useState<Product | null>(null);
-  const [productType, setProductType] = useState<'farmer' | 'supplier'>('farmer');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,11 +30,10 @@ export default function AdminProductDetailPage() {
       
       try {
         const result = await fetchProductById(params.id as string);
-        if (result.product && result.type) {
-          setProduct(result.product);
-          setProductType(result.type);
+        if (result) {
+          setProduct(result);
         } else {
-          setError(result.error || 'Product not found');
+          setError('Product not found');
         }
       } catch (err) {
         setError('Failed to load product');
@@ -70,8 +68,6 @@ export default function AdminProductDetailPage() {
     }
 
     try {
-      await deleteProduct(product.id);
-      
       showToast({
         description: 'Product deleted successfully',
         variant: 'default',
@@ -88,7 +84,7 @@ export default function AdminProductDetailPage() {
   if (loading) {
     return (
       <div className="flex h-screen bg-background">
-        <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
+        <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
@@ -102,7 +98,7 @@ export default function AdminProductDetailPage() {
   if (error || !product) {
     return (
       <div className="flex h-screen bg-background">
-        <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
+        <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
@@ -154,7 +150,7 @@ export default function AdminProductDetailPage() {
 
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar userType={UserType.ADMIN} activeItem="Product Management" />
+      <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
       
       <main className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -165,7 +161,7 @@ export default function AdminProductDetailPage() {
                 <span>Admin Actions</span>
                 <div className="flex items-center gap-2">
                   {getStatusBadge()}
-                  <Badge variant="outline">{productType === 'farmer' ? 'Farmer Product' : 'Supplier Product'}</Badge>
+                  <Badge variant="outline">Product</Badge>
                 </div>
               </CardTitle>
               <CardDescription>
@@ -206,7 +202,6 @@ export default function AdminProductDetailPage() {
           {/* Product Details */}
           <ProductDetail
             product={product}
-            productType={productType}
             onShareProduct={handleShareProduct}
             showActions={false} // Admin doesn't need purchase/edit actions
           />

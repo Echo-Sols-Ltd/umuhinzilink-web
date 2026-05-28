@@ -22,7 +22,7 @@ import {
   Info,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 
 interface SystemSettings {
   siteName: string;
@@ -115,7 +115,7 @@ function SystemSettingsPage() {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
-        userType={UserType.ADMIN}
+        userType={UserRole.ADMIN}
         activeItem='Settings'
       />
       <div className="flex-1 flex flex-col overflow-auto">

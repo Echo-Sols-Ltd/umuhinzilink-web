@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 import { walletService } from '@/services/wallet';
-import { WalletDTO, WalletTransactionDTO } from '@/types';
+import {Wallet as IWallet, Transaction } from '@/types';
 import {
     Wallet,
     Loader2,
@@ -33,8 +33,8 @@ export default function WalletDetailPage() {
 
     const walletId = params.id as string;
 
-    const [wallet, setWallet] = useState<WalletDTO | null>(null);
-    const [userTransactions, setUserTransactions] = useState<WalletTransactionDTO[]>([]);
+    const [wallet, setWallet] = useState<IWallet | null>(null);
+    const [userTransactions, setUserTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
     const [loadingTransactions, setLoadingTransactions] = useState(false);
 
@@ -52,7 +52,7 @@ export default function WalletDetailPage() {
                 const foundWallet = response.data.find(w => w.id === walletId);
                 if (foundWallet) {
                     setWallet(foundWallet);
-                    await fetchUserTransactions(foundWallet.userId);
+                    await fetchUserTransactions(foundWallet.user.id);
                 } else {
                     notify.error('Wallet not found', 'Error');
                     router.push('/admin/wallets');
@@ -105,7 +105,7 @@ export default function WalletDetailPage() {
     if (loading) {
         return (
             <div className="flex h-screen bg-background overflow-hidden">
-                <Sidebar userType={UserType.ADMIN} activeItem="Wallets" />
+                <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
                 <main className="flex-1 overflow-auto bg-background">
                     <div className="p-8 max-w-7xl mx-auto">
                         <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -121,7 +121,7 @@ export default function WalletDetailPage() {
     if (!wallet) {
         return (
             <div className="flex h-screen bg-background overflow-hidden">
-                <Sidebar userType={UserType.ADMIN} activeItem="Wallets" />
+                <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
                 <main className="flex-1 overflow-auto bg-background">
                     <div className="p-8 max-w-7xl mx-auto">
                         <div className="text-center">
@@ -135,7 +135,7 @@ export default function WalletDetailPage() {
 
     return (
         <div className="flex h-screen bg-background overflow-hidden">
-            <Sidebar userType={UserType.ADMIN} activeItem="Wallets" />
+            <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
 
             <main className="flex-1 overflow-auto bg-background">
                 <div className="p-8 max-w-7xl mx-auto space-y-8">
@@ -164,8 +164,8 @@ export default function WalletDetailPage() {
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                         <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">
                             <p className="text-[10px] uppercase font-semibold text-muted-foreground">Account Holder</p>
-                            <p className="font-semibold text-foreground text-lg">{wallet.userName}</p>
-                            <p className="text-sm text-muted-foreground font-medium">{wallet.userEmail}</p>
+                            <p className="font-semibold text-foreground text-lg">{wallet.user.firstName} {wallet.user.lastName}</p>
+                            <p className="text-sm text-muted-foreground font-medium">{wallet.user.email}</p>
                         </div>
                         <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">
                             <p className="text-[10px] text-muted-foreground font-semibold uppercase">Available Balance</p>

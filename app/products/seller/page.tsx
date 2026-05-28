@@ -322,7 +322,7 @@ export default function SellerListings() {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 6;
 
-  const { myProducts: listings } = useProduct()
+  const { products: listings } = useProduct()
 
   // ── Filter + sort ─────────────────────────────────────────────────────
 

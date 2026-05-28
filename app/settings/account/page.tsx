@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { UserRole as UserType } from '@/types';
 import {
   User,
   ArrowLeft,
