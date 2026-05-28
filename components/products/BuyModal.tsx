@@ -146,9 +146,14 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
 
                 await createOrder(requestData)
             } else {
-                // TODO: POST /api/v1/orders
-                // { productId: product.id, quantity, proposedPrice: proposedPriceNum }
-                await new Promise(r => setTimeout(r, 1200));
+                const requestData: OrderRequest = {
+                    productId: product.id,
+                    quantity,
+                    proposedPrice: proposedPriceNum,
+                    paymentMethod: PaymentMethod.WALLET
+                }
+
+                await createOrder(requestData)
             }
             setStep('done');
         } catch {
