@@ -5,23 +5,14 @@ import Footer from '@/components/Footer';
 import { useEffect, useState } from 'react';
 import { useProduct } from '@/contexts/ProductContext';
 import { useI18n } from '@/contexts/I18nContext';
+import ProductCard from '@/components/products/ProductCard';
 
 export default function Home() {
   const { t } = useI18n()
   const {
-    marketplaceProducts,
-    fetchMarketplaceProducts,
+    products,
     loading,
-    marketplaceProductsTotalPages
   } = useProduct()
-
-  const [currentPage, setCurrentPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-
-  useEffect(() => {
-    fetchMarketplaceProducts(currentPage - 1, 10)
-  }, [currentPage, fetchMarketplaceProducts])
 
   return (
     <div className='bg-background h-screen pb-12 overflow-auto'>
@@ -38,7 +29,11 @@ export default function Home() {
           </header>
 
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-            
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+              {products.map(l => (
+                <ProductCard key={l.id} product={l} />
+              ))}
+            </div>
           </div>
         </div>
         <Footer />

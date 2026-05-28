@@ -9,6 +9,9 @@ import {
   LayoutGrid, List, Sprout, ArrowUpDown,
   CheckCircle, Clock, PauseCircle,
 } from 'lucide-react';
+import ProductCard from '@/components/products/ProductCard';
+import { useProduct } from '@/contexts/ProductContext';
+import { Product } from '@/types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -285,13 +288,11 @@ function EmptyState({ filtered }: { filtered: boolean }) {
 
 // ── Summary bar ───────────────────────────────────────────────────────────────
 
-function SummaryBar({ listings }: { listings: Listing[] }) {
+function SummaryBar({ listings }: { listings: Product[] }) {
   const total = listings.length;
   const inStock = listings.filter(l => l.status === 'IN_STOCK').length;
   const lowStock = listings.filter(l => l.status === 'LOW_STOCK').length;
   const outOfStock = listings.filter(l => l.status === 'OUT_OF_STOCK').length;
-  const totalViews = listings.reduce((a, l) => a + l.viewCount, 0);
-  const totalNeg = listings.reduce((a, l) => a + l.activeNegotiations, 0);
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -300,7 +301,6 @@ function SummaryBar({ listings }: { listings: Listing[] }) {
         { label: 'In stock', value: inStock, color: 'text-emerald-600 dark:text-emerald-400' },
         { label: 'Low stock', value: lowStock, color: 'text-amber-600 dark:text-amber-400' },
         { label: 'Out of stock', value: outOfStock, color: 'text-red-500' },
-        { label: 'Active negotiations', value: totalNeg, color: 'text-green-600' },
       ].map(({ label, value, color }) => (
         <div key={label} className="bg-white dark:bg-gray-900 border border-border rounded-xl px-3 py-2.5 text-center">
           <p className={`text-xl font-extrabold ${color}`}>{value}</p>
@@ -314,7 +314,6 @@ function SummaryBar({ listings }: { listings: Listing[] }) {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function SellerListings() {
-  const [listings, setListings] = useState<Listing[]>(MOCK_LISTINGS);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ProductStatus | 'ALL'>('ALL');
   const [sortKey, setSortKey] = useState<SortKey>('createdAt');
@@ -323,12 +322,7 @@ export default function SellerListings() {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 6;
 
-  // ── Delete handler ────────────────────────────────────────────────────
-
-  const handleDelete = (id: string) => {
-    // TODO: call DELETE /api/v1/products/:id then refetch
-    setListings(prev => prev.filter(l => l.id !== id));
-  };
+  const { products: listings } = useProduct()
 
   // ── Filter + sort ─────────────────────────────────────────────────────
 
@@ -369,6 +363,12 @@ export default function SellerListings() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-sm font-bold text-foreground hover:text-success transition-colors">
+            <Sprout size={18} className="text-green-600" />
+            UmuhinziLink
+          </Link>
           <div className="flex items-center gap-2">
             <Sprout size={18} className="text-green-600" />
             <span className="text-sm font-bold text-foreground">My Listings</span>
@@ -459,16 +459,10 @@ export default function SellerListings() {
         {/* Listings */}
         {paginated.length === 0 ? (
           <EmptyState filtered={!!(search || statusFilter !== 'ALL')} />
-        ) : viewMode === 'grid' ? (
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {paginated.map(l => (
-              <GridCard key={l.id} listing={l} onDelete={handleDelete} />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border divide-y divide-border overflow-hidden">
-            {paginated.map(l => (
-              <ListRow key={l.id} listing={l} onDelete={handleDelete} />
+              <ProductCard key={l.id} product={l} />
             ))}
           </div>
         )}

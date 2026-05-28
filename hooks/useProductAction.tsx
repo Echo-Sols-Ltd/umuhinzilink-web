@@ -11,7 +11,7 @@ export function useProductAction() {
   const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const { addMyProduct, updateProductState, removeMyProduct} = useProduct()
+  const { addMyProduct, updateProductState, removeMyProduct } = useProduct()
 
   const router = useRouter()
 
@@ -37,9 +37,14 @@ export function useProductAction() {
     }
   };
 
-  const updateProduct = async (id: string, payload: any) => {
+  const updateProduct = async (id: string, payload: ProductRequest, image?: File) => {
     try {
       setLoading(true);
+      if (image) {
+        const imgRes = await productService.uploadProductPhoto(image);
+        if (!imgRes?.data) return;
+        payload.image = imgRes.data;
+      }
       const res = await productService.updateProduct(id, payload);
       if (!res?.success || !res.data) {
         notify.error('Try again later', 'Failed to Edit product');

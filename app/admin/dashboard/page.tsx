@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 import AdminDashboard from '@/components/dashboard/admin/AdminDashboard';
 import Sidebar from '@/components/shared/Sidebar';
 import { useI18n } from '@/contexts/I18nContext';
@@ -11,7 +11,7 @@ export default function AdminDashboardPage() {
   const { user } = useAuth();
   const { t } = useI18n();
 
-  if (!user || user.role !== UserType.ADMIN) {
+  if (!user || user.role !== UserRole.ADMIN) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
@@ -27,7 +27,7 @@ export default function AdminDashboardPage() {
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <div className="hidden md:block shrink-0">
           <Sidebar
-            userType={UserType.ADMIN}
+            userType={UserRole.ADMIN}
             activeItem="Dashboard"
           />
         </div>

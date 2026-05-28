@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
-import { Order, UserType } from '@/types';
+import { Order, UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -36,7 +36,6 @@ export default function AdminOrderDetailPage() {
         fetchSellingOrders
     } = useOrder();
     const { toast: showToast } = useToast();
-    const [orderType, setOrderType] = useState<'farmer' | 'supplier'>('farmer');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const orderId = params.id as string;
@@ -50,23 +49,21 @@ export default function AdminOrderDetailPage() {
 
             try {
                 let foundOrder = buyingOrders?.find((o: Order) => o.id === orderId) || sellingOrders?.find((o: Order) => o.id === orderId);
-                
+
                 if (!foundOrder && currentOrder?.id === orderId) {
                     foundOrder = currentOrder;
                 }
 
                 if (foundOrder) {
                     setCurrentOrder(foundOrder);
-                    setOrderType((foundOrder.product as any).productType === 'FARMER_PRODUCT' ? 'farmer' : 'supplier');
                     setLoading(false);
                 } else {
                     const { orderService } = await import('@/services/orders');
                     const response = await orderService.getOrderById(orderId);
-                    
+
                     if (response.success && response.data) {
                         const data = response.data;
                         setCurrentOrder(data);
-                        setOrderType(data.product.productType === 'FARMER_PRODUCT' ? 'farmer' : 'supplier');
                         fetchBuyingOrders();
                         fetchSellingOrders();
                     } else {
@@ -137,7 +134,7 @@ export default function AdminOrderDetailPage() {
     if (loading) {
         return (
             <div className="flex h-screen bg-background">
-                <Sidebar userType={UserType.GOVERNMENT} activeItem="Orders" />
+                <Sidebar userType={UserRole.ADMIN} activeItem="Orders" />
                 <main className="flex-1 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </main>
@@ -148,7 +145,7 @@ export default function AdminOrderDetailPage() {
     if (error) {
         return (
             <div className="flex h-screen bg-background">
-                <Sidebar userType={UserType.GOVERNMENT} activeItem="Orders" />
+                <Sidebar userType={UserRole.ADMIN} activeItem="Orders" />
                 <main className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                         <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -168,7 +165,7 @@ export default function AdminOrderDetailPage() {
     if (!order) {
         return (
             <div className="flex h-screen bg-background">
-                <Sidebar userType={UserType.GOVERNMENT} activeItem="Orders" />
+                <Sidebar userType={UserRole.ADMIN} activeItem="Orders" />
                 <main className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                         <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -185,7 +182,7 @@ export default function AdminOrderDetailPage() {
 
     return (
         <div className="flex h-screen bg-background">
-            <Sidebar userType={UserType.GOVERNMENT} activeItem="Orders" />
+            <Sidebar userType={UserRole.ADMIN} activeItem="Orders" />
 
             <main className="flex-1 overflow-auto">
                 {/* Header */}
@@ -204,7 +201,7 @@ export default function AdminOrderDetailPage() {
                         <div>
                             <h1 className="text-xl font-semibold text-foreground">Order Details</h1>
                             <p className="text-sm text-muted-foreground">
-                                #{order.id.slice(0, 8)} • {orderType === 'farmer' ? 'Farmer Order' : 'Supplier Order'}
+                                #{order.id.slice(0, 8)} • Order
                             </p>
                         </div>
                     </div>
@@ -280,7 +277,7 @@ export default function AdminOrderDetailPage() {
                                 <div>
                                     <p className="text-sm text-muted-foreground">Name</p>
                                     <p className="font-medium">
-                                        {orderType === 'farmer' ? order.buyer?.firstName : order.buyer?.firstName}
+                                        {order.buyer?.firstName} {order.buyer?.lastName}
                                     </p>
                                 </div>
                                 <div>
@@ -321,8 +318,8 @@ export default function AdminOrderDetailPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Payment Status</p>
-                                    <Badge className={order.isPaid ? 'text-success bg-success/10' : 'text-destructive bg-destructive/10'}>
-                                        {order.isPaid ? 'Paid' : 'Unpaid'}
+                                    <Badge className={order.status === 'CONFIRMED' ? 'text-success bg-success/10' : 'text-destructive bg-destructive/10'}>
+                                        {order.status === 'CONFIRMED' ? 'Paid' : 'Unpaid'}
                                     </Badge>
                                 </div>
                             </CardContent>

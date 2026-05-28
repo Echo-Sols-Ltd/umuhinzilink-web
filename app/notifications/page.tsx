@@ -25,6 +25,7 @@ import { useNotification } from '@/hooks/useNotification';
 import { NotificationType, Notification, UserRole } from '@/types';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import Navbar from '@/components/Navbar';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 15;
@@ -121,9 +122,8 @@ export default function NotificationsPage() {
 
     return (
         <div className="flex h-screen bg-background overflow-hidden">
-            {/* <Sidebar userType={user.role as UserRole} activeItem="Notifications" /> */}
-
-            <main className="flex-1 overflow-auto pb-14">
+            <Navbar />
+            <main className="flex-1 overflow-auto py-14">
                 <div className="p-6 lg:p-8 max-w-full space-y-6">
 
                     {/* ── Header ──────────────────────────────────────────── */}

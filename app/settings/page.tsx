@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 import {
   Settings,
   Building,
@@ -138,8 +138,7 @@ export default function GlobalSettingsPage() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserType} activeItem="Settings" />
-      
+      <Sidebar userType={user?.role as UserRole} activeItem="Settings" />
       <main className="flex-1 overflow-auto">
         <div className="p-6 max-w-6xl mx-auto">
           {/* Header */}

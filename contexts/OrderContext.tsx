@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { orderService } from '@/services/orders';
-import { Order, OrderStatus, Product,SocketResponse } from '@/types';
+import { Order, OrderStatus, Product, SocketResponse, UserRole } from '@/types';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
 import { useSocket } from './SocketContext';
@@ -51,7 +51,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { updateProductState } = useProduct();
   const socket = useSocket()
-  const { isEnabled, shouldUseInAppNotifications, shouldUseBrowserNotifications, showNotification } = useBrowserNotification();
+  const { isEnabled, showNotification } = useBrowserNotification();
 
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
@@ -101,7 +101,12 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-
+  useEffect(() => {
+    if (user) {
+      if (user.role === UserRole.BUYER) fetchBuyingOrders(0, 10)
+      if (user.role === UserRole.SELLER) fetchSellingOrders(0, 10)
+    }
+  }, [user])
 
   const addOrder = useCallback((data: Order) => {
     setBuyingOrders(prev => {

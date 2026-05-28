@@ -3,14 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType, User as UserTypeType } from '@/types';
+import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import {
     ArrowLeft,
     UserIcon,
@@ -31,11 +30,8 @@ export default function AdminUserDetailPage() {
     const params = useParams();
     const router = useRouter();
     const { user: currentUser } = useAuth();
-    const { 
-        users, 
-        farmerUsers, 
-        buyerUsers, 
-        supplierUsers,
+    const {
+        users,
         currentUser: selectedUser,
         setCurrentUser,
         loading: contextLoading
@@ -51,16 +47,16 @@ export default function AdminUserDetailPage() {
 
             setLoading(true);
             setError(null);
-            
+
             try {
                 // Step 1: Check if user is already in context lists
                 let foundUser = users?.find(u => u.id === userId);
-                
+
                 // Step 2: Check if it's the current context user
                 if (!foundUser && selectedUser?.id === userId) {
                     foundUser = selectedUser;
                 }
-                
+
                 if (foundUser) {
                     // ✅ Found in context - use immediately
                     setCurrentUser(foundUser);
@@ -69,7 +65,7 @@ export default function AdminUserDetailPage() {
                     // ❌ Not in context - fetch from server
                     const { userService } = await import('@/services/users');
                     const response = await userService.getUserById(userId);
-                    
+
                     if (response.success && response.data) {
                         // Store in context for future use and real-time updates
                         setCurrentUser(response.data);
@@ -86,7 +82,7 @@ export default function AdminUserDetailPage() {
                 console.error('Failed to fetch user:', error);
                 setError('Failed to load user');
                 showToast({
-                    title: "Error", 
+                    title: "Error",
                     description: "Failed to load user details",
                     variant: "default"
                 });
@@ -112,7 +108,7 @@ export default function AdminUserDetailPage() {
 
     const handleSuspendUser = async () => {
         if (!selectedUser) return;
-        
+
         try {
             // For now, just show a toast since the API method doesn't exist
             showToast({
@@ -132,7 +128,7 @@ export default function AdminUserDetailPage() {
 
     const handleUnsuspendUser = async () => {
         if (!selectedUser) return;
-        
+
         try {
             // For now, just show a toast since the API method doesn't exist
             showToast({
@@ -153,7 +149,7 @@ export default function AdminUserDetailPage() {
     if (loading) {
         return (
             <div className="flex h-screen bg-background">
-                <Sidebar userType={UserType.GOVERNMENT} activeItem="Users" />
+                <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
                 <main className="flex-1 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </main>
@@ -164,7 +160,7 @@ export default function AdminUserDetailPage() {
     if (error || !selectedUser) {
         return (
             <div className="flex h-screen bg-background">
-                <Sidebar userType={UserType.GOVERNMENT} activeItem="Users" />
+                <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
                 <main className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                         <UserIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -183,8 +179,8 @@ export default function AdminUserDetailPage() {
 
     return (
         <div className="flex h-screen bg-background">
-            <Sidebar userType={UserType.GOVERNMENT} activeItem="Users" />
-            
+            <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
+
             <main className="flex-1 overflow-auto">
                 {/* Header */}
                 <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
@@ -249,10 +245,10 @@ export default function AdminUserDetailPage() {
                                     </CardDescription>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Badge className={user.isVerified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
+                                    <Badge className={user.emailVerified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
                                         <div className="flex items-center space-x-1">
-                                            {user.isVerified ? <CheckCircle className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
-                                            <span>{user.isVerified ? 'Verified' : 'Pending'}</span>
+                                            {user.emailVerified ? <CheckCircle className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
+                                            <span>{user.emailVerified ? 'Verified' : 'Pending'}</span>
                                         </div>
                                     </Badge>
                                     {(user as any).suspended && (
@@ -312,7 +308,7 @@ export default function AdminUserDetailPage() {
                                 <div>
                                     <p className="text-sm text-muted-foreground">Address</p>
                                     <p className="font-medium">
-                                        {user.district && user.province ? `${user.district}, ${user.province}` : 'Not provided'}
+                                        {'Not provided'}
                                     </p>
                                 </div>
                             </CardContent>
@@ -333,8 +329,8 @@ export default function AdminUserDetailPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Verification Status</p>
-                                    <Badge className={user.isVerified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
-                                        {user.isVerified ? 'Verified' : 'Pending Verification'}
+                                    <Badge className={user.emailVerified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
+                                        {user.emailVerified ? 'Verified' : 'Pending Verification'}
                                     </Badge>
                                 </div>
                                 <div>
@@ -342,12 +338,6 @@ export default function AdminUserDetailPage() {
                                     <Badge className={(user as any).suspended ? 'text-destructive bg-destructive/10' : 'text-success bg-success/10'}>
                                         {(user as any).suspended ? 'Suspended' : 'Active'}
                                     </Badge>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Last Login</p>
-                                    <p className="font-medium">
-                                        {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
-                                    </p>
                                 </div>
                             </CardContent>
                         </Card>

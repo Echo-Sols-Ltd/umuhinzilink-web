@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { Product } from '@/types';
 import { notify } from '@/lib/notify';
+import { useProduct } from '@/contexts/ProductContext';
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 
@@ -71,7 +72,7 @@ export default function ProductDetailPage() {
     const router = useRouter();
     const { user } = useAuth();
     const { t } = useI18n();
-
+    const { fetchProductById } = useProduct();
     const productId = params.id as string;
 
     const [product, setProduct] = useState<Product | null>(null);
@@ -99,12 +100,10 @@ export default function ProductDetailPage() {
             setLoading(true);
             setError(null);
             try {
-                // TODO: replace with your productService call
-                // const res = await productService.getProductById(productId);
-                // setProduct(res.data);
-                await new Promise(r => setTimeout(r, 800)); // remove when wired
-                // setProduct(res.data);
-            } catch {
+                const res = await fetchProductById(productId);
+                setProduct(res);
+            } catch (error) {
+                console.error('Error fetching product:', error);
                 setError('This product could not be found or may have been removed.');
             } finally {
                 setLoading(false);
@@ -156,10 +155,9 @@ export default function ProductDetailPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-            <Navbar />
 
             {/* Sticky breadcrumb bar */}
-            <div className="sticky top-14 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border">
+            <div className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 h-11 flex items-center justify-between">
                     <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         <Link href="/" className="hover:text-foreground transition-colors">Home</Link>

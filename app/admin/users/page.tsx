@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { AdminPages, User, UserType } from '@/types';
+import { AdminPages, User, UserRole } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { notify } from '@/lib/notify';
 import { adminService } from '@/services/admin';
@@ -57,7 +57,7 @@ function UserManagement() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedUser, setSelectedUser] = useState<User|null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -99,8 +99,8 @@ function UserManagement() {
 
       const matchesRole = roleFilter === 'all' || user.role === roleFilter;
       const matchesStatus = statusFilter === 'all' ||
-        (statusFilter === 'verified' && user.isVerified) ||
-        (statusFilter === 'pending' && !user.isVerified);
+        (statusFilter === 'verified' && user.emailVerified) ||
+        (statusFilter === 'pending' && !user.emailVerified);
 
       return matchesSearch && matchesRole && matchesStatus;
     }) || [];
@@ -154,7 +154,7 @@ function UserManagement() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={UserType.ADMIN} activeItem="User Management" />
+      <Sidebar userType={UserRole.ADMIN} activeItem="User Management" />
 
       <div className="flex-1 flex flex-col overflow-auto">
         <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
@@ -245,8 +245,8 @@ function UserManagement() {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full overflow-hidden bg-card border border-border flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
-                            {usersItem.avatar ? (
-                              <img src={imageUrl(usersItem.avatar)} alt={`${usersItem.firstName} ${usersItem.lastName}`} className="w-full h-full object-cover" />
+                            {usersItem.profilePicture ? (
+                              <img src={imageUrl(usersItem.profilePicture)} alt={`${usersItem.firstName} ${usersItem.lastName}`} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full bg-linear-to-br from-success to-emerald-600 flex items-center justify-center text-white text-xs font-semibold">
                                 {usersItem.firstName.charAt(0).toUpperCase()}
@@ -261,8 +261,8 @@ function UserManagement() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1.5">
-                          <Badge variant={usersItem.isVerified ? 'success' : 'warning'} className="font-semibold text-[9px] uppercase  px-2 py-0.5">
-                            {usersItem.isVerified ? 'Verified' : 'Pending'}
+                          <Badge variant={usersItem.emailVerified ? 'success' : 'warning'} className="font-semibold text-[9px] uppercase  px-2 py-0.5">
+                            {usersItem.emailVerified ? 'Verified' : 'Pending'}
                           </Badge>
                           {(usersItem as any).suspended && (
                             <Badge variant="destructive" className="font-semibold text-[9px] uppercase  px-2 py-0.5">
@@ -273,7 +273,7 @@ function UserManagement() {
                       </TableCell>
                       <TableCell>
                         <div className="max-w-[120px]">
-                         {usersItem.role}
+                          {usersItem.role}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -403,8 +403,8 @@ function UserManagement() {
               <div className="relative -mt-12 mb-6">
                 <div className="w-24 h-24 rounded-2xl bg-card p-1 shadow-lg">
                   <div className="w-full h-full rounded-xl overflow-hidden bg-card flex items-center justify-center border border-border">
-                    {selectedUser.avatar ? (
-                      <img src={imageUrl(selectedUser.avatar)} alt={`${selectedUser.firstName} ${selectedUser.lastName}`} className="w-full h-full object-cover" />
+                    {selectedUser.profilePicture ? (
+                      <img src={imageUrl(selectedUser.profilePicture)} alt={`${selectedUser.firstName} ${selectedUser.lastName}`} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-success flex items-center justify-center text-white text-2xl font-semibold">
                         {selectedUser.firstName.charAt(0).toUpperCase()}
@@ -432,8 +432,8 @@ function UserManagement() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Badge variant={selectedUser.isVerified ? 'success' : 'warning'} className="font-semibold">
-                    {selectedUser.isVerified ? 'Verified Account' : 'Pending Verification'}
+                  <Badge variant={selectedUser.emailVerified ? 'success' : 'warning'} className="font-semibold">
+                    {selectedUser.emailVerified ? 'Verified Account' : 'Pending Verification'}
                   </Badge>
                   {(selectedUser as any).suspended && (
                     <Badge variant="destructive" className="font-semibold">Suspended</Badge>

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserType } from '@/types';
+import { UserRole } from '@/types';
 import {
   Shield,
   ArrowLeft,
@@ -95,7 +95,7 @@ export default function SecuritySettingsPage() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserType} activeItem="Settings" />
+      <Sidebar userType={user?.role as UserRole} activeItem="Settings" />
       
       <main className="flex-1 overflow-auto">
         <div className="p-6 max-w-4xl mx-auto">

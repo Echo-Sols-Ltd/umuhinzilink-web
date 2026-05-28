@@ -92,20 +92,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   return (
     <div className={cn('max-w-6xl mx-auto p-4 sm:p-6 space-y-6', className)}>
-      {/* Breadcrumbs */}
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Home className="w-4 h-4" />
-        <ChevronRight className="w-4 h-4" />
-        <span>{t('buyer.productDetail.breadcrumbs.home')}</span>
-        <ChevronRight className="w-4 h-4" />
-        <span>{t('buyer.productDetail.breadcrumbs.grainsAndCereals')}</span>
-        <ChevronRight className="w-4 h-4" />
-        <span className="text-foreground font-medium">{product.name}</span>
-      </div>
-
-      {/* Product Header */}
-
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Product Images */}
         <div className="space-y-4">
@@ -151,7 +137,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <div className="space-y-6 h-screen overflow-auto pb-20">
           <div className="space-y-3">
             <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
 

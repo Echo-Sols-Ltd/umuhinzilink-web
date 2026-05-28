@@ -71,7 +71,7 @@ function FarmerOrderDetailPage() {
 
 
   const handleBack = () => {
-    router.push('/farmer/orders');
+    router.back()
   };
 
   if (loading) {
