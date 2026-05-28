@@ -23,8 +23,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      await authService.requestPasswordReset(email);
-
+    
       setSubmitted(true);
       notify.success(t('auth.forgotPassword.toast.resetCodeSent.body'), t('auth.forgotPassword.toast.resetCodeSent.title'));
     } catch (error: any) {

@@ -11,17 +11,8 @@ export default function Home() {
   const { t } = useI18n()
   const {
     products,
-    fetchMarketplaceProducts,
     loading,
   } = useProduct()
-
-  const [currentPage, setCurrentPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-
-  useEffect(() => {
-    fetchMarketplaceProducts(currentPage - 1, 10)
-  }, [currentPage, fetchMarketplaceProducts])
 
   return (
     <div className='bg-background h-screen pb-12 overflow-auto'>

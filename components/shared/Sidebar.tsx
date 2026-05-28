@@ -207,8 +207,8 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
                 <div className="flex items-center gap-2.5">
                     <div className="relative shrink-0">
                         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center overflow-hidden">
-                            {user?.avatar
-                                ? <img src={imageUrl(user.avatar)} alt={fullName} className="w-8 h-8 object-cover" />
+                            {user?.profilePicture
+                                ? <img src={imageUrl(user.profilePicture)} alt={fullName} className="w-8 h-8 object-cover" />
                                 : <span className="text-[11px] font-semibold text-primary-foreground">{initials}</span>}
                         </div>
                         <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-background rounded-full" />
