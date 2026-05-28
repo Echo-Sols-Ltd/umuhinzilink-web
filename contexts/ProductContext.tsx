@@ -3,6 +3,7 @@ import { productService } from '@/services/products';
 import {
   Product,
   ProductStatus,
+  UserRole,
 } from '@/types';
 import { useAuth } from './AuthContext';
 
@@ -106,7 +107,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     if (editProduct?.id === productId) setEditProduct(null);
   }, [currentProduct, editProduct]);
 
-  const fetchProducts = useCallback(async (page = 0, size = 10) => {
+  const fetchSellerProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
       const res = await productService.getSellerProducts(page, size);
@@ -124,7 +125,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }, []);
 
 
-  const fetchMarketplaceProducts = useCallback(async (page = 0, size = 10) => {
+  const fetchProducts = useCallback(async (page = 0, size = 10) => {
     try {
       setLoading(true);
       const res = await productService.getProducts(page, size);
@@ -141,22 +142,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-
-  const fetchMyStats = useCallback(async () => {
-    if (!user?.id) return;
-    try {
-      setLoading(true);
-      // Fetch both for now or based on role if needed, but unify into myStats
-      const res = await productService.getSellerStats()
-      if (res.success) {
-        setMyStats(res.data ?? []);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch stats');
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (user) {
+      if (user.role === UserRole.SELLER) fetchSellerProducts()
+      if (user.role === UserRole.BUYER) fetchProducts()
     }
-  }, [user]);
+  }, [user])
 
   const fetchProductById = useCallback(async (id: string) => {
     try {
