@@ -12,10 +12,75 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { notify } from '@/lib/notify';
 import { Client } from '@stomp/stompjs';
-import { UserRole, NegotiationMessage, NegotiationStatus, MessageType, Negotiation } from '@/types';
 
+// ── Types ─────────────────────────────────────────────────────────────────────
 
+type MessageType = 'TEXT' | 'IMAGE' | 'OFFER';
+type NegotiationStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
+type UserRole = 'BUYER' | 'SELLER';
 
+interface ChatMessage {
+    id: string;
+    senderId: string;
+    senderName: string;
+    content: string;
+    type: MessageType;
+    offeredPrice?: number;
+    isRead: boolean;
+    createdAt: string;
+    replyToId?: string;
+    replyToContent?: string;
+}
+
+interface Negotiation {
+    id: string;
+    status: NegotiationStatus;
+    buyerProposedPrice: number;
+    agreedPrice?: number;
+    expiresAt: string;
+    order: {
+        id: string;
+        orderNumber: string;
+        quantity: number;
+        product: {
+            id: string;
+            name: string;
+            image?: string;
+            unitPrice: number;
+            measurementUnit: string;
+        };
+        buyer: {
+            id: string;
+            firstName: string;
+            lastName: string;
+        };
+    };
+}
+
+const exampleNegotiation={
+    id: "1",
+    status: "PENDING",
+    buyerProposedPrice: 1000,
+    agreedPrice: 2000,
+    expiresAt: "2026-05-30T20:13:35+02:00",
+    order: {
+        id: "1",
+        orderNumber: "1",
+        quantity: 100,
+        product: {
+            id: "1",
+            name: "maize",
+            image: "https://images.unsplash.com/photo-1567003904783-e79012944066?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            unitPrice: 100,
+            measurementUnit: "kg",
+        },
+        buyer: {
+            id: "1",
+            firstName: "John",
+            lastName: "Doe",
+        },
+    },
+}
 
 interface NegotiationChatProps {
     negotiationId: string;
@@ -53,25 +118,25 @@ function timeUntil(dateStr: string) {
 function MessageBubble({
     msg, isOwn, onReply,
 }: {
-    msg: NegotiationMessage;
+    msg: ChatMessage;
     isOwn: boolean;
-    onReply: (msg: NegotiationMessage) => void;
+    onReply: (msg: ChatMessage) => void;
 }) {
     const [showActions, setShowActions] = useState(false);
 
-    if (msg.type === MessageType.PRODUCT) {
+    if (msg.type === 'OFFER') {
         return (
             <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-3`}>
                 <div className="max-w-[280px] w-full">
                     <div className={`rounded-2xl border-2 overflow-hidden ${isOwn
-                        ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30'
-                        : 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30'
+                            ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30'
+                            : 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30'
                         }`}>
                         <div className={`px-3 py-2 flex items-center gap-2 text-xs font-bold ${isOwn ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300'
-                            : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'
+                                : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'
                             }`}>
                             <DollarSign size={13} />
-                            {isOwn ? 'Your price offer' : 'Seller's price offer'}
+                            {isOwn ? 'Your price offer' : 'Seller price offer'}
                         </div>
                         <div className="px-4 py-3 text-center">
                             <p className="text-2xl font-extrabold text-foreground">
@@ -102,10 +167,17 @@ function MessageBubble({
             )}
 
             <div className="max-w-[70%]">
+                {/* Reply preview */}
+                {msg.replyToContent && (
+                    <div className={`mb-1 px-3 py-1.5 rounded-xl border-l-2 border-green-500 bg-gray-100 dark:bg-gray-800 text-xs text-muted-foreground line-clamp-1`}>
+                        {msg.replyToContent}
+                    </div>
+                )}
+
                 {/* Bubble */}
                 <div className={`relative px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${isOwn
-                    ? 'bg-green-600 text-white rounded-tr-sm'
-                    : 'bg-white dark:bg-gray-800 text-foreground border border-border rounded-tl-sm'
+                        ? 'bg-green-600 text-white rounded-tr-sm'
+                        : 'bg-white dark:bg-gray-800 text-foreground border border-border rounded-tl-sm'
                     }`}>
                     {msg.content}
 
@@ -402,58 +474,6 @@ function SellerPricePanel({
     );
 }
 
-// ── Buyer bottom bar ──────────────────────────────────────────────────────────
-
-function BuyerActionBar({
-    negotiation,
-    onAccept,
-    onReject,
-    loading,
-}: {
-    negotiation: Negotiation;
-    onAccept: () => Promise<void>;
-    onReject: () => Promise<void>;
-    loading: boolean;
-}) {
-    const hasOffer = !!negotiation.agreedPrice && negotiation.status === 'PENDING';
-    if (!hasOffer) return null;
-
-    return (
-        <div className="border-t border-border bg-white dark:bg-gray-900 px-4 py-3">
-            <div className="flex items-center justify-between mb-2.5">
-                <div>
-                    <p className="text-xs text-muted-foreground">Seller's counter offer</p>
-                    <p className="text-lg font-extrabold text-green-700 dark:text-green-400">
-                        {fmt(negotiation.agreedPrice!)}
-                        <span className="text-xs font-normal text-muted-foreground ml-1">/ {negotiation.order.product.measurementUnit?.toLowerCase()}</span>
-                    </p>
-                </div>
-                <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Your offer was</p>
-                    <p className="text-sm font-semibold text-foreground line-through opacity-60">
-                        {fmt(negotiation.buyerProposedPrice)}
-                    </p>
-                </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-                <button
-                    onClick={onReject}
-                    disabled={loading}
-                    className="h-10 border border-red-200 dark:border-red-800 text-red-500 text-sm font-semibold rounded-xl hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors disabled:opacity-50">
-                    Decline
-                </button>
-                <button
-                    onClick={onAccept}
-                    disabled={loading}
-                    className="h-10 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5">
-                    {loading ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
-                    Accept {fmt(negotiation.agreedPrice!)}
-                </button>
-            </div>
-        </div>
-    );
-}
-
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function NegotiationChat({
@@ -463,10 +483,10 @@ export default function NegotiationChat({
 }: NegotiationChatProps) {
     const { user } = useAuth();
 
-    const [negotiation, setNegotiation] = useState<Negotiation | null>(null);
-    const [messages, setMessages] = useState<NegotiationMessage[]>([]);
+    const [negotiation, setNegotiation] = useState<Negotiation | null>(exampleNegotiation);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
-    const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
+    const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [sending, setSending] = useState(false);
@@ -512,7 +532,7 @@ export default function NegotiationChat({
             onConnect: () => {
                 // Subscribe to negotiation topic
                 client.subscribe(`/topic/negotiation/${negotiationId}`, frame => {
-                    const msg: NegotiationMessage = JSON.parse(frame.body);
+                    const msg: ChatMessage = JSON.parse(frame.body);
                     setMessages(prev => [...prev, msg]);
                     scrollToBottom();
                 });
@@ -624,8 +644,8 @@ export default function NegotiationChat({
     const handleAccept = async () => {
         setActionLoading(true);
         try {
-            await negotiationService.accept(negotiationId);
-            setNegotiation(prev => prev ? { ...prev, status: NegotiationStatus.ACCEPTED } : prev);
+            // TODO: await negotiationService.accept(negotiationId);
+            setNegotiation(prev => prev ? { ...prev, status: 'ACCEPTED' } : prev);
             notify.success('Negotiation accepted!');
         } catch {
             notify.error('Failed to accept negotiation');
@@ -638,7 +658,7 @@ export default function NegotiationChat({
         setActionLoading(true);
         try {
             // TODO: await negotiationService.reject(negotiationId);
-            setNegotiation(prev => prev ? { ...prev, status: NegotiationStatus.REJECTED } : prev);
+            setNegotiation(prev => prev ? { ...prev, status: 'REJECTED' } : prev);
             notify.success('Negotiation rejected');
         } catch {
             notify.error('Failed to reject negotiation');
@@ -673,12 +693,11 @@ export default function NegotiationChat({
     return (
         <div className={cn(
             'flex h-full bg-gray-50 dark:bg-gray-950 overflow-hidden',
-            isSeller ? 'flex-row' : 'flex-col'
         )}>
 
             {/* ── Chat panel ───────────────────────────────────────────── */}
             <div className={cn(
-                'flex flex-col min-w-0',
+                'flex flex-col w-full',
                 isSeller ? 'flex-1' : 'flex-1'
             )}>
 
@@ -777,15 +796,6 @@ export default function NegotiationChat({
                     </div>
                 )}
 
-                {/* Buyer action bar — shown above input for buyer when offer exists */}
-                {!isSeller && negotiation && (
-                    <BuyerActionBar
-                        negotiation={negotiation}
-                        onAccept={handleAccept}
-                        onReject={handleReject}
-                        loading={actionLoading}
-                    />
-                )}
 
                 {/* Input */}
                 <div className="bg-white dark:bg-gray-900 border-t border-border px-3 py-3 flex items-center gap-2 shrink-0">
@@ -817,7 +827,7 @@ export default function NegotiationChat({
 
             {/* ── Seller right panel ────────────────────────────────────── */}
             {isSeller && negotiation && (
-                <div className="w-72 shrink-0 border-l border-border">
+                <div className="w-72 border-l border-border">
                     <SellerPricePanel
                         negotiation={negotiation}
                         onSetOffer={handleSetOffer}

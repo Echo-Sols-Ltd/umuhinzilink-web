@@ -1,3 +1,5 @@
+'use client'
+
 import NegotiationChat from "@/components/negotiation/NegotiationChat";
 import { UserRole } from "@/types";
 import { useParams } from "next/navigation";
@@ -9,7 +11,7 @@ export default function NegotiationDetailPage() {
 
     return (
         <div>
-            <NegotiationChat negotiationId={negotiationId} currentRole={role} />
+            <NegotiationChat negotiationId={negotiationId} currentRole={'SELLER'} />
         </div>
     )
 }
