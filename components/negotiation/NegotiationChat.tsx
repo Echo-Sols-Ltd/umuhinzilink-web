@@ -12,75 +12,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { notify } from '@/lib/notify';
 import { Client } from '@stomp/stompjs';
+import { UserRole, Negotiation, NegotiationMessage } from '@/types';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-type MessageType = 'TEXT' | 'IMAGE' | 'OFFER';
-type NegotiationStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
-type UserRole = 'BUYER' | 'SELLER';
-
-interface ChatMessage {
-    id: string;
-    senderId: string;
-    senderName: string;
-    content: string;
-    type: MessageType;
-    offeredPrice?: number;
-    isRead: boolean;
-    createdAt: string;
-    replyToId?: string;
-    replyToContent?: string;
-}
-
-interface Negotiation {
-    id: string;
-    status: NegotiationStatus;
-    buyerProposedPrice: number;
-    agreedPrice?: number;
-    expiresAt: string;
-    order: {
-        id: string;
-        orderNumber: string;
-        quantity: number;
-        product: {
-            id: string;
-            name: string;
-            image?: string;
-            unitPrice: number;
-            measurementUnit: string;
-        };
-        buyer: {
-            id: string;
-            firstName: string;
-            lastName: string;
-        };
-    };
-}
-
-const exampleNegotiation={
-    id: "1",
-    status: "PENDING",
-    buyerProposedPrice: 1000,
-    agreedPrice: 2000,
-    expiresAt: "2026-05-30T20:13:35+02:00",
-    order: {
-        id: "1",
-        orderNumber: "1",
-        quantity: 100,
-        product: {
-            id: "1",
-            name: "maize",
-            image: "https://images.unsplash.com/photo-1567003904783-e79012944066?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            unitPrice: 100,
-            measurementUnit: "kg",
-        },
-        buyer: {
-            id: "1",
-            firstName: "John",
-            lastName: "Doe",
-        },
-    },
-}
 
 interface NegotiationChatProps {
     negotiationId: string;
@@ -118,40 +51,12 @@ function timeUntil(dateStr: string) {
 function MessageBubble({
     msg, isOwn, onReply,
 }: {
-    msg: ChatMessage;
+    msg: NegotiationMessage;
     isOwn: boolean;
-    onReply: (msg: ChatMessage) => void;
+    onReply: (msg: NegotiationMessage) => void;
 }) {
     const [showActions, setShowActions] = useState(false);
 
-    if (msg.type === 'OFFER') {
-        return (
-            <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-3`}>
-                <div className="max-w-[280px] w-full">
-                    <div className={`rounded-2xl border-2 overflow-hidden ${isOwn
-                            ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30'
-                            : 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30'
-                        }`}>
-                        <div className={`px-3 py-2 flex items-center gap-2 text-xs font-bold ${isOwn ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300'
-                                : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'
-                            }`}>
-                            <DollarSign size={13} />
-                            {isOwn ? 'Your price offer' : 'Seller price offer'}
-                        </div>
-                        <div className="px-4 py-3 text-center">
-                            <p className="text-2xl font-extrabold text-foreground">
-                                {fmt(msg.offeredPrice!)}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-0.5">per unit</p>
-                        </div>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground mt-1 px-1 text-right">
-                        {timeAgo(msg.createdAt)}
-                    </p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div
@@ -167,17 +72,10 @@ function MessageBubble({
             )}
 
             <div className="max-w-[70%]">
-                {/* Reply preview */}
-                {msg.replyToContent && (
-                    <div className={`mb-1 px-3 py-1.5 rounded-xl border-l-2 border-green-500 bg-gray-100 dark:bg-gray-800 text-xs text-muted-foreground line-clamp-1`}>
-                        {msg.replyToContent}
-                    </div>
-                )}
-
                 {/* Bubble */}
                 <div className={`relative px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${isOwn
-                        ? 'bg-green-600 text-white rounded-tr-sm'
-                        : 'bg-white dark:bg-gray-800 text-foreground border border-border rounded-tl-sm'
+                    ? 'bg-green-600 text-white rounded-tr-sm'
+                    : 'bg-white dark:bg-gray-800 text-foreground border border-border rounded-tl-sm'
                     }`}>
                     {msg.content}
 
@@ -483,10 +381,10 @@ export default function NegotiationChat({
 }: NegotiationChatProps) {
     const { user } = useAuth();
 
-    const [negotiation, setNegotiation] = useState<Negotiation | null>(exampleNegotiation);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [negotiation, setNegotiation] = useState<Negotiation | null>();
+    const [messages, setMessages] = useState<NegotiationMessage[]>([]);
     const [input, setInput] = useState('');
-    const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
+    const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [sending, setSending] = useState(false);
@@ -495,72 +393,10 @@ export default function NegotiationChat({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const stompRef = useRef<Client | null>(null);
-    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     const isSeller = currentRole === 'SELLER';
 
-    // ── Load negotiation + messages ───────────────────────────────────────
-
-    useEffect(() => {
-        const load = async () => {
-            setLoading(true);
-            try {
-                // TODO: const neg = await negotiationService.getById(negotiationId);
-                // TODO: const msgs = await messageService.getByNegotiation(negotiationId, 0, 50);
-                // setNegotiation(neg.data);
-                // setMessages(msgs.data.content);
-                await new Promise(r => setTimeout(r, 800));
-            } catch {
-                notify.error('Failed to load negotiation');
-            } finally {
-                setLoading(false);
-            }
-        };
-        load();
-    }, [negotiationId]);
-
-    // ── WebSocket ─────────────────────────────────────────────────────────
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        const client = new Client({
-            brokerURL: `${process.env.NEXT_PUBLIC_WS_URL ?? 'ws://localhost:8080'}/api/v1/ws`,
-            connectHeaders: { Authorization: `Bearer ${token}` },
-            reconnectDelay: 5000,
-            onConnect: () => {
-                // Subscribe to negotiation topic
-                client.subscribe(`/topic/negotiation/${negotiationId}`, frame => {
-                    const msg: ChatMessage = JSON.parse(frame.body);
-                    setMessages(prev => [...prev, msg]);
-                    scrollToBottom();
-                });
-                // Subscribe to typing
-                client.subscribe(`/user/queue/typing`, frame => {
-                    const { isTyping: t } = JSON.parse(frame.body);
-                    setIsTyping(t);
-                    if (t) {
-                        clearTimeout(typingTimeoutRef.current);
-                        typingTimeoutRef.current = setTimeout(() => setIsTyping(false), 3000);
-                    }
-                });
-                // Mark messages as read
-                client.publish({
-                    destination: `/app/negotiation/${negotiationId}/read`,
-                    body: '',
-                });
-            },
-        });
-
-        client.activate();
-        stompRef.current = client;
-
-        return () => {
-            client.deactivate();
-            clearTimeout(typingTimeoutRef.current);
-        };
-    }, [negotiationId]);
 
     // ── Scroll to bottom ──────────────────────────────────────────────────
 
@@ -644,8 +480,6 @@ export default function NegotiationChat({
     const handleAccept = async () => {
         setActionLoading(true);
         try {
-            // TODO: await negotiationService.accept(negotiationId);
-            setNegotiation(prev => prev ? { ...prev, status: 'ACCEPTED' } : prev);
             notify.success('Negotiation accepted!');
         } catch {
             notify.error('Failed to accept negotiation');
@@ -657,8 +491,6 @@ export default function NegotiationChat({
     const handleReject = async () => {
         setActionLoading(true);
         try {
-            // TODO: await negotiationService.reject(negotiationId);
-            setNegotiation(prev => prev ? { ...prev, status: 'REJECTED' } : prev);
             notify.success('Negotiation rejected');
         } catch {
             notify.error('Failed to reject negotiation');
@@ -774,7 +606,7 @@ export default function NegotiationChat({
                             <MessageBubble
                                 key={msg.id}
                                 msg={msg}
-                                isOwn={msg.senderId === user?.id}
+                                isOwn={msg.sender.id === user?.id}
                                 onReply={setReplyTo}
                             />
                         ))
