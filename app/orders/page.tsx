@@ -84,7 +84,7 @@ export default function SellerOrdersPage() {
         sellingOrdersTotalPages: totalPages,
         sellingOrdersTotalElements: totalElements,
     } = useOrder();
-    const { acceptOrder, cancelOrder, loading: actionLoading } = useOrderAction();
+    const { loading: actionLoading } = useOrderAction();
 
     const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>('ALL');
     const [page, setPage] = useState(1);
@@ -113,18 +113,6 @@ export default function SellerOrdersPage() {
         [orders, statusFilter]
     );
 
-    // ── Handlers ──────────────────────────────────────────────────────────
-
-    const handleConfirm = async (id: string) => {
-        await acceptOrder(id);
-    };
-
-    const handleCancel = async (id: string) => {
-        if (!window.confirm('Cancel this order? Stock will be restored.')) return;
-        await cancelOrder(id);
-    };
-
-    // ── Render ────────────────────────────────────────────────────────────
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -263,22 +251,6 @@ export default function SellerOrdersPage() {
                                         {/* Actions */}
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                {order.status === 'PENDING' && (
-                                                    <>
-                                                        <button
-                                                            onClick={() => handleConfirm(order.id)}
-                                                            disabled={actionLoading}
-                                                            className="h-7 px-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors">
-                                                            Confirm
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleCancel(order.id)}
-                                                            disabled={actionLoading}
-                                                            className="h-7 px-2.5 border border-red-300 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50">
-                                                            Reject
-                                                        </button>
-                                                    </>
-                                                )}
                                                 <Link
                                                     href={`/orders/${order.id}`}
                                                     className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">

@@ -11,6 +11,7 @@ import { SocketProvider } from './SocketContext';
 import { NotificationProvider } from './NotificationContext';
 import { BrowserNotificationProvider } from './BrowserNotificationContext';
 import { ThemeProvider } from './ThemeContext';
+import { NegotiationProvider } from './NegotiationContext';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -28,7 +29,9 @@ export function AppProviders({ children }: AppProvidersProps) {
                   <ProductProvider>
                     <WalletProvider>
                       <OrderProvider>
-                        {children}
+                        <NegotiationProvider>
+                          {children}
+                        </NegotiationProvider>
                       </OrderProvider>
                     </WalletProvider>
                   </ProductProvider>
