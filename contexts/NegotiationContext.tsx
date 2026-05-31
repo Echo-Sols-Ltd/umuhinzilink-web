@@ -1,7 +1,8 @@
 import { Negotiation } from "@/types";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { negotiationService } from "@/services/negotiationService";
 import { notify } from "@/lib/notify";
+import { useAuth } from "./AuthContext";
 
 interface NegotiationContextType {
     negotiations: Negotiation[]
@@ -14,9 +15,35 @@ const NegotiationContext = createContext<NegotiationContextType | null>(null)
 
 
 function NegotiationProvider({ children }: { children: ReactNode }) {
+    const { user } = useAuth()
+
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
     const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
+
+    const fetchNegotiations = async () => {
+        try {
+            setLoading(true)
+            const res = await negotiationService.getAllNegotiations()
+            if (!res.success) {
+                setError(res.message)
+                notify.error(res.message)
+                return
+            }
+            if (res.data) {
+                setNegotiations(res.data)
+            }
+        } catch (err: any) {
+            setError(err.message)
+            notify.error(err.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if (user) fetchNegotiations()
+    }, [user])
 
     const fetchNegotiationById = async (id: string) => {
         try {
