@@ -21,10 +21,10 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
     const [error, setError] = useState<string | null>(null)
     const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
 
-    const fetchNegotiations = async () => {
+    const fetchBuyerNegotiations = async () => {
         try {
             setLoading(true)
-            const res = await negotiationService.getAllNegotiations()
+            const res = await negotiationService.getBuyerNegotiations()
             if (!res.success) {
                 setError(res.message)
                 notify.error(res.message)
@@ -38,6 +38,34 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
             notify.error(err.message)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const fetchSellerNegotiations = async () => {
+        try {
+            setLoading(true)
+            const res = await negotiationService.getSellerNegotiations()
+            if (!res.success) {
+                setError(res.message)
+                notify.error(res.message)
+                return
+            }
+            if (res.data) {
+                setNegotiations(res.data)
+            }
+        } catch (err: any) {
+            setError(err.message)
+            notify.error(err.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const fetchNegotiations = async () => {
+        if (user?.role === "BUYER") {
+            fetchBuyerNegotiations()
+        } else if (user?.role === "SELLER") {
+            fetchSellerNegotiations()
         }
     }
 

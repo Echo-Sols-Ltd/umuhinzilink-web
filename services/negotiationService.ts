@@ -23,6 +23,16 @@ class NegotiationService {
         const res = await apiClient.delete<ApiResponse<Negotiation>>(API_ENDPOINTS.NEGOTIATION.BY_ID(id))
         return res
     }
+
+    async getBuyerNegotiations() {
+        const res = await apiClient.get<ApiResponse<Negotiation[]>>(API_ENDPOINTS.NEGOTIATION.BUYER)
+        return res
+    }
+
+    async getSellerNegotiations() {
+        const res = await apiClient.get<ApiResponse<Negotiation[]>>(API_ENDPOINTS.NEGOTIATION.SELLER)
+        return res
+    }
 }
 
 export const negotiationService = new NegotiationService()
