@@ -13,6 +13,7 @@ import { cn, imageUrl } from '@/lib/utils';
 import { notify } from '@/lib/notify';
 import { Client } from '@stomp/stompjs';
 import { UserRole, Negotiation, NegotiationMessage } from '@/types';
+import { useNegotiation } from '@/contexts/NegotiationContext';
 
 
 interface NegotiationChatProps {
@@ -380,9 +381,8 @@ export default function NegotiationChat({
     onBack,
 }: NegotiationChatProps) {
     const { user } = useAuth();
-
+    const { negotiationMessages: messages } = useNegotiation()
     const [negotiation, setNegotiation] = useState<Negotiation | null>();
-    const [messages, setMessages] = useState<NegotiationMessage[]>([]);
     const [input, setInput] = useState('');
     const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
     const [loading, setLoading] = useState(true);

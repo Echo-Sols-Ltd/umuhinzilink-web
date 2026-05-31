@@ -9,11 +9,6 @@ class NegotiationService {
         return res
     }
 
-    async getAllNegotiations() {
-        const res = await apiClient.get<ApiResponse<Negotiation[]>>(API_ENDPOINTS.NEGOTIATION.ALL)
-        return res
-    }
-
     async getNegotiationMessages(id: string) {
         const res = await apiClient.get<ApiResponse<NegotiationMessage[]>>(API_ENDPOINTS.NEGOTIATION.MESSAGES(id))
         return res
