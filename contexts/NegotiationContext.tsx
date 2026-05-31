@@ -1,12 +1,13 @@
 import { Negotiation } from "@/types";
 import { createContext, ReactNode, useContext, useState } from "react";
+import { negotiationService } from "@/services/negotiationService";
+import { notify } from "@/lib/notify";
 
 interface NegotiationContextType {
     negotiations: Negotiation[]
     loading: boolean
     error: string | null
-    fetchNegotiationById: (id: string) => Promise<void>
-
+    fetchNegotiationById: (id: string) => Promise<Negotiation | null>
 }
 
 const NegotiationContext = createContext<NegotiationContextType | null>(null)
@@ -15,7 +16,7 @@ const NegotiationContext = createContext<NegotiationContextType | null>(null)
 function NegotiationProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
-    const [negotiations, setNegotiations] = useState<Negotiation | null>(null)
+    const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
 
     const fetchNegotiationById = async (id: string) => {
         try {
@@ -24,22 +25,29 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
             if (!res.success) {
                 setError(res.message)
                 notify.error(res.message)
-                return
+                return null
             }
             if (res.data) {
-                setNegotiations(res.data)
+                return res.data
             }
+            return null
         } catch (err: any) {
             setError(err.message)
             notify.error(err.message)
+            return null
         } finally {
             setLoading(false)
         }
     }
 
-    return (<>
+    return (<NegotiationContext.Provider value={{
+        negotiations,
+        loading,
+        error,
+        fetchNegotiationById
+    }} >
         {children}
-    </>)
+    </NegotiationContext.Provider>)
 }
 
 const useNegotiation = () => {
