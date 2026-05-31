@@ -14,6 +14,7 @@ import { cn, imageUrl } from '@/lib/utils';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import NegotiationCard from '@/components/negotiation/NegotiationCard';
 import { UserRole } from '@/types';
+import Navbar from '@/components/Navbar';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -86,9 +87,8 @@ function EmptyState({ tab, role }: { tab: TabFilter; role: UserRole }) {
 export default function NegotiationsPage() {
     const { user } = useAuth();
     const router = useRouter();
-    const { negotiations } = useNegotiation()
+    const { negotiations, loading } = useNegotiation()
 
-    const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<TabFilter>('ALL');
     const [search, setSearch] = useState('');
 
@@ -122,8 +122,11 @@ export default function NegotiationsPage() {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
 
+            <Navbar />
+
             {/* Header */}
             <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border">
+
                 <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <TrendingUp size={18} className="text-green-600" />
