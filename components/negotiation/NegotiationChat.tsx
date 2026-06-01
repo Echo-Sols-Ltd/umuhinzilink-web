@@ -11,9 +11,9 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { notify } from '@/lib/notify';
-import { Client } from '@stomp/stompjs';
 import { UserRole, Negotiation, NegotiationMessage } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
+import { useNegotiationAction } from '@/hooks/useNegotiationAction';
 
 
 interface NegotiationChatProps {
@@ -381,18 +381,17 @@ export default function NegotiationChat({
     onBack,
 }: NegotiationChatProps) {
     const { user } = useAuth();
-    const { negotiationMessages: messages } = useNegotiation()
+    const { negotiationMessages: messages, loading } = useNegotiation()
+    const { sendNegotiationMessage } = useNegotiationAction()
     const [negotiation, setNegotiation] = useState<Negotiation | null>();
     const [input, setInput] = useState('');
     const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
-    const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [sending, setSending] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-    const stompRef = useRef<Client | null>(null);
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     const isSeller = currentRole === 'SELLER';
@@ -416,15 +415,7 @@ export default function NegotiationChat({
         setReplyTo(null);
 
         try {
-            stompRef.current?.publish({
-                destination: `/app/negotiation/${negotiationId}/message`,
-                body: JSON.stringify({
-                    negotiationId,
-                    content,
-                    type: 'TEXT',
-                    replyToId: replyTo?.id ?? null,
-                }),
-            });
+            await sendNegotiationMessage(negotiationId, content)
         } catch {
             notify.error('Failed to send message');
             setInput(content);
@@ -434,41 +425,12 @@ export default function NegotiationChat({
         }
     };
 
-    // ── Typing indicator ──────────────────────────────────────────────────
-
-    const handleTyping = () => {
-        stompRef.current?.publish({
-            destination: `/app/negotiation/${negotiationId}/typing`,
-            body: JSON.stringify({ isTyping: true }),
-        });
-        clearTimeout(typingTimeoutRef.current);
-        typingTimeoutRef.current = setTimeout(() => {
-            stompRef.current?.publish({
-                destination: `/app/negotiation/${negotiationId}/typing`,
-                body: JSON.stringify({ isTyping: false }),
-            });
-        }, 2000);
-    };
 
     // ── Negotiation actions ───────────────────────────────────────────────
 
     const handleSetOffer = async (price: number) => {
         setActionLoading(true);
         try {
-            // TODO: await negotiationService.setSellerOffer(negotiationId, price);
-            // Optimistically update
-            setNegotiation(prev => prev ? { ...prev, agreedPrice: price } : prev);
-
-            // Also send as OFFER message via WS
-            stompRef.current?.publish({
-                destination: `/app/negotiation/${negotiationId}/message`,
-                body: JSON.stringify({
-                    negotiationId,
-                    content: `Offered price: ${fmt(price)}`,
-                    type: 'OFFER',
-                    offeredPrice: price,
-                }),
-            });
             notify.success(`Price offer of ${fmt(price)} sent`);
         } catch {
             notify.error('Failed to send offer');
@@ -641,7 +603,7 @@ export default function NegotiationChat({
                         }
                         disabled={!isNegotiationActive || sending}
                         value={input}
-                        onChange={e => { setInput(e.target.value); handleTyping(); }}
+                        onChange={e => { setInput(e.target.value); }}
                         onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
                         className="flex-1 h-10 px-4 text-sm bg-gray-50 dark:bg-gray-800 border border-border rounded-full text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 transition-all"
                     />

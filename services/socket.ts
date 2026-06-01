@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
-import { SocketResponse, ChatTyping, Order } from '@/types'
+import { SocketResponse, ChatTyping, Order, NegotiationMessage, NegotiationMessageRequest } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants'
 
 class SocketService {
@@ -8,12 +8,9 @@ class SocketService {
     private onlineUsers: Set<string> = new Set()
     private onlineUserListeners: ((users: Set<string>) => void)[] = []
     private messageDeletionListeners: ((id: string) => void)[] = []
+    private negotiationMessageListeners: ((message: NegotiationMessage) => void)[] = []
     private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
-    private orderStatusChangeListeners: ((data: SocketResponse<Order>) => void)[] = []
-    private orderDeliveryChangeListeners: ((data: SocketResponse<Order>) => void)[] = []
-    private orderNewListeners: ((data: SocketResponse<Order>) => void)[] = []
-    private orderSatisfactionListeners: ((data: SocketResponse<Order>) => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
 
@@ -170,74 +167,22 @@ class SocketService {
 
             this.stompClient.subscribe('/topic/onlineUsers', (msg) => this.handleOnlineUsers(msg))
             this.stompClient.subscribe('/user/queue/typing', (msg) => this.handleTyping(msg))
-            this.stompClient.subscribe('/user/queue/orderStatusChange', (msg) => this.handleOrderStatusChange(msg))
-            this.stompClient.subscribe('/user/queue/orderDeliveryChange', (msg) => this.handleOrderDeliveryChange(msg))
-            this.stompClient.subscribe('/user/queue/newOrder', (msg) => this.handleNewOrder(msg))
-            this.stompClient.subscribe('/user/queue/orderSatisfaction', (msg) => this.handleOrderSatisfaction(msg))
         } catch (error) {
             console.error('Error subscribing to topics:', error)
         }
     }
-
-
-    private handleNewOrder(message: IMessage) {
+    private handleNegotiationMessage(message: IMessage) {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<Order>
-            // Only call listeners if data exists
-            if (body.data) {
-                this.orderNewListeners.forEach(cb => cb(body))
-            } else {
-                console.warn('New order received but no data provided', body)
-            }
-
+            const body = JSON.parse(message.body) as SocketResponse<NegotiationMessage>
+            this.negotiationMessageListeners.forEach(cb => cb(body.data!))
         } catch (error) {
-            console.error('error parsing new order', error)
+            console.error('Failed to parse negotiation message:', error)
         }
     }
 
-    private handleOrderStatusChange(message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as SocketResponse<Order>
-            // Only call listeners if data exists
-            if (body.data) {
-                this.orderStatusChangeListeners.forEach(cb => cb(body))
-            } else {
-                console.warn('Order status change received but no data provided', body)
-            }
-        } catch (error) {
-            console.error('error parsing order status change', error)
-        }
+    public sendNegotiationMessage(message: NegotiationMessageRequest) {
+        this.enqueueOrPublish(SOCKET_EVENTS.NEGOTIATION_MESSAGE.SEND(message.negotiationId), JSON.stringify(message))
     }
-
-    private handleOrderDeliveryChange(message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as SocketResponse<Order>
-            // Only call listeners if data exists
-            if (body.data) {
-                this.orderDeliveryChangeListeners.forEach(cb => cb(body))
-            } else {
-                console.warn('Order delivery change received but no data provided', body)
-            }
-        } catch (error) {
-            console.error('error parsing order delivery change', error)
-        }
-    }
-
-    private handleOrderSatisfaction(message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as SocketResponse<Order>
-            // Only call listeners if data exists
-            if (body.data) {
-                this.orderSatisfactionListeners.forEach(cb => cb(body))
-            } else {
-                console.warn('Order satisfaction received but no data provided', body)
-            }
-        } catch (error) {
-            console.error('error parsing order satisfaction', error)
-        }
-    }
-
-
 
     private handleOnlineUsers(message: IMessage) {
         try {
@@ -279,38 +224,6 @@ class SocketService {
                 this.stompClient.publish(msg)
             }
         }
-    }
-    public onNewOrder(callback: (data: SocketResponse<Order>) => void) {
-        this.orderNewListeners.push(callback)
-    }
-    public removeNewOrderListener(callback: (data: SocketResponse<Order>) => void) {
-        this.orderNewListeners = this.orderNewListeners.filter(cb => cb !== callback)
-    }
-    public onOrderStatusChange(callback: (data: SocketResponse<Order>) => void) {
-        this.orderStatusChangeListeners.push(callback)
-    }
-    public removeOrderStatusChangeListener(callback: (data: SocketResponse<Order>) => void) {
-        this.orderStatusChangeListeners = this.orderStatusChangeListeners.filter(cb => cb !== callback)
-    }
-    public onOrderDeliveryChange(callback: (data: SocketResponse<Order>) => void) {
-        this.orderDeliveryChangeListeners.push(callback)
-    }
-    public removeOrderDeliveryChangeListener(callback: (data: SocketResponse<Order>) => void) {
-        this.orderDeliveryChangeListeners = this.orderDeliveryChangeListeners.filter(cb => cb !== callback)
-    }
-    public onOrderSatisfaction(callback: (data: SocketResponse<Order>) => void) {
-        this.orderSatisfactionListeners.push(callback)
-    }
-    public removeOrderSatisfactionListener(callback: (data: SocketResponse<Order>) => void) {
-        this.orderSatisfactionListeners = this.orderSatisfactionListeners.filter(cb => cb !== callback)
-    }
-
-    public messageDeletion(id: string) {
-        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.DELETE_MESSAGE, JSON.stringify(id))
-    }
-
-    public sendTyping(data: ChatTyping) {
-        this.enqueueOrPublish(SOCKET_EVENTS.MESSAGE.TYPING, JSON.stringify(data))
     }
 
     public getOnlineUsers() {

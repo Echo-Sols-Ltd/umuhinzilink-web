@@ -127,18 +127,8 @@ export const HTTP_STATUS = {
 
 
 export const SOCKET_EVENTS = {
-  MESSAGE: {
-    SEND_MESSAGE: '/app/chat.sendMessage',
-    REPLY_MESSAGE: '/app/chat.sendMessageReply',
-    REACT_MESSAGE: '/app/chat.sendMessageReaction',
-    EDIT_MESSAGE: '/app/chat.editMessage',
-    DELETE_MESSAGE: '/app/chat.deleteMessage',
-    TYPING: '/app/chat.typing'
-  },
-  NEGOTIATION: {
-    SUBSCRIBE_NEGOTIATION: '/topic/negotiation',
-    SUBSCRIBE_MESSAGE: '/topic/negotiation/{negotiationId}',
-    SUBSCRIBE_STATUS: '/queue/negotiationAccepted',
-    SUBSCRIBE_REJECTED: '/queue/negotiationRejected'
+  NEGOTIATION_MESSAGE: {
+    SUBSCRIBE: (id: string) => `/topic/negotiation/${id}`,
+    SEND: (id: string) => `/app/negotiation/${id}`,
   }
 };
