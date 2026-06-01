@@ -78,18 +78,16 @@ export default function SellerOrdersPage() {
     const router = useRouter();
     const { user } = useAuth();
     const {
-        sellingOrders,
+        orders,
         loading,
         fetchBuyingOrders,
-        sellingOrdersTotalPages: totalPages,
-        sellingOrdersTotalElements: totalElements,
+        ordersTotalPages: totalPages,
+        ordersTotalElements: totalElements,
     } = useOrder();
     const { loading: actionLoading } = useOrderAction();
 
     const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>('ALL');
     const [page, setPage] = useState(1);
-
-    const orders: Order[] = useMemo(() => sellingOrders ?? [], [sellingOrders]);
 
     useEffect(() => {
         fetchBuyingOrders(page - 1, ITEMS_PER_PAGE);

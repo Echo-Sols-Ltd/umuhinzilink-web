@@ -119,6 +119,9 @@ export default function NegotiationsPage() {
 
     // ── Render ────────────────────────────────────────────────────────────
 
+    if(!user){
+        return null
+    }
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
 
@@ -213,11 +216,11 @@ export default function NegotiationsPage() {
                         ))}
                     </div>
                 ) : filtered.length === 0 ? (
-                    <EmptyState tab={tab} role={user!.role} />
+                    <EmptyState tab={tab} role={user.role} />
                 ) : (
                     <div className="space-y-3">
                         {filtered.map(neg => (
-                            <NegotiationCard key={neg.id} neg={neg} role={user!.role} />
+                            <NegotiationCard key={neg.id} neg={neg} role={user.role} />
                         ))}
                     </div>
                 )}
