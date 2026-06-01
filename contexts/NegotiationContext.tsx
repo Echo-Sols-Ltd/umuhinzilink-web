@@ -1,6 +1,6 @@
 import { Negotiation, NegotiationMessage } from "@/types";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { negotiationService } from "@/services/negotiationService";
+import { negotiationService } from "@/services/negotiation";
 import { notify } from "@/lib/notify";
 import { useAuth } from "./AuthContext";
 import { socketService } from "@/services/socket";

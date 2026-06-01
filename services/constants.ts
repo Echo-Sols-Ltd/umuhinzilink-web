@@ -57,15 +57,15 @@ export const API_ENDPOINTS = {
     CONFIRM: (id: string) => `/orders/${id}/confirm`,
     BUYER_ALL: '/orders/buyer',
     SELLER_ALL: '/orders/seller',
-    UPDATE_STATUS: (id: string) => `/orders/${id}/status`,
-    SATISFACTION: (id: string) => `/orders/${id}/satisfaction`,
+    UPDATE_STATUS: (id: string) => `/orders/${id}/status`
   },
   NEGOTIATION: {
     ALL: '/negotiations',
     BY_ID: (id: string) => `/negotiations/${id}`,
     MESSAGES: (id: string) => `/negotiations/${id}/messages`,
     BUYER: '/negotiations/buyer',
-    SELLER: '/negotiations/seller'
+    SELLER: '/negotiations/seller',
+    SET_AGREED_PRICE: (id: string) => `/negotiations/${id}/set-agreed-price`,
   },
   ADMIN: {
     USERS: '/admin/users',
