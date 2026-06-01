@@ -41,6 +41,7 @@ export function useNegotiationAction() {
     }
     return {
         sendNegotiationMessage,
-        setAgreedPrice
+        setAgreedPrice,
+        loading
     }
 }

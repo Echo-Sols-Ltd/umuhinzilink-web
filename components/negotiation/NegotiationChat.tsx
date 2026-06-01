@@ -110,14 +110,13 @@ export default function NegotiationChat({
     onBack,
 }: NegotiationChatProps) {
     const { user } = useAuth();
-    const { negotiationMessages:messages, loading, currentNegotiation: negotiation } = useNegotiation()
-    const { sendNegotiationMessage } = useNegotiationAction()
+    const { negotiationMessages: messages, loading, currentNegotiation: negotiation } = useNegotiation()
+    const { sendNegotiationMessage, setAgreedPrice, loading: actionLoading } = useNegotiationAction()
     const [input, setInput] = useState('');
     const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
-    const [actionLoading, setActionLoading] = useState(false);
     const [sending, setSending] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
- 
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -132,7 +131,7 @@ export default function NegotiationChat({
 
     useEffect(() => { scrollToBottom(); }, [messages, scrollToBottom]);
 
-    
+
 
     // ── Send message ──────────────────────────────────────────────────────
 
@@ -318,7 +317,7 @@ export default function NegotiationChat({
                 <div className="w-72 border-l border-border">
                     <SellerPricePanel
                         negotiation={negotiation}
-                        onSetOffer={async () => { }}
+                        onSetOffer={async () => { setAgreedPrice(negotiationId, negotiation.buyerProposedPrice) }}
                         onAccept={async () => { }}
                         onReject={async () => { }}
                         loading={actionLoading}
