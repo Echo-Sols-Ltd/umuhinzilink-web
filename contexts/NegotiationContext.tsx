@@ -5,11 +5,12 @@ import { notify } from "@/lib/notify";
 import { useAuth } from "./AuthContext";
 
 interface NegotiationContextType {
+    currentNegotiation: Negotiation | null
     negotiations: Negotiation[]
     negotiationMessages: NegotiationMessage[]
     loading: boolean
     error: string | null
-    fetchNegotiationById: (id: string) => Promise<Negotiation | null>
+    fetchNegotiationById: (id: string) => Promise<void>
     fetchNegotiationMessages: (negotiationId: string) => Promise<void>
 }
 
@@ -23,6 +24,7 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
     const [error, setError] = useState<string | null>(null)
     const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
     const [negotiationMessages, setNegotiationMessages] = useState<NegotiationMessage[]>([])
+    const [currentNegotiation, setCurrentNegotiation] = useState<Negotiation | null>(null)
 
     const fetchNegotiationMessages = async (negotiationId: string) => {
         try {
@@ -103,16 +105,12 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
             if (!res.success) {
                 setError(res.message)
                 notify.error(res.message)
-                return null
             }
-            if (res.data) {
-                return res.data
-            }
-            return null
+            if (res.data) setCurrentNegotiation(res.data)
+
         } catch (err: any) {
             setError(err.message)
             notify.error(err.message)
-            return null
         } finally {
             setLoading(false)
         }
@@ -121,6 +119,7 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
 
 
     return (<NegotiationContext.Provider value={{
+        currentNegotiation,
         negotiations,
         negotiationMessages,
         loading,

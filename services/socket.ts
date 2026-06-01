@@ -167,12 +167,14 @@ class SocketService {
 
             this.stompClient.subscribe('/topic/onlineUsers', (msg) => this.handleOnlineUsers(msg))
             this.stompClient.subscribe('/user/queue/typing', (msg) => this.handleTyping(msg))
+            this.stompClient.subscribe('/user/queue/negotiation', (msg) => this.handleNegotiationMessage(msg))
         } catch (error) {
             console.error('Error subscribing to topics:', error)
         }
     }
     private handleNegotiationMessage(message: IMessage) {
         try {
+            console.log('Received negotiation message:', message.body)
             const body = JSON.parse(message.body) as SocketResponse<NegotiationMessage>
             this.negotiationMessageListeners.forEach(cb => cb(body.data!))
         } catch (error) {

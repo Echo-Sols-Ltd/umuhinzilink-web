@@ -110,9 +110,8 @@ export default function NegotiationChat({
     onBack,
 }: NegotiationChatProps) {
     const { user } = useAuth();
-    const { negotiationMessages: messages, loading } = useNegotiation()
+    const { negotiationMessages: messages, loading, currentNegotiation: negotiation } = useNegotiation()
     const { sendNegotiationMessage } = useNegotiationAction()
-    const [negotiation, setNegotiation] = useState<Negotiation | null>();
     const [input, setInput] = useState('');
     const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
     const [actionLoading, setActionLoading] = useState(false);
