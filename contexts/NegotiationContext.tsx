@@ -3,6 +3,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { negotiationService } from "@/services/negotiationService";
 import { notify } from "@/lib/notify";
 import { useAuth } from "./AuthContext";
+import { socketService } from "@/services/socket";
 
 interface NegotiationContextType {
     currentNegotiation: Negotiation | null
@@ -116,7 +117,19 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    useEffect(() => {
+        socketService.onNegotiationMessage((negotiationMessage) => {
+            console.log(negotiationMessage.negotiation.id,currentNegotiation?.id)
+            if (negotiationMessage.negotiation.id == currentNegotiation?.id) {
+                setNegotiationMessages((prev) => [...prev, negotiationMessage])
+            }
+        })
 
+        return () => {
+            socketService.removeNegotiationMessageListener((message) => {
+            })
+        }
+    }, [currentNegotiation?.id])
 
     return (<NegotiationContext.Provider value={{
         currentNegotiation,

@@ -174,7 +174,6 @@ class SocketService {
     }
     private handleNegotiationMessage(message: IMessage) {
         try {
-            console.log('Received negotiation message:', message.body)
             const body = JSON.parse(message.body) as SocketResponse<NegotiationMessage>
             this.negotiationMessageListeners.forEach(cb => cb(body.data!))
         } catch (error) {
@@ -240,6 +239,13 @@ class SocketService {
         this.onlineUserListeners = this.onlineUserListeners.filter(cb => cb !== callback)
     }
 
+    public onNegotiationMessage(callback: (message: NegotiationMessage) => void) {
+        this.negotiationMessageListeners.push(callback)
+    }
+
+    public removeNegotiationMessageListener(callback: (message: NegotiationMessage) => void) {
+        this.negotiationMessageListeners = this.negotiationMessageListeners.filter(cb => cb !== callback)
+    }
 
     public onMessageDeletion(callback: (id: string) => void) {
         this.messageDeletionListeners.push(callback)

@@ -110,17 +110,16 @@ export default function NegotiationChat({
     onBack,
 }: NegotiationChatProps) {
     const { user } = useAuth();
-    const { negotiationMessages: messages, loading, currentNegotiation: negotiation } = useNegotiation()
+    const { negotiationMessages:messages, loading, currentNegotiation: negotiation } = useNegotiation()
     const { sendNegotiationMessage } = useNegotiationAction()
     const [input, setInput] = useState('');
     const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [sending, setSending] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
-
+ 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     const isSeller = currentRole === 'SELLER';
 
@@ -132,6 +131,8 @@ export default function NegotiationChat({
     }, []);
 
     useEffect(() => { scrollToBottom(); }, [messages, scrollToBottom]);
+
+    
 
     // ── Send message ──────────────────────────────────────────────────────
 
@@ -184,7 +185,7 @@ export default function NegotiationChat({
 
             {/* ── Chat panel ───────────────────────────────────────────── */}
             <div className={cn(
-                'flex flex-col w-full',
+                'flex flex-col w-full h-screen',
                 isSeller ? 'flex-1' : 'flex-1'
             )}>
 
