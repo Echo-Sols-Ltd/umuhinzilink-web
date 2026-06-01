@@ -62,7 +62,7 @@ export default function ProductCard({
     const handleChat = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!user) { router.push('/auth/signin'); return; }
-        router.push(`/buyer/negotiations?seller=${product.owner.id}&product=${product.id}`);
+        router.push(`/negotiations?seller=${product.owner.id}&product=${product.id}`);
     };
 
     const handleBuy = (e: React.MouseEvent) => {

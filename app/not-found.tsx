@@ -99,7 +99,7 @@ export default function NotFound() {
                     <div className="flex flex-wrap justify-center gap-2">
                         {[
                             { label: 'Browse products', href: '/products' },
-                            { label: 'My negotiations', href: '/buyer/negotiations' },
+                            { label: 'My negotiations', href: '/negotiations' },
                             { label: 'Seller dashboard', href: '/seller/dashboard' },
                             { label: 'Wallet', href: '/wallet' },
                             { label: 'Sign in', href: '/auth/signin' },

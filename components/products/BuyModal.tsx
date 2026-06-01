@@ -165,7 +165,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
 
     const handleGoToNegotiation = () => {
         onClose();
-        router.push('/buyer/negotiations');
+        router.push('/negotiations');
     };
 
     const handleGoToOrders = () => {

@@ -9,8 +9,7 @@ import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 type OrderContextValue = {
   loading: boolean;
   error?: string | null;
-  buyingOrders: Order[] | null;
-  sellingOrders: Order[] | null;
+  orders: Order[]
 
   currentOrder: Order | null;
   currentProduct: Product | null;
@@ -28,10 +27,8 @@ type OrderContextValue = {
   fetchBuyingOrders: (page?: number, size?: number) => Promise<Order[] | null>;
   fetchSellingOrders: (page?: number, size?: number) => Promise<Order[] | null>;
 
-  buyingOrdersTotalPages: number;
-  buyingOrdersTotalElements: number;
-  sellingOrdersTotalPages: number;
-  sellingOrdersTotalElements: number;
+  ordersTotalPages: number;
+  ordersTotalElements: number;
 
   // Derived order states
   pendingBuyingOrders: Order[];
@@ -56,13 +53,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
 
-  const [buyingOrders, setBuyingOrders] = useState<Order[] | null>(null);
-  const [sellingOrders, setSellingOrders] = useState<Order[] | null>(null);
-
-  const [buyingOrdersTotalPages, setBuyingOrdersTotalPages] = useState(0);
-  const [buyingOrdersTotalElements, setBuyingOrdersTotalElements] = useState(0);
-  const [sellingOrdersTotalPages, setSellingOrdersTotalPages] = useState(0);
-  const [sellingOrdersTotalElements, setSellingOrdersTotalElements] = useState(0);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersTotalPages, setOrdersTotalPages] = useState(0);
+  const [ordersTotalElements, setOrdersTotalElements] = useState(0);
 
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
@@ -73,9 +66,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       const res = await orderService.getBuyerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
-      setBuyingOrders(Array.isArray(list) ? list : []);
-      setBuyingOrdersTotalPages(res.totalPages ?? 0);
-      setBuyingOrdersTotalElements(res.totalElements ?? 0);
+      setOrders(Array.isArray(list) ? list : []);
+      setOrdersTotalPages(res.totalPages ?? 0);
+      setOrdersTotalElements(res.totalElements ?? 0);
       return Array.isArray(list) ? list : null;
     } catch {
       return null;
@@ -90,9 +83,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       const res = await orderService.getSellerOrders(page, size);
       if (!res.success) return null;
       const list = res.data ?? [];
-      setSellingOrders(Array.isArray(list) ? list : []);
-      setSellingOrdersTotalPages(res.totalPages ?? 0);
-      setSellingOrdersTotalElements(res.totalElements ?? 0);
+      setOrders(Array.isArray(list) ? list : []);
+      setOrdersTotalPages(res.totalPages ?? 0);
+      setOrdersTotalElements(res.totalElements ?? 0);
       return Array.isArray(list) ? list : null;
     } catch {
       return null;
@@ -109,7 +102,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   }, [user])
 
   const addOrder = useCallback((data: Order) => {
-    setBuyingOrders(prev => {
+    setOrders(prev => {
       const updated = prev ? [data, ...prev] : [data];
       return updated;
     });
@@ -122,8 +115,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       if (!prev) return [data];
       return prev.map(order => (order.id === data.id ? data : order));
     };
-    setBuyingOrders(updater);
-    setSellingOrders(updater);
+    setOrders(updater);
     if (currentOrder?.id === data.id) setCurrentOrder(data);
   }, [currentOrder]);
 
@@ -136,13 +128,12 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   // Helper to update socket orders
   const handleOrderChange = useCallback((order: Order) => {
     const orderId = order.id;
-    const updater = (prev: Order[] | null) => {
+    const updater = (prev: Order[]) => {
       if (!prev) return prev;
       return prev.map(o => o.id === orderId ? order : o);
     };
 
-    setBuyingOrders(updater);
-    setSellingOrders(updater);
+    setOrders(updater);
 
     if (currentOrder?.id === orderId) setCurrentOrder(order);
   }, [currentOrder]);
@@ -212,63 +203,46 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   }, [showNotification, handleOrderChange]);
 
 
-  const cleanupSocketListeners = useCallback(() => {
-    if (!socket) return;
-    socket.removeNewOrderListener(handleNewOrder);
-    socket.removeOrderStatusChangeListener(handleOrderStatusChange);
-    socket.removeOrderDeliveryChangeListener(handleOrderDeliveryChange);
-  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange]);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.onNewOrder(handleNewOrder);
-    socket.onOrderStatusChange(handleOrderStatusChange);
-    socket.onOrderDeliveryChange(handleOrderDeliveryChange);
-
-    return cleanupSocketListeners;
-  }, [socket, handleNewOrder, handleOrderStatusChange, handleOrderDeliveryChange, cleanupSocketListeners]);
 
   // 🔹 Derived Orders
   const pendingBuyingOrders = useMemo(
-    () => buyingOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
-    [buyingOrders]
+    () => orders?.filter(o => o.status === OrderStatus.PENDING) || [],
+    [orders]
   );
   const completedBuyingOrders = useMemo(
-    () => buyingOrders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
-    [buyingOrders]
+    () => orders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
+    [orders]
   );
   const cancelledBuyingOrders = useMemo(
-    () => buyingOrders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
-    [buyingOrders]
+    () => orders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
+    [orders]
   );
   const activeBuyingOrders = useMemo(
-    () => buyingOrders?.filter(o => o.status === OrderStatus.CONFIRMED) || [],
-    [buyingOrders]
+    () => orders?.filter(o => o.status === OrderStatus.CONFIRMED) || [],
+    [orders]
   );
 
   const pendingSellingOrders = useMemo(
-    () => sellingOrders?.filter(o => o.status === OrderStatus.PENDING) || [],
-    [sellingOrders]
+    () => orders?.filter(o => o.status === OrderStatus.PENDING) || [],
+    [orders]
   );
   const completedSellingOrders = useMemo(
-    () => sellingOrders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
-    [sellingOrders]
+    () => orders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
+    [orders]
   );
   const cancelledSellingOrders = useMemo(
-    () => sellingOrders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
-    [sellingOrders]
+    () => orders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
+    [orders]
   );
   const activeSellingOrders = useMemo(
-    () => sellingOrders?.filter(o => o.status === OrderStatus.CONFIRMED) || [],
-    [sellingOrders]
+    () => orders?.filter(o => o.status === OrderStatus.CONFIRMED) || [],
+    [orders]
   );
 
 
   const value: OrderContextValue = {
     loading,
-    buyingOrders,
-    sellingOrders,
+    orders,
     currentOrder,
     currentProduct,
     setCurrentOrder,
@@ -279,10 +253,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     mutationLoading: mutationLoadingState,
     fetchBuyingOrders,
     fetchSellingOrders,
-    buyingOrdersTotalPages,
-    buyingOrdersTotalElements,
-    sellingOrdersTotalPages,
-    sellingOrdersTotalElements,
+    ordersTotalPages,
+    ordersTotalElements,
     pendingBuyingOrders,
     completedBuyingOrders,
     cancelledBuyingOrders,

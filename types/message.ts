@@ -33,9 +33,6 @@ export interface NegotiationMessageRequest {
   negotiationId: string;
   content: string;
   type: MessageType;
-  fileName: string;
-  replyToId: string;
-  offeredPrice: number;
 }
 
 export interface ChatTyping {

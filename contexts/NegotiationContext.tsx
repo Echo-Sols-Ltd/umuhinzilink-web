@@ -1,14 +1,18 @@
-import { Negotiation } from "@/types";
+import { Negotiation, NegotiationMessage } from "@/types";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { negotiationService } from "@/services/negotiationService";
 import { notify } from "@/lib/notify";
 import { useAuth } from "./AuthContext";
+import { socketService } from "@/services/socket";
 
 interface NegotiationContextType {
+    currentNegotiation: Negotiation | null
     negotiations: Negotiation[]
+    negotiationMessages: NegotiationMessage[]
     loading: boolean
     error: string | null
-    fetchNegotiationById: (id: string) => Promise<Negotiation | null>
+    fetchNegotiationById: (id: string) => Promise<void>
+    fetchNegotiationMessages: (negotiationId: string) => Promise<void>
 }
 
 const NegotiationContext = createContext<NegotiationContextType | null>(null)
@@ -20,6 +24,28 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
     const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
+    const [negotiationMessages, setNegotiationMessages] = useState<NegotiationMessage[]>([])
+    const [currentNegotiation, setCurrentNegotiation] = useState<Negotiation | null>(null)
+
+    const fetchNegotiationMessages = async (negotiationId: string) => {
+        try {
+            setLoading(true)
+            const res = await negotiationService.getNegotiationMessages(negotiationId)
+            if (!res.success) {
+                setError(res.message)
+                notify.error(res.message)
+                return
+            }
+            if (res.data) {
+                setNegotiationMessages(res.data)
+            }
+        } catch (err: any) {
+            setError(err.message)
+            notify.error(err.message)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const fetchBuyerNegotiations = async () => {
         try {
@@ -80,26 +106,39 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
             if (!res.success) {
                 setError(res.message)
                 notify.error(res.message)
-                return null
             }
-            if (res.data) {
-                return res.data
-            }
-            return null
+            if (res.data) setCurrentNegotiation(res.data)
+
         } catch (err: any) {
             setError(err.message)
             notify.error(err.message)
-            return null
         } finally {
             setLoading(false)
         }
     }
 
+    useEffect(() => {
+        socketService.onNegotiationMessage((negotiationMessage) => {
+            console.log(negotiationMessage.negotiation.id,currentNegotiation?.id)
+            if (negotiationMessage.negotiation.id == currentNegotiation?.id) {
+                setNegotiationMessages((prev) => [...prev, negotiationMessage])
+            }
+        })
+
+        return () => {
+            socketService.removeNegotiationMessageListener((message) => {
+            })
+        }
+    }, [currentNegotiation?.id])
+
     return (<NegotiationContext.Provider value={{
+        currentNegotiation,
         negotiations,
+        negotiationMessages,
         loading,
         error,
-        fetchNegotiationById
+        fetchNegotiationById,
+        fetchNegotiationMessages
     }} >
         {children}
     </NegotiationContext.Provider>)
