@@ -14,7 +14,7 @@ import { notify } from '@/lib/notify';
 import { UserRole, Negotiation, NegotiationMessage } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import { useNegotiationAction } from '@/hooks/useNegotiationAction';
-import SellerPricePanel from './SellerPricePanel';
+import SellerPricePanel from './PricePanel';
 
 
 interface NegotiationChatProps {
@@ -38,7 +38,6 @@ function timeAgo(dateStr: string) {
     if (hrs < 24) return `${hrs}h ago`;
     return new Date(dateStr).toLocaleDateString('en-RW', { month: 'short', day: 'numeric' });
 }
-
 
 
 // ── Message bubble ────────────────────────────────────────────────────────────
@@ -317,10 +316,11 @@ export default function NegotiationChat({
                 <div className="w-72 border-l border-border">
                     <SellerPricePanel
                         negotiation={negotiation}
-                        onSetOffer={async () => { setAgreedPrice(negotiationId, negotiation.buyerProposedPrice) }}
+                        onSetOffer={async (data: number) => { setAgreedPrice(negotiationId, data) }}
                         onAccept={async () => { }}
                         onReject={async () => { }}
                         loading={actionLoading}
+                        isSeller={user?.role == 'SELLER'}
                     />
                 </div>
             )}

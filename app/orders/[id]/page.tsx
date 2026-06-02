@@ -13,12 +13,12 @@ import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard } from 'lucide-r
 import { orderService } from '@/services/orders';
 import { useI18n } from '@/contexts/I18nContext';
 
-function FarmerOrderDetailPage() {
+export default function FarmerOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const {
-    sellingOrders,
+    orders,
     currentOrder,
     setCurrentOrder,
     fetchSellingOrders
@@ -36,7 +36,7 @@ function FarmerOrderDetailPage() {
 
       try {
         // Step 1: Check if order is already in context lists
-        let foundOrder = sellingOrders?.find((o: Order) => o.id === orderId);
+        let foundOrder = orders?.find((o: Order) => o.id === orderId);
 
         if (!foundOrder && currentOrder?.id === orderId) {
           foundOrder = currentOrder;
@@ -66,7 +66,7 @@ function FarmerOrderDetailPage() {
     if (orderId) {
       loadOrder();
     }
-  }, [orderId, sellingOrders, currentOrder, setCurrentOrder, fetchSellingOrders]);
+  }, [orderId, orders, currentOrder, setCurrentOrder, fetchSellingOrders]);
 
 
 
@@ -229,12 +229,3 @@ function FarmerOrderDetailPage() {
   );
 }
 
-function FarmerOrderDetailPageWithGuard() {
-  return (
-    <FarmerGuard>
-      <FarmerOrderDetailPage />
-    </FarmerGuard>
-  );
-}
-
-export default FarmerOrderDetailPageWithGuard;

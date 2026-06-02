@@ -16,19 +16,23 @@ function timeUntil(dateStr: string) {
     return `${hrs}h left`;
 }
 
-export default function SellerPricePanel({
-    negotiation,
-    onSetOffer,
-    onAccept,
-    onReject,
-    loading,
-}: {
+interface PricePanelProps {
     negotiation: Negotiation;
     onSetOffer: (price: number) => Promise<void>;
     onAccept: () => Promise<void>;
     onReject: () => Promise<void>;
     loading: boolean;
-}) {
+    isSeller: boolean
+}
+
+export default function PricePanel({
+    negotiation,
+    onSetOffer,
+    onAccept,
+    onReject,
+    loading,
+    isSeller
+}: PricePanelProps) {
     const [offerInput, setOfferInput] = useState('');
     const [offerError, setOfferError] = useState('');
     const [confirming, setConfirming] = useState<'accept' | 'reject' | null>(null);
@@ -41,6 +45,7 @@ export default function SellerPricePanel({
     const discount = Math.round((1 - buyerPrice / listedPrice) * 100);
 
     const handleSubmitOffer = async () => {
+        console.log(offerInput)
         const val = parseFloat(offerInput);
         if (!offerInput || isNaN(val) || val <= 0) {
             setOfferError('Enter a valid price');
