@@ -312,7 +312,7 @@ export default function NegotiationChat({
             </div>
 
             {/* ── Seller right panel ────────────────────────────────────── */}
-            {isSeller && negotiation && (
+            {negotiation && (
                 <div className="w-72 border-l border-border">
                     <SellerPricePanel
                         negotiation={negotiation}
