@@ -24,5 +24,10 @@ export interface GoogleAuthRequest {
 }
 
 export interface ResetPasswordRequest {
+  code: string;
   newPassword: string
+}
+
+export interface ForgotPasswordRequest {
+  email: string
 }

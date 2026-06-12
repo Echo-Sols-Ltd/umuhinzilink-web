@@ -19,6 +19,8 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
     VERIFY_USER: '/auth/check-token',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    CHECK_RESET_CODE: '/auth/check-reset-code',
     RESET_PASSWORD: '/auth/reset-password',
     VERIFY_OTP: '/auth/verify-otp',
     ASK_OTP_CODE: '/auth/ask-otp-code',

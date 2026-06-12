@@ -9,7 +9,8 @@ import {
   GoogleAuthRequest,
   VerifyOtpRequest,
   AskOtpRequest,
-  ResetPasswordRequest
+  ResetPasswordRequest,
+  ForgotPasswordRequest
 } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
@@ -81,6 +82,10 @@ class AuthService {
     return response;
   }
 
+  async forgotPassword(data: ForgotPasswordRequest): Promise<ApiResponse<void>> {
+    const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, data);
+    return response;
+  }
 
 
   /**
@@ -88,6 +93,14 @@ class AuthService {
    */
   async resetPassword(data: ResetPasswordRequest): Promise<ApiResponse<void>> {
     const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.RESET_PASSWORD, data)
+    return response;
+  }
+
+  /**
+   * Check if the reset code is valid
+   */
+  async checkResetCode(data: string): Promise<ApiResponse<boolean>> {
+    const response = await apiClient.post<ApiResponse<boolean>>(API_ENDPOINTS.AUTH.CHECK_RESET_CODE, { code: data })
     return response;
   }
 }
