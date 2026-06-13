@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { notify } from '@/lib/notify';
 import { authService } from '@/services/auth';
 import { useI18n } from '@/contexts/I18nContext';
+import { ForgotPasswordRequest } from '@/types';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -23,7 +24,10 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-    
+      const data:ForgotPasswordRequest={
+        email
+      }
+      await authService.forgotPassword(data);
       setSubmitted(true);
       notify.success(t('auth.forgotPassword.toast.resetCodeSent.body'), t('auth.forgotPassword.toast.resetCodeSent.title'));
     } catch (error: any) {

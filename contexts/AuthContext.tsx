@@ -128,7 +128,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Redirect to OTP verification if user is not verified
       if (!user.emailVerified) {
-        await askOtpCode({ email: user.email });
         router.replace('/auth/verify-otp');
         setLoading(false);
         return;
@@ -275,7 +274,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.SELLER, JSON.stringify(res.data));
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
         setUser(res.data);
         notify.success('Register Success', 'Seller registered successfully');
       }
@@ -306,6 +305,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(user);
         notify.success('Verify Success', 'User verified successfully');
         await loadAuthState();
+        router.replace('/');
       }
     } catch {
       notify.error('Please try again', 'Error verifying');
