@@ -121,6 +121,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!token || !user) {
         setLoading(false);
+        setIsAuthenticated(false)
         return;
       }
 
@@ -128,8 +129,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Redirect to OTP verification if user is not verified
       if (!user.emailVerified) {
+        setIsAuthenticated(false)
         router.replace('/auth/verify-otp');
         setLoading(false);
+
         return;
       }
 
@@ -338,7 +341,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setUser(null);
     setSeller(null);
-
+    setIsAuthenticated(false)
     router.replace('/');
   };
 

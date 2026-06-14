@@ -68,6 +68,8 @@ export const API_ENDPOINTS = {
     BUYER: '/negotiations/buyer',
     SELLER: '/negotiations/seller',
     SET_AGREED_PRICE: (id: string) => `/negotiations/${id}/set-agreed-price`,
+    BUYER_ACCEPT: (id: string) => `/negotiations/${id}/accept`,
+    BUYER_REJECT: (id: string) => `/negotiations/${id}/reject`,
   },
   ADMIN: {
     USERS: '/admin/users',

@@ -33,6 +33,16 @@ class NegotiationService {
         const res = await apiClient.put<ApiResponse<Negotiation>>(API_ENDPOINTS.NEGOTIATION.SET_AGREED_PRICE(id), { price })
         return res
     }
+    async buyerAcceptPrice(id: string) {
+        const res = await apiClient.put<ApiResponse<Negotiation>>(API_ENDPOINTS.NEGOTIATION.BUYER_ACCEPT(id))
+        return res
+    }
+    async buyerRejectPrice(id: string) {
+        const res = await apiClient.put<ApiResponse<Negotiation>>(API_ENDPOINTS.NEGOTIATION.BUYER_REJECT(id))
+        return res
+    }
+
+
 }
 
 export const negotiationService = new NegotiationService()

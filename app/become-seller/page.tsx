@@ -383,7 +383,7 @@ export default function BecomeSeller() {
                                 <Link
                                     href="/dashboard"
                                     className="w-full h-11 bg-white dark:bg-gray-900 border border-border hover:bg-gray-50 dark:hover:bg-gray-800/50 text-foreground font-medium text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
-                                    Go to seller dashboard
+                                    Go to dashboard
                                 </Link>
                             </div>
                         </div>

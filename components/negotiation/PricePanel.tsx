@@ -137,7 +137,7 @@ export default function PricePanel({
     // ── Render ────────────────────────────────────────────────────────────
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-gray-900 border-l border-border">
+        <div className="flex flex-col h-screen bg-white dark:bg-gray-900 border-l border-border overflow-auto">
 
             {/* Panel header */}
             <div className="px-4 py-3.5 border-b border-border shrink-0">

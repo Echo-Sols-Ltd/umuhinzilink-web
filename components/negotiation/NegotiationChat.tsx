@@ -110,7 +110,7 @@ export default function NegotiationChat({
 }: NegotiationChatProps) {
     const { user } = useAuth();
     const { negotiationMessages: messages, loading, currentNegotiation: negotiation } = useNegotiation()
-    const { sendNegotiationMessage, setAgreedPrice, loading: actionLoading } = useNegotiationAction()
+    const { sendNegotiationMessage, setAgreedPrice, buyerAcceptPrice, buyerRejectPrice, loading: actionLoading } = useNegotiationAction()
     const [input, setInput] = useState('');
     const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
     const [sending, setSending] = useState(false);
@@ -317,8 +317,8 @@ export default function NegotiationChat({
                     <SellerPricePanel
                         negotiation={negotiation}
                         onSetOffer={async (data: number) => { setAgreedPrice(negotiationId, data) }}
-                        onAccept={async () => { }}
-                        onReject={async () => { }}
+                        onAccept={async () => { await buyerAcceptPrice(negotiationId) }}
+                        onReject={async () => { await buyerRejectPrice(negotiationId) }}
                         loading={actionLoading}
                         isSeller={user?.role == 'SELLER'}
                     />

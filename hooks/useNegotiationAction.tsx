@@ -39,9 +39,41 @@ export function useNegotiationAction() {
             setLoading(false)
         }
     }
+
+    const buyerAcceptPrice = async (negotiationId: string) => {
+        if (!user) return
+        setLoading(true)
+        try {
+            const res = await negotiationService.buyerAcceptPrice(negotiationId)
+            if (res.success) {
+                notify.success('Agreed price accepted successfully', 'Negotiation Updated')
+            }
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const buyerRejectPrice = async (negotiationId: string) => {
+        if (!user) return
+        setLoading(true)
+        try {
+            const res = await negotiationService.buyerRejectPrice(negotiationId)
+            if (res.success) {
+                notify.success('Agreed price rejected successfully', 'Negotiation Updated')
+            }
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
     return {
         sendNegotiationMessage,
         setAgreedPrice,
+        buyerAcceptPrice,
+        buyerRejectPrice,
         loading
     }
 }
