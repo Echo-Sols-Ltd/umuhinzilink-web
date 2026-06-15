@@ -14,7 +14,8 @@ import { cn, imageUrl } from '@/lib/utils';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import NegotiationCard from '@/components/negotiation/NegotiationCard';
 import { UserRole } from '@/types';
-import Navbar from '@/components/Navbar';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -147,29 +148,20 @@ export default function NegotiationsPage() {
         return null;
     }
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-
-            <Navbar />
-
-            {/* Header */}
-            <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border">
-
-                <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <TrendingUp size={18} className="text-green-600" />
-                        <span className="text-sm font-bold text-foreground">Negotiations</span>
-                    </div>
-                    {user?.role === 'BUYER' && (
+        <AppLayout maxWidth="max-w-2xl">
+            <PageHeader
+                title="Negotiations"
+                description="Track price discussions and deals with buyers or sellers."
+                actions={
+                    user?.role === 'BUYER' ? (
                         <Link
                             href="/products"
-                            className="flex items-center gap-1.5 h-8 px-3 text-xs font-semibold bg-green-600 hover:bg-green-700 text-white rounded-full transition-colors">
-                            <Sprout size={12} /> Browse
+                            className="flex items-center gap-1.5 h-9 px-4 text-xs font-semibold bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors">
+                            <Sprout size={12} /> Browse products
                         </Link>
-                    )}
-                </div>
-            </header>
-
-            <main className="max-w-2xl mx-auto px-4 py-5 space-y-5">
+                    ) : undefined
+                }
+            />
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -263,7 +255,6 @@ export default function NegotiationsPage() {
                     </div>
                 )}
 
-            </main>
-        </div>
+        </AppLayout>
     );
 }

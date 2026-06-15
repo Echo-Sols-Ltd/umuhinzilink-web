@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types';
 import AdminDashboard from '@/components/dashboard/admin/AdminDashboard';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { useI18n } from '@/contexts/I18nContext';
 
 export default function AdminDashboardPage() {
@@ -23,34 +24,20 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden">
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        <div className="hidden md:block shrink-0">
-          <Sidebar
-            userType={UserRole.ADMIN}
-            activeItem="Dashboard"
-          />
-        </div>
+    <div className="flex h-screen bg-background overflow-hidden">
+      <Sidebar
+        userType={UserRole.ADMIN}
+        activeItem="Dashboard"
+      />
 
-        <main className="flex-1 overflow-y-auto">
-          <div className="container mx-auto px-6 py-8">
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-3xl font-bold text-foreground mb-2">
-                    {t('admin.dashboard.title')}
-                  </h1>
-                  <p className="text-muted-foreground">
-                    {t('admin.dashboard.subtitle')}
-                  </p>
-                </div>
-              </div>
-            </div>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <AdminPageHeader
+          title={t('admin.dashboard.title')}
+          description={t('admin.dashboard.subtitle')}
+        />
 
-            <div className="min-h-screen">
-              <AdminDashboard />
-            </div>
-          </div>
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
+          <AdminDashboard />
         </main>
       </div>
     </div>

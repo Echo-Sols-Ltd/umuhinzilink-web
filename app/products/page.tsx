@@ -12,7 +12,8 @@ import {
 import { useProduct } from '@/contexts/ProductContext';
 import { Product } from '@/types';
 import ProductCard from '@/components/products/ProductCard';
-import Navbar from '@/components/Navbar';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
 import ProductList from '@/components/products/ProductList';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -103,9 +104,11 @@ export default function Products() {
     // ── Render ────────────────────────────────────────────────────────────
 
     return (
-        <div className="h-screen bg-gray-50 dark:bg-gray-950">
-            <Navbar />
-            <main className="max-w-5xl mx-auto px-4 py-6 space-y-5 pt-20">
+        <AppLayout>
+            <PageHeader
+                title="Browse products"
+                description="Discover fresh produce and farm supplies from sellers across Rwanda."
+            />
 
                 {/* Toolbar */}
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -208,7 +211,6 @@ export default function Products() {
                     </div>
                 )}
 
-            </main>
-        </div>
+        </AppLayout>
     );
 }

@@ -7,7 +7,7 @@ import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { UserRole } from '@/types';
 import { useState } from 'react';
-import { Bell, ChevronDown, Menu, X, ShoppingBag, LayoutDashboard, ListChecks, LogOut, User, Sprout } from 'lucide-react';
+import { Bell, ChevronDown, Menu, X, ShoppingBag, LayoutDashboard, ListChecks, LogOut, User, Sprout, Wallet, Settings } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -145,8 +145,15 @@ export default function Navbar() {
 
                         <DropdownLink
                           href="/wallet"
-                          icon={<ShoppingBag size={15} />}
+                          icon={<Wallet size={15} />}
                           label="Wallet"
+                          onClick={() => setAvatarOpen(false)}
+                        />
+
+                        <DropdownLink
+                          href="/settings"
+                          icon={<Settings size={15} />}
+                          label="Settings"
                           onClick={() => setAvatarOpen(false)}
                         />
                       </div>

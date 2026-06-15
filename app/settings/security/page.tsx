@@ -1,13 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import Sidebar from '@/components/shared/Sidebar';
-import { UserRole } from '@/types';
+import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   Shield,
-  ArrowLeft,
   Eye,
   Download,
   Trash2,
@@ -20,8 +16,6 @@ import {
 } from 'lucide-react';
 
 export default function SecuritySettingsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [security, setSecurity] = useState({
@@ -94,30 +88,13 @@ export default function SecuritySettingsPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserRole} activeItem="Settings" />
-      
-      <main className="flex-1 overflow-auto">
-        <div className="p-6 max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <button
-              onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Settings</span>
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Security</h1>
-              <p className="text-muted-foreground mt-1">Manage your account security and privacy</p>
-            </div>
-          </div>
-
-          {/* Security Settings */}
-          <div className="space-y-6">
+    <SettingsSubLayout
+      title="Security"
+      description="Manage your account security and privacy"
+    >
+      <div className="space-y-6">
             {/* Authentication Security */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white">
                   <Lock className="w-5 h-5" />
@@ -187,7 +164,7 @@ export default function SecuritySettingsPage() {
             </div>
 
             {/* Active Sessions */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
                   <Monitor className="w-5 h-5" />
@@ -233,7 +210,7 @@ export default function SecuritySettingsPage() {
             </div>
 
             {/* Privacy Settings */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                   <Eye className="w-5 h-5" />
@@ -279,7 +256,7 @@ export default function SecuritySettingsPage() {
             </div>
 
             {/* Data Management */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center text-white">
                   <Download className="w-5 h-5" />
@@ -332,7 +309,7 @@ export default function SecuritySettingsPage() {
             </div>
 
             {/* Security Status */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <h2 className="text-lg font-semibold text-foreground mb-4">Security Status</h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
@@ -355,7 +332,6 @@ export default function SecuritySettingsPage() {
                 </div>
               </div>
             </div>
-          </div>
 
           {/* Save Button */}
           <div className="flex justify-end mt-8">
@@ -387,8 +363,7 @@ export default function SecuritySettingsPage() {
               )}
             </button>
           </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </SettingsSubLayout>
   );
 }

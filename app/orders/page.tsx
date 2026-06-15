@@ -12,6 +12,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
 import { OrderStatus, Order, UserRole, isUnpaidOrder } from '@/types';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -164,22 +166,18 @@ export default function OrdersPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-
-            {/* Header */}
-            <header className="sticky top-0 z-40 h-14 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border flex items-center justify-between px-4">
-                <div className="flex items-center gap-2">
-                    <Sprout size={18} className="text-green-600" />
-                    <span className="text-sm font-bold text-foreground">My Orders</span>
-                </div>
-                <Link
-                    href="/dashboard"
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-                    Dashboard <ChevronRight size={12} />
-                </Link>
-            </header>
-
-            <main className="max-w-6xl mx-auto px-4 py-6 space-y-5">
+        <AppLayout maxWidth="max-w-6xl">
+            <PageHeader
+                title="My Orders"
+                description={isSeller ? 'Track sales and payments from buyers.' : 'View, pay, or cancel your purchases.'}
+                actions={
+                    <Link
+                        href="/dashboard"
+                        className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+                        Dashboard <ChevronRight size={12} />
+                    </Link>
+                }
+            />
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -373,8 +371,6 @@ export default function OrdersPage() {
                     )}
                 </div>
 
-            </main>
-
             <OrderDetailsModal
                 order={selectedOrder}
                 isOpen={modalOpen}
@@ -383,6 +379,6 @@ export default function OrdersPage() {
                 onCancel={handleCancel}
                 loading={actionLoading}
             />
-        </div>
+        </AppLayout>
     );
 }

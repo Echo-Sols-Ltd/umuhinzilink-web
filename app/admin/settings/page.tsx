@@ -22,6 +22,7 @@ import {
   Info,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { UserRole } from '@/types';
 
 interface SystemSettings {
@@ -118,21 +119,32 @@ function SystemSettingsPage() {
         userType={UserRole.ADMIN}
         activeItem='Settings'
       />
-      <div className="flex-1 flex flex-col overflow-auto">
-        {/* Header */}
-        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">System Settings</h1>
-            <p className="text-xs text-muted-foreground">Configure platform-wide settings and preferences</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
-              <Settings className="w-4 h-4" />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <AdminPageHeader
+          title="System Settings"
+          description="Configure platform-wide settings and preferences"
+          actions={
+            <button
+              onClick={handleSave}
+              disabled={saveStatus === 'saving'}
+              className="px-4 py-2 bg-success text-white rounded-lg hover:bg-success/90 disabled:opacity-50 flex items-center gap-2 text-sm"
+            >
+              {saveStatus === 'saving' ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Save Settings
+                </>
+              )}
             </button>
-          </div>
-        </header>
+          }
+        />
 
-        <main className="flex-1 bg-background p-6 space-y-6">
+        <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
           {/* General Settings */}
           <div className="bg-card rounded-lg border border-border shadow-sm p-6">
             <h2 className="text-lg font-semibold text-foreground mb-4">General Settings</h2>
@@ -165,27 +177,6 @@ function SystemSettingsPage() {
                 className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-success"
               />
             </div>
-          </div>
-
-          {/* Save Button */}
-          <div className="flex justify-end">
-            <button
-              onClick={handleSave}
-              disabled={saveStatus === 'saving'}
-              className="px-6 py-2 bg-success text-white rounded-lg hover:bg-success/90 disabled:opacity-50 flex items-center gap-2"
-            >
-              {saveStatus === 'saving' ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  Save Settings
-                </>
-              )}
-            </button>
           </div>
         </main>
       </div>

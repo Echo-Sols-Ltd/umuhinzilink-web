@@ -12,6 +12,8 @@ import {
 import ProductCard from '@/components/products/ProductCard';
 import { useProduct } from '@/contexts/ProductContext';
 import { Product } from '@/types';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -358,30 +360,18 @@ export default function SellerListings() {
   // ── Render ────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border">
-        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-sm font-bold text-foreground hover:text-success transition-colors">
-            <Sprout size={18} className="text-green-600" />
-            UmuhinziLink
-          </Link>
-          <div className="flex items-center gap-2">
-            <Sprout size={18} className="text-green-600" />
-            <span className="text-sm font-bold text-foreground">My Listings</span>
-          </div>
+    <AppLayout>
+      <PageHeader
+        title="My Listings"
+        description="Manage your products, stock, and visibility."
+        actions={
           <Link
             href="/products/create"
-            className="flex items-center gap-1.5 h-8 px-4 bg-green-600 hover:bg-green-700 active:scale-[0.97] text-white text-xs font-semibold rounded-full transition-all">
+            className="flex items-center gap-1.5 h-9 px-4 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-xl transition-all">
             <Plus size={13} /> New listing
           </Link>
-        </div>
-      </header>
-
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-5">
+        }
+      />
 
         {/* Summary */}
         <SummaryBar listings={listings} />
@@ -498,7 +488,6 @@ export default function SellerListings() {
           </div>
         )}
 
-      </main>
-    </div>
+    </AppLayout>
   );
 }

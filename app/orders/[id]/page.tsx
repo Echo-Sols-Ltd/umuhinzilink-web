@@ -10,6 +10,8 @@ import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, User, CreditCard, XCircle } from 'lucide-react';
 import { orderService } from '@/services/orders';
 import OrderStatusTracker from '@/components/orders/OrderStatusTracker';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -84,21 +86,23 @@ export default function OrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-background items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
+      <AppLayout maxWidth="max-w-5xl">
+        <div className="flex items-center justify-center py-24">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600" />
+        </div>
+      </AppLayout>
     );
   }
 
   if (!currentOrder) {
     return (
-      <div className="flex h-screen bg-background items-center justify-center">
-        <div className="text-center">
+      <AppLayout maxWidth="max-w-5xl">
+        <PageHeader title="Order not found" backHref="/orders" backLabel="Orders" />
+        <div className="py-16 text-center">
           <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-foreground mb-2">Order not found</h2>
           <p className="text-muted-foreground">This order may have been removed or you do not have access.</p>
         </div>
-      </div>
+      </AppLayout>
     );
   }
 
@@ -109,26 +113,20 @@ export default function OrderDetailPage() {
   const paid = isPaidOrder(currentOrder.status);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => router.push('/orders')}
-            className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to orders</span>
-          </button>
-          <div className="h-8 w-px bg-border" />
-          <h1 className="text-xl font-semibold text-foreground">Order details</h1>
-          <span className="text-sm text-muted-foreground">#{currentOrder.id.slice(0, 8)}</span>
-        </div>
-        <span className="text-xs font-semibold uppercase px-2 py-1 rounded-full bg-muted">
-          {getOrderStatusLabel(currentOrder.status)}
-        </span>
-      </header>
+    <AppLayout maxWidth="max-w-5xl">
+      <PageHeader
+        title="Order details"
+        description={`#${currentOrder.orderNumber || currentOrder.id.slice(0, 8)}`}
+        backHref="/orders"
+        backLabel="Orders"
+        actions={
+          <span className="text-xs font-semibold uppercase px-2.5 py-1 rounded-full bg-muted">
+            {getOrderStatusLabel(currentOrder.status)}
+          </span>
+        }
+      />
 
-      <div className="max-w-5xl mx-auto p-6 space-y-6">
+      <div className="space-y-6">
         <div className="bg-card rounded-lg border p-6">
           <OrderStatusTracker
             orderStatus={currentOrder.status}
@@ -216,6 +214,6 @@ export default function OrderDetailPage() {
           </div>
         )}
       </div>
-    </div>
+    </AppLayout>
   );
 }

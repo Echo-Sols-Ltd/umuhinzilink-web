@@ -62,8 +62,7 @@ export default function Profile({
     const initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8 px-4">
-            <div className="max-w-2xl mx-auto space-y-4">
+        <div className="space-y-4">
 
                 {/* Profile card */}
                 <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border shadow-sm overflow-hidden">
@@ -227,7 +226,6 @@ export default function Profile({
                     ))}
                 </div>
 
-            </div>
         </div>
     );
 }

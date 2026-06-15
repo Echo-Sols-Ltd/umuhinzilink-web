@@ -2,38 +2,24 @@
 
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import { useWallet } from '@/contexts/WalletContext';
-import { useI18n } from '@/contexts/I18nContext';
-import Navbar from '@/components/Navbar';
-
-
-function WalletPageComponent() {
-  const { wallet, transactions, loading, handleDeposit } = useWallet();
-  const { t } = useI18n();
-
-  return (
-    <div className="flex h-screen bg-background">
-      <Navbar />
-
-      {/* Main Content */}
-      <main className="flex-1 p-6 overflow-auto mt-20">
-
-        {/* Wallet Dashboard */}
-        <WalletDashboard
-          wallet={wallet}
-          transactions={transactions}
-          loading={loading}
-          onDeposit={handleDeposit}
-          className='overflow-auto h-full'
-        />
-      </main>
-    </div>
-  );
-}
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
 
 export default function WalletPage() {
+  const { wallet, transactions, loading, handleDeposit } = useWallet();
+
   return (
-    <>
-      <WalletPageComponent />
-    </>
+    <AppLayout maxWidth="max-w-5xl">
+      <PageHeader
+        title="My Wallet"
+        description="Deposit funds, view balance, and track transactions."
+      />
+      <WalletDashboard
+        wallet={wallet}
+        transactions={transactions}
+        loading={loading}
+        onDeposit={handleDeposit}
+      />
+    </AppLayout>
   );
 }

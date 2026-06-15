@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { UserRole as UserType } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import {
@@ -51,21 +52,13 @@ function FarmerOrderManagement() {
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserType.ADMIN} activeItem="Order Management" />
 
-      <div className="flex-1 flex flex-col overflow-auto">
-        {/* Header */}
-        <header className="bg-card border-b h-16 flex items-center justify-between p-6 shadow-sm">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">Farmer Orders</h1>
-            <p className="text-xs text-muted-foreground">Monitor and manage farmer-to-buyer transactions</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
-              <Filter className="w-4 h-4" />
-            </button>
-          </div>
-        </header>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <AdminPageHeader
+          title="Farmer Orders"
+          description="Monitor and manage farmer-to-buyer transactions"
+        />
 
-        <main className="flex-1 bg-background space-y-6">
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
           {/* Table Container */}
           <div className="bg-card overflow-hidden">
             <Table>

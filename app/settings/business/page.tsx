@@ -1,13 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import Sidebar from '@/components/shared/Sidebar';
-import { UserRole as UserType } from '@/types';
+import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   Building,
-  ArrowLeft,
   Save,
   MapPin,
   Ruler,
@@ -19,8 +15,6 @@ import {
 } from 'lucide-react';
 
 export default function BusinessSettingsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [business, setBusiness] = useState({
@@ -87,30 +81,13 @@ export default function BusinessSettingsPage() {
   const currentSectors = business.district ? rwandaSectors[business.district as keyof typeof rwandaSectors] || [] : [];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserType} activeItem="Settings" />
-      
-      <main className="flex-1 overflow-auto">
-        <div className="p-6 max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <button
-              onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Settings</span>
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Business / Farm Information</h1>
-              <p className="text-muted-foreground mt-1">Manage your farm or business details visible to buyers</p>
-            </div>
-          </div>
-
-          {/* Business Information */}
-          <div className="space-y-6">
+    <SettingsSubLayout
+      title="Business / Farm Information"
+      description="Manage your farm or business details visible to buyers"
+    >
+      <div className="space-y-6">
             {/* Basic Information */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
                   <Building className="w-5 h-5" />
@@ -164,7 +141,7 @@ export default function BusinessSettingsPage() {
             </div>
 
             {/* Location Information */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
                   <MapPin className="w-5 h-5" />
@@ -230,7 +207,7 @@ export default function BusinessSettingsPage() {
             </div>
 
             {/* Farm Details */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                   <Ruler className="w-5 h-5" />
@@ -276,7 +253,7 @@ export default function BusinessSettingsPage() {
             </div>
 
             {/* Contact Information */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center text-white">
                   <Phone className="w-5 h-5" />
@@ -325,7 +302,6 @@ export default function BusinessSettingsPage() {
                 </div>
               </div>
             </div>
-          </div>
 
           {/* Save Button */}
           <div className="flex justify-end mt-8">
@@ -357,8 +333,7 @@ export default function BusinessSettingsPage() {
               )}
             </button>
           </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </SettingsSubLayout>
   );
 }

@@ -4,25 +4,24 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import Sidebar from '@/components/shared/Sidebar';
-import { UserRole } from '@/types';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
 import {
-  Settings,
   Building,
   CreditCard,
   Bell,
   Globe,
   Shield,
   ChevronRight,
-  Eye,
-  Download,
-  Trash2,
-  Smartphone,
-  Mail,
-  AlertTriangle,
   User,
-  Wallet
+  Mail
 } from 'lucide-react';
+
+const ROLE_MAP: Record<string, string> = {
+  BUYER: 'buyer',
+  SELLER: 'seller',
+  ADMIN: 'admin',
+};
 
 // Settings Configuration
 const settingsConfig = {
@@ -31,7 +30,7 @@ const settingsConfig = {
       "id": "business",
       "titleKey": "settings.hub.sections.business.title",
       "descriptionKey": "settings.hub.sections.business.description",
-      "roles": ["farmer", "supplier"],
+      "roles": ["seller"],
       "icon": Building,
       "href": "/settings/business",
       "color": "bg-blue-500",
@@ -48,7 +47,7 @@ const settingsConfig = {
       "id": "payments",
       "titleKey": "settings.hub.sections.payments.title",
       "descriptionKey": "settings.hub.sections.payments.description",
-      "roles": ["farmer", "supplier"],
+      "roles": ["seller"],
       "icon": CreditCard,
       "href": "/settings/payments",
       "color": "bg-green-500",
@@ -62,7 +61,7 @@ const settingsConfig = {
       "id": "notifications",
       "titleKey": "settings.hub.sections.notifications.title",
       "descriptionKey": "settings.hub.sections.notifications.description",
-      "roles": ["farmer", "supplier", "buyer", "admin"],
+      "roles": ["seller", "buyer", "admin"],
       "icon": Bell,
       "href": "/settings/notifications",
       "color": "bg-purple-500",
@@ -77,7 +76,7 @@ const settingsConfig = {
       "id": "localization",
       "titleKey": "settings.hub.sections.localization.title",
       "descriptionKey": "settings.hub.sections.localization.description",
-      "roles": ["farmer", "supplier", "buyer", "admin"],
+      "roles": ["seller", "buyer", "admin"],
       "icon": Globe,
       "href": "/settings/localization",
       "color": "bg-orange-500",
@@ -92,7 +91,7 @@ const settingsConfig = {
       "id": "security",
       "titleKey": "settings.hub.sections.security.title",
       "descriptionKey": "settings.hub.sections.security.description",
-      "roles": ["farmer", "supplier", "buyer", "admin"],
+      "roles": ["seller", "buyer", "admin"],
       "icon": Shield,
       "href": "/settings/security",
       "color": "bg-red-500",
@@ -107,7 +106,7 @@ const settingsConfig = {
       "id": "account",
       "titleKey": "settings.hub.sections.account.title",
       "descriptionKey": "settings.hub.sections.account.description",
-      "roles": ["farmer", "supplier", "buyer", "admin"],
+      "roles": ["seller", "buyer", "admin"],
       "icon": User,
       "href": "/settings/account",
       "color": "bg-indigo-500",
@@ -126,10 +125,9 @@ export default function GlobalSettingsPage() {
   const router = useRouter();
   const { t } = useI18n();
 
-  // Filter sections based on user role
-  const userRole = user?.role || 'BUYER';
+  const userRole = ROLE_MAP[user?.role ?? 'BUYER'] ?? 'buyer';
   const availableSections = settingsConfig.sections.filter(
-    section => section.roles.includes(userRole.toLowerCase())
+    section => section.roles.includes(userRole)
   );
 
   const handleSectionClick = (href: string) => {
@@ -137,107 +135,101 @@ export default function GlobalSettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserRole} activeItem="Settings" />
-      <main className="flex-1 overflow-auto">
-        <div className="p-6 max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground">{t('settings.hub.title')}</h1>
-            <p className="text-muted-foreground mt-2">{t('settings.hub.description')}</p>
-          </div>
+    <AppLayout maxWidth="max-w-6xl">
+      <PageHeader
+        title={t('settings.hub.title')}
+        description={t('settings.hub.description')}
+      />
 
-          {/* Settings Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {availableSections.map((section) => {
-              const Icon = section.icon;
-              return (
-                <div
-                  key={section.id}
-                  onClick={() => handleSectionClick(section.href)}
-                  className="bg-card rounded-lg border border-border p-6 hover:shadow-lg transition-all cursor-pointer hover:border-success/50 group"
-                >
-                  {/* Icon and Title */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`w-12 h-12 ${section.color} rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-success transition-colors" />
-                  </div>
+      {/* Settings Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {availableSections.map((section) => {
+          const Icon = section.icon;
+          return (
+            <div
+              key={section.id}
+              onClick={() => handleSectionClick(section.href)}
+              className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6 hover:shadow-lg transition-all cursor-pointer hover:border-success/50 group"
+            >
+              {/* Icon and Title */}
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-12 h-12 ${section.color} rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-success transition-colors" />
+              </div>
 
-                  {/* Content */}
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-foreground group-hover:text-success transition-colors">
-                      {t(section.titleKey)}
-                    </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {t(section.descriptionKey)}
-                    </p>
-                    
-                    {/* Fields Preview */}
-                    <div className="pt-3 border-t border-border">
-                      <div className="flex flex-wrap gap-1">
-                        {section.fieldsKeys.slice(0, 3).map((fieldKey, index) => (
-                          <span
-                            key={index}
-                            className="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground"
-                          >
-                            {t(fieldKey)}
-                          </span>
-                        ))}
-                        {section.fieldsKeys.length > 3 && (
-                          <span className="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground">
-                            {t('settings.hub.moreFields', { count: section.fieldsKeys.length - 3 })}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+              {/* Content */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground group-hover:text-success transition-colors">
+                  {t(section.titleKey)}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t(section.descriptionKey)}
+                </p>
+
+                {/* Fields Preview */}
+                <div className="pt-3 border-t border-border">
+                  <div className="flex flex-wrap gap-1">
+                    {section.fieldsKeys.slice(0, 3).map((fieldKey, index) => (
+                      <span
+                        key={index}
+                        className="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground"
+                      >
+                        {t(fieldKey)}
+                      </span>
+                    ))}
+                    {section.fieldsKeys.length > 3 && (
+                      <span className="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground">
+                        {t('settings.hub.moreFields', { count: section.fieldsKeys.length - 3 })}
+                      </span>
+                    )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Quick Actions */}
-          <div className="mt-12 bg-card rounded-lg border border-border p-6">
-            <h2 className="text-xl font-semibold text-foreground mb-4">{t('settings.hub.quickActions.title')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                onClick={() => router.push('/profile')}
-                className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
-              >
-                <User className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium text-foreground">{t('settings.hub.quickActions.viewProfile.title')}</div>
-                  <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.viewProfile.description')}</div>
-                </div>
-              </button>
-              
-              <button
-                onClick={() => router.push('/chat')}
-                className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
-              >
-                <Mail className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium text-foreground">{t('settings.hub.quickActions.messages.title')}</div>
-                  <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.messages.description')}</div>
-                </div>
-              </button>
-              
-              <button
-                onClick={() => router.push('/notifications')}
-                className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
-              >
-                <Bell className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium text-foreground">{t('settings.hub.quickActions.notifications.title')}</div>
-                  <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.notifications.description')}</div>
-                </div>
-              </button>
+              </div>
             </div>
-          </div>
+          );
+        })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
+        <h2 className="text-xl font-semibold text-foreground mb-4">{t('settings.hub.quickActions.title')}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button
+            onClick={() => router.push('/profile')}
+            className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
+          >
+            <User className="w-5 h-5 text-muted-foreground" />
+            <div>
+              <div className="font-medium text-foreground">{t('settings.hub.quickActions.viewProfile.title')}</div>
+              <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.viewProfile.description')}</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/negotiations')}
+            className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
+          >
+            <Mail className="w-5 h-5 text-muted-foreground" />
+            <div>
+              <div className="font-medium text-foreground">{t('settings.hub.quickActions.messages.title')}</div>
+              <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.messages.description')}</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => router.push('/notifications')}
+            className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
+          >
+            <Bell className="w-5 h-5 text-muted-foreground" />
+            <div>
+              <div className="font-medium text-foreground">{t('settings.hub.quickActions.notifications.title')}</div>
+              <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.notifications.description')}</div>
+            </div>
+          </button>
         </div>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

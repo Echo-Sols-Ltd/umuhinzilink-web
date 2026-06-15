@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { AdminPages, User, UserRole } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { notify } from '@/lib/notify';
@@ -158,59 +159,60 @@ function UserManagement() {
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserRole.ADMIN} activeItem="User Management" />
 
-      <div className="flex-1 flex flex-col overflow-auto">
-        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">User Management</h1>
-            <p className="text-xs text-muted-foreground">Manage and monitor all platform members</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
-              />
-            </div>
-            <div className="flex gap-2">
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger className="w-32 rounded-lg border border-border">
-                  <SelectValue placeholder="All Roles" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="FARMER">Farmer</SelectItem>
-                  <SelectItem value="BUYER">Buyer</SelectItem>
-                  <SelectItem value="SUPPLIER">Supplier</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
-                </SelectContent>
-              </Select>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <AdminPageHeader
+          title="User Management"
+          description="Manage and monitor all platform members"
+          toolbar={
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search users..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Select value={roleFilter} onValueChange={setRoleFilter}>
+                  <SelectTrigger className="w-32 rounded-lg border border-border">
+                    <SelectValue placeholder="All Roles" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="FARMER">Farmer</SelectItem>
+                    <SelectItem value="BUYER">Buyer</SelectItem>
+                    <SelectItem value="SUPPLIER">Supplier</SelectItem>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                  </SelectContent>
+                </Select>
 
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-32 rounded-lg border border-border">
-                  <SelectValue placeholder="All Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="verified">Verified</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <button
-              onClick={() => fetchUsers(currentPage)}
-              className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors"
-              disabled={loading}
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
-        </header>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-32 rounded-lg border border-border">
+                    <SelectValue placeholder="All Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="verified">Verified</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                  </SelectContent>
+                </Select>
 
-        <main className="flex-1 bg-background p-6">
+                <button
+                  onClick={() => fetchUsers(currentPage)}
+                  className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors"
+                  disabled={loading}
+                >
+                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
+            </div>
+          }
+        />
+
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
           <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
             <Table>
               <TableHeader>
