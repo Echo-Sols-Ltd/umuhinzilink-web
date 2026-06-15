@@ -17,6 +17,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      validateStatus: (status) => status < 500,
     });
 
     this.axiosInstance.interceptors.request.use(
@@ -31,7 +32,29 @@ class ApiClient {
     );
 
     this.axiosInstance.interceptors.response.use(
-      (response: AxiosResponse) => response,
+      async (response: AxiosResponse) => {
+        const originalRequest = response.config as InternalAxiosRequestConfig & { _retryAfterRefresh?: boolean };
+        const url = originalRequest.url ?? '';
+
+        if (
+          response.status === HTTP_STATUS.UNAUTHORIZED &&
+          !url.includes('/auth/') &&
+          !originalRequest._retryAfterRefresh
+        ) {
+          originalRequest._retryAfterRefresh = true;
+          const refreshed = await this.tryRefreshToken();
+          if (refreshed) {
+            const token = this.getAuthToken();
+            if (token) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            return this.axiosInstance(originalRequest);
+          }
+          this.logout();
+        }
+
+        return response;
+      },
       async error => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retryCount?: number; _retryAfterRefresh?: boolean };
         if (!originalRequest) {
