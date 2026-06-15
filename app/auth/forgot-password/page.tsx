@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
             </div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">{t('auth.forgotPassword.submitted.title')}</h2>
             <p className="text-gray-600 mb-6">
-              {t('auth.forgotPassword.submitted.description', { email })}
+              If an account exists for <strong>{email}</strong>, we sent a password reset link. Check your inbox and spam folder.
             </p>
             <Button
               onClick={() => router.push('/auth/signin')}

@@ -8,6 +8,7 @@ import {
   SellerRegistration,
   GoogleAuthRequest,
   VerifyOtpRequest,
+  RefreshTokenRequest,
   ResetPasswordRequest,
   ForgotPasswordRequest
 } from '@/types';
@@ -57,12 +58,20 @@ class AuthService {
     return await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.AUTH.VERIFY_USER);
   }
 
+  async refreshToken(data: RefreshTokenRequest): Promise<ApiResponse<AuthResponse>> {
+    return await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.REFRESH, data);
+  }
+
   /**
    * Log out the user and clear tokens.
    */
   async logout(): Promise<ApiResponse<void>> {
     try {
-      const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.LOGOUT);
+      const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
+      const response = await apiClient.post<ApiResponse<void>>(
+        API_ENDPOINTS.AUTH.LOGOUT,
+        refreshToken ? { refreshToken } : undefined
+      );
       localStorage.clear();
       return response;
     } catch (error) {

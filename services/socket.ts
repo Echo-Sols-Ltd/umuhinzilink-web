@@ -94,11 +94,22 @@ class SocketService {
             })
 
             if (response.ok) {
-                const data = await response.json()
-                localStorage.setItem("auth_token", data.accessToken)
-                await this.stompClient.deactivate()
-                this.stompClient.activate()
-                this.connectionAttempts = 0
+                const payload = await response.json()
+                const tokens = payload?.data
+                if (tokens?.token) {
+                    localStorage.setItem("auth_token", tokens.token)
+                    if (tokens.refreshToken) {
+                        localStorage.setItem("refresh_token", tokens.refreshToken)
+                    }
+                    if (tokens.user) {
+                        localStorage.setItem("user", JSON.stringify(tokens.user))
+                    }
+                    await this.stompClient.deactivate()
+                    this.stompClient.activate()
+                    this.connectionAttempts = 0
+                } else {
+                    throw new Error('Refresh token invalid or expired')
+                }
             } else {
                 throw new Error('Refresh token invalid or expired')
             }

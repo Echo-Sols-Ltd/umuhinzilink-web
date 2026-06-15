@@ -19,6 +19,7 @@ import { userService } from '@/services/users';
 
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
+  REFRESH_TOKEN: 'refresh_token',
   USER: 'user',
   SELLER: 'seller',
   BUYER: 'buyer',
@@ -96,8 +97,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const persistSession = (token: string, nextUser: User) => {
+  const persistSession = (token: string, refreshToken: string | undefined, nextUser: User) => {
     localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+    if (refreshToken) {
+      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    }
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(nextUser));
     setUser(nextUser);
   };
@@ -122,7 +126,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      persistSession(token, res.data);
+      const existingRefresh = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN) ?? undefined;
+      persistSession(token, existingRefresh, res.data);
 
       if (!res.data.emailVerified) {
         setIsAuthenticated(false);
@@ -154,7 +159,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      persistSession(res.data.token, res.data.user);
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
 
       if (!res.data.user.emailVerified) {
         setIsAuthenticated(false);
@@ -185,7 +190,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      persistSession(res.data.token, res.data.user);
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
       setIsAuthenticated(true);
 
       if (res.data.user.role === UserRole.SELLER) {
@@ -214,7 +219,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      persistSession(res.data.token, res.data.user);
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
       setIsAuthenticated(true);
       notify.success('Account created successfully', 'Register Success');
       router.replace('/');
@@ -236,7 +241,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      persistSession(res.data.token, res.data.user);
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
       setIsAuthenticated(false);
       notify.success('Check your email for the verification code', 'Register Success');
       router.replace('/auth/verify-otp');
@@ -278,7 +283,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      persistSession(res.data.token, res.data.user);
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
       setIsAuthenticated(true);
       notify.success('Email verified successfully', 'Verify Success');
       router.replace('/');
