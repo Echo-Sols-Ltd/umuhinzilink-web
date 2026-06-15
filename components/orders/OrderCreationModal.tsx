@@ -20,7 +20,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   product,
 }) => {
   const [quantity, setQuantity] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.MOBILE_MONEY);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.WALLET);
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [productName, setProductName] = useState('');
@@ -75,8 +75,8 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
     };
 
     try {
-      await createOrder(orderData);
-      onClose();
+      const result = await createOrder(orderData, { payImmediately: true });
+      if (result) onClose();
     } catch (error) {
       console.error('Failed to create order:', error);
     }
@@ -302,7 +302,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                 loading && 'opacity-50 cursor-not-allowed'
               )}
             >
-              {loading ? 'Creating Order...' : (isOutOfStock ? 'Out of Stock' : 'Create Order')}
+              {loading ? 'Processing payment…' : (isOutOfStock ? 'Out of Stock' : 'Create & pay')}
             </button>
           </div>
         </form>

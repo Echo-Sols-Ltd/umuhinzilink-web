@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
-import useOrderAction from '@/hooks/useOrderAction';
+import { Order, isPaidOrder } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
-import { UserRole, Order } from '@/types';
+import { UserRole } from '@/types';
 import FarmerGuard from '@/contexts/guard/SellerGuard';
 import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, Calendar, User, MapPin, CreditCard } from 'lucide-react';
@@ -23,7 +23,6 @@ export default function FarmerOrderDetailPage() {
     setCurrentOrder,
     fetchSellingOrders
   } = useOrder();
-  const { updateOrderStatus } = useOrderAction();
   const { t } = useI18n();
 
   const [loading, setLoading] = useState(true);
@@ -216,8 +215,8 @@ export default function FarmerOrderDetailPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t('farmer.orders.detail.paymentStatus')}</label>
-                  <p className={`font-medium ${currentOrder.status === 'COMPLETED' ? 'text-success' : 'text-destructive'}`}>
-                    {currentOrder.status === 'COMPLETED' ? t('farmer.orders.detail.paid') : t('farmer.orders.detail.unpaid')}
+                  <p className={`font-medium ${isPaidOrder(currentOrder.status) ? 'text-success' : 'text-destructive'}`}>
+                    {isPaidOrder(currentOrder.status) ? t('farmer.orders.detail.paid') : t('farmer.orders.detail.unpaid')}
                   </p>
                 </div>
               </div>

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
-import { Order, UserRole } from '@/types';
+import { Order, UserRole, isPaidOrder } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -318,8 +318,8 @@ export default function AdminOrderDetailPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Payment Status</p>
-                                    <Badge className={order.status === 'CONFIRMED' ? 'text-success bg-success/10' : 'text-destructive bg-destructive/10'}>
-                                        {order.status === 'CONFIRMED' ? 'Paid' : 'Unpaid'}
+                                    <Badge className={isPaidOrder(order.status) ? 'text-success bg-success/10' : 'text-destructive bg-destructive/10'}>
+                                        {isPaidOrder(order.status) ? 'Paid' : 'Unpaid'}
                                     </Badge>
                                 </div>
                             </CardContent>

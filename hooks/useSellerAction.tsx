@@ -175,26 +175,9 @@ export const useSellerAction = () => {
     }
   };
 
-  const acceptOrder = async (id: string): Promise<Order | null> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await orderService.acceptOrder(id);
-      if (response.success && response.data) {
-        updateOrder(response.data);
-        notify.success('Order accepted successfully', 'Success');
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Failed to accept order');
-      }
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to accept order';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      return null;
-    } finally {
-      setLoading(false);
-    }
+  const acceptOrder = async (_id: string): Promise<Order | null> => {
+    notify.error('Orders are paid automatically when the buyer checks out. No manual approval is needed.', 'Not available');
+    return null;
   };
 
   const rejectOrder = async (id: string): Promise<Order | null> => {
@@ -204,13 +187,13 @@ export const useSellerAction = () => {
       const response = await orderService.cancelOrder(id);
       if (response.success && response.data) {
         updateOrder(response.data);
-        notify.success('Order rejected successfully', 'Success');
+        notify.success('Order cancelled successfully', 'Order cancelled');
         return response.data;
       } else {
         throw new Error(response.message || 'Failed to reject order');
       }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to reject order';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to cancel order';
       setError(errorMessage);
       notify.error(errorMessage, 'Error');
       return null;

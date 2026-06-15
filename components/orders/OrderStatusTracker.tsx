@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle, Clock, Truck, Package, XCircle, AlertCircle, DollarSign } from 'lucide-react';
-import { OrderStatus } from '@/types';
+import { CheckCircle, Clock, XCircle, DollarSign } from 'lucide-react';
+import { OrderStatus, isUnpaidOrder, isPaidOrder, getOrderStatusLabel } from '@/types';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';
 
@@ -20,10 +20,11 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
   className,
 }) => {
   const { t } = useI18n();
+
   const getStatusSteps = () => {
     const baseSteps = [
       {
-        id: 'pending',
+        id: 'placed',
         labelKey: 'orderStatus.tracker.orderPlaced.label',
         descriptionKey: 'orderStatus.tracker.orderPlaced.description',
         icon: Clock,
@@ -46,42 +47,28 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       ];
     }
 
-    const isBeyondPayment = ![OrderStatus.PENDING].includes(orderStatus);
-    const isPaymentActive = orderStatus === OrderStatus.PENDING
+    const paymentComplete = isPaidOrder(orderStatus);
+    const paymentActive = isUnpaidOrder(orderStatus);
 
-    const activeSteps = [
+    return [
       ...baseSteps,
       {
         id: 'payment',
         labelKey: 'orderStatus.tracker.paymentPending.label',
         descriptionKey: 'orderStatus.tracker.paymentPending.description',
         icon: DollarSign,
-        status: isBeyondPayment ? 'completed' : isPaymentActive ? 'active' : 'pending' as const,
-        timestamp: isBeyondPayment ? updatedAt : undefined,
+        status: paymentComplete ? 'completed' : paymentActive ? 'active' : 'pending' as const,
+        timestamp: paymentComplete ? updatedAt : undefined,
       },
       {
-        id: 'confirmed',
-        labelKey: 'orderStatus.tracker.orderConfirmed.label',
-        descriptionKey: 'orderStatus.tracker.orderConfirmed.description',
-        icon: CheckCircle,
-        status: orderStatus === OrderStatus.CONFIRMED || orderStatus === OrderStatus.COMPLETED ? 'completed' : 'pending' as const,
-        timestamp: orderStatus === OrderStatus.CONFIRMED || orderStatus === OrderStatus.COMPLETED ? updatedAt : undefined,
-      },
-    ];
-
-    // Simple completion step for orders without delivery tracking
-    if (orderStatus === OrderStatus.COMPLETED) {
-      activeSteps.push({
         id: 'completed',
         labelKey: 'orderStatus.tracker.completed.label',
         descriptionKey: 'orderStatus.tracker.completed.description',
         icon: CheckCircle,
-        status: 'completed' as const,
-        timestamp: updatedAt,
-      });
-    }
-
-    return activeSteps;
+        status: paymentComplete ? 'completed' : 'pending' as const,
+        timestamp: orderStatus === OrderStatus.COMPLETED ? updatedAt : undefined,
+      },
+    ];
   };
 
   const steps = getStatusSteps();
@@ -103,12 +90,8 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
     if (currentStatus === 'completed') {
       return nextStatus === 'completed' || nextStatus === 'active' ? 'bg-success/30' : 'bg-border';
     }
-    if (currentStatus === 'active') {
-      return 'bg-info/30';
-    }
-    if (currentStatus === 'error') {
-      return 'bg-destructive/30';
-    }
+    if (currentStatus === 'active') return 'bg-info/30';
+    if (currentStatus === 'error') return 'bg-destructive/30';
     return 'bg-border';
   };
 
@@ -122,6 +105,11 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       return timestamp;
     }
   };
+
+  const badgeColor =
+    orderStatus === OrderStatus.COMPLETED ? 'bg-success' :
+      orderStatus === OrderStatus.CANCELLED ? 'bg-destructive' :
+        isUnpaidOrder(orderStatus) ? 'bg-warning' : 'bg-muted';
 
   return (
     <div className={cn('w-full', className)}>
@@ -177,17 +165,11 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
         </ul>
       </div>
 
-      {/* Overall Status Badge */}
       <div className="mt-6 flex items-center justify-between p-4 bg-card rounded-lg">
         <div className="flex items-center space-x-2">
-          <div className={cn(
-            'w-3 h-3 rounded-full',
-            orderStatus === OrderStatus.COMPLETED ? 'bg-success' :
-              orderStatus === OrderStatus.CONFIRMED ? 'bg-info' :
-                orderStatus === OrderStatus.CANCELLED ? 'bg-destructive' : 'bg-warning'
-          )} />
+          <div className={cn('w-3 h-3 rounded-full', badgeColor)} />
           <span className="text-sm font-medium text-foreground">
-            {t('orderStatus.tracker.currentStatus', { status: orderStatus.replace('_', ' ') })}
+            {t('orderStatus.tracker.currentStatus', { status: getOrderStatusLabel(orderStatus) })}
           </span>
         </div>
       </div>

@@ -15,7 +15,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import Image from 'next/image';
-import { Order, OrderStatus } from '@/types';
+import { Order, OrderStatus, isUnpaidOrder, isPaidOrder, getOrderStatusLabel, matchesOrderStatusFilter } from '@/types';
 import { cn } from '@/lib/utils';
 import OrderStatusTracker from './OrderStatusTracker';
 import { useI18n } from '@/contexts/I18nContext';
@@ -27,12 +27,10 @@ interface OrderManagementDashboardProps {
   loading?: boolean;
   className?: string;
   onViewOrder?: (order: Order) => void;
-  onAcceptOrder?: (orderId: string) => void;
   onRejectOrder?: (orderId: string) => void;
-  onUpdateStatus?: (orderId: string, status: OrderStatus) => void;
 }
 
-type FilterType = 'all' | 'pending' | 'active' | 'completed' | 'cancelled';
+type FilterType = 'all' | 'pending' | 'completed' | 'cancelled';
 type SortType = 'newest' | 'oldest' | 'amount_high' | 'amount_low';
 
 export default function OrderManagementDashboard({
@@ -42,9 +40,7 @@ export default function OrderManagementDashboard({
   title,
   className,
   onViewOrder,
-  onAcceptOrder,
   onRejectOrder,
-  onUpdateStatus,
 }: OrderManagementDashboardProps) {
   const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
@@ -63,7 +59,7 @@ export default function OrderManagementDashboard({
         `${order.buyer.firstName} ${order.buyer.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
 
       // Status filter
-      const statusMatch = filterType === 'all' || order.status.toLowerCase() === filterType.toLowerCase();
+      const statusMatch = matchesOrderStatusFilter(order.status, filterType);
 
       return searchMatch && statusMatch;
     });
@@ -90,54 +86,30 @@ export default function OrderManagementDashboard({
   // Order statistics
   const stats = useMemo(() => {
     const total = orders.length;
-    const pending = orders.filter(o => o.status === OrderStatus.PENDING).length;
-    const active = orders.filter(o => o.status === OrderStatus.CONFIRMED).length;
-    const completed = orders.filter(o => o.status === OrderStatus.COMPLETED).length;
+    const pending = orders.filter(o => isUnpaidOrder(o.status)).length;
+    const completed = orders.filter(o => isPaidOrder(o.status)).length;
     const cancelled = orders.filter(o => o.status === OrderStatus.CANCELLED).length;
     const totalValue = orders.reduce((sum, o) => sum + o.totalPrice, 0);
 
-    return { total, pending, active, completed, cancelled, totalValue };
+    return { total, pending, completed, cancelled, totalValue };
   }, [orders]);
 
   const getStatusIcon = (status: OrderStatus) => {
-    switch (status) {
-      case OrderStatus.PENDING:
-        return <Clock className="w-4 h-4 text-warning" />;
-      case OrderStatus.CONFIRMED:
-        return <Truck className="w-4 h-4 text-info" />;
-      case OrderStatus.COMPLETED:
-        return <CheckCircle className="w-4 h-4 text-success" />;
-      case OrderStatus.CANCELLED:
-        return <XCircle className="w-4 h-4 text-destructive" />;
-      default:
-        return <Clock className="w-4 h-4 text-muted-foreground" />;
-    }
+    if (isUnpaidOrder(status)) return <Clock className="w-4 h-4 text-warning" />;
+    if (isPaidOrder(status)) return <CheckCircle className="w-4 h-4 text-success" />;
+    if (status === OrderStatus.CANCELLED) return <XCircle className="w-4 h-4 text-destructive" />;
+    return <Clock className="w-4 h-4 text-muted-foreground" />;
   };
 
   const getStatusColor = (status: OrderStatus) => {
-    switch (status) {
-      case OrderStatus.PENDING:
-        return 'bg-warning/10 text-warning';
-      case OrderStatus.CONFIRMED:
-        return 'bg-info/10 text-info';
-      case OrderStatus.COMPLETED:
-        return 'bg-success/10 text-success';
-      case OrderStatus.CANCELLED:
-        return 'bg-destructive/10 text-destructive';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
+    if (isUnpaidOrder(status)) return 'bg-warning/10 text-warning';
+    if (isPaidOrder(status)) return 'bg-success/10 text-success';
+    if (status === OrderStatus.CANCELLED) return 'bg-destructive/10 text-destructive';
+    return 'bg-muted text-muted-foreground';
   };
 
-  const canAcceptOrder = (order: Order) => {
-    return (orderType === 'farmer' || orderType === 'supplier') &&
-      order.status === OrderStatus.PENDING;
-  };
-
-  const canUpdateStatus = (order: Order) => {
-    return (orderType === 'farmer' || orderType === 'supplier') &&
-      order.status === OrderStatus.CONFIRMED;
-  };
+  const canCancelOrder = (order: Order) =>
+    (orderType === 'farmer' || orderType === 'supplier') && isUnpaidOrder(order.status);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -183,7 +155,7 @@ export default function OrderManagementDashboard({
         <div className="bg-card p-4 rounded-lg border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending</p>
+              <p className="text-sm text-muted-foreground">Pending payment</p>
               <p className="text-2xl font-semibold text-warning">{stats.pending}</p>
             </div>
             <div className="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
@@ -195,11 +167,11 @@ export default function OrderManagementDashboard({
         <div className="bg-card p-4 rounded-lg border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Active</p>
-              <p className="text-2xl font-semibold text-info">{stats.active}</p>
+              <p className="text-sm text-muted-foreground">Paid</p>
+              <p className="text-2xl font-semibold text-success">{stats.completed}</p>
             </div>
-            <div className="w-10 h-10 bg-info/10 rounded-full flex items-center justify-center">
-              <Truck className="w-5 h-5 text-info" />
+            <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-success" />
             </div>
           </div>
         </div>
@@ -207,11 +179,11 @@ export default function OrderManagementDashboard({
         <div className="bg-card p-4 rounded-lg border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Completed</p>
-              <p className="text-2xl font-semibold text-success">{stats.completed}</p>
+              <p className="text-sm text-muted-foreground">Cancelled</p>
+              <p className="text-2xl font-semibold text-destructive">{stats.cancelled}</p>
             </div>
-            <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-success" />
+            <div className="w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center">
+              <XCircle className="w-5 h-5 text-destructive" />
             </div>
           </div>
         </div>
@@ -271,9 +243,8 @@ export default function OrderManagementDashboard({
                 className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="all">{t('orderManagement.dashboard.allOrders')}</option>
-                <option value="pending">{t('orderManagement.dashboard.pending')}</option>
-                <option value="active">{t('orderManagement.dashboard.active')}</option>
-                <option value="completed">{t('orderManagement.dashboard.completed')}</option>
+                <option value="pending">Pending payment</option>
+                <option value="completed">Paid</option>
                 <option value="cancelled">{t('orderManagement.dashboard.cancelled')}</option>
               </select>
             </div>
@@ -390,7 +361,7 @@ export default function OrderManagementDashboard({
                           'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
                           getStatusColor(order.status)
                         )}>
-                          {order.status}
+                          {getOrderStatusLabel(order.status)}
                         </span>
                       </div>
                     </td>
@@ -409,21 +380,11 @@ export default function OrderManagementDashboard({
                           <Eye className="w-4 h-4" />
                         </button>
 
-                        {canAcceptOrder(order) && (
-                          <button
-                            onClick={() => onAcceptOrder?.(order.id)}
-                            className="text-green-600 hover:text-green-900"
-                            title="Accept Order"
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                          </button>
-                        )}
-
-                        {canAcceptOrder(order) && (
+                        {canCancelOrder(order) && (
                           <button
                             onClick={() => onRejectOrder?.(order.id)}
                             className="text-red-600 hover:text-red-900"
-                            title="Reject Order"
+                            title="Cancel order"
                           >
                             <XCircle className="w-4 h-4" />
                           </button>

@@ -87,6 +87,8 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
     const [priceError, setPriceError] = useState('');
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [orderPaid, setOrderPaid] = useState(false);
+    const [paymentRequired, setPaymentRequired] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => { setMounted(true); }, []);
@@ -136,24 +138,28 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
     const handleSubmit = async () => {
         if (!validatePrice()) return;
         setLoading(true);
+        setOrderPaid(false);
+        setPaymentRequired(false);
         try {
             if (mode === 'buy') {
                 const requestData: OrderRequest = {
                     productId: product.id,
                     quantity,
                     paymentMethod: PaymentMethod.WALLET
-                }
-
-                await createOrder(requestData)
+                };
+                const result = await createOrder(requestData, { payImmediately: true });
+                if (!result) return;
+                setOrderPaid(result.paid);
+                setPaymentRequired(!result.paid);
             } else {
                 const requestData: OrderRequest = {
                     productId: product.id,
                     quantity,
                     proposedPrice: proposedPriceNum,
                     paymentMethod: PaymentMethod.WALLET
-                }
-
-                await createOrder(requestData)
+                };
+                const result = await createOrder(requestData);
+                if (!result) return;
             }
             setStep('done');
         } catch {
@@ -170,7 +176,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
 
     const handleGoToOrders = () => {
         onClose();
-        router.push('orders');
+        router.push('/orders');
     };
 
     // ── Modal content ─────────────────────────────────────────────────────
@@ -434,20 +440,29 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                 </div>
 
                                 <h3 className="text-lg font-extrabold text-foreground">
-                                    {mode === 'negotiate' ? 'Offer sent!' : 'Order placed!'}
+                                    {mode === 'negotiate'
+                                        ? 'Offer sent!'
+                                        : orderPaid
+                                            ? 'Payment successful!'
+                                            : paymentRequired
+                                                ? 'Order created — payment required'
+                                                : 'Order placed!'}
                                 </h3>
                                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-xs mx-auto">
                                     {mode === 'negotiate'
                                         ? `Your offer of ${formatRWF(proposedPriceNum)} / ${unit} has been sent to ${product.owner?.firstName}. You'll be notified when they respond.`
-                                        : `Your order for ${quantity} ${unit} of ${product.name} has been confirmed. The seller will be notified.`
-                                    }
+                                        : orderPaid
+                                            ? `Payment of ${formatRWF(totalPrice)} was deducted from your wallet. The seller has been notified.`
+                                            : paymentRequired
+                                                ? `Your order was created but payment failed. Add funds to your wallet and pay from the orders page.`
+                                                : `Your order for ${quantity} ${unit} of ${product.name} has been created.`}
                                 </p>
 
                                 <div className="flex flex-col gap-2.5 mt-6">
                                     <button
                                         onClick={mode === 'negotiate' ? handleGoToNegotiation : handleGoToOrders}
                                         className="w-full h-11 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl transition-colors">
-                                        {mode === 'negotiate' ? 'View negotiation' : 'View order'}
+                                        {mode === 'negotiate' ? 'View negotiation' : paymentRequired ? 'Pay from orders' : 'View order'}
                                     </button>
                                     <button
                                         onClick={onClose}
