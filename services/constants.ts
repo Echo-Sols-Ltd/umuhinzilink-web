@@ -18,7 +18,7 @@ export const API_ENDPOINTS = {
     REGISTER_GOOGLE_USER: '/auth/register/google',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
-    VERIFY_USER: '/auth/check-token',
+    VERIFY_USER: '/auth/me',
     FORGOT_PASSWORD: '/auth/forgot-password',
     CHECK_RESET_CODE: '/auth/check-reset-code',
     RESET_PASSWORD: '/auth/reset-password',

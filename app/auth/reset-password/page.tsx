@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -87,7 +87,7 @@ function PasswordInput({
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
-export default function ResetPassword() {
+function ResetPasswordContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const code = searchParams.get('code');
@@ -112,9 +112,8 @@ export default function ResetPassword() {
         // GET /api/v1/auth/validate-reset-code?code=xxx
         const check = async () => {
             try {
-
-                await authService.checkResetCode(code);
-                setCodeValid(true);
+                const res = await authService.checkResetCode(code);
+                setCodeValid(res.success && res.data === true);
             } catch {
                 setCodeValid(false);
             }
@@ -153,7 +152,11 @@ export default function ResetPassword() {
                 code: code!,
                 newPassword: password,
             }
-            await authService.resetPassword(data);
+            const res = await authService.resetPassword(data);
+            if (!res.success) {
+                notify.error(res.message || 'Failed to reset password. The link may have expired.');
+                return;
+            }
             setDone(true);
         } catch {
             notify.error('Failed to reset password. The link may have expired.');
@@ -365,5 +368,17 @@ export default function ResetPassword() {
                 </Link>
             </div>
         </div>
+    );
+}
+
+export default function ResetPassword() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+                <p className="text-sm text-muted-foreground">Loading…</p>
+            </div>
+        }>
+            <ResetPasswordContent />
+        </Suspense>
     );
 }

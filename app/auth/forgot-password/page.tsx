@@ -27,7 +27,11 @@ export default function ForgotPasswordPage() {
       const data:ForgotPasswordRequest={
         email
       }
-      await authService.forgotPassword(data);
+      const res = await authService.forgotPassword(data);
+      if (!res.success) {
+        notify.error(res.message || t('auth.forgotPassword.toast.resetCodeFailed.body'), t('common.error'));
+        return;
+      }
       setSubmitted(true);
       notify.success(t('auth.forgotPassword.toast.resetCodeSent.body'), t('auth.forgotPassword.toast.resetCodeSent.title'));
     } catch (error: any) {
@@ -48,9 +52,6 @@ export default function ForgotPasswordPage() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">{t('auth.forgotPassword.submitted.title')}</h2>
             <p className="text-gray-600 mb-6">
               {t('auth.forgotPassword.submitted.description', { email })}
-              <Link href={`/reset-password?email=${encodeURIComponent(email)}`} className="text-green-600 font-semibold hover:text-green-700 block mt-2">
-                {t('auth.forgotPassword.submitted.cta')}
-              </Link>
             </p>
             <Button
               onClick={() => router.push('/auth/signin')}

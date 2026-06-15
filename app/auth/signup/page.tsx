@@ -66,7 +66,7 @@ export default function SignUp() {
   const handleGoogleRegister = async () => {
     try {
       if (!googleToken) return
-      await registerGoogle({ token: googleToken, });
+      await registerGoogle({ token: googleToken, role: UserRole.BUYER });
 
       notify.success(t('auth.signUp.primary'), t('common.primary'));
     } catch (error) {

@@ -8,7 +8,6 @@ import {
   SellerRegistration,
   GoogleAuthRequest,
   VerifyOtpRequest,
-  AskOtpRequest,
   ResetPasswordRequest,
   ForgotPasswordRequest
 } from '@/types';
@@ -77,8 +76,8 @@ class AuthService {
     return response;
   }
 
-  async askOtpCode(data: AskOtpRequest): Promise<ApiResponse<User>> {
-    const response = await apiClient.post<ApiResponse<User>>(API_ENDPOINTS.AUTH.ASK_OTP_CODE, data);
+  async askOtpCode(): Promise<ApiResponse<string>> {
+    const response = await apiClient.post<ApiResponse<string>>(API_ENDPOINTS.AUTH.ASK_OTP_CODE);
     return response;
   }
 

@@ -51,10 +51,10 @@ class ApiClient {
           if (error.response) {
             const status = error.response.status;
 
-            // if (status === HTTP_STATUS.UNAUTHORIZED || status === HTTP_STATUS.FORBIDDEN) {
-            //   this.logout();
-            //   throw error;
-            // }
+          if (status === HTTP_STATUS.UNAUTHORIZED && !originalRequest.url?.includes('/auth/')) {
+            this.logout();
+            throw error;
+          }
 
             // Retry only server-side errors (5xx)
             if (
