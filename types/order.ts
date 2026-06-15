@@ -4,11 +4,17 @@ import { Negotiation } from "./negotiation";
 
 // Order-related enums
 export enum OrderStatus {
+  PENDING_PAYMENT = 'PENDING_PAYMENT',
+  /** @deprecated legacy — mapped to PENDING_PAYMENT on backend */
   PENDING = 'PENDING',
+  /** @deprecated legacy — paid orders use COMPLETED */
   CONFIRMED = 'CONFIRMED',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
 }
+
+export const isUnpaidOrder = (status: OrderStatus) =>
+  status === OrderStatus.PENDING_PAYMENT || status === OrderStatus.PENDING;
 
 
 export enum PaymentMethod {

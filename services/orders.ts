@@ -24,7 +24,7 @@ class OrderService {
   }
 
   async cancelOrder(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.REJECT(id));
+    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CANCEL(id));
   }
 
   async acceptOrder(id: string): Promise<ApiResponse<Order>> {
