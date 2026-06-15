@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
+import { notify } from '@/lib/notify';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 
@@ -49,16 +50,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 10;
   const isOwner = user?.id === product.owner.id;
 
-  // Chat with Product Owner functionality
+  // Chat with Product Owner — start via product purchase/negotiation flow
   const handleChatWithOwner = () => {
     if (!user) {
-      // Redirect to login if not authenticated
       router.push('/auth/signin');
       return;
     }
+    if (isOwner) return;
 
-    // Navigate to chat with the product owner
-    router.push(`/chat/${product.owner.id}`);
+    notify.info(
+      product.isNegotiable
+        ? 'Use Buy to make an offer — you can chat once a negotiation starts.'
+        : 'Purchase this product to communicate with the seller.',
+      'Contact seller'
+    );
+    router.push(`/products/${product.id}${product.isNegotiable ? '?negotiate=1' : ''}`);
   };
 
   const getStockStatus = () => {

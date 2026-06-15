@@ -6,7 +6,7 @@ import Sidebar from '@/components/shared/Sidebar';
 import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
-import { useToast } from '@/components/ui/use-toast';
+import { adminService } from '@/services/admin';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -62,21 +62,8 @@ export default function AdminUserDetailPage() {
                     setCurrentUser(foundUser);
                     setLoading(false);
                 } else {
-                    // ❌ Not in context - fetch from server
-                    const { userService } = await import('@/services/users');
-                    const response = await userService.getUserById(userId);
-
-                    if (response.success && response.data) {
-                        // Store in context for future use and real-time updates
-                        setCurrentUser(response.data);
-                    } else {
-                        setError('User not found');
-                        showToast({
-                            title: "Error",
-                            description: "Failed to load user details",
-                            variant: "default"
-                        });
-                    }
+                    const userData = await adminService.getUserById(userId);
+                    setCurrentUser(userData);
                 }
             } catch (error) {
                 console.error('Failed to fetch user:', error);
@@ -101,9 +88,11 @@ export default function AdminUserDetailPage() {
     };
 
     const handleSendMessage = () => {
-        if (selectedUser) {
-            router.push(`/chat/${selectedUser.id}`);
-        }
+        showToast({
+            title: "Not available",
+            description: "Direct messaging is only available through order negotiations.",
+            variant: "default"
+        });
     };
 
     const handleSuspendUser = async () => {

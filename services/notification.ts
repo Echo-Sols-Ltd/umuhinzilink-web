@@ -1,25 +1,37 @@
 import { apiClient } from './client';
-import { Notification, NotificationFilter } from '@/types';
-import { ApiResponse } from '@/types';
+import { Notification, NotificationType, PaginatedResponse } from '@/types';
 
 class NotificationService {
-    async getNotifications(filter?: NotificationFilter): Promise<ApiResponse<Notification[]>> {
-        return apiClient.get('/notifications', filter as Record<string, unknown>);
+    async getNotifications(page = 0, size = 15): Promise<PaginatedResponse<Notification[]>> {
+        return apiClient.get<PaginatedResponse<Notification[]>>('/notifications', { page, size });
     }
 
-    async markAsRead(notificationId: string): Promise<ApiResponse<void>> {
+    async getUnreadNotifications(page = 0, size = 15): Promise<PaginatedResponse<Notification[]>> {
+        return apiClient.get<PaginatedResponse<Notification[]>>('/notifications/unread', { page, size });
+    }
+
+    async getByType(type: NotificationType, page = 0, size = 15): Promise<PaginatedResponse<Notification[]>> {
+        return apiClient.get<PaginatedResponse<Notification[]>>(`/notifications/type/${type}`, { page, size });
+    }
+
+    async getUnreadCount(): Promise<number> {
+        const res = await apiClient.get<{ success: boolean; data?: number }>('/notifications/unread/count');
+        return res.data ?? 0;
+    }
+
+    async markAsRead(notificationId: string): Promise<{ success: boolean; message: string }> {
         return apiClient.put(`/notifications/${notificationId}/read`);
     }
 
-    async markAllAsRead(): Promise<ApiResponse<void>> {
+    async markAllAsRead(): Promise<{ success: boolean; message: string }> {
         return apiClient.put('/notifications/read-all');
     }
 
-    async deleteNotification(notificationId: string): Promise<ApiResponse<void>> {
+    async deleteNotification(notificationId: string): Promise<{ success: boolean; message: string }> {
         return apiClient.delete(`/notifications/${notificationId}`);
     }
 
-    async deleteAllNotifications(): Promise<ApiResponse<void>> {
+    async deleteAllNotifications(): Promise<{ success: boolean; message: string }> {
         return apiClient.delete('/notifications');
     }
 }

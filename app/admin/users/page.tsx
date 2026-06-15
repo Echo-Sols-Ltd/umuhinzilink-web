@@ -51,6 +51,8 @@ import {
 } from '@/components/ui/select';
 import { imageUrl } from '@/lib/utils';
 
+const isSuspended = (user: User) => user.active === false;
+
 function UserManagement() {
   const { deleteUser } = useAdmin();
   const [searchTerm, setSearchTerm] = useState('');
@@ -264,7 +266,7 @@ function UserManagement() {
                           <Badge variant={usersItem.emailVerified ? 'success' : 'warning'} className="font-semibold text-[9px] uppercase  px-2 py-0.5">
                             {usersItem.emailVerified ? 'Verified' : 'Pending'}
                           </Badge>
-                          {(usersItem as any).suspended && (
+                          {isSuspended(usersItem) && (
                             <Badge variant="destructive" className="font-semibold text-[9px] uppercase  px-2 py-0.5">
                               Suspended
                             </Badge>
@@ -292,16 +294,16 @@ function UserManagement() {
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => handleSuspendUser(usersItem.id, !(usersItem as any).suspended)}
+                            onClick={() => handleSuspendUser(usersItem.id, !isSuspended(usersItem))}
                             disabled={actionLoading === usersItem.id}
-                            className={`p-2 rounded-lg transition-all ${(usersItem as any).suspended
+                            className={`p-2 rounded-lg transition-all ${isSuspended(usersItem)
                               ? 'text-muted-foreground hover:text-success hover:bg-success/10'
                               : 'text-muted-foreground hover:text-warning hover:bg-warning/10'
                               }`}
                           >
                             {actionLoading === usersItem.id ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (usersItem as any).suspended ? (
+                            ) : isSuspended(usersItem) ? (
                               <UserCheck className="w-4 h-4" />
                             ) : (
                               <UserX className="w-4 h-4" />
@@ -435,20 +437,20 @@ function UserManagement() {
                   <Badge variant={selectedUser.emailVerified ? 'success' : 'warning'} className="font-semibold">
                     {selectedUser.emailVerified ? 'Verified Account' : 'Pending Verification'}
                   </Badge>
-                  {(selectedUser as any).suspended && (
+                  {isSuspended(selectedUser) && (
                     <Badge variant="destructive" className="font-semibold">Suspended</Badge>
                   )}
                 </div>
 
                 <div className="pt-4 border-t border-border flex gap-3">
                   <button
-                    onClick={() => handleSuspendUser(selectedUser.id, !(selectedUser as any).suspended)}
-                    className={`flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all ${(selectedUser as any).suspended
+                    onClick={() => handleSuspendUser(selectedUser.id, !isSuspended(selectedUser))}
+                    className={`flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all ${isSuspended(selectedUser)
                       ? 'bg-success text-white hover:bg-success/90 shadow-md shadow-success/20'
                       : 'bg-warning text-white hover:bg-warning/90 shadow-md shadow-warning/20'
                       }`}
                   >
-                    {(selectedUser as any).suspended ? 'Reactivate Account' : 'Suspend Account'}
+                    {isSuspended(selectedUser) ? 'Reactivate Account' : 'Suspend Account'}
                   </button>
                   <button
                     onClick={() => setShowUserModal(false)}

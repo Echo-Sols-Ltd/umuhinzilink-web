@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
     Sprout, MapPin, Phone, FileText, ChevronRight,
     ChevronLeft, CheckCircle, Package, TrendingUp,
@@ -103,7 +104,14 @@ export default function BecomeSeller() {
     });
     const [errors, setErrors] = useState<Partial<SellerRegistration>>({});
 
-    const { registerSeller, loading} = useAuth();
+    const { registerSeller, loading, isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!loading && !isAuthenticated) {
+            router.replace('/auth/signin?redirect=/become-seller');
+        }
+    }, [loading, isAuthenticated, router]);
 
     // ── Validation ─────────────────────────────────────────────────────────
 

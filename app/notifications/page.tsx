@@ -62,6 +62,7 @@ export default function NotificationsPage() {
         currentPage,
         loading,
         fetchAll,
+        fetchUnread,
         fetchByType,
         markAsRead,
         markAllAsRead,
@@ -88,18 +89,24 @@ export default function NotificationsPage() {
 
     // ── Load data when tab or page changes ────────────────────────────────────
     const load = useCallback(async (tab: TabValue, p: number) => {
-        if (tab === NotificationType.SYSTEM) setNotifications(systemNotifications);
-        else if (tab === NotificationType.PRODUCT) setNotifications(productNotifications);
-        else if (tab === NotificationType.ORDER) setNotifications(orderNotifications);
-        else if (tab === NotificationType.PAYMENT) setNotifications(allNotifications.filter(n => n.type === tab));
-        else if (tab === 'ALL') setNotifications(allNotifications);
-        else if (tab === 'UNREAD') setNotifications(unreadNotifications);
-    }, [allNotifications, systemNotifications, productNotifications, orderNotifications, unreadNotifications]);
+        if (tab === 'UNREAD') {
+            await fetchUnread({ page: p, size: PAGE_SIZE });
+            return;
+        }
+        if (tab === NotificationType.SYSTEM || tab === NotificationType.PRODUCT || tab === NotificationType.ORDER || tab === NotificationType.PAYMENT) {
+            await fetchByType(tab, { page: p, size: PAGE_SIZE });
+            return;
+        }
+        await fetchAll({ page: p, size: PAGE_SIZE });
+    }, [fetchAll, fetchUnread, fetchByType]);
 
     useEffect(() => {
-        load(activeTab, page);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeTab, page, allNotifications]);
+        if (user) load(activeTab, page);
+    }, [activeTab, page, user, load]);
+
+    useEffect(() => {
+        setNotifications(allNotifications);
+    }, [allNotifications]);
 
     // ── Client-side filter: UNREAD tab + search ───────────────────────────────
     const visible = useMemo(() => {

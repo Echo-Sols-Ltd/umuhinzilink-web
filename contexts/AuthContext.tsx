@@ -262,8 +262,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
-      setUser(res.data);
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
+      setIsAuthenticated(true);
       await fetchSeller();
       notify.success('Seller profile created successfully', 'Register Success');
     } catch {
