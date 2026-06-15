@@ -71,9 +71,7 @@ export default function VerifyPage() {
     };
 
     const handleResend = async () => {
-        await askOtpCode({
-            email: user?.email!,
-        });
+        await askOtpCode();
         setOtp(['', '', '', '', '', '']);
         setTimer(120);
     };

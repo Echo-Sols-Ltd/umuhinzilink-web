@@ -8,8 +8,9 @@ import {
   SellerRegistration,
   GoogleAuthRequest,
   VerifyOtpRequest,
-  AskOtpRequest,
-  ResetPasswordRequest
+  RefreshTokenRequest,
+  ResetPasswordRequest,
+  ForgotPasswordRequest
 } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
@@ -57,12 +58,20 @@ class AuthService {
     return await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.AUTH.VERIFY_USER);
   }
 
+  async refreshToken(data: RefreshTokenRequest): Promise<ApiResponse<AuthResponse>> {
+    return await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.REFRESH, data);
+  }
+
   /**
    * Log out the user and clear tokens.
    */
   async logout(): Promise<ApiResponse<void>> {
     try {
-      const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.LOGOUT);
+      const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
+      const response = await apiClient.post<ApiResponse<void>>(
+        API_ENDPOINTS.AUTH.LOGOUT,
+        refreshToken ? { refreshToken } : undefined
+      );
       localStorage.clear();
       return response;
     } catch (error) {
@@ -76,11 +85,15 @@ class AuthService {
     return response;
   }
 
-  async askOtpCode(data: AskOtpRequest): Promise<ApiResponse<User>> {
-    const response = await apiClient.post<ApiResponse<User>>(API_ENDPOINTS.AUTH.ASK_OTP_CODE, data);
+  async askOtpCode(): Promise<ApiResponse<string>> {
+    const response = await apiClient.post<ApiResponse<string>>(API_ENDPOINTS.AUTH.ASK_OTP_CODE);
     return response;
   }
 
+  async forgotPassword(data: ForgotPasswordRequest): Promise<ApiResponse<void>> {
+    const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, data);
+    return response;
+  }
 
 
   /**
@@ -88,6 +101,14 @@ class AuthService {
    */
   async resetPassword(data: ResetPasswordRequest): Promise<ApiResponse<void>> {
     const response = await apiClient.post<ApiResponse<void>>(API_ENDPOINTS.AUTH.RESET_PASSWORD, data)
+    return response;
+  }
+
+  /**
+   * Check if the reset code is valid
+   */
+  async checkResetCode(data: string): Promise<ApiResponse<boolean>> {
+    const response = await apiClient.post<ApiResponse<boolean>>(API_ENDPOINTS.AUTH.CHECK_RESET_CODE, { code: data })
     return response;
   }
 }

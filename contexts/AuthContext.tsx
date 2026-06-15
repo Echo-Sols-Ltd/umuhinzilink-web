@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   SellerRegistration,
@@ -8,7 +10,6 @@ import {
   GoogleAuthRequest,
   UserRole,
   VerifyOtpRequest,
-  AskOtpRequest
 } from '@/types';
 import { authService } from '@/services/auth';
 import { useRouter } from 'next/navigation';
@@ -16,9 +17,9 @@ import { notify } from '@/lib/notify';
 import { apiClient } from '@/services/client';
 import { userService } from '@/services/users';
 
-// Storage keys for localStorage
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
+  REFRESH_TOKEN: 'refresh_token',
   USER: 'user',
   SELLER: 'seller',
   BUYER: 'buyer',
@@ -39,13 +40,12 @@ interface AuthContextType {
   register: (data: UserRequest) => Promise<void>;
   registerSeller: (data: SellerRegistration) => Promise<void>;
   verifyOtp: (data: VerifyOtpRequest) => Promise<void>;
-  askOtpCode: (data: AskOtpRequest) => Promise<void>;
+  askOtpCode: () => Promise<void>;
   updateAvatar: (data: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// Custom hook to access auth context
 function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (!context) {
@@ -63,46 +63,31 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 
   useEffect(() => {
-    // Register logout listener to handle token expiry and unauthorized access
     const handleLogout = () => {
-      // Clear all auth state
       setUser(null);
       setSeller(null);
+      setIsAuthenticated(false);
       setLoading(false);
-
-      // Redirect to login page
-      router.push('/');
+      router.push('/auth/signin');
     };
 
-    // Register the logout callback with apiClient
     apiClient.onLogout(handleLogout);
-
-    // Cleanup function to remove the listener when component unmounts
     return () => {
       apiClient.removeLogoutListener(handleLogout);
     };
   }, [router]);
 
-  // Fetch seller profile from API and store in state/localStorage
   const fetchSeller = async () => {
     try {
       const res = await userService.getSellerMe();
-      if (!res.success) {
-        router.replace('/auth/seller');
-        return;
-      }
-      if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.SELLER, JSON.stringify(res.data));
-        setSeller(res.data);
-      }
+      if (!res.success || !res.data) return;
+      localStorage.setItem(STORAGE_KEYS.SELLER, JSON.stringify(res.data));
+      setSeller(res.data);
     } catch {
       notify.error('Please try again later', 'Fetching seller failed');
     }
   };
 
-
-
-  // Retrieve user data from localStorage
   const getStoredData = <T,>(key: string): T | null => {
     try {
       const data = localStorage.getItem(key);
@@ -112,98 +97,107 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Load authentication state from localStorage and validate user
+  const persistSession = (token: string, refreshToken: string | undefined, nextUser: User) => {
+    localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+    if (refreshToken) {
+      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    }
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(nextUser));
+    setUser(nextUser);
+  };
+
   const loadAuthState = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-      const user = getStoredData<User>(STORAGE_KEYS.USER);
+      const storedUser = getStoredData<User>(STORAGE_KEYS.USER);
 
-      if (!token || !user) {
-        setLoading(false);
+      if (!token || !storedUser) {
+        setIsAuthenticated(false);
         return;
       }
 
-      setUser(user);
+      const res = await authService.checkToken();
+      if (!res.success || !res.data) {
+        Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+        setUser(null);
+        setSeller(null);
+        setIsAuthenticated(false);
+        return;
+      }
 
-      // Redirect to OTP verification if user is not verified
-      if (!user.emailVerified) {
-        await askOtpCode({ email: user.email });
+      const existingRefresh = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN) ?? undefined;
+      persistSession(token, existingRefresh, res.data);
+
+      if (!res.data.emailVerified) {
+        setIsAuthenticated(false);
         router.replace('/auth/verify-otp');
-        setLoading(false);
         return;
       }
 
-      setIsAuthenticated(true)
-      setLoading(false);
+      setIsAuthenticated(true);
+      if (res.data.role === UserRole.SELLER) {
+        await fetchSeller();
+      }
     } catch {
-      notify.error('Please try again later', 'Loading auth state failed');
-      setLoading(false);
+      Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+      setUser(null);
+      setSeller(null);
+      setIsAuthenticated(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
-  // Authenticate user with credentials
   const login = async (data: LoginRequest) => {
     try {
       setLoading(true);
       const res = await authService.login(data);
 
-      if (!res.success) {
-        notify.error(res.message, 'Login Failed');
+      if (!res.success || !res.data) {
+        notify.error(res.message || 'Login failed', 'Login Failed');
         return;
       }
 
-      if (res.data) {
-        // Store auth token and user data
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
-        setUser(res.data.user);
-        if (!res.data.user.emailVerified) {
-          await askOtpCode({ email: res.data.user.email });
-          router.replace('/auth/verify-otp');
-          setLoading(false);
-          return;
-        }
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
 
-        router.replace('/');
+      if (!res.data.user.emailVerified) {
+        setIsAuthenticated(false);
+        await askOtpCode();
+        router.replace('/auth/verify-otp');
+        return;
       }
+
+      setIsAuthenticated(true);
+      if (res.data.user.role === UserRole.SELLER) {
+        await fetchSeller();
+      }
+      router.replace('/');
     } catch {
       notify.error('Please try again', 'Error logging in');
     } finally {
       setLoading(false);
-
     }
   };
 
   const googleLogin = async (token: string) => {
     try {
       setLoading(true);
-      console.log(token)
       const res = await authService.googleLogin(token);
 
-      if (!res.success) {
-        notify.error(res.message, 'Login Failed');
+      if (!res.success || !res.data) {
+        notify.error(res.message || 'Login failed', 'Login Failed');
         return;
       }
 
-      if (res.data) {
-        // Store auth token and user data
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
-        setUser(res.data.user);
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
+      setIsAuthenticated(true);
 
-        // Fetch role-specific profile data
-        const roleFetchers = {
-          [UserRole.SELLER]: fetchSeller,
-        };
-
-        const fetcher = roleFetchers[res.data.user.role as keyof typeof roleFetchers];
-        if (fetcher) await fetcher();
-
-        router.replace('/');
+      if (res.data.user.role === UserRole.SELLER) {
+        await fetchSeller();
       }
+
+      router.replace('/');
     } catch {
       notify.error('Please try again', 'Error logging in');
     } finally {
@@ -215,20 +209,20 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const registerGoogle = async (data: GoogleAuthRequest) => {
     try {
       setLoading(true);
-      const res = await authService.registerGoogleUser(data);
+      const res = await authService.registerGoogleUser({
+        ...data,
+        role: data.role ?? UserRole.BUYER,
+      });
 
-      if (!res.success) {
-        notify.error(res.message, 'Register Failed');
+      if (!res.success || !res.data) {
+        notify.error(res.message || 'Registration failed', 'Register Failed');
         return;
       }
 
-      if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
-        setUser(res.data.user);
-        notify.success('Register Success', 'User registered successfully');
-        await loadAuthState();
-      }
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
+      setIsAuthenticated(true);
+      notify.success('Account created successfully', 'Register Success');
+      router.replace('/');
     } catch {
       notify.error('Please try again', 'Error registering');
     } finally {
@@ -237,24 +231,20 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // Register new user account
   const register = async (data: UserRequest) => {
     try {
       setLoading(true);
       const res = await authService.register(data);
 
-      if (!res.success) {
-        notify.error(res.message, 'Register Failed');
+      if (!res.success || !res.data) {
+        notify.error(res.message || 'Registration failed', 'Register Failed');
         return;
       }
 
-      if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, res.data.token);
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data.user));
-        setUser(res.data.user);
-        notify.success('Register Success', 'User registered successfully');
-        await loadAuthState();
-      }
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
+      setIsAuthenticated(false);
+      notify.success('Check your email for the verification code', 'Register Success');
+      router.replace('/auth/verify-otp');
     } catch {
       notify.error('Please try again', 'Error registering');
     } finally {
@@ -262,23 +252,20 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-
-  // Register seller profile
   const registerSeller = async (data: SellerRegistration) => {
     try {
       setLoading(true);
       const res = await authService.registerSeller(data);
 
-      if (!res.success) {
-        notify.error(res.message, 'Register Failed');
+      if (!res.success || !res.data) {
+        notify.error(res.message || 'Registration failed', 'Register Failed');
         return;
       }
 
-      if (res.data) {
-        localStorage.setItem(STORAGE_KEYS.SELLER, JSON.stringify(res.data));
-        setUser(res.data);
-        notify.success('Register Success', 'Seller registered successfully');
-      }
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
+      setUser(res.data);
+      await fetchSeller();
+      notify.success('Seller profile created successfully', 'Register Success');
     } catch {
       notify.error('Please try again', 'Error registering seller');
     } finally {
@@ -286,27 +273,20 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Verify OTP code for account verification
   const verifyOtp = async (data: VerifyOtpRequest) => {
     try {
       setLoading(true);
       const res = await authService.verifyOtp(data);
 
-      if (!res.success) {
-        notify.error(res.message, 'Verify Failed');
+      if (!res.success || !res.data) {
+        notify.error(res.message || 'Invalid or expired code', 'Verify Failed');
         return;
       }
 
-      if (res.data) {
-        const user = res.data.user;
-        const token = res.data.token;
-
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-        setUser(user);
-        notify.success('Verify Success', 'User verified successfully');
-        await loadAuthState();
-      }
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
+      setIsAuthenticated(true);
+      notify.success('Email verified successfully', 'Verify Success');
+      router.replace('/');
     } catch {
       notify.error('Please try again', 'Error verifying');
     } finally {
@@ -314,16 +294,16 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Request OTP code to be sent to user
-  const askOtpCode = async (data: AskOtpRequest) => {
+  const askOtpCode = async () => {
     try {
       setLoading(true);
-      const res = await authService.askOtpCode(data);
+      const res = await authService.askOtpCode();
 
       if (!res.success) {
-        notify.error(res.message, 'Ask OTP Failed');
+        notify.error(res.message || 'Failed to send code', 'Ask OTP Failed');
+        return;
       }
-      notify.success('Ask OTP Success', 'OTP sent successfully');
+      notify.success('A new verification code has been sent to your email', 'OTP sent');
     } catch {
       notify.error('Please try again', 'Error asking for OTP');
     } finally {
@@ -331,27 +311,27 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Clear all auth data and redirect to home
   const logout = async () => {
-    Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
-    localStorage.clear();
-
-    setUser(null);
-    setSeller(null);
-
-    router.replace('/');
+    try {
+      await authService.logout();
+    } catch {
+      // still clear local session
+    } finally {
+      Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+      setUser(null);
+      setSeller(null);
+      setIsAuthenticated(false);
+      router.replace('/auth/signin');
+    }
   };
 
-  // Update user avatar URL
   const updateAvatar = async (avatarUrl: string) => {
     if (!user) return;
-
     const updatedUser = { ...user, avatar: avatarUrl };
     setUser(updatedUser);
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
   };
 
-  // Load auth state on component mount
   useEffect(() => {
     loadAuthState();
   }, []);

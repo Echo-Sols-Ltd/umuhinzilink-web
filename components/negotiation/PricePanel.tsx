@@ -1,0 +1,334 @@
+'use client';
+
+import { cn, imageUrl } from "@/lib/utils";
+import { Negotiation } from "@/types";
+import {
+    AlertCircle, CheckCircle, Clock, Loader2,
+    Package, Send, XCircle, Wallet, Info,
+} from "lucide-react";
+import { useState } from "react";
+
+function fmt(n: number) {
+    return new Intl.NumberFormat('rw-RW').format(n) + ' RWF';
+}
+
+function timeUntil(dateStr: string) {
+    const diff = new Date(dateStr).getTime() - Date.now();
+    if (diff <= 0) return 'Expired';
+    const days = Math.floor(diff / 86400000);
+    const hrs = Math.floor((diff % 86400000) / 3600000);
+    if (days > 0) return `${days}d ${hrs}h left`;
+    return `${hrs}h left`;
+}
+
+interface PricePanelProps {
+    negotiation: Negotiation;
+    onSetSellerOffer: (price: number) => Promise<void>;
+    onSetBuyerOffer: (price: number) => Promise<void>;
+    onSellerAcceptBuyer: () => Promise<void>;
+    onBuyerAcceptSeller: () => Promise<void>;
+    onReject: () => Promise<void>;
+    onPayOrder?: () => Promise<void>;
+    loading: boolean;
+    isSeller: boolean;
+}
+
+function ConfirmBox({
+    type, price, loading, onConfirm, onCancel,
+}: {
+    type: 'accept' | 'reject';
+    price?: number;
+    loading: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+}) {
+    const isAccept = type === 'accept';
+    return (
+        <div className={cn(
+            'p-3 rounded-xl border space-y-3',
+            isAccept
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'
+                : 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800'
+        )}>
+            <p className={cn('text-xs font-medium', isAccept ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-600')}>
+                {isAccept
+                    ? `Accept ${price ? `offer of ${fmt(price)}` : 'this offer'}? Payment will be processed from the buyer's wallet.`
+                    : 'Reject this negotiation? The order will be cancelled.'}
+            </p>
+            <div className="flex gap-2">
+                <button
+                    onClick={onConfirm}
+                    disabled={loading}
+                    className={cn(
+                        'flex-1 h-8 text-white text-xs font-bold rounded-lg disabled:opacity-50 flex items-center justify-center gap-1.5',
+                        isAccept ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-500 hover:bg-red-600'
+                    )}>
+                    {loading ? <Loader2 size={12} className="animate-spin" /> : isAccept ? <CheckCircle size={12} /> : <XCircle size={12} />}
+                    {loading ? 'Processing…' : isAccept ? 'Yes, accept' : 'Yes, reject'}
+                </button>
+                <button onClick={onCancel} className="h-8 px-3 border border-border text-xs text-muted-foreground rounded-lg">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    );
+}
+
+export default function PricePanel({
+    negotiation,
+    onSetSellerOffer,
+    onSetBuyerOffer,
+    onSellerAcceptBuyer,
+    onBuyerAcceptSeller,
+    onReject,
+    onPayOrder,
+    loading,
+    isSeller,
+}: PricePanelProps) {
+    const [offerInput, setOfferInput] = useState('');
+    const [offerError, setOfferError] = useState('');
+    const [confirming, setConfirming] = useState<'accept' | 'reject' | null>(null);
+
+    const product = negotiation.order.product;
+    const buyerPrice = negotiation.buyerProposedPrice;
+    const listedPrice = product.unitPrice;
+    const sellerPrice = negotiation.agreedPrice;
+    const isActive = negotiation.status === 'PENDING';
+    const orderStatus = (negotiation.order.status as string)?.toUpperCase();
+    const awaitingPayment = negotiation.status === 'ACCEPTED' && orderStatus === 'PENDING_PAYMENT';
+    const hasSellerCounter = !!sellerPrice && isActive;
+    const discount = Math.round((1 - buyerPrice / listedPrice) * 100);
+
+    const submitOffer = async () => {
+        const val = parseFloat(offerInput);
+        if (!offerInput || isNaN(val) || val <= 0) {
+            setOfferError('Enter a valid price');
+            return;
+        }
+        if (val > listedPrice) {
+            setOfferError("Can't exceed listed price");
+            return;
+        }
+        setOfferError('');
+        if (isSeller) await onSetSellerOffer(val);
+        else await onSetBuyerOffer(val);
+        setOfferInput('');
+    };
+
+    const handleConfirm = async () => {
+        if (confirming === 'accept') {
+            if (isSeller) await onSellerAcceptBuyer();
+            else await onBuyerAcceptSeller();
+        } else if (confirming === 'reject') {
+            await onReject();
+        }
+        setConfirming(null);
+    };
+
+    return (
+        <div className="flex flex-col h-screen bg-white dark:bg-gray-900 border-l border-border overflow-auto">
+            <div className="px-4 py-3.5 border-b border-border shrink-0">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    {isSeller ? 'Negotiation Panel' : 'Offer Details'}
+                </p>
+                <p className="text-sm font-bold text-foreground mt-0.5">{negotiation.order.orderNumber}</p>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                <div className={cn(
+                    'flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold',
+                    isActive && 'bg-amber-50 dark:bg-amber-950/30 text-amber-700',
+                    awaitingPayment && 'bg-blue-50 dark:bg-blue-950/30 text-blue-700',
+                    negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED' && 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700',
+                    negotiation.status === 'REJECTED' && 'bg-red-50 dark:bg-red-950/30 text-red-600',
+                    negotiation.status === 'EXPIRED' && 'bg-gray-100 dark:bg-gray-800 text-gray-500',
+                )}>
+                    {isActive && <><AlertCircle size={13} /> Expires in {timeUntil(negotiation.expiresAt)}</>}
+                    {awaitingPayment && <><Wallet size={13} /> Awaiting payment</>}
+                    {negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED' && <><CheckCircle size={13} /> Paid & completed</>}
+                    {negotiation.status === 'REJECTED' && <><XCircle size={13} /> Rejected</>}
+                    {negotiation.status === 'EXPIRED' && <><Clock size={13} /> Expired</>}
+                </div>
+
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                    <div className="w-12 h-12 rounded-xl bg-gray-200 dark:bg-gray-700 overflow-hidden shrink-0">
+                        {product.image ? (
+                            <img src={imageUrl(product.image)} alt={product.name} className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                                <Package size={18} className="text-gray-400" />
+                            </div>
+                        )}
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-sm font-bold text-foreground truncate">{product.name}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                            {negotiation.order.quantity} {product.measurementUnit?.toLowerCase()}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Prices</p>
+                    <div className="flex justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-xs">
+                        <span className="text-muted-foreground">Listed</span>
+                        <span className="font-bold">{fmt(listedPrice)}</span>
+                    </div>
+                    <div className="flex justify-between py-2 px-3 bg-amber-50 dark:bg-amber-950/20 rounded-xl text-xs">
+                        <span className="text-muted-foreground">{isSeller ? "Buyer's offer" : 'Your offer'}</span>
+                        <span className="font-extrabold text-amber-600">{fmt(buyerPrice)}{discount > 0 ? ` (-${discount}%)` : ''}</span>
+                    </div>
+                    {sellerPrice && (
+                        <div className="flex justify-between py-2 px-3 bg-green-50 dark:bg-green-950/20 rounded-xl border border-green-200 text-xs">
+                            <span className="text-muted-foreground">{isSeller ? 'Your counter' : "Seller's counter"}</span>
+                            <span className="font-extrabold text-green-700">{fmt(sellerPrice)}</span>
+                        </div>
+                    )}
+                    <div className="flex justify-between py-2.5 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border text-xs">
+                        <span className="font-semibold">Order total</span>
+                        <span className="font-extrabold text-green-700">
+                            {fmt((sellerPrice ?? buyerPrice) * negotiation.order.quantity)}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Awaiting payment — buyer pays manually */}
+                {awaitingPayment && !isSeller && onPayOrder && (
+                    <div className="space-y-3">
+                        <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 rounded-xl">
+                            <Info size={14} className="text-blue-500 mt-0.5 shrink-0" />
+                            <p className="text-xs text-blue-700 leading-relaxed">
+                                Deal agreed! Top up your wallet if needed, then pay to complete the order.
+                            </p>
+                        </div>
+                        <button
+                            onClick={onPayOrder}
+                            disabled={loading}
+                            className="w-full h-10 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50">
+                            {loading ? <Loader2 size={16} className="animate-spin" /> : <Wallet size={16} />}
+                            Pay {fmt(negotiation.order.totalPrice)}
+                        </button>
+                    </div>
+                )}
+
+                {/* Seller: set counter OR accept buyer OR reject */}
+                {isSeller && isActive && (
+                    <>
+                        <div className="space-y-2">
+                            <p className="text-xs font-bold text-muted-foreground uppercase">Set your counter price</p>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    placeholder={String(Math.round(buyerPrice * 1.1))}
+                                    value={offerInput}
+                                    onChange={e => { setOfferInput(e.target.value); setOfferError(''); }}
+                                    onKeyDown={e => { if (e.key === 'Enter') submitOffer(); }}
+                                    className={cn('flex-1 h-10 px-3 text-sm border rounded-xl', offerError ? 'border-red-400' : 'border-border')}
+                                />
+                                <button onClick={submitOffer} disabled={loading || !offerInput}
+                                    className="h-10 px-3 bg-green-600 text-white text-xs font-bold rounded-xl disabled:opacity-50 flex items-center gap-1">
+                                    {loading ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />} Send
+                                </button>
+                            </div>
+                            {offerError && <p className="text-xs text-red-500">{offerError}</p>}
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <div className="flex-1 h-px bg-border" />
+                            <span className="text-xs text-muted-foreground">or</span>
+                            <div className="flex-1 h-px bg-border" />
+                        </div>
+
+                        {confirming ? (
+                            <ConfirmBox type={confirming} price={confirming === 'accept' ? buyerPrice : undefined}
+                                loading={loading} onConfirm={handleConfirm} onCancel={() => setConfirming(null)} />
+                        ) : (
+                            <div className="grid grid-cols-2 gap-2">
+                                <button onClick={() => setConfirming('accept')}
+                                    className="h-9 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1">
+                                    <CheckCircle size={13} /> Accept {fmt(buyerPrice)}
+                                </button>
+                                <button onClick={() => setConfirming('reject')}
+                                    className="h-9 border border-red-200 text-red-600 text-xs font-bold rounded-xl flex items-center justify-center gap-1">
+                                    <XCircle size={13} /> Reject
+                                </button>
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {/* Buyer: update offer while active */}
+                {!isSeller && isActive && (
+                    <div className="space-y-2">
+                        <p className="text-xs font-bold text-muted-foreground uppercase">Update your offer</p>
+                        <div className="flex gap-2">
+                            <input
+                                type="number"
+                                placeholder={String(buyerPrice)}
+                                value={offerInput}
+                                onChange={e => { setOfferInput(e.target.value); setOfferError(''); }}
+                                onKeyDown={e => { if (e.key === 'Enter') submitOffer(); }}
+                                className={cn('flex-1 h-10 px-3 text-sm border rounded-xl', offerError ? 'border-red-400' : 'border-border')}
+                            />
+                            <button onClick={submitOffer} disabled={loading || !offerInput}
+                                className="h-10 px-3 bg-amber-600 text-white text-xs font-bold rounded-xl disabled:opacity-50">
+                                Update
+                            </button>
+                        </div>
+                        {offerError && <p className="text-xs text-red-500">{offerError}</p>}
+                    </div>
+                )}
+
+                {/* Buyer: accept or reject seller counter */}
+                {!isSeller && isActive && hasSellerCounter && (
+                    <div className="space-y-3">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 rounded-xl text-xs text-blue-700">
+                            Seller countered at <span className="font-extrabold">{fmt(sellerPrice!)}</span> per unit.
+                            Accept to pay automatically, or reject to cancel.
+                        </div>
+                        {confirming ? (
+                            <ConfirmBox type={confirming} price={confirming === 'accept' ? sellerPrice! : undefined}
+                                loading={loading} onConfirm={handleConfirm} onCancel={() => setConfirming(null)} />
+                        ) : (
+                            <div className="grid grid-cols-2 gap-2">
+                                <button onClick={() => setConfirming('reject')}
+                                    className="h-10 border border-red-200 text-red-600 text-xs font-bold rounded-xl">
+                                    Decline
+                                </button>
+                                <button onClick={() => setConfirming('accept')}
+                                    className="h-10 bg-green-600 text-white text-xs font-bold rounded-xl">
+                                    Accept & pay
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Buyer waiting for seller */}
+                {!isSeller && isActive && !hasSellerCounter && (
+                    <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
+                        <Clock size={14} className="mt-0.5 animate-pulse shrink-0" />
+                        Waiting for the seller to accept your offer or send a counter price.
+                    </div>
+                )}
+
+                {/* Closed states */}
+                {(negotiation.status === 'REJECTED' || negotiation.status === 'EXPIRED' ||
+                    (negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED')) && (
+                    <div className="p-5 rounded-2xl text-center space-y-2 bg-gray-50 dark:bg-gray-800 border">
+                        <p className="text-sm font-bold">
+                            {negotiation.status === 'REJECTED' && 'Negotiation cancelled'}
+                            {negotiation.status === 'EXPIRED' && 'Negotiation expired'}
+                            {negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED' && 'Order completed'}
+                        </p>
+                        {negotiation.status === 'ACCEPTED' && (
+                            <p className="text-xs text-muted-foreground">
+                                Final: {fmt((sellerPrice ?? buyerPrice) * negotiation.order.quantity)}
+                            </p>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

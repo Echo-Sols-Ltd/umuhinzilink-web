@@ -1,14 +1,14 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosProgressEvent, CancelToken } from 'axios';
-import { API_CONFIG, HTTP_STATUS } from './constants';
-import { ApiResponse } from '@/types';
+import axios, { AxiosInstance, AxiosResponse, AxiosProgressEvent, CancelToken, InternalAxiosRequestConfig } from 'axios';
+import { API_CONFIG, API_ENDPOINTS, HTTP_STATUS } from './constants';
+import { ApiResponse, AuthResponse } from '@/types';
 import { withRetry, retryConfigs, RetryOptions } from '@/lib/retry';
 import { withTimeout, timeoutConfigs, TimeoutError } from '@/lib/timeout';
 
 class ApiClient {
   private axiosInstance: AxiosInstance;
-
   private logoutListeners: (() => void)[] = [];
   private maxRefreshAttempts: number = 3;
+  private refreshPromise: Promise<boolean> | null = null;
 
   constructor() {
     this.axiosInstance = axios.create({
@@ -19,30 +19,24 @@ class ApiClient {
       },
     });
 
-    // Request interceptor to add auth token
     this.axiosInstance.interceptors.request.use(
       async config => {
-        try {
-          const token = this.getAuthToken();
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
-          return config;
-        } catch (error) {
-          return Promise.reject(error);
+        const token = this.getAuthToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
+        return config;
       },
-      error => {
-        return Promise.reject(error);
-      }
+      error => Promise.reject(error)
     );
 
-    // Response interceptor to handle errors
     this.axiosInstance.interceptors.response.use(
       (response: AxiosResponse) => response,
       async error => {
-        const originalRequest = error.config;
-        // Initialize retry count per request
+        const originalRequest = error.config as InternalAxiosRequestConfig & { _retryCount?: number; _retryAfterRefresh?: boolean };
+        if (!originalRequest) {
+          return Promise.reject(error);
+        }
         if (!originalRequest._retryCount) {
           originalRequest._retryCount = 0;
         }
@@ -50,20 +44,31 @@ class ApiClient {
         try {
           if (error.response) {
             const status = error.response.status;
+            const url = originalRequest.url ?? '';
 
-            // if (status === HTTP_STATUS.UNAUTHORIZED || status === HTTP_STATUS.FORBIDDEN) {
-            //   this.logout();
-            //   throw error;
-            // }
+            if (status === HTTP_STATUS.UNAUTHORIZED && !url.includes('/auth/')) {
+              if (!originalRequest._retryAfterRefresh) {
+                originalRequest._retryAfterRefresh = true;
+                const refreshed = await this.tryRefreshToken();
+                if (refreshed) {
+                  const token = this.getAuthToken();
+                  if (token) {
+                    originalRequest.headers.Authorization = `Bearer ${token}`;
+                  }
+                  return this.axiosInstance(originalRequest);
+                }
+              }
+              this.logout();
+              throw error;
+            }
 
-            // Retry only server-side errors (5xx)
             if (
               status >= 500 &&
               status < 600 &&
               originalRequest._retryCount < this.maxRefreshAttempts
             ) {
               originalRequest._retryCount++;
-              const delay = 1000 * originalRequest._retryCount; // 1s, 2s, 3s backoff
+              const delay = 1000 * originalRequest._retryCount;
               await new Promise(res => setTimeout(res, delay));
               return this.axiosInstance(originalRequest);
             }
@@ -71,7 +76,6 @@ class ApiClient {
             throw error;
           }
 
-          // Handle network or timeout errors
           if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
             if (originalRequest._retryCount < this.maxRefreshAttempts) {
               originalRequest._retryCount++;
@@ -94,49 +98,53 @@ class ApiClient {
     try {
       return localStorage.getItem('auth_token');
     } catch {
-      this.logout();
       return null;
     }
   }
 
-  // private async handleUnauthorized() {
-  //   try {
+  private async tryRefreshToken(): Promise<boolean> {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
 
-  //     if (this.refreshAttempts >= this.maxRefreshAttempts) {
-  //       this.logout();
-  //       throw new Error('Max refresh attempts exceeded');
-  //     }
-  //     this.refreshAttempts++;
-  //     const refreshToken = await SecureStore.getItemAsync('refresh_token');
-  //     if (!refreshToken) {
-  //       throw new Error('No refresh token available');
-  //     }
-  //     const response = await axios.post(
-  //       `${API_CONFIG.BASE_URL}/api/${API_CONFIG.API_VERSION}/auth/refresh`,
-  //       { refreshToken },
-  //       { headers: { 'Content-Type': 'application/json' } }
-  //     );
-  //     if (response.status === HTTP_STATUS.OK) {
-  //       const { accessToken } = response.data;
-  //       await SecureStore.setItemAsync('access_token', accessToken);
-  //       this.refreshAttempts = 0;
-  //     } else {
-  //       throw new Error('Refresh token invalid or expired');
-  //     }
-  //   } catch (error) {
-  //     this.logout();
-  //     throw error;
-  //   }
-  // }
+    this.refreshPromise = (async () => {
+      try {
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) return false;
+
+        const response = await axios.post<ApiResponse<AuthResponse>>(
+          `${API_CONFIG.BASE_URL}/api/${API_CONFIG.API_VERSION}${API_ENDPOINTS.AUTH.REFRESH}`,
+          { refreshToken },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+
+        if (response.data?.success && response.data.data?.token) {
+          localStorage.setItem('auth_token', response.data.data.token);
+          if (response.data.data.refreshToken) {
+            localStorage.setItem('refresh_token', response.data.data.refreshToken);
+          }
+          if (response.data.data.user) {
+            localStorage.setItem('user', JSON.stringify(response.data.data.user));
+          }
+          return true;
+        }
+        return false;
+      } catch {
+        return false;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
+  }
 
   public async logout() {
     try {
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('refresh_token');
       localStorage.removeItem('user');
-      localStorage.removeItem('farmer');
-      localStorage.removeItem('supplier');
-      localStorage.removeItem('buyer');
-      localStorage.clear();
+      localStorage.removeItem('seller');
     } catch {
     } finally {
       this.logoutListeners.forEach(callback => {
@@ -148,15 +156,11 @@ class ApiClient {
   }
 
   public onLogout(callback: () => void) {
-    try {
-      this.logoutListeners.push(callback);
-    } catch { }
+    this.logoutListeners.push(callback);
   }
 
   public removeLogoutListener(callback: () => void) {
-    try {
-      this.logoutListeners = this.logoutListeners.filter(cb => cb !== callback);
-    } catch { }
+    this.logoutListeners = this.logoutListeners.filter(cb => cb !== callback);
   }
 
   async get<T>(endpoint: string, params?: Record<string, unknown>, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
@@ -293,11 +297,9 @@ class ApiClient {
       return response.data;
     };
 
-    // Use file upload retry configuration for uploads
     return withRetry(operation, retryConfigs.fileUpload);
   }
 
-  // Convenience methods with pre-configured retry and timeout settings
   async getWithRetry<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
     return this.get(endpoint, params, { retry: retryConfigs.networkRequest });
   }

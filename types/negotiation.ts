@@ -12,7 +12,7 @@ export interface Negotiation {
     id: string;
     order: Order;
     buyerProposedPrice: number;
-    agreedPrice: number;
+    agreedPrice: number | null;
     status: NegotiationStatus;
     expiresAt: string;
     createdAt: string;

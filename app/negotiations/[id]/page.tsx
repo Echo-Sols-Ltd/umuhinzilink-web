@@ -2,7 +2,7 @@
 
 import NegotiationChat from "@/components/negotiation/NegotiationChat";
 import { useAuth } from "@/contexts/AuthContext";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useNegotiation } from "@/contexts/NegotiationContext";
 
@@ -10,7 +10,8 @@ export default function NegotiationDetailPage() {
     const { user } = useAuth()
     const { id } = useParams() as { id: string };
     const negotiationId = id;
-    const { fetchNegotiationMessages,fetchNegotiationById } = useNegotiation()
+    const { fetchNegotiationMessages, fetchNegotiationById } = useNegotiation()
+    const router = useRouter()
 
     useEffect(() => {
         const load = async () => {
@@ -28,7 +29,10 @@ export default function NegotiationDetailPage() {
 
     return (
         <div>
-            <NegotiationChat negotiationId={negotiationId} currentRole={user.role} />
+            <NegotiationChat
+                negotiationId={negotiationId}
+                currentRole={user.role}
+                onBack={() => router.back()} />
         </div>
     )
 }

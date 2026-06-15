@@ -14,7 +14,7 @@ const SellerGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (loading) return; // Still initializing — wait
 
     if (!user) {
-      router.replace('/auth/farmer');
+      router.replace('/auth/signin');
       return;
     }
 

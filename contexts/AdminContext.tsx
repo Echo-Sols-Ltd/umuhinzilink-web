@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { adminService } from '@/services/admin';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
-import { Product, User, Order, Transaction, PaginatedResponse, Wallet, UserRole, ProductStatus, OrderStatus } from '@/types';
+import { Product, User, Order, Transaction, PaginatedResponse, Wallet, UserRole, ProductStatus, isUnpaidOrder } from '@/types';
 
 interface AdminContextType {
   users: PaginatedResponse<User[]> | null;
@@ -169,7 +169,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const orderStats = {
     totalOrders: orders.length,
-    pendingCount: orders.filter(o => o.status === OrderStatus.PENDING).length,
+    pendingCount: orders.filter(o => isUnpaidOrder(o.status)).length,
     completedCount: orders.filter(o => o.status === OrderStatus.COMPLETED).length,
     cancelledCount: orders.filter(o => o.status === OrderStatus.CANCELLED).length,
   };

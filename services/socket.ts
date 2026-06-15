@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage } from '@stomp/stompjs'
-import { SocketResponse, ChatTyping, Order, NegotiationMessage, NegotiationMessageRequest } from '@/types'
+import { SocketResponse, ChatTyping, Order, NegotiationMessage, NegotiationMessageRequest, Notification } from '@/types'
 import { API_CONFIG, SOCKET_EVENTS } from './constants'
 
 class SocketService {
@@ -9,12 +9,13 @@ class SocketService {
     private onlineUserListeners: ((users: Set<string>) => void)[] = []
     private messageDeletionListeners: ((id: string) => void)[] = []
     private negotiationMessageListeners: ((message: NegotiationMessage) => void)[] = []
+    private notificationListeners: ((notification: Notification, message: string) => void)[] = []
+    private orderListeners: ((response: SocketResponse<Order>) => void)[] = []
+    private errorListeners: ((message: string) => void)[] = []
     private typingListeners: ((typing: ChatTyping) => void)[] = []
     private logoutListeners: (() => void)[] = []
     private connectionAttempts: number = 0
     private maxConnectionAttempts: number = 3
-
-    // Queue for messages sent while disconnected
     private messageQueue: { destination: string; body: string }[] = []
 
     constructor() {
@@ -41,7 +42,7 @@ class SocketService {
             onConnect: () => {
                 try {
                     this.connectionAttempts = 0
-                    this.subscribeToPublic()
+                    this.subscribeToQueues()
                     this.flushMessageQueue()
                 } catch (error) {
                     console.error('Error in onConnect handler:', error)
@@ -93,11 +94,22 @@ class SocketService {
             })
 
             if (response.ok) {
-                const data = await response.json()
-                localStorage.setItem("auth_token", data.accessToken)
-                await this.stompClient.deactivate()
-                this.stompClient.activate()
-                this.connectionAttempts = 0
+                const payload = await response.json()
+                const tokens = payload?.data
+                if (tokens?.token) {
+                    localStorage.setItem("auth_token", tokens.token)
+                    if (tokens.refreshToken) {
+                        localStorage.setItem("refresh_token", tokens.refreshToken)
+                    }
+                    if (tokens.user) {
+                        localStorage.setItem("user", JSON.stringify(tokens.user))
+                    }
+                    await this.stompClient.deactivate()
+                    this.stompClient.activate()
+                    this.connectionAttempts = 0
+                } else {
+                    throw new Error('Refresh token invalid or expired')
+                }
             } else {
                 throw new Error('Refresh token invalid or expired')
             }
@@ -148,11 +160,12 @@ class SocketService {
             this.logout()
             return
         }
-        this.stompClient.activate()
+        if (!this.stompClient.active) {
+            this.stompClient.activate()
+        }
     }
 
     public async disconnect() {
-
         await this.stompClient.deactivate()
         this.onlineUsers = new Set()
         this.onlineUserListeners.forEach(cb => cb(new Set()))
@@ -162,23 +175,54 @@ class SocketService {
         return this.stompClient?.connected || false
     }
 
-    private subscribeToPublic() {
+    private subscribeToQueues() {
         try {
-
             this.stompClient.subscribe('/topic/onlineUsers', (msg) => this.handleOnlineUsers(msg))
             this.stompClient.subscribe('/user/queue/typing', (msg) => this.handleTyping(msg))
             this.stompClient.subscribe('/user/queue/negotiation', (msg) => this.handleNegotiationMessage(msg))
+            this.stompClient.subscribe('/user/queue/notifications', (msg) => this.handleNotification(msg))
+            this.stompClient.subscribe('/user/queue/orders', (msg) => this.handleOrderUpdate(msg))
+            this.stompClient.subscribe('/user/queue/errors', (msg) => this.handleSocketError(msg))
         } catch (error) {
-            console.error('Error subscribing to topics:', error)
+            console.error('Error subscribing to queues:', error)
         }
     }
-    private handleNegotiationMessage(message: IMessage) {
+
+    private parseBody<T>(message: IMessage): SocketResponse<T> | null {
         try {
-            const body = JSON.parse(message.body) as SocketResponse<NegotiationMessage>
-            this.negotiationMessageListeners.forEach(cb => cb(body.data!))
+            return JSON.parse(message.body) as SocketResponse<T>
         } catch (error) {
-            console.error('Failed to parse negotiation message:', error)
+            console.error('Failed to parse socket message:', error)
+            return null
         }
+    }
+
+    private handleNegotiationMessage(message: IMessage) {
+        const body = this.parseBody<NegotiationMessage>(message)
+        if (body?.data) {
+            this.negotiationMessageListeners.forEach(cb => cb(body.data!))
+        }
+    }
+
+    private handleNotification(message: IMessage) {
+        const body = this.parseBody<Notification>(message)
+        if (body?.data) {
+            const notification = { ...body.data, id: String(body.data.id) }
+            this.notificationListeners.forEach(cb => cb(notification, body.message || notification.title))
+        }
+    }
+
+    private handleOrderUpdate(message: IMessage) {
+        const body = this.parseBody<Order>(message)
+        if (body) {
+            this.orderListeners.forEach(cb => cb(body))
+        }
+    }
+
+    private handleSocketError(message: IMessage) {
+        const body = this.parseBody<unknown>(message)
+        const errorMessage = body?.message || 'Something went wrong'
+        this.errorListeners.forEach(cb => cb(errorMessage))
     }
 
     public sendNegotiationMessage(message: NegotiationMessageRequest) {
@@ -197,18 +241,15 @@ class SocketService {
     }
 
     private handleTyping(message: IMessage) {
-        try {
-            const body = JSON.parse(message.body) as SocketResponse<ChatTyping>
+        const body = this.parseBody<ChatTyping>(message)
+        if (body?.data) {
             this.typingListeners.forEach(cb => cb(body.data!))
-        } catch (error) {
-            console.error('Failed to parse typing:', error)
         }
     }
 
     private enqueueOrPublish(destination: string, body: string) {
         if (!this.stompClient.connected) {
             this.messageQueue.push({ destination, body })
-            // Automatically try to connect if we aren't already
             if (localStorage.getItem("auth_token")) {
                 this.connect()
             }
@@ -233,38 +274,51 @@ class SocketService {
 
     public onOnlineUsersChange(callback: (users: Set<string>) => void) {
         this.onlineUserListeners.push(callback)
+        return () => { this.onlineUserListeners = this.onlineUserListeners.filter(cb => cb !== callback) }
+    }
+
+    public onNegotiationMessage(callback: (message: NegotiationMessage) => void) {
+        this.negotiationMessageListeners.push(callback)
+        return () => { this.negotiationMessageListeners = this.negotiationMessageListeners.filter(cb => cb !== callback) }
+    }
+
+    public onNotification(callback: (notification: Notification, message: string) => void) {
+        this.notificationListeners.push(callback)
+        return () => { this.notificationListeners = this.notificationListeners.filter(cb => cb !== callback) }
+    }
+
+    public onOrderUpdate(callback: (response: SocketResponse<Order>) => void) {
+        this.orderListeners.push(callback)
+        return () => { this.orderListeners = this.orderListeners.filter(cb => cb !== callback) }
+    }
+
+    public onSocketError(callback: (message: string) => void) {
+        this.errorListeners.push(callback)
+        return () => { this.errorListeners = this.errorListeners.filter(cb => cb !== callback) }
+    }
+
+    public onMessageDeletion(callback: (id: string) => void) {
+        this.messageDeletionListeners.push(callback)
+        return () => { this.messageDeletionListeners = this.messageDeletionListeners.filter(cb => cb !== callback) }
+    }
+
+    public onTyping(callback: (typing: ChatTyping) => void) {
+        this.typingListeners.push(callback)
+        return () => { this.typingListeners = this.typingListeners.filter(cb => cb !== callback) }
+    }
+
+    /** @deprecated use unsubscribe return from on* methods */
+    public removeNegotiationMessageListener(callback: (message: NegotiationMessage) => void) {
+        this.negotiationMessageListeners = this.negotiationMessageListeners.filter(cb => cb !== callback)
     }
 
     public removeOnlineUsersListener(callback: (users: Set<string>) => void) {
         this.onlineUserListeners = this.onlineUserListeners.filter(cb => cb !== callback)
     }
 
-    public onNegotiationMessage(callback: (message: NegotiationMessage) => void) {
-        this.negotiationMessageListeners.push(callback)
-    }
-
-    public removeNegotiationMessageListener(callback: (message: NegotiationMessage) => void) {
-        this.negotiationMessageListeners = this.negotiationMessageListeners.filter(cb => cb !== callback)
-    }
-
-    public onMessageDeletion(callback: (id: string) => void) {
-        this.messageDeletionListeners.push(callback)
-    }
-
-    public removeMessageDeletionListener(callback: (id: string) => void) {
-        this.messageDeletionListeners = this.messageDeletionListeners.filter(cb => cb !== callback)
-    }
-
-
-    public onTyping(callback: (typing: ChatTyping) => void) {
-        this.typingListeners.push(callback)
-    }
-
     public removeTypingListener(callback: (typing: ChatTyping) => void) {
         this.typingListeners = this.typingListeners.filter(cb => cb !== callback)
     }
-
-
 }
 
 export const socketService = new SocketService()

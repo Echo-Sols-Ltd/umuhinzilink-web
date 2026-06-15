@@ -8,6 +8,11 @@ export interface LoginRequest {
 export interface AuthResponse {
   user: User;
   token: string;
+  refreshToken?: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
 }
 
 export interface AskOtpRequest {
@@ -21,8 +26,14 @@ export interface VerifyOtpRequest {
 
 export interface GoogleAuthRequest {
   token: string;
+  role?: string;
 }
 
 export interface ResetPasswordRequest {
+  code: string;
   newPassword: string
+}
+
+export interface ForgotPasswordRequest {
+  email: string
 }

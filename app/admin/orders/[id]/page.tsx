@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
-import { Order, UserRole } from '@/types';
+import { Order, UserRole, isPaidOrder } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -28,12 +28,11 @@ export default function AdminOrderDetailPage() {
     const router = useRouter();
     const { user } = useAuth();
     const {
-        buyingOrders,
-        sellingOrders,
+        orders,
         currentOrder,
         setCurrentOrder,
         fetchBuyingOrders,
-        fetchSellingOrders
+        fetchSellingOrders,
     } = useOrder();
     const { toast: showToast } = useToast();
     const [loading, setLoading] = useState(false);
@@ -48,7 +47,7 @@ export default function AdminOrderDetailPage() {
             setError(null);
 
             try {
-                let foundOrder = buyingOrders?.find((o: Order) => o.id === orderId) || sellingOrders?.find((o: Order) => o.id === orderId);
+                let foundOrder = orders?.find((o: Order) => o.id === orderId);
 
                 if (!foundOrder && currentOrder?.id === orderId) {
                     foundOrder = currentOrder;
@@ -86,7 +85,7 @@ export default function AdminOrderDetailPage() {
         if (orderId) {
             loadOrder();
         }
-    }, [orderId, buyingOrders, sellingOrders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, showToast]);
+    }, [orderId, orders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, showToast]);
 
     // Get current order based on type
     const getCurrentOrder = () => {
@@ -318,8 +317,8 @@ export default function AdminOrderDetailPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Payment Status</p>
-                                    <Badge className={order.status === 'CONFIRMED' ? 'text-success bg-success/10' : 'text-destructive bg-destructive/10'}>
-                                        {order.status === 'CONFIRMED' ? 'Paid' : 'Unpaid'}
+                                    <Badge className={isPaidOrder(order.status) ? 'text-success bg-success/10' : 'text-destructive bg-destructive/10'}>
+                                        {isPaidOrder(order.status) ? 'Paid' : 'Unpaid'}
                                     </Badge>
                                 </div>
                             </CardContent>

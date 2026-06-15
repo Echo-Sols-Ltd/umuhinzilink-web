@@ -3,7 +3,9 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Notification, NotificationFilter, NotificationType } from '@/types';
 import { notificationService } from '@/services/notification';
+import { socketService } from '@/services/socket';
 import { useAuth } from './AuthContext';
+import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 import { notify } from '@/lib/notify';
 
 interface NotificationContextType {
@@ -35,6 +37,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const { user } = useAuth();
+    const { showNotification } = useBrowserNotification();
 
     const fetchNotifications = useCallback(async (filter?: NotificationFilter & { page?: number; size?: number }) => {
         if (!user) return;
@@ -42,10 +45,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         try {
             const response = await notificationService.getNotifications(filter);
             if (response.success && response.data) {
-                // Support both direct array and nested paginated data structures
                 const data = response.data || [];
-
-
                 const normalizedNotifications = data.map((n) => ({
                     ...n,
                     id: String(n.id)
@@ -54,7 +54,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 setTotalElements(data.length);
                 setTotalPages(1);
                 setCurrentPage(0);
-
             }
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
@@ -126,6 +125,31 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             setNotifications([]);
         }
     }, [user, fetchNotifications]);
+
+    // Real-time notifications via WebSocket
+    useEffect(() => {
+        if (!user) return;
+
+        const unsubscribe = socketService.onNotification((incoming, wsMessage) => {
+            setNotifications(prev => {
+                const exists = prev.some(n => n.id === incoming.id);
+                if (exists) return prev;
+                return [incoming, ...prev];
+            });
+
+            const title = incoming.title || wsMessage;
+            const body = incoming.message || wsMessage;
+            notify.info(body, title);
+            showNotification({
+                type: incoming.type === NotificationType.NEGOTIATION ? 'message' : 'order',
+                title,
+                body,
+                onClick: () => { window.location.href = '/notifications'; },
+            });
+        });
+
+        return unsubscribe;
+    }, [user, showNotification]);
 
     const unreadCount = (Array.isArray(notifications) ? notifications : []).filter(n => n && !n.isRead).length;
     const productNotifications = notifications.filter(n => n.type === NotificationType.PRODUCT)

@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { orderService } from '@/services/orders';
-import { Order, OrderStatus, Product, SocketResponse, UserRole } from '@/types';
+import { Order, OrderStatus, Product, UserRole, isUnpaidOrder } from '@/types';
 import { useAuth } from './AuthContext';
 import { useProduct } from './ProductContext';
-import { useSocket } from './SocketContext';
+import { socketService } from '@/services/socket';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 
 type OrderContextValue = {
@@ -47,8 +47,8 @@ const OrderContext = createContext<OrderContextValue | undefined>(undefined);
 export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { updateProductState } = useProduct();
-  const socket = useSocket()
-  const { isEnabled, showNotification } = useBrowserNotification();
+  const { showNotification } = useBrowserNotification();
+  const currentOrderIdRef = useRef<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
@@ -59,6 +59,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    currentOrderIdRef.current = currentOrder?.id ?? null;
+  }, [currentOrder?.id]);
 
   const fetchBuyingOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
@@ -125,88 +129,46 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   };
 
 
-  // Helper to update socket orders
-  const handleOrderChange = useCallback((order: Order) => {
-    const orderId = order.id;
-    const updater = (prev: Order[]) => {
-      if (!prev) return prev;
-      return prev.map(o => o.id === orderId ? order : o);
-    };
+  // Real-time order updates via WebSocket
+  useEffect(() => {
+    if (!user) return;
 
-    setOrders(updater);
+    const ordersPath = '/orders';
 
-    if (currentOrder?.id === orderId) setCurrentOrder(order);
-  }, [currentOrder]);
+    const unsubscribe = socketService.onOrderUpdate((response) => {
+      const data = response.data;
+      if (!data) return;
 
+      setOrders(prev => {
+        const list = prev ?? [];
+        const exists = list.some(o => o.id === data.id);
+        if (exists) return list.map(o => (o.id === data.id ? data : o));
+        return [data, ...list];
+      });
 
-  // Socket event handlers
-  const handleNewOrder = useCallback((response: SocketResponse<Order>) => {
-    // Add null check to prevent undefined errors
-    const data = response.data
-    if (!data) {
-      console.error('Order change data is undefined');
-      return;
-    }
+      if (currentOrderIdRef.current === data.id) {
+        setCurrentOrder(data);
+      }
 
-    // Show notification for new order
-    showNotification({
-      type: 'order',
-      title: 'New Order Received',
-      body: response.message,
-      icon: data.product.image,
-      onClick: () => {
-        // Navigate to orders page
-        window.location.href = '/farmer/orders';
-      },
-    });
+      if (data.product?.id) {
+        updateProductState(data.product.id, data.product);
+      }
 
-    // Notify triggers in-app notification context automatically from showNotification
-
-    // For new orders, we need to refresh appropriate list since we don't have full order data
-    // This is a limitation of the current socket event structure
-    // In a real implementation, you might want to fetch the full order or have the socket send complete order data
-    fetchBuyingOrders();
-    fetchSellingOrders();
-  }, [isEnabled, showNotification, fetchBuyingOrders, fetchSellingOrders]);
-
-  const handleOrderStatusChange = useCallback((response: SocketResponse<Order>) => {
-    const data = response.data;
-    if (!data) return;
-
-    if (isEnabled) {
       showNotification({
         type: 'order',
-        title: 'Order Status Updated',
-        body: response.message,
-        icon: '/icons/order.svg',
-        onClick: () => {
-          window.location.href = '/farmer/orders';
-        },
+        title: response.message || 'Order update',
+        body: response.message || `Order for ${data.product?.name ?? 'product'} updated`,
+        icon: data.product?.image,
+        onClick: () => { window.location.href = ordersPath; },
       });
-    }
-    handleOrderChange(data);
-  }, [isEnabled, showNotification, handleOrderChange]); const handleOrderDeliveryChange = useCallback((response: SocketResponse<Order>) => {
-    const data = response.data;
-    if (!data) return;
-
-    showNotification({
-      type: 'delivery',
-      title: 'Delivery Status Updated',
-      body: `Your order delivery was updated`,
-      icon: '/icons/delivery.svg',
-      onClick: () => {
-        window.location.href = '/farmer/delivery';
-      },
     });
 
-    handleOrderChange(data);
-  }, [showNotification, handleOrderChange]);
-
-
+    return unsubscribe;
+  }, [user, updateProductState, showNotification]);
 
   // 🔹 Derived Orders
   const pendingBuyingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.PENDING) || [],
+    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
     [orders]
   );
   const completedBuyingOrders = useMemo(
@@ -218,12 +180,12 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     [orders]
   );
   const activeBuyingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.CONFIRMED) || [],
+    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
     [orders]
   );
 
   const pendingSellingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.PENDING) || [],
+    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
     [orders]
   );
   const completedSellingOrders = useMemo(
@@ -235,7 +197,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     [orders]
   );
   const activeSellingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.CONFIRMED) || [],
+    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
     [orders]
   );
 

@@ -1,28 +1,31 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import {
     Package, Eye, CheckCircle, XCircle,
     AlertCircle, Clock, TrendingUp, Wallet,
-    Sprout, ChevronRight, User, Filter,
+    Sprout, ChevronRight, User, Filter, CreditCard,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
-import { OrderStatus, Order } from '@/types';
+import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import { OrderStatus, Order, UserRole, isUnpaidOrder } from '@/types';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const ITEMS_PER_PAGE = 10;
 
-const STATUS_CONFIG: Record<OrderStatus, { label: string; icon: React.ElementType; cls: string; dot: string }> = {
-    PENDING: { label: 'Pending', icon: AlertCircle, cls: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400', dot: 'bg-amber-500' },
-    CONFIRMED: { label: 'Confirmed', icon: CheckCircle, cls: 'text-blue-600  bg-blue-50  dark:bg-blue-950/30  dark:text-blue-400', dot: 'bg-blue-500' },
-    COMPLETED: { label: 'Completed', icon: CheckCircle, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400', dot: 'bg-emerald-500' },
+const STATUS_CONFIG: Partial<Record<OrderStatus, { label: string; icon: React.ElementType; cls: string; dot: string }>> = {
+    PENDING_PAYMENT: { label: 'Pending payment', icon: AlertCircle, cls: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400', dot: 'bg-amber-500' },
+    PENDING: { label: 'Pending payment', icon: AlertCircle, cls: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400', dot: 'bg-amber-500' },
+    COMPLETED: { label: 'Paid', icon: CheckCircle, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400', dot: 'bg-emerald-500' },
+    CONFIRMED: { label: 'Paid', icon: CheckCircle, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400', dot: 'bg-emerald-500' },
     CANCELLED: { label: 'Cancelled', icon: XCircle, cls: 'text-red-500   bg-red-50    dark:bg-red-950/30    dark:text-red-400', dot: 'bg-red-500' },
 };
+
+const DEFAULT_STATUS = STATUS_CONFIG.PENDING_PAYMENT!;
 
 function fmt(n: number) {
     return new Intl.NumberFormat('rw-RW').format(n) + ' RWF';
@@ -52,7 +55,7 @@ function StatCard({ label, value, sub, icon: Icon, accent }: {
 }
 
 function StatusBadge({ status }: { status: OrderStatus }) {
-    const { label, icon: Icon, cls } = STATUS_CONFIG[status] ?? STATUS_CONFIG.PENDING;
+    const { label, icon: Icon, cls } = STATUS_CONFIG[status] ?? DEFAULT_STATUS;
     return (
         <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${cls}`}>
             <Icon size={10} /> {label}
@@ -74,42 +77,79 @@ function SkeletonRow() {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-export default function SellerOrdersPage() {
-    const router = useRouter();
+export default function OrdersPage() {
     const { user } = useAuth();
+    const isSeller = user?.role === UserRole.SELLER;
     const {
         orders,
         loading,
         fetchBuyingOrders,
+        fetchSellingOrders,
         ordersTotalPages: totalPages,
         ordersTotalElements: totalElements,
     } = useOrder();
-    const { loading: actionLoading } = useOrderAction();
+    const { loading: actionLoading, payOrder, cancelOrder } = useOrderAction();
 
     const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>('ALL');
     const [page, setPage] = useState(1);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [modalOpen, setModalOpen] = useState(false);
+
+    const fetchOrders = useCallback((pageIndex: number) => {
+        if (isSeller) {
+            return fetchSellingOrders(pageIndex, ITEMS_PER_PAGE);
+        }
+        return fetchBuyingOrders(pageIndex, ITEMS_PER_PAGE);
+    }, [isSeller, fetchBuyingOrders, fetchSellingOrders]);
 
     useEffect(() => {
-        fetchBuyingOrders(page - 1, ITEMS_PER_PAGE);
-    }, [page]);
+        if (!user) return;
+        fetchOrders(page - 1);
+    }, [page, user, fetchOrders]);
 
     useEffect(() => {
         setPage(1);
-    }, [statusFilter]);
+    }, [statusFilter, isSeller]);
+
+    const handleOpenOrder = (order: Order) => {
+        setSelectedOrder(order);
+        setModalOpen(true);
+    };
+
+    const handlePay = async (order: Order) => {
+        const paid = await payOrder(order.id);
+        if (paid) {
+            await fetchOrders(page - 1);
+            setModalOpen(false);
+        }
+    };
+
+    const handleCancel = async (id: string) => {
+        const cancelled = await cancelOrder(id);
+        if (cancelled) {
+            await fetchOrders(page - 1);
+            setModalOpen(false);
+        }
+    };
 
     // ── Metrics ───────────────────────────────────────────────────────────
 
     const metrics = useMemo(() => ({
         total: totalElements ?? orders.length,
-        revenue: orders.filter(o => o.status === 'COMPLETED').reduce((s, o) => s + o.totalPrice, 0),
-        pending: orders.filter(o => o.status === 'PENDING').length,
+        revenue: isSeller
+            ? orders.filter(o => o.status === 'COMPLETED').reduce((s, o) => s + o.totalPrice, 0)
+            : orders.filter(o => o.status === 'COMPLETED').reduce((s, o) => s + o.totalPrice, 0),
+        pending: orders.filter(o => isUnpaidOrder(o.status)).length,
         completed: orders.filter(o => o.status === 'COMPLETED').length,
-    }), [orders, totalElements]);
+    }), [orders, totalElements, isSeller]);
 
-    const filtered = useMemo(() =>
-        statusFilter === 'ALL' ? orders : orders.filter(o => o.status === statusFilter),
-        [orders, statusFilter]
-    );
+    const filtered = useMemo(() => {
+        if (statusFilter === 'ALL') return orders;
+        if (statusFilter === OrderStatus.PENDING_PAYMENT) {
+            return orders.filter(o => isUnpaidOrder(o.status));
+        }
+        return orders.filter(o => o.status === statusFilter);
+    }, [orders, statusFilter]);
 
 
     return (
@@ -133,23 +173,28 @@ export default function SellerOrdersPage() {
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <StatCard icon={Package} label="Total orders" value={metrics.total} accent />
-                    <StatCard icon={TrendingUp} label="Revenue" value={fmt(metrics.revenue)} sub="completed only" />
-                    <StatCard icon={AlertCircle} label="Pending" value={metrics.pending} sub="need action" />
+                    <StatCard
+                        icon={isSeller ? TrendingUp : Wallet}
+                        label={isSeller ? 'Revenue' : 'Total spent'}
+                        value={fmt(metrics.revenue)}
+                        sub="completed only"
+                    />
+                    <StatCard icon={AlertCircle} label="Pending payment" value={metrics.pending} sub="awaiting payment" />
                     <StatCard icon={CheckCircle} label="Completed" value={metrics.completed} />
                 </div>
 
                 {/* Toolbar */}
                 <div className="flex items-center gap-2 flex-wrap">
                     <Filter size={14} className="text-muted-foreground" />
-                    {(['ALL', 'PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'] as const).map(s => (
+                    {(['ALL', 'PENDING_PAYMENT', 'COMPLETED', 'CANCELLED'] as const).map(s => (
                         <button
                             key={s}
-                            onClick={() => setStatusFilter(s as OrderStatus)}
+                            onClick={() => setStatusFilter(s === 'ALL' ? 'ALL' : s as OrderStatus)}
                             className={`h-8 px-3 text-xs font-semibold rounded-xl border transition-colors ${statusFilter === s
                                 ? 'bg-green-600 border-green-600 text-white'
                                 : 'bg-white dark:bg-gray-900 border-border text-muted-foreground hover:text-foreground'
                                 }`}>
-                            {s === 'ALL' ? 'All' : STATUS_CONFIG[s].label}
+                            {s === 'ALL' ? 'All' : s === 'PENDING_PAYMENT' ? 'Pending payment' : STATUS_CONFIG[s]?.label ?? s}
                         </button>
                     ))}
                     {statusFilter !== 'ALL' && (
@@ -183,7 +228,9 @@ export default function SellerOrdersPage() {
                                             <p className="text-xs text-muted-foreground mt-1">
                                                 {statusFilter !== 'ALL'
                                                     ? 'Try a different filter'
-                                                    : 'Orders will appear here when buyers place them'}
+                                                    : isSeller
+                                                        ? 'Orders will appear here when buyers place them'
+                                                        : 'Your orders will appear here after you buy'}
                                             </p>
                                         </td>
                                     </tr>
@@ -249,10 +296,25 @@ export default function SellerOrdersPage() {
                                         {/* Actions */}
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                {user?.role === UserRole.BUYER && isUnpaidOrder(order.status) && (
+                                                    <button
+                                                        onClick={() => handlePay(order)}
+                                                        disabled={actionLoading}
+                                                        title="Pay now"
+                                                        className="w-7 h-7 flex items-center justify-center rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors">
+                                                        <CreditCard size={14} />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => handleOpenOrder(order)}
+                                                    title="View details"
+                                                    className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                                    <Eye size={14} />
+                                                </button>
                                                 <Link
                                                     href={`/orders/${order.id}`}
                                                     className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                                                    <Eye size={14} />
+                                                    <ChevronRight size={14} />
                                                 </Link>
                                             </div>
                                         </td>
@@ -301,6 +363,15 @@ export default function SellerOrdersPage() {
                 </div>
 
             </main>
+
+            <OrderDetailsModal
+                order={selectedOrder}
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onPay={user?.role === UserRole.BUYER ? handlePay : undefined}
+                onCancel={handleCancel}
+                loading={actionLoading}
+            />
         </div>
     );
 }

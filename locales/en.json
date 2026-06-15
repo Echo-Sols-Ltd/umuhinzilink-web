@@ -79,7 +79,7 @@
   },
   "orders": {
     "created": {
-      "success": "Order created successfully. Initiating payment...",
+      "success": "Order created successfully.",
       "error": "Failed to create order."
     },
     "statusUpdated": {

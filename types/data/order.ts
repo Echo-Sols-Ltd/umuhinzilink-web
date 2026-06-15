@@ -2,10 +2,9 @@ import { OrderStatus, PaymentMethod } from '../order';
 
 // Order status options for UI components
 export const orderStatusOptions = [
-  { label: 'PENDING', value: OrderStatus.PENDING },
+  { label: 'PENDING PAYMENT', value: OrderStatus.PENDING_PAYMENT },
   { label: 'COMPLETED', value: OrderStatus.COMPLETED },
   { label: 'CANCELLED', value: OrderStatus.CANCELLED },
-  { label: 'CONFIRMED', value: OrderStatus.CONFIRMED },
 ];
 
 export const paymentMethodOptions = [

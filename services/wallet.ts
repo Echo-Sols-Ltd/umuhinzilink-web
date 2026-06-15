@@ -26,19 +26,35 @@ class WalletService {
   }
 
   // Pay for order using wallet
-  async payOrder(request: WalletPaymentRequest): Promise<ApiResponse<Transaction>> {
-    return await apiClient.post<ApiResponse<Transaction>>(API_ENDPOINTS.WALLET.PAY_ORDER, request, {
-      timeout: 30000,
-    });
+  async payOrder(orderId: string): Promise<ApiResponse<unknown>> {
+    return await apiClient.post<ApiResponse<unknown>>(
+      `${API_ENDPOINTS.PAYMENT.PAY}?orderId=${orderId}`,
+      undefined,
+      { timeout: 30000 }
+    );
   }
 
 
-  // Get transaction by ID
+  // Get my transaction history (paginated)
+  async getMyTransactions(params?: {
+    page?: number;
+    size?: number;
+    sortBy?: string;
+    sortDir?: string;
+  }): Promise<PaginatedResponse<Transaction[]>> {
+    const queryParams = new URLSearchParams();
+    queryParams.append('page', String(params?.page ?? 0));
+    queryParams.append('size', String(params?.size ?? 50));
+    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
+
+    const url = `${API_ENDPOINTS.WALLET.TRANSACTIONS}?${queryParams.toString()}`;
+    return await apiClient.get<PaginatedResponse<Transaction[]>>(url);
+  }
+
   async getTransactionById(transactionId: string): Promise<ApiResponse<Transaction>> {
     return await apiClient.get<ApiResponse<Transaction>>(API_ENDPOINTS.WALLET.TRANSACTION_BY_ID(transactionId));
   }
-
-
 
   // Admin: Get all wallets (paginated)
   async getAllWallets(params?: {

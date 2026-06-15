@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { notify } from '@/lib/notify';
 import { authService } from '@/services/auth';
 import { useI18n } from '@/contexts/I18nContext';
+import { ForgotPasswordRequest } from '@/types';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -23,7 +24,14 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-    
+      const data:ForgotPasswordRequest={
+        email
+      }
+      const res = await authService.forgotPassword(data);
+      if (!res.success) {
+        notify.error(res.message || t('auth.forgotPassword.toast.resetCodeFailed.body'), t('common.error'));
+        return;
+      }
       setSubmitted(true);
       notify.success(t('auth.forgotPassword.toast.resetCodeSent.body'), t('auth.forgotPassword.toast.resetCodeSent.title'));
     } catch (error: any) {
@@ -43,10 +51,7 @@ export default function ForgotPasswordPage() {
             </div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">{t('auth.forgotPassword.submitted.title')}</h2>
             <p className="text-gray-600 mb-6">
-              {t('auth.forgotPassword.submitted.description', { email })}
-              <Link href={`/reset-password?email=${encodeURIComponent(email)}`} className="text-green-600 font-semibold hover:text-green-700 block mt-2">
-                {t('auth.forgotPassword.submitted.cta')}
-              </Link>
+              If an account exists for <strong>{email}</strong>, we sent a password reset link. Check your inbox and spam folder.
             </p>
             <Button
               onClick={() => router.push('/auth/signin')}
