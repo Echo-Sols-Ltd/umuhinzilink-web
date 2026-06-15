@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import {
     Package, Eye, CheckCircle, XCircle,
     AlertCircle, Clock, TrendingUp, Wallet,
-    Sprout, ChevronRight, User, Filter,
+    Sprout, ChevronRight, User, Filter, CreditCard,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
-import { OrderStatus, Order, isUnpaidOrder, isPaidOrder, getOrderStatusLabel } from '@/types';
+import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
+import { OrderStatus, Order, UserRole, isUnpaidOrder } from '@/types';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -77,37 +77,71 @@ function SkeletonRow() {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-export default function SellerOrdersPage() {
-    const router = useRouter();
+export default function OrdersPage() {
     const { user } = useAuth();
+    const isSeller = user?.role === UserRole.SELLER;
     const {
         orders,
         loading,
         fetchBuyingOrders,
+        fetchSellingOrders,
         ordersTotalPages: totalPages,
         ordersTotalElements: totalElements,
     } = useOrder();
-    const { loading: actionLoading } = useOrderAction();
+    const { loading: actionLoading, payOrder, cancelOrder } = useOrderAction();
 
     const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>('ALL');
     const [page, setPage] = useState(1);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [modalOpen, setModalOpen] = useState(false);
+
+    const fetchOrders = useCallback((pageIndex: number) => {
+        if (isSeller) {
+            return fetchSellingOrders(pageIndex, ITEMS_PER_PAGE);
+        }
+        return fetchBuyingOrders(pageIndex, ITEMS_PER_PAGE);
+    }, [isSeller, fetchBuyingOrders, fetchSellingOrders]);
 
     useEffect(() => {
-        fetchBuyingOrders(page - 1, ITEMS_PER_PAGE);
-    }, [page]);
+        if (!user) return;
+        fetchOrders(page - 1);
+    }, [page, user, fetchOrders]);
 
     useEffect(() => {
         setPage(1);
-    }, [statusFilter]);
+    }, [statusFilter, isSeller]);
+
+    const handleOpenOrder = (order: Order) => {
+        setSelectedOrder(order);
+        setModalOpen(true);
+    };
+
+    const handlePay = async (order: Order) => {
+        const paid = await payOrder(order.id);
+        if (paid) {
+            await fetchOrders(page - 1);
+            setModalOpen(false);
+        }
+    };
+
+    const handleCancel = async (id: string) => {
+        const cancelled = await cancelOrder(id);
+        if (cancelled) {
+            await fetchOrders(page - 1);
+            setModalOpen(false);
+        }
+    };
 
     // ── Metrics ───────────────────────────────────────────────────────────
 
     const metrics = useMemo(() => ({
         total: totalElements ?? orders.length,
-        revenue: orders.filter(o => o.status === 'COMPLETED').reduce((s, o) => s + o.totalPrice, 0),
+        revenue: isSeller
+            ? orders.filter(o => o.status === 'COMPLETED').reduce((s, o) => s + o.totalPrice, 0)
+            : orders.filter(o => o.status === 'COMPLETED').reduce((s, o) => s + o.totalPrice, 0),
         pending: orders.filter(o => isUnpaidOrder(o.status)).length,
         completed: orders.filter(o => o.status === 'COMPLETED').length,
-    }), [orders, totalElements]);
+    }), [orders, totalElements, isSeller]);
 
     const filtered = useMemo(() => {
         if (statusFilter === 'ALL') return orders;
@@ -139,7 +173,12 @@ export default function SellerOrdersPage() {
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <StatCard icon={Package} label="Total orders" value={metrics.total} accent />
-                    <StatCard icon={TrendingUp} label="Revenue" value={fmt(metrics.revenue)} sub="completed only" />
+                    <StatCard
+                        icon={isSeller ? TrendingUp : Wallet}
+                        label={isSeller ? 'Revenue' : 'Total spent'}
+                        value={fmt(metrics.revenue)}
+                        sub="completed only"
+                    />
                     <StatCard icon={AlertCircle} label="Pending payment" value={metrics.pending} sub="awaiting payment" />
                     <StatCard icon={CheckCircle} label="Completed" value={metrics.completed} />
                 </div>
@@ -189,7 +228,9 @@ export default function SellerOrdersPage() {
                                             <p className="text-xs text-muted-foreground mt-1">
                                                 {statusFilter !== 'ALL'
                                                     ? 'Try a different filter'
-                                                    : 'Orders will appear here when buyers place them'}
+                                                    : isSeller
+                                                        ? 'Orders will appear here when buyers place them'
+                                                        : 'Your orders will appear here after you buy'}
                                             </p>
                                         </td>
                                     </tr>
@@ -255,10 +296,25 @@ export default function SellerOrdersPage() {
                                         {/* Actions */}
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                {user?.role === UserRole.BUYER && isUnpaidOrder(order.status) && (
+                                                    <button
+                                                        onClick={() => handlePay(order)}
+                                                        disabled={actionLoading}
+                                                        title="Pay now"
+                                                        className="w-7 h-7 flex items-center justify-center rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors">
+                                                        <CreditCard size={14} />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => handleOpenOrder(order)}
+                                                    title="View details"
+                                                    className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                                    <Eye size={14} />
+                                                </button>
                                                 <Link
                                                     href={`/orders/${order.id}`}
                                                     className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                                                    <Eye size={14} />
+                                                    <ChevronRight size={14} />
                                                 </Link>
                                             </div>
                                         </td>
@@ -307,6 +363,15 @@ export default function SellerOrdersPage() {
                 </div>
 
             </main>
+
+            <OrderDetailsModal
+                order={selectedOrder}
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onPay={user?.role === UserRole.BUYER ? handlePay : undefined}
+                onCancel={handleCancel}
+                loading={actionLoading}
+            />
         </div>
     );
 }

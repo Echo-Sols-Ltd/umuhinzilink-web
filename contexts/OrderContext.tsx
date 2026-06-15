@@ -133,7 +133,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user) return;
 
-    const ordersPath = user.role === UserRole.SELLER ? '/farmer/orders' : '/orders';
+    const ordersPath = '/orders';
 
     const unsubscribe = socketService.onOrderUpdate((response) => {
       const data = response.data;
@@ -180,7 +180,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     [orders]
   );
   const activeBuyingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
+    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
     [orders]
   );
 
@@ -197,7 +197,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     [orders]
   );
   const activeSellingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
+    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
     [orders]
   );
 

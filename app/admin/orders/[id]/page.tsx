@@ -28,12 +28,11 @@ export default function AdminOrderDetailPage() {
     const router = useRouter();
     const { user } = useAuth();
     const {
-        buyingOrders,
-        sellingOrders,
+        orders,
         currentOrder,
         setCurrentOrder,
         fetchBuyingOrders,
-        fetchSellingOrders
+        fetchSellingOrders,
     } = useOrder();
     const { toast: showToast } = useToast();
     const [loading, setLoading] = useState(false);
@@ -48,7 +47,7 @@ export default function AdminOrderDetailPage() {
             setError(null);
 
             try {
-                let foundOrder = buyingOrders?.find((o: Order) => o.id === orderId) || sellingOrders?.find((o: Order) => o.id === orderId);
+                let foundOrder = orders?.find((o: Order) => o.id === orderId);
 
                 if (!foundOrder && currentOrder?.id === orderId) {
                     foundOrder = currentOrder;
@@ -86,7 +85,7 @@ export default function AdminOrderDetailPage() {
         if (orderId) {
             loadOrder();
         }
-    }, [orderId, buyingOrders, sellingOrders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, showToast]);
+    }, [orderId, orders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, showToast]);
 
     // Get current order based on type
     const getCurrentOrder = () => {
