@@ -26,10 +26,12 @@ class WalletService {
   }
 
   // Pay for order using wallet
-  async payOrder(request: WalletPaymentRequest): Promise<ApiResponse<Transaction>> {
-    return await apiClient.post<ApiResponse<Transaction>>(API_ENDPOINTS.WALLET.PAY_ORDER, request, {
-      timeout: 30000,
-    });
+  async payOrder(orderId: string): Promise<ApiResponse<unknown>> {
+    return await apiClient.post<ApiResponse<unknown>>(
+      `${API_ENDPOINTS.PAYMENT.PAY}?orderId=${orderId}`,
+      undefined,
+      { timeout: 30000 }
+    );
   }
 
 

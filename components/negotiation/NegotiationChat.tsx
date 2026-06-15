@@ -14,6 +14,7 @@ import { notify } from '@/lib/notify';
 import { UserRole, Negotiation, NegotiationMessage } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import { useNegotiationAction } from '@/hooks/useNegotiationAction';
+import { useWallet } from '@/contexts/WalletContext';
 import SellerPricePanel from './PricePanel';
 
 
@@ -110,7 +111,17 @@ export default function NegotiationChat({
 }: NegotiationChatProps) {
     const { user } = useAuth();
     const { negotiationMessages: messages, loading, currentNegotiation: negotiation } = useNegotiation()
-    const { sendNegotiationMessage, setAgreedPrice, buyerAcceptPrice, buyerRejectPrice, loading: actionLoading } = useNegotiationAction()
+    const {
+        sendNegotiationMessage,
+        setSellerOffer,
+        setBuyerOffer,
+        sellerAcceptBuyerOffer,
+        buyerAcceptSellerOffer,
+        rejectNegotiation,
+        loading: actionLoading,
+        refresh,
+    } = useNegotiationAction(negotiationId)
+    const { handleWalletPayment } = useWallet()
     const [input, setInput] = useState('');
     const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
     const [sending, setSending] = useState(false);
@@ -316,11 +327,17 @@ export default function NegotiationChat({
                 <div className="w-72 border-l border-border">
                     <SellerPricePanel
                         negotiation={negotiation}
-                        onSetOffer={async (data: number) => { setAgreedPrice(negotiationId, data) }}
-                        onAccept={async () => { await buyerAcceptPrice(negotiationId) }}
-                        onReject={async () => { await buyerRejectPrice(negotiationId) }}
+                        onSetSellerOffer={(price) => setSellerOffer(negotiationId, price)}
+                        onSetBuyerOffer={(price) => setBuyerOffer(negotiationId, price)}
+                        onSellerAcceptBuyer={() => sellerAcceptBuyerOffer(negotiationId)}
+                        onBuyerAcceptSeller={() => buyerAcceptSellerOffer(negotiationId)}
+                        onReject={() => rejectNegotiation(negotiationId)}
+                        onPayOrder={async () => {
+                            await handleWalletPayment(negotiation.order.id)
+                            await refresh()
+                        }}
                         loading={actionLoading}
-                        isSeller={user?.role == 'SELLER'}
+                        isSeller={user?.role === 'SELLER'}
                     />
                 </div>
             )}

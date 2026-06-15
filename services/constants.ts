@@ -68,7 +68,9 @@ export const API_ENDPOINTS = {
     BUYER: '/negotiations/buyer',
     SELLER: '/negotiations/seller',
     SET_AGREED_PRICE: (id: string) => `/negotiations/${id}/set-agreed-price`,
+    SET_BUYER_PRICE: (id: string) => `/negotiations/${id}/set-buyer-price`,
     BUYER_ACCEPT: (id: string) => `/negotiations/${id}/accept`,
+    SELLER_ACCEPT: (id: string) => `/negotiations/${id}/seller-accept`,
     BUYER_REJECT: (id: string) => `/negotiations/${id}/reject`,
   },
   ADMIN: {
@@ -101,6 +103,7 @@ export const API_ENDPOINTS = {
     ADMIN_TRANSACTIONS_BY_USER: (userId: string) => `/admin/transactions/user/${userId}`,
   },
   PAYMENT: {
+    PAY: '/payments/pay',
     PROCESS: '/payments/process',
     STATUS: (transactionId: string) => `/payments/status/${transactionId}`,
     ORDER_PAYMENT: (orderId: string) => `/payments/order/${orderId}`,

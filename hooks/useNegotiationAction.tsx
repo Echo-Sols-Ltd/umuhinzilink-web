@@ -1,79 +1,112 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useNegotiation } from "@/contexts/NegotiationContext";
 import { notify } from "@/lib/notify";
 import { negotiationService } from "@/services/negotiation";
 import { socketService } from "@/services/socket";
 import { MessageType, NegotiationMessageRequest } from "@/types";
 import { useState } from "react";
 
-export function useNegotiationAction() {
+export function useNegotiationAction(negotiationId?: string) {
     const [loading, setLoading] = useState(false)
     const { user } = useAuth()
+    const { fetchNegotiationById } = useNegotiation()
 
-    const sendNegotiationMessage = async (negotiationId: string, message: string) => {
-        if (!user) return
-        try {
-            const request: NegotiationMessageRequest = {
-                negotiationId: negotiationId,
-                content: message,
-                type: MessageType.TEXT,
-            }
-            // send message to socket
+    const refresh = async () => {
+        if (negotiationId) await fetchNegotiationById(negotiationId)
+    }
 
-            socketService.sendNegotiationMessage(request)
-        } catch (error) {
-            console.error(error)
+    const handleResponse = async (success: boolean, message: string, successTitle: string) => {
+        if (success) {
+            notify.success(message, successTitle)
+            await refresh()
+        } else {
+            notify.error(message)
         }
     }
 
-    const setAgreedPrice = async (negotiationId: string, price: number) => {
+    const sendNegotiationMessage = async (id: string, message: string) => {
+        if (!user) return
+        const request: NegotiationMessageRequest = {
+            negotiationId: id,
+            content: message,
+            type: MessageType.TEXT,
+        }
+        socketService.sendNegotiationMessage(request)
+    }
+
+    const setSellerOffer = async (id: string, price: number) => {
         if (!user) return
         setLoading(true)
         try {
-            const res = await negotiationService.setAgreedPrice(negotiationId, price)
-            if (res.success) {
-                notify.success('Agreed price set successfully', 'Negotiation Updated')
-            }
+            const res = await negotiationService.setSellerOffer(id, price)
+            await handleResponse(res.success, res.message, 'Counter offer sent')
         } catch (error) {
-            console.error(error)
+            notify.error(error instanceof Error ? error.message : 'Failed to set price')
         } finally {
             setLoading(false)
         }
     }
 
-    const buyerAcceptPrice = async (negotiationId: string) => {
+    const setBuyerOffer = async (id: string, price: number) => {
         if (!user) return
         setLoading(true)
         try {
-            const res = await negotiationService.buyerAcceptPrice(negotiationId)
-            if (res.success) {
-                notify.success('Agreed price accepted successfully', 'Negotiation Updated')
-            }
+            const res = await negotiationService.setBuyerOffer(id, price)
+            await handleResponse(res.success, res.message, 'Offer updated')
         } catch (error) {
-            console.error(error)
+            notify.error(error instanceof Error ? error.message : 'Failed to update offer')
         } finally {
             setLoading(false)
         }
     }
 
-    const buyerRejectPrice = async (negotiationId: string) => {
+    const sellerAcceptBuyerOffer = async (id: string) => {
         if (!user) return
         setLoading(true)
         try {
-            const res = await negotiationService.buyerRejectPrice(negotiationId)
-            if (res.success) {
-                notify.success('Agreed price rejected successfully', 'Negotiation Updated')
-            }
+            const res = await negotiationService.sellerAcceptBuyerOffer(id)
+            await handleResponse(res.success, res.message, 'Buyer offer accepted')
         } catch (error) {
-            console.error(error)
+            notify.error(error instanceof Error ? error.message : 'Failed to accept offer')
         } finally {
             setLoading(false)
         }
     }
+
+    const buyerAcceptSellerOffer = async (id: string) => {
+        if (!user) return
+        setLoading(true)
+        try {
+            const res = await negotiationService.buyerAcceptSellerOffer(id)
+            await handleResponse(res.success, res.message, 'Offer accepted')
+        } catch (error) {
+            notify.error(error instanceof Error ? error.message : 'Failed to accept offer')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const rejectNegotiation = async (id: string) => {
+        if (!user) return
+        setLoading(true)
+        try {
+            const res = await negotiationService.rejectNegotiation(id)
+            await handleResponse(res.success, res.message, 'Negotiation cancelled')
+        } catch (error) {
+            notify.error(error instanceof Error ? error.message : 'Failed to reject')
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return {
         sendNegotiationMessage,
-        setAgreedPrice,
-        buyerAcceptPrice,
-        buyerRejectPrice,
-        loading
+        setSellerOffer,
+        setBuyerOffer,
+        sellerAcceptBuyerOffer,
+        buyerAcceptSellerOffer,
+        rejectNegotiation,
+        loading,
+        refresh,
     }
 }

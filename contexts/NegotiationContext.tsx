@@ -13,6 +13,7 @@ interface NegotiationContextType {
     error: string | null
     fetchNegotiationById: (id: string) => Promise<void>
     fetchNegotiationMessages: (negotiationId: string) => Promise<void>
+    setCurrentNegotiation: (negotiation: Negotiation | null) => void
 }
 
 const NegotiationContext = createContext<NegotiationContextType | null>(null)
@@ -138,7 +139,8 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
         loading,
         error,
         fetchNegotiationById,
-        fetchNegotiationMessages
+        fetchNegotiationMessages,
+        setCurrentNegotiation,
     }} >
         {children}
     </NegotiationContext.Provider>)
