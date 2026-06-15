@@ -202,26 +202,9 @@ export const useSellerAction = () => {
     }
   };
 
-  const updateOrderStatus = async (id: string, status: string): Promise<Order | null> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await orderService.updateOrderStatus(id, status as any);
-      if (response.success && response.data) {
-        updateOrder(response.data);
-        notify.success('Order status updated successfully', 'Success');
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Failed to update order status');
-      }
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update order status';
-      setError(errorMessage);
-      notify.error(errorMessage, 'Error');
-      return null;
-    } finally {
-      setLoading(false);
-    }
+  const updateOrderStatus = async (_id: string, _status: string): Promise<Order | null> => {
+    notify.error('Order status is managed automatically after payment.', 'Not available');
+    return null;
   };
 
   // Dashboard Actions
@@ -251,7 +234,7 @@ export const useSellerAction = () => {
     try {
       const response = await productService.getSellerStats();
       if (response.success) {
-        return response.data;
+        return response.data ?? {};
       } else {
         throw new Error(response.message || 'Failed to fetch product stats');
       }
@@ -259,7 +242,7 @@ export const useSellerAction = () => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch product stats';
       setError(errorMessage);
       notify.error(errorMessage, 'Error');
-      return [];
+      return {};
     } finally {
       setLoading(false);
     }

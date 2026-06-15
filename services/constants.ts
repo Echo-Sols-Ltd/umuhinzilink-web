@@ -56,11 +56,7 @@ export const API_ENDPOINTS = {
     ALL: '/orders',
     BY_ID: (id: string) => `/orders/${id}`,
     CANCEL: (id: string) => `/orders/${id}/cancel`,
-    REJECT: (id: string) => `/orders/${id}/cancel`,
-    CONFIRM: (id: string) => `/orders/${id}/confirm`,
-    BUYER_ALL: '/orders/buyer',
     SELLER_ALL: '/orders/seller',
-    UPDATE_STATUS: (id: string) => `/orders/${id}/status`
   },
   NEGOTIATION: {
     ALL: '/negotiations',
@@ -94,22 +90,19 @@ export const API_ENDPOINTS = {
   WALLET: {
     ME: '/wallet/me',
     DEPOSIT: '/wallet/deposit',
-    PAY_ORDER: '/wallet/pay-order',
     TRANSACTIONS: '/wallet/transactions',
-    TRANSACTION_BY_ID: (id: string) => `/wallet/transaction/${id}`,
+    TRANSACTION_BY_ID: (id: string) => `/wallet/transactions/${id}`,
     ADMIN_ALL_WALLETS: '/admin/wallets',
     ADMIN_ALL_TRANSACTIONS: '/admin/transactions',
     SYSTEM_WALLET: '/admin/wallet/system',
-    ADMIN_WALLET_BY_USER: (userId: string) => `/admin/wallets/user/${userId}`,
-    ADMIN_TRANSACTIONS_BY_USER: (userId: string) => `/admin/transactions/user/${userId}`,
+    ADMIN_WALLET_BY_USER: (userId: string) => `/admin/wallets/${userId}`,
+    ADMIN_TRANSACTIONS_BY_USER: (userId: string) => `/admin/transactions/${userId}`,
   },
   PAYMENT: {
     PAY: '/payments/pay',
     PROCESS: '/payments/process',
     STATUS: (transactionId: string) => `/payments/status/${transactionId}`,
     ORDER_PAYMENT: (orderId: string) => `/payments/order/${orderId}`,
-    MY_TRANSACTIONS: '/payments/my-transactions',
-    ADMIN_ALL_TRANSACTIONS: '/payments/admin/all-transactions',
   },
   MESSAGES: {
     CONVERSATION: (senderId: string, receiverId: string) => `/messages/all/${senderId}/${receiverId}`,

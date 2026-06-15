@@ -34,8 +34,8 @@ class ProductService {
 
 
 
-  async getSellerStats(): Promise<ApiResponse<any[]>> {
-    return await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.PRODUCT.SELLER_STATS);
+  async getSellerStats(): Promise<ApiResponse<Record<string, number>>> {
+    return await apiClient.get<ApiResponse<Record<string, number>>>(API_ENDPOINTS.PRODUCT.SELLER_STATS);
   }
 
   async searchProducts(params: {

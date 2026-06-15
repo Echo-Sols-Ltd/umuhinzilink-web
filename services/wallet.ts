@@ -35,12 +35,26 @@ class WalletService {
   }
 
 
-  // Get transaction by ID
+  // Get my transaction history (paginated)
+  async getMyTransactions(params?: {
+    page?: number;
+    size?: number;
+    sortBy?: string;
+    sortDir?: string;
+  }): Promise<PaginatedResponse<Transaction[]>> {
+    const queryParams = new URLSearchParams();
+    queryParams.append('page', String(params?.page ?? 0));
+    queryParams.append('size', String(params?.size ?? 50));
+    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params?.sortDir) queryParams.append('sortDir', params.sortDir);
+
+    const url = `${API_ENDPOINTS.WALLET.TRANSACTIONS}?${queryParams.toString()}`;
+    return await apiClient.get<PaginatedResponse<Transaction[]>>(url);
+  }
+
   async getTransactionById(transactionId: string): Promise<ApiResponse<Transaction>> {
     return await apiClient.get<ApiResponse<Transaction>>(API_ENDPOINTS.WALLET.TRANSACTION_BY_ID(transactionId));
   }
-
-
 
   // Admin: Get all wallets (paginated)
   async getAllWallets(params?: {

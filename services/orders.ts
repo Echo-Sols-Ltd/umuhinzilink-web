@@ -27,21 +27,28 @@ class OrderService {
     return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CANCEL(id));
   }
 
-  async acceptOrder(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.CONFIRM(id));
+  async acceptOrder(_id: string): Promise<ApiResponse<Order>> {
+    return {
+      success: false,
+      message: 'Orders are paid automatically when the buyer checks out.',
+    };
   }
 
   async updateOrderStatus(
-    id: string,
-    status: OrderStatus
+    _id: string,
+    _status: OrderStatus
   ): Promise<ApiResponse<Order>> {
-    return await apiClient.put<ApiResponse<Order>>(API_ENDPOINTS.ORDER.UPDATE_STATUS(id), status);
+    return {
+      success: false,
+      message: 'Order status is managed automatically after payment.',
+    };
   }
 
-  async markOrderSatisfaction(id: string): Promise<ApiResponse<Order>> {
-    return await apiClient.post<ApiResponse<Order>>(
-      API_ENDPOINTS.ORDER.SATISFACTION(id)
-    );
+  async markOrderSatisfaction(_id: string): Promise<ApiResponse<Order>> {
+    return {
+      success: false,
+      message: 'Order satisfaction tracking is not available yet.',
+    };
   }
 }
 

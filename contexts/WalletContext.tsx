@@ -91,30 +91,27 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Fetch payment history
-  const fetchTransactions= async (): Promise<Transaction[] | null> => {
+  // Fetch transaction history
+  const fetchTransactions = async (): Promise<Transaction[] | null> => {
     try {
       setLoading(true);
       setError(null);
 
-      const res = await paymentService.getMyTransactions({ page: 0, size: 50, sortBy: 'createdAt', sortDir: 'desc' });
+      const res = await walletService.getMyTransactions({ page: 0, size: 50, sortBy: 'createdAt', sortDir: 'desc' });
       if (!res.success) {
-        setError(res.message || 'Failed to fetch payment history');
+        setError(res.message || 'Failed to fetch transactions');
         return null;
       }
 
+      const list = Array.isArray(res.data) ? res.data : [];
+      setTransactions(list);
+      setPaymentHistory(list);
+      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(list));
+      localStorage.setItem(STORAGE_KEYS.PAYMENT_HISTORY, JSON.stringify(list));
 
-      const paymentData = res.data;
-      const paymentList = Array.isArray(paymentData)
-        ? paymentData
-        : (paymentData as any)?.content || [];
-
-      setPaymentHistory(paymentList as any);
-      localStorage.setItem(STORAGE_KEYS.PAYMENT_HISTORY, JSON.stringify(paymentList));
-
-      return paymentList;
+      return list;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch payment history';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch transactions';
       setError(errorMessage);
       return null;
     } finally {
@@ -199,7 +196,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const res = await paymentService.processPayment(request as any);
+      const res = await paymentService.processPayment(request);
       if (!res.success) {
         const errorMessage = res.message || 'Failed to process payment';
         setError(errorMessage);
@@ -207,23 +204,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
 
-      const payment = res.data as Transaction;
-      if (payment) {
-        // Add to payment history
-        setPaymentHistory(prev => [payment, ...prev]);
-
-        // Update cached payment history
-        const updatedHistory = [payment, ...paymentHistory];
-        localStorage.setItem(STORAGE_KEYS.PAYMENT_HISTORY, JSON.stringify(updatedHistory));
-
-        if (payment.status === TransactionStatus.COMPLETED) {
-          notify.success('Your payment has been processed successfully.', 'Payment Successful');
-        } else if (payment.status === TransactionStatus.PENDING) {
-          notify.warning('Your payment is being processed. You will receive a confirmation shortly.', 'Payment Processing');
-        }
-      }
-
-      return payment ?? null;
+      await refreshWalletData();
+      notify.success('Your payment has been processed successfully.', 'Payment Successful');
+      return null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to process payment';
       setError(errorMessage);
