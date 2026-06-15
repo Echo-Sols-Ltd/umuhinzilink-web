@@ -6,18 +6,16 @@ import { Negotiation } from '@/types';
 import { Loader2 } from 'lucide-react';
 
 import ProfileComponent from '@/components/profile/Profile';
-import { useUser } from '@/contexts/UserContext';
 import { useWallet } from '@/contexts/WalletContext';
 import { useOrder } from '@/contexts/OrderContext';
 
 
 function GlobalProfileComponent() {
-  const { user, loading: authLoading, } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { wallet } = useWallet()
   const { completedBuyingOrders: orders } = useOrder()
   const router = useRouter();
-  const { loading: userLoading } = useUser()
-  const loading = authLoading || userLoading
+  const loading = authLoading
 
   if (loading) {
     return (

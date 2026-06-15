@@ -25,6 +25,7 @@ import {
     Ban,
     MessageSquare
 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function AdminUserDetailPage() {
     const params = useParams();
@@ -99,10 +100,11 @@ export default function AdminUserDetailPage() {
         if (!selectedUser) return;
 
         try {
-            // For now, just show a toast since the API method doesn't exist
+            await adminService.toggleUserStatus(selectedUser.id, true);
+            setCurrentUser({ ...selectedUser, active: false });
             showToast({
-                title: "Info",
-                description: "Suspend user functionality not yet implemented",
+                title: "Success",
+                description: "User suspended successfully",
                 variant: "default"
             });
         } catch (error) {
@@ -119,17 +121,18 @@ export default function AdminUserDetailPage() {
         if (!selectedUser) return;
 
         try {
-            // For now, just show a toast since the API method doesn't exist
+            await adminService.toggleUserStatus(selectedUser.id, false);
+            setCurrentUser({ ...selectedUser, active: true });
             showToast({
-                title: "Info",
-                description: "Unsuspend user functionality not yet implemented",
+                title: "Success",
+                description: "User activated successfully",
                 variant: "default"
             });
         } catch (error) {
             console.error('Failed to unsuspend user:', error);
             showToast({
                 title: "Error",
-                description: "Failed to unsuspend user",
+                description: "Failed to activate user",
                 variant: "default"
             });
         }
@@ -200,7 +203,7 @@ export default function AdminUserDetailPage() {
                             <MessageSquare className="w-4 h-4 mr-2" />
                             Message
                         </Button>
-                        {(user as any).suspended ? (
+                        {!user.active ? (
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -240,7 +243,7 @@ export default function AdminUserDetailPage() {
                                             <span>{user.emailVerified ? 'Verified' : 'Pending'}</span>
                                         </div>
                                     </Badge>
-                                    {(user as any).suspended && (
+                                    {!user.active && (
                                         <Badge className="text-destructive bg-destructive/10">
                                             <div className="flex items-center space-x-1">
                                                 <XCircle className="w-4 h-4" />
@@ -324,8 +327,8 @@ export default function AdminUserDetailPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Account Status</p>
-                                    <Badge className={(user as any).suspended ? 'text-destructive bg-destructive/10' : 'text-success bg-success/10'}>
-                                        {(user as any).suspended ? 'Suspended' : 'Active'}
+                                    <Badge className={!user.active ? 'text-destructive bg-destructive/10' : 'text-success bg-success/10'}>
+                                        {!user.active ? 'Suspended' : 'Active'}
                                     </Badge>
                                 </div>
                             </CardContent>

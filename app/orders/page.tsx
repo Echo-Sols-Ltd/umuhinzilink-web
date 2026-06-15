@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
     Package, Eye, CheckCircle, XCircle,
     AlertCircle, Clock, TrendingUp, Wallet,
@@ -78,7 +79,8 @@ function SkeletonRow() {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function OrdersPage() {
-    const { user } = useAuth();
+    const { user, loading: authLoading, isAuthenticated } = useAuth();
+    const router = useRouter();
     const isSeller = user?.role === UserRole.SELLER;
     const {
         orders,
@@ -101,6 +103,12 @@ export default function OrdersPage() {
         }
         return fetchBuyingOrders(pageIndex, ITEMS_PER_PAGE);
     }, [isSeller, fetchBuyingOrders, fetchSellingOrders]);
+
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            router.replace('/auth/signin?redirect=/orders');
+        }
+    }, [authLoading, isAuthenticated, router]);
 
     useEffect(() => {
         if (!user) return;
@@ -151,6 +159,9 @@ export default function OrdersPage() {
         return orders.filter(o => o.status === statusFilter);
     }, [orders, statusFilter]);
 
+    if (!authLoading && !isAuthenticated) {
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

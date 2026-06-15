@@ -85,12 +85,26 @@ function EmptyState({ tab, role }: { tab: TabFilter; role: UserRole }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function NegotiationsPage() {
-    const { user } = useAuth();
+    const { user, loading: authLoading, isAuthenticated } = useAuth();
     const router = useRouter();
     const { negotiations, loading } = useNegotiation()
 
     const [tab, setTab] = useState<TabFilter>('ALL');
     const [search, setSearch] = useState('');
+    const [productFilter, setProductFilter] = useState<string | null>(null);
+    const [sellerFilter, setSellerFilter] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            router.replace('/auth/signin?redirect=/negotiations');
+        }
+    }, [authLoading, isAuthenticated, router]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        setProductFilter(params.get('product'));
+        setSellerFilter(params.get('seller'));
+    }, []);
 
 
 
@@ -98,6 +112,12 @@ export default function NegotiationsPage() {
 
     const filtered = useMemo(() => {
         let list = tab === 'ALL' ? negotiations : negotiations.filter(n => n.status === tab);
+        if (productFilter) {
+            list = list.filter(n => n.order.product.id === productFilter);
+        }
+        if (sellerFilter) {
+            list = list.filter(n => n.order.product.owner?.id === sellerFilter);
+        }
         if (search.trim()) {
             const q = search.toLowerCase();
             list = list.filter(n =>
@@ -107,7 +127,7 @@ export default function NegotiationsPage() {
             );
         }
         return list;
-    }, [negotiations, tab, search]);
+    }, [negotiations, tab, search, productFilter, sellerFilter]);
 
     // ── Metrics ───────────────────────────────────────────────────────────
 
@@ -119,8 +139,12 @@ export default function NegotiationsPage() {
 
     // ── Render ────────────────────────────────────────────────────────────
 
-    if(!user){
-        return null
+    if (!authLoading && !isAuthenticated) {
+        return null;
+    }
+
+    if (!user) {
+        return null;
     }
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -216,7 +240,21 @@ export default function NegotiationsPage() {
                         ))}
                     </div>
                 ) : filtered.length === 0 ? (
-                    <EmptyState tab={tab} role={user.role} />
+                    productFilter ? (
+                        <div className="py-20 flex flex-col items-center text-center">
+                            <h3 className="text-base font-bold text-foreground">No negotiation for this product yet</h3>
+                            <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                                Start a negotiation from the product page to discuss pricing with the seller.
+                            </p>
+                            <Link
+                                href={`/products/${productFilter}${sellerFilter ? '?negotiate=1' : ''}`}
+                                className="mt-5 flex items-center gap-2 h-10 px-5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors">
+                                View product
+                            </Link>
+                        </div>
+                    ) : (
+                        <EmptyState tab={tab} role={user.role} />
+                    )
                 ) : (
                     <div className="space-y-3">
                         {filtered.map(neg => (
