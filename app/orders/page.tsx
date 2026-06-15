@@ -14,6 +14,7 @@ import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { OrderStatus, Order, UserRole, isUnpaidOrder } from '@/types';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -163,6 +164,14 @@ export default function OrdersPage() {
 
     if (!authLoading && !isAuthenticated) {
         return null;
+    }
+
+    if (authLoading) {
+        return (
+            <AppLayout maxWidth="max-w-6xl">
+                <PageLoading fullScreen={false} label="Loading orders" description="Fetching your order history…" />
+            </AppLayout>
+        );
     }
 
     return (

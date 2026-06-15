@@ -12,6 +12,7 @@ import { orderService } from '@/services/orders';
 import OrderStatusTracker from '@/components/orders/OrderStatusTracker';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -87,9 +88,7 @@ export default function OrderDetailPage() {
   if (loading) {
     return (
       <AppLayout maxWidth="max-w-5xl">
-        <div className="flex items-center justify-center py-24">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600" />
-        </div>
+        <PageLoading fullScreen={false} label="Loading order" description="Fetching order details…" />
       </AppLayout>
     );
   }

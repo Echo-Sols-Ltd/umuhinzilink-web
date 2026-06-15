@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Product, ProductStatus } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
@@ -87,10 +88,12 @@ export default function AdminProductDetailPage() {
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading product...</p>
-          </div>
+          <PageLoading
+            variant="section"
+            label="Loading product"
+            description="Fetching listing details…"
+            className="bg-transparent dark:bg-transparent"
+          />
         </main>
       </div>
     );

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { UserRole as UserType } from '@/types';
 
 interface AnalyticsData {
@@ -121,7 +122,12 @@ function RevenueAnalytics() {
             description="Revenue insights and platform metrics"
           />
           <main className="flex-1 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success"></div>
+            <PageLoading
+              variant="section"
+              label="Loading analytics"
+              description="Crunching platform metrics…"
+              className="bg-transparent dark:bg-transparent"
+            />
           </main>
         </div>
       </div>

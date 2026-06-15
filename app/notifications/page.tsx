@@ -87,6 +87,8 @@ export default function NotificationsPage() {
         { value: NotificationType.ORDER, label: t('common.notificationPage.tabs.orders') },
     ], [t]);
 
+    const userId = user?.id;
+
     // ── Load data when tab or page changes ────────────────────────────────────
     const load = useCallback(async (tab: TabValue, p: number) => {
         if (tab === 'UNREAD') {
@@ -101,8 +103,8 @@ export default function NotificationsPage() {
     }, [fetchAll, fetchUnread, fetchByType]);
 
     useEffect(() => {
-        if (user) load(activeTab, page);
-    }, [activeTab, page, user, load]);
+        if (userId) load(activeTab, page);
+    }, [activeTab, page, userId, load]);
 
     useEffect(() => {
         setNotifications(allNotifications);

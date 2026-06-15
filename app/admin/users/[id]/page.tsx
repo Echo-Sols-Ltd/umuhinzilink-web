@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
@@ -144,7 +145,12 @@ export default function AdminUserDetailPage() {
             <div className="flex h-screen bg-background">
                 <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
                 <main className="flex-1 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <PageLoading
+                        variant="section"
+                        label="Loading user"
+                        description="Fetching account details…"
+                        className="bg-transparent dark:bg-transparent"
+                    />
                 </main>
             </div>
         );

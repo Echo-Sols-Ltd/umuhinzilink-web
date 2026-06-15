@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { Order, UserRole, isPaidOrder } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -136,7 +137,12 @@ export default function AdminOrderDetailPage() {
             <div className="flex h-screen bg-background">
                 <Sidebar userType={UserRole.ADMIN} activeItem="Orders" />
                 <main className="flex-1 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <PageLoading
+                        variant="section"
+                        label="Loading order"
+                        description="Fetching order details…"
+                        className="bg-transparent dark:bg-transparent"
+                    />
                 </main>
             </div>
         );

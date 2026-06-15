@@ -19,6 +19,7 @@ import { Order, OrderStatus, isUnpaidOrder, isPaidOrder, getOrderStatusLabel, ma
 import { cn } from '@/lib/utils';
 import OrderStatusTracker from './OrderStatusTracker';
 import { useI18n } from '@/contexts/I18nContext';
+import PageLoading from '@/components/layout/PageLoading';
 
 interface OrderManagementDashboardProps {
   orders: Order[];
@@ -130,9 +131,12 @@ export default function OrderManagementDashboard({
 
   if (loading) {
     return (
-      <div className={cn('flex items-center justify-center py-12', className)}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
+      <PageLoading
+        variant="inline"
+        label="Loading orders"
+        description="Fetching order list…"
+        className={cn('bg-transparent dark:bg-transparent', className)}
+      />
     );
   }
 

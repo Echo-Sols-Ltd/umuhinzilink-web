@@ -2,11 +2,11 @@
 
 import NegotiationChat from '@/components/negotiation/NegotiationChat';
 import Navbar from '@/components/Navbar';
+import PageLoading from '@/components/layout/PageLoading';
 import { useAuth } from '@/contexts/AuthContext';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useNegotiation } from '@/contexts/NegotiationContext';
-import { Loader2 } from 'lucide-react';
 
 export default function NegotiationDetailPage() {
     const { user, loading: authLoading } = useAuth();
@@ -31,11 +31,7 @@ export default function NegotiationDetailPage() {
     }, [negotiationId, fetchNegotiationById, fetchNegotiationMessages]);
 
     if (authLoading || !user) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-                <Loader2 className="animate-spin text-green-600" size={32} />
-            </div>
-        );
+        return <PageLoading label="Opening negotiation" description="Loading messages and deal details…" />;
     }
 
     return (

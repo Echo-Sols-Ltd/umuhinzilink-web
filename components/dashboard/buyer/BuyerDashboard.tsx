@@ -18,6 +18,7 @@ import { BuyerDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
 import DashboardChart from '../common/DashboardChart';
 import { useI18n } from '@/contexts/I18nContext';
+import { DashboardSkeleton } from '@/components/layout/PageLoading';
 
 export default function BuyerDashboard() {
   const [dashboardData, setDashboardData] = useState<BuyerDashboardData | null>(null);
@@ -47,11 +48,7 @@ export default function BuyerDashboard() {
   }, [t]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (error) {

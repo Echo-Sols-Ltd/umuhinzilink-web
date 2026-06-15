@@ -3,12 +3,12 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Negotiation } from '@/types';
-import { Loader2 } from 'lucide-react';
 import ProfileComponent from '@/components/profile/Profile';
 import { useWallet } from '@/contexts/WalletContext';
 import { useOrder } from '@/contexts/OrderContext';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 
 function GlobalProfileComponent() {
   const { user, loading: authLoading } = useAuth();
@@ -18,11 +18,7 @@ function GlobalProfileComponent() {
   const loading = authLoading;
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950">
-        <Loader2 className="text-green-600 animate-spin" size={50} />
-      </div>
-    );
+    return <PageLoading label="Loading profile" description="Fetching your account details…" />;
   }
 
   if (!user) {

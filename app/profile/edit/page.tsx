@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Camera, Loader2, Save } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -132,11 +133,7 @@ export default function ProfileEditPage() {
   };
 
   if (authLoading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <Loader2 className="animate-spin text-green-600" size={32} />
-      </div>
-    );
+    return <PageLoading label="Loading profile" description="Preparing the editor…" />;
   }
 
   const initials = `${form.firstName[0] ?? ''}${form.lastName[0] ?? ''}`.toUpperCase();

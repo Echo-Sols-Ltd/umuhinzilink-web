@@ -17,6 +17,7 @@ import { useNegotiationAction } from '@/hooks/useNegotiationAction';
 import { useWallet } from '@/contexts/WalletContext';
 import { socketService } from '@/services/socket';
 import SellerPricePanel from './PricePanel';
+import PageLoading from '@/components/layout/PageLoading';
 
 
 interface NegotiationChatProps {
@@ -199,12 +200,12 @@ export default function NegotiationChat({
 
     if (loading) {
         return (
-            <div className="flex h-full items-center justify-center bg-gray-50 dark:bg-gray-950">
-                <div className="text-center">
-                    <Loader2 size={28} className="animate-spin text-green-600 mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">Loading negotiation…</p>
-                </div>
-            </div>
+            <PageLoading
+                fullScreen={false}
+                className="h-full min-h-[320px] bg-gray-50 dark:bg-gray-950"
+                label="Loading negotiation"
+                description="Fetching messages and offer details…"
+            />
         );
     }
 

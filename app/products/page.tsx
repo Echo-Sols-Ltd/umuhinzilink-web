@@ -15,6 +15,7 @@ import ProductCard from '@/components/products/ProductCard';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import ProductList from '@/components/products/ProductList';
+import { ProductGridSkeleton } from '@/components/layout/PageLoading';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -164,7 +165,9 @@ export default function Products() {
                 ) : null}
 
                 {/* Listings */}
-                {paginated.length === 0 ? (
+                {loading ? (
+                    <ProductGridSkeleton count={PAGE_SIZE} />
+                ) : paginated.length === 0 ? (
                     <EmptyState filtered={!!(search || statusFilter !== 'ALL')} />
                 ) : viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

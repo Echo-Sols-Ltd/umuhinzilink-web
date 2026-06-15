@@ -24,6 +24,7 @@ import { Wallet as IWallet, Transaction } from '@/types';
 import { cn } from '@/lib/utils';
 
 import { useI18n } from '@/contexts/I18nContext';
+import PageLoading from '@/components/layout/PageLoading';
 
 interface WalletDashboardProps {
   wallet: IWallet | null;
@@ -188,9 +189,12 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
 
   if (loading) {
     return (
-      <div className={cn('flex items-center justify-center py-12', className)}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-      </div>
+      <PageLoading
+        variant="inline"
+        label="Loading wallet"
+        description="Fetching balance and transactions…"
+        className={cn('bg-transparent dark:bg-transparent', className)}
+      />
     );
   }
 

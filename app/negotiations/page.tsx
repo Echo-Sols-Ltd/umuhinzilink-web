@@ -16,6 +16,7 @@ import NegotiationCard from '@/components/negotiation/NegotiationCard';
 import { UserRole } from '@/types';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -144,9 +145,14 @@ export default function NegotiationsPage() {
         return null;
     }
 
-    if (!user) {
-        return null;
+    if (authLoading || !user) {
+        return (
+            <AppLayout maxWidth="max-w-2xl">
+                <PageLoading fullScreen={false} label="Loading negotiations" description="Fetching your active deals…" />
+            </AppLayout>
+        );
     }
+
     return (
         <AppLayout maxWidth="max-w-2xl">
             <PageHeader
