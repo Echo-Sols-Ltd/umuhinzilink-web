@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { notify } from '@/lib/notify';
 import { authService } from '@/services';
 import { ResetPasswordRequest } from '@/types';
+import PageLoading from '@/components/layout/PageLoading';
 
 // ── Password strength ─────────────────────────────────────────────────────────
 
@@ -169,12 +170,10 @@ function ResetPasswordContent() {
 
     if (codeValid === null) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-                <div className="text-center">
-                    <Loader2 size={28} className="animate-spin text-green-600 mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">Verifying your reset link…</p>
-                </div>
-            </div>
+            <PageLoading
+                label="Verifying reset link"
+                description="Checking that your link is still valid…"
+            />
         );
     }
 

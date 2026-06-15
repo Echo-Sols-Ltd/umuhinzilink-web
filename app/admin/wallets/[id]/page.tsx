@@ -18,6 +18,7 @@ import {
 import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import {
     Table,
     TableBody,
@@ -109,10 +110,12 @@ export default function WalletDetailPage() {
                 <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
                 <main className="flex-1 overflow-auto bg-background">
                     <div className="p-8 max-w-7xl mx-auto">
-                        <div className="flex flex-col items-center justify-center py-20 gap-4">
-                            <Loader2 className="w-8 h-8 animate-spin text-success" />
-                            <p className="font-semibold text-muted-foreground text-xs uppercase">Loading wallet details...</p>
-                        </div>
+                        <PageLoading
+                            variant="section"
+                            label="Loading wallet"
+                            description="Fetching wallet details and transactions…"
+                            className="bg-transparent dark:bg-transparent"
+                        />
                     </div>
                 </main>
             </div>

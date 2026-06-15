@@ -17,6 +17,7 @@ import SellerGuard from '@/contexts/guard/SellerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { District, MeasurementUnit, Product, ProductCategory } from '@/types';
 import { useProductAction } from '@/hooks/useProductAction';
+import PageLoading from '@/components/layout/PageLoading';
 
 // ── Enums (mirror backend) ────────────────────────────────────────────────────
 
@@ -337,12 +338,10 @@ function EditProductForm() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 size={32} className="animate-spin text-green-600 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Loading product…</p>
-        </div>
-      </div>
+      <PageLoading
+        label="Loading product"
+        description="Preparing the editor…"
+      />
     );
   }
 
