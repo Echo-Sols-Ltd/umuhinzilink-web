@@ -112,7 +112,7 @@ export default function NegotiationChat({
     onBack,
 }: NegotiationChatProps) {
     const { user } = useAuth();
-    const { negotiationMessages: messages, loading, currentNegotiation: negotiation } = useNegotiation()
+    const { negotiationMessages: messages, detailLoading, currentNegotiation: negotiation } = useNegotiation()
     const {
         sendNegotiationMessage,
         setSellerOffer,
@@ -198,7 +198,7 @@ export default function NegotiationChat({
 
     // ── Loading ───────────────────────────────────────────────────────────
 
-    if (loading) {
+    if (detailLoading) {
         return (
             <PageLoading
                 fullScreen={false}

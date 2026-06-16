@@ -12,7 +12,7 @@ export function useNegotiationAction(negotiationId?: string) {
     const { fetchNegotiationById } = useNegotiation()
 
     const refresh = async () => {
-        if (negotiationId) await fetchNegotiationById(negotiationId)
+        if (negotiationId) await fetchNegotiationById(negotiationId, true)
     }
 
     const handleResponse = async (success: boolean, message: string, successTitle: string) => {
