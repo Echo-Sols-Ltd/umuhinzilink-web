@@ -1,13 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import Sidebar from '@/components/shared/Sidebar';
-import {UserRole as UserType  } from '@/types';
+import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   CreditCard,
-  ArrowLeft,
   Save,
   Smartphone,
   Building,
@@ -17,8 +13,6 @@ import {
 } from 'lucide-react';
 
 export default function PaymentsSettingsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [payments, setPayments] = useState({
@@ -71,30 +65,13 @@ export default function PaymentsSettingsPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserType} activeItem="Settings" />
-      
-      <main className="flex-1 overflow-auto">
-        <div className="p-6 max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <button
-              onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Settings</span>
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Payments & Payouts</h1>
-              <p className="text-muted-foreground mt-1">Configure how you receive payments</p>
-            </div>
-          </div>
-
-          {/* Payment Settings */}
-          <div className="space-y-6">
+    <SettingsSubLayout
+      title="Payments & Payouts"
+      description="Configure how you receive payments"
+    >
+      <div className="space-y-6">
             {/* Mobile Money Settings */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
                   <Smartphone className="w-5 h-5" />
@@ -156,7 +133,7 @@ export default function PaymentsSettingsPage() {
             </div>
 
             {/* Bank Account Settings */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
                   <Building className="w-5 h-5" />
@@ -213,7 +190,7 @@ export default function PaymentsSettingsPage() {
             </div>
 
             {/* Payment Preferences */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                   <Banknote className="w-5 h-5" />
@@ -280,7 +257,7 @@ export default function PaymentsSettingsPage() {
             </div>
 
             {/* Security Notice */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center text-white flex-shrink-0">
                   <Shield className="w-5 h-5" />
@@ -307,7 +284,6 @@ export default function PaymentsSettingsPage() {
                 </div>
               </div>
             </div>
-          </div>
 
           {/* Save Button */}
           <div className="flex justify-end mt-8">
@@ -339,8 +315,7 @@ export default function PaymentsSettingsPage() {
               )}
             </button>
           </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </SettingsSubLayout>
   );
 }

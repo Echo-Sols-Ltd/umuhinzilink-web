@@ -12,15 +12,21 @@ export function useNegotiationAction(negotiationId?: string) {
     const { fetchNegotiationById } = useNegotiation()
 
     const refresh = async () => {
-        if (negotiationId) await fetchNegotiationById(negotiationId)
+        if (negotiationId) await fetchNegotiationById(negotiationId, true)
     }
 
     const handleResponse = async (success: boolean, message: string, successTitle: string) => {
         if (success) {
-            notify.success(message, successTitle)
-            await refresh()
+            const needsPayment = message.toLowerCase().includes('top up')
+                || message.toLowerCase().includes('pay from');
+            if (needsPayment) {
+                notify.warning(message, 'Payment required');
+            } else {
+                notify.success(message, successTitle);
+            }
+            await refresh();
         } else {
-            notify.error(message)
+            notify.error(message);
         }
     }
 

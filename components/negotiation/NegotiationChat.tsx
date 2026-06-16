@@ -15,7 +15,9 @@ import { UserRole, Negotiation, NegotiationMessage } from '@/types';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import { useNegotiationAction } from '@/hooks/useNegotiationAction';
 import { useWallet } from '@/contexts/WalletContext';
+import { socketService } from '@/services/socket';
 import SellerPricePanel from './PricePanel';
+import PageLoading from '@/components/layout/PageLoading';
 
 
 interface NegotiationChatProps {
@@ -110,7 +112,7 @@ export default function NegotiationChat({
     onBack,
 }: NegotiationChatProps) {
     const { user } = useAuth();
-    const { negotiationMessages: messages, loading, currentNegotiation: negotiation } = useNegotiation()
+    const { negotiationMessages: messages, detailLoading, currentNegotiation: negotiation } = useNegotiation()
     const {
         sendNegotiationMessage,
         setSellerOffer,
@@ -125,10 +127,12 @@ export default function NegotiationChat({
     const [input, setInput] = useState('');
     const [replyTo, setReplyTo] = useState<NegotiationMessage | null>(null);
     const [sending, setSending] = useState(false);
-    const [isTyping, setIsTyping] = useState(false);
+    const [otherTyping, setOtherTyping] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const typingStopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const typingClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const isSeller = currentRole === 'SELLER';
 
@@ -140,6 +144,34 @@ export default function NegotiationChat({
     }, []);
 
     useEffect(() => { scrollToBottom(); }, [messages, scrollToBottom]);
+
+    useEffect(() => {
+        const unsubscribe = socketService.onTyping((event) => {
+            if (event.userId === user?.id) return;
+            if (event.typing) {
+                setOtherTyping(true);
+                if (typingClearRef.current) clearTimeout(typingClearRef.current);
+                typingClearRef.current = setTimeout(() => setOtherTyping(false), 3000);
+            } else {
+                setOtherTyping(false);
+            }
+        });
+        return () => {
+            unsubscribe();
+            if (typingClearRef.current) clearTimeout(typingClearRef.current);
+        };
+    }, [user?.id]);
+
+    const handleInputChange = (value: string) => {
+        setInput(value);
+        if (negotiation?.status !== 'PENDING') return;
+
+        socketService.sendTyping(negotiationId, true);
+        if (typingStopRef.current) clearTimeout(typingStopRef.current);
+        typingStopRef.current = setTimeout(() => {
+            socketService.sendTyping(negotiationId, false);
+        }, 1200);
+    };
 
 
 
@@ -166,14 +198,14 @@ export default function NegotiationChat({
 
     // ── Loading ───────────────────────────────────────────────────────────
 
-    if (loading) {
+    if (detailLoading) {
         return (
-            <div className="flex h-full items-center justify-center bg-gray-50 dark:bg-gray-950">
-                <div className="text-center">
-                    <Loader2 size={28} className="animate-spin text-green-600 mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">Loading negotiation…</p>
-                </div>
-            </div>
+            <PageLoading
+                fullScreen={false}
+                className="h-full min-h-[320px] bg-gray-50 dark:bg-gray-950"
+                label="Loading negotiation"
+                description="Fetching messages and offer details…"
+            />
         );
     }
 
@@ -189,12 +221,12 @@ export default function NegotiationChat({
 
     return (
         <div className={cn(
-            'flex h-full bg-gray-50 dark:bg-gray-950 overflow-hidden',
+            'flex h-full min-h-0 bg-gray-50 dark:bg-gray-950 overflow-hidden',
         )}>
 
             {/* ── Chat panel ───────────────────────────────────────────── */}
             <div className={cn(
-                'flex flex-col w-full h-screen',
+                'flex flex-col w-full h-full min-h-0',
                 isSeller ? 'flex-1' : 'flex-1'
             )}>
 
@@ -214,7 +246,7 @@ export default function NegotiationChat({
                         <div>
                             <p className="text-sm font-bold text-foreground">{otherName}</p>
                             <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                {isTyping ? (
+                                {otherTyping ? (
                                     <span className="text-green-500 animate-pulse">typing…</span>
                                 ) : (
                                     <>
@@ -306,7 +338,7 @@ export default function NegotiationChat({
                         }
                         disabled={!isNegotiationActive || sending}
                         value={input}
-                        onChange={e => { setInput(e.target.value); }}
+                        onChange={e => handleInputChange(e.target.value)}
                         onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
                         className="flex-1 h-10 px-4 text-sm bg-gray-50 dark:bg-gray-800 border border-border rounded-full text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 transition-all"
                     />

@@ -1,17 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info, Edit, Trash2, Package, DollarSign, TrendingUp, MessageSquare, Star, Minus, Plus, Home, ChevronRight, User, Clock, Truck, ArrowRight } from 'lucide-react';
+import {
+  Heart, Share2, MapPin, Package, MessageSquare,
+  Minus, Plus, User, Edit, Trash2, Sprout,
+} from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Product } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
+import { useI18n } from '@/contexts/I18nContext';
+import { notify } from '@/lib/notify';
+import BuyModal from './BuyModal';
 
 interface ProductDetailProps {
   product: Product;
@@ -19,14 +21,19 @@ interface ProductDetailProps {
   onShareProduct?: (product: Product) => void;
   onEditProduct?: (product: Product) => void;
   onDeleteProduct?: (productId: string) => void;
-  onPurchaseProduct?: (product: Product, quantity: number) => void;
   isSaved?: boolean;
   showActions?: boolean;
+  openBuyOnMount?: boolean;
   className?: string;
 }
 
-import { useI18n } from '@/contexts/I18nContext';
-import Footer from '../Footer';
+function formatCategory(category: string) {
+  return category.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function formatDistrict(district: string) {
+  return district.charAt(0) + district.slice(1).toLowerCase();
+}
 
 const ProductDetail: React.FC<ProductDetailProps> = ({
   product,
@@ -34,415 +41,330 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   onShareProduct,
   onEditProduct,
   onDeleteProduct,
-  onPurchaseProduct,
-  isSaved = false,
+  isSaved,
   showActions = true,
+  openBuyOnMount = false,
   className,
 }) => {
   const { t, locale } = useI18n();
-  const { user } = useAuth();
+  const { user, toggleSavedProduct, isProductSaved } = useAuth();
   const router = useRouter();
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
-  const isOutOfStock = product.stockQuantity === 0;
-  const isLowStock = product.stockQuantity > 0 && product.stockQuantity <= 10;
-  const isOwner = user?.id === product.owner.id;
+  const [buyOpen, setBuyOpen] = useState(openBuyOnMount);
+  const [savingWishlist, setSavingWishlist] = useState(false);
 
-  // Chat with Product Owner functionality
-  const handleChatWithOwner = () => {
+  const saved = isSaved ?? isProductSaved(product.id);
+
+  const handleSaveClick = async () => {
+    if (onSaveProduct) {
+      onSaveProduct(product.id);
+      return;
+    }
     if (!user) {
-      // Redirect to login if not authenticated
       router.push('/auth/signin');
       return;
     }
+    if (savingWishlist) return;
 
-    // Navigate to chat with the product owner
-    router.push(`/chat/${product.owner.id}`);
-  };
-
-  const getStockStatus = () => {
-    if (isOutOfStock) {
-      return { text: t('buyer.productDetail.stock.outOfStock'), color: 'text-red-600', bgColor: 'bg-red-100' };
+    setSavingWishlist(true);
+    const wasSaved = saved;
+    const ok = await toggleSavedProduct(product.id);
+    if (ok) {
+      notify.success(wasSaved ? 'Removed from saved' : `${product.name} saved`);
     }
-    if (isLowStock) {
-      return { text: t('buyer.productDetail.stock.lowStock', { count: product.stockQuantity }), color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
-    }
-    return { text: t('buyer.productDetail.stock.available', { count: product.stockQuantity }), color: 'text-green-600', bgColor: 'bg-green-100' };
+    setSavingWishlist(false);
   };
 
-  const stockStatus = getStockStatus();
+  const isOutOfStock = product.stockQuantity === 0 || product.status === 'OUT_OF_STOCK';
+  const isLowStock = product.status === 'LOW_STOCK';
+  const isOwner = user?.id === product.owner?.id;
 
-  const formatDate = (dateString: string | Date | undefined) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(locale === 'rw' ? 'rw-RW' : 'en-US', {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat(locale === 'rw' ? 'rw-RW' : 'en-US', {
       style: 'currency',
       currency: 'RWF',
       minimumFractionDigits: 0,
     }).format(price);
+
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+
+  const handleChatWithOwner = () => {
+    if (!user) {
+      router.push('/auth/signin');
+      return;
+    }
+    if (isOwner) return;
+    router.push(`/negotiations?seller=${product.owner.id}&product=${product.id}`);
   };
 
+  const stockLabel = isOutOfStock
+    ? t('buyer.productDetail.stock.outOfStock')
+    : isLowStock
+      ? t('buyer.productDetail.stock.lowStock', { count: product.stockQuantity })
+      : t('buyer.productDetail.stock.available', { count: product.stockQuantity });
+
+  const stockCls = isOutOfStock
+    ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400'
+    : isLowStock
+      ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300'
+      : 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400';
+
   return (
-    <div className={cn('max-w-6xl mx-auto p-4 sm:p-6 space-y-6', className)}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Product Images */}
-        <div className="space-y-4">
-          <div className="relative aspect-square rounded-xl overflow-hidden bg-muted border border-border shadow-sm">
+    <>
+      <div className={cn('space-y-5', className)}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          {/* Image */}
+          <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-border shadow-sm">
             <Image
               src={imageUrl(product.image)}
               alt={product.name}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority
             />
             {isOutOfStock && (
-              <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex items-center justify-center">
-                <span className="text-destructive text-2xl font-bold uppercase tracking-widest">{t('buyer.productDetail.stock.outOfStock')}</span>
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <span className="text-sm font-bold uppercase tracking-widest text-white bg-red-600/90 px-4 py-2 rounded-xl">
+                  {t('buyer.productDetail.stock.outOfStock')}
+                </span>
               </div>
+            )}
+            {product.isNegotiable && !isOutOfStock && (
+              <span className="absolute top-3 left-3 text-xs font-semibold text-white bg-green-600 px-2.5 py-1 rounded-full">
+                Negotiable
+              </span>
             )}
           </div>
 
-          {images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-              {images.map((image: string, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImageIndex(index)}
-                  className={cn(
-                    'relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all shrink-0',
-                    selectedImageIndex === index ? 'border-success' : 'border-border hover:border-success/50'
-                  )}
-                >
-                  <Image
-                    src={image}
-                    alt={`${product.name} ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="80px"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-
-
-        {/* Right Column */}
-        <div className="space-y-6 h-screen overflow-auto pb-20">
-          <div className="space-y-3">
-            <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
-
-            {/* Badges */}
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-                {t('buyer.productDetail.badges.freshHarvest')}
-              </Badge>
-              <Badge variant="outline" className="border-green-200 text-green-700">
-                {product.category}
-              </Badge>
-              <Badge variant="outline" className="border-blue-200 text-blue-700">
-                {product.district}
-              </Badge>
-            </div>
-
-            {/* Rating and Stock */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={cn('w-4 h-4', i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300')} />
-                  ))}
-                </div>
-                <span className="font-semibold">{t('buyer.productDetail.overallRating')}</span>
-                <span className="text-muted-foreground">{t('buyer.productDetail.reviews')}</span>
-              </div>
-              <div className={cn('px-3 py-1 rounded-full text-sm font-medium', stockStatus.bgColor, stockStatus.color)}>
-                In stock - {product.stockQuantity} {product.measurementUnit} available
+          {/* Info */}
+          <div className="space-y-5">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                {product.name}
+              </h1>
+              <div className="flex flex-wrap items-center gap-2 mt-3">
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-muted-foreground">
+                  {formatCategory(String(product.category))}
+                </span>
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-muted-foreground flex items-center gap-1">
+                  <MapPin size={11} />
+                  {formatDistrict(String(product.district))}
+                </span>
+                <span className={cn('text-xs font-semibold px-2.5 py-1 rounded-full', stockCls)}>
+                  {stockLabel}
+                </span>
               </div>
             </div>
 
-            {/* Price */}
-            <div className="text-2xl font-bold text-foreground">
-              {formatPrice(product.unitPrice)} per {product.measurementUnit}
-            </div>
-          </div>
-          {/* Description */}
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold">{t('buyer.productDetail.description')}</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              {product.description}
-            </p>
-          </div>
-
-          {/* Product Details */}
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold">{t('buyer.productDetail.productDetails')}</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('buyer.productDetail.details.weight')}</span>
-                  <span className="font-medium">{product.stockQuantity} kg</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('buyer.productDetail.details.harvestDate')}</span>
-                  <span className="font-medium">
-                    {formatDate(product.createdAt)}  
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('buyer.productDetail.details.location')}</span>
-                  <span className="font-medium">{product.district}</span>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('buyer.productDetail.details.variety')}</span>
-                  <span className="font-medium">PAN 691 white</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('buyer.productDetail.details.storage')}</span>
-                  <span className="font-medium">Dry warehouse</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('buyer.productDetail.details.delivery')}</span>
-                  <span className="font-medium">2-4 days</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quantity and Actions */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <span className="font-medium">{t('buyer.productDetail.quantity')}</span>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
-                  className="w-8 h-8 p-0"
-                >
-                  <Minus className="w-4 h-4" />
-                </Button>
-                <Input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-20 text-center"
-                  min="1"
-                  max={product.stockQuantity}
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}
-                  disabled={quantity >= product.stockQuantity}
-                  className="w-8 h-8 p-0"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-                <span className="text-muted-foreground">bag</span>
-              </div>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5 shadow-sm">
+              <p className="text-2xl font-extrabold text-green-600 dark:text-green-400">
+                {formatPrice(product.unitPrice)}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                per {String(product.measurementUnit).toLowerCase()}
+              </p>
             </div>
 
-            {showActions && (
+            {product.description && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5 shadow-sm">
+                <h2 className="text-sm font-bold text-foreground mb-2">
+                  {t('buyer.productDetail.description')}
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
+            )}
+
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5 shadow-sm">
+              <h2 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+                <Package size={15} className="text-green-600" />
+                {t('buyer.productDetail.productDetails')}
+              </h2>
+              <dl className="space-y-2.5 text-sm">
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted-foreground">{t('buyer.productDetail.details.location')}</dt>
+                  <dd className="font-medium text-foreground">{formatDistrict(String(product.district))}</dd>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted-foreground">Available stock</dt>
+                  <dd className="font-medium text-foreground">
+                    {product.stockQuantity} {String(product.measurementUnit).toLowerCase()}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted-foreground">{t('buyer.productDetail.details.harvestDate')}</dt>
+                  <dd className="font-medium text-foreground">{formatDate(product.createdAt)}</dd>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-muted-foreground">Views</dt>
+                  <dd className="font-medium text-foreground">{product.viewCount ?? 0}</dd>
+                </div>
+              </dl>
+            </div>
+
+            {showActions && !isOwner && (
               <div className="space-y-3">
-                <Button
-                  onClick={() => onPurchaseProduct?.(product, quantity)}
-                  disabled={isOutOfStock}
-                  className="w-full h-12 font-semibold shadow-lg shadow-success/20 hover:shadow-success/40 transition-all"
-                  size="lg"
-                >
-                  <ArrowRight className="w-5 h-5 mr-2" />
-                  {t('productCard.buy')} - {formatPrice(product.unitPrice * quantity)}
-                </Button>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-foreground shrink-0">
+                    {t('buyer.productDetail.quantity')}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      disabled={quantity <= 1}
+                      className="w-9 h-9 flex items-center justify-center rounded-xl border border-border bg-white dark:bg-gray-900 text-foreground disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <input
+                      type="number"
+                      value={quantity}
+                      onChange={(e) =>
+                        setQuantity(
+                          Math.min(
+                            product.stockQuantity,
+                            Math.max(1, parseInt(e.target.value, 10) || 1),
+                          ),
+                        )
+                      }
+                      className="w-16 h-9 text-center text-sm font-semibold rounded-xl border border-border bg-white dark:bg-gray-900 text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
+                      min={1}
+                      max={product.stockQuantity}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setQuantity((q) => Math.min(product.stockQuantity, q + 1))
+                      }
+                      disabled={quantity >= product.stockQuantity}
+                      className="w-9 h-9 flex items-center justify-center rounded-xl border border-border bg-white dark:bg-gray-900 text-foreground disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <Plus size={14} />
+                    </button>
+                    <span className="text-xs text-muted-foreground">
+                      {String(product.measurementUnit).toLowerCase()}
+                    </span>
+                  </div>
+                </div>
 
-                <Button
-                  variant="outline"
-                  onClick={() => onSaveProduct?.(product.id)}
-                  className="w-full h-12 shadow-sm border-border hover:border-success/50 transition-colors"
+                <button
+                  type="button"
+                  onClick={() => setBuyOpen(true)}
+                  disabled={isOutOfStock}
+                  className="w-full h-11 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors"
                 >
-                  <Heart className={cn('w-4 h-4 mr-2', isSaved && 'fill-destructive text-destructive')} />
-                  {isSaved ? t('buyer.productDetail.actions.saved') : t('buyer.productDetail.saveToWishlist')}
-                </Button>
+                  {product.isNegotiable ? 'Negotiate or buy' : t('productCard.buy')}
+                  <span className="text-green-100">· {formatPrice(product.unitPrice * quantity)}</span>
+                </button>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveClick}
+                    disabled={savingWishlist}
+                    className="flex-1 h-10 flex items-center justify-center gap-2 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+                  >
+                    <Heart
+                      size={15}
+                      className={cn(saved && 'fill-red-500 text-red-500')}
+                    />
+                    {saved ? t('buyer.productDetail.actions.saved') : t('buyer.productDetail.saveToWishlist')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onShareProduct?.(product)}
+                    className="h-10 w-10 flex items-center justify-center border border-border rounded-xl text-muted-foreground hover:text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    aria-label="Share"
+                  >
+                    <Share2 size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleChatWithOwner}
+                    className="h-10 w-10 flex items-center justify-center border border-border rounded-xl text-muted-foreground hover:text-green-600 hover:border-green-300 transition-colors"
+                    aria-label="Message seller"
+                  >
+                    <MessageSquare size={15} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {showActions && isOwner && (
+              <div className="flex gap-2">
+                <Link
+                  href={`/products/${product.id}/edit`}
+                  className="flex-1 h-10 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors"
+                >
+                  <Edit size={15} />
+                  Edit listing
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => onDeleteProduct?.(product.id)}
+                  className="h-10 px-4 flex items-center justify-center gap-2 border border-red-200 dark:border-red-900 text-red-600 bg-red-50 dark:bg-red-950/30 rounded-xl text-sm font-medium hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors"
+                >
+                  <Trash2 size={15} />
+                  Delete
+                </button>
               </div>
             )}
           </div>
-          {/* Sold By Section */}
-          <Card className="shadow-sm border-border">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">{t('buyer.productDetail.soldBy')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center border border-success/20">
-                  <User className="w-8 h-8 text-success" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-lg text-foreground">{product.owner.firstName} {product.owner.lastName}</h3>
-                  <p className="text-muted-foreground mb-3">
-                    {product.district}
-                  </p>
-
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="font-semibold">4.9</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{t('buyer.productDetail.sellerRating')}</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-semibold mb-1">243</div>
-                      <p className="text-xs text-muted-foreground">{t('buyer.productDetail.sales')}</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-semibold mb-1">98%</div>
-                      <p className="text-xs text-muted-foreground">{t('buyer.productDetail.onTimeDelivery')}</p>
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    onClick={handleChatWithOwner}
-                    className="w-full border-success/30 hover:border-success/60 text-success hover:bg-success/10 transition-all font-medium"
-                  >
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    {t('buyer.productDetail.messageSeller')}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
         </div>
 
-      </div>
-
-      {/* Customer Reviews */}
-      <Card className="shadow-sm border-border">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">{t('buyer.productDetail.customerReviews')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-6">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-3xl font-bold">4.8</span>
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={cn('w-5 h-5', i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300')} />
-                  ))}
-                </div>
-              </div>
-              <span className="text-muted-foreground">(124 reviews)</span>
+        {/* Seller card */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5 shadow-sm">
+          <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <User size={15} className="text-green-600" />
+            {t('buyer.productDetail.soldBy')}
+          </h2>
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/40 flex items-center justify-center shrink-0">
+              <User size={22} className="text-green-600" />
             </div>
-
-            {/* Rating Distribution */}
-            <div className="space-y-2">
-              {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="flex items-center gap-2">
-                  <span className="text-sm w-3">{rating}</span>
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-yellow-400 h-full rounded-full"
-                      style={{ width: `${rating === 5 ? 70 : rating === 4 ? 20 : rating === 3 ? 5 : rating === 2 ? 3 : 2}%` }}
-                    />
-                  </div>
-                  <span className="text-sm text-muted-foreground w-10 text-right">
-                    {rating === 5 ? 70 : rating === 4 ? 20 : rating === 3 ? 5 : rating === 2 ? 3 : 2}%
-                  </span>
-                </div>
-              ))}
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground">
+                {product.owner.firstName} {product.owner.lastName}
+              </p>
+              <p className="text-sm text-muted-foreground mt-0.5 flex items-center gap-1">
+                <MapPin size={12} />
+                {formatDistrict(String(product.district))}
+              </p>
+              {!isOwner && user && (
+                <button
+                  type="button"
+                  onClick={handleChatWithOwner}
+                  className="mt-3 h-9 px-4 flex items-center gap-2 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-xl text-xs font-semibold hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors"
+                >
+                  <MessageSquare size={13} />
+                  {t('buyer.productDetail.messageSeller')}
+                </button>
+              )}
+              {!user && (
+                <Link
+                  href="/auth/signin"
+                  className="mt-3 inline-flex h-9 px-4 items-center gap-2 border border-border rounded-xl text-xs font-semibold text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                >
+                  Sign in to contact seller
+                </Link>
+              )}
             </div>
           </div>
-
-          {/* Individual Reviews */}
-          <div className="space-y-4">
-            <div className="border-b border-border/50 pb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-semibold">Mukamana</span>
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <span className="text-sm text-muted-foreground">Nov 2025</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Very good quality maize. Delivered on time to Kigali. Will order again next season.
-              </p>
-            </div>
-
-            <div className="border-b border-border/50 pb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-semibold">Niyonzima</span>
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <span className="text-sm text-muted-foreground">Oct 2025</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Exactly as described. Well dried, no mold. Seller responded quickly to my questions.
-              </p>
-            </div>
-
-            <div className="pb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-semibold">Uwera</span>
-                <div className="flex items-center">
-                  {[...Array(4)].map((_, i) => (
-                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                  ))}
-                  <Star className="w-3 h-3 text-gray-300" />
-                </div>
-                <span className="text-sm text-muted-foreground">Oct 2025</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Good product. Packaging could be tighter but the maize quality is excellent for milling.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Related Products */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('buyer.productDetail.relatedProducts')}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { name: 'Yellow maize 50kg', seller: 'Karangwa - Musange', price: 11000 },
-            { name: 'Sorghum 50kg bag', seller: 'Bizimana - Ruhengeri', price: 9500 },
-            { name: 'Rice paddy 25kg', seller: 'Nkurunziza - Bugesera', price: 14000 },
-            { name: 'Beans 25kg bag', seller: 'Uwimana - Musanze', price: 18500 },
-          ].map((relatedProduct, index) => (
-            <Card key={index} className="shadow-sm border-border hover:shadow-md transition-shadow cursor-pointer">
-              <CardContent className="pt-4">
-                <div className="aspect-square bg-muted rounded-lg mb-3" />
-                <h3 className="font-semibold text-sm mb-1">{relatedProduct.name}</h3>
-                <p className="text-xs text-muted-foreground mb-2">{relatedProduct.seller}</p>
-                <p className="font-bold text-sm">{formatPrice(relatedProduct.price)}</p>
-              </CardContent>
-            </Card>
-          ))}
         </div>
       </div>
 
-      <Footer />
-    </div>
+      {buyOpen && (
+        <BuyModal product={product} onClose={() => setBuyOpen(false)} />
+      )}
+    </>
   );
 };
 

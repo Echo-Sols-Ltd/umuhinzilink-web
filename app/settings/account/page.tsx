@@ -1,13 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import Sidebar from '@/components/shared/Sidebar';
-import { UserRole as UserType } from '@/types';
+import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   User,
-  ArrowLeft,
   Save,
   Lock,
   Mail,
@@ -20,8 +16,6 @@ import {
 } from 'lucide-react';
 
 export default function AccountSettingsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [account, setAccount] = useState({
@@ -75,30 +69,13 @@ export default function AccountSettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserType} activeItem="Settings" />
-      
-      <main className="flex-1 overflow-auto">
-        <div className="p-6 max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <button
-              onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Settings</span>
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Account Settings</h1>
-              <p className="text-muted-foreground mt-1">Manage your profile and account preferences</p>
-            </div>
-          </div>
-
-          {/* Account Settings */}
-          <div className="space-y-6">
+    <SettingsSubLayout
+      title="Account Settings"
+      description="Manage your profile and account preferences"
+    >
+      <div className="space-y-6">
             {/* Profile Information */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center text-white">
                   <User className="w-5 h-5" />
@@ -196,7 +173,7 @@ export default function AccountSettingsPage() {
             </div>
 
             {/* Password Change */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white">
                   <Lock className="w-5 h-5" />
@@ -286,7 +263,7 @@ export default function AccountSettingsPage() {
             </div>
 
             {/* Privacy Preferences */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                   <Shield className="w-5 h-5" />
@@ -330,7 +307,6 @@ export default function AccountSettingsPage() {
                 </div>
               </div>
             </div>
-          </div>
 
           {/* Save Button */}
           <div className="flex justify-end mt-8">
@@ -362,8 +338,7 @@ export default function AccountSettingsPage() {
               )}
             </button>
           </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </SettingsSubLayout>
   );
 }

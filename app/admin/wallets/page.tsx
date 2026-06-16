@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import {
     Table,
     TableBody,
@@ -90,31 +91,41 @@ export default function AdminWalletsPage() {
         <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
 
-            <main className="flex-1 overflow-auto bg-background/30">
-                <div className="p-8 max-w-7xl mx-auto space-y-8">
-                    {/* Header */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div>
-                            <h1 className="text-3xl font-semibold text-foreground  flex items-center gap-3">
-                                <ShieldCheck className="w-8 h-8 text-success" />
-                                Treasury Management
-                            </h1>
-                            <p className="text-sm text-muted-foreground mt-1 font-medium">Verify and monitor {totalElements} user wallets across ecosystem</p>
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <AdminPageHeader
+                    title="Treasury Management"
+                    description={`Verify and monitor ${totalElements} user wallets across ecosystem`}
+                    actions={
+                        <div className="bg-card p-1 rounded-lg shadow-sm border border-border flex">
+                            <button className="px-4 py-2 bg-success/10 text-success text-xs font-semibold rounded-xl flex items-center gap-2">
+                                <TrendingUp className="w-4 h-4" />
+                                Wallets
+                            </button>
+                            <button className="px-4 py-2 text-muted-foreground text-xs font-semibold rounded-xl hover:text-foreground transition-all">
+                                Transactions
+                            </button>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <div className="bg-card p-1 rounded-lg shadow-sm border border-border flex">
-                                <button className="px-4 py-2 bg-success/10 text-success text-xs font-semibold rounded-xl flex items-center gap-2">
-                                    <TrendingUp className="w-4 h-4" />
-                                    Wallets
-                                </button>
-                                <button className="px-4 py-2 text-muted-foreground text-xs font-semibold rounded-xl hover:text-foreground transition-all">
-                                    Transactions
-                                </button>
+                    }
+                    toolbar={
+                        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+                            <div className="relative flex-1 max-w-xl">
+                                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                                <input
+                                    type="text"
+                                    placeholder="Search by name, email, or wallet ID..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full pl-14 pr-6 py-3 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-success shadow-sm font-medium"
+                                />
                             </div>
+                            <button onClick={fetchWallets} className="p-3 bg-card border border-border rounded-lg hover:bg-card transition-all shadow-sm shrink-0">
+                                <RefreshCw className={`w-5 h-5 text-muted-foreground ${loading ? 'animate-spin text-success' : ''}`} />
+                            </button>
                         </div>
-                    </div>
+                    }
+                />
 
-                    {/* Quick Stats */}
+                <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="bg-card p-6 rounded-lg border border-border shadow-sm flex items-center gap-5">
                             <div className="p-4 bg-success rounded-lg text-white shadow-lg shadow-success/20">
@@ -143,23 +154,6 @@ export default function AdminWalletsPage() {
                                 <p className="text-2xl font-semibold text-foreground">RWF {(wallets.length ? wallets.reduce((acc, w) => acc + w.balance, 0) / wallets.length : 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                             </div>
                         </div>
-                    </div>
-
-                    {/* Search and Filters */}
-                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                        <div className="relative flex-1 max-w-xl w-full">
-                            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                            <input
-                                type="text"
-                                placeholder="Search by name, email, or wallet ID..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-14 pr-6 py-4 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-success shadow-sm font-medium"
-                            />
-                        </div>
-                        <button onClick={fetchWallets} className="p-4 bg-card border border-border rounded-lg hover:bg-card transition-all shadow-sm">
-                            <RefreshCw className={`w-5 h-5 text-muted-foreground ${loading ? 'animate-spin text-success' : ''}`} />
-                        </button>
                     </div>
 
                     {/* Table */}
@@ -272,9 +266,8 @@ export default function AdminWalletsPage() {
                             </div>
                         </div>
                     )}
-                </div>
-            </main>
-
+                </main>
+            </div>
         </div>
     );
 }

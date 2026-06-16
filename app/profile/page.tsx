@@ -1,30 +1,25 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { Negotiation } from '@/types';
-import { Loader2 } from 'lucide-react';
-
-import ProfileComponent from '@/components/profile/Profile';
-import { useUser } from '@/contexts/UserContext';
 import { useWallet } from '@/contexts/WalletContext';
 import { useOrder } from '@/contexts/OrderContext';
+import { useNegotiation } from '@/contexts/NegotiationContext';
+import { useRouter } from 'next/navigation';
+import ProfileComponent from '@/components/profile/Profile';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
+import PageLoading from '@/components/layout/PageLoading';
+import { UserRole } from '@/types';
 
-
-function GlobalProfileComponent() {
-  const { user, loading: authLoading, } = useAuth();
-  const { wallet } = useWallet()
-  const { completedBuyingOrders: orders } = useOrder()
+export default function ProfilePage() {
+  const { user, loading: authLoading } = useAuth();
+  const { wallet } = useWallet();
+  const { orders, ordersTotalElements, completedBuyingOrders, completedSellingOrders } = useOrder();
+  const { negotiations, loading: negotiationsLoading } = useNegotiation();
   const router = useRouter();
-  const { loading: userLoading } = useUser()
-  const loading = authLoading || userLoading
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader2 className='text-success animate-spin' size={50} />
-      </div>
-    );
+  if (authLoading) {
+    return <PageLoading label="Loading profile" description="Fetching your account details…" />;
   }
 
   if (!user) {
@@ -32,29 +27,31 @@ function GlobalProfileComponent() {
     return null;
   }
 
+  const walletBalance = wallet?.balance ?? 0;
+  const isSeller = user.role === UserRole.SELLER;
+  const totalOrders = ordersTotalElements > 0 ? ordersTotalElements : orders.length;
+  const completedOrders = isSeller ? completedSellingOrders.length : completedBuyingOrders.length;
+  const savedProductsCount = user.savedProducts?.length ?? 0;
 
-  const walletBalance = wallet?.balance || 0
-  const totalOrders = orders.length
-  const completedOrders = orders.length
-  const savedProductsCount = user.savedProducts.length
-  const activeNegotiations: Negotiation[] = []
+  const activeNegotiations = negotiations.filter(
+    (n) => n.order?.buyer?.id === user.id || n.order?.product?.owner?.id === user.id,
+  );
 
   return (
-    <div className="flex  h-screen bg-background overflow-hidden">
-      <div className="flex-1 overflow-auto pb-20">
-        <ProfileComponent
-          user={user}
-          walletBalance={walletBalance}
-          totalOrders={totalOrders}
-          completedOrders={completedOrders}
-          savedProductsCount={savedProductsCount}
-          activeNegotiations={activeNegotiations}
-        />
-      </div>
-    </div>
+    <AppLayout maxWidth="max-w-6xl" mainClassName="space-y-0">
+      <PageHeader
+        title="My profile"
+        description="Wallet, orders, and account settings."
+      />
+      <ProfileComponent
+        user={user}
+        walletBalance={walletBalance}
+        totalOrders={totalOrders}
+        completedOrders={completedOrders}
+        savedProductsCount={savedProductsCount}
+        activeNegotiations={activeNegotiations}
+        negotiationsLoading={negotiationsLoading}
+      />
+    </AppLayout>
   );
-}
-
-export default function GlobalProfilePage() {
-  return <GlobalProfileComponent />;
 }

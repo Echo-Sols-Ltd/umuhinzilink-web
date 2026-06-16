@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
-import { useToast } from '@/components/ui/use-toast';
+import { adminService } from '@/services/admin';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +27,7 @@ import {
     Ban,
     MessageSquare
 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function AdminUserDetailPage() {
     const params = useParams();
@@ -62,21 +65,8 @@ export default function AdminUserDetailPage() {
                     setCurrentUser(foundUser);
                     setLoading(false);
                 } else {
-                    // ❌ Not in context - fetch from server
-                    const { userService } = await import('@/services/users');
-                    const response = await userService.getUserById(userId);
-
-                    if (response.success && response.data) {
-                        // Store in context for future use and real-time updates
-                        setCurrentUser(response.data);
-                    } else {
-                        setError('User not found');
-                        showToast({
-                            title: "Error",
-                            description: "Failed to load user details",
-                            variant: "default"
-                        });
-                    }
+                    const userData = await adminService.getUserById(userId);
+                    setCurrentUser(userData);
                 }
             } catch (error) {
                 console.error('Failed to fetch user:', error);
@@ -101,19 +91,22 @@ export default function AdminUserDetailPage() {
     };
 
     const handleSendMessage = () => {
-        if (selectedUser) {
-            router.push(`/chat/${selectedUser.id}`);
-        }
+        showToast({
+            title: "Not available",
+            description: "Direct messaging is only available through order negotiations.",
+            variant: "default"
+        });
     };
 
     const handleSuspendUser = async () => {
         if (!selectedUser) return;
 
         try {
-            // For now, just show a toast since the API method doesn't exist
+            await adminService.toggleUserStatus(selectedUser.id, true);
+            setCurrentUser({ ...selectedUser, active: false });
             showToast({
-                title: "Info",
-                description: "Suspend user functionality not yet implemented",
+                title: "Success",
+                description: "User suspended successfully",
                 variant: "default"
             });
         } catch (error) {
@@ -130,17 +123,18 @@ export default function AdminUserDetailPage() {
         if (!selectedUser) return;
 
         try {
-            // For now, just show a toast since the API method doesn't exist
+            await adminService.toggleUserStatus(selectedUser.id, false);
+            setCurrentUser({ ...selectedUser, active: true });
             showToast({
-                title: "Info",
-                description: "Unsuspend user functionality not yet implemented",
+                title: "Success",
+                description: "User activated successfully",
                 variant: "default"
             });
         } catch (error) {
             console.error('Failed to unsuspend user:', error);
             showToast({
                 title: "Error",
-                description: "Failed to unsuspend user",
+                description: "Failed to activate user",
                 variant: "default"
             });
         }
@@ -151,7 +145,12 @@ export default function AdminUserDetailPage() {
             <div className="flex h-screen bg-background">
                 <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
                 <main className="flex-1 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <PageLoading
+                        variant="section"
+                        label="Loading user"
+                        description="Fetching account details…"
+                        className="bg-transparent dark:bg-transparent"
+                    />
                 </main>
             </div>
         );
@@ -178,62 +177,49 @@ export default function AdminUserDetailPage() {
     const user = selectedUser;
 
     return (
-        <div className="flex h-screen bg-background">
+        <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
 
-            <main className="flex-1 overflow-auto">
-                {/* Header */}
-                <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
-                    <div className="flex items-center space-x-4">
-                        <Button
-                            onClick={handleBack}
-                            variant="ghost"
-                            size="sm"
-                            className="flex items-center space-x-2"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            <span>Back to Users</span>
-                        </Button>
-                        <div className="h-8 w-px bg-border"></div>
-                        <div>
-                            <h1 className="text-xl font-semibold text-foreground">User Details</h1>
-                            <p className="text-sm text-muted-foreground">
-                                #{user.id.slice(0, 8)} • {user.role}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleSendMessage}
-                        >
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            Message
-                        </Button>
-                        {(user as any).suspended ? (
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <AdminPageHeader
+                    title="User Details"
+                    description={`#${user.id.slice(0, 8)} • ${user.role}`}
+                    backHref="/admin/users"
+                    backLabel="Back to Users"
+                    actions={
+                        <>
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={handleUnsuspendUser}
+                                onClick={handleSendMessage}
                             >
-                                <CheckCircle className="w-4 h-4 mr-2" />
-                                Unsuspend
+                                <MessageSquare className="w-4 h-4 mr-2" />
+                                Message
                             </Button>
-                        ) : (
-                            <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={handleSuspendUser}
-                            >
-                                <Ban className="w-4 h-4 mr-2" />
-                                Suspend
-                            </Button>
-                        )}
-                    </div>
-                </header>
+                            {!user.active ? (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleUnsuspendUser}
+                                >
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    Unsuspend
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={handleSuspendUser}
+                                >
+                                    <Ban className="w-4 h-4 mr-2" />
+                                    Suspend
+                                </Button>
+                            )}
+                        </>
+                    }
+                />
 
-                <div className="p-6 space-y-6">
+                <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
                     {/* User Status Card */}
                     <Card>
                         <CardHeader>
@@ -251,7 +237,7 @@ export default function AdminUserDetailPage() {
                                             <span>{user.emailVerified ? 'Verified' : 'Pending'}</span>
                                         </div>
                                     </Badge>
-                                    {(user as any).suspended && (
+                                    {!user.active && (
                                         <Badge className="text-destructive bg-destructive/10">
                                             <div className="flex items-center space-x-1">
                                                 <XCircle className="w-4 h-4" />
@@ -335,8 +321,8 @@ export default function AdminUserDetailPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Account Status</p>
-                                    <Badge className={(user as any).suspended ? 'text-destructive bg-destructive/10' : 'text-success bg-success/10'}>
-                                        {(user as any).suspended ? 'Suspended' : 'Active'}
+                                    <Badge className={!user.active ? 'text-destructive bg-destructive/10' : 'text-success bg-success/10'}>
+                                        {!user.active ? 'Suspended' : 'Active'}
                                     </Badge>
                                 </div>
                             </CardContent>
@@ -368,8 +354,8 @@ export default function AdminUserDetailPage() {
                             </div>
                         </CardContent>
                     </Card>
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
     );
 }

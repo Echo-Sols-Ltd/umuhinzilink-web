@@ -3,13 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { UserRole } from '@/types';
 import { useState } from 'react';
-import { Bell, ChevronDown, Menu, X, ShoppingBag, LayoutDashboard, ListChecks, LogOut, User, Sprout } from 'lucide-react';
+import { Bell, ChevronDown, Menu, X, ShoppingBag, LayoutDashboard, ListChecks, LogOut, User, Sprout, Wallet, Settings } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotificationContext();
   const { t } = useI18n();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -22,7 +24,7 @@ export default function Navbar() {
 
   const guestLinks = [
     { label: 'Browse', href: '/products' },
-    { label: 'How it works', href: '/how-it-works' },
+    { label: 'How it works', href: '/about#features' },
   ];
 
   const buyerLinks = [
@@ -77,8 +79,11 @@ export default function Navbar() {
                 href="/notifications"
                 className="relative p-2 rounded-full hover:bg-accent transition-colors">
                 <Bell size={18} className="text-foreground/70" />
-                {/* TODO: wire unread count from API */}
-                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
               </Link>
 
               {/* Avatar dropdown */}
@@ -140,8 +145,15 @@ export default function Navbar() {
 
                         <DropdownLink
                           href="/wallet"
-                          icon={<ShoppingBag size={15} />}
+                          icon={<Wallet size={15} />}
                           label="Wallet"
+                          onClick={() => setAvatarOpen(false)}
+                        />
+
+                        <DropdownLink
+                          href="/settings"
+                          icon={<Settings size={15} />}
+                          label="Settings"
                           onClick={() => setAvatarOpen(false)}
                         />
                       </div>

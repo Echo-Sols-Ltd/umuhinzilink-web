@@ -18,6 +18,8 @@ import {
   Filter,
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { UserRole as UserType } from '@/types';
 
 interface AnalyticsData {
@@ -112,8 +114,22 @@ function RevenueAnalytics() {
 
   if (!analytics) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-success"></div>
+      <div className="flex h-screen bg-background overflow-hidden">
+        <Sidebar userType={UserType.ADMIN} activeItem="Analytics" />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <AdminPageHeader
+            title="Analytics Dashboard"
+            description="Revenue insights and platform metrics"
+          />
+          <main className="flex-1 flex items-center justify-center">
+            <PageLoading
+              variant="section"
+              label="Loading analytics"
+              description="Crunching platform metrics…"
+              className="bg-transparent dark:bg-transparent"
+            />
+          </main>
+        </div>
       </div>
     );
   }
@@ -159,27 +175,22 @@ function RevenueAnalytics() {
         userType={UserType.ADMIN}
         activeItem='Analytics'
       />
-      <div className="flex-1 flex flex-col overflow-auto">
-        {/* Header */}
-        <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">Analytics Dashboard</h1>
-            <p className="text-xs text-muted-foreground">Revenue insights and platform metrics</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
-              <Download className="w-4 h-4" />
-            </button>
-            <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
-              <Filter className="w-4 h-4" />
-            </button>
-          </div>
-        </header>
-
-        <main className="flex-1 bg-background p-6 space-y-6">
-          {/* Time Range Selector */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <AdminPageHeader
+          title="Analytics Dashboard"
+          description="Revenue insights and platform metrics"
+          actions={
+            <>
+              <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
+                <Download className="w-4 h-4" />
+              </button>
+              <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
+                <Filter className="w-4 h-4" />
+              </button>
+            </>
+          }
+          toolbar={
+            <div className="flex items-center gap-3">
               <select
                 value={timeRange}
                 onChange={e => setTimeRange(e.target.value)}
@@ -190,14 +201,15 @@ function RevenueAnalytics() {
                 <option value="quarter">Last Quarter</option>
                 <option value="year">Last Year</option>
               </select>
-              <button className="bg-success text-white px-4 py-2 rounded-lg hover:bg-success/90 flex items-center space-x-2">
+              <button className="bg-success text-white px-4 py-2 rounded-lg hover:bg-success/90 flex items-center space-x-2 text-sm">
                 <Download className="w-4 h-4" />
                 <span>Export</span>
               </button>
             </div>
-          </div>
+          }
+        />
 
-          {/* Stats Overview */}
+        <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {statCards.map((stat, index) => {
               const Icon = stat.icon;

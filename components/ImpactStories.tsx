@@ -1,98 +1,75 @@
 'use client';
 
+import { User } from 'lucide-react';
 import { useI18n } from '@/contexts/I18nContext';
 
 export default function ImpactStories() {
   const { t: translate } = useI18n();
-  const metrics = [
-    {
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          viewBox="0 0 24 24"
-        >
-          <path d="M16 21v-2a4 4 0 0 0-8 0v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-      ),
-      value: '500+',
-      labelKey: 'landing.impact.metrics.registeredFarmers',
-    },
-    {
-      value: '50+',
-      labelKey: 'landing.impact.metrics.activeSuppliers',
-    },
-    {
-      value: '30%',
-      labelKey: 'landing.impact.metrics.averageYieldIncrease',
-    },
-    {
-      value: '$50K',
-      labelKey: 'landing.impact.metrics.totalTransactions',
-    },
-  ];
 
   const testimonials = [
     {
       name: 'Marie Uwimana',
       roleKey: 'landing.impact.testimonials.marie.role',
       quoteKey: 'landing.impact.testimonials.marie.quote',
-      image: 'https://randomuser.me/api/portraits/women/44.jpg',
     },
     {
       name: 'Jean Baptiste',
       roleKey: 'landing.impact.testimonials.jean.role',
       quoteKey: 'landing.impact.testimonials.jean.quote',
-      image: 'https://randomuser.me/api/portraits/men/46.jpg',
     },
     {
       name: 'Agnes Mukamana',
       roleKey: 'landing.impact.testimonials.agnes.role',
       quoteKey: 'landing.impact.testimonials.agnes.quote',
-      image: 'https://randomuser.me/api/portraits/women/68.jpg',
     },
   ];
 
+  const highlights = [
+    { labelKey: 'landing.impact.metrics.registeredFarmers' },
+    { labelKey: 'landing.impact.metrics.activeSuppliers' },
+    { labelKey: 'landing.impact.metrics.averageYieldIncrease' },
+    { labelKey: 'landing.impact.metrics.totalTransactions' },
+  ];
+
   return (
-    <section className="py-20 bg-background">
-      <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-semibold text-foreground">{translate('landing.impact.title')}</h2>
-        <p className="text-center text-muted-foreground mt-2">
+    <section className="py-20 bg-gray-50 dark:bg-gray-950">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <h2 className="text-center text-2xl font-bold text-foreground">
+          {translate('landing.impact.title')}
+        </h2>
+        <p className="text-center text-muted-foreground mt-2 max-w-2xl mx-auto">
           {translate('landing.impact.subtitle')}
         </p>
 
-        {/* Testimonials */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          {testimonials.map((testimonial, i) => (
-            <div key={i} className="bg-card shadow-md rounded-lg p-4">
-              {/* Profile */}
-              <div className="flex items-center mb-3">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover mr-3"
-                />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+          {testimonials.map((testimonial) => (
+            <div
+              key={testimonial.name}
+              className="bg-white dark:bg-gray-900 border border-border rounded-2xl p-5 shadow-sm"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-950/40 flex items-center justify-center">
+                  <User size={18} className="text-green-600" />
+                </div>
                 <div>
-                  <p className="font-semibold text-foreground">{testimonial.name}</p>
+                  <p className="font-semibold text-foreground text-sm">{testimonial.name}</p>
                   <p className="text-muted-foreground text-xs">{translate(testimonial.roleKey)}</p>
                 </div>
               </div>
-              {/* Quote */}
-              <p className="text-foreground text-sm ">"{translate(testimonial.quoteKey)}"</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                &ldquo;{translate(testimonial.quoteKey)}&rdquo;
+              </p>
             </div>
           ))}
         </div>
 
-        {/* Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-8">
-          {metrics.map((m, i) => (
-            <div key={i} className="flex flex-col items-center">
-              <p className="text-lg font-semibold mt-2 text-success ">{m.value}</p>
-              <p className="text-muted-foreground text-sm">{translate(m.labelKey)}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
+          {highlights.map((item) => (
+            <div
+              key={item.labelKey}
+              className="bg-white dark:bg-gray-900 border border-border rounded-2xl p-4 text-center"
+            >
+              <p className="text-sm font-medium text-foreground">{translate(item.labelKey)}</p>
             </div>
           ))}
         </div>

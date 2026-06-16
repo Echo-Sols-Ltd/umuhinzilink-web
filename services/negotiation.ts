@@ -20,9 +20,9 @@ class NegotiationService {
         } as ApiResponse<NegotiationMessage[]>
     }
 
-    async getBuyerNegotiations() {
+    async getBuyerNegotiations(page = 0, size = 50) {
         const res = await apiClient.get<PaginatedResponse<Negotiation[]>>(
-            API_ENDPOINTS.NEGOTIATION.BUYER
+            `${API_ENDPOINTS.NEGOTIATION.BUYER}?page=${page}&size=${size}`
         )
         return {
             success: res.success,
@@ -31,9 +31,9 @@ class NegotiationService {
         } as ApiResponse<Negotiation[]>
     }
 
-    async getSellerNegotiations() {
+    async getSellerNegotiations(page = 0, size = 50) {
         const res = await apiClient.get<PaginatedResponse<Negotiation[]>>(
-            API_ENDPOINTS.NEGOTIATION.SELLER
+            `${API_ENDPOINTS.NEGOTIATION.SELLER}?page=${page}&size=${size}`
         )
         return {
             success: res.success,

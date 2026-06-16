@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Product, ProductStatus } from '@/types';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
@@ -20,14 +22,16 @@ export default function AdminProductDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
-  const { fetchProductById, loading } = useProduct();
+  const { fetchProductById } = useProduct();
   const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
       if (!params.id) return;
-      
+
+      setPageLoading(true);
       try {
         const result = await fetchProductById(params.id as string);
         if (result) {
@@ -35,13 +39,15 @@ export default function AdminProductDetailPage() {
         } else {
           setError('Product not found');
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load product');
+      } finally {
+        setPageLoading(false);
       }
     };
 
     fetchProduct();
-  }, [params.id]);
+  }, [params.id, fetchProductById]);
 
   const handleShareProduct = (product: Product) => {
     if (navigator.share) {
@@ -81,15 +87,17 @@ export default function AdminProductDetailPage() {
     }
   };
 
-  if (loading) {
+  if (pageLoading) {
     return (
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading product...</p>
-          </div>
+          <PageLoading
+            variant="section"
+            label="Loading product"
+            description="Fetching listing details…"
+            className="bg-transparent dark:bg-transparent"
+          />
         </main>
       </div>
     );
@@ -149,11 +157,24 @@ export default function AdminProductDetailPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
-      
-      <main className="flex-1 overflow-auto">
-        <div className="max-w-6xl mx-auto p-6 space-y-6">
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <AdminPageHeader
+          title={product.name}
+          description={`Product • ${product.category}`}
+          backHref="/admin/products"
+          backLabel="Back to Products"
+          actions={
+            <Button onClick={handleDeleteProduct} variant="outline" className="text-destructive border-destructive hover:bg-destructive/10">
+              Delete Product
+            </Button>
+          }
+        />
+
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
+          <div className="max-w-6xl mx-auto space-y-6">
           {/* Admin Actions */}
           <Card>
             <CardHeader>
@@ -169,13 +190,6 @@ export default function AdminProductDetailPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex gap-3">
-                {/* Admin actions for product management */}
-                <Button onClick={handleDeleteProduct} variant="outline" className="text-destructive border-destructive hover:bg-destructive/10">
-                  Delete Product
-                </Button>
-              </div>
-              
               <Separator />
               
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -205,8 +219,9 @@ export default function AdminProductDetailPage() {
             onShareProduct={handleShareProduct}
             showActions={false} // Admin doesn't need purchase/edit actions
           />
-        </div>
-      </main>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

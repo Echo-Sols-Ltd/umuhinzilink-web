@@ -3,13 +3,15 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import {
-    ChevronLeft, Upload, X, Check, ChevronDown,
-    Sprout, Package, MapPin, Tag, Scale,
+    Upload, X, Check, ChevronDown,
+    Package, MapPin,
     DollarSign, Info, ImagePlus, AlertCircle,
     ToggleLeft, ToggleRight,
 } from 'lucide-react';
 import { District, MeasurementUnit, ProductCategory, ProductRequest } from '@/types';
 import { useProductAction } from '@/hooks/useProductAction';
+import DetailPageShell from '@/components/layout/DetailPageShell';
+import AppLayout from '@/components/layout/AppLayout';
 
 // ── Enums (mirror backend) ────────────────────────────────────────────────────
 
@@ -179,7 +181,7 @@ export default function CreateProduct() {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
+            <AppLayout maxWidth="max-w-lg" mainClassName="flex items-center justify-center min-h-[60vh]">
                 <div className="max-w-sm w-full text-center animate-in fade-in zoom-in-95 duration-500">
                     <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/40 flex items-center justify-center mx-auto mb-6">
                         <Check size={36} className="text-green-600" />
@@ -209,41 +211,43 @@ export default function CreateProduct() {
                             <Package size={16} /> Add another listing
                         </button>
                         <Link
-                            href="/seller/listings"
+                            href="/products/seller"
                             className="w-full h-11 border border-border bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/50 text-foreground font-medium text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
                             View my listings
                         </Link>
                     </div>
                 </div>
-            </div>
+            </AppLayout>
         );
     }
+
+    const publishButton = (
+        <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="h-8 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs font-semibold rounded-xl transition-colors"
+        >
+            {loading ? 'Publishing…' : 'Publish'}
+        </button>
+    );
 
     // ── Form ──────────────────────────────────────────────────────────────
 
     return (
-        <div className="h-screen bg-gray-50 dark:bg-gray-950">
-
-            {/* Sticky header */}
-            <header className="sticky top-0 z-40 h-14 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4">
-                <Link
-                    href="/seller/listings"
-                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <ChevronLeft size={16} /> My listings
-                </Link>
-                <div className="flex items-center gap-1.5">
-                    <Sprout size={16} className="text-green-600" />
-                    <span className="text-sm font-bold text-foreground">New listing</span>
-                </div>
-                <button
-                    onClick={handleSubmit}
-                    disabled={loading}
-                    className="h-8 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs font-semibold rounded-full transition-colors">
-                    {loading ? 'Publishing…' : 'Publish'}
-                </button>
-            </header>
-
-            <main className="max-w-lg mx-auto px-4 py-6 space-y-4 pb-60 h-full overflow-y-scroll">
+        <DetailPageShell
+            maxWidth="max-w-lg"
+            breadcrumbs={[
+                { label: 'Home', href: '/' },
+                { label: 'My listings', href: '/products/seller' },
+                { label: 'New listing' },
+            ]}
+            backHref="/products/seller"
+            backLabel="My listings"
+            actions={publishButton}
+            className="pb-24"
+        >
+            <div className="space-y-4">
 
                 {/* Image upload */}
                 <div
@@ -442,14 +446,13 @@ export default function CreateProduct() {
                         Stock is reserved when a buyer places an order. Keep your quantity updated to avoid overselling.
                     </p>
                 </div>
-
-            </main>
+            </div>
 
             {/* Sticky bottom bar */}
             <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-border px-4 py-3">
                 <div className="max-w-lg mx-auto flex items-center gap-3">
                     <Link
-                        href="/seller/listings"
+                        href="/products/seller"
                         className="flex-1 h-11 border border-border rounded-xl text-sm font-medium text-foreground flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         Cancel
                     </Link>
@@ -470,6 +473,6 @@ export default function CreateProduct() {
                     </button>
                 </div>
             </div>
-        </div>
+        </DetailPageShell>
     );
 }

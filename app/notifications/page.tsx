@@ -18,14 +18,14 @@ import {
     RefreshCw,
     X,
 } from 'lucide-react';
-import Sidebar from '@/components/shared/Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { useNotification } from '@/hooks/useNotification';
 import { NotificationType, Notification, UserRole } from '@/types';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
-import Navbar from '@/components/Navbar';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 15;
@@ -62,6 +62,7 @@ export default function NotificationsPage() {
         currentPage,
         loading,
         fetchAll,
+        fetchUnread,
         fetchByType,
         markAsRead,
         markAllAsRead,
@@ -86,20 +87,28 @@ export default function NotificationsPage() {
         { value: NotificationType.ORDER, label: t('common.notificationPage.tabs.orders') },
     ], [t]);
 
+    const userId = user?.id;
+
     // ── Load data when tab or page changes ────────────────────────────────────
     const load = useCallback(async (tab: TabValue, p: number) => {
-        if (tab === NotificationType.SYSTEM) setNotifications(systemNotifications);
-        else if (tab === NotificationType.PRODUCT) setNotifications(productNotifications);
-        else if (tab === NotificationType.ORDER) setNotifications(orderNotifications);
-        else if (tab === NotificationType.PAYMENT) setNotifications(allNotifications.filter(n => n.type === tab));
-        else if (tab === 'ALL') setNotifications(allNotifications);
-        else if (tab === 'UNREAD') setNotifications(unreadNotifications);
-    }, [allNotifications, systemNotifications, productNotifications, orderNotifications, unreadNotifications]);
+        if (tab === 'UNREAD') {
+            await fetchUnread({ page: p, size: PAGE_SIZE });
+            return;
+        }
+        if (tab === NotificationType.SYSTEM || tab === NotificationType.PRODUCT || tab === NotificationType.ORDER || tab === NotificationType.PAYMENT) {
+            await fetchByType(tab, { page: p, size: PAGE_SIZE });
+            return;
+        }
+        await fetchAll({ page: p, size: PAGE_SIZE });
+    }, [fetchAll, fetchUnread, fetchByType]);
 
     useEffect(() => {
-        load(activeTab, page);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeTab, page, allNotifications]);
+        if (userId) load(activeTab, page);
+    }, [activeTab, page, userId, load]);
+
+    useEffect(() => {
+        setNotifications(allNotifications);
+    }, [allNotifications]);
 
     // ── Client-side filter: UNREAD tab + search ───────────────────────────────
     const visible = useMemo(() => {
@@ -120,50 +129,40 @@ export default function NotificationsPage() {
 
     if (!user) return null;
 
-    return (
-        <div className="flex h-screen bg-background overflow-hidden">
-            <Navbar />
-            <main className="flex-1 overflow-auto py-14">
-                <div className="p-6 lg:p-8 max-w-full space-y-6">
+    const unreadSubtitle = unreadCount > 0
+        ? (unreadCount > 1
+            ? t('common.notificationPage.unreadPlural').replace('{{count}}', String(unreadCount))
+            : t('common.notificationPage.unreadSingular'))
+        : t('common.notificationPage.caughtUp');
 
-                    {/* ── Header ──────────────────────────────────────────── */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-green-600/10 flex items-center justify-center">
-                                <Bell className="w-5 h-5 text-green-600" />
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-semibold text-foreground leading-tight">{t('common.notificationPage.title')}</h1>
-                                <p className="text-xs text-muted-foreground mt-0.5">
-                                    {unreadCount > 0
-                                        ? (unreadCount > 1
-                                            ? t('common.notificationPage.unreadPlural').replace('{{count}}', String(unreadCount))
-                                            : t('common.notificationPage.unreadSingular'))
-                                        : t('common.notificationPage.caughtUp')}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => load(activeTab, page)}
-                                disabled={loading}
-                                title="Refresh"
-                                className="p-2 text-muted-foreground hover:text-foreground hover:bg-card rounded-lg border border-border transition-all disabled:opacity-50"
-                            >
-                                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                            </button>
-                            <button
-                                onClick={markAllAsRead}
-                                disabled={loading || unreadCount === 0}
-                                className="px-4 py-2 bg-card border border-border rounded-xl hover:bg-card text-xs font-semibold text-muted-foreground transition-all disabled:opacity-40 shadow-sm"
-                            >
-                                <span className="flex items-center gap-1.5">
-                                    <Check className="w-3.5 h-3.5" />
-                                    {t('common.notificationPage.markAllRead')}
-                                </span>
-                            </button>
-                        </div>
-                    </div>
+    return (
+        <AppLayout maxWidth="max-w-3xl">
+            <PageHeader
+                title={t('common.notificationPage.title')}
+                description={unreadSubtitle}
+                actions={
+                    <>
+                        <button
+                            onClick={() => load(activeTab, page)}
+                            disabled={loading}
+                            title="Refresh"
+                            className="p-2 text-muted-foreground hover:text-foreground hover:bg-white dark:hover:bg-gray-900 rounded-xl border border-border transition-all disabled:opacity-50">
+                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                        </button>
+                        <button
+                            onClick={markAllAsRead}
+                            disabled={loading || unreadCount === 0}
+                            className="px-4 py-2 bg-white dark:bg-gray-900 border border-border rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-xs font-semibold text-muted-foreground transition-all disabled:opacity-40">
+                            <span className="flex items-center gap-1.5">
+                                <Check className="w-3.5 h-3.5" />
+                                {t('common.notificationPage.markAllRead')}
+                            </span>
+                        </button>
+                    </>
+                }
+            />
+
+            <div className="space-y-4">
 
                     {/* ── Tab strip ────────────────────────────────────────── */}
                     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
@@ -329,8 +328,7 @@ export default function NotificationsPage() {
                             </div>
                         )}
                     </div>
-                </div>
-            </main>
-        </div>
+            </div>
+        </AppLayout>
     );
 }

@@ -14,7 +14,9 @@ import { cn, imageUrl } from '@/lib/utils';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import NegotiationCard from '@/components/negotiation/NegotiationCard';
 import { UserRole } from '@/types';
-import Navbar from '@/components/Navbar';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -85,12 +87,26 @@ function EmptyState({ tab, role }: { tab: TabFilter; role: UserRole }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function NegotiationsPage() {
-    const { user } = useAuth();
+    const { user, loading: authLoading, isAuthenticated } = useAuth();
     const router = useRouter();
     const { negotiations, loading } = useNegotiation()
 
     const [tab, setTab] = useState<TabFilter>('ALL');
     const [search, setSearch] = useState('');
+    const [productFilter, setProductFilter] = useState<string | null>(null);
+    const [sellerFilter, setSellerFilter] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            router.replace('/auth/signin?redirect=/negotiations');
+        }
+    }, [authLoading, isAuthenticated, router]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        setProductFilter(params.get('product'));
+        setSellerFilter(params.get('seller'));
+    }, []);
 
 
 
@@ -98,6 +114,12 @@ export default function NegotiationsPage() {
 
     const filtered = useMemo(() => {
         let list = tab === 'ALL' ? negotiations : negotiations.filter(n => n.status === tab);
+        if (productFilter) {
+            list = list.filter(n => n.order.product.id === productFilter);
+        }
+        if (sellerFilter) {
+            list = list.filter(n => n.order.product.owner?.id === sellerFilter);
+        }
         if (search.trim()) {
             const q = search.toLowerCase();
             list = list.filter(n =>
@@ -107,7 +129,7 @@ export default function NegotiationsPage() {
             );
         }
         return list;
-    }, [negotiations, tab, search]);
+    }, [negotiations, tab, search, productFilter, sellerFilter]);
 
     // ── Metrics ───────────────────────────────────────────────────────────
 
@@ -119,33 +141,33 @@ export default function NegotiationsPage() {
 
     // ── Render ────────────────────────────────────────────────────────────
 
-    if(!user){
-        return null
+    if (!authLoading && !isAuthenticated) {
+        return null;
     }
+
+    if (authLoading || !user) {
+        return (
+            <AppLayout maxWidth="max-w-6xl">
+                <PageLoading fullScreen={false} label="Loading negotiations" description="Fetching your active deals…" />
+            </AppLayout>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-
-            <Navbar />
-
-            {/* Header */}
-            <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border">
-
-                <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <TrendingUp size={18} className="text-green-600" />
-                        <span className="text-sm font-bold text-foreground">Negotiations</span>
-                    </div>
-                    {user?.role === 'BUYER' && (
+        <AppLayout maxWidth="max-w-6xl">
+            <PageHeader
+                title="Negotiations"
+                description="Track price discussions and deals with buyers or sellers."
+                actions={
+                    user?.role === 'BUYER' ? (
                         <Link
                             href="/products"
-                            className="flex items-center gap-1.5 h-8 px-3 text-xs font-semibold bg-green-600 hover:bg-green-700 text-white rounded-full transition-colors">
-                            <Sprout size={12} /> Browse
+                            className="flex items-center gap-1.5 h-9 px-4 text-xs font-semibold bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors">
+                            <Sprout size={12} /> Browse products
                         </Link>
-                    )}
-                </div>
-            </header>
-
-            <main className="max-w-2xl mx-auto px-4 py-5 space-y-5">
+                    ) : undefined
+                }
+            />
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -200,8 +222,8 @@ export default function NegotiationsPage() {
 
                 {/* List */}
                 {loading ? (
-                    <div className="space-y-3">
-                        {Array.from({ length: 3 }).map((_, i) => (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-4 animate-pulse space-y-3">
                                 <div className="flex gap-3">
                                     <div className="w-14 h-14 rounded-xl bg-gray-200 dark:bg-gray-800" />
@@ -216,16 +238,29 @@ export default function NegotiationsPage() {
                         ))}
                     </div>
                 ) : filtered.length === 0 ? (
-                    <EmptyState tab={tab} role={user.role} />
+                    productFilter ? (
+                        <div className="py-20 flex flex-col items-center text-center">
+                            <h3 className="text-base font-bold text-foreground">No negotiation for this product yet</h3>
+                            <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                                Start a negotiation from the product page to discuss pricing with the seller.
+                            </p>
+                            <Link
+                                href={`/products/${productFilter}${sellerFilter ? '?negotiate=1' : ''}`}
+                                className="mt-5 flex items-center gap-2 h-10 px-5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors">
+                                View product
+                            </Link>
+                        </div>
+                    ) : (
+                        <EmptyState tab={tab} role={user.role} />
+                    )
                 ) : (
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                         {filtered.map(neg => (
                             <NegotiationCard key={neg.id} neg={neg} role={user.role} />
                         ))}
                     </div>
                 )}
 
-            </main>
-        </div>
+        </AppLayout>
     );
 }

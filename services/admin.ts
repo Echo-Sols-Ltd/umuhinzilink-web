@@ -175,6 +175,16 @@ export const adminService = {
 
 
 
+  getBuyerById: async (userId: string): Promise<User> => {
+    const response = await apiClient.get<ApiResponse<User>>(API_ENDPOINTS.ADMIN.BUYERS_BY_ID(userId));
+    return response.data!;
+  },
+
+  getSellerById: async (userId: string): Promise<any> => {
+    const response = await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.ADMIN.SELLERS_BY_ID(userId));
+    return response.data!;
+  },
+
   getSystemWallet: async (): Promise<Wallet> => {
     try {
       const response = await apiClient.get<ApiResponse<Wallet>>(API_ENDPOINTS.WALLET.SYSTEM_WALLET);

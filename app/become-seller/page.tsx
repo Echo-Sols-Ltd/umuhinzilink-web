@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
     Sprout, MapPin, Phone, FileText, ChevronRight,
     ChevronLeft, CheckCircle, Package, TrendingUp,
@@ -103,7 +104,14 @@ export default function BecomeSeller() {
     });
     const [errors, setErrors] = useState<Partial<SellerRegistration>>({});
 
-    const { registerSeller, loading} = useAuth();
+    const { registerSeller, loading, isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!loading && !isAuthenticated) {
+            router.replace('/auth/signin?redirect=/become-seller');
+        }
+    }, [loading, isAuthenticated, router]);
 
     // ── Validation ─────────────────────────────────────────────────────────
 
@@ -149,7 +157,7 @@ export default function BecomeSeller() {
     // ── Render ──────────────────────────────────────────────────────────────
 
     return (
-        <div className="h-screen bg-gray-50 dark:bg-gray-950 flex flex-col overflow-auto pb-20">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col pb-20">
 
             {/* Top bar */}
             <header className="fixed top-0 left-0 right-0 z-40 h-14 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border flex items-center px-4">

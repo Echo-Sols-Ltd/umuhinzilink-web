@@ -1,13 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import Sidebar from '@/components/shared/Sidebar';
-import { UserRole as UserType } from '@/types';
+import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   Bell,
-  ArrowLeft,
   Save,
   Mail,
   Smartphone,
@@ -18,8 +14,6 @@ import {
 } from 'lucide-react';
 
 export default function NotificationsSettingsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [notifications, setNotifications] = useState({
@@ -95,32 +89,15 @@ export default function NotificationsSettingsPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserType} activeItem="Settings" />
-      
-      <main className="flex-1 overflow-auto">
-        <div className="p-6 max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <button
-              onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Settings</span>
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Notification Preferences</h1>
-              <p className="text-muted-foreground mt-1">Choose how you receive alerts and updates</p>
-            </div>
-          </div>
-
-          {/* Notification Categories */}
-          <div className="space-y-6">
+    <SettingsSubLayout
+      title="Notification Preferences"
+      description="Choose how you receive alerts and updates"
+    >
+      <div className="space-y-6">
             {notificationCategories.map((category, categoryIndex) => {
               const Icon = category.icon;
               return (
-                <div key={categoryIndex} className="bg-card rounded-lg border border-border p-6">
+                <div key={categoryIndex} className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                       <Icon className="w-5 h-5" />
@@ -159,8 +136,6 @@ export default function NotificationsSettingsPage() {
                 </div>
               );
             })}
-          </div>
-
           {/* Save Button */}
           <div className="flex justify-end mt-8">
             <button
@@ -191,8 +166,7 @@ export default function NotificationsSettingsPage() {
               )}
             </button>
           </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </SettingsSubLayout>
   );
 }

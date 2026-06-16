@@ -17,6 +17,7 @@ import {
 import { useAdmin } from '@/contexts/AdminContext';
 import { adminService } from '@/services/admin';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { Product, UserRole } from '@/types';
 import AdminGuard from '@/contexts/guard/AdminGuard';
 import { notify } from '@/lib/notify';
@@ -95,57 +96,49 @@ function FarmerProductManagement() {
         <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
 
-            <div className="flex-1 flex flex-col overflow-auto">
-                <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
-                    <div>
-                        <h1 className="text-xl font-semibold text-foreground">Farmer Products</h1>
-                        <p className="text-xs text-muted-foreground">Moderate and oversee all farmer-listed produce</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
-                            <Filter className="w-4 h-4" />
-                        </button>
-                    </div>
-                </header>
-
-                <main className="flex-1 bg-background p-6 space-y-6">
-                    {/* Search and Filters */}
-                    <div className="flex items-center justify-between gap-4">
-                        <div className="relative flex-1 max-w-md">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                            <input
-                                type="text"
-                                placeholder="Search products or farmers..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
-                            />
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <AdminPageHeader
+                    title="Farmer Products"
+                    description="Moderate and oversee all farmer-listed produce"
+                    toolbar={
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <div className="relative flex-1 max-w-md">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                                <input
+                                    type="text"
+                                    placeholder="Search products or farmers..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
+                                />
+                            </div>
+                            <div className="flex gap-2">
+                                <select
+                                    value={categoryFilter}
+                                    onChange={(e) => setCategoryFilter(e.target.value)}
+                                    className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
+                                >
+                                    <option value="all">All Categories</option>
+                                    <option value="vegetables">Vegetables</option>
+                                    <option value="fruits">Fruits</option>
+                                    <option value="grains">Grains</option>
+                                </select>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
+                                >
+                                    <option value="all">All Status</option>
+                                    <option value="IN_STOCK">In Stock</option>
+                                    <option value="OUT_OF_STOCK">Out of Stock</option>
+                                    <option value="LOW_STOCK">Low Stock</option>
+                                </select>
+                            </div>
                         </div>
-                        <div className="flex gap-2">
-                            <select
-                                value={categoryFilter}
-                                onChange={(e) => setCategoryFilter(e.target.value)}
-                                className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
-                            >
-                                <option value="all">All Categories</option>
-                                <option value="vegetables">Vegetables</option>
-                                <option value="fruits">Fruits</option>
-                                <option value="grains">Grains</option>
-                            </select>
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
-                            >
-                                <option value="all">All Status</option>
-                                <option value="IN_STOCK">In Stock</option>
-                                <option value="OUT_OF_STOCK">Out of Stock</option>
-                                <option value="LOW_STOCK">Low Stock</option>
-                            </select>
-                        </div>
-                    </div>
+                    }
+                />
 
-                    {/* Products Table */}
+                <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
                     <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
                         <Table>
                             <TableHeader>

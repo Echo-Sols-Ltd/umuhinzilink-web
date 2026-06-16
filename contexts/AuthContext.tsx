@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { notify } from '@/lib/notify';
 import { apiClient } from '@/services/client';
 import { userService } from '@/services/users';
+import { HTTP_STATUS } from '@/services/constants';
 
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
@@ -37,11 +38,15 @@ interface AuthContextType {
   seller: Seller | null;
   logout: () => Promise<void>;
   registerGoogle: (data: GoogleAuthRequest) => Promise<void>
-  register: (data: UserRequest) => Promise<void>;
+  register: (data: UserRequest) => Promise<string | null>;
   registerSeller: (data: SellerRegistration) => Promise<void>;
   verifyOtp: (data: VerifyOtpRequest) => Promise<void>;
   askOtpCode: () => Promise<void>;
   updateAvatar: (data: string) => Promise<void>;
+  updateSavedProducts: (productIds: string[]) => Promise<boolean>;
+  toggleSavedProduct: (productId: string) => Promise<boolean>;
+  isProductSaved: (productId: string) => boolean;
+  setUserState: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -97,19 +102,25 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const normalizeUser = (nextUser: User): User => ({
+    ...nextUser,
+    savedProducts: nextUser.savedProducts ?? [],
+  });
+
   const persistSession = (token: string, refreshToken: string | undefined, nextUser: User) => {
+    const normalized = normalizeUser(nextUser);
     localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
     if (refreshToken) {
       localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
     }
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(nextUser));
-    setUser(nextUser);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(normalized));
+    setUser(normalized);
   };
 
   const loadAuthState = async () => {
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
     try {
       setLoading(true);
-      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
       const storedUser = getStoredData<User>(STORAGE_KEYS.USER);
 
       if (!token || !storedUser) {
@@ -139,11 +150,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data.role === UserRole.SELLER) {
         await fetchSeller();
       }
-    } catch {
-      Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
-      setUser(null);
-      setSeller(null);
-      setIsAuthenticated(false);
+    } catch (err) {
+      const isAuthFailure =
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err &&
+        (err as { response?: { status?: number } }).response?.status === HTTP_STATUS.UNAUTHORIZED;
+
+      if (isAuthFailure) {
+        Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+        setUser(null);
+        setSeller(null);
+        setIsAuthenticated(false);
+        return;
+      }
+
+      // Transient failure: keep cached session so the user isn't kicked out on a blip
+      const storedUser = getStoredData<User>(STORAGE_KEYS.USER);
+      if (token && storedUser) {
+        setUser(storedUser);
+        setIsAuthenticated(Boolean(storedUser.emailVerified));
+        notify.error('Could not verify session. Showing cached data — refresh or try again.', 'Connection issue');
+      } else {
+        setIsAuthenticated(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -231,22 +261,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const register = async (data: UserRequest) => {
+  const register = async (data: UserRequest): Promise<string | null> => {
     try {
       setLoading(true);
       const res = await authService.register(data);
 
       if (!res.success || !res.data) {
-        notify.error(res.message || 'Registration failed', 'Register Failed');
-        return;
+        const message = res.message || 'Registration failed';
+        notify.error(message, 'Register Failed');
+        return message;
       }
 
       persistSession(res.data.token, res.data.refreshToken, res.data.user);
       setIsAuthenticated(false);
       notify.success('Check your email for the verification code', 'Register Success');
       router.replace('/auth/verify-otp');
-    } catch {
-      notify.error('Please try again', 'Error registering');
+      return null;
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === 'object' && 'response' in err
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined;
+      const fallback = message || 'Please try again';
+      notify.error(fallback, 'Error registering');
+      return fallback;
     } finally {
       setLoading(false);
     }
@@ -262,8 +300,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
-      setUser(res.data);
+      persistSession(res.data.token, res.data.refreshToken, res.data.user);
+      setIsAuthenticated(true);
       await fetchSeller();
       notify.success('Seller profile created successfully', 'Register Success');
     } catch {
@@ -327,9 +365,43 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateAvatar = async (avatarUrl: string) => {
     if (!user) return;
-    const updatedUser = { ...user, avatar: avatarUrl };
+    const updatedUser = { ...user, profilePicture: avatarUrl };
     setUser(updatedUser);
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+  };
+
+  const setUserState = (nextUser: User) => {
+    const normalized = normalizeUser(nextUser);
+    setUser(normalized);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(normalized));
+  };
+
+  const updateSavedProducts = async (productIds: string[]): Promise<boolean> => {
+    if (!user) return false;
+    try {
+      const res = await userService.updateProfile(user.id, { savedProducts: productIds });
+      if (!res.success || !res.data) {
+        notify.error(res.message || 'Could not update saved products');
+        return false;
+      }
+      setUserState(res.data);
+      return true;
+    } catch {
+      notify.error('Could not update saved products');
+      return false;
+    }
+  };
+
+  const isProductSaved = (productId: string): boolean =>
+    user?.savedProducts?.includes(productId) ?? false;
+
+  const toggleSavedProduct = async (productId: string): Promise<boolean> => {
+    if (!user) return false;
+    const current = user.savedProducts ?? [];
+    const next = current.includes(productId)
+      ? current.filter((id) => id !== productId)
+      : [...current, productId];
+    return updateSavedProducts(next);
   };
 
   useEffect(() => {
@@ -354,6 +426,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         verifyOtp,
         askOtpCode,
         updateAvatar,
+        updateSavedProducts,
+        toggleSavedProduct,
+        isProductSaved,
+        setUserState,
         isAuthenticated,
       }}
     >

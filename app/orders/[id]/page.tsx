@@ -1,15 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
-import { Order, UserRole, isPaidOrder, isUnpaidOrder, getOrderStatusLabel } from '@/types';
+import { UserRole, isPaidOrder, isUnpaidOrder, getOrderStatusLabel } from '@/types';
 import { notify } from '@/lib/notify';
-import { ArrowLeft, Package, User, CreditCard, XCircle } from 'lucide-react';
+import { Package, User, CreditCard, XCircle } from 'lucide-react';
 import { orderService } from '@/services/orders';
 import OrderStatusTracker from '@/components/orders/OrderStatusTracker';
+import DetailPageShell, { ContentCard } from '@/components/layout/DetailPageShell';
+import PageLoading from '@/components/layout/PageLoading';
+
+function fmt(n: number) {
+  return new Intl.NumberFormat('rw-RW').format(n) + ' RWF';
+}
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -17,57 +23,45 @@ export default function OrderDetailPage() {
   const { user } = useAuth();
   const isSeller = user?.role === UserRole.SELLER;
   const isBuyer = user?.role === UserRole.BUYER;
-  const {
-    orders,
-    currentOrder,
-    setCurrentOrder,
-    fetchBuyingOrders,
-    fetchSellingOrders,
-  } = useOrder();
+  const { currentOrder, setCurrentOrder } = useOrder();
   const { payOrder, cancelOrder, loading: actionLoading } = useOrderAction();
 
   const [loading, setLoading] = useState(true);
   const orderId = params.id as string;
+  const userId = user?.id;
 
   useEffect(() => {
+    if (!orderId || !userId) return;
+
+    let cancelled = false;
+
     const loadOrder = async () => {
       setLoading(true);
-
       try {
-        let foundOrder = orders?.find((o: Order) => o.id === orderId);
+        const response = await orderService.getOrderById(orderId);
+        if (cancelled) return;
 
-        if (!foundOrder && currentOrder?.id === orderId) {
-          foundOrder = currentOrder;
-        }
-
-        if (foundOrder) {
-          setCurrentOrder(foundOrder);
+        if (response.success && response.data) {
+          setCurrentOrder(response.data);
         } else {
-          const response = await orderService.getOrderById(orderId);
-
-          if (response.success && response.data) {
-            setCurrentOrder(response.data);
-            if (isSeller) {
-              fetchSellingOrders();
-            } else {
-              fetchBuyingOrders();
-            }
-          } else {
-            notify.error('Order not found', 'Error');
-          }
+          notify.error('Order not found', 'Error');
         }
       } catch (error) {
-        console.error('Failed to fetch order:', error);
-        notify.error('Failed to load order details', 'Error');
+        if (!cancelled) {
+          console.error('Failed to fetch order:', error);
+          notify.error('Failed to load order details', 'Error');
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
-    if (orderId && user) {
-      loadOrder();
-    }
-  }, [orderId, orders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, isSeller, user]);
+    loadOrder();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId, userId, setCurrentOrder]);
 
   const handlePay = async () => {
     if (!currentOrder) return;
@@ -82,23 +76,42 @@ export default function OrderDetailPage() {
     }
   };
 
+  const orderLabel = currentOrder
+    ? `#${currentOrder.orderNumber || currentOrder.id.slice(0, 8).toUpperCase()}`
+    : 'Order';
+
+  const breadcrumbs = [
+    { label: 'Home', href: '/' },
+    { label: 'Orders', href: '/orders' },
+    ...(currentOrder ? [{ label: orderLabel }] : [{ label: 'Details' }]),
+  ];
+
   if (loading) {
     return (
-      <div className="flex h-screen bg-background items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
+      <DetailPageShell breadcrumbs={breadcrumbs} backHref="/orders" backLabel="Orders">
+        <PageLoading
+          variant="inline"
+          label="Loading order"
+          description="Fetching order details…"
+          className="bg-transparent dark:bg-transparent"
+        />
+      </DetailPageShell>
     );
   }
 
   if (!currentOrder) {
     return (
-      <div className="flex h-screen bg-background items-center justify-center">
-        <div className="text-center">
-          <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-foreground mb-2">Order not found</h2>
-          <p className="text-muted-foreground">This order may have been removed or you do not have access.</p>
+      <DetailPageShell breadcrumbs={breadcrumbs} backHref="/orders" backLabel="Orders">
+        <div className="py-16 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
+            <Package size={28} className="text-muted-foreground" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">Order not found</p>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+            This order may have been removed or you do not have access.
+          </p>
         </div>
-      </div>
+      </DetailPageShell>
     );
   }
 
@@ -109,113 +122,108 @@ export default function OrderDetailPage() {
   const paid = isPaidOrder(currentOrder.status);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => router.push('/orders')}
-            className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to orders</span>
-          </button>
-          <div className="h-8 w-px bg-border" />
-          <h1 className="text-xl font-semibold text-foreground">Order details</h1>
-          <span className="text-sm text-muted-foreground">#{currentOrder.id.slice(0, 8)}</span>
-        </div>
-        <span className="text-xs font-semibold uppercase px-2 py-1 rounded-full bg-muted">
+    <DetailPageShell
+      breadcrumbs={breadcrumbs}
+      backHref="/orders"
+      backLabel="Orders"
+      actions={
+        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900">
           {getOrderStatusLabel(currentOrder.status)}
         </span>
-      </header>
+      }
+    >
+      <ContentCard>
+        <OrderStatusTracker
+          orderStatus={currentOrder.status}
+          createdAt={currentOrder.createdAt}
+          updatedAt={currentOrder.updatedAt}
+        />
+      </ContentCard>
 
-      <div className="max-w-5xl mx-auto p-6 space-y-6">
-        <div className="bg-card rounded-lg border p-6">
-          <OrderStatusTracker
-            orderStatus={currentOrder.status}
-            createdAt={currentOrder.createdAt}
-            updatedAt={currentOrder.updatedAt}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-card rounded-lg p-4 border">
-            <p className="text-sm text-muted-foreground">Product</p>
-            <p className="font-semibold text-foreground">{product.name}</p>
-          </div>
-          <div className="bg-card rounded-lg p-4 border">
-            <p className="text-sm text-muted-foreground">{isSeller ? 'Customer' : 'Seller'}</p>
-            <p className="font-semibold text-foreground">
-              {isSeller
-                ? `${buyer.firstName} ${buyer.lastName}`
-                : seller ? `${seller.firstName} ${seller.lastName}` : '—'}
-            </p>
-          </div>
-          <div className="bg-card rounded-lg p-4 border">
-            <p className="text-sm text-muted-foreground">Total</p>
-            <p className="font-semibold text-foreground">RWF {currentOrder.totalPrice.toLocaleString()}</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-card rounded-lg p-6 border">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
-              <User className="w-5 h-5 mr-2 text-success" />
-              {isSeller ? 'Customer information' : 'Your order'}
-            </h2>
-            <div className="space-y-3 text-sm">
-              {isSeller ? (
-                <>
-                  <p><span className="text-muted-foreground">Name:</span> {buyer.firstName} {buyer.lastName}</p>
-                  <p><span className="text-muted-foreground">Email:</span> {buyer.email}</p>
-                  {buyer.phoneNumber && <p><span className="text-muted-foreground">Phone:</span> {buyer.phoneNumber}</p>}
-                </>
-              ) : (
-                <>
-                  <p><span className="text-muted-foreground">Quantity:</span> {currentOrder.quantity} {product.measurementUnit}</p>
-                  <p><span className="text-muted-foreground">Payment:</span> {currentOrder.paymentMethod?.replace('_', ' ')}</p>
-                  <p><span className="text-muted-foreground">Status:</span> {paid ? 'Paid' : unpaid ? 'Awaiting payment' : 'Not paid'}</p>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-card rounded-lg p-6 border">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
-              <Package className="w-5 h-5 mr-2 text-success" />
-              Product details
-            </h2>
-            <div className="space-y-3 text-sm">
-              <p><span className="text-muted-foreground">Product:</span> {product.name}</p>
-              <p><span className="text-muted-foreground">Quantity:</span> {currentOrder.quantity} {product.measurementUnit}</p>
-              <p><span className="text-muted-foreground">Unit price:</span> RWF {(currentOrder.totalPrice / currentOrder.quantity).toLocaleString()}</p>
-              <p className="font-semibold text-success">Total: RWF {currentOrder.totalPrice.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-
-        {unpaid && (
-          <div className="flex items-center justify-end gap-3">
-            {isBuyer && (
-              <button
-                onClick={handlePay}
-                disabled={actionLoading}
-                className="px-6 py-2 text-sm font-medium text-primary-foreground bg-warning rounded-lg hover:bg-warning/90 flex items-center gap-2 disabled:opacity-50"
-              >
-                <CreditCard className="w-4 h-4" />
-                Pay now
-              </button>
-            )}
-            <button
-              onClick={handleCancel}
-              disabled={actionLoading}
-              className="px-4 py-2 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-lg hover:bg-destructive/20 flex items-center gap-2 disabled:opacity-50"
-            >
-              <XCircle className="w-4 h-4" />
-              Cancel order
-            </button>
-          </div>
-        )}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <ContentCard padding="p-4">
+          <p className="text-xs font-medium text-muted-foreground">Product</p>
+          <p className="text-sm font-bold text-foreground mt-1 truncate">{product.name}</p>
+        </ContentCard>
+        <ContentCard padding="p-4">
+          <p className="text-xs font-medium text-muted-foreground">{isSeller ? 'Customer' : 'Seller'}</p>
+          <p className="text-sm font-bold text-foreground mt-1 truncate">
+            {isSeller
+              ? `${buyer.firstName} ${buyer.lastName}`
+              : seller ? `${seller.firstName} ${seller.lastName}` : '—'}
+          </p>
+        </ContentCard>
+        <ContentCard padding="p-4">
+          <p className="text-xs font-medium text-muted-foreground">Total</p>
+          <p className="text-sm font-bold text-green-600 dark:text-green-400 mt-1">
+            {fmt(currentOrder.totalPrice)}
+          </p>
+        </ContentCard>
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <ContentCard>
+          <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <User size={16} className="text-green-600" />
+            {isSeller ? 'Customer information' : 'Your order'}
+          </h2>
+          <div className="space-y-2.5 text-sm">
+            {isSeller ? (
+              <>
+                <p><span className="text-muted-foreground">Name:</span> <span className="font-medium">{buyer.firstName} {buyer.lastName}</span></p>
+                <p><span className="text-muted-foreground">Email:</span> <span className="font-medium">{buyer.email}</span></p>
+                {buyer.phoneNumber && (
+                  <p><span className="text-muted-foreground">Phone:</span> <span className="font-medium">{buyer.phoneNumber}</span></p>
+                )}
+              </>
+            ) : (
+              <>
+                <p><span className="text-muted-foreground">Quantity:</span> <span className="font-medium">{currentOrder.quantity} {product.measurementUnit}</span></p>
+                <p><span className="text-muted-foreground">Payment:</span> <span className="font-medium">{currentOrder.paymentMethod?.replace('_', ' ')}</span></p>
+                <p><span className="text-muted-foreground">Status:</span> <span className="font-medium">{paid ? 'Paid' : unpaid ? 'Awaiting payment' : 'Not paid'}</span></p>
+              </>
+            )}
+          </div>
+        </ContentCard>
+
+        <ContentCard>
+          <h2 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <Package size={16} className="text-green-600" />
+            Product details
+          </h2>
+          <div className="space-y-2.5 text-sm">
+            <p><span className="text-muted-foreground">Product:</span> <span className="font-medium">{product.name}</span></p>
+            <p><span className="text-muted-foreground">Quantity:</span> <span className="font-medium">{currentOrder.quantity} {product.measurementUnit}</span></p>
+            <p><span className="text-muted-foreground">Unit price:</span> <span className="font-medium">{fmt(currentOrder.totalPrice / currentOrder.quantity)}</span></p>
+            <p className="font-bold text-green-600 dark:text-green-400 pt-1">Total: {fmt(currentOrder.totalPrice)}</p>
+          </div>
+        </ContentCard>
+      </div>
+
+      {unpaid && (
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          {isBuyer && (
+            <button
+              type="button"
+              onClick={handlePay}
+              disabled={actionLoading}
+              className="inline-flex items-center gap-2 h-10 px-5 text-sm font-semibold rounded-xl bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 transition-colors"
+            >
+              <CreditCard size={16} />
+              Pay now
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={actionLoading}
+            className="inline-flex items-center gap-2 h-10 px-4 text-sm font-semibold rounded-xl border border-red-200 dark:border-red-900 text-red-600 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 disabled:opacity-50 transition-colors"
+          >
+            <XCircle size={16} />
+            Cancel order
+          </button>
+        </div>
+      )}
+    </DetailPageShell>
   );
 }

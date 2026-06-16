@@ -17,6 +17,7 @@ import { SellerDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
 import DashboardChart from '../common/DashboardChart';
 import { useI18n } from '@/contexts/I18nContext';
+import { DashboardSkeleton } from '@/components/layout/PageLoading';
 
 export default function SellerDashboard() {
   const [dashboardData, setDashboardData] = useState<SellerDashboardData | null>(null);
@@ -41,18 +42,7 @@ export default function SellerDashboard() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-card rounded-xl p-6 border border-border animate-pulse">
-              <div className="h-4 bg-muted rounded w-3/4 mb-4"></div>
-              <div className="h-8 bg-muted rounded w-1/2"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (!dashboardData) {
@@ -83,12 +73,7 @@ export default function SellerDashboard() {
     }
   };
 
-  // Fallbacks if data is missing during API migration
-  const recentOrders = dashboardData.recentOrders || [
-    { id: 'S-ORD-001', farmer: 'John Doe', product: 'Fertilizer NPK', quantity: '100 Bags', status: 'In Transit', deliveryDate: new Date().toISOString() },
-    { id: 'S-ORD-002', farmer: 'Alice Smith', product: 'Tomato Seeds', quantity: '50 Pkts', status: 'Pending', deliveryDate: new Date(Date.now() + 86400000).toISOString() },
-    { id: 'S-ORD-003', farmer: 'Local Coop', product: 'Pesticide', quantity: '20 Liters', status: 'Delivered', deliveryDate: new Date(Date.now() - 172800000).toISOString() }
-  ];
+  const recentOrders = dashboardData.recentOrders ?? [];
 
   const lowStockItems = dashboardData.lowStockItems || [
     { id: 'ITEM-1', name: 'Fertilizer NPK 15-15-15', currentStock: 12, minThreshold: 50 },

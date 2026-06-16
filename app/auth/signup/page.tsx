@@ -153,7 +153,18 @@ export default function SignUp() {
       setLoading(false);
       return;
     }
-    await register(formData);
+    const errorMessage = await register(formData);
+    if (errorMessage) {
+      const lower = errorMessage.toLowerCase();
+      if (lower.includes('email')) {
+        setFieldErrors(prev => ({ ...prev, email: errorMessage }));
+        setTouched(prev => ({ ...prev, email: true }));
+      }
+      if (lower.includes('phone')) {
+        setFieldErrors(prev => ({ ...prev, phoneNumber: errorMessage }));
+        setTouched(prev => ({ ...prev, phoneNumber: true }));
+      }
+    }
     setLoading(false);
   };
 

@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { notify } from '@/lib/notify';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import {
     Table,
     TableBody,
@@ -108,10 +110,12 @@ export default function WalletDetailPage() {
                 <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
                 <main className="flex-1 overflow-auto bg-background">
                     <div className="p-8 max-w-7xl mx-auto">
-                        <div className="flex flex-col items-center justify-center py-20 gap-4">
-                            <Loader2 className="w-8 h-8 animate-spin text-success" />
-                            <p className="font-semibold text-muted-foreground text-xs uppercase">Loading wallet details...</p>
-                        </div>
+                        <PageLoading
+                            variant="section"
+                            label="Loading wallet"
+                            description="Fetching wallet details and transactions…"
+                            className="bg-transparent dark:bg-transparent"
+                        />
                     </div>
                 </main>
             </div>
@@ -137,30 +141,15 @@ export default function WalletDetailPage() {
         <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
 
-            <main className="flex-1 overflow-auto bg-background">
-                <div className="p-8 max-w-7xl mx-auto space-y-8">
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={() => router.push('/admin/wallets')}
-                                className="p-3 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all"
-                            >
-                                <ArrowLeft className="w-5 h-5" />
-                            </button>
-                            <div className="flex items-center gap-5">
-                                <div className="w-14 h-14 bg-success rounded-lg flex items-center justify-center text-white shadow-xl">
-                                    <Wallet className="w-7 h-7" />
-                                </div>
-                                <div>
-                                    <h1 className="text-2xl font-semibold text-foreground uppercase">Ledger Summary</h1>
-                                    <p className="text-xs text-muted-foreground font-semibold uppercase mt-1">Wallet ID: {wallet.id}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <AdminPageHeader
+                    title="Ledger Summary"
+                    description={`Wallet ID: ${wallet.id}`}
+                    backHref="/admin/wallets"
+                    backLabel="Back to Wallets"
+                />
 
-                    {/* Detailed Info Grid */}
+                <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                         <div className="bg-card p-6 rounded-lg border border-border shadow-sm space-y-1">
                             <p className="text-[10px] uppercase font-semibold text-muted-foreground">Account Holder</p>
@@ -254,8 +243,8 @@ export default function WalletDetailPage() {
                             )}
                         </div>
                     </div>
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
     );
 }

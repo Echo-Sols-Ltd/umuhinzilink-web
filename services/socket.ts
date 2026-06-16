@@ -229,6 +229,13 @@ class SocketService {
         this.enqueueOrPublish(SOCKET_EVENTS.NEGOTIATION_MESSAGE.SEND(message.negotiationId), JSON.stringify(message))
     }
 
+    public sendTyping(negotiationId: string, typing: boolean) {
+        this.enqueueOrPublish(
+            `/app/negotiation/${negotiationId}/typing`,
+            JSON.stringify({ isTyping: typing })
+        )
+    }
+
     private handleOnlineUsers(message: IMessage) {
         try {
             const userIds = JSON.parse(message.body) as string[]

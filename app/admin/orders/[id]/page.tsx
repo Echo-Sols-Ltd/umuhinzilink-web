@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Sidebar from '@/components/shared/Sidebar';
+import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 import { Order, UserRole, isPaidOrder } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -28,11 +30,8 @@ export default function AdminOrderDetailPage() {
     const router = useRouter();
     const { user } = useAuth();
     const {
-        orders,
         currentOrder,
         setCurrentOrder,
-        fetchBuyingOrders,
-        fetchSellingOrders,
     } = useOrder();
     const { toast: showToast } = useToast();
     const [loading, setLoading] = useState(false);
@@ -40,52 +39,45 @@ export default function AdminOrderDetailPage() {
     const orderId = params.id as string;
 
     useEffect(() => {
-        const loadOrder = async () => {
-            if (!orderId) return;
+        if (!orderId) return;
 
+        let cancelled = false;
+
+        const loadOrder = async () => {
             setLoading(true);
             setError(null);
 
             try {
-                let foundOrder = orders?.find((o: Order) => o.id === orderId);
+                const { orderService } = await import('@/services/orders');
+                const response = await orderService.getOrderById(orderId);
+                if (cancelled) return;
 
-                if (!foundOrder && currentOrder?.id === orderId) {
-                    foundOrder = currentOrder;
-                }
-
-                if (foundOrder) {
-                    setCurrentOrder(foundOrder);
-                    setLoading(false);
+                if (response.success && response.data) {
+                    setCurrentOrder(response.data);
                 } else {
-                    const { orderService } = await import('@/services/orders');
-                    const response = await orderService.getOrderById(orderId);
-
-                    if (response.success && response.data) {
-                        const data = response.data;
-                        setCurrentOrder(data);
-                        fetchBuyingOrders();
-                        fetchSellingOrders();
-                    } else {
-                        throw new Error('Order not found');
-                    }
+                    throw new Error('Order not found');
                 }
             } catch (error) {
-                console.error('Failed to fetch order:', error);
-                setError('Order not found');
-                showToast({
-                    title: "Error",
-                    description: "Failed to load order details",
-                    variant: "default"
-                });
+                if (!cancelled) {
+                    console.error('Failed to fetch order:', error);
+                    setError('Order not found');
+                    showToast({
+                        title: "Error",
+                        description: "Failed to load order details",
+                        variant: "default"
+                    });
+                }
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         };
 
-        if (orderId) {
-            loadOrder();
-        }
-    }, [orderId, orders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, showToast]);
+        loadOrder();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [orderId, setCurrentOrder, showToast]);
 
     // Get current order based on type
     const getCurrentOrder = () => {
@@ -135,7 +127,12 @@ export default function AdminOrderDetailPage() {
             <div className="flex h-screen bg-background">
                 <Sidebar userType={UserRole.ADMIN} activeItem="Orders" />
                 <main className="flex-1 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <PageLoading
+                        variant="section"
+                        label="Loading order"
+                        description="Fetching order details…"
+                        className="bg-transparent dark:bg-transparent"
+                    />
                 </main>
             </div>
         );
@@ -180,50 +177,37 @@ export default function AdminOrderDetailPage() {
     }
 
     return (
-        <div className="flex h-screen bg-background">
+        <div className="flex h-screen bg-background overflow-hidden">
             <Sidebar userType={UserRole.ADMIN} activeItem="Orders" />
 
-            <main className="flex-1 overflow-auto">
-                {/* Header */}
-                <header className="bg-card border-b h-16 flex items-center justify-between px-6 shadow-sm">
-                    <div className="flex items-center space-x-4">
-                        <Button
-                            onClick={handleBack}
-                            variant="ghost"
-                            size="sm"
-                            className="flex items-center space-x-2"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            <span>Back to Orders</span>
-                        </Button>
-                        <div className="h-8 w-px bg-border"></div>
-                        <div>
-                            <h1 className="text-xl font-semibold text-foreground">Order Details</h1>
-                            <p className="text-sm text-muted-foreground">
-                                #{order.id.slice(0, 8)} • Order
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleShareOrder(order)}
-                        >
-                            <Share2 className="w-4 h-4 mr-2" />
-                            Share
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                        >
-                            <Download className="w-4 h-4 mr-2" />
-                            Export
-                        </Button>
-                    </div>
-                </header>
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <AdminPageHeader
+                    title="Order Details"
+                    description={`#${order.id.slice(0, 8)} • Order`}
+                    backHref="/admin/orders"
+                    backLabel="Back to Orders"
+                    actions={
+                        <>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleShareOrder(order)}
+                            >
+                                <Share2 className="w-4 h-4 mr-2" />
+                                Share
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                            >
+                                <Download className="w-4 h-4 mr-2" />
+                                Export
+                            </Button>
+                        </>
+                    }
+                />
 
-                <div className="p-6 space-y-6">
+                <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
                     {/* Order Status Card */}
                     <Card>
                         <CardHeader>
@@ -350,8 +334,8 @@ export default function AdminOrderDetailPage() {
                             </div>
                         </CardContent>
                     </Card>
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
     );
 }

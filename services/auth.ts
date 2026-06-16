@@ -45,8 +45,8 @@ class AuthService {
     return response;
   }
 
-  async registerSeller(userData: SellerRegistration): Promise<ApiResponse<User>> {
-    const response = await apiClient.post<ApiResponse<User>>(API_ENDPOINTS.AUTH.REGISTER_SELLER, userData);
+  async registerSeller(userData: SellerRegistration): Promise<ApiResponse<AuthResponse>> {
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.AUTH.REGISTER_SELLER, userData);
     return response;
   }
 

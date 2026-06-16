@@ -1,7 +1,7 @@
+'use client';
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, UserRole} from '@/types';
-import { notify } from '@/lib/notify';
-import { userService } from '@/services/users';
+import { User, UserRole } from '@/types';
 import { useAuth } from './AuthContext';
 
 interface UserContextType {
@@ -21,36 +21,34 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // Fetch all users from API
   useEffect(() => {
-    const fetchUsers = async () => {
-      if (!user) return;
+    if (!user) {
+      setUsers([]);
+      return;
+    }
 
+    // Only admins need the global users list; other roles use profile/auth data.
+    if (user.role !== UserRole.ADMIN) {
+      setUsers([]);
+      return;
+    }
+
+    const fetchUsers = async () => {
       setLoading(true);
       try {
-        const res = await userService.getAllUsers();
-
-        if (!res.success) {
-          notify.error('Users cannot be fetched', 'Server error');
-          return;
-        }
-
-        if (res.data) {
-          setUsers(res.data);
-        }
+        const { adminService } = await import('@/services/admin');
+        const res = await adminService.getAllUsers(0, 50);
+        setUsers(res.data ?? []);
       } catch {
-        notify.error('Users cannot be fetched', 'Server error');
+        setUsers([]);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchUsers();
   }, [user]);
 
-
-
-  // Filter users by role
   const buyerUsers = users.filter(u => u.role === UserRole.BUYER);
   const sellerUsers = users.filter(u => u.role === UserRole.SELLER);
 
@@ -61,8 +59,8 @@ function UserProvider({ children }: { children: React.ReactNode }) {
         loading,
         setCurrentUser,
         currentUser,
-        sellerUsers,
         buyerUsers,
+        sellerUsers,
       }}
     >
       {children}
@@ -70,13 +68,12 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Custom hook to access user context
-function useUser(): UserContextType {
+function useUser() {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUser must be used within an UserProvider');
+    throw new Error('useUser must be used within a UserProvider');
   }
   return context;
 }
 
-export { useUser, UserProvider };
+export { UserProvider, useUser };

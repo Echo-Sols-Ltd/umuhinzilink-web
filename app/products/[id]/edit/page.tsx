@@ -4,10 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ChevronLeft, Package, DollarSign, MapPin,
+  Package, DollarSign, MapPin,
   ImageIcon, Eye, Info, Upload, Check,
   Loader2, X, ToggleLeft, ToggleRight,
-  ChevronDown, Sprout, AlertCircle,
+  ChevronDown, AlertCircle,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { notify } from '@/lib/notify';
@@ -17,6 +17,8 @@ import SellerGuard from '@/contexts/guard/SellerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { District, MeasurementUnit, Product, ProductCategory } from '@/types';
 import { useProductAction } from '@/hooks/useProductAction';
+import PageLoading from '@/components/layout/PageLoading';
+import DetailPageShell from '@/components/layout/DetailPageShell';
 
 // ── Enums (mirror backend) ────────────────────────────────────────────────────
 
@@ -242,7 +244,7 @@ function EditProductForm() {
         const res = await fetchProductById(productId);
         if (!res) {
           notify.error('Failed to load product');
-          router.push('/seller/listings');
+          router.push('/products/seller');
           return;
         }
         setOriginalProduct(res);
@@ -259,7 +261,7 @@ function EditProductForm() {
         });
       } catch {
         notify.error('Failed to load product');
-        router.push('/seller/listings');
+        router.push('/products/seller');
       } finally {
         setLoading(false);
       }
@@ -325,7 +327,7 @@ function EditProductForm() {
 
       await new Promise(r => setTimeout(r, 1200));
       notify.success('Product updated successfully');
-      router.push('/seller/listings');
+      router.push('/products/seller');
     } catch {
       notify.error('Failed to update product. Please try again.');
     } finally {
@@ -337,43 +339,42 @@ function EditProductForm() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 size={32} className="animate-spin text-green-600 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Loading product…</p>
-        </div>
-      </div>
+      <PageLoading
+        label="Loading product"
+        description="Preparing the editor…"
+      />
     );
   }
+
+  const saveButton = (
+    <button
+      type="button"
+      onClick={handleSubmit}
+      disabled={submitting}
+      className="h-8 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5"
+    >
+      {submitting
+        ? <><Loader2 size={12} className="animate-spin" /> Saving…</>
+        : <><Check size={12} /> Save</>
+      }
+    </button>
+  );
 
   // ── Render ────────────────────────────────────────────────────────────
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-950">
-
-      {/* Header */}
-      <header className="sticky top-0 z-40 h-14 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-border flex items-center justify-between px-4">
-        <Link
-          href="/products/seller"
-          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ChevronLeft size={16} /> My listings
-        </Link>
-        <div className="flex items-center gap-1.5">
-          <Sprout size={16} className="text-green-600" />
-          <span className="text-sm font-bold text-foreground">Edit listing</span>
-        </div>
-        <button
-          onClick={handleSubmit}
-          disabled={submitting}
-          className="h-8 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs font-semibold rounded-full transition-colors flex items-center gap-1.5">
-          {submitting
-            ? <><Loader2 size={12} className="animate-spin" /> Saving…</>
-            : <><Check size={12} /> Save</>
-          }
-        </button>
-      </header>
-
-      <main className="max-w-5xl mx-auto px-4 py-6 h-screen overflow-auto pb-40">
+    <DetailPageShell
+      maxWidth="max-w-5xl"
+      breadcrumbs={[
+        { label: 'Home', href: '/' },
+        { label: 'My listings', href: '/products/seller' },
+        { label: originalProduct?.name ?? 'Edit listing' },
+      ]}
+      backHref="/products/seller"
+      backLabel="My listings"
+      actions={saveButton}
+      className="pb-24"
+    >
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -571,7 +572,7 @@ function EditProductForm() {
 
             {/* ── Right: Preview + tips ──────────────────────── */}
             <div className="lg:col-span-1 space-y-4">
-              <div className="sticky top-20 space-y-4">
+              <div className="sticky top-28 space-y-4">
 
                 {/* Preview */}
                 <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-4">
@@ -611,7 +612,7 @@ function EditProductForm() {
           <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-border px-4 py-3">
             <div className="max-w-5xl mx-auto flex items-center gap-3">
               <Link
-                href="/seller/listings"
+                href="/products/seller"
                 className="flex-1 h-11 border border-border rounded-xl text-sm font-medium text-foreground flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 Cancel
               </Link>
@@ -628,11 +629,8 @@ function EditProductForm() {
             </div>
           </div>
 
-          {/* Spacer for bottom bar */}
-          <div className="h-20" />
         </form>
-      </main>
-    </div>
+    </DetailPageShell>
   );
 }
 

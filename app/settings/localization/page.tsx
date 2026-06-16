@@ -1,15 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import Sidebar from '@/components/shared/Sidebar';
-import { UserRole as UserType } from '@/types';
+import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import { switchLanguage } from '@/lib/language-switch';
 import {
-  Globe,
-  ArrowLeft,
   Save,
   Clock,
   Calendar,
@@ -18,8 +13,6 @@ import {
 } from 'lucide-react';
 
 export default function LocalizationSettingsPage() {
-  const { user } = useAuth();
-  const router = useRouter();
   const { t } = useI18n();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
@@ -90,30 +83,13 @@ export default function LocalizationSettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={user?.role as UserType} activeItem="Settings" />
-      
-      <main className="flex-1 overflow-auto">
-        <div className="p-6 max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <button
-              onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{t('common.backToSettings')}</span>
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{t('settings.localization.pageTitle')}</h1>
-              <p className="text-muted-foreground mt-1">{t('settings.localization.pageDescription')}</p>
-            </div>
-          </div>
-
-          {/* Localization Settings */}
-          <div className="space-y-6">
+    <SettingsSubLayout
+      title={t('settings.localization.pageTitle')}
+      description={t('settings.localization.pageDescription')}
+    >
+      <div className="space-y-6">
             {/* Language Settings */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center text-white">
                   <Languages className="w-5 h-5" />
@@ -145,7 +121,7 @@ export default function LocalizationSettingsPage() {
             </div>
 
             {/* Currency Settings */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
                   <DollarSign className="w-5 h-5" />
@@ -199,7 +175,7 @@ export default function LocalizationSettingsPage() {
             </div>
 
             {/* Time & Date Settings */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
                   <Clock className="w-5 h-5" />
@@ -277,7 +253,7 @@ export default function LocalizationSettingsPage() {
             </div>
 
             {/* Preview Section */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <h2 className="text-lg font-semibold text-foreground mb-4">{t('common.preview')}</h2>
               <div className="bg-muted/30 rounded-lg p-4 space-y-2">
                 <div className="flex justify-between items-center">
@@ -294,7 +270,6 @@ export default function LocalizationSettingsPage() {
                 </div>
               </div>
             </div>
-          </div>
 
           {/* Save Button */}
           <div className="flex justify-end mt-8">
@@ -326,8 +301,7 @@ export default function LocalizationSettingsPage() {
               )}
             </button>
           </div>
-        </div>
-      </main>
-    </div>
+      </div>
+    </SettingsSubLayout>
   );
 }
