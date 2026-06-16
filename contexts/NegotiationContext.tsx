@@ -26,6 +26,8 @@ interface NegotiationContextType {
   loadNegotiationDetail: (negotiationId: string) => Promise<void>;
   fetchNegotiations: () => Promise<void>;
   setCurrentNegotiation: (negotiation: Negotiation | null) => void;
+  setViewingNegotiationId: (negotiationId: string | null) => void;
+  clearNegotiationDetail: () => void;
 }
 
 const NegotiationContext = createContext<NegotiationContextType | null>(null);
@@ -43,6 +45,7 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
   const [currentNegotiation, setCurrentNegotiation] = useState<Negotiation | null>(null);
 
   const currentNegotiationIdRef = useRef<string | null>(null);
+  const viewingNegotiationIdRef = useRef<string | null>(null);
   const prevUserIdRef = useRef<string | undefined>(undefined);
   const fetchNegotiationByIdRef = useRef<
     ((id: string, silent?: boolean) => Promise<void>) | null
@@ -167,11 +170,21 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
     setCurrentNegotiation(negotiation);
   }, []);
 
+  const setViewingNegotiationId = useCallback((negotiationId: string | null) => {
+    viewingNegotiationIdRef.current = negotiationId;
+  }, []);
+
+  const clearNegotiationDetail = useCallback(() => {
+    viewingNegotiationIdRef.current = null;
+    setCurrentNegotiation(null);
+    setNegotiationMessages([]);
+  }, []);
+
   // Live chat messages
   useEffect(() => {
     const unsubscribeChat = socketService.onNegotiationMessage((negotiationMessage) => {
       const msgNegotiationId = negotiationMessage.negotiation?.id;
-      const activeId = currentNegotiationIdRef.current;
+      const activeId = viewingNegotiationIdRef.current ?? currentNegotiationIdRef.current;
 
       if (msgNegotiationId && activeId && msgNegotiationId === activeId) {
         setNegotiationMessages((prev) => {
@@ -180,6 +193,10 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
         });
       } else if (msgNegotiationId) {
         notify.info('New message in a negotiation', 'Chat');
+      }
+
+      if (msgNegotiationId) {
+        fetchNegotiationsRef.current?.();
       }
     });
 
@@ -217,6 +234,8 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
       loadNegotiationDetail,
       fetchNegotiations,
       setCurrentNegotiation: setCurrentNegotiationStable,
+      setViewingNegotiationId,
+      clearNegotiationDetail,
     }),
     [
       currentNegotiation,
@@ -230,6 +249,8 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
       loadNegotiationDetail,
       fetchNegotiations,
       setCurrentNegotiationStable,
+      setViewingNegotiationId,
+      clearNegotiationDetail,
     ],
   );
 
