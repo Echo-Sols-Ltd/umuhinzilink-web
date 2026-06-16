@@ -22,14 +22,16 @@ export default function AdminProductDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { toast: showToast } = useToast();
-  const { fetchProductById, loading } = useProduct();
+  const { fetchProductById } = useProduct();
   const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
       if (!params.id) return;
-      
+
+      setPageLoading(true);
       try {
         const result = await fetchProductById(params.id as string);
         if (result) {
@@ -37,13 +39,15 @@ export default function AdminProductDetailPage() {
         } else {
           setError('Product not found');
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load product');
+      } finally {
+        setPageLoading(false);
       }
     };
 
     fetchProduct();
-  }, [params.id]);
+  }, [params.id, fetchProductById]);
 
   const handleShareProduct = (product: Product) => {
     if (navigator.share) {
@@ -83,7 +87,7 @@ export default function AdminProductDetailPage() {
     }
   };
 
-  if (loading) {
+  if (pageLoading) {
     return (
       <div className="flex h-screen bg-background">
         <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />

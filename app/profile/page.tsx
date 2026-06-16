@@ -1,11 +1,11 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { Negotiation } from '@/types';
-import ProfileComponent from '@/components/profile/Profile';
 import { useWallet } from '@/contexts/WalletContext';
 import { useOrder } from '@/contexts/OrderContext';
+import { useNegotiation } from '@/contexts/NegotiationContext';
+import { useRouter } from 'next/navigation';
+import ProfileComponent from '@/components/profile/Profile';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
@@ -14,10 +14,10 @@ function GlobalProfileComponent() {
   const { user, loading: authLoading } = useAuth();
   const { wallet } = useWallet();
   const { completedBuyingOrders: orders } = useOrder();
+  const { negotiations, loading: negotiationsLoading } = useNegotiation();
   const router = useRouter();
-  const loading = authLoading;
 
-  if (loading) {
+  if (authLoading) {
     return <PageLoading label="Loading profile" description="Fetching your account details…" />;
   }
 
@@ -29,8 +29,10 @@ function GlobalProfileComponent() {
   const walletBalance = wallet?.balance || 0;
   const totalOrders = orders.length;
   const completedOrders = orders.length;
-  const savedProductsCount = user.savedProducts.length;
-  const activeNegotiations: Negotiation[] = [];
+  const savedProductsCount = user.savedProducts?.length ?? 0;
+  const activeNegotiations = negotiations.filter(
+    (n) => n.order?.buyer?.id === user.id || n.order?.product?.owner?.id === user.id,
+  );
 
   return (
     <AppLayout maxWidth="max-w-2xl" mainClassName="space-y-0">
@@ -38,14 +40,18 @@ function GlobalProfileComponent() {
         title="My Profile"
         description="Your account overview, wallet, and activity."
       />
-      <ProfileComponent
-        user={user}
-        walletBalance={walletBalance}
-        totalOrders={totalOrders}
-        completedOrders={completedOrders}
-        savedProductsCount={savedProductsCount}
-        activeNegotiations={activeNegotiations}
-      />
+      {negotiationsLoading && negotiations.length === 0 ? (
+        <PageLoading fullScreen={false} label="Loading activity" description="Fetching negotiations…" />
+      ) : (
+        <ProfileComponent
+          user={user}
+          walletBalance={walletBalance}
+          totalOrders={totalOrders}
+          completedOrders={completedOrders}
+          savedProductsCount={savedProductsCount}
+          activeNegotiations={activeNegotiations}
+        />
+      )}
     </AppLayout>
   );
 }

@@ -221,12 +221,12 @@ export default function NegotiationChat({
 
     return (
         <div className={cn(
-            'flex h-full bg-gray-50 dark:bg-gray-950 overflow-hidden',
+            'flex h-full min-h-0 bg-gray-50 dark:bg-gray-950 overflow-hidden',
         )}>
 
             {/* ── Chat panel ───────────────────────────────────────────── */}
             <div className={cn(
-                'flex flex-col w-full h-screen',
+                'flex flex-col w-full h-full min-h-0',
                 isSeller ? 'flex-1' : 'flex-1'
             )}>
 

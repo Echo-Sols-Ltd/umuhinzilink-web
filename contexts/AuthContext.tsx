@@ -43,6 +43,8 @@ interface AuthContextType {
   verifyOtp: (data: VerifyOtpRequest) => Promise<void>;
   askOtpCode: () => Promise<void>;
   updateAvatar: (data: string) => Promise<void>;
+  updateSavedProducts: (productIds: string[]) => Promise<boolean>;
+  setUserState: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -355,9 +357,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateAvatar = async (avatarUrl: string) => {
     if (!user) return;
-    const updatedUser = { ...user, avatar: avatarUrl };
+    const updatedUser = { ...user, profilePicture: avatarUrl };
     setUser(updatedUser);
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+  };
+
+  const setUserState = (nextUser: User) => {
+    setUser(nextUser);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(nextUser));
+  };
+
+  const updateSavedProducts = async (productIds: string[]): Promise<boolean> => {
+    if (!user) return false;
+    try {
+      const res = await userService.updateProfile(user.id, { savedProducts: productIds });
+      if (!res.success || !res.data) {
+        notify.error(res.message || 'Could not update saved products');
+        return false;
+      }
+      setUserState(res.data);
+      return true;
+    } catch {
+      notify.error('Could not update saved products');
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -382,6 +405,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         verifyOtp,
         askOtpCode,
         updateAvatar,
+        updateSavedProducts,
+        setUserState,
         isAuthenticated,
       }}
     >

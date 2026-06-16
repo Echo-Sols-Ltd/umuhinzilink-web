@@ -24,7 +24,7 @@ export default function Navbar() {
 
   const guestLinks = [
     { label: 'Browse', href: '/products' },
-    { label: 'How it works', href: '/how-it-works' },
+    { label: 'How it works', href: '/about#features' },
   ];
 
   const buyerLinks = [

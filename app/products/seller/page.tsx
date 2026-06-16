@@ -85,7 +85,7 @@ export default function SellerListings() {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 6;
 
-  const { products: listings, loading } = useProduct();
+  const { myProducts: listings, loading } = useProduct();
 
   const filtered = useMemo(() => {
     let result = listings ?? [];
@@ -147,7 +147,15 @@ export default function SellerListings() {
         </div>
 
         <div className="flex items-center gap-1.5 flex-wrap">
-          {(['ALL', 'IN_STOCK', 'LOW_STOCK', 'OUT_OF_STOCK', 'DRAFT'] as const).map((s) => (
+          {(
+            [
+              'ALL',
+              ProductStatus.IN_STOCK,
+              ProductStatus.LOW_STOCK,
+              ProductStatus.OUT_OF_STOCK,
+              ProductStatus.DRAFT,
+            ] as const
+          ).map((s) => (
             <button
               key={s}
               type="button"

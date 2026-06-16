@@ -10,6 +10,8 @@ import PageLoading from '@/components/layout/PageLoading';
 import { Product } from '@/types';
 import { notify } from '@/lib/notify';
 import { useProduct } from '@/contexts/ProductContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProductAction } from '@/hooks/useProductAction';
 
 function ProductSkeleton() {
   return (
@@ -20,12 +22,6 @@ function ProductSkeleton() {
           <div className="h-8 w-3/4 rounded-xl bg-gray-200 dark:bg-gray-800" />
           <div className="h-4 w-1/3 rounded-lg bg-gray-200 dark:bg-gray-800" />
           <div className="h-6 w-1/2 rounded-lg bg-gray-200 dark:bg-gray-800" />
-          <div className="space-y-2 mt-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-4 rounded-lg bg-gray-200 dark:bg-gray-800" />
-            ))}
-          </div>
-          <div className="h-12 rounded-xl bg-gray-200 dark:bg-gray-800 mt-6" />
         </div>
       </div>
     </div>
@@ -67,21 +63,15 @@ export default function ProductDetailPage() {
   const searchParams = useSearchParams();
   const openNegotiate = searchParams.get('negotiate') === '1';
   const { fetchProductById } = useProduct();
+  const { user, updateSavedProducts } = useAuth();
+  const { deleteProduct } = useProductAction();
   const productId = params.id as string;
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem('savedProducts');
-      if (raw) setSavedIds(new Set(JSON.parse(raw)));
-    } catch {
-      // ignore
-    }
-  }, []);
+  const savedIds = user?.savedProducts ?? [];
 
   useEffect(() => {
     if (!productId) return;
@@ -103,23 +93,18 @@ export default function ProductDetailPage() {
     load();
   }, [productId, fetchProductById]);
 
-  const handleSave = (id: string) => {
-    setSavedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-        notify.success('Removed from saved');
-      } else {
-        next.add(id);
-        notify.success(`${product?.name} saved`);
-      }
-      try {
-        localStorage.setItem('savedProducts', JSON.stringify([...next]));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
+  const handleSave = async (id: string) => {
+    if (!user) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    const isSaved = savedIds.includes(id);
+    const next = isSaved ? savedIds.filter((pid) => pid !== id) : [...savedIds, id];
+    const ok = await updateSavedProducts(next);
+    if (ok) {
+      notify.success(isSaved ? 'Removed from saved' : `${product?.name ?? 'Product'} saved`);
+    }
   };
 
   const handleShare = () => {
@@ -137,6 +122,11 @@ export default function ProductDetailPage() {
         notify.error('Could not copy link');
       });
     }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this listing? This cannot be undone.')) return;
+    await deleteProduct(id);
   };
 
   const breadcrumbs = [
@@ -171,7 +161,8 @@ export default function ProductDetailPage() {
           product={product}
           onSaveProduct={handleSave}
           onShareProduct={handleShare}
-          isSaved={savedIds.has(product.id)}
+          onDeleteProduct={handleDelete}
+          isSaved={savedIds.includes(product.id)}
           showActions={true}
           openBuyOnMount={openNegotiate}
           className="!p-0"

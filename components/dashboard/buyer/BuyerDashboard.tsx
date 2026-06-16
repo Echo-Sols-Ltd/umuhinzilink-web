@@ -128,7 +128,7 @@ export default function BuyerDashboard() {
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">{t('buyer.dashboard.sections.quickAccess')}</h2>
           <div className="flex gap-4">
-            <Link href="/buyer/purchases" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+            <Link href="/orders" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
                   <Package className="w-5 h-5 text-blue-600" />
@@ -137,7 +137,7 @@ export default function BuyerDashboard() {
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
-            <Link href="/buyer/products" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+            <Link href="/products" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
                   <Search className="w-5 h-5 text-green-600" />
@@ -146,7 +146,7 @@ export default function BuyerDashboard() {
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
-            <Link href="/buyer/saved" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
+            <Link href="/products/saved" className="flex flex-1 items-center justify-between p-4 bg-card border border-border rounded-xl hover:border-primary transition-colors hover:shadow-sm group">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-pink-500/10 rounded-lg group-hover:bg-pink-500/20 transition-colors">
                   <Heart className="w-5 h-5 text-pink-600" />

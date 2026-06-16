@@ -73,12 +73,7 @@ export default function SellerDashboard() {
     }
   };
 
-  // Fallbacks if data is missing during API migration
-  const recentOrders = dashboardData.recentOrders || [
-    { id: 'S-ORD-001', farmer: 'John Doe', product: 'Fertilizer NPK', quantity: '100 Bags', status: 'In Transit', deliveryDate: new Date().toISOString() },
-    { id: 'S-ORD-002', farmer: 'Alice Smith', product: 'Tomato Seeds', quantity: '50 Pkts', status: 'Pending', deliveryDate: new Date(Date.now() + 86400000).toISOString() },
-    { id: 'S-ORD-003', farmer: 'Local Coop', product: 'Pesticide', quantity: '20 Liters', status: 'Delivered', deliveryDate: new Date(Date.now() - 172800000).toISOString() }
-  ];
+  const recentOrders = dashboardData.recentOrders ?? [];
 
   const lowStockItems = dashboardData.lowStockItems || [
     { id: 'ITEM-1', name: 'Fertilizer NPK 15-15-15', currentStock: 12, minThreshold: 50 },

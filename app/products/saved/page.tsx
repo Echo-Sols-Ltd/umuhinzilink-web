@@ -1,158 +1,124 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  FilePlus,
-  MessageSquare,
-  Mail,
-  User as UserIcon,
-  Phone,
-  Heart,
-  Trash2,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { Heart, Package } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProduct } from '@/contexts/ProductContext';
+import { Product } from '@/types';
+import { productService } from '@/services/products';
+import ProductCard from '@/components/products/ProductCard';
+import AppLayout from '@/components/layout/AppLayout';
+import PageHeader from '@/components/layout/PageHeader';
+import PageLoading from '@/components/layout/PageLoading';
 
-const products = [
-  {
-    name: 'Fresh Tomatoes',
-    price: '$3.50/kg',
-    available: '250 kg',
-    farmer: 'John Mutesi',
-    location: 'Kigali',
-    image: '/tomatoes.png',
-  },
-  {
-    name: 'Organic Carrots',
-    price: '$2.80/kg',
-    available: '180 kg',
-    farmer: 'Marie Uwimana',
-    location: 'Musanze',
-    image: '/carrots.png',
-  },
-  {
-    name: 'Fresh Spinach',
-    price: '$4.20/kg',
-    available: '95 kg',
-    farmer: 'David Nkurunziza',
-    location: 'Huye',
-    image: '/spinach.png',
-  },
-  {
-    name: 'Sweet Bananas',
-    price: '$1.90/kg',
-    available: '320 kg',
-    farmer: 'Grace Mukamana',
-    location: 'Rubavu',
-    image: '/banana.png',
-  },
-  {
-    name: 'Irish Potatoes',
-    price: '$1.50/kg',
-    available: '500 kg',
-    farmer: 'Paul Habimana',
-    location: 'Nyabihu',
-    image: '/potatoes.png',
-  },
-  {
-    name: 'Premium Avocados',
-    price: '$5.80/kg',
-    available: '75 kg',
-    farmer: 'Alice Nyiramana',
-    location: 'Karongi',
-    image: '/avocados.png',
-  },
-];
+export default function SavedProductsPage() {
+  const { user, loading: authLoading, updateSavedProducts } = useAuth();
+  const { products: marketplaceProducts } = useProduct();
+  const [savedProducts, setSavedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const Logo = () => (
-  <span className="font-extrabold text-2xl ">
-    <span className="text-green-700">Umuhinzi</span>
-    <span className="text-foreground">Link</span>
-  </span>
-);
+  const savedIdsKey = user?.savedProducts?.join(',') ?? '';
 
-import { useI18n } from '@/contexts/I18nContext';
+  const loadSaved = useCallback(async () => {
+    const ids = savedIdsKey ? savedIdsKey.split(',') : [];
+    if (!ids.length) {
+      setSavedProducts([]);
+      setLoading(false);
+      return;
+    }
 
-export default function SavedItemsComponent() {
-  const { t } = useI18n();
-  const [activeTab, setActiveTab] = useState<'all' | 'expected' | 'available'>('all');
-  const [sortBy, setSortBy] = useState('Newest');
-  const [logoutPending, setLogoutPending] = useState(false);
-  const router = useRouter();
+    setLoading(true);
+    try {
+      const fromMarketplace = marketplaceProducts.filter((p) => ids.includes(p.id));
+      const missingIds = ids.filter((id) => !fromMarketplace.some((p) => p.id === id));
 
-  const filteredProducts = products
-    .map(p => ({
-      ...p,
-      isAvailable: true, // Adding missing property
-    }))
-    .filter(product => {
-      if (activeTab === 'available') return product.isAvailable;
-      if (activeTab === 'expected') return !product.isAvailable;
-      return true;
-    });
+      const fetched =
+        missingIds.length > 0
+          ? (
+              await Promise.all(
+                missingIds.map(async (id) => {
+                  const res = await productService.getProductById(id);
+                  return res.success && res.data ? res.data : null;
+                }),
+              )
+            ).filter((p): p is Product => p !== null)
+          : [];
 
+      const merged = [...fromMarketplace];
+      fetched.forEach((p) => {
+        if (!merged.some((m) => m.id === p.id)) merged.push(p);
+      });
 
+      setSavedProducts(merged.filter((p) => ids.includes(p.id)));
+    } finally {
+      setLoading(false);
+    }
+  }, [savedIdsKey, marketplaceProducts]);
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      loadSaved();
+    }
+  }, [authLoading, user, loadSaved]);
+
+  const handleRemove = async (productId: string) => {
+    const ids = user?.savedProducts ?? [];
+    const next = ids.filter((id) => id !== productId);
+    const ok = await updateSavedProducts(next);
+    if (ok) {
+      setSavedProducts((prev) => prev.filter((p) => p.id !== productId));
+    }
+  };
+
+  if (authLoading || !user) {
+    return (
+      <AppLayout maxWidth="max-w-6xl">
+        <PageLoading fullScreen={false} label="Loading saved products" description="Fetching your wishlist…" />
+      </AppLayout>
+    );
+  }
 
   return (
-    <div className="flex h-screen overflow bg-background">
-    
+    <AppLayout maxWidth="max-w-6xl">
+      <PageHeader
+        title="Saved products"
+        description="Products you saved for later."
+        backHref="/profile"
+        backLabel="Profile"
+      />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col h-full overflow-auto">
-        {/* Sort Bar */}
-        <div className="bg-card border-b px-6 py-4 flex justify-end items-center">
-          <label className="text-sm text-muted-foreground mr-2">{t('buyer.saved.sortBy')}</label>
-          <select
-            className="border border-border rounded-lg py-2 px-3 text-sm"
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value)}
-          >
-            <option value="Newest">{t('buyer.saved.sortOptions.newest')}</option>
-            <option value="Price: Low to High">{t('buyer.saved.sortOptions.priceLowHigh')}</option>
-            <option value="Price: High to Low">{t('buyer.saved.sortOptions.priceHighLow')}</option>
-          </select>
-        </div>
-
-        {/* Products Grid */}
-        <main className="flex-1 overflow-auto p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map(p => (
-              <div key={p.name} className="bg-card rounded-lg shadow-sm border overflow-hidden">
-                <div className="relative">
-                  <img src={p.image} alt={p.name} className="h-48 w-full object-cover" />
-                  <button className="absolute top-3 right-3 bg-card p-1 rounded-full shadow">
-                    <Heart className="w-5 h-5 text-destructive" />
-                  </button>
-                </div>
-                <div className="p-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold text-lg text-foreground">{p.name}</h3>
-                    <p className="text-success font-semibold text-sm">{p.price}</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">{t('buyer.saved.available')}: {p.available}</p>
-                  <div className="flex items-center text-sm text-muted-foreground mt-1">
-                    <UserIcon className="w-4 h-4 mr-1" /> {p.farmer}
-                    <span className="mx-1">•</span>
-                    {p.location}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="mt-3 flex items-center gap-2">
-                    <button className="bg-success text-primary-foreground px-4 py-2 rounded text-sm flex-1">
-                      {t('buyer.saved.buyNow')}
-                    </button>
-                    <button className="border border-border p-2 rounded">
-                      <MessageSquare className="w-4 h-4 text-foreground" />
-                    </button>
-                    <button className="border border-destructive p-2 rounded" title={t('buyer.saved.remove')}>
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+      {loading ? (
+        <PageLoading fullScreen={false} label="Loading saved products" description="Fetching your wishlist…" />
+      ) : savedProducts.length === 0 ? (
+        <div className="py-20 flex flex-col items-center text-center bg-white dark:bg-gray-900 rounded-2xl border border-border">
+          <div className="w-16 h-16 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mb-4">
+            <Heart size={28} className="text-green-400" />
           </div>
-        </main>
-      </div>
-    </div>
+          <h3 className="text-base font-bold text-foreground">No saved products yet</h3>
+          <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+            Tap the heart on a product to save it here.
+          </p>
+          <Link
+            href="/products"
+            className="mt-5 h-10 px-5 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors"
+          >
+            <Package size={15} />
+            Browse products
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {savedProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              isSaved={true}
+              onSave={() => handleRemove(product.id)}
+            />
+          ))}
+        </div>
+      )}
+    </AppLayout>
   );
 }

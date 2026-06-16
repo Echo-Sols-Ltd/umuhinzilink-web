@@ -11,7 +11,7 @@ import Footer from '@/components/Footer';
 
 export default function AboutPage() {
   return (
-    <div className='bg-background min-h-screen'>
+    <div className='bg-gray-50 dark:bg-gray-950 min-h-screen'>
       <main className="bg-background w-full">
         <Navbar />
         <section id="home" className="section-fade-up section-delay-1 pt-24">
