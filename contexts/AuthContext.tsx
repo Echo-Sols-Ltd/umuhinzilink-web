@@ -44,6 +44,8 @@ interface AuthContextType {
   askOtpCode: () => Promise<void>;
   updateAvatar: (data: string) => Promise<void>;
   updateSavedProducts: (productIds: string[]) => Promise<boolean>;
+  toggleSavedProduct: (productId: string) => Promise<boolean>;
+  isProductSaved: (productId: string) => boolean;
   setUserState: (user: User) => void;
 }
 
@@ -100,13 +102,19 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const normalizeUser = (nextUser: User): User => ({
+    ...nextUser,
+    savedProducts: nextUser.savedProducts ?? [],
+  });
+
   const persistSession = (token: string, refreshToken: string | undefined, nextUser: User) => {
+    const normalized = normalizeUser(nextUser);
     localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
     if (refreshToken) {
       localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
     }
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(nextUser));
-    setUser(nextUser);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(normalized));
+    setUser(normalized);
   };
 
   const loadAuthState = async () => {
@@ -363,8 +371,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const setUserState = (nextUser: User) => {
-    setUser(nextUser);
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(nextUser));
+    const normalized = normalizeUser(nextUser);
+    setUser(normalized);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(normalized));
   };
 
   const updateSavedProducts = async (productIds: string[]): Promise<boolean> => {
@@ -381,6 +390,18 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       notify.error('Could not update saved products');
       return false;
     }
+  };
+
+  const isProductSaved = (productId: string): boolean =>
+    user?.savedProducts?.includes(productId) ?? false;
+
+  const toggleSavedProduct = async (productId: string): Promise<boolean> => {
+    if (!user) return false;
+    const current = user.savedProducts ?? [];
+    const next = current.includes(productId)
+      ? current.filter((id) => id !== productId)
+      : [...current, productId];
+    return updateSavedProducts(next);
   };
 
   useEffect(() => {
@@ -406,6 +427,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         askOtpCode,
         updateAvatar,
         updateSavedProducts,
+        toggleSavedProduct,
+        isProductSaved,
         setUserState,
         isAuthenticated,
       }}

@@ -10,7 +10,6 @@ import PageLoading from '@/components/layout/PageLoading';
 import { Product } from '@/types';
 import { notify } from '@/lib/notify';
 import { useProduct } from '@/contexts/ProductContext';
-import { useAuth } from '@/contexts/AuthContext';
 import { useProductAction } from '@/hooks/useProductAction';
 
 function ProductSkeleton() {
@@ -63,15 +62,12 @@ export default function ProductDetailPage() {
   const searchParams = useSearchParams();
   const openNegotiate = searchParams.get('negotiate') === '1';
   const { fetchProductById } = useProduct();
-  const { user, updateSavedProducts } = useAuth();
   const { deleteProduct } = useProductAction();
   const productId = params.id as string;
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const savedIds = user?.savedProducts ?? [];
 
   useEffect(() => {
     if (!productId) return;
@@ -92,20 +88,6 @@ export default function ProductDetailPage() {
 
     load();
   }, [productId, fetchProductById]);
-
-  const handleSave = async (id: string) => {
-    if (!user) {
-      router.push('/auth/signin');
-      return;
-    }
-
-    const isSaved = savedIds.includes(id);
-    const next = isSaved ? savedIds.filter((pid) => pid !== id) : [...savedIds, id];
-    const ok = await updateSavedProducts(next);
-    if (ok) {
-      notify.success(isSaved ? 'Removed from saved' : `${product?.name ?? 'Product'} saved`);
-    }
-  };
 
   const handleShare = () => {
     const url = window.location.href;
@@ -159,10 +141,8 @@ export default function ProductDetailPage() {
       ) : (
         <ProductDetail
           product={product}
-          onSaveProduct={handleSave}
           onShareProduct={handleShare}
           onDeleteProduct={handleDelete}
-          isSaved={savedIds.includes(product.id)}
           showActions={true}
           openBuyOnMount={openNegotiate}
           className="!p-0"

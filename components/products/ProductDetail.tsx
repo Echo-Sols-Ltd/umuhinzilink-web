@@ -41,16 +41,39 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   onShareProduct,
   onEditProduct,
   onDeleteProduct,
-  isSaved = false,
+  isSaved,
   showActions = true,
   openBuyOnMount = false,
   className,
 }) => {
   const { t, locale } = useI18n();
-  const { user } = useAuth();
+  const { user, toggleSavedProduct, isProductSaved } = useAuth();
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [buyOpen, setBuyOpen] = useState(openBuyOnMount);
+  const [savingWishlist, setSavingWishlist] = useState(false);
+
+  const saved = isSaved ?? isProductSaved(product.id);
+
+  const handleSaveClick = async () => {
+    if (onSaveProduct) {
+      onSaveProduct(product.id);
+      return;
+    }
+    if (!user) {
+      router.push('/auth/signin');
+      return;
+    }
+    if (savingWishlist) return;
+
+    setSavingWishlist(true);
+    const wasSaved = saved;
+    const ok = await toggleSavedProduct(product.id);
+    if (ok) {
+      notify.success(wasSaved ? 'Removed from saved' : `${product.name} saved`);
+    }
+    setSavingWishlist(false);
+  };
 
   const isOutOfStock = product.stockQuantity === 0 || product.status === 'OUT_OF_STOCK';
   const isLowStock = product.status === 'LOW_STOCK';
@@ -245,14 +268,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => onSaveProduct?.(product.id)}
-                    className="flex-1 h-10 flex items-center justify-center gap-2 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    onClick={handleSaveClick}
+                    disabled={savingWishlist}
+                    className="flex-1 h-10 flex items-center justify-center gap-2 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
                   >
                     <Heart
                       size={15}
-                      className={cn(isSaved && 'fill-red-500 text-red-500')}
+                      className={cn(saved && 'fill-red-500 text-red-500')}
                     />
-                    {isSaved ? t('buyer.productDetail.actions.saved') : t('buyer.productDetail.saveToWishlist')}
+                    {saved ? t('buyer.productDetail.actions.saved') : t('buyer.productDetail.saveToWishlist')}
                   </button>
                   <button
                     type="button"

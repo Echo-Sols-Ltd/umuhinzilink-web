@@ -13,7 +13,7 @@ import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 
 export default function SavedProductsPage() {
-  const { user, loading: authLoading, updateSavedProducts } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { products: marketplaceProducts } = useProduct();
   const [savedProducts, setSavedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,14 +62,13 @@ export default function SavedProductsPage() {
     }
   }, [authLoading, user, loadSaved]);
 
-  const handleRemove = async (productId: string) => {
-    const ids = user?.savedProducts ?? [];
-    const next = ids.filter((id) => id !== productId);
-    const ok = await updateSavedProducts(next);
-    if (ok) {
-      setSavedProducts((prev) => prev.filter((p) => p.id !== productId));
+  // Refresh list when saved IDs change (e.g. heart removed on card)
+  useEffect(() => {
+    if (!authLoading && user) {
+      const ids = user.savedProducts ?? [];
+      setSavedProducts((prev) => prev.filter((p) => ids.includes(p.id)));
     }
-  };
+  }, [user?.savedProducts, authLoading, user]);
 
   if (authLoading || !user) {
     return (
@@ -110,12 +109,7 @@ export default function SavedProductsPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {savedProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              isSaved={true}
-              onSave={() => handleRemove(product.id)}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}

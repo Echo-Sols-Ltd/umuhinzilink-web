@@ -35,14 +35,16 @@ export default function ProductCard({
     product,
     onSave,
     onDelete,
-    isSaved = false,
+    isSaved: isSavedProp,
 }: ProductCardProps) {
-    const { user } = useAuth();
+    const { user, toggleSavedProduct, isProductSaved } = useAuth();
     const { t } = useI18n();
     const router = useRouter();
     const [buyOpen, setBuyOpen] = useState(false);
-    const [saved, setSaved] = useState(isSaved);
+    const [saving, setSaving] = useState(false);
     const [imgError, setImgError] = useState(false);
+
+    const isSaved = isSavedProp ?? isProductSaved(product.id);
 
     const isOwner = user?.id === product.owner?.id;
     const isOutOfStock = product.status === 'OUT_OF_STOCK';
@@ -51,12 +53,26 @@ export default function ProductCard({
 
     // ── Handlers ──────────────────────────────────────────────────────────
 
-    const handleSave = (e: React.MouseEvent) => {
+    const handleSave = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!user) { router.push('/auth/signin'); return; }
-        setSaved(v => !v);
-        onSave?.(product.id);
-        notify.success(saved ? `Removed from saved` : `${product.name} saved`);
+        if (!user) {
+            router.push('/auth/signin');
+            return;
+        }
+        if (saving) return;
+
+        if (onSave) {
+            onSave(product.id);
+            return;
+        }
+
+        setSaving(true);
+        const wasSaved = isSaved;
+        const ok = await toggleSavedProduct(product.id);
+        if (ok) {
+            notify.success(wasSaved ? 'Removed from saved' : `${product.name} saved`);
+        }
+        setSaving(false);
     };
 
     const handleChat = (e: React.MouseEvent) => {
@@ -155,13 +171,16 @@ export default function ProductCard({
                             </>
                         ) : (
                             <button
+                                type="button"
                                 onClick={handleSave}
-                                className="w-8 h-8 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center shadow transition-colors">
+                                disabled={saving}
+                                className="w-8 h-8 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center shadow transition-colors disabled:opacity-50"
+                            >
                                 <Heart
                                     size={14}
                                     className={cn(
                                         'transition-colors',
-                                        saved ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-400'
+                                        isSaved ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-400'
                                     )}
                                 />
                             </button>
