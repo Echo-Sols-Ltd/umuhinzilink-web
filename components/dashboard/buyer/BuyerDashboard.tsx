@@ -93,12 +93,7 @@ export default function BuyerDashboard() {
     }
   };
 
-  // Fallback mock data if recentOrders isn't available from API
-  const recentOrders = dashboardData.recentOrders || [
-    { id: 'ORD-901', status: 'Processing', amount: 15000, date: new Date().toISOString() },
-    { id: 'ORD-902', status: 'Shipped', amount: 45000, date: new Date(Date.now() - 86400000).toISOString() },
-    { id: 'ORD-903', status: 'Delivered', amount: 24000, date: new Date(Date.now() - 172800000).toISOString() }
-  ];
+  const recentOrders = dashboardData.recentOrders ?? [];
 
   return (
     <div className="space-y-8">

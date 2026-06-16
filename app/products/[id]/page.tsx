@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Sprout, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import ProductDetail from '@/components/products/ProductDetail';
@@ -64,6 +64,8 @@ function ProductError({ message, onBack }: { message: string; onBack: () => void
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const openNegotiate = searchParams.get('negotiate') === '1';
   const { fetchProductById } = useProduct();
   const productId = params.id as string;
 
@@ -138,7 +140,7 @@ export default function ProductDetailPage() {
   };
 
   const breadcrumbs = [
-    { label: 'Home', href: '/' },
+    { label: 'Home', href: '/dashboard' },
     { label: 'Products', href: '/products' },
     ...(product ? [{ label: product.name }] : []),
   ];
@@ -171,6 +173,7 @@ export default function ProductDetailPage() {
           onShareProduct={handleShare}
           isSaved={savedIds.has(product.id)}
           showActions={true}
+          openBuyOnMount={openNegotiate}
           className="!p-0"
         />
       )}
