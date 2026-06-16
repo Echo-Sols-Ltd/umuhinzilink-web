@@ -1,28 +1,24 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
-  Wallet,
-  CreditCard,
   ArrowUpRight,
   ArrowDownLeft,
   Plus,
   History,
-  Filter,
-  Download,
   Search,
-  Calendar,
-  DollarSign,
   TrendingUp,
   TrendingDown,
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  CreditCard,
+  X,
+  Loader2,
 } from 'lucide-react';
 import { Wallet as IWallet, Transaction } from '@/types';
 import { cn } from '@/lib/utils';
-
 import { useI18n } from '@/contexts/I18nContext';
 import PageLoading from '@/components/layout/PageLoading';
 
@@ -33,37 +29,88 @@ interface WalletDashboardProps {
   onDeposit?: (amount: number, description?: string) => void;
   onPayOrder?: (orderId: string, description?: string) => void;
   className?: string;
+  depositOpen?: boolean;
+  onDepositOpenChange?: (open: boolean) => void;
 }
 
 type FilterType = 'all' | 'deposit' | 'withdrawal' | 'payment';
 type SortType = 'newest' | 'oldest' | 'amount_high' | 'amount_low';
+
+const FILTER_OPTIONS: { value: FilterType; labelKey: string }[] = [
+  { value: 'all', labelKey: 'buyer.wallet.filters.allTransactions' },
+  { value: 'deposit', labelKey: 'buyer.wallet.filters.deposits' },
+  { value: 'payment', labelKey: 'buyer.wallet.filters.payments' },
+  { value: 'withdrawal', labelKey: 'buyer.wallet.filters.withdrawals' },
+];
+
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  tone = 'default',
+}: {
+  label: string;
+  value: string | number;
+  icon: React.ElementType;
+  tone?: 'default' | 'success' | 'info' | 'warning' | 'destructive';
+}) {
+  const toneClasses = {
+    default: 'text-foreground',
+    success: 'text-emerald-600 dark:text-emerald-400',
+    info: 'text-sky-600 dark:text-sky-400',
+    warning: 'text-amber-600 dark:text-amber-400',
+    destructive: 'text-red-500 dark:text-red-400',
+  };
+
+  return (
+    <div className="rounded-2xl border border-border bg-white dark:bg-gray-900 p-4 flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        <div className="w-8 h-8 rounded-xl bg-green-50 dark:bg-green-950/40 flex items-center justify-center">
+          <Icon size={14} className="text-green-600" />
+        </div>
+      </div>
+      <p className={cn('text-xl font-extrabold tracking-tight', toneClasses[tone])}>{value}</p>
+    </div>
+  );
+}
 
 const WalletDashboard: React.FC<WalletDashboardProps> = ({
   wallet,
   transactions,
   loading = false,
   onDeposit,
-  onPayOrder,
   className,
+  depositOpen,
+  onDepositOpenChange,
 }) => {
   const { t, locale } = useI18n();
+  const [internalDepositOpen, setInternalDepositOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState('');
+  const [depositDescription, setDepositDescription] = useState('');
+  const [depositing, setDepositing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [sortType, setSortType] = useState<SortType>('newest');
-  const [showDepositModal, setShowDepositModal] = useState(false);
-  const [depositAmount, setDepositAmount] = useState('');
-  const [depositDescription, setDepositDescription] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
 
-  // Filter and sort transactions
+  const showDepositModal = depositOpen ?? internalDepositOpen;
+  const setShowDepositModal = onDepositOpenChange ?? setInternalDepositOpen;
+
+  useEffect(() => {
+    if (!showDepositModal) {
+      setDepositAmount('');
+      setDepositDescription('');
+      setDepositing(false);
+    }
+  }, [showDepositModal]);
+
   const filteredAndSortedTransactions = useMemo(() => {
     let filtered = transactions.filter(transaction => {
-      // Search filter
-      const searchMatch = searchTerm === '' ||
+      const searchMatch =
+        searchTerm === '' ||
         transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         transaction.id.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Type filter
       let typeMatch = filterType === 'all';
       if (!typeMatch) {
         const type = transaction.type.toLowerCase();
@@ -79,7 +126,6 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
       return searchMatch && typeMatch;
     });
 
-    // Sort transactions
     filtered.sort((a, b) => {
       switch (sortType) {
         case 'newest':
@@ -98,7 +144,6 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
     return filtered;
   }, [transactions, searchTerm, filterType, sortType]);
 
-  // Transaction statistics
   const stats = useMemo(() => {
     const totalDeposits = transactions
       .filter(t => (t.type === 'DEPOSIT' || t.type === 'TRANSFER_IN') && t.status === 'COMPLETED')
@@ -117,53 +162,11 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
     return { totalDeposits, totalPayments, totalWithdrawals, pendingTransactions };
   }, [transactions]);
 
-  const getTransactionIcon = (type: string, status: string) => {
-    if (status === 'PENDING') return <Clock className="w-4 h-4 text-warning" />;
-    if (status === 'FAILED' || status === 'CANCELLED') return <XCircle className="w-4 h-4 text-destructive" />;
-
-    switch (type) {
-      case 'DEPOSIT':
-      case 'TRANSFER_IN':
-        return <ArrowDownLeft className="w-4 h-4 text-success" />;
-      case 'PAYMENT':
-      case 'TRANSFER_OUT':
-        return <ArrowUpRight className="w-4 h-4 text-info" />;
-      case 'WITHDRAWAL':
-        return <ArrowUpRight className="w-4 h-4 text-destructive" />;
-      default:
-        return <CheckCircle className="w-4 h-4 text-muted-foreground" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'COMPLETED':
-        return 'bg-success/10 text-success';
-      case 'PENDING':
-        return 'bg-warning/10 text-warning';
-      case 'FAILED':
-        return 'bg-destructive/10 text-destructive';
-      case 'CANCELLED':
-        return 'bg-muted text-muted-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
-  };
-
-  const translateStatus = (status: string) => {
-    switch (status) {
-      case 'COMPLETED': return t('common.status.completed');
-      case 'PENDING': return t('common.status.pending');
-      case 'FAILED': return t('common.error');
-      case 'CANCELLED': return t('common.status.cancelled');
-      default: return status;
-    }
-  };
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat(locale === 'rw' ? 'rw-RW' : 'en-US', {
       style: 'currency',
       currency: wallet?.currency || 'RWF',
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -177,13 +180,38 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
     });
   };
 
-  const handleDeposit = () => {
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'COMPLETED':
+        return 'text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400';
+      case 'PENDING':
+        return 'text-amber-700 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-400';
+      case 'FAILED':
+        return 'text-red-700 bg-red-50 dark:bg-red-950/40 dark:text-red-400';
+      default:
+        return 'text-muted-foreground bg-gray-100 dark:bg-gray-800';
+    }
+  };
+
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case 'COMPLETED': return t('common.status.completed');
+      case 'PENDING': return t('common.status.pending');
+      case 'FAILED': return t('common.error');
+      case 'CANCELLED': return t('common.status.cancelled');
+      default: return status;
+    }
+  };
+
+  const handleDeposit = async () => {
     const amount = parseFloat(depositAmount);
-    if (amount > 0 && onDeposit) {
-      onDeposit(amount, depositDescription.trim() || undefined);
-      setDepositAmount('');
-      setDepositDescription('');
+    if (amount <= 0 || !onDeposit) return;
+    setDepositing(true);
+    try {
+      await onDeposit(amount, depositDescription.trim() || undefined);
       setShowDepositModal(false);
+    } finally {
+      setDepositing(false);
     }
   };
 
@@ -199,304 +227,271 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-success/10 rounded-lg">
-              <Wallet className="w-8 h-8 text-success" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{t('buyer.wallet.title')}</h1>
-              <p className="text-sm text-muted-foreground">{t('buyer.wallet.subtitle')}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Balance Hero Card */}
-        <div className="relative overflow-hidden bg-linear-to-br from-green-600 to-green-800 rounded-2xl p-8 text-white shadow-lg border border-green-500/20">
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-48 h-48 bg-black/10 rounded-full blur-2xl pointer-events-none" />
-
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-            <div className="space-y-1">
-              <p className="text-green-50/80 text-sm font-medium uppercase tracking-wider">{t('buyer.wallet.balance')}</p>
-              <div className="flex items-baseline gap-2">
-                <h2 className="text-xl md:text-2xl font-extrabold tracking-tight">
-                  {formatCurrency(wallet?.balance || 0)}
-                </h2>
-                <span className="text-green-100/60 text-lg font-medium">{wallet?.currency || 'RWF'}</span>
-              </div>
-              <div className="flex items-center gap-3 pt-2">
-                <span className="flex items-center gap-1 text-xs bg-white/10 px-2 py-0.5 rounded-full border border-white/20 backdrop-blur-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
-                  {t('buyer.wallet.active')}
-                </span>
-                <span className="text-xs font-mono text-green-50/60">
-                  ID: {wallet?.id ? `****${wallet.id.slice(-8)}` : 'N/A'}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => setShowDepositModal(true)}
-                className="flex items-center justify-center gap-2 px-6 py-2 bg-white text-green-700 font-semibold rounded-xl hover:bg-green-50 transition-all transform active:scale-95 shadow-md"
-              >
-                <Plus className="w-5 h-5" />
-                {t('buyer.wallet.addMoney')}
-              </button>
+    <div className={cn('space-y-5', className)}>
+      {/* Balance hero */}
+      <div className="rounded-2xl border border-green-600 bg-green-600 p-6 sm:p-8 text-white shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-green-100">
+              {t('buyer.wallet.balance')}
+            </p>
+            <p className="text-3xl sm:text-4xl font-extrabold tracking-tight mt-1">
+              {formatCurrency(wallet?.balance || 0)}
+            </p>
+            <div className="flex items-center gap-2 mt-3">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white/15 px-2.5 py-1 rounded-full border border-white/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
+                {t('buyer.wallet.active')}
+              </span>
+              <span className="text-xs text-green-100/80 font-mono">
+                {wallet?.currency || 'RWF'}
+              </span>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setShowDepositModal(true)}
+            className="inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold rounded-xl bg-white text-green-700 hover:bg-green-50 transition-colors shrink-0"
+          >
+            <Plus size={16} />
+            {t('buyer.wallet.addMoney')}
+          </button>
         </div>
       </div>
 
-      <div className={cn('space-y-6', className)}>
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard
+          label={t('buyer.wallet.stats.totalDeposits')}
+          value={formatCurrency(stats.totalDeposits)}
+          icon={TrendingUp}
+          tone="success"
+        />
+        <StatCard
+          label={t('buyer.wallet.stats.totalPayments')}
+          value={formatCurrency(stats.totalPayments)}
+          icon={CreditCard}
+          tone="info"
+        />
+        <StatCard
+          label={t('buyer.wallet.stats.withdrawals')}
+          value={formatCurrency(stats.totalWithdrawals)}
+          icon={TrendingDown}
+          tone="destructive"
+        />
+        <StatCard
+          label={t('buyer.wallet.stats.pending')}
+          value={stats.pendingTransactions}
+          icon={Clock}
+          tone="warning"
+        />
+      </div>
 
+      {/* Toolbar */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder={t('buyer.wallet.filters.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full h-10 pl-9 pr-4 text-sm bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <select
+            value={sortType}
+            onChange={(e) => setSortType(e.target.value as SortType)}
+            className="h-10 px-3 text-sm bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            <option value="newest">{t('buyer.wallet.filters.newestFirst')}</option>
+            <option value="oldest">{t('buyer.wallet.filters.oldestFirst')}</option>
+            <option value="amount_high">{t('buyer.wallet.filters.highestAmount')}</option>
+            <option value="amount_low">{t('buyer.wallet.filters.lowestAmount')}</option>
+          </select>
+        </div>
 
-        {/* Statistics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { label: t('buyer.wallet.stats.totalDeposits'), value: stats.totalDeposits, icon: TrendingUp, color: 'success' },
-            { label: t('buyer.wallet.stats.totalPayments'), value: stats.totalPayments, icon: CreditCard, color: 'info' },
-            { label: t('buyer.wallet.stats.withdrawals'), value: stats.totalWithdrawals, icon: TrendingDown, color: 'destructive' },
-            { label: t('buyer.wallet.stats.pending'), value: stats.pendingTransactions, icon: Clock, color: 'warning', isCount: true }
-          ].map((item, idx) => (
-            <div key={idx} className="bg-card p-6 rounded-2xl border border-border hover:border-foreground/10 hover:shadow-sm transition-all group">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{item.label}</p>
-                  <p className={cn(
-                    "text-2xl font-bold",
-                    item.color === 'success' ? 'text-success' :
-                      item.color === 'info' ? 'text-info' :
-                        item.color === 'destructive' ? 'text-destructive' :
-                          'text-warning'
-                  )}>
-                    {item.isCount ? item.value : formatCurrency(item.value as number)}
-                  </p>
-                </div>
-                <div className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center transition-colors",
-                  item.color === 'success' ? 'bg-success/10 group-hover:bg-success/20' :
-                    item.color === 'info' ? 'bg-info/10 group-hover:bg-info/20' :
-                      item.color === 'destructive' ? 'bg-destructive/10 group-hover:bg-destructive/20' :
-                        'bg-warning/10 group-hover:bg-warning/20'
-                )}>
-                  <item.icon className={cn(
-                    "w-6 h-6",
-                    item.color === 'success' ? 'text-success' :
-                      item.color === 'info' ? 'text-info' :
-                        item.color === 'destructive' ? 'text-destructive' :
-                          'text-warning'
-                  )} />
-                </div>
-              </div>
-            </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          {FILTER_OPTIONS.map(({ value, labelKey }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setFilterType(value)}
+              className={cn(
+                'h-8 px-3 text-xs font-semibold rounded-xl border transition-colors',
+                filterType === value
+                  ? 'bg-green-600 border-green-600 text-white'
+                  : 'bg-white dark:bg-gray-900 border-border text-muted-foreground hover:text-foreground',
+              )}
+            >
+              {t(labelKey)}
+            </button>
           ))}
         </div>
+      </div>
 
-        {/* Filters and Search */}
-        <div className="bg-card">
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <input
-                type="text"
-                placeholder={t('buyer.wallet.filters.searchPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Filter Toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-card"
-            >
-              <Filter className="w-4 h-4" />
-              <span>{t('buyer.wallet.filters.title')}</span>
-            </button>
-
-            {/* Export */}
-            <button className="flex items-center space-x-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">
-              <Download className="w-4 h-4" />
-              <span>{t('buyer.wallet.export')}</span>
-            </button>
-          </div>
-
-          {/* Filter Options */}
-          {showFilters && (
-            <div className="mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">{t('buyer.wallet.filters.transactionType')}</label>
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value as FilterType)}
-                  className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
-                  <option value="all">{t('buyer.wallet.filters.allTransactions')}</option>
-                  <option value="deposit">{t('buyer.wallet.filters.deposits')}</option>
-                  <option value="payment">{t('buyer.wallet.filters.payments')}</option>
-                  <option value="withdrawal">{t('buyer.wallet.filters.withdrawals')}</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">{t('buyer.wallet.filters.sortBy')}</label>
-                <select
-                  value={sortType}
-                  onChange={(e) => setSortType(e.target.value as SortType)}
-                  className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
-                  <option value="newest">{t('buyer.wallet.filters.newestFirst')}</option>
-                  <option value="oldest">{t('buyer.wallet.filters.oldestFirst')}</option>
-                  <option value="amount_high">{t('buyer.wallet.filters.highestAmount')}</option>
-                  <option value="amount_low">{t('buyer.wallet.filters.lowestAmount')}</option>
-                </select>
-              </div>
-            </div>
-          )}
+      {/* Transactions */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-border bg-gray-50 dark:bg-gray-800/50 flex items-center gap-2">
+          <History size={16} className="text-muted-foreground" />
+          <h2 className="text-sm font-bold text-foreground">{t('buyer.wallet.history')}</h2>
+          <span className="text-xs text-muted-foreground ml-auto">
+            {filteredAndSortedTransactions.length} {filteredAndSortedTransactions.length === 1 ? 'entry' : 'entries'}
+          </span>
         </div>
 
-        {/* Transaction History */}
-        <div className="bg-card rounded-lg border border-border overflow-hidden">
-          <div className="p-4 border-b">
-            <div className="flex items-center space-x-2">
-              <History className="w-5 h-5 text-muted-foreground" />
-              <h3 className="text-lg font-semibold text-foreground">{t('buyer.wallet.history')}</h3>
+        {filteredAndSortedTransactions.length === 0 ? (
+          <div className="py-16 flex flex-col items-center text-center px-4">
+            <div className="w-14 h-14 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mb-4">
+              <History size={24} className="text-green-500" />
             </div>
+            <p className="text-sm font-semibold text-foreground">{t('buyer.wallet.noTransactions')}</p>
+            <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+              {searchTerm || filterType !== 'all'
+                ? t('buyer.wallet.tryAdjusting')
+                : t('buyer.wallet.historyDescription')}
+            </p>
           </div>
-
-          {filteredAndSortedTransactions.length === 0 ? (
-            <div className="text-center py-12">
-              <History className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">{t('buyer.wallet.noTransactions')}</h3>
-              <p className="text-muted-foreground">
-                {searchTerm || filterType !== 'all'
-                  ? t('buyer.wallet.tryAdjusting')
-                  : t('buyer.wallet.historyDescription')}
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-border">
-              {filteredAndSortedTransactions.map((transaction) => (
-                <div key={transaction.id} className="p-4 hover:bg-card">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      {getTransactionIcon(transaction.type, transaction.status)}
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
-                          {transaction.description || `${transaction.type.toLowerCase()} transaction`}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(transaction.createdAt)} • ID: {transaction.id.slice(-8)}
-                        </p>
-                      </div>
+        ) : (
+          <div className="divide-y divide-border">
+            {filteredAndSortedTransactions.map((transaction) => {
+              const isCredit =
+                transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_IN';
+              return (
+                <div
+                  key={transaction.id}
+                  className="px-4 py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className={cn(
+                        'w-9 h-9 rounded-xl flex items-center justify-center shrink-0',
+                        isCredit
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600'
+                          : 'bg-sky-50 dark:bg-sky-950/40 text-sky-600',
+                      )}
+                    >
+                      {isCredit ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
                     </div>
-                    <div className="text-right">
-                      <p className={cn(
-                        'text-sm font-semibold',
-                        (transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_IN') ? 'text-success' : 'text-destructive'
-                      )}>
-                        {(transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_IN') ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">
+                        {transaction.description || transaction.type}
                       </p>
-                      <span className={cn(
-                        'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                        getStatusColor(transaction.status)
-                      )}>
-                        {translateStatus(transaction.status)}
-                      </span>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {formatDate(transaction.createdAt)} · {transaction.id.slice(-8)}
+                      </p>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Deposit Modal */}
-        {showDepositModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-card rounded-lg shadow-xl w-full max-w-md m-4">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-foreground">{t('buyer.wallet.modal.title')}</h3>
-                  <button
-                    onClick={() => setShowDepositModal(false)}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <XCircle className="w-6 h-6" />
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      {t('buyer.wallet.modal.amount')} ({wallet?.currency || 'RWF'})
-                    </label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                      <input
-                        type="number"
-                        value={depositAmount}
-                        onChange={(e) => setDepositAmount(e.target.value)}
-                        placeholder="0.00"
-                        min="0"
-                        step="0.01"
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      {t('buyer.wallet.modal.description')}
-                    </label>
-                    <input
-                      type="text"
-                      value={depositDescription}
-                      onChange={(e) => setDepositDescription(e.target.value)}
-                      placeholder={t('buyer.wallet.modal.descriptionPlaceholder')}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                    />
-                  </div>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <div className="flex items-start space-x-2">
-                      <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5" />
-                      <div className="text-sm text-blue-800">
-                        <p className="font-medium">{t('buyer.wallet.modal.instructionsTitle')}</p>
-                        <p className="mt-1">
-                          {t('buyer.wallet.modal.instructions')}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex space-x-3 pt-4">
-                    <button
-                      onClick={() => setShowDepositModal(false)}
-                      className="flex-1 px-4 py-2 border border-border text-muted-foreground rounded-lg hover:bg-card transition-colors"
+                  <div className="text-right shrink-0">
+                    <p
+                      className={cn(
+                        'text-sm font-bold',
+                        isCredit ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground',
+                      )}
                     >
-                      {t('buyer.wallet.modal.cancel')}
-                    </button>
-                    <button
-                      onClick={handleDeposit}
-                      disabled={!depositAmount || parseFloat(depositAmount) <= 0}
-                      className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      {isCredit ? '+' : '−'}{formatCurrency(Math.abs(transaction.amount))}
+                    </p>
+                    <span
+                      className={cn(
+                        'inline-flex mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full',
+                        getStatusBadge(transaction.status),
+                      )}
                     >
-                      {t('buyer.wallet.modal.confirm')}
-                    </button>
+                      {translateStatus(transaction.status)}
+                    </span>
                   </div>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         )}
       </div>
+
+      {/* Deposit modal */}
+      {showDepositModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deposit-modal-title"
+        >
+          <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-border shadow-xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <h3 id="deposit-modal-title" className="text-base font-bold text-foreground">
+                {t('buyer.wallet.modal.title')}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowDepositModal(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                  {t('buyer.wallet.modal.amount')} ({wallet?.currency || 'RWF'})
+                </label>
+                <input
+                  type="number"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  placeholder="0"
+                  min="0"
+                  step="1"
+                  className="w-full h-10 px-3 text-sm bg-white dark:bg-gray-950 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                  {t('buyer.wallet.modal.description')}
+                </label>
+                <input
+                  type="text"
+                  value={depositDescription}
+                  onChange={(e) => setDepositDescription(e.target.value)}
+                  placeholder={t('buyer.wallet.modal.descriptionPlaceholder')}
+                  className="w-full h-10 px-3 text-sm bg-white dark:bg-gray-950 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+
+              <div className="rounded-xl border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/30 p-3 flex gap-2">
+                <AlertCircle size={16} className="text-green-600 shrink-0 mt-0.5" />
+                <div className="text-xs text-green-800 dark:text-green-200 leading-relaxed">
+                  <p className="font-semibold">{t('buyer.wallet.modal.instructionsTitle')}</p>
+                  <p className="mt-1 opacity-90">{t('buyer.wallet.modal.instructions')}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowDepositModal(false)}
+                  disabled={depositing}
+                  className="flex-1 h-10 text-sm font-semibold border border-border rounded-xl text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+                >
+                  {t('buyer.wallet.modal.cancel')}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeposit}
+                  disabled={!depositAmount || parseFloat(depositAmount) <= 0 || depositing}
+                  className="flex-1 h-10 text-sm font-semibold rounded-xl bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {depositing ? <Loader2 size={16} className="animate-spin" /> : null}
+                  {t('buyer.wallet.modal.confirm')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

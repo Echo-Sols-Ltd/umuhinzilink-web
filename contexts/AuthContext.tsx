@@ -38,7 +38,7 @@ interface AuthContextType {
   seller: Seller | null;
   logout: () => Promise<void>;
   registerGoogle: (data: GoogleAuthRequest) => Promise<void>
-  register: (data: UserRequest) => Promise<void>;
+  register: (data: UserRequest) => Promise<string | null>;
   registerSeller: (data: SellerRegistration) => Promise<void>;
   verifyOtp: (data: VerifyOtpRequest) => Promise<void>;
   askOtpCode: () => Promise<void>;
@@ -251,22 +251,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const register = async (data: UserRequest) => {
+  const register = async (data: UserRequest): Promise<string | null> => {
     try {
       setLoading(true);
       const res = await authService.register(data);
 
       if (!res.success || !res.data) {
-        notify.error(res.message || 'Registration failed', 'Register Failed');
-        return;
+        const message = res.message || 'Registration failed';
+        notify.error(message, 'Register Failed');
+        return message;
       }
 
       persistSession(res.data.token, res.data.refreshToken, res.data.user);
       setIsAuthenticated(false);
       notify.success('Check your email for the verification code', 'Register Success');
       router.replace('/auth/verify-otp');
-    } catch {
-      notify.error('Please try again', 'Error registering');
+      return null;
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === 'object' && 'response' in err
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined;
+      const fallback = message || 'Please try again';
+      notify.error(fallback, 'Error registering');
+      return fallback;
     } finally {
       setLoading(false);
     }
