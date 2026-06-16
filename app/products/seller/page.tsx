@@ -117,7 +117,7 @@ function ActionMenu({ listing, onDelete }: { listing: Listing; onDelete: (id: st
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute right-0 mt-1 w-44 bg-white dark:bg-gray-900 border border-border rounded-xl shadow-lg z-20 py-1 overflow-hidden">
             <Link
-              href={`/seller/listings/${listing.id}/edit`}
+              href={`/products/seller/${listing.id}/edit`}
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
               <Edit3 size={13} className="text-muted-foreground" /> Edit listing
@@ -194,7 +194,7 @@ function GridCard({ listing, onDelete }: { listing: Listing; onDelete: (id: stri
             )}
           </div>
           <Link
-            href={`/seller/listings/${listing.id}`}
+            href={`/products/seller/${listing.id}`}
             className="flex items-center gap-1 text-xs text-green-600 font-semibold hover:underline">
             Manage <ChevronRight size={12} />
           </Link>
@@ -251,7 +251,7 @@ function ListRow({ listing, onDelete }: { listing: Listing; onDelete: (id: strin
       {/* Actions */}
       <div className="flex items-center gap-1 shrink-0">
         <Link
-          href={`/seller/listings/${listing.id}/edit`}
+          href={`/products/seller/${listing.id}/edit`}
           className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors opacity-0 group-hover:opacity-100">
           <Edit3 size={14} />
         </Link>

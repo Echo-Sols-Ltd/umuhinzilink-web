@@ -209,7 +209,7 @@ export default function CreateProduct() {
                             <Package size={16} /> Add another listing
                         </button>
                         <Link
-                            href="/seller/listings"
+                            href="/products/seller"
                             className="w-full h-11 border border-border bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/50 text-foreground font-medium text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
                             View my listings
                         </Link>
@@ -449,7 +449,7 @@ export default function CreateProduct() {
             <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-border px-4 py-3">
                 <div className="max-w-lg mx-auto flex items-center gap-3">
                     <Link
-                        href="/seller/listings"
+                        href="/products/seller"
                         className="flex-1 h-11 border border-border rounded-xl text-sm font-medium text-foreground flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         Cancel
                     </Link>

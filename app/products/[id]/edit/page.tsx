@@ -243,7 +243,7 @@ function EditProductForm() {
         const res = await fetchProductById(productId);
         if (!res) {
           notify.error('Failed to load product');
-          router.push('/seller/listings');
+          router.push('/products/seller');
           return;
         }
         setOriginalProduct(res);
@@ -260,7 +260,7 @@ function EditProductForm() {
         });
       } catch {
         notify.error('Failed to load product');
-        router.push('/seller/listings');
+        router.push('/products/seller');
       } finally {
         setLoading(false);
       }
@@ -326,7 +326,7 @@ function EditProductForm() {
 
       await new Promise(r => setTimeout(r, 1200));
       notify.success('Product updated successfully');
-      router.push('/seller/listings');
+      router.push('/products/seller');
     } catch {
       notify.error('Failed to update product. Please try again.');
     } finally {
@@ -610,7 +610,7 @@ function EditProductForm() {
           <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-border px-4 py-3">
             <div className="max-w-5xl mx-auto flex items-center gap-3">
               <Link
-                href="/seller/listings"
+                href="/products/seller"
                 className="flex-1 h-11 border border-border rounded-xl text-sm font-medium text-foreground flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 Cancel
               </Link>

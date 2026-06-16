@@ -144,9 +144,11 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const userId = user?.id;
-    if (!userId) return;
-    if (user?.role === UserRole.SELLER) fetchSellerProducts();
-    if (user?.role === UserRole.BUYER) fetchProducts();
+    if (userId) {
+      if (user?.role === UserRole.SELLER) fetchSellerProducts();
+      return
+    }
+    fetchProducts();
   }, [user?.id, user?.role, fetchSellerProducts, fetchProducts]);
 
   const fetchProductById = useCallback(async (id: string) => {
