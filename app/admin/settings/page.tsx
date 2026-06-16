@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import AdminGuard from '@/contexts/guard/AdminGuard';
 import {
   Settings,
   ChevronLeft,
@@ -185,9 +184,5 @@ function SystemSettingsPage() {
 }
 
 export default function SettingsPage() {
-  return (
-    <AdminGuard>
-      <SystemSettingsPage />
-    </AdminGuard>
-  );
+  return <SystemSettingsPage />;
 }

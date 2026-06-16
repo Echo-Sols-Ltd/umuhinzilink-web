@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 import { UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
+import { getAdminHomePath } from '@/lib/appPaths';
 
 interface Props {
     onMenuClick: () => void;
@@ -29,6 +30,8 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
     const pageTitle = title ?? getPageTitle(pathname);
     const firstName = user?.firstName ?? '';
     const initials = firstName ? firstName[0].toUpperCase() : 'U';
+    const isAdmin = user?.role === UserRole.ADMIN;
+    const profileHref = '/profile';
 
     return (
         <header className="
@@ -47,6 +50,14 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
                 </button>
                 <div className="flex items-center gap-1.5 text-sm">
                     <span className="hidden lg:block text-muted-foreground font-medium">UmuhinziLink</span>
+                    {isAdmin && (
+                        <Link
+                            href={getAdminHomePath()}
+                            className="hidden lg:block text-muted-foreground font-medium hover:text-foreground transition-colors"
+                        >
+                            Admin
+                        </Link>
+                    )}
                     <ChevronRight size={13} className="hidden lg:block text-muted-foreground/50" />
                     <span className="font-semibold text-foreground">{pageTitle}</span>
                 </div>
@@ -67,7 +78,7 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
                     )}
                 </Link>
 
-                <Link href={`/${user?.role?.toLowerCase()}/profile`}
+                <Link href={profileHref}
                     className="ml-1 flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-accent transition-colors"
                     title="Profile">
                     <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center overflow-hidden shrink-0">

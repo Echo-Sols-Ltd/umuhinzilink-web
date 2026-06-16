@@ -19,7 +19,6 @@ import { adminService } from '@/services/admin';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { Product, UserRole } from '@/types';
-import AdminGuard from '@/contexts/guard/AdminGuard';
 import { notify } from '@/lib/notify';
 import {
     Table,
@@ -284,9 +283,5 @@ function FarmerProductManagement() {
 }
 
 export default function FarmerProductsPage() {
-    return (
-        <AdminGuard>
-            <FarmerProductManagement />
-        </AdminGuard>
-    );
+    return <FarmerProductManagement />;
 }

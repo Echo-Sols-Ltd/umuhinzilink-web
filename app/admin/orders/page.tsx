@@ -16,7 +16,6 @@ import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { UserRole as UserType } from '@/types';
-import AdminGuard from '@/contexts/guard/AdminGuard';
 import {
   Table,
   TableBody,
@@ -153,9 +152,5 @@ function FarmerOrderManagement() {
 }
 
 export default function FarmerOrdersPage() {
-  return (
-    <AdminGuard>
-      <FarmerOrderManagement />
-    </AdminGuard>
-  );
+  return <FarmerOrderManagement />;
 }

@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import AdminGuard from '@/contexts/guard/AdminGuard';
 import {
   BarChart3,
   TrendingUp,
@@ -378,9 +377,5 @@ function RevenueAnalytics() {
 }
 
 export default function AnalyticsPage() {
-  return (
-    <AdminGuard>
-      <RevenueAnalytics />
-    </AdminGuard>
-  );
+  return <RevenueAnalytics />;
 }
