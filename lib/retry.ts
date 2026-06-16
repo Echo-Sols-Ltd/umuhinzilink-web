@@ -86,6 +86,25 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/** Matches axios / fetch transient failures for retry decisions. */
+export function isTransientRequestError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const err = error as {
+    code?: string;
+    message?: string;
+    name?: string;
+    response?: { status?: number };
+  };
+
+  if (err.name === 'TimeoutError' || err.name === 'AbortError') return true;
+  if (err.code === 'ECONNABORTED' || err.code === 'ERR_NETWORK') return true;
+  if (err.message === 'Network Error' || err.message?.includes('timed out')) return true;
+
+  const status = err.response?.status;
+  return typeof status === 'number' && status >= 500 && status < 600;
+}
+
 // Specific retry configurations for common scenarios
 export const retryConfigs = {
   // For API calls that might fail due to network issues
@@ -93,15 +112,7 @@ export const retryConfigs = {
     maxAttempts: 3,
     delay: 1000,
     backoff: 'exponential' as const,
-    shouldRetry: (error: any) => {
-      // Retry on network errors, 5xx errors, and timeouts
-      return (
-        error.code === 'NETWORK_ERROR' ||
-        error.code === 'TIMEOUT' ||
-        (error.response && error.response.status >= 500) ||
-        error.name === 'AbortError'
-      );
-    },
+    shouldRetry: (error: unknown) => isTransientRequestError(error),
   },
 
   // For file uploads that might fail
@@ -110,22 +121,16 @@ export const retryConfigs = {
     delay: 2000,
     backoff: 'exponential' as const,
     maxDelay: 10000,
-    shouldRetry: (error: any) => {
-      // Don't retry on client errors (4xx), only server errors and network issues
-      return (
-        error.code === 'NETWORK_ERROR' ||
-        error.code === 'TIMEOUT' ||
-        (error.response && error.response.status >= 500)
-      );
-    },
+    shouldRetry: (error: unknown) => isTransientRequestError(error),
   },
 
-  // For critical operations that must succeed
+  // For critical read operations that must succeed
   critical: {
-    maxAttempts: 5,
+    maxAttempts: 3,
     delay: 500,
     backoff: 'exponential' as const,
     maxDelay: 5000,
+    shouldRetry: (error: unknown) => isTransientRequestError(error),
   },
 
   // For quick operations that should fail fast

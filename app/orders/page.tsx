@@ -113,10 +113,12 @@ export default function OrdersPage() {
         }
     }, [authLoading, isAuthenticated, router]);
 
+    const userId = user?.id;
+
     useEffect(() => {
-        if (!user) return;
+        if (!userId) return;
         fetchOrders(page - 1);
-    }, [page, user, fetchOrders]);
+    }, [page, userId, isSeller, fetchOrders]);
 
     useEffect(() => {
         setPage(1);

@@ -46,15 +46,15 @@ export const dashboardService = {
     return apiClient.post(endpoint, { metrics });
   },
 
-  // Refresh dashboard data with retry logic
+  // Refresh dashboard data (GET retries are handled by the API client interceptor)
   refreshDashboard: async (userRole: string): Promise<any> => {
     switch (userRole) {
       case 'BUYER':
-        return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.BUYER_STATS);
+        return apiClient.get(API_ENDPOINTS.DASHBOARD.BUYER_STATS);
       case 'SELLER':
-        return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.SELLER_STATS);
+        return apiClient.get(API_ENDPOINTS.DASHBOARD.SELLER_STATS);
       case 'ADMIN':
-        return apiClient.getWithRetry(API_ENDPOINTS.DASHBOARD.ADMIN_STATS);
+        return apiClient.get(API_ENDPOINTS.DASHBOARD.ADMIN_STATS);
       default:
         throw new Error(`Unsupported user role: ${userRole}`);
     }

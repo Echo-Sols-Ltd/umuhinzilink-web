@@ -1,8 +1,13 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosProgressEvent, CancelToken, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosResponse, AxiosProgressEvent, CancelToken, InternalAxiosRequestConfig, AxiosError } from 'axios';
 import { API_CONFIG, API_ENDPOINTS, HTTP_STATUS } from './constants';
 import { ApiResponse, AuthResponse } from '@/types';
-import { withRetry, retryConfigs, RetryOptions } from '@/lib/retry';
+import { withRetry, retryConfigs, RetryOptions, isTransientRequestError } from '@/lib/retry';
 import { withTimeout, timeoutConfigs, TimeoutError } from '@/lib/timeout';
+
+function isIdempotentRequest(config: InternalAxiosRequestConfig): boolean {
+  const method = config.method?.toUpperCase() ?? 'GET';
+  return method === 'GET' || method === 'HEAD' || method === 'OPTIONS';
+}
 
 class ApiClient {
   private axiosInstance: AxiosInstance;
@@ -51,6 +56,14 @@ class ApiClient {
             return this.axiosInstance(originalRequest);
           }
           this.logout();
+          return Promise.reject(
+            new AxiosError(
+              'Session expired',
+              'ERR_BAD_REQUEST',
+              originalRequest,
+              response,
+            ),
+          );
         }
 
         return response;
@@ -86,6 +99,7 @@ class ApiClient {
             }
 
             if (
+              isIdempotentRequest(originalRequest) &&
               status >= 500 &&
               status < 600 &&
               originalRequest._retryCount < this.maxRefreshAttempts
@@ -99,7 +113,10 @@ class ApiClient {
             throw error;
           }
 
-          if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
+          if (
+            isIdempotentRequest(originalRequest) &&
+            (error.code === 'ECONNABORTED' || error.message === 'Network Error' || isTransientRequestError(error))
+          ) {
             if (originalRequest._retryCount < this.maxRefreshAttempts) {
               originalRequest._retryCount++;
               const delay = 1000 * originalRequest._retryCount;

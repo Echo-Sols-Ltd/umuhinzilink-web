@@ -30,11 +30,8 @@ export default function AdminOrderDetailPage() {
     const router = useRouter();
     const { user } = useAuth();
     const {
-        orders,
         currentOrder,
         setCurrentOrder,
-        fetchBuyingOrders,
-        fetchSellingOrders,
     } = useOrder();
     const { toast: showToast } = useToast();
     const [loading, setLoading] = useState(false);
@@ -42,52 +39,45 @@ export default function AdminOrderDetailPage() {
     const orderId = params.id as string;
 
     useEffect(() => {
-        const loadOrder = async () => {
-            if (!orderId) return;
+        if (!orderId) return;
 
+        let cancelled = false;
+
+        const loadOrder = async () => {
             setLoading(true);
             setError(null);
 
             try {
-                let foundOrder = orders?.find((o: Order) => o.id === orderId);
+                const { orderService } = await import('@/services/orders');
+                const response = await orderService.getOrderById(orderId);
+                if (cancelled) return;
 
-                if (!foundOrder && currentOrder?.id === orderId) {
-                    foundOrder = currentOrder;
-                }
-
-                if (foundOrder) {
-                    setCurrentOrder(foundOrder);
-                    setLoading(false);
+                if (response.success && response.data) {
+                    setCurrentOrder(response.data);
                 } else {
-                    const { orderService } = await import('@/services/orders');
-                    const response = await orderService.getOrderById(orderId);
-
-                    if (response.success && response.data) {
-                        const data = response.data;
-                        setCurrentOrder(data);
-                        fetchBuyingOrders();
-                        fetchSellingOrders();
-                    } else {
-                        throw new Error('Order not found');
-                    }
+                    throw new Error('Order not found');
                 }
             } catch (error) {
-                console.error('Failed to fetch order:', error);
-                setError('Order not found');
-                showToast({
-                    title: "Error",
-                    description: "Failed to load order details",
-                    variant: "default"
-                });
+                if (!cancelled) {
+                    console.error('Failed to fetch order:', error);
+                    setError('Order not found');
+                    showToast({
+                        title: "Error",
+                        description: "Failed to load order details",
+                        variant: "default"
+                    });
+                }
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         };
 
-        if (orderId) {
-            loadOrder();
-        }
-    }, [orderId, orders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, showToast]);
+        loadOrder();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [orderId, setCurrentOrder, showToast]);
 
     // Get current order based on type
     const getCurrentOrder = () => {

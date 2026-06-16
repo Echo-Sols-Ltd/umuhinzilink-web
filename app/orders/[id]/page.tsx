@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
-import { Order, UserRole, isPaidOrder, isUnpaidOrder, getOrderStatusLabel } from '@/types';
+import { UserRole, isPaidOrder, isUnpaidOrder, getOrderStatusLabel } from '@/types';
 import { notify } from '@/lib/notify';
 import { ArrowLeft, Package, User, CreditCard, XCircle } from 'lucide-react';
 import { orderService } from '@/services/orders';
@@ -21,56 +21,48 @@ export default function OrderDetailPage() {
   const isSeller = user?.role === UserRole.SELLER;
   const isBuyer = user?.role === UserRole.BUYER;
   const {
-    orders,
     currentOrder,
     setCurrentOrder,
-    fetchBuyingOrders,
-    fetchSellingOrders,
   } = useOrder();
   const { payOrder, cancelOrder, loading: actionLoading } = useOrderAction();
 
   const [loading, setLoading] = useState(true);
   const orderId = params.id as string;
+  const userId = user?.id;
 
   useEffect(() => {
+    if (!orderId || !userId) return;
+
+    let cancelled = false;
+
     const loadOrder = async () => {
       setLoading(true);
 
       try {
-        let foundOrder = orders?.find((o: Order) => o.id === orderId);
+        const response = await orderService.getOrderById(orderId);
+        if (cancelled) return;
 
-        if (!foundOrder && currentOrder?.id === orderId) {
-          foundOrder = currentOrder;
-        }
-
-        if (foundOrder) {
-          setCurrentOrder(foundOrder);
+        if (response.success && response.data) {
+          setCurrentOrder(response.data);
         } else {
-          const response = await orderService.getOrderById(orderId);
-
-          if (response.success && response.data) {
-            setCurrentOrder(response.data);
-            if (isSeller) {
-              fetchSellingOrders();
-            } else {
-              fetchBuyingOrders();
-            }
-          } else {
-            notify.error('Order not found', 'Error');
-          }
+          notify.error('Order not found', 'Error');
         }
       } catch (error) {
-        console.error('Failed to fetch order:', error);
-        notify.error('Failed to load order details', 'Error');
+        if (!cancelled) {
+          console.error('Failed to fetch order:', error);
+          notify.error('Failed to load order details', 'Error');
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
-    if (orderId && user) {
-      loadOrder();
-    }
-  }, [orderId, orders, currentOrder, setCurrentOrder, fetchBuyingOrders, fetchSellingOrders, isSeller, user]);
+    loadOrder();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId, userId, setCurrentOrder]);
 
   const handlePay = async () => {
     if (!currentOrder) return;

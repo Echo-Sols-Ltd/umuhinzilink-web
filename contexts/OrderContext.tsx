@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
 import { orderService } from '@/services/orders';
 import { Order, OrderStatus, Product, UserRole, isUnpaidOrder } from '@/types';
 import { useAuth } from './AuthContext';
@@ -49,6 +57,15 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { updateProductState } = useProduct();
   const { showNotification } = useBrowserNotification();
   const currentOrderIdRef = useRef<string | null>(null);
+  const prevUserIdRef = useRef<string | undefined>(undefined);
+  const showNotificationRef = useRef(showNotification);
+
+  const userId = user?.id;
+  const userRole = user?.role;
+
+  useEffect(() => {
+    showNotificationRef.current = showNotification;
+  }, [showNotification]);
 
   const [loading, setLoading] = useState(false);
   const [mutationLoadingState, setMutationLoadingState] = useState(false);
@@ -64,7 +81,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     currentOrderIdRef.current = currentOrder?.id ?? null;
   }, [currentOrder?.id]);
 
-  const fetchBuyingOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
+  const fetchBuyingOrders = useCallback(async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getBuyerOrders(page, size);
@@ -79,9 +96,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchSellingOrders = async (page = 0, size = 10): Promise<Order[] | null> => {
+  const fetchSellingOrders = useCallback(async (page = 0, size = 10): Promise<Order[] | null> => {
     try {
       setLoading(true);
       const res = await orderService.getSellerOrders(page, size);
@@ -96,42 +113,39 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
+  // Warm cache for profile / navbar — only when the signed-in user changes
   useEffect(() => {
-    if (user) {
-      if (user.role === UserRole.BUYER) fetchBuyingOrders(0, 10)
-      if (user.role === UserRole.SELLER) fetchSellingOrders(0, 10)
-    }
-  }, [user])
+    const previousUserId = prevUserIdRef.current;
+    prevUserIdRef.current = userId;
+
+    if (!userId || previousUserId === userId) return;
+
+    if (userRole === UserRole.BUYER) fetchBuyingOrders(0, 10);
+    if (userRole === UserRole.SELLER) fetchSellingOrders(0, 10);
+  }, [userId, userRole, fetchBuyingOrders, fetchSellingOrders]);
 
   const addOrder = useCallback((data: Order) => {
-    setOrders(prev => {
-      const updated = prev ? [data, ...prev] : [data];
-      return updated;
-    });
+    setOrders(prev => [data, ...prev]);
     updateProductState(data.product.id, data.product);
     setCurrentOrder(data);
   }, [updateProductState]);
 
   const updateOrder = useCallback((data: Order) => {
-    const updater = (prev: Order[] | null) => {
-      if (!prev) return [data];
-      return prev.map(order => (order.id === data.id ? data : order));
-    };
-    setOrders(updater);
-    if (currentOrder?.id === data.id) setCurrentOrder(data);
-  }, [currentOrder]);
+    setOrders(prev => prev.map(order => (order.id === data.id ? data : order)));
+    if (currentOrderIdRef.current === data.id) {
+      setCurrentOrder(data);
+    }
+  }, []);
 
-
-  const setMutationLoading = (loading: boolean) => {
-    setMutationLoadingState(loading);
-  };
-
+  const setMutationLoading = useCallback((nextLoading: boolean) => {
+    setMutationLoadingState(nextLoading);
+  }, []);
 
   // Real-time order updates via WebSocket
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
 
     const ordersPath = '/orders';
 
@@ -140,10 +154,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       if (!data) return;
 
       setOrders(prev => {
-        const list = prev ?? [];
-        const exists = list.some(o => o.id === data.id);
-        if (exists) return list.map(o => (o.id === data.id ? data : o));
-        return [data, ...list];
+        const exists = prev.some(o => o.id === data.id);
+        if (exists) return prev.map(o => (o.id === data.id ? data : o));
+        return [data, ...prev];
       });
 
       if (currentOrderIdRef.current === data.id) {
@@ -154,7 +167,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         updateProductState(data.product.id, data.product);
       }
 
-      showNotification({
+      showNotificationRef.current({
         type: 'order',
         title: response.message || 'Order update',
         body: response.message || `Order for ${data.product?.name ?? 'product'} updated`,
@@ -164,45 +177,44 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     });
 
     return unsubscribe;
-  }, [user, updateProductState, showNotification]);
+  }, [userId, updateProductState]);
 
   // 🔹 Derived Orders
   const pendingBuyingOrders = useMemo(
-    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
+    () => orders.filter(o => isUnpaidOrder(o.status)),
     [orders]
   );
   const completedBuyingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
+    () => orders.filter(o => o.status === OrderStatus.COMPLETED),
     [orders]
   );
   const cancelledBuyingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
+    () => orders.filter(o => o.status === OrderStatus.CANCELLED),
     [orders]
   );
   const activeBuyingOrders = useMemo(
-    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
+    () => orders.filter(o => isUnpaidOrder(o.status)),
     [orders]
   );
 
   const pendingSellingOrders = useMemo(
-    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
+    () => orders.filter(o => isUnpaidOrder(o.status)),
     [orders]
   );
   const completedSellingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.COMPLETED) || [],
+    () => orders.filter(o => o.status === OrderStatus.COMPLETED),
     [orders]
   );
   const cancelledSellingOrders = useMemo(
-    () => orders?.filter(o => o.status === OrderStatus.CANCELLED) || [],
+    () => orders.filter(o => o.status === OrderStatus.CANCELLED),
     [orders]
   );
   const activeSellingOrders = useMemo(
-    () => orders?.filter(o => isUnpaidOrder(o.status)) || [],
+    () => orders.filter(o => isUnpaidOrder(o.status)),
     [orders]
   );
 
-
-  const value: OrderContextValue = {
+  const value = useMemo<OrderContextValue>(() => ({
     loading,
     orders,
     currentOrder,
@@ -225,7 +237,28 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     completedSellingOrders,
     cancelledSellingOrders,
     activeSellingOrders,
-  };
+  }), [
+    loading,
+    orders,
+    currentOrder,
+    currentProduct,
+    addOrder,
+    updateOrder,
+    setMutationLoading,
+    mutationLoadingState,
+    fetchBuyingOrders,
+    fetchSellingOrders,
+    ordersTotalPages,
+    ordersTotalElements,
+    pendingBuyingOrders,
+    completedBuyingOrders,
+    cancelledBuyingOrders,
+    activeBuyingOrders,
+    pendingSellingOrders,
+    completedSellingOrders,
+    cancelledSellingOrders,
+    activeSellingOrders,
+  ]);
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
 }

@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { notify } from '@/lib/notify';
 import { apiClient } from '@/services/client';
 import { userService } from '@/services/users';
+import { HTTP_STATUS } from '@/services/constants';
 
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
@@ -107,9 +108,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loadAuthState = async () => {
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
     try {
       setLoading(true);
-      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
       const storedUser = getStoredData<User>(STORAGE_KEYS.USER);
 
       if (!token || !storedUser) {
@@ -139,11 +140,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data.role === UserRole.SELLER) {
         await fetchSeller();
       }
-    } catch {
-      Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
-      setUser(null);
-      setSeller(null);
-      setIsAuthenticated(false);
+    } catch (err) {
+      const isAuthFailure =
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err &&
+        (err as { response?: { status?: number } }).response?.status === HTTP_STATUS.UNAUTHORIZED;
+
+      if (isAuthFailure) {
+        Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+        setUser(null);
+        setSeller(null);
+        setIsAuthenticated(false);
+        return;
+      }
+
+      // Transient failure: keep cached session so the user isn't kicked out on a blip
+      const storedUser = getStoredData<User>(STORAGE_KEYS.USER);
+      if (token && storedUser) {
+        setUser(storedUser);
+        setIsAuthenticated(Boolean(storedUser.emailVerified));
+        notify.error('Could not verify session. Showing cached data — refresh or try again.', 'Connection issue');
+      } else {
+        setIsAuthenticated(false);
+      }
     } finally {
       setLoading(false);
     }
