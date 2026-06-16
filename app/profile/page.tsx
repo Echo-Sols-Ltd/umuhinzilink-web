@@ -9,11 +9,12 @@ import ProfileComponent from '@/components/profile/Profile';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
+import { UserRole } from '@/types';
 
-function GlobalProfileComponent() {
+export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const { wallet } = useWallet();
-  const { completedBuyingOrders: orders } = useOrder();
+  const { orders, ordersTotalElements, completedBuyingOrders, completedSellingOrders } = useOrder();
   const { negotiations, loading: negotiationsLoading } = useNegotiation();
   const router = useRouter();
 
@@ -26,10 +27,12 @@ function GlobalProfileComponent() {
     return null;
   }
 
-  const walletBalance = wallet?.balance || 0;
-  const totalOrders = orders.length;
-  const completedOrders = orders.length;
+  const walletBalance = wallet?.balance ?? 0;
+  const isSeller = user.role === UserRole.SELLER;
+  const totalOrders = ordersTotalElements > 0 ? ordersTotalElements : orders.length;
+  const completedOrders = isSeller ? completedSellingOrders.length : completedBuyingOrders.length;
   const savedProductsCount = user.savedProducts?.length ?? 0;
+
   const activeNegotiations = negotiations.filter(
     (n) => n.order?.buyer?.id === user.id || n.order?.product?.owner?.id === user.id,
   );
@@ -37,23 +40,18 @@ function GlobalProfileComponent() {
   return (
     <AppLayout maxWidth="max-w-2xl" mainClassName="space-y-0">
       <PageHeader
-        title="My Profile"
-        description="Your account overview, wallet, and activity."
+        title="My profile"
+        description="Wallet, orders, and account settings."
       />
-      {negotiationsLoading && negotiations.length === 0 ? (
-        <PageLoading fullScreen={false} label="Loading activity" description="Fetching negotiations…" />
-      ) : (
-        <ProfileComponent
-          user={user}
-          walletBalance={walletBalance}
-          totalOrders={totalOrders}
-          completedOrders={completedOrders}
-          savedProductsCount={savedProductsCount}
-          activeNegotiations={activeNegotiations}
-        />
-      )}
+      <ProfileComponent
+        user={user}
+        walletBalance={walletBalance}
+        totalOrders={totalOrders}
+        completedOrders={completedOrders}
+        savedProductsCount={savedProductsCount}
+        activeNegotiations={activeNegotiations}
+        negotiationsLoading={negotiationsLoading}
+      />
     </AppLayout>
   );
 }
-
-export default GlobalProfileComponent;
