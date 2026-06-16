@@ -157,7 +157,7 @@ export default function BecomeSeller() {
     // ── Render ──────────────────────────────────────────────────────────────
 
     return (
-        <div className="h-screen bg-gray-50 dark:bg-gray-950 flex flex-col overflow-auto pb-20">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col pb-20">
 
             {/* Top bar */}
             <header className="fixed top-0 left-0 right-0 z-40 h-14 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border flex items-center px-4">

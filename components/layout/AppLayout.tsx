@@ -19,7 +19,7 @@ export default function AppLayout({
   return (
     <div className={cn('min-h-screen bg-gray-50 dark:bg-gray-950', className)}>
       <Navbar />
-      <main className={cn(maxWidth, 'mx-auto px-4 py-6 pt-20 space-y-5', mainClassName)}>
+      <main className={cn(maxWidth, 'mx-auto px-4 py-6 pt-20 pb-16 space-y-5', mainClassName)}>
         {children}
       </main>
     </div>

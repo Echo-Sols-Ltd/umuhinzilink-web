@@ -143,7 +143,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
 
         {/* Right Column */}
-        <div className="space-y-6 h-screen overflow-auto pb-20">
+        <div className="space-y-6">
           <div className="space-y-3">
             <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
 

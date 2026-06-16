@@ -28,7 +28,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${poppins.variable} antialiased`}>
-      <body className="bg-background text-foreground overflow-hidden">
+      <body className="bg-background text-foreground min-h-screen overflow-x-hidden">
         <OfflineIndicator />
         <AppProviders>
           <main id="main-content" tabIndex={-1} >
