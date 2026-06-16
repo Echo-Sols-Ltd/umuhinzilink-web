@@ -147,6 +147,7 @@ export default function NegotiationChat({
 
     useEffect(() => {
         const unsubscribe = socketService.onTyping((event) => {
+            if (event.negotiationId && event.negotiationId !== negotiationId) return;
             if (event.userId === user?.id) return;
             if (event.typing) {
                 setOtherTyping(true);
@@ -160,7 +161,7 @@ export default function NegotiationChat({
             unsubscribe();
             if (typingClearRef.current) clearTimeout(typingClearRef.current);
         };
-    }, [user?.id]);
+    }, [negotiationId, user?.id]);
 
     const handleInputChange = (value: string) => {
         setInput(value);

@@ -36,6 +36,7 @@ export interface NegotiationMessageRequest {
 }
 
 export interface ChatTyping {
+  negotiationId?: string;
   userId: string;
   receiverId: string;
   typing: boolean;

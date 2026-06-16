@@ -15,6 +15,7 @@ import { authService } from '@/services/auth';
 import { useRouter } from 'next/navigation';
 import { notify } from '@/lib/notify';
 import { apiClient } from '@/services/client';
+import { socketService } from '@/services/socket';
 import { userService } from '@/services/users';
 import { HTTP_STATUS } from '@/services/constants';
 
@@ -69,6 +70,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const handleLogout = () => {
+      Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
+      socketService.logout();
       setUser(null);
       setSeller(null);
       setIsAuthenticated(false);
@@ -77,8 +80,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     apiClient.onLogout(handleLogout);
+    socketService.onLogout(handleLogout);
     return () => {
       apiClient.removeLogoutListener(handleLogout);
+      socketService.removeLogoutListener(handleLogout);
     };
   }, [router]);
 
@@ -356,6 +361,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       // still clear local session
     } finally {
       Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+      await socketService.logout();
       setUser(null);
       setSeller(null);
       setIsAuthenticated(false);

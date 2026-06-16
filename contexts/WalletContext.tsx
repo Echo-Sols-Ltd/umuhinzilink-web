@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { walletService } from '@/services/wallet';
 import { paymentService } from '@/services/payments';
-import { Wallet, Transaction, PaymentRequest, TransactionStatus } from '@/types';
+import { Wallet, Transaction, PaymentRequest, TransactionStatus, OrderStatus } from '@/types';
 import { useAuth } from './AuthContext';
 import { notify } from '@/lib/notify';
+import { socketService } from '@/services/socket';
 
 const STORAGE_KEYS = {
   WALLET: 'walletData',
@@ -276,6 +277,21 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user?.id) return;
     refreshWalletData();
+  }, [user?.id]);
+
+  // Refresh balance when orders update over WebSocket (e.g. payment completed)
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const unsubscribe = socketService.onOrderUpdate((response) => {
+      const order = response.data;
+      if (!order) return;
+      if (order.status === OrderStatus.COMPLETED || order.status === OrderStatus.CONFIRMED) {
+        refreshWalletData();
+      }
+    });
+
+    return unsubscribe;
   }, [user?.id]);
 
   const value: WalletContextValue = {

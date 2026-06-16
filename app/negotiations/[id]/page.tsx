@@ -12,7 +12,7 @@ export default function NegotiationDetailPage() {
   const { user, loading: authLoading } = useAuth();
   const { id } = useParams() as { id: string };
   const negotiationId = id;
-  const { loadNegotiationDetail } = useNegotiation();
+  const { loadNegotiationDetail, setViewingNegotiationId, clearNegotiationDetail } = useNegotiation();
   const router = useRouter();
   const userId = user?.id;
 
@@ -25,6 +25,8 @@ export default function NegotiationDetailPage() {
   useEffect(() => {
     if (!negotiationId || !userId) return;
 
+    setViewingNegotiationId(negotiationId);
+
     let cancelled = false;
 
     const load = async () => {
@@ -36,8 +38,9 @@ export default function NegotiationDetailPage() {
 
     return () => {
       cancelled = true;
+      clearNegotiationDetail();
     };
-  }, [negotiationId, userId, loadNegotiationDetail]);
+  }, [negotiationId, userId, loadNegotiationDetail, setViewingNegotiationId, clearNegotiationDetail]);
 
   if (authLoading || !user) {
     return <PageLoading label="Opening negotiation" description="Loading messages and deal details…" />;
