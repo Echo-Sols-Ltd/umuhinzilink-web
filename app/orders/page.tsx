@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
     Package, Eye, CheckCircle, XCircle,
     AlertCircle, Clock, TrendingUp, Wallet,
-    Sprout, ChevronRight, User, Filter, CreditCard,
+    Sprout, ChevronRight, User, CreditCard,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -67,10 +67,10 @@ function StatusBadge({ status }: { status: OrderStatus }) {
     );
 }
 
-function SkeletonRow() {
+function SkeletonRow({ columnCount }: { columnCount: number }) {
     return (
         <tr className="animate-pulse">
-            {Array.from({ length: 7 }).map((_, i) => (
+            {Array.from({ length: columnCount }).map((_, i) => (
                 <td key={i} className="px-4 py-3">
                     <div className="h-4 rounded-lg bg-gray-200 dark:bg-gray-800" />
                 </td>
@@ -164,6 +164,8 @@ export default function OrdersPage() {
         return orders.filter(o => o.status === statusFilter);
     }, [orders, statusFilter]);
 
+    const tableColumnCount = isSeller ? 8 : 7;
+
     if (!authLoading && !isAuthenticated) {
         return null;
     }
@@ -205,7 +207,7 @@ export default function OrdersPage() {
 
                 {/* Toolbar */}
                 <div className="flex items-center gap-2 flex-wrap">
-                    <Filter size={14} className="text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground">Filter</span>
                     {(['ALL', 'PENDING_PAYMENT', 'COMPLETED', 'CANCELLED'] as const).map(s => (
                         <button
                             key={s}
@@ -230,7 +232,10 @@ export default function OrdersPage() {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-border bg-gray-50 dark:bg-gray-800/50">
-                                    {['Order', 'Buyer', 'Product', 'Qty', 'Total', 'Status', 'Date', ''].map(h => (
+                                    {(isSeller
+                                        ? ['Order', 'Buyer', 'Product', 'Qty', 'Total', 'Status', 'Date', 'Actions']
+                                        : ['Order', 'Product', 'Qty', 'Total', 'Status', 'Date', 'Actions']
+                                    ).map((h) => (
                                         <th key={h} className="px-4 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider whitespace-nowrap">
                                             {h}
                                         </th>
@@ -239,10 +244,10 @@ export default function OrdersPage() {
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {loading ? (
-                                    Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
+                                    Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} columnCount={tableColumnCount} />)
                                 ) : filtered.length === 0 ? (
                                     <tr>
-                                        <td colSpan={8} className="py-20 text-center">
+                                        <td colSpan={tableColumnCount} className="py-20 text-center">
                                             <Package size={32} className="text-gray-300 mx-auto mb-3" />
                                             <p className="text-sm font-semibold text-foreground">No orders found</p>
                                             <p className="text-xs text-muted-foreground mt-1">
@@ -257,7 +262,7 @@ export default function OrdersPage() {
                                 ) : filtered.map(order => (
                                     <tr
                                         key={order.id}
-                                        className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
+                                        className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
 
                                         {/* Order number */}
                                         <td className="px-4 py-3">
@@ -266,23 +271,25 @@ export default function OrdersPage() {
                                             </p>
                                         </td>
 
-                                        {/* Buyer */}
-                                        <td className="px-4 py-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-7 h-7 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center shrink-0">
-                                                    <User size={12} className="text-green-700 dark:text-green-300" />
+                                        {/* Buyer (sellers only) */}
+                                        {isSeller && (
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-7 h-7 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center shrink-0">
+                                                        <User size={12} className="text-green-700 dark:text-green-300" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="font-semibold text-foreground text-xs truncate max-w-[140px]">
+                                                            {order.buyer?.firstName} {order.buyer?.lastName}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="min-w-0">
-                                                    <p className="font-semibold text-foreground text-xs truncate max-w-[100px]">
-                                                        {order.buyer?.firstName} {order.buyer?.lastName}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </td>
+                                            </td>
+                                        )}
 
                                         {/* Product */}
                                         <td className="px-4 py-3">
-                                            <p className="text-xs font-medium text-foreground truncate max-w-[120px]">
+                                            <p className="text-xs font-medium text-foreground truncate max-w-[180px]">
                                                 {order.product?.name ?? '—'}
                                             </p>
                                         </td>
@@ -315,26 +322,35 @@ export default function OrdersPage() {
 
                                         {/* Actions */}
                                         <td className="px-4 py-3">
-                                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <div className="flex items-center gap-1.5 flex-wrap">
                                                 {user?.role === UserRole.BUYER && isUnpaidOrder(order.status) && (
                                                     <button
+                                                        type="button"
                                                         onClick={() => handlePay(order)}
                                                         disabled={actionLoading}
-                                                        title="Pay now"
-                                                        className="w-7 h-7 flex items-center justify-center rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors">
-                                                        <CreditCard size={14} />
+                                                        aria-label="Pay for this order"
+                                                        className="h-8 px-2.5 flex items-center gap-1.5 text-xs font-semibold rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-950/50 disabled:opacity-50 transition-colors"
+                                                    >
+                                                        <CreditCard size={13} />
+                                                        Pay
                                                     </button>
                                                 )}
                                                 <button
+                                                    type="button"
                                                     onClick={() => handleOpenOrder(order)}
-                                                    title="View details"
-                                                    className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                                                    <Eye size={14} />
+                                                    aria-label="View order summary"
+                                                    className="h-8 px-2.5 flex items-center gap-1.5 text-xs font-medium rounded-lg border border-border bg-white dark:bg-gray-900 text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                                >
+                                                    <Eye size={13} />
+                                                    Summary
                                                 </button>
                                                 <Link
                                                     href={`/orders/${order.id}`}
-                                                    className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                                                    <ChevronRight size={14} />
+                                                    aria-label="Open full order page"
+                                                    className="h-8 px-2.5 flex items-center gap-1.5 text-xs font-medium rounded-lg border border-border bg-white dark:bg-gray-900 text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                                >
+                                                    Open
+                                                    <ChevronRight size={13} />
                                                 </Link>
                                             </div>
                                         </td>

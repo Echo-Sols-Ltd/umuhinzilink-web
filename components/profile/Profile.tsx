@@ -64,7 +64,7 @@ function ShortcutCard({
         </div>
         <ChevronRight
           size={14}
-          className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+          className="text-muted-foreground shrink-0"
         />
       </div>
       <div>
@@ -153,9 +153,9 @@ export default function Profile({
       ];
 
   return (
-    <div className="space-y-5">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
       {/* Profile hero */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border overflow-hidden">
+      <div className="xl:col-span-1 bg-white dark:bg-gray-900 rounded-2xl border border-border overflow-hidden">
         <div className="h-14 bg-green-600" />
         <div className="px-5 pb-5">
           <div className="-mt-9 flex items-end justify-between gap-3 mb-4">
@@ -212,12 +212,13 @@ export default function Profile({
         </div>
       </div>
 
+      <div className="xl:col-span-2 space-y-5">
       {/* Shortcuts */}
       <div>
         <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-3 px-0.5">
           Quick access
         </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {shortcuts.map((item) => (
             <ShortcutCard key={item.href} {...item} />
           ))}
@@ -244,7 +245,7 @@ export default function Profile({
             ))}
           </div>
         ) : recentNegotiations.length > 0 ? (
-          <div className="p-3 space-y-2">
+          <div className="p-3 grid grid-cols-1 lg:grid-cols-2 gap-2">
             {recentNegotiations.map((neg) => (
               <NegotiationCard key={neg.id} neg={neg} role={user.role} />
             ))}
@@ -280,7 +281,7 @@ export default function Profile({
             <User size={16} className="text-muted-foreground" />
             Edit profile
           </div>
-          <ChevronRight size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+          <ChevronRight size={14} className="text-muted-foreground shrink-0" />
         </Link>
         <Link
           href="/settings"
@@ -290,8 +291,9 @@ export default function Profile({
             <Settings size={16} className="text-muted-foreground" />
             Settings
           </div>
-          <ChevronRight size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+          <ChevronRight size={14} className="text-muted-foreground shrink-0" />
         </Link>
+      </div>
       </div>
     </div>
   );

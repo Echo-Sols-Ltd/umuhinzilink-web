@@ -147,14 +147,14 @@ export default function NegotiationsPage() {
 
     if (authLoading || !user) {
         return (
-            <AppLayout maxWidth="max-w-2xl">
+            <AppLayout maxWidth="max-w-6xl">
                 <PageLoading fullScreen={false} label="Loading negotiations" description="Fetching your active deals…" />
             </AppLayout>
         );
     }
 
     return (
-        <AppLayout maxWidth="max-w-2xl">
+        <AppLayout maxWidth="max-w-6xl">
             <PageHeader
                 title="Negotiations"
                 description="Track price discussions and deals with buyers or sellers."
@@ -222,8 +222,8 @@ export default function NegotiationsPage() {
 
                 {/* List */}
                 {loading ? (
-                    <div className="space-y-3">
-                        {Array.from({ length: 3 }).map((_, i) => (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-4 animate-pulse space-y-3">
                                 <div className="flex gap-3">
                                     <div className="w-14 h-14 rounded-xl bg-gray-200 dark:bg-gray-800" />
@@ -254,7 +254,7 @@ export default function NegotiationsPage() {
                         <EmptyState tab={tab} role={user.role} />
                     )
                 ) : (
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                         {filtered.map(neg => (
                             <NegotiationCard key={neg.id} neg={neg} role={user.role} />
                         ))}

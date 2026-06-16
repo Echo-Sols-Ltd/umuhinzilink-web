@@ -38,7 +38,7 @@ export default function ProfilePage() {
   );
 
   return (
-    <AppLayout maxWidth="max-w-2xl" mainClassName="space-y-0">
+    <AppLayout maxWidth="max-w-6xl" mainClassName="space-y-0">
       <PageHeader
         title="My profile"
         description="Wallet, orders, and account settings."
