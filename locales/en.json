@@ -1861,9 +1861,23 @@
   "assistant": {
     "title": "AI Assistant",
     "subtitle": "Farming & marketplace help",
+    "subtitleBuyer": "Ask anything — find produce, prices, and help buying",
     "open": "Open AI assistant",
     "expand": "Full page",
-    "welcome": "Ask about crops, prices, or finding produce. For what's on the market, I'll only show real listings from UmuhinziLink.",
+    "close": "Close",
+    "send": "Send message",
+    "backToChat": "Back to chat",
+    "signInPrompt": "Sign in to use the AI assistant.",
+    "welcome": "Ask about crops, prices, or farming tips for Rwanda.",
+    "welcomeBuyer": "Just type your question below — like texting a friend who knows the marketplace.",
+    "buyerHint": "Type naturally — e.g. “What can I buy?” or “Maize near Bugesera”",
+    "inputPlaceholderBuyer": "What are you looking for?",
+    "farmingPlaceholder": "Ask a farming question…",
+    "suggestions": {
+      "whatAvailable": "What can I buy today?",
+      "findProduce": "Find maize near me",
+      "howToBuy": "How do I place an order?"
+    },
     "profile": {
       "crops": "Your listings"
     },
@@ -1912,6 +1926,7 @@
     "page": {
       "title": "UmuhinziLink AI",
       "description": "Your expert for farming, fair prices, and finding produce in Rwanda.",
+      "descriptionBuyer": "Ask in plain language — no special commands needed.",
       "hint": "Use the floating button (bottom-right) on any page to chat with the assistant."
     },
     "features": {

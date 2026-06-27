@@ -1861,9 +1861,23 @@
   "assistant": {
     "title": "Umufasha wa AI",
     "subtitle": "Ubuhinzi n'isoko",
+    "subtitleBuyer": "Baza ikibazo icyo ari cyo cyose — gushaka ibicuruzwa, ibiciro, n'ubufasha bwo kugura",
     "open": "Fungura umufasha wa AI",
     "expand": "Urupapuro rwuzuye",
-    "welcome": "Baza ku byerekeye ibihingwa, ibiciro, cyangwa gushaka ibicuruzwa kuri UmuhinziLink.",
+    "close": "Funga",
+    "send": "Ohereza ubutumwa",
+    "backToChat": "Subira mu kiganiro",
+    "signInPrompt": "Injira kugirango ukoreshe umufasha wa AI.",
+    "welcome": "Baza ku buhinzi, ibiciro, cyangwa inama z'ibihingwa mu Rwanda.",
+    "welcomeBuyer": "Andika ikibazo cyawe hepfo — nko kohereza ubutumwa ku nshuti izi isoko.",
+    "buyerHint": "Andika uko bisanzwe — urugero: “Nshobora kugura iki?” cyangwa “Ibigori hafi ya Bugesera”",
+    "inputPlaceholderBuyer": "Urashaka iki?",
+    "farmingPlaceholder": "Baza ikibazo cy'ubuhinzi…",
+    "suggestions": {
+      "whatAvailable": "Nshobora kugura iki uyu munsi?",
+      "findProduce": "Shaka ibigori hafi yanjye",
+      "howToBuy": "Nagura nte?"
+    },
     "profile": {
       "crops": "Ibicuruzwa byawe"
     },
@@ -1912,6 +1926,7 @@
     "page": {
       "title": "UmuhinziLink AI",
       "description": "Umujyanama wawe mu buhinzi, ibiciro byiza, no gushaka ibicuruzwa mu Rwanda.",
+      "descriptionBuyer": "Baza mu rurimi rusanzwe — nta mategeko yihariye akenewe.",
       "hint": "Koresha buto buhagaze hasi iburyo ku rupapuro rwose kugirango uvugane n'umufasha."
     },
     "features": {
