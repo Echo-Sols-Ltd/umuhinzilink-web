@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useI18n } from '@/contexts/I18nContext';
 import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   Building,
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function BusinessSettingsPage() {
+  const { t } = useI18n();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [business, setBusiness] = useState({
@@ -38,7 +40,7 @@ export default function BusinessSettingsPage() {
     }));
   };
 
-  const handleCropToggle = (crop: string) => {
+  const handleCropToggle = (crop: typeof cropOptions[number]) => {
     setBusiness(prev => ({
       ...prev,
       crop_types: prev.crop_types.includes(crop)
@@ -73,17 +75,17 @@ export default function BusinessSettingsPage() {
   };
 
   const cropOptions = [
-    "Tomatoes", "Cabbage", "Carrots", "Onions", "Potatoes", 
-    "Maize", "Beans", "Coffee", "Tea", "Fruits",
-    "Vegetables", "Bananas", "Sorghum", "Wheat", "Rice"
-  ];
+    'tomatoes', 'cabbage', 'carrots', 'onions', 'potatoes',
+    'maize', 'beans', 'coffee', 'tea', 'fruits',
+    'vegetables', 'bananas', 'sorghum', 'wheat', 'rice',
+  ] as const;
 
   const currentSectors = business.district ? rwandaSectors[business.district as keyof typeof rwandaSectors] || [] : [];
 
   return (
     <SettingsSubLayout
-      title="Business / Farm Information"
-      description="Manage your farm or business details visible to buyers"
+      title={t('settings.hub.sections.business.title')}
+      description={t('settings.hub.sections.business.description')}
     >
       <div className="space-y-6">
             {/* Basic Information */}
@@ -92,34 +94,34 @@ export default function BusinessSettingsPage() {
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
                   <Building className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Basic Information</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.business.sections.basicInformation')}</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Business/Farm Name *
+                    {t('settings.business.fields.businessName')}
                   </label>
                   <input
                     type="text"
                     value={business.business_name}
                     onChange={(e) => handleChange('business_name', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="Enter your farm or business name"
+                    placeholder={t('settings.business.placeholders.businessName')}
                     required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Established Year
+                    {t('settings.business.fields.establishedYear')}
                   </label>
                   <input
                     type="number"
                     value={business.established_year}
                     onChange={(e) => handleChange('established_year', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="e.g., 2020"
+                    placeholder={t('settings.business.placeholders.establishedYear')}
                     min="1900"
                     max={new Date().getFullYear()}
                   />
@@ -127,13 +129,13 @@ export default function BusinessSettingsPage() {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Business Description
+                    {t('settings.business.fields.businessDescription')}
                   </label>
                   <textarea
                     value={business.business_description}
                     onChange={(e) => handleChange('business_description', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="Describe your farm or business..."
+                    placeholder={t('settings.business.placeholders.businessDescription')}
                     rows={3}
                   />
                 </div>
@@ -146,13 +148,13 @@ export default function BusinessSettingsPage() {
                 <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Location Details</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.business.sections.locationDetails')}</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    District *
+                    {t('settings.business.fields.district')}
                   </label>
                   <select
                     value={business.district}
@@ -163,7 +165,7 @@ export default function BusinessSettingsPage() {
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
                     required
                   >
-                    <option value="">Select District</option>
+                    <option value="">{t('settings.business.placeholders.selectDistrict')}</option>
                     {rwandaDistricts.map(district => (
                       <option key={district} value={district}>{district}</option>
                     ))}
@@ -172,7 +174,7 @@ export default function BusinessSettingsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Sector *
+                    {t('settings.business.fields.sector')}
                   </label>
                   <select
                     value={business.sector}
@@ -181,7 +183,7 @@ export default function BusinessSettingsPage() {
                     required
                     disabled={!business.district}
                   >
-                    <option value="">Select Sector</option>
+                    <option value="">{t('settings.business.placeholders.selectSector')}</option>
                     {currentSectors.map(sector => (
                       <option key={sector} value={sector}>{sector}</option>
                     ))}
@@ -190,17 +192,17 @@ export default function BusinessSettingsPage() {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    GPS Coordinates
+                    {t('settings.business.fields.gpsCoordinates')}
                   </label>
                   <input
                     type="text"
                     value={business.gps_location}
                     onChange={(e) => handleChange('gps_location', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="e.g., -1.9444, 30.0614"
+                    placeholder={t('settings.business.placeholders.gpsCoordinates')}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Optional: Helps buyers locate your farm precisely
+                    {t('settings.business.gpsHint')}
                   </p>
                 </div>
               </div>
@@ -212,20 +214,20 @@ export default function BusinessSettingsPage() {
                 <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                   <Ruler className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Farm Details</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.business.sections.farmDetails')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Farm Size (hectares)
+                    {t('settings.business.fields.farmSize')}
                   </label>
                   <input
                     type="number"
                     value={business.farm_size}
                     onChange={(e) => handleChange('farm_size', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="0.0"
+                    placeholder={t('settings.business.placeholders.farmSize')}
                     min="0"
                     step="0.1"
                   />
@@ -233,7 +235,7 @@ export default function BusinessSettingsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Crop Types
+                    {t('settings.business.fields.cropTypes')}
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     {cropOptions.map(crop => (
@@ -244,7 +246,7 @@ export default function BusinessSettingsPage() {
                           onChange={() => handleCropToggle(crop)}
                           className="mr-2"
                         />
-                        <span className="text-sm">{crop}</span>
+                        <span className="text-sm">{t(`settings.business.crops.${crop}`)}</span>
                       </label>
                     ))}
                   </div>
@@ -258,46 +260,46 @@ export default function BusinessSettingsPage() {
                 <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center text-white">
                   <Phone className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Contact Information</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.business.sections.contactInformation')}</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Phone Number
+                    {t('settings.business.fields.phoneNumber')}
                   </label>
                   <input
                     type="tel"
                     value={business.contact_phone}
                     onChange={(e) => handleChange('contact_phone', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="+250 788 123 456"
+                    placeholder={t('settings.business.placeholders.phone')}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Email Address
+                    {t('settings.business.fields.emailAddress')}
                   </label>
                   <input
                     type="email"
                     value={business.contact_email}
                     onChange={(e) => handleChange('contact_email', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="business@example.com"
+                    placeholder={t('settings.business.placeholders.email')}
                   />
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Website
+                    {t('settings.business.fields.website')}
                   </label>
                   <input
                     type="url"
                     value={business.website}
                     onChange={(e) => handleChange('website', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="https://yourwebsite.com"
+                    placeholder={t('settings.business.placeholders.website')}
                   />
                 </div>
               </div>
@@ -313,22 +315,22 @@ export default function BusinessSettingsPage() {
               {saveStatus === 'saving' ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  {t('common.saving')}
                 </>
               ) : saveStatus === 'success' ? (
                 <>
                   <span>✓</span>
-                  Saved!
+                  {t('common.saved')}
                 </>
               ) : saveStatus === 'error' ? (
                 <>
                   <span>✗</span>
-                  Error
+                  {t('common.error')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Save Changes
+                  {t('common.saveChanges')}
                 </>
               )}
             </button>

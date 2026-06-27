@@ -1,32 +1,50 @@
-"use client";
-import { useAuth } from "@/contexts/AuthContext";
-import { useEffect } from "react";
+'use client';
+
+import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
+import { useEffect } from 'react';
 
 declare global { interface Window { google: any } }
 
 export default function GoogleLogin() {
-    const { setGoogleToken } = useAuth()
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "https://accounts.google.com/gsi/client";
-        script.async = true;
-        document.body.appendChild(script);
+  const { setGoogleToken } = useAuth();
+  const { locale, t } = useI18n();
 
-        script.onload = () => {
-            window.google.accounts.id.initialize({
-                client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-                callback: async (response: any) => {
-                    const token = response.credential
-                    setGoogleToken(token)
-                },
-            });
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    document.body.appendChild(script);
 
-            window.google.accounts.id.renderButton(
-                document.getElementById("googleBtn"),
-                { theme: "outline", size: "large" },
-            );
-        };
-    }, []);
+    script.onload = () => {
+      window.google.accounts.id.initialize({
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+        locale,
+        callback: async (response: { credential: string }) => {
+          setGoogleToken(response.credential);
+        },
+      });
 
-    return <div id="googleBtn" className="w-full" />;
+      const container = document.getElementById('googleBtn');
+      if (container) {
+        container.innerHTML = '';
+        window.google.accounts.id.renderButton(container, {
+          theme: 'outline',
+          size: 'large',
+        });
+      }
+    };
+
+    return () => {
+      script.remove();
+    };
+  }, [locale, setGoogleToken]);
+
+  return (
+    <div
+      id="googleBtn"
+      className="w-full"
+      aria-label={t('googleLogin.ariaLabel')}
+    />
+  );
 }

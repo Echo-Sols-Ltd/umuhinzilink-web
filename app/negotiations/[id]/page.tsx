@@ -4,11 +4,13 @@ import NegotiationChat from '@/components/negotiation/NegotiationChat';
 import Navbar from '@/components/Navbar';
 import PageLoading from '@/components/layout/PageLoading';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 
 export default function NegotiationDetailPage() {
+  const { t } = useI18n();
   const { user, loading: authLoading } = useAuth();
   const { id } = useParams() as { id: string };
   const negotiationId = id;
@@ -43,7 +45,7 @@ export default function NegotiationDetailPage() {
   }, [negotiationId, userId, loadNegotiationDetail, setViewingNegotiationId, clearNegotiationDetail]);
 
   if (authLoading || !user) {
-    return <PageLoading label="Opening negotiation" description="Loading messages and deal details…" />;
+    return <PageLoading label={t('settings.negotiations.openingLabel')} description={t('settings.negotiations.openingDescription')} />;
   }
 
   return (

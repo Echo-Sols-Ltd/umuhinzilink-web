@@ -10,6 +10,7 @@ import {
     MessageSquare, DollarSign, Calendar,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import NegotiationCard from '@/components/negotiation/NegotiationCard';
@@ -18,25 +19,8 @@ import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 type NegotiationStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
 type TabFilter = 'ALL' | NegotiationStatus;
-
-
-
-const TABS: { key: TabFilter; label: string }[] = [
-    { key: 'ALL', label: 'All' },
-    { key: 'PENDING', label: 'Active' },
-    { key: 'ACCEPTED', label: 'Accepted' },
-    { key: 'REJECTED', label: 'Rejected' },
-    { key: 'EXPIRED', label: 'Expired' },
-];
-
-
-
-
-// ── Stat card ─────────────────────────────────────────────────────────────────
 
 function StatCard({ label, value, icon: Icon, color }: {
     label: string; value: number; icon: React.ElementType; color: string;
@@ -54,42 +38,63 @@ function StatCard({ label, value, icon: Icon, color }: {
     );
 }
 
+function EmptyState({
+    tab,
+    role,
+    t,
+}: {
+    tab: TabFilter;
+    role: UserRole;
+    t: (key: string, vars?: Record<string, string | number>) => string;
+}) {
+    const tabLabel = tab === 'ALL'
+        ? ''
+        : t(`negotiationsPage.tabs.${tab === 'PENDING' ? 'active' : tab.toLowerCase()}`);
 
-// ── Empty state ───────────────────────────────────────────────────────────────
-
-function EmptyState({ tab, role }: { tab: TabFilter; role: UserRole }) {
     return (
         <div className="py-20 flex flex-col items-center text-center">
             <div className="w-16 h-16 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mb-4">
                 <TrendingUp size={28} className="text-green-400" />
             </div>
             <h3 className="text-base font-bold text-foreground">
-                {tab === 'ALL' ? 'No negotiations yet' : `No ${tab.toLowerCase()} negotiations`}
+                {tab === 'ALL'
+                    ? t('negotiationsPage.empty.none')
+                    : t('negotiationsPage.empty.noneFiltered', { status: tabLabel })}
             </h3>
             <p className="text-sm text-muted-foreground mt-1 max-w-xs">
                 {tab === 'ALL'
                     ? role === 'BUYER'
-                        ? 'Browse products and start negotiating with sellers.'
-                        : 'Negotiations from buyers will appear here.'
-                    : 'Nothing matches this filter.'}
+                        ? t('negotiationsPage.empty.buyerHint')
+                        : t('negotiationsPage.empty.sellerHint')
+                    : t('negotiationsPage.empty.noMatch')}
             </p>
             {tab === 'ALL' && role === 'BUYER' && (
                 <Link
                     href="/products"
                     className="mt-5 flex items-center gap-2 h-10 px-5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors">
-                    Browse products
+                    {t('negotiationsPage.browseProducts')}
                 </Link>
             )}
         </div>
     );
 }
 
-// ── Main page ─────────────────────────────────────────────────────────────────
-
 export default function NegotiationsPage() {
     const { user, loading: authLoading, isAuthenticated } = useAuth();
+    const { t } = useI18n();
     const router = useRouter();
-    const { negotiations, loading } = useNegotiation()
+    const { negotiations, loading } = useNegotiation();
+
+    const TABS: { key: TabFilter; label: string }[] = useMemo(
+        () => [
+            { key: 'ALL', label: t('negotiationsPage.tabs.all') },
+            { key: 'PENDING', label: t('negotiationsPage.tabs.active') },
+            { key: 'ACCEPTED', label: t('negotiationsPage.tabs.accepted') },
+            { key: 'REJECTED', label: t('negotiationsPage.tabs.rejected') },
+            { key: 'EXPIRED', label: t('negotiationsPage.tabs.expired') },
+        ],
+        [t],
+    );
 
     const [tab, setTab] = useState<TabFilter>('ALL');
     const [search, setSearch] = useState('');
@@ -107,10 +112,6 @@ export default function NegotiationsPage() {
         setProductFilter(params.get('product'));
         setSellerFilter(params.get('seller'));
     }, []);
-
-
-
-    // ── Filter ────────────────────────────────────────────────────────────
 
     const filtered = useMemo(() => {
         let list = tab === 'ALL' ? negotiations : negotiations.filter(n => n.status === tab);
@@ -131,15 +132,11 @@ export default function NegotiationsPage() {
         return list;
     }, [negotiations, tab, search, productFilter, sellerFilter]);
 
-    // ── Metrics ───────────────────────────────────────────────────────────
-
     const metrics = useMemo(() => ({
         total: negotiations.length,
         active: negotiations.filter(n => n.status === 'PENDING').length,
         accepted: negotiations.filter(n => n.status === 'ACCEPTED').length,
     }), [negotiations]);
-
-    // ── Render ────────────────────────────────────────────────────────────
 
     if (!authLoading && !isAuthenticated) {
         return null;
@@ -148,7 +145,11 @@ export default function NegotiationsPage() {
     if (authLoading || !user) {
         return (
             <AppLayout maxWidth="max-w-6xl">
-                <PageLoading fullScreen={false} label="Loading negotiations" description="Fetching your active deals…" />
+                <PageLoading
+                    fullScreen={false}
+                    label={t('negotiationsPage.loadingLabel')}
+                    description={t('negotiationsPage.loadingDescription')}
+                />
             </AppLayout>
         );
     }
@@ -156,39 +157,36 @@ export default function NegotiationsPage() {
     return (
         <AppLayout maxWidth="max-w-6xl">
             <PageHeader
-                title="Negotiations"
-                description="Track price discussions and deals with buyers or sellers."
+                title={t('negotiationsPage.title')}
+                description={t('negotiationsPage.description')}
                 actions={
                     user?.role === 'BUYER' ? (
                         <Link
                             href="/products"
                             className="flex items-center gap-1.5 h-9 px-4 text-xs font-semibold bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors">
-                            <Sprout size={12} /> Browse products
+                            <Sprout size={12} /> {t('negotiationsPage.browseProducts')}
                         </Link>
                     ) : undefined
                 }
             />
 
-                {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <StatCard label="Total" value={metrics.total} icon={TrendingUp} color="bg-green-50 dark:bg-green-950/30 text-green-600" />
-                    <StatCard label="Active" value={metrics.active} icon={AlertCircle} color="bg-amber-50 dark:bg-amber-950/30 text-amber-600" />
-                    <StatCard label="Accepted" value={metrics.accepted} icon={CheckCircle} color="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600" />
+                    <StatCard label={t('negotiationsPage.stats.total')} value={metrics.total} icon={TrendingUp} color="bg-green-50 dark:bg-green-950/30 text-green-600" />
+                    <StatCard label={t('negotiationsPage.stats.active')} value={metrics.active} icon={AlertCircle} color="bg-amber-50 dark:bg-amber-950/30 text-amber-600" />
+                    <StatCard label={t('negotiationsPage.stats.accepted')} value={metrics.accepted} icon={CheckCircle} color="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600" />
                 </div>
 
-                {/* Search */}
                 <div className="relative">
                     <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input
                         type="text"
-                        placeholder="Search by product, order number or name…"
+                        placeholder={t('negotiationsPage.searchPlaceholder')}
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         className="w-full h-10 pl-9 pr-4 text-sm bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
                     />
                 </div>
 
-                {/* Tabs */}
                 <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
                     {TABS.map(({ key, label }) => {
                         const count = key === 'ALL'
@@ -220,7 +218,6 @@ export default function NegotiationsPage() {
                     })}
                 </div>
 
-                {/* List */}
                 {loading ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                         {Array.from({ length: 4 }).map((_, i) => (
@@ -240,18 +237,18 @@ export default function NegotiationsPage() {
                 ) : filtered.length === 0 ? (
                     productFilter ? (
                         <div className="py-20 flex flex-col items-center text-center">
-                            <h3 className="text-base font-bold text-foreground">No negotiation for this product yet</h3>
+                            <h3 className="text-base font-bold text-foreground">{t('negotiationsPage.empty.productNone')}</h3>
                             <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-                                Start a negotiation from the product page to discuss pricing with the seller.
+                                {t('negotiationsPage.empty.productHint')}
                             </p>
                             <Link
                                 href={`/products/${productFilter}${sellerFilter ? '?negotiate=1' : ''}`}
                                 className="mt-5 flex items-center gap-2 h-10 px-5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors">
-                                View product
+                                {t('negotiationsPage.empty.viewProduct')}
                             </Link>
                         </div>
                     ) : (
-                        <EmptyState tab={tab} role={user.role} />
+                        <EmptyState tab={tab} role={user.role} t={t} />
                     )
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">

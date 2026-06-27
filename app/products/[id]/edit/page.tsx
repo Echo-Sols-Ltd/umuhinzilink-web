@@ -9,10 +9,10 @@ import {
   Loader2, X, ToggleLeft, ToggleRight,
   ChevronDown, AlertCircle,
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 import { notify } from '@/lib/notify';
 import { imageUrl } from '@/lib/utils';
-import { productService } from '@/services/products';
+import { useI18n } from '@/contexts/I18nContext';
+import { formatCurrency } from '@/lib/localeFormat';
 import SellerGuard from '@/contexts/guard/SellerGuard';
 import { useProduct } from '@/contexts/ProductContext';
 import { District, MeasurementUnit, Product, ProductCategory } from '@/types';
@@ -20,31 +20,13 @@ import { useProductAction } from '@/hooks/useProductAction';
 import PageLoading from '@/components/layout/PageLoading';
 import DetailPageShell from '@/components/layout/DetailPageShell';
 
-// ── Enums (mirror backend) ────────────────────────────────────────────────────
-
-const CATEGORIES: Record<string, string> = {
-  CEREALS: 'Cereals', LEGUMES_PULSES: 'Legumes & Pulses', ROOTS_TUBERS: 'Roots & Tubers',
-  BANANAS_PLANTAINS: 'Bananas & Plantains', VEGETABLES: 'Vegetables', FRUITS: 'Fruits',
-  CASH_CROPS: 'Cash Crops', OILSEEDS: 'Oilseeds', SPICES_HERBS: 'Spices & Herbs',
-  FODDER_FORAGE: 'Fodder & Forage', FERTILISER: 'Fertiliser', PESTICIDE: 'Pesticide',
-  HERBICIDE: 'Herbicide', FUNGICIDE: 'Fungicide', SEEDS_SEEDLINGS: 'Seeds & Seedlings',
-  IRRIGATION: 'Irrigation Equipment', HAND_TOOLS: 'Hand Tools', MACHINERY: 'Machinery',
-  STORAGE_EQUIPMENT: 'Storage Equipment', PACKAGING: 'Packaging Material',
-  ANIMAL_FEED: 'Animal Feed', VETERINARY: 'Veterinary Products', OTHER: 'Other',
-};
-
 const CATEGORY_GROUPS = [
-  { group: 'Produce', keys: ['CEREALS', 'LEGUMES_PULSES', 'ROOTS_TUBERS', 'BANANAS_PLANTAINS', 'VEGETABLES', 'FRUITS', 'CASH_CROPS', 'OILSEEDS', 'SPICES_HERBS', 'FODDER_FORAGE'] },
-  { group: 'Inputs & Equipment', keys: ['FERTILISER', 'PESTICIDE', 'HERBICIDE', 'FUNGICIDE', 'SEEDS_SEEDLINGS', 'IRRIGATION', 'HAND_TOOLS', 'MACHINERY', 'STORAGE_EQUIPMENT', 'PACKAGING', 'ANIMAL_FEED', 'VETERINARY'] },
-  { group: 'Other', keys: ['OTHER'] },
-];
+  { groupKey: 'produce', keys: ['CEREALS', 'LEGUMES_PULSES', 'ROOTS_TUBERS', 'BANANAS_PLANTAINS', 'VEGETABLES', 'FRUITS', 'CASH_CROPS', 'OILSEEDS', 'SPICES_HERBS', 'FODDER_FORAGE'] },
+  { groupKey: 'inputs', keys: ['FERTILISER', 'PESTICIDE', 'HERBICIDE', 'FUNGICIDE', 'SEEDS_SEEDLINGS', 'IRRIGATION', 'HAND_TOOLS', 'MACHINERY', 'STORAGE_EQUIPMENT', 'PACKAGING', 'ANIMAL_FEED', 'VETERINARY'] },
+  { groupKey: 'other', keys: ['OTHER'] },
+] as const;
 
-const UNITS: Record<string, string> = {
-  KG: 'Kilogram (kg)', G: 'Gram (g)', TON: 'Metric Ton', LITER: 'Liter', ML: 'Milliliter',
-  BAG_25KG: '25 kg Bag', BAG_50KG: '50 kg Bag', BAG_100KG: '100 kg Bag',
-  CRATE: 'Crate', BUNDLE: 'Bundle', BUNCH: 'Bunch', PIECE: 'Piece',
-  DOZEN: 'Dozen', JERRICAN: 'Jerrican', SACK: 'Sack',
-};
+const UNIT_KEYS = Object.keys(MeasurementUnit) as (keyof typeof MeasurementUnit)[];
 
 const DISTRICTS = [
   'BUGESERA', 'BURERA', 'GAKENKE', 'GASABO', 'GATSIBO', 'GICUMBI', 'GISAGARA', 'HUYE',
@@ -52,8 +34,6 @@ const DISTRICTS = [
   'NGORORERO', 'NYABIHU', 'NYAGATARE', 'NYAMASHEKE', 'NYANZA', 'NYARUGENGE',
   'NYARUGURU', 'RUBAVU', 'RUHANGO', 'RULINDO', 'RUSIZI', 'RUTSIRO', 'RWAMAGANA',
 ];
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface FormData {
   name: string;
@@ -68,8 +48,6 @@ interface FormData {
 }
 
 type FieldErrors = Partial<Record<keyof FormData, string>>;
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls = (err?: string) =>
   `w-full h-11 px-3.5 text-sm text-foreground bg-gray-50 dark:bg-gray-800/60 border rounded-xl placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${err ? 'border-red-400' : 'border-border'
@@ -109,12 +87,21 @@ function SectionHeader({ icon: Icon, title, sub, color }: {
   );
 }
 
-// ── Category picker ───────────────────────────────────────────────────────────
-
-function CategoryPicker({ value, error, onChange }: {
+function CategoryPicker({ value, error, onChange, t }: {
   value: string; error?: string; onChange: (v: string) => void;
+  t: (key: string) => string;
 }) {
   const [open, setOpen] = useState(false);
+
+  const categoryDisplay = (key: string) => {
+    const label = t(`enums.categories.${key}`);
+    return label !== `enums.categories.${key}` ? label : key;
+  };
+
+  const selectedKey = Object.keys(ProductCategory).find(
+    k => ProductCategory[k as keyof typeof ProductCategory] === value
+  ) ?? value;
+
   return (
     <div className="relative">
       <button
@@ -122,7 +109,7 @@ function CategoryPicker({ value, error, onChange }: {
         onClick={() => setOpen(v => !v)}
         className={`${inputCls(error)} flex items-center justify-between text-left`}>
         <span className={value ? 'text-foreground' : 'text-muted-foreground'}>
-          {value ? CATEGORIES[value] : 'Select a category'}
+          {value ? categoryDisplay(selectedKey) : t('products.edit.fields.selectCategory')}
         </span>
         <ChevronDown size={14} className={`shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
@@ -130,19 +117,19 @@ function CategoryPicker({ value, error, onChange }: {
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute z-20 mt-1 w-full bg-white dark:bg-gray-900 border border-border rounded-xl shadow-xl max-h-64 overflow-y-auto">
-            {CATEGORY_GROUPS.map(({ group, keys }) => (
-              <div key={group}>
+            {CATEGORY_GROUPS.map(({ groupKey, keys }) => (
+              <div key={groupKey}>
                 <p className="px-3 py-2 text-xs font-bold text-muted-foreground uppercase tracking-wider bg-gray-50 dark:bg-gray-800/50 sticky top-0">
-                  {group}
+                  {t(`products.edit.categoryGroups.${groupKey}`)}
                 </p>
                 {keys.map(k => (
                   <button
                     key={k}
                     type="button"
-                    onClick={() => { onChange(k); setOpen(false); }}
-                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-green-50 dark:hover:bg-green-950/20 ${value === k ? 'text-green-600 font-semibold' : 'text-foreground'
+                    onClick={() => { onChange(ProductCategory[k as keyof typeof ProductCategory] ?? k); setOpen(false); }}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-green-50 dark:hover:bg-green-950/20 ${selectedKey === k ? 'text-green-600 font-semibold' : 'text-foreground'
                       }`}>
-                    {CATEGORIES[k]}
+                    {categoryDisplay(k)}
                   </button>
                 ))}
               </div>
@@ -154,15 +141,17 @@ function CategoryPicker({ value, error, onChange }: {
   );
 }
 
-// ── Live preview card ─────────────────────────────────────────────────────────
-
-function PreviewCard({ form, previewUrl, originalImage }: {
+function PreviewCard({ form, previewUrl, originalImage, t, locale }: {
   form: Partial<Product>; previewUrl: string | null; originalImage: string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  locale: 'en' | 'rw';
 }) {
   const img = previewUrl ?? (originalImage ? imageUrl(originalImage) : null);
+  const unitKey = Object.entries(MeasurementUnit).find(([, v]) => v === form.measurementUnit)?.[0];
+  const unit = unitKey ? t(`enums.units.${unitKey}`).toLowerCase() : 'unit';
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border overflow-hidden shadow-sm">
-      {/* Image */}
       <div className="relative h-48 bg-gray-100 dark:bg-gray-800">
         {img ? (
           <img src={img} alt="preview" className="w-full h-full object-cover" />
@@ -173,46 +162,41 @@ function PreviewCard({ form, previewUrl, originalImage }: {
         )}
         {form.isNegotiable && (
           <span className="absolute top-2.5 left-2.5 text-xs font-semibold text-white bg-green-600/90 px-2 py-0.5 rounded-full">
-            Negotiable
+            {t('products.edit.preview.negotiable')}
           </span>
         )}
       </div>
 
-      {/* Info */}
       <div className="p-4 space-y-2">
         <p className="font-bold text-foreground line-clamp-1">
-          {form.name || 'Product name'}
+          {form.name || t('products.edit.preview.namePlaceholder')}
         </p>
         <p className="text-xs text-muted-foreground line-clamp-2">
-          {form.description || 'Description will appear here...'}
+          {form.description || t('products.edit.preview.descriptionPlaceholder')}
         </p>
         <div className="flex items-baseline gap-1.5 pt-1">
           <p className="text-base font-extrabold text-green-700 dark:text-green-400">
             {form.unitPrice
-              ? new Intl.NumberFormat('rw-RW').format(Number(form.unitPrice)) + ' RWF'
+              ? formatCurrency(Number(form.unitPrice), locale)
               : '— RWF'}
           </p>
-          <p className="text-xs text-muted-foreground">
-            / {UNITS[form.measurementUnit?.toString()!]?.split(' ')[0].toLowerCase() || 'unit'}
-          </p>
+          <p className="text-xs text-muted-foreground">/ {unit}</p>
         </div>
         <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border">
-          <span>{form.stockQuantity || '0'} left</span>
-          <span>{form.district ? form.district.charAt(0) + form.district.slice(1).toLowerCase() : 'No district'}</span>
+          <span>{t('products.edit.preview.left', { count: form.stockQuantity || '0' })}</span>
+          <span>{form.district ? form.district.charAt(0) + form.district.slice(1).toLowerCase() : t('products.edit.preview.noDistrict')}</span>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Edit form ─────────────────────────────────────────────────────────────────
-
 function EditProductForm() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { t, locale } = useI18n();
   const fileRef = useRef<HTMLInputElement>(null);
-  const { fetchProductById } = useProduct()
+  const { fetchProductById } = useProduct();
   const productId = params.id as string;
 
   const [originalProduct, setOriginalProduct] = useState<Product | null>(null);
@@ -222,7 +206,7 @@ function EditProductForm() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
 
-  const { updateProduct } = useProductAction()
+  const { updateProduct } = useProductAction();
   const [form, setForm] = useState<Partial<Product>>({
     name: '', description: '',
     category: ProductCategory.VEGETABLES,
@@ -234,7 +218,7 @@ function EditProductForm() {
     image: '',
   });
 
-  // ── Load product ──────────────────────────────────────────────────────
+  const unitDisplay = (key: keyof typeof MeasurementUnit) => t(`enums.units.${key}`);
 
   useEffect(() => {
     if (!productId) return;
@@ -243,7 +227,7 @@ function EditProductForm() {
       try {
         const res = await fetchProductById(productId);
         if (!res) {
-          notify.error('Failed to load product');
+          notify.error(t('products.edit.loadFailed'));
           router.push('/products/seller');
           return;
         }
@@ -260,16 +244,14 @@ function EditProductForm() {
           image: res.image,
         });
       } catch {
-        notify.error('Failed to load product');
+        notify.error(t('products.edit.loadFailed'));
         router.push('/products/seller');
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [productId]);
-
-  // ── Handlers ──────────────────────────────────────────────────────────
+  }, [productId, fetchProductById, router, t]);
 
   const set = (field: keyof FormData, value: string | boolean) => {
     setForm(p => ({ ...p, [field]: value }));
@@ -280,7 +262,7 @@ function EditProductForm() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      setErrors(p => ({ ...p, image: 'Image must be under 5 MB' }));
+      setErrors(p => ({ ...p, image: t('products.edit.validation.imageSize') }));
       return;
     }
     setImageFile(file);
@@ -290,29 +272,24 @@ function EditProductForm() {
     if (errors.image) setErrors(p => ({ ...p, image: undefined }));
   };
 
-  // ── Validation ────────────────────────────────────────────────────────
-
   const validate = (): boolean => {
     const e: FieldErrors = {};
-    if (!form.name?.trim()) e.name = 'Name is required';
-    if (!form.category) e.category = 'Select a category';
-    if (!form.description?.trim()) e.description = 'Description is required';
-    if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = 'Enter a valid price';
-    if (!form.stockQuantity || Number(form.stockQuantity) <= 0) e.stockQuantity = 'Enter a valid quantity';
-    if (!form.measurementUnit) e.measurementUnit = 'Select a unit';
-    if (!form.district) e.district = 'Select a district';
+    if (!form.name?.trim()) e.name = t('products.edit.validation.nameRequired');
+    if (!form.category) e.category = t('products.edit.validation.categoryRequired');
+    if (!form.description?.trim()) e.description = t('products.edit.validation.descriptionRequired');
+    if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = t('products.edit.validation.priceInvalid');
+    if (!form.stockQuantity || Number(form.stockQuantity) <= 0) e.stockQuantity = t('products.edit.validation.quantityInvalid');
+    if (!form.measurementUnit) e.measurementUnit = t('products.edit.validation.unitRequired');
+    if (!form.district) e.district = t('products.edit.validation.districtRequired');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
-
-  // ── Submit ────────────────────────────────────────────────────────────
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
     try {
-
       await updateProduct(productId, {
         name: form.name!,
         description: form.description!,
@@ -326,22 +303,20 @@ function EditProductForm() {
       }, imageFile!);
 
       await new Promise(r => setTimeout(r, 1200));
-      notify.success('Product updated successfully');
+      notify.success(t('products.updated.success'));
       router.push('/products/seller');
     } catch {
-      notify.error('Failed to update product. Please try again.');
+      notify.error(t('products.edit.updateFailed'));
     } finally {
       setSubmitting(false);
     }
   };
 
-  // ── Loading ───────────────────────────────────────────────────────────
-
   if (loading) {
     return (
       <PageLoading
-        label="Loading product"
-        description="Preparing the editor…"
+        label={t('products.edit.loadingLabel')}
+        description={t('products.edit.loadingDescription')}
       />
     );
   }
@@ -354,39 +329,35 @@ function EditProductForm() {
       className="h-8 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5"
     >
       {submitting
-        ? <><Loader2 size={12} className="animate-spin" /> Saving…</>
-        : <><Check size={12} /> Save</>
+        ? <><Loader2 size={12} className="animate-spin" /> {t('products.edit.saving')}</>
+        : <><Check size={12} /> {t('products.edit.save')}</>
       }
     </button>
   );
-
-  // ── Render ────────────────────────────────────────────────────────────
 
   return (
     <DetailPageShell
       maxWidth="max-w-5xl"
       breadcrumbs={[
-        { label: 'Home', href: '/' },
-        { label: 'My listings', href: '/products/seller' },
-        { label: originalProduct?.name ?? 'Edit listing' },
+        { label: t('products.edit.breadcrumbs.home'), href: '/' },
+        { label: t('products.edit.breadcrumbs.myListings'), href: '/products/seller' },
+        { label: originalProduct?.name ?? t('products.edit.breadcrumbs.editListing') },
       ]}
       backHref="/products/seller"
-      backLabel="My listings"
+      backLabel={t('products.edit.backLabel')}
       actions={saveButton}
       className="pb-24"
     >
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {/* ── Left: Form ─────────────────────────────────── */}
             <div className="lg:col-span-2 space-y-4">
 
-              {/* Image */}
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5">
                 <SectionHeader
                   icon={ImageIcon}
-                  title="Product image"
-                  sub="Update the photo buyers see"
+                  title={t('products.edit.sections.image')}
+                  sub={t('products.edit.sections.imageSub')}
                   color="bg-amber-50 dark:bg-amber-950/30 text-amber-600"
                 />
                 <div
@@ -404,7 +375,7 @@ function EditProductForm() {
                       />
                       <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                         <span className="text-white text-sm font-medium flex items-center gap-2">
-                          <Upload size={14} /> Change image
+                          <Upload size={14} /> {t('products.edit.image.change')}
                         </span>
                       </div>
                       {previewUrl && (
@@ -419,8 +390,8 @@ function EditProductForm() {
                   ) : (
                     <div className="h-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
                       <Upload size={22} />
-                      <p className="text-sm font-medium text-foreground">Upload image</p>
-                      <p className="text-xs">JPG, PNG up to 5 MB</p>
+                      <p className="text-sm font-medium text-foreground">{t('products.edit.image.upload')}</p>
+                      <p className="text-xs">{t('products.edit.image.hint')}</p>
                     </div>
                   )}
                 </div>
@@ -438,37 +409,37 @@ function EditProductForm() {
                 />
               </div>
 
-              {/* Basic info */}
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5">
                 <SectionHeader
                   icon={Package}
-                  title="Product details"
-                  sub="Essential information about your listing"
+                  title={t('products.edit.sections.details')}
+                  sub={t('products.edit.sections.detailsSub')}
                   color="bg-green-50 dark:bg-green-950/30 text-green-600"
                 />
                 <div className="space-y-4">
-                  <Field label="Product name" required error={errors.name}>
+                  <Field label={t('products.edit.fields.name')} required error={errors.name}>
                     <input
                       type="text"
-                      placeholder="e.g. Fresh Maize, NPK Fertiliser"
+                      placeholder={t('products.edit.fields.namePlaceholder')}
                       value={form.name}
                       onChange={e => set('name', e.target.value)}
                       className={inputCls(errors.name)}
                     />
                   </Field>
 
-                  <Field label="Category" required error={errors.category}>
+                  <Field label={t('products.edit.fields.category')} required error={errors.category}>
                     <CategoryPicker
                       value={form.category?.toString()!}
                       error={errors.category}
                       onChange={v => set('category', v)}
+                      t={t}
                     />
                   </Field>
 
-                  <Field label="Description" error={errors.description}>
+                  <Field label={t('products.edit.fields.description')} error={errors.description}>
                     <textarea
                       rows={3}
-                      placeholder="Quality, variety, harvest date, storage conditions…"
+                      placeholder={t('products.edit.fields.descriptionPlaceholder')}
                       value={form.description}
                       onChange={e => set('description', e.target.value)}
                       className={`${inputCls(errors.description)} h-auto py-3 resize-none`}
@@ -477,17 +448,16 @@ function EditProductForm() {
                 </div>
               </div>
 
-              {/* Pricing & stock */}
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5">
                 <SectionHeader
                   icon={DollarSign}
-                  title="Pricing & stock"
-                  sub="Set your price and available quantity"
+                  title={t('products.edit.sections.pricing')}
+                  sub={t('products.edit.sections.pricingSub')}
                   color="bg-blue-50 dark:bg-blue-950/30 text-blue-600"
                 />
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="Unit price (RWF)" required error={errors.unitPrice}>
+                    <Field label={t('products.edit.fields.unitPrice')} required error={errors.unitPrice}>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">RWF</span>
                         <input
@@ -502,7 +472,7 @@ function EditProductForm() {
                       </div>
                     </Field>
 
-                    <Field label="Quantity" required error={errors.stockQuantity}>
+                    <Field label={t('products.edit.fields.quantity')} required error={errors.stockQuantity}>
                       <input
                         type="number"
                         min="0"
@@ -515,23 +485,22 @@ function EditProductForm() {
                     </Field>
                   </div>
 
-                  <Field label="Measurement unit" required error={errors.measurementUnit}>
+                  <Field label={t('products.edit.fields.measurementUnit')} required error={errors.measurementUnit}>
                     <select
                       value={form.measurementUnit}
                       onChange={e => set('measurementUnit', e.target.value)}
                       className={inputCls(errors.measurementUnit)}>
-                      <option value="">Select unit</option>
-                      {Object.entries(UNITS).map(([k, v]) => (
-                        <option key={k} value={k}>{v}</option>
+                      <option value="">{t('products.edit.fields.selectUnit')}</option>
+                      {UNIT_KEYS.map(k => (
+                        <option key={k} value={MeasurementUnit[k]}>{unitDisplay(k)}</option>
                       ))}
                     </select>
                   </Field>
 
-                  {/* Negotiable toggle */}
                   <div className="flex items-center justify-between p-3.5 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-border">
                     <div>
-                      <p className="text-sm font-medium text-foreground">Allow negotiation</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Buyers can propose a different price</p>
+                      <p className="text-sm font-medium text-foreground">{t('products.edit.fields.negotiable')}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{t('products.edit.fields.negotiableHint')}</p>
                     </div>
                     <button
                       type="button"
@@ -545,20 +514,19 @@ function EditProductForm() {
                 </div>
               </div>
 
-              {/* Location */}
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5">
                 <SectionHeader
                   icon={MapPin}
-                  title="Location"
-                  sub="Where this product is available"
+                  title={t('products.edit.sections.location')}
+                  sub={t('products.edit.sections.locationSub')}
                   color="bg-purple-50 dark:bg-purple-950/30 text-purple-600"
                 />
-                <Field label="District" required error={errors.district}>
+                <Field label={t('products.edit.fields.district')} required error={errors.district}>
                   <select
                     value={form.district}
                     onChange={e => set('district', e.target.value)}
                     className={inputCls(errors.district)}>
-                    <option value="">Select district</option>
+                    <option value="">{t('products.edit.fields.selectDistrict')}</option>
                     {DISTRICTS.map(d => (
                       <option key={d} value={d}>
                         {d.charAt(0) + d.slice(1).toLowerCase()}
@@ -570,34 +538,33 @@ function EditProductForm() {
 
             </div>
 
-            {/* ── Right: Preview + tips ──────────────────────── */}
             <div className="lg:col-span-1 space-y-4">
               <div className="sticky top-28 space-y-4">
 
-                {/* Preview */}
                 <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-4">
                   <div className="flex items-center gap-2 mb-4">
                     <Eye size={14} className="text-green-600" />
-                    <p className="text-sm font-bold text-foreground">Buyer preview</p>
+                    <p className="text-sm font-bold text-foreground">{t('products.edit.preview.title')}</p>
                   </div>
                   <PreviewCard
                     form={form}
                     previewUrl={previewUrl}
                     originalImage={originalProduct?.image ?? ''}
+                    t={t}
+                    locale={locale}
                   />
                 </div>
 
-                {/* Tips */}
                 <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900 rounded-2xl p-4">
                   <div className="flex items-start gap-2.5">
                     <Info size={14} className="text-blue-500 mt-0.5 shrink-0" />
                     <div>
-                      <p className="text-xs font-bold text-foreground mb-2">Tips for better visibility</p>
+                      <p className="text-xs font-bold text-foreground mb-2">{t('products.edit.tips.title')}</p>
                       <ul className="space-y-1.5 text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
-                        <li>• Use clear, well-lit photos of the actual product</li>
-                        <li>• Mention variety, quality grade, and harvest date</li>
-                        <li>• Keep stock quantity up to date</li>
-                        <li>• Enable negotiation for faster sales</li>
+                        <li>• {t('products.edit.tips.photo')}</li>
+                        <li>• {t('products.edit.tips.details')}</li>
+                        <li>• {t('products.edit.tips.stock')}</li>
+                        <li>• {t('products.edit.tips.negotiate')}</li>
                       </ul>
                     </div>
                   </div>
@@ -608,22 +575,21 @@ function EditProductForm() {
 
           </div>
 
-          {/* Bottom bar */}
           <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-border px-4 py-3">
             <div className="max-w-5xl mx-auto flex items-center gap-3">
               <Link
                 href="/products/seller"
                 className="flex-1 h-11 border border-border rounded-xl text-sm font-medium text-foreground flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                Cancel
+                {t('products.edit.cancel')}
               </Link>
               <button
                 type="submit"
                 disabled={submitting}
                 className="flex-[2] h-11 bg-green-600 hover:bg-green-700 disabled:opacity-60 active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all">
                 {submitting ? (
-                  <><Loader2 size={15} className="animate-spin" /> Saving changes…</>
+                  <><Loader2 size={15} className="animate-spin" /> {t('products.edit.savingChanges')}</>
                 ) : (
-                  <><Check size={15} /> Save changes</>
+                  <><Check size={15} /> {t('products.edit.saveChanges')}</>
                 )}
               </button>
             </div>
@@ -633,8 +599,6 @@ function EditProductForm() {
     </DetailPageShell>
   );
 }
-
-// ── Export with guard ─────────────────────────────────────────────────────────
 
 export default function EditProductPage() {
   return (

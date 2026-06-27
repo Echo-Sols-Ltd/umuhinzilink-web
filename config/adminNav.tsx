@@ -10,49 +10,49 @@ import {
 } from 'lucide-react';
 
 export interface AdminNavItem {
-  label: string;
+  labelKey: string;
   href: string;
   icon: React.ReactNode;
 }
 
 export interface AdminNavGroup {
-  label?: string;
+  labelKey?: string;
   items: AdminNavItem[];
 }
 
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
-    label: 'Overview',
+    labelKey: 'sidebar.groups.overview',
     items: [
-      { label: 'Dashboard', href: '/admin/dashboard', icon: <LayoutDashboard size={16} /> },
-      { label: 'Analytics', href: '/admin/analytics', icon: <BarChart2 size={16} /> },
+      { labelKey: 'sidebar.items.dashboard', href: '/admin/dashboard', icon: <LayoutDashboard size={16} /> },
+      { labelKey: 'sidebar.items.platformAnalytics', href: '/admin/analytics', icon: <BarChart2 size={16} /> },
     ],
   },
   {
-    label: 'Manage',
+    labelKey: 'nav.groups.manage',
     items: [
-      { label: 'Users', href: '/admin/users', icon: <Users size={16} /> },
-      { label: 'Products', href: '/admin/products', icon: <Sprout size={16} /> },
-      { label: 'Orders', href: '/admin/orders', icon: <ShoppingCart size={16} /> },
-      { label: 'Wallets', href: '/admin/wallets', icon: <Wallet size={16} /> },
+      { labelKey: 'sidebar.items.userManagement', href: '/admin/users', icon: <Users size={16} /> },
+      { labelKey: 'sidebar.items.productManagement', href: '/admin/products', icon: <Sprout size={16} /> },
+      { labelKey: 'sidebar.items.orderManagement', href: '/admin/orders', icon: <ShoppingCart size={16} /> },
+      { labelKey: 'sidebar.items.walletManagement', href: '/admin/wallets', icon: <Wallet size={16} /> },
     ],
   },
   {
-    label: 'System',
+    labelKey: 'nav.groups.system',
     items: [
-      { label: 'Settings', href: '/admin/settings', icon: <Settings size={16} /> },
-      { label: 'Marketplace', href: '/products', icon: <Store size={16} /> },
+      { labelKey: 'sidebar.items.settings', href: '/admin/settings', icon: <Settings size={16} /> },
+      { labelKey: 'sidebar.items.marketplace', href: '/products', icon: <Store size={16} /> },
     ],
   },
 ];
 
 /** Flat links for the top Navbar when an admin browses outside the admin shell */
 export const ADMIN_TOP_NAV_LINKS = [
-  { label: 'Console', href: '/admin/dashboard' },
-  { label: 'Users', href: '/admin/users' },
-  { label: 'Orders', href: '/admin/orders' },
-  { label: 'Products', href: '/admin/products' },
-  { label: 'Wallets', href: '/admin/wallets' },
+  { labelKey: 'nav.adminTop.console', href: '/admin/dashboard' },
+  { labelKey: 'nav.adminTop.users', href: '/admin/users' },
+  { labelKey: 'nav.adminTop.orders', href: '/admin/orders' },
+  { labelKey: 'nav.adminTop.products', href: '/admin/products' },
+  { labelKey: 'nav.adminTop.wallets', href: '/admin/wallets' },
 ];
 
 export function isAdminNavActive(pathname: string, href: string): boolean {

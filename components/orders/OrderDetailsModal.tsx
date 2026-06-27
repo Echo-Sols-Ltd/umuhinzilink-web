@@ -11,10 +11,11 @@ import {
     XCircle,
     Clock,
 } from 'lucide-react';
-import { Order, OrderStatus, isUnpaidOrder, isPaidOrder, getOrderStatusLabel } from '@/types';
+import { Order, OrderStatus, isUnpaidOrder, isPaidOrder } from '@/types';
 import OrderStatusTracker from './OrderStatusTracker';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types';
+import { useI18n } from '@/contexts/I18nContext';
+import { formatCurrency, formatDate } from '@/lib/localeFormat';
 
 interface OrderDetailsModalProps {
     order: Order | null;
@@ -34,6 +35,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     loading = false,
 }) => {
     const { user } = useAuth();
+    const { t, locale } = useI18n();
 
     if (!isOpen || !order) return null;
 
@@ -43,15 +45,11 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     const buyer = order.buyer;
     const product = order.product;
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
+    const paymentStatusLabel = paid
+        ? t('ordersPage.detailsModal.paid')
+        : unpaid
+            ? t('ordersPage.detailsModal.awaitingPayment')
+            : t('ordersPage.detailsModal.notPaid');
 
     const statusBadgeClass =
         paid ? 'bg-success/10 text-success' :
@@ -65,9 +63,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 <div className="p-6 border-b flex items-center justify-between bg-card/50">
                     <div>
                         <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-xl font-semibold text-foreground">Order Details</h2>
+                            <h2 className="text-xl font-semibold text-foreground">{t('ordersPage.detailsModal.title')}</h2>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-semibold uppercase ${statusBadgeClass}`}>
-                                {getOrderStatusLabel(order.status)}
+                                {t(`enums.orderStatus.${order.status}`)}
                             </span>
                         </div>
                         <p className="text-sm text-muted-foreground">#{order.id}</p>
@@ -84,7 +82,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     <div className="bg-card rounded-lg border p-6 shadow-sm">
                         <h3 className="text-sm font-semibold text-foreground mb-6 flex items-center gap-2">
                             <Truck className="w-4 h-4 text-primary" />
-                            Order Status
+                            {t('ordersPage.detailsModal.orderStatus')}
                         </h3>
                         <OrderStatusTracker
                             orderStatus={order.status}
@@ -97,7 +95,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <div className="space-y-4">
                             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                                 <User className="w-4 h-4 text-primary" />
-                                Customer Information
+                                {t('ordersPage.detailsModal.customerInfo')}
                             </h3>
                             <div className="bg-card rounded-lg p-4 space-y-3">
                                 <p className="text-sm font-medium text-foreground">{buyer.firstName} {buyer.lastName}</p>
@@ -111,21 +109,21 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <div className="space-y-4">
                             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                                 <Package className="w-4 h-4 text-primary" />
-                                Product Details
+                                {t('ordersPage.detailsModal.productDetails')}
                             </h3>
                             <div className="bg-card rounded-lg p-4 space-y-3">
                                 <p className="text-sm font-medium text-foreground">{product.name}</p>
                                 <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span>Quantity:</span>
+                                    <span>{t('ordersPage.detailsModal.quantity')}</span>
                                     <span className="font-semibold">{order.quantity} {product.measurementUnit}</span>
                                 </div>
                                 <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span>Unit Price:</span>
-                                    <span>RWF {product.unitPrice?.toLocaleString()}</span>
+                                    <span>{t('ordersPage.detailsModal.unitPrice')}</span>
+                                    <span>{formatCurrency(product.unitPrice ?? 0, locale)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm font-semibold text-foreground pt-2 border-t border-border">
-                                    <span>Total Price:</span>
-                                    <span className="text-success">RWF {order.totalPrice.toLocaleString()}</span>
+                                    <span>{t('ordersPage.detailsModal.totalPrice')}</span>
+                                    <span className="text-success">{formatCurrency(order.totalPrice, locale)}</span>
                                 </div>
                             </div>
                         </div>
@@ -135,22 +133,28 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <div className="space-y-2">
                             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                                 <CreditCard className="w-4 h-4 text-primary" />
-                                Payment
+                                {t('ordersPage.detailsModal.payment')}
                             </h3>
                             <div className="bg-card rounded-lg p-4">
-                                <p className="text-sm text-foreground">{order.paymentMethod?.toString().replace('_', ' ')}</p>
+                                <p className="text-sm text-foreground">{t(`enums.paymentMethod.${order.paymentMethod}`)}</p>
                                 <p className="text-xs mt-1 font-medium text-muted-foreground">
-                                    {paid ? 'Paid' : unpaid ? 'Awaiting payment' : 'Not paid'}
+                                    {paymentStatusLabel}
                                 </p>
                             </div>
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                                 <Calendar className="w-4 h-4 text-primary" />
-                                Order Date
+                                {t('ordersPage.detailsModal.orderDate')}
                             </h3>
                             <div className="bg-card rounded-lg p-4">
-                                <p className="text-sm text-foreground">{formatDate(order.createdAt)}</p>
+                                <p className="text-sm text-foreground">
+                                    {formatDate(order.createdAt, locale, {
+                                        month: 'long',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                    })}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -164,7 +168,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             className="px-6 py-2 text-sm font-medium text-primary-foreground bg-warning rounded-lg hover:bg-warning/90 shadow-md shadow-warning/20 transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                             {loading ? <Clock className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
-                            Pay Now
+                            {t('ordersPage.detailsModal.payNow')}
                         </button>
                     )}
 
@@ -175,7 +179,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             className="px-4 py-2 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-lg hover:bg-destructive/20 shadow-sm transition-all disabled:opacity-50 flex items-center gap-2"
                         >
                             <XCircle className="w-4 h-4" />
-                            Cancel order
+                            {t('ordersPage.detailsModal.cancelOrder')}
                         </button>
                     )}
 
@@ -183,7 +187,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         onClick={onClose}
                         className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-lg hover:bg-background shadow-sm transition-all"
                     >
-                        Close
+                        {t('ordersPage.detailsModal.close')}
                     </button>
                 </div>
             </div>

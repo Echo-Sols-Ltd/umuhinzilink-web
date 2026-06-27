@@ -38,12 +38,12 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/products" className="hover:text-foreground transition-colors">
-                  Browse products
+                  {t('landing.footer.browseProducts')}
                 </Link>
               </li>
               <li>
                 <Link href="/become-seller" className="hover:text-foreground transition-colors">
-                  Become a seller
+                  {t('landing.footer.becomeSeller')}
                 </Link>
               </li>
             </ul>
@@ -66,7 +66,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/auth/signin" className="hover:text-foreground transition-colors">
-                  Sign in
+                  {t('landing.footer.signIn')}
                 </Link>
               </li>
             </ul>
@@ -87,7 +87,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <MapPin size={14} className="text-green-600 shrink-0" />
-                Kigali, Rwanda
+                {t('landing.footer.contact.location')}
               </li>
             </ul>
             <div className="flex gap-2 mt-4">

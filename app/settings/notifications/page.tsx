@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useI18n } from '@/contexts/I18nContext';
 import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   Bell,
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 
 export default function NotificationsSettingsPage() {
+  const { t } = useI18n();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [notifications, setNotifications] = useState({
@@ -49,49 +51,49 @@ export default function NotificationsSettingsPage() {
 
   const notificationCategories = [
     {
-      title: "Order & Transaction Alerts",
+      title: t('settings.notificationSettings.categories.orderAlerts.title'),
       icon: ShoppingCart,
       items: [
-        { key: 'order_alerts', label: 'Order Updates', description: 'Real-time order status changes' },
-        { key: 'payment_reminders', label: 'Payment Reminders', description: 'Payment due dates and confirmations' }
+        { key: 'order_alerts', label: t('settings.notificationSettings.categories.orderAlerts.orderUpdates.label'), description: t('settings.notificationSettings.categories.orderAlerts.orderUpdates.description') },
+        { key: 'payment_reminders', label: t('settings.notificationSettings.categories.orderAlerts.paymentReminders.label'), description: t('settings.notificationSettings.categories.orderAlerts.paymentReminders.description') }
       ]
     },
     {
-      title: "Market & Business Intelligence",
+      title: t('settings.notificationSettings.categories.marketIntelligence.title'),
       icon: TrendingUp,
       items: [
-        { key: 'price_alerts', label: 'Market Price Alerts', description: 'Product price changes and trends' },
-        { key: 'weekly_reports', label: 'Weekly Reports', description: 'Summary of your business activities' }
+        { key: 'price_alerts', label: t('settings.notificationSettings.categories.marketIntelligence.priceAlerts.label'), description: t('settings.notificationSettings.categories.marketIntelligence.priceAlerts.description') },
+        { key: 'weekly_reports', label: t('settings.notificationSettings.categories.marketIntelligence.weeklyReports.label'), description: t('settings.notificationSettings.categories.marketIntelligence.weeklyReports.description') }
       ]
     },
     {
-      title: "Communication Channels",
+      title: t('settings.notificationSettings.categories.communicationChannels.title'),
       icon: Bell,
       items: [
-        { key: 'sms_notifications', label: 'SMS Notifications', description: 'Critical alerts via SMS' },
-        { key: 'email_notifications', label: 'Email Notifications', description: 'Order updates and promotions' }
+        { key: 'sms_notifications', label: t('settings.smsNotifications.label'), description: t('settings.smsNotifications.description') },
+        { key: 'email_notifications', label: t('settings.emailNotifications.label'), description: t('settings.emailNotifications.description') }
       ]
     },
     {
-      title: "Marketing & Promotions",
+      title: t('settings.notificationSettings.categories.marketing.title'),
       icon: Megaphone,
       items: [
-        { key: 'marketing_emails', label: 'Marketing Emails', description: 'Promotions and company news' }
+        { key: 'marketing_emails', label: t('settings.marketingEmails.label'), description: t('settings.marketingEmails.description') }
       ]
     },
     {
-      title: "System Updates",
+      title: t('settings.notificationSettings.categories.systemUpdates.title'),
       icon: Settings,
       items: [
-        { key: 'system_updates', label: 'System Updates', description: 'Platform maintenance and new features' }
+        { key: 'system_updates', label: t('settings.notificationSettings.categories.systemUpdates.systemUpdates.label'), description: t('settings.notificationSettings.categories.systemUpdates.systemUpdates.description') }
       ]
     }
   ];
 
   return (
     <SettingsSubLayout
-      title="Notification Preferences"
-      description="Choose how you receive alerts and updates"
+      title={t('settings.hub.sections.notifications.title')}
+      description={t('settings.hub.sections.notifications.description')}
     >
       <div className="space-y-6">
             {notificationCategories.map((category, categoryIndex) => {
@@ -146,22 +148,22 @@ export default function NotificationsSettingsPage() {
               {saveStatus === 'saving' ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  {t('common.saving')}
                 </>
               ) : saveStatus === 'success' ? (
                 <>
                   <span>✓</span>
-                  Saved!
+                  {t('common.saved')}
                 </>
               ) : saveStatus === 'error' ? (
                 <>
                   <span>✗</span>
-                  Error
+                  {t('common.error')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Save Changes
+                  {t('common.saveChanges')}
                 </>
               )}
             </button>

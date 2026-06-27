@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Heart, Package } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { Product } from '@/types';
 import { productService } from '@/services/products';
 import ProductCard from '@/components/products/ProductCard';
@@ -13,6 +14,7 @@ import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 
 export default function SavedProductsPage() {
+  const { t } = useI18n();
   const { user, loading: authLoading } = useAuth();
   const { products: marketplaceProducts } = useProduct();
   const [savedProducts, setSavedProducts] = useState<Product[]>([]);
@@ -62,7 +64,6 @@ export default function SavedProductsPage() {
     }
   }, [authLoading, user, loadSaved]);
 
-  // Refresh list when saved IDs change (e.g. heart removed on card)
   useEffect(() => {
     if (!authLoading && user) {
       const ids = user.savedProducts ?? [];
@@ -73,7 +74,11 @@ export default function SavedProductsPage() {
   if (authLoading || !user) {
     return (
       <AppLayout maxWidth="max-w-6xl">
-        <PageLoading fullScreen={false} label="Loading saved products" description="Fetching your wishlist…" />
+        <PageLoading
+          fullScreen={false}
+          label={t('products.saved.loadingLabel')}
+          description={t('products.saved.loadingDescription')}
+        />
       </AppLayout>
     );
   }
@@ -81,29 +86,33 @@ export default function SavedProductsPage() {
   return (
     <AppLayout maxWidth="max-w-6xl">
       <PageHeader
-        title="Saved products"
-        description="Products you saved for later."
+        title={t('products.saved.title')}
+        description={t('products.saved.description')}
         backHref="/profile"
-        backLabel="Profile"
+        backLabel={t('products.saved.backLabel')}
       />
 
       {loading ? (
-        <PageLoading fullScreen={false} label="Loading saved products" description="Fetching your wishlist…" />
+        <PageLoading
+          fullScreen={false}
+          label={t('products.saved.loadingLabel')}
+          description={t('products.saved.loadingDescription')}
+        />
       ) : savedProducts.length === 0 ? (
         <div className="py-20 flex flex-col items-center text-center bg-white dark:bg-gray-900 rounded-2xl border border-border">
           <div className="w-16 h-16 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mb-4">
             <Heart size={28} className="text-green-400" />
           </div>
-          <h3 className="text-base font-bold text-foreground">No saved products yet</h3>
+          <h3 className="text-base font-bold text-foreground">{t('products.saved.empty.title')}</h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-            Tap the heart on a product to save it here.
+            {t('products.saved.empty.description')}
           </p>
           <Link
             href="/products"
             className="mt-5 h-10 px-5 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors"
           >
             <Package size={15} />
-            Browse products
+            {t('products.saved.empty.browse')}
           </Link>
         </div>
       ) : (

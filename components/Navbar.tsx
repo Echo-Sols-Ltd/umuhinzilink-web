@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { UserRole } from '@/types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Bell, ChevronDown, Menu, X, LayoutDashboard, LogOut, User, Settings, Sprout, Wallet } from 'lucide-react';
 import { ADMIN_TOP_NAV_LINKS, isAdminNavActive } from '@/config/adminNav';
 import { getAdminHomePath } from '@/lib/appPaths';
@@ -24,39 +24,49 @@ export default function Navbar() {
   const isActive = (href: string) =>
     isAdmin ? isAdminNavActive(pathname, href) : pathname === href;
 
-  // ── Nav links by role ─────────────────────────────────────────────────────
+  const guestLinks = useMemo(
+    () => [
+      { label: t('nav.browse'), href: '/products' },
+      { label: t('nav.howItWorks'), href: '/about#features' },
+    ],
+    [t],
+  );
 
-  const guestLinks = [
-    { label: 'Browse', href: '/products' },
-    { label: 'How it works', href: '/about#features' },
-  ];
+  const buyerLinks = useMemo(
+    () => [
+      { label: t('nav.browse'), href: '/products' },
+      { label: t('nav.aiAssistant'), href: '/assistant' },
+      { label: t('nav.myOrders'), href: '/orders' },
+      { label: t('nav.negotiations'), href: '/negotiations' },
+    ],
+    [t],
+  );
 
-  const buyerLinks = [
-    { label: 'Browse', href: '/products' },
-    { label: 'AI Assistant', href: '/assistant' },
-    { label: 'My Orders', href: '/orders' },
-    { label: 'Negotiations', href: '/negotiations' }
-  ];
+  const sellerLinks = useMemo(
+    () => [
+      { label: t('nav.browse'), href: '/products' },
+      { label: t('nav.aiAssistant'), href: '/assistant' },
+      { label: t('nav.myListings'), href: '/products/seller' },
+      { label: t('nav.myOrders'), href: '/orders' },
+      { label: t('nav.negotiations'), href: '/negotiations' },
+    ],
+    [t],
+  );
 
-  const sellerLinks = [
-    { label: 'Browse', href: '/products' },
-    { label: 'AI Assistant', href: '/assistant' },
-    { label: 'My Listings', href: '/products/seller' },
-    { label: 'My Orders', href: '/orders' },
-    { label: 'Negotiations', href: '/negotiations' }
-  ];
+  const adminLinks = useMemo(
+    () => ADMIN_TOP_NAV_LINKS.map(({ labelKey, href }) => ({ label: t(labelKey), href })),
+    [t],
+  );
 
   const navLinks = !user
     ? guestLinks
     : isAdmin
-      ? ADMIN_TOP_NAV_LINKS
+      ? adminLinks
       : isSeller
         ? sellerLinks
         : buyerLinks;
 
   const homeHref = isAdmin ? getAdminHomePath() : '/';
-
-  // ── Link className helper ──────────────────────────────────────────────────
 
   const linkCls = (href: string) =>
     `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(href)
@@ -68,18 +78,16 @@ export default function Navbar() {
     <nav className="w-full fixed top-0 left-0 right-0 z-50 h-16 flex items-center bg-card/80 backdrop-blur-md border-b border-border/40">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
 
-        {/* Logo */}
         <Link href={homeHref} className="flex items-center gap-1.5 shrink-0">
           <span className="text-xl font-extrabold text-primary">Umuhinzi</span>
           <span className="text-xl font-extrabold text-foreground">Link</span>
           {isAdmin && (
             <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase bg-rose-500/15 text-rose-600">
-              Admin
+              {t('nav.adminBadge')}
             </span>
           )}
         </Link>
 
-        {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map(({ label, href }) => (
             <Link key={href} href={href} className={linkCls(href)}>
@@ -88,11 +96,9 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right section */}
         <div className="flex items-center gap-2">
           {user ? (
             <>
-              {/* Notification bell */}
               <Link
                 href="/notifications"
                 className="relative p-2 rounded-full hover:bg-accent transition-colors">
@@ -104,7 +110,6 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* Avatar dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setAvatarOpen(v => !v)}
@@ -120,13 +125,11 @@ export default function Navbar() {
 
                 {avatarOpen && (
                   <>
-                    {/* backdrop */}
                     <div
                       className="fixed inset-0 z-10"
                       onClick={() => setAvatarOpen(false)}
                     />
                     <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-xl shadow-lg z-20 py-1 overflow-hidden">
-                      {/* User info */}
                       <div className="px-4 py-3 border-b border-border">
                         <p className="text-sm font-semibold text-foreground">
                           {user.firstName} {user.lastName}
@@ -136,12 +139,11 @@ export default function Navbar() {
                         </p>
                       </div>
 
-                      {/* Menu items */}
                       <div className="py-1">
                         <DropdownLink
                           href="/profile"
                           icon={<User size={15} />}
-                          label="Profile"
+                          label={t('nav.profile')}
                           onClick={() => setAvatarOpen(false)}
                         />
 
@@ -150,13 +152,13 @@ export default function Navbar() {
                             <DropdownLink
                               href="/admin/dashboard"
                               icon={<LayoutDashboard size={15} />}
-                              label="Admin Console"
+                              label={t('nav.adminConsole')}
                               onClick={() => setAvatarOpen(false)}
                             />
                             <DropdownLink
                               href="/admin/settings"
                               icon={<Settings size={15} />}
-                              label="System Settings"
+                              label={t('nav.systemSettings')}
                               onClick={() => setAvatarOpen(false)}
                             />
                           </>
@@ -164,14 +166,14 @@ export default function Navbar() {
                           <DropdownLink
                             href="/seller/dashboard"
                             icon={<LayoutDashboard size={15} />}
-                            label="Seller Dashboard"
+                            label={t('nav.sellerDashboard')}
                             onClick={() => setAvatarOpen(false)}
                           />
                         ) : (
                           <DropdownLink
                             href="/become-seller"
                             icon={<Sprout size={15} />}
-                            label="Become a Seller"
+                            label={t('nav.becomeSeller')}
                             onClick={() => setAvatarOpen(false)}
                           />
                         )}
@@ -180,7 +182,7 @@ export default function Navbar() {
                           <DropdownLink
                             href="/wallet"
                             icon={<Wallet size={15} />}
-                            label="Wallet"
+                            label={t('nav.wallet')}
                             onClick={() => setAvatarOpen(false)}
                           />
                         )}
@@ -189,19 +191,18 @@ export default function Navbar() {
                           <DropdownLink
                             href="/settings"
                             icon={<Settings size={15} />}
-                            label="Settings"
+                            label={t('nav.settings')}
                             onClick={() => setAvatarOpen(false)}
                           />
                         )}
                       </div>
 
-                      {/* Logout */}
                       <div className="border-t border-border py-1">
                         <button
                           onClick={() => { logout(); setAvatarOpen(false); }}
                           className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors">
                           <LogOut size={15} />
-                          Logout
+                          {t('nav.logout')}
                         </button>
                       </div>
                     </div>
@@ -214,17 +215,16 @@ export default function Navbar() {
               <Link
                 href="/auth/signin"
                 className="px-4 py-2 rounded-full text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-accent transition-colors">
-                Sign in
+                {t('nav.signIn')}
               </Link>
               <Link
                 href="/auth/signup"
                 className="px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm">
-                Get started
+                {t('nav.getStarted')}
               </Link>
             </>
           )}
 
-          {/* Mobile hamburger — always visible */}
           <button
             onClick={() => setMobileOpen(v => !v)}
             className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors ml-1">
@@ -233,7 +233,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu — secondary links only */}
       {mobileOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-card border-b border-border shadow-lg px-4 py-3 flex flex-col gap-1">
           {navLinks.map(({ label, href }) => (
@@ -250,8 +249,6 @@ export default function Navbar() {
     </nav>
   );
 }
-
-// ── Dropdown link helper ──────────────────────────────────────────────────────
 
 function DropdownLink({
   href,

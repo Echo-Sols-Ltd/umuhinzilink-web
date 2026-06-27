@@ -7,18 +7,19 @@ import {
     Package, Send, XCircle, Wallet, Info,
 } from "lucide-react";
 import { useState } from "react";
+import { useI18n } from '@/contexts/I18nContext';
 
 function fmt(n: number) {
     return new Intl.NumberFormat('rw-RW').format(n) + ' RWF';
 }
 
-function timeUntil(dateStr: string) {
+function timeUntil(dateStr: string, t: (key: string) => string) {
     const diff = new Date(dateStr).getTime() - Date.now();
-    if (diff <= 0) return 'Expired';
+    if (diff <= 0) return t('settings.negotiations.expired');
     const days = Math.floor(diff / 86400000);
     const hrs = Math.floor((diff % 86400000) / 3600000);
-    if (days > 0) return `${days}d ${hrs}h left`;
-    return `${hrs}h left`;
+    if (days > 0) return `${days}d ${hrs}h`;
+    return `${hrs}h`;
 }
 
 interface PricePanelProps {
@@ -34,13 +35,14 @@ interface PricePanelProps {
 }
 
 function ConfirmBox({
-    type, price, loading, onConfirm, onCancel,
+    type, price, loading, onConfirm, onCancel, t,
 }: {
     type: 'accept' | 'reject';
     price?: number;
     loading: boolean;
     onConfirm: () => void;
     onCancel: () => void;
+    t: (key: string, vars?: Record<string, string | number>) => string;
 }) {
     const isAccept = type === 'accept';
     return (
@@ -52,8 +54,10 @@ function ConfirmBox({
         )}>
             <p className={cn('text-xs font-medium', isAccept ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-600')}>
                 {isAccept
-                    ? `Accept ${price ? `offer of ${fmt(price)}` : 'this offer'}? Payment will be processed from the buyer's wallet.`
-                    : 'Reject this negotiation? The order will be cancelled.'}
+                    ? price
+                        ? t('settings.negotiations.confirm.acceptOffer', { price: fmt(price) }) + ' ' + t('settings.negotiations.confirm.acceptPaymentNote')
+                        : t('settings.negotiations.confirm.acceptOfferDefault') + ' ' + t('settings.negotiations.confirm.acceptPaymentNote')
+                    : t('settings.negotiations.confirm.rejectNegotiation')}
             </p>
             <div className="flex gap-2">
                 <button
@@ -64,10 +68,10 @@ function ConfirmBox({
                         isAccept ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-500 hover:bg-red-600'
                     )}>
                     {loading ? <Loader2 size={12} className="animate-spin" /> : isAccept ? <CheckCircle size={12} /> : <XCircle size={12} />}
-                    {loading ? 'Processing…' : isAccept ? 'Yes, accept' : 'Yes, reject'}
+                    {loading ? t('settings.negotiations.confirm.processing') : isAccept ? t('settings.negotiations.confirm.yesAccept') : t('settings.negotiations.confirm.yesReject')}
                 </button>
                 <button onClick={onCancel} className="h-8 px-3 border border-border text-xs text-muted-foreground rounded-lg">
-                    Cancel
+                    {t('settings.negotiations.cancel')}
                 </button>
             </div>
         </div>
@@ -85,6 +89,7 @@ export default function PricePanel({
     loading,
     isSeller,
 }: PricePanelProps) {
+    const { t } = useI18n();
     const [offerInput, setOfferInput] = useState('');
     const [offerError, setOfferError] = useState('');
     const [confirming, setConfirming] = useState<'accept' | 'reject' | null>(null);
@@ -102,11 +107,11 @@ export default function PricePanel({
     const submitOffer = async () => {
         const val = parseFloat(offerInput);
         if (!offerInput || isNaN(val) || val <= 0) {
-            setOfferError('Enter a valid price');
+            setOfferError(t('settings.negotiations.validation.enterValidPrice'));
             return;
         }
         if (val > listedPrice) {
-            setOfferError("Can't exceed listed price");
+            setOfferError(t('settings.negotiations.validation.exceedsListedPrice'));
             return;
         }
         setOfferError('');
@@ -129,7 +134,7 @@ export default function PricePanel({
         <div className="flex flex-col h-screen bg-white dark:bg-gray-900 border-l border-border overflow-auto">
             <div className="px-4 py-3.5 border-b border-border shrink-0">
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    {isSeller ? 'Negotiation Panel' : 'Offer Details'}
+                    {isSeller ? t('settings.negotiations.panel.negotiationPanel') : t('settings.negotiations.panel.offerDetails')}
                 </p>
                 <p className="text-sm font-bold text-foreground mt-0.5">{negotiation.order.orderNumber}</p>
             </div>
@@ -143,11 +148,11 @@ export default function PricePanel({
                     negotiation.status === 'REJECTED' && 'bg-red-50 dark:bg-red-950/30 text-red-600',
                     negotiation.status === 'EXPIRED' && 'bg-gray-100 dark:bg-gray-800 text-gray-500',
                 )}>
-                    {isActive && <><AlertCircle size={13} /> Expires in {timeUntil(negotiation.expiresAt)}</>}
-                    {awaitingPayment && <><Wallet size={13} /> Awaiting payment</>}
-                    {negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED' && <><CheckCircle size={13} /> Paid & completed</>}
-                    {negotiation.status === 'REJECTED' && <><XCircle size={13} /> Rejected</>}
-                    {negotiation.status === 'EXPIRED' && <><Clock size={13} /> Expired</>}
+                    {isActive && <><AlertCircle size={13} /> {t('settings.negotiations.panel.expiresInTime', { time: timeUntil(negotiation.expiresAt, t) })}</>}
+                    {awaitingPayment && <><Wallet size={13} /> {t('settings.negotiations.panel.awaitingPayment')}</>}
+                    {negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED' && <><CheckCircle size={13} /> {t('settings.negotiations.panel.paidCompleted')}</>}
+                    {negotiation.status === 'REJECTED' && <><XCircle size={13} /> {t('settings.negotiations.rejected')}</>}
+                    {negotiation.status === 'EXPIRED' && <><Clock size={13} /> {t('settings.negotiations.expired')}</>}
                 </div>
 
                 <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
@@ -169,23 +174,23 @@ export default function PricePanel({
                 </div>
 
                 <div className="space-y-2">
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Prices</p>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('settings.negotiations.panel.prices')}</p>
                     <div className="flex justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-xs">
-                        <span className="text-muted-foreground">Listed</span>
+                        <span className="text-muted-foreground">{t('settings.negotiations.panel.listed')}</span>
                         <span className="font-bold">{fmt(listedPrice)}</span>
                     </div>
                     <div className="flex justify-between py-2 px-3 bg-amber-50 dark:bg-amber-950/20 rounded-xl text-xs">
-                        <span className="text-muted-foreground">{isSeller ? "Buyer's offer" : 'Your offer'}</span>
+                        <span className="text-muted-foreground">{isSeller ? t('settings.negotiations.panel.buyersOffer') : t('settings.negotiations.panel.yourOffer')}</span>
                         <span className="font-extrabold text-amber-600">{fmt(buyerPrice)}{discount > 0 ? ` (-${discount}%)` : ''}</span>
                     </div>
                     {sellerPrice && (
                         <div className="flex justify-between py-2 px-3 bg-green-50 dark:bg-green-950/20 rounded-xl border border-green-200 text-xs">
-                            <span className="text-muted-foreground">{isSeller ? 'Your counter' : "Seller's counter"}</span>
+                            <span className="text-muted-foreground">{isSeller ? t('settings.negotiations.panel.yourCounter') : t('settings.negotiations.panel.sellersCounter')}</span>
                             <span className="font-extrabold text-green-700">{fmt(sellerPrice)}</span>
                         </div>
                     )}
                     <div className="flex justify-between py-2.5 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border text-xs">
-                        <span className="font-semibold">Order total</span>
+                        <span className="font-semibold">{t('settings.negotiations.panel.orderTotal')}</span>
                         <span className="font-extrabold text-green-700">
                             {fmt((sellerPrice ?? buyerPrice) * negotiation.order.quantity)}
                         </span>
@@ -198,7 +203,7 @@ export default function PricePanel({
                         <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 rounded-xl">
                             <Info size={14} className="text-blue-500 mt-0.5 shrink-0" />
                             <p className="text-xs text-blue-700 leading-relaxed">
-                                Deal agreed! Top up your wallet if needed, then pay to complete the order.
+                                {t('settings.negotiations.panel.dealAgreedHint')}
                             </p>
                         </div>
                         <button
@@ -206,7 +211,7 @@ export default function PricePanel({
                             disabled={loading}
                             className="w-full h-10 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50">
                             {loading ? <Loader2 size={16} className="animate-spin" /> : <Wallet size={16} />}
-                            Pay {fmt(negotiation.order.totalPrice)}
+                            {t('settings.negotiations.panel.pay', { price: fmt(negotiation.order.totalPrice) })}
                         </button>
                     </div>
                 )}
@@ -215,7 +220,7 @@ export default function PricePanel({
                 {isSeller && isActive && (
                     <>
                         <div className="space-y-2">
-                            <p className="text-xs font-bold text-muted-foreground uppercase">Set your counter price</p>
+                            <p className="text-xs font-bold text-muted-foreground uppercase">{t('settings.negotiations.panel.setCounterPrice')}</p>
                             <div className="flex gap-2">
                                 <input
                                     type="number"
@@ -227,7 +232,7 @@ export default function PricePanel({
                                 />
                                 <button onClick={submitOffer} disabled={loading || !offerInput}
                                     className="h-10 px-3 bg-green-600 text-white text-xs font-bold rounded-xl disabled:opacity-50 flex items-center gap-1">
-                                    {loading ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />} Send
+                                    {loading ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />} {t('settings.negotiations.panel.send')}
                                 </button>
                             </div>
                             {offerError && <p className="text-xs text-red-500">{offerError}</p>}
@@ -235,22 +240,22 @@ export default function PricePanel({
 
                         <div className="flex items-center gap-3">
                             <div className="flex-1 h-px bg-border" />
-                            <span className="text-xs text-muted-foreground">or</span>
+                            <span className="text-xs text-muted-foreground">{t('settings.negotiations.panel.or')}</span>
                             <div className="flex-1 h-px bg-border" />
                         </div>
 
                         {confirming ? (
                             <ConfirmBox type={confirming} price={confirming === 'accept' ? buyerPrice : undefined}
-                                loading={loading} onConfirm={handleConfirm} onCancel={() => setConfirming(null)} />
+                                loading={loading} onConfirm={handleConfirm} onCancel={() => setConfirming(null)} t={t} />
                         ) : (
                             <div className="grid grid-cols-2 gap-2">
                                 <button onClick={() => setConfirming('accept')}
                                     className="h-9 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1">
-                                    <CheckCircle size={13} /> Accept {fmt(buyerPrice)}
+                                    <CheckCircle size={13} /> {t('settings.negotiations.panel.acceptOffer', { price: fmt(buyerPrice) })}
                                 </button>
                                 <button onClick={() => setConfirming('reject')}
                                     className="h-9 border border-red-200 text-red-600 text-xs font-bold rounded-xl flex items-center justify-center gap-1">
-                                    <XCircle size={13} /> Reject
+                                    <XCircle size={13} /> {t('settings.negotiations.reject')}
                                 </button>
                             </div>
                         )}
@@ -260,7 +265,7 @@ export default function PricePanel({
                 {/* Buyer: update offer while active */}
                 {!isSeller && isActive && (
                     <div className="space-y-2">
-                        <p className="text-xs font-bold text-muted-foreground uppercase">Update your offer</p>
+                        <p className="text-xs font-bold text-muted-foreground uppercase">{t('settings.negotiations.panel.updateOffer')}</p>
                         <div className="flex gap-2">
                             <input
                                 type="number"
@@ -272,7 +277,7 @@ export default function PricePanel({
                             />
                             <button onClick={submitOffer} disabled={loading || !offerInput}
                                 className="h-10 px-3 bg-amber-600 text-white text-xs font-bold rounded-xl disabled:opacity-50">
-                                Update
+                                {t('settings.negotiations.panel.update')}
                             </button>
                         </div>
                         {offerError && <p className="text-xs text-red-500">{offerError}</p>}
@@ -283,21 +288,20 @@ export default function PricePanel({
                 {!isSeller && isActive && hasSellerCounter && (
                     <div className="space-y-3">
                         <div className="p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 rounded-xl text-xs text-blue-700">
-                            Seller countered at <span className="font-extrabold">{fmt(sellerPrice!)}</span> per unit.
-                            Accept to pay automatically, or reject to cancel.
+                            {t('settings.negotiations.panel.sellerCounterHint', { price: fmt(sellerPrice!) })}
                         </div>
                         {confirming ? (
                             <ConfirmBox type={confirming} price={confirming === 'accept' ? sellerPrice! : undefined}
-                                loading={loading} onConfirm={handleConfirm} onCancel={() => setConfirming(null)} />
+                                loading={loading} onConfirm={handleConfirm} onCancel={() => setConfirming(null)} t={t} />
                         ) : (
                             <div className="grid grid-cols-2 gap-2">
                                 <button onClick={() => setConfirming('reject')}
                                     className="h-10 border border-red-200 text-red-600 text-xs font-bold rounded-xl">
-                                    Decline
+                                    {t('settings.negotiations.decline')}
                                 </button>
                                 <button onClick={() => setConfirming('accept')}
                                     className="h-10 bg-green-600 text-white text-xs font-bold rounded-xl">
-                                    Accept & pay
+                                    {t('settings.negotiations.panel.acceptAndPay')}
                                 </button>
                             </div>
                         )}
@@ -308,7 +312,7 @@ export default function PricePanel({
                 {!isSeller && isActive && !hasSellerCounter && (
                     <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
                         <Clock size={14} className="mt-0.5 animate-pulse shrink-0" />
-                        Waiting for the seller to accept your offer or send a counter price.
+                        {t('settings.negotiations.panel.waitingForSeller')}
                     </div>
                 )}
 
@@ -317,13 +321,13 @@ export default function PricePanel({
                     (negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED')) && (
                     <div className="p-5 rounded-2xl text-center space-y-2 bg-gray-50 dark:bg-gray-800 border">
                         <p className="text-sm font-bold">
-                            {negotiation.status === 'REJECTED' && 'Negotiation cancelled'}
-                            {negotiation.status === 'EXPIRED' && 'Negotiation expired'}
-                            {negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED' && 'Order completed'}
+                            {negotiation.status === 'REJECTED' && t('settings.negotiations.panel.negotiationCancelled')}
+                            {negotiation.status === 'EXPIRED' && t('settings.negotiations.panel.negotiationExpiredLabel')}
+                            {negotiation.status === 'ACCEPTED' && orderStatus === 'COMPLETED' && t('settings.negotiations.panel.orderCompleted')}
                         </p>
                         {negotiation.status === 'ACCEPTED' && (
                             <p className="text-xs text-muted-foreground">
-                                Final: {fmt((sellerPrice ?? buyerPrice) * negotiation.order.quantity)}
+                                {t('settings.negotiations.panel.finalTotal', { price: fmt((sellerPrice ?? buyerPrice) * negotiation.order.quantity) })}
                             </p>
                         )}
                     </div>

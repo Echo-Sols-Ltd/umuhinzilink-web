@@ -5,6 +5,8 @@ import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info } from 'luci
 import Image from 'next/image';
 import { Product } from '@/types';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/contexts/I18nContext';
+import { formatCurrency, formatDate } from '@/lib/localeFormat';
 
 interface ProductOrderInterfaceProps {
   product: Product;
@@ -25,7 +27,7 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
   className,
   setIsPurchasing,
 }) => {
-  const [showOrderModal, setShowOrderModal] = useState(false);
+  const { t, locale } = useI18n();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const images = (product as any).images || (product.image ? [product.image] : ['/placeholder.png']);
@@ -34,23 +36,27 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
 
   const getStockStatus = () => {
     if (isOutOfStock) {
-      return { text: 'Out of Stock', color: 'text-red-600', bgColor: 'bg-red-100' };
+      return {
+        text: t('buyer.productDetail.stock.outOfStock'),
+        color: 'text-red-600',
+        bgColor: 'bg-red-100',
+      };
     }
     if (isLowStock) {
-      return { text: `Only ${product.stockQuantity} left`, color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
+      return {
+        text: t('buyer.productDetail.stock.lowStock', { count: product.stockQuantity }),
+        color: 'text-yellow-600',
+        bgColor: 'bg-yellow-100',
+      };
     }
-    return { text: `${product.stockQuantity} available`, color: 'text-green-600', bgColor: 'bg-green-100' };
+    return {
+      text: t('buyer.productDetail.stock.available', { count: product.stockQuantity }),
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+    };
   };
 
   const stockStatus = getStockStatus();
-
-  const formatDate = (dateString: string | Date) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
 
   const getCertificationBadge = (certification: string) => {
     if (certification === 'NONE') return null;
@@ -63,7 +69,7 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
     );
   };
 
-  const sellerInfo = product.owner
+  const sellerInfo = product.owner;
 
   return (
     <>
@@ -135,13 +141,15 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <span className="text-3xl font-semibold text-primary">
-                  {product.unitPrice.toLocaleString()} RWF
+                  {formatCurrency(product.unitPrice, locale)}
                 </span>
-                <span className="text-muted-foreground">per {product.measurementUnit}</span>
+                <span className="text-muted-foreground">
+                  {t('buyer.productDetail.perUnit', { unit: product.measurementUnit })}
+                </span>
               </div>
               {product.isNegotiable && (
                 <span className="px-2 py-1 bg-info/10 text-info rounded-full text-xs font-medium">
-                  Negotiable
+                  {t('buyer.productDetail.actions.negotiable')}
                 </span>
               )}
             </div>
@@ -149,7 +157,7 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
 
           {/* Description */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-foreground mb-2">Description</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-2">{t('buyer.productDetail.description')}</h3>
             <p className="text-muted-foreground leading-relaxed">{product.description}</p>
           </div>
 
@@ -158,15 +166,17 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Location:</span>
+                <span className="text-sm text-muted-foreground">{t('buyer.productDetail.location')}:</span>
                 <span className="text-sm font-medium text-foreground">{product.district}</span>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Harvest Date:</span>
+                <span className="text-sm text-muted-foreground">{t('buyer.productDetail.details.harvestDate')}:</span>
                 <span className="text-sm font-medium text-foreground">
-                  {productType === 'farmer' && 'harvestDate' in product ? formatDate((product as any).harvestDate) : 'N/A'}
+                  {productType === 'farmer' && 'harvestDate' in product
+                    ? formatDate((product as any).harvestDate, locale, { month: 'long' })
+                    : t('ordersPage.productOrder.notAvailable')}
                 </span>
               </div>
             </div>
@@ -174,7 +184,7 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Info className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Category:</span>
+                <span className="text-sm text-muted-foreground">{t('buyer.productDetail.category')}:</span>
                 <span className="text-sm font-medium text-foreground">{product.category}</span>
               </div>
             </div>
@@ -183,7 +193,9 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
           {/* Seller Information */}
           <div className="border-t pt-6 mb-6">
             <h3 className="text-lg font-semibold text-foreground mb-3">
-              {productType === 'farmer' ? 'Farmer' : 'Supplier'} Information
+              {productType === 'farmer'
+                ? t('buyer.productDetail.farmerInfo')
+                : t('buyer.productDetail.supplierInfo')}
             </h3>
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
@@ -211,7 +223,11 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
               )}
             >
               <ShoppingCart className="w-5 h-5" />
-              <span>{isOutOfStock ? 'Out of Stock' : 'Order Now'}</span>
+              <span>
+                {isOutOfStock
+                  ? t('buyer.productDetail.stock.outOfStock')
+                  : t('ordersPage.productOrder.orderNow')}
+              </span>
             </button>
 
             <button
@@ -223,7 +239,9 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
                   : 'border-border text-foreground hover:bg-background'
               )}
             >
-              {isSaved ? 'Saved' : 'Save'}
+              {isSaved
+                ? t('buyer.productDetail.actions.saved')
+                : t('buyer.productDetail.actions.save')}
             </button>
           </div>
 
@@ -233,7 +251,7 @@ const ProductOrderInterface: React.FC<ProductOrderInterfaceProps> = ({
               <div className="flex items-center space-x-2">
                 <Info className="w-4 h-4 text-warning" />
                 <span className="text-sm text-warning">
-                  Limited stock available. Order soon to avoid disappointment.
+                  {t('buyer.productDetail.stock.limitedWarning')}
                 </span>
               </div>
             </div>

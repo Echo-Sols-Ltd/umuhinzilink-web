@@ -9,6 +9,7 @@ import {
     DollarSign, Info, Loader2, CornerUpLeft,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { notify } from '@/lib/notify';
 import { UserRole, Negotiation, NegotiationMessage } from '@/types';
@@ -32,25 +33,31 @@ function fmt(n: number) {
     return new Intl.NumberFormat('rw-RW').format(n) + ' RWF';
 }
 
-function timeAgo(dateStr: string) {
+function timeAgo(dateStr: string, t: (key: string, vars?: Record<string, string | number>) => string) {
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'Just now';
-    if (mins < 60) return `${mins}m ago`;
+    if (mins < 1) return t('settings.negotiations.timeAgo.justNow');
+    if (mins < 60) return t('settings.negotiations.timeAgo.minutes', { count: mins });
     const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
+    if (hrs < 24) return t('settings.negotiations.timeAgo.hours', { count: hrs });
     return new Date(dateStr).toLocaleDateString('en-RW', { month: 'short', day: 'numeric' });
+}
+
+function statusLabel(status: string, t: (key: string) => string) {
+    const key = `settings.negotiations.${status.toLowerCase()}`;
+    return t(key);
 }
 
 
 // ── Message bubble ────────────────────────────────────────────────────────────
 
 function MessageBubble({
-    msg, isOwn, onReply,
+    msg, isOwn, onReply, t,
 }: {
     msg: NegotiationMessage;
     isOwn: boolean;
     onReply: (msg: NegotiationMessage) => void;
+    t: (key: string, vars?: Record<string, string | number>) => string;
 }) {
     const [showActions, setShowActions] = useState(false);
 
@@ -91,7 +98,7 @@ function MessageBubble({
 
                 {/* Meta */}
                 <div className={`flex items-center gap-1.5 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <span className="text-[10px] text-muted-foreground">{timeAgo(msg.createdAt)}</span>
+                    <span className="text-[10px] text-muted-foreground">{timeAgo(msg.createdAt, t)}</span>
                     {isOwn && (
                         msg.isRead
                             ? <CheckCheck size={11} className="text-green-400" />
@@ -112,6 +119,7 @@ export default function NegotiationChat({
     onBack,
 }: NegotiationChatProps) {
     const { user } = useAuth();
+    const { t } = useI18n();
     const { negotiationMessages: messages, detailLoading, currentNegotiation: negotiation } = useNegotiation()
     const {
         sendNegotiationMessage,
@@ -188,7 +196,7 @@ export default function NegotiationChat({
         try {
             await sendNegotiationMessage(negotiationId, content)
         } catch {
-            notify.error('Failed to send message');
+            notify.error(t('settings.negotiations.sendFailed'));
             setInput(content);
         } finally {
             setSending(false);
@@ -204,8 +212,8 @@ export default function NegotiationChat({
             <PageLoading
                 fullScreen={false}
                 className="h-full min-h-[320px] bg-gray-50 dark:bg-gray-950"
-                label="Loading negotiation"
-                description="Fetching messages and offer details…"
+                label={t('settings.negotiations.loadingLabel')}
+                description={t('settings.negotiations.loadingDescription')}
             />
         );
     }
@@ -213,8 +221,8 @@ export default function NegotiationChat({
     const otherName = negotiation
         ? isSeller
             ? `${negotiation.order.buyer.firstName} ${negotiation.order.buyer.lastName}`
-            : 'Seller'
-        : 'Unknown';
+            : t('settings.negotiations.seller')
+        : t('settings.negotiations.unknown');
 
     const isNegotiationActive = negotiation?.status === 'PENDING';
 
@@ -248,7 +256,7 @@ export default function NegotiationChat({
                             <p className="text-sm font-bold text-foreground">{otherName}</p>
                             <p className="text-xs text-muted-foreground flex items-center gap-1">
                                 {otherTyping ? (
-                                    <span className="text-green-500 animate-pulse">typing…</span>
+                                    <span className="text-green-500 animate-pulse">{t('settings.negotiations.typing')}</span>
                                 ) : (
                                     <>
                                         <Sprout size={10} className="text-green-500" />
@@ -267,7 +275,7 @@ export default function NegotiationChat({
                                 negotiation.status === 'REJECTED' && 'bg-red-100 dark:bg-red-900/40 text-red-600',
                                 negotiation.status === 'EXPIRED' && 'bg-gray-200 dark:bg-gray-700 text-gray-500',
                             )}>
-                                {negotiation.status}
+                                {statusLabel(negotiation.status, t)}
                             </span>
                         )}
                     </div>
@@ -281,8 +289,11 @@ export default function NegotiationChat({
                         <div className="flex justify-center mb-4">
                             <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 border border-border rounded-full text-xs text-muted-foreground shadow-sm">
                                 <TrendingUp size={12} className="text-amber-500" />
-                                Buyer offered <span className="font-bold text-foreground mx-1">{fmt(negotiation.buyerProposedPrice)}</span>
-                                for {negotiation.order.quantity} {negotiation.order.product.measurementUnit?.toLowerCase()}
+                                {t('settings.negotiations.buyerOfferedBanner', {
+                                    price: fmt(negotiation.buyerProposedPrice),
+                                    quantity: negotiation.order.quantity,
+                                    unit: negotiation.order.product.measurementUnit?.toLowerCase() ?? '',
+                                })}
                             </div>
                         </div>
                     )}
@@ -292,11 +303,11 @@ export default function NegotiationChat({
                             <div className="w-14 h-14 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mb-3">
                                 <Sprout size={24} className="text-green-500" />
                             </div>
-                            <p className="text-sm font-semibold text-foreground">Start the conversation</p>
+                            <p className="text-sm font-semibold text-foreground">{t('settings.negotiations.startConversation')}</p>
                             <p className="text-xs text-muted-foreground mt-1">
                                 {isSeller
-                                    ? 'Reply to the buyer or set your price on the right'
-                                    : 'Chat with the seller to agree on a price'}
+                                    ? t('settings.negotiations.emptySellerHint')
+                                    : t('settings.negotiations.emptyBuyerHint')}
                             </p>
                         </div>
                     ) : (
@@ -306,6 +317,7 @@ export default function NegotiationChat({
                                 msg={msg}
                                 isOwn={msg.sender.id === user?.id}
                                 onReply={setReplyTo}
+                                t={t}
                             />
                         ))
                     )}
@@ -334,8 +346,8 @@ export default function NegotiationChat({
                         type="text"
                         placeholder={
                             !isNegotiationActive
-                                ? 'Negotiation is closed'
-                                : 'Type a message…'
+                                ? t('settings.negotiations.negotiationClosed')
+                                : t('settings.negotiations.typeMessage')
                         }
                         disabled={!isNegotiationActive || sending}
                         value={input}

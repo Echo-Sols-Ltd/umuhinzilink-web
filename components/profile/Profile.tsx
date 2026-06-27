@@ -18,6 +18,8 @@ import {
 import { Negotiation, NegotiationStatus, User as UserType, UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
 import NegotiationCard from '@/components/negotiation/NegotiationCard';
+import { useI18n } from '@/contexts/I18nContext';
+import { formatCurrency } from '@/lib/localeFormat';
 
 interface ProfileProps {
   user: UserType;
@@ -29,16 +31,11 @@ interface ProfileProps {
   negotiationsLoading?: boolean;
 }
 
-function formatRWF(amount: number) {
-  return new Intl.NumberFormat('rw-RW', { style: 'decimal' }).format(amount) + ' RWF';
-}
-
-function formatJoined(createdAt?: string) {
-  if (!createdAt) return 'Member';
-  const date = new Date(createdAt);
-  if (Number.isNaN(date.getTime())) return 'Member';
-  return `Joined ${date.toLocaleDateString('en-RW', { month: 'long', year: 'numeric' })}`;
-}
+const ROLE_KEYS: Record<UserRole, string> = {
+  [UserRole.SELLER]: 'nav.roles.seller',
+  [UserRole.BUYER]: 'nav.roles.buyer',
+  [UserRole.ADMIN]: 'nav.roles.admin',
+};
 
 function ShortcutCard({
   href,
@@ -85,70 +82,92 @@ export default function Profile({
   activeNegotiations,
   negotiationsLoading = false,
 }: ProfileProps) {
+  const { t, locale } = useI18n();
   const initials = `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() || '?';
   const pendingNegotiations = activeNegotiations.filter((n) => n.status === NegotiationStatus.PENDING).length;
   const recentNegotiations = activeNegotiations.slice(0, 3);
   const isSeller = user.role === UserRole.SELLER;
+
+  const formatJoined = (createdAt?: string) => {
+    if (!createdAt) return t('profile.overview.member');
+    const date = new Date(createdAt);
+    if (Number.isNaN(date.getTime())) return t('profile.overview.member');
+    const monthYear = date.toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-RW', {
+      month: 'long',
+      year: 'numeric',
+    });
+    return t('profile.overview.joined', { monthYear });
+  };
 
   const shortcuts = isSeller
     ? [
         {
           href: '/wallet',
           icon: Wallet,
-          label: 'Wallet',
-          value: formatRWF(walletBalance),
-          sub: 'Available balance',
+          label: t('profile.overview.wallet'),
+          value: formatCurrency(walletBalance, locale),
+          sub: t('profile.overview.availableBalance'),
         },
         {
           href: '/products/seller',
           icon: Package,
-          label: 'My listings',
-          value: 'Manage',
-          sub: 'Products you sell',
+          label: t('profile.overview.myListings'),
+          value: t('profile.overview.manage'),
+          sub: t('profile.overview.productsYouSell'),
         },
         {
           href: '/orders',
           icon: ShoppingBag,
-          label: 'Orders',
+          label: t('profile.overview.orders'),
           value: totalOrders,
-          sub: completedOrders > 0 ? `${completedOrders} completed` : 'View history',
+          sub: completedOrders > 0
+            ? t('profile.overview.completed', { count: completedOrders })
+            : t('profile.overview.viewHistory'),
         },
         {
           href: '/negotiations',
           icon: MessageSquare,
-          label: 'Negotiations',
+          label: t('profile.overview.negotiations'),
           value: pendingNegotiations,
-          sub: pendingNegotiations > 0 ? 'Awaiting response' : 'View all',
+          sub: pendingNegotiations > 0
+            ? t('profile.overview.awaitingResponse')
+            : t('profile.overview.viewAll'),
         },
       ]
     : [
         {
           href: '/wallet',
           icon: Wallet,
-          label: 'Wallet',
-          value: formatRWF(walletBalance),
-          sub: 'Available balance',
+          label: t('profile.overview.wallet'),
+          value: formatCurrency(walletBalance, locale),
+          sub: t('profile.overview.availableBalance'),
         },
         {
           href: '/orders',
           icon: ShoppingBag,
-          label: 'Orders',
+          label: t('profile.overview.orders'),
           value: totalOrders,
-          sub: completedOrders > 0 ? `${completedOrders} completed` : 'View history',
+          sub: completedOrders > 0
+            ? t('profile.overview.completed', { count: completedOrders })
+            : t('profile.overview.viewHistory'),
         },
         {
           href: '/products/saved',
           icon: Heart,
-          label: 'Saved',
+          label: t('profile.overview.saved'),
           value: savedProductsCount,
-          sub: savedProductsCount > 0 ? 'Saved for later' : 'Browse products',
+          sub: savedProductsCount > 0
+            ? t('profile.overview.savedForLater')
+            : t('profile.overview.browseProducts'),
         },
         {
           href: '/negotiations',
           icon: MessageSquare,
-          label: 'Negotiations',
+          label: t('profile.overview.negotiations'),
           value: pendingNegotiations,
-          sub: pendingNegotiations > 0 ? 'Awaiting response' : 'View all',
+          sub: pendingNegotiations > 0
+            ? t('profile.overview.awaitingResponse')
+            : t('profile.overview.viewAll'),
         },
       ];
 
@@ -177,7 +196,7 @@ export default function Profile({
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-border text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shrink-0"
             >
               <Edit2 size={12} />
-              Edit profile
+              {t('profile.overview.editProfile')}
             </Link>
           </div>
 
@@ -188,13 +207,13 @@ export default function Profile({
             {user.emailVerified && (
               <span className="flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-950/40 px-2 py-0.5 rounded-full">
                 <CheckCircle size={10} />
-                Verified
+                {t('profile.overview.verified')}
               </span>
             )}
           </div>
 
           <p className="text-sm text-muted-foreground">
-            {user.role} · {formatJoined(user.createdAt)}
+            {t(ROLE_KEYS[user.role])} · {formatJoined(user.createdAt)}
           </p>
 
           <div className="mt-4 flex flex-col gap-1.5">
@@ -216,7 +235,7 @@ export default function Profile({
       {/* Shortcuts */}
       <div>
         <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-3 px-0.5">
-          Quick access
+          {t('profile.overview.quickAccess')}
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {shortcuts.map((item) => (
@@ -228,12 +247,12 @@ export default function Profile({
       {/* Recent negotiations */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h2 className="text-sm font-bold text-foreground">Recent negotiations</h2>
+          <h2 className="text-sm font-bold text-foreground">{t('profile.overview.recentNegotiations')}</h2>
           <Link
             href="/negotiations"
             className="text-xs font-semibold text-green-600 hover:text-green-700 flex items-center gap-0.5"
           >
-            See all
+            {t('profile.overview.seeAll')}
             <ChevronRight size={13} />
           </Link>
         </div>
@@ -253,18 +272,18 @@ export default function Profile({
         ) : (
           <div className="py-12 px-6 text-center">
             <MessageSquare size={28} className="text-muted-foreground mx-auto mb-3 opacity-40" />
-            <p className="text-sm font-medium text-foreground">No negotiations yet</p>
+            <p className="text-sm font-medium text-foreground">{t('profile.overview.noNegotiationsYet')}</p>
             <p className="text-xs text-muted-foreground mt-1 max-w-xs mx-auto">
               {isSeller
-                ? 'When buyers negotiate on your products, they will appear here.'
-                : 'Negotiate on a product to get a better price from sellers.'}
+                ? t('profile.overview.sellerNegotiationsHint')
+                : t('profile.overview.buyerNegotiationsHint')}
             </p>
             {!isSeller && (
               <Link
                 href="/products"
                 className="mt-4 inline-flex h-9 items-center px-4 text-sm font-semibold rounded-xl bg-green-600 text-white hover:bg-green-700 transition-colors"
               >
-                Browse products
+                {t('profile.overview.browseProducts')}
               </Link>
             )}
           </div>
@@ -279,7 +298,7 @@ export default function Profile({
         >
           <div className="flex items-center gap-3 text-sm font-medium text-foreground">
             <User size={16} className="text-muted-foreground" />
-            Edit profile
+            {t('profile.overview.editProfile')}
           </div>
           <ChevronRight size={14} className="text-muted-foreground shrink-0" />
         </Link>
@@ -289,7 +308,7 @@ export default function Profile({
         >
           <div className="flex items-center gap-3 text-sm font-medium text-foreground">
             <Settings size={16} className="text-muted-foreground" />
-            Settings
+            {t('profile.overview.settings')}
           </div>
           <ChevronRight size={14} className="text-muted-foreground shrink-0" />
         </Link>

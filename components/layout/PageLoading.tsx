@@ -2,6 +2,7 @@
 
 import { Sprout, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/contexts/I18nContext';
 
 type PageLoadingVariant = 'fullscreen' | 'section' | 'inline';
 
@@ -16,13 +17,15 @@ interface PageLoadingProps {
 }
 
 export default function PageLoading({
-  label = 'Loading',
+  label,
   description,
   className,
   fullScreen = true,
   withNavbarOffset = false,
   variant,
 }: PageLoadingProps) {
+  const { t } = useI18n();
+  const resolvedLabel = label ?? t('layout.loading');
   const resolvedVariant: PageLoadingVariant =
     variant ?? (fullScreen ? 'fullscreen' : 'section');
 
@@ -51,7 +54,7 @@ export default function PageLoading({
           <Loader2 size={14} className="animate-spin text-green-600" />
         </div>
       </div>
-      <p className="text-sm font-semibold text-foreground">{label}</p>
+      <p className="text-sm font-semibold text-foreground">{resolvedLabel}</p>
       {description && (
         <p className="text-xs text-muted-foreground mt-1 text-center max-w-xs">{description}</p>
       )}

@@ -8,6 +8,7 @@ import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { adminService } from '@/services/admin';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +33,7 @@ import { useToast } from '@/components/ui/use-toast';
 export default function AdminUserDetailPage() {
     const params = useParams();
     const router = useRouter();
+    const { t } = useI18n();
     const { user: currentUser } = useAuth();
     const {
         users,
@@ -70,10 +72,10 @@ export default function AdminUserDetailPage() {
                 }
             } catch (error) {
                 console.error('Failed to fetch user:', error);
-                setError('Failed to load user');
+                setError(t('admin.usersDetail.failedToLoad'));
                 showToast({
-                    title: "Error",
-                    description: "Failed to load user details",
+                    title: t('common.error'),
+                    description: t('admin.usersDetail.toasts.loadFailed'),
                     variant: "default"
                 });
             } finally {
@@ -92,8 +94,8 @@ export default function AdminUserDetailPage() {
 
     const handleSendMessage = () => {
         showToast({
-            title: "Not available",
-            description: "Direct messaging is only available through order negotiations.",
+            title: t('common.information'),
+            description: t('admin.usersDetail.toasts.notAvailable'),
             variant: "default"
         });
     };
@@ -105,15 +107,15 @@ export default function AdminUserDetailPage() {
             await adminService.toggleUserStatus(selectedUser.id, true);
             setCurrentUser({ ...selectedUser, active: false });
             showToast({
-                title: "Success",
-                description: "User suspended successfully",
+                title: t('common.success'),
+                description: t('admin.usersDetail.toasts.userSuspended'),
                 variant: "default"
             });
         } catch (error) {
             console.error('Failed to suspend user:', error);
             showToast({
-                title: "Error",
-                description: "Failed to suspend user",
+                title: t('common.error'),
+                description: t('admin.usersDetail.toasts.suspendFailed'),
                 variant: "default"
             });
         }
@@ -126,15 +128,15 @@ export default function AdminUserDetailPage() {
             await adminService.toggleUserStatus(selectedUser.id, false);
             setCurrentUser({ ...selectedUser, active: true });
             showToast({
-                title: "Success",
-                description: "User activated successfully",
+                title: t('common.success'),
+                description: t('admin.usersDetail.toasts.userActivated'),
                 variant: "default"
             });
         } catch (error) {
             console.error('Failed to unsuspend user:', error);
             showToast({
-                title: "Error",
-                description: "Failed to activate user",
+                title: t('common.error'),
+                description: t('admin.usersDetail.toasts.activateFailed'),
                 variant: "default"
             });
         }
@@ -147,8 +149,8 @@ export default function AdminUserDetailPage() {
                 <main className="flex-1 flex items-center justify-center">
                     <PageLoading
                         variant="section"
-                        label="Loading user"
-                        description="Fetching account details…"
+                        label={t('admin.usersDetail.loadingLabel')}
+                        description={t('admin.usersDetail.loadingDescription')}
                         className="bg-transparent dark:bg-transparent"
                     />
                 </main>
@@ -163,10 +165,10 @@ export default function AdminUserDetailPage() {
                 <main className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                         <UserIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                        <h2 className="text-xl font-semibold text-foreground mb-2">User Not Found</h2>
-                        <p className="text-muted-foreground">{error || 'The user you\'re looking for doesn\'t exist.'}</p>
+                        <h2 className="text-xl font-semibold text-foreground mb-2">{t('admin.usersDetail.notFoundTitle')}</h2>
+                        <p className="text-muted-foreground">{error || t('admin.usersDetail.notFoundDesc')}</p>
                         <Button onClick={handleBack} className="mt-4">
-                            Back to Users
+                            {t('admin.usersDetail.backToUsers')}
                         </Button>
                     </div>
                 </main>
@@ -182,10 +184,10 @@ export default function AdminUserDetailPage() {
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <AdminPageHeader
-                    title="User Details"
+                    title={t('admin.usersDetail.title')}
                     description={`#${user.id.slice(0, 8)} • ${user.role}`}
                     backHref="/admin/users"
-                    backLabel="Back to Users"
+                    backLabel={t('admin.usersDetail.backToUsers')}
                     actions={
                         <>
                             <Button
@@ -194,7 +196,7 @@ export default function AdminUserDetailPage() {
                                 onClick={handleSendMessage}
                             >
                                 <MessageSquare className="w-4 h-4 mr-2" />
-                                Message
+                                {t('admin.usersDetail.message')}
                             </Button>
                             {!user.active ? (
                                 <Button
@@ -203,7 +205,7 @@ export default function AdminUserDetailPage() {
                                     onClick={handleUnsuspendUser}
                                 >
                                     <CheckCircle className="w-4 h-4 mr-2" />
-                                    Unsuspend
+                                    {t('admin.usersDetail.unsuspend')}
                                 </Button>
                             ) : (
                                 <Button
@@ -212,7 +214,7 @@ export default function AdminUserDetailPage() {
                                     onClick={handleSuspendUser}
                                 >
                                     <Ban className="w-4 h-4 mr-2" />
-                                    Suspend
+                                    {t('admin.usersDetail.suspend')}
                                 </Button>
                             )}
                         </>
@@ -225,23 +227,23 @@ export default function AdminUserDetailPage() {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <CardTitle className="text-lg">User Status</CardTitle>
+                                    <CardTitle className="text-lg">{t('admin.usersDetail.userStatus')}</CardTitle>
                                     <CardDescription>
-                                        Current status and verification information
+                                        {t('admin.usersDetail.userStatusDesc')}
                                     </CardDescription>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <Badge className={user.emailVerified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
                                         <div className="flex items-center space-x-1">
                                             {user.emailVerified ? <CheckCircle className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
-                                            <span>{user.emailVerified ? 'Verified' : 'Pending'}</span>
+                                            <span>{user.emailVerified ? t('admin.users.status.verified') : t('admin.users.status.pending')}</span>
                                         </div>
                                     </Badge>
                                     {!user.active && (
                                         <Badge className="text-destructive bg-destructive/10">
                                             <div className="flex items-center space-x-1">
                                                 <XCircle className="w-4 h-4" />
-                                                <span>Suspended</span>
+                                                <span>{t('admin.users.status.suspended')}</span>
                                             </div>
                                         </Badge>
                                     )}
@@ -251,15 +253,15 @@ export default function AdminUserDetailPage() {
                         <CardContent>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">User ID</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.userId')}</p>
                                     <p className="font-medium">#{user.id.slice(0, 8)}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Role</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.role')}</p>
                                     <p className="font-medium">{user.role}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Joined</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.joined')}</p>
                                     <p className="font-medium">
                                         {new Date(user.createdAt).toLocaleDateString()}
                                     </p>
@@ -275,26 +277,26 @@ export default function AdminUserDetailPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center">
                                     <UserIcon className="w-5 h-5 mr-2" />
-                                    Personal Information
+                                    {t('admin.usersDetail.personalInfo')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Full Name</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.fullName')}</p>
                                     <p className="font-medium">{user.firstName} {user.lastName}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Email Address</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.email')}</p>
                                     <p className="font-medium">{user.email}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Phone Number</p>
-                                    <p className="font-medium">{user.phoneNumber || 'Not provided'}</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.phone')}</p>
+                                    <p className="font-medium">{user.phoneNumber || t('profile.notProvided')}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Address</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.address')}</p>
                                     <p className="font-medium">
-                                        {'Not provided'}
+                                        {t('profile.notProvided')}
                                     </p>
                                 </div>
                             </CardContent>
@@ -305,24 +307,24 @@ export default function AdminUserDetailPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center">
                                     <Shield className="w-5 h-5 mr-2" />
-                                    Account Information
+                                    {t('admin.usersDetail.accountInfo')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Account Type</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.accountType')}</p>
                                     <p className="font-medium">{user.role}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Verification Status</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.verificationStatus')}</p>
                                     <Badge className={user.emailVerified ? 'text-success bg-success/10' : 'text-warning bg-warning/10'}>
-                                        {user.emailVerified ? 'Verified' : 'Pending Verification'}
+                                        {user.emailVerified ? t('admin.users.status.verifiedAccount') : t('admin.users.status.pendingVerification')}
                                     </Badge>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Account Status</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.usersDetail.accountStatus')}</p>
                                     <Badge className={!user.active ? 'text-destructive bg-destructive/10' : 'text-success bg-success/10'}>
-                                        {!user.active ? 'Suspended' : 'Active'}
+                                        {!user.active ? t('admin.users.status.suspended') : t('admin.usersDetail.active')}
                                     </Badge>
                                 </div>
                             </CardContent>
@@ -332,24 +334,24 @@ export default function AdminUserDetailPage() {
                     {/* Additional Actions */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Admin Actions</CardTitle>
+                            <CardTitle>{t('admin.usersDetail.adminActions')}</CardTitle>
                             <CardDescription>
-                                Administrative controls for this user
+                                {t('admin.usersDetail.adminActionsDesc')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-wrap gap-2">
                                 <Button variant="outline" size="sm" onClick={handleSendMessage}>
                                     <MessageSquare className="w-4 h-4 mr-2" />
-                                    Send Message
+                                    {t('admin.usersDetail.sendMessage')}
                                 </Button>
                                 <Button variant="outline" size="sm">
                                     <Edit className="w-4 h-4 mr-2" />
-                                    Edit User
+                                    {t('admin.usersDetail.editUser')}
                                 </Button>
                                 <Button variant="outline" size="sm">
                                     <Calendar className="w-4 h-4 mr-2" />
-                                    View Activity
+                                    {t('admin.usersDetail.viewActivity')}
                                 </Button>
                             </div>
                         </CardContent>
