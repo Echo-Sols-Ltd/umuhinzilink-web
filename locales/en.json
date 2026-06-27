@@ -1867,7 +1867,15 @@
     "thinking": "Thinking…",
     "inputPlaceholder": "Ask anything…",
     "errors": {
-      "generic": "AI assistant is unavailable. Try again later."
+      "generic": "AI assistant is unavailable. Try again later.",
+      "timeout": "That took too long — try a shorter question.",
+      "unavailable": "AI is not configured on the server yet.",
+      "emptyInput": "Please type a message or crop name first.",
+      "image": "Could not use that image — try another photo.",
+      "imageTooLarge": "Photo must be under 5MB.",
+      "session": "Session expired — please sign in again.",
+      "noResponse": "No answer received — try rephrasing your question.",
+      "cropAnalysis": "Could not analyze this photo — use a clear close-up of the leaves."
     },
     "modes": {
       "chat": "Chat",

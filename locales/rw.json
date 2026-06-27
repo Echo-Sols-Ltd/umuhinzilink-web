@@ -1867,7 +1867,15 @@
     "thinking": "Ndatekereza…",
     "inputPlaceholder": "Baza ikibazo…",
     "errors": {
-      "generic": "Umufasha wa AI ntiboneka. Ongera ugerageze."
+      "generic": "Umufasha wa AI ntiboneka. Ongera ugerageze.",
+      "timeout": "Byafashe igihe kinini — gerageza ikibazo gito.",
+      "unavailable": "AI ntirashyirwaho kuri seriveri.",
+      "emptyInput": "Andika ubutumwa cyangwa izina ry'igihingwa.",
+      "image": "Ifoto ntiyakoreshejwe — gerageza indi.",
+      "imageTooLarge": "Ifoto igomba kuba munsi ya 5MB.",
+      "session": "Igihe cyarangiye — injira nanone.",
+      "noResponse": "Nta gisubizo — gerageza kubaza mu buryo butandukanye.",
+      "cropAnalysis": "Ifoto ntiyasuzumwe — koresha ifoto isobanutse y'ibibabi."
     },
     "modes": {
       "chat": "Ikiganiro",

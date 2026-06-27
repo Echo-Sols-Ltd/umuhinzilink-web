@@ -1,4 +1,11 @@
-import { Product } from './product';
+export interface AiProductSummary {
+  id: string;
+  name: string;
+  unitPrice: number;
+  district?: string;
+  measurementUnit?: string;
+  image?: string;
+}
 
 export type AiCapability =
   | 'CHAT'
@@ -11,6 +18,7 @@ export type AiCapability =
 export interface AiChatTurn {
   role: 'user' | 'assistant';
   content: string;
+  isError?: boolean;
 }
 
 export interface AiStatus {
@@ -46,7 +54,7 @@ export interface AiSearchFilters {
 export interface AiSmartSearchResponse {
   interpretation: string;
   reply: string;
-  products: Product[];
+  products: AiProductSummary[];
   parsedFilters: AiSearchFilters;
 }
 
@@ -77,3 +85,10 @@ export interface AiNegotiationHintRequest {
   sellerCounter?: number;
   locale?: string;
 }
+
+/** Max chars sent per history turn / message — must match backend AiLimits. */
+export const AI_CLIENT_LIMITS = {
+  maxMessageChars: 500,
+  maxHistoryTurns: 4,
+  maxHistoryCharsPerTurn: 300,
+} as const;

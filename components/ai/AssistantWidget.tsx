@@ -2,15 +2,20 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Brain, X, Send, Loader2, Camera, TrendingUp,
+  Brain, X, Send, Loader2, Camera, TrendingUp, AlertCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { aiService } from '@/services/ai';
-import { notify } from '@/lib/notify';
-import { UserRole, AiChatTurn, Product } from '@/types';
+import {
+  compressHistory,
+  extractApiErrorMessage,
+  resolveAiErrorMessage,
+  trimForAi,
+} from '@/lib/aiErrors';
+import { UserRole, AiChatTurn, AiProductSummary } from '@/types';
 import { cn } from '@/lib/utils';
 
 type AssistantMode = 'chat' | 'farming' | 'crop' | 'price' | 'search';
@@ -40,14 +45,12 @@ export default function AssistantWidget() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<AiChatTurn[]>([]);
-  const [searchProducts, setSearchProducts] = useState<Product[]>([]);
+  const [searchProducts, setSearchProducts] = useState<AiProductSummary[]>([]);
 
-  // Crop disease
   const [cropHint, setCropHint] = useState('');
   const [cropFile, setCropFile] = useState<File | null>(null);
   const [cropPreview, setCropPreview] = useState<string | null>(null);
 
-  // Price advice
   const [cropName, setCropName] = useState('');
   const [district, setDistrict] = useState('');
 
@@ -75,7 +78,7 @@ export default function AssistantWidget() {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-  }, [history, loading]);
+  }, [history, loading, searchProducts]);
 
   useEffect(() => {
     if (!modes.includes(mode)) {
@@ -87,8 +90,17 @@ export default function AssistantWidget() {
     setHistory(prev => [...prev, { role: 'assistant', content }]);
   }, []);
 
+  const pushError = useCallback((raw?: string) => {
+    const message = resolveAiErrorMessage(raw, t);
+    setHistory(prev => [...prev, { role: 'assistant', content: message, isError: true }]);
+  }, [t]);
+
+  const handleApiFailure = useCallback((message?: string) => {
+    pushError(message);
+  }, [pushError]);
+
   const handleSend = async () => {
-    const text = input.trim();
+    const text = trimForAi(input);
     if (!text || loading) return;
 
     setInput('');
@@ -100,7 +112,7 @@ export default function AssistantWidget() {
       if (mode === 'search') {
         const res = await aiService.smartSearch({ query: text, locale: aiLocale });
         if (!res.success || !res.data) {
-          notify.error(res.message || t('assistant.errors.generic'));
+          handleApiFailure(res.message);
           return;
         }
         pushAssistant(res.data.reply);
@@ -109,10 +121,9 @@ export default function AssistantWidget() {
         const res = await aiService.farmingTips({
           message: text,
           locale: aiLocale,
-          history: history.slice(-8),
         });
-        if (!res.success || !res.data) {
-          notify.error(res.message || t('assistant.errors.generic'));
+        if (!res.success || !res.data?.reply) {
+          handleApiFailure(res.message);
           return;
         }
         pushAssistant(res.data.reply);
@@ -120,40 +131,44 @@ export default function AssistantWidget() {
         const res = await aiService.chat({
           message: text,
           locale: aiLocale,
-          history: history.slice(-8),
+          history: compressHistory(history),
         });
-        if (!res.success || !res.data) {
-          notify.error(res.message || t('assistant.errors.generic'));
+        if (!res.success || !res.data?.reply) {
+          handleApiFailure(res.message);
           return;
         }
         pushAssistant(res.data.reply);
       }
-    } catch {
-      notify.error(t('assistant.errors.generic'));
+    } catch (err) {
+      handleApiFailure(extractApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
 
   const handlePriceAdvice = async () => {
-    if (!cropName.trim() || loading) return;
+    const crop = trimForAi(cropName, 80);
+    if (!crop || loading) {
+      if (!crop) pushError(t('assistant.errors.emptyInput'));
+      return;
+    }
     setLoading(true);
-    const userMsg = `${t('assistant.price.for')} ${cropName}${district ? ` (${district})` : ''}`;
+    const userMsg = `${t('assistant.price.for')} ${crop}${district ? ` (${district.trim()})` : ''}`;
     setHistory(prev => [...prev, { role: 'user', content: userMsg }]);
 
     try {
       const res = await aiService.priceAdvice({
-        cropName: cropName.trim(),
+        cropName: crop,
         district: district.trim() || undefined,
         locale: aiLocale,
       });
-      if (!res.success || !res.data) {
-        notify.error(res.message || t('assistant.errors.generic'));
+      if (!res.success || !res.data?.reply) {
+        handleApiFailure(res.message);
         return;
       }
       pushAssistant(res.data.reply);
-    } catch {
-      notify.error(t('assistant.errors.generic'));
+    } catch (err) {
+      handleApiFailure(extractApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -161,25 +176,35 @@ export default function AssistantWidget() {
 
   const handleCropAnalyze = async () => {
     if (!cropFile || loading) return;
+    if (cropFile.size > 5 * 1024 * 1024) {
+      pushError(t('assistant.errors.imageTooLarge'));
+      return;
+    }
+
     setLoading(true);
     setHistory(prev => [...prev, { role: 'user', content: t('assistant.crop.uploaded') }]);
 
     try {
       const res = await aiService.analyzeCropDisease(cropFile, cropHint || undefined, aiLocale);
       if (!res.success || !res.data) {
-        notify.error(res.message || t('assistant.errors.generic'));
+        handleApiFailure(res.message);
         return;
       }
       const d = res.data;
-      const reply = [
-        d.diagnosis && `**${t('assistant.crop.diagnosis')}:** ${d.diagnosis}`,
-        d.treatment && `**${t('assistant.crop.treatment')}:** ${d.treatment}`,
-        d.prevention && `**${t('assistant.crop.prevention')}:** ${d.prevention}`,
-        d.confidenceNote && `**${t('assistant.crop.confidence')}:** ${d.confidenceNote}`,
-      ].filter(Boolean).join('\n\n');
-      pushAssistant(reply);
-    } catch {
-      notify.error(t('assistant.errors.generic'));
+      const parts = [
+        d.diagnosis && `${t('assistant.crop.diagnosis')}: ${d.diagnosis}`,
+        d.treatment && `${t('assistant.crop.treatment')}: ${d.treatment}`,
+        d.prevention && `${t('assistant.crop.prevention')}: ${d.prevention}`,
+        d.confidenceNote && `${t('assistant.crop.confidence')}: ${d.confidenceNote}`,
+      ].filter(Boolean);
+
+      if (parts.length === 0) {
+        handleApiFailure(t('assistant.errors.cropAnalysis'));
+        return;
+      }
+      pushAssistant(parts.join('\n\n'));
+    } catch (err) {
+      handleApiFailure(extractApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -195,7 +220,6 @@ export default function AssistantWidget() {
 
   return (
     <>
-      {/* Floating button */}
       {!open && (
         <button
           type="button"
@@ -208,10 +232,8 @@ export default function AssistantWidget() {
         </button>
       )}
 
-      {/* Panel */}
       {open && (
         <div className="fixed bottom-4 right-4 z-50 w-[min(100vw-2rem,400px)] h-[min(85vh,560px)] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
-          {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-primary/5 shrink-0">
             <div className="flex items-center gap-2">
               <Brain size={18} className="text-primary" />
@@ -238,7 +260,6 @@ export default function AssistantWidget() {
             </div>
           </div>
 
-          {/* Mode tabs */}
           <div className="flex gap-1 px-3 py-2 border-b border-border overflow-x-auto shrink-0 scrollbar-hide">
             {modes.map(m => (
               <button
@@ -257,7 +278,6 @@ export default function AssistantWidget() {
             ))}
           </div>
 
-          {/* Messages */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
             {history.length === 0 && (
               <p className="text-xs text-muted-foreground text-center py-6">
@@ -269,12 +289,15 @@ export default function AssistantWidget() {
                 key={i}
                 className={cn(
                   'max-w-[90%] rounded-xl px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap',
-                  msg.role === 'user'
-                    ? 'ml-auto bg-primary text-primary-foreground'
-                    : 'bg-muted text-foreground',
+                  msg.isError
+                    ? 'bg-destructive/10 text-destructive border border-destructive/20 flex gap-2 items-start'
+                    : msg.role === 'user'
+                      ? 'ml-auto bg-primary text-primary-foreground'
+                      : 'bg-muted text-foreground',
                 )}
               >
-                {msg.content}
+                {msg.isError && <AlertCircle size={14} className="shrink-0 mt-0.5" />}
+                <span>{msg.content}</span>
               </div>
             ))}
             {loading && (
@@ -287,7 +310,7 @@ export default function AssistantWidget() {
             {searchProducts.length > 0 && (
               <div className="space-y-2 pt-2">
                 <p className="text-xs font-semibold text-foreground">{t('assistant.search.results')}</p>
-                {searchProducts.slice(0, 3).map(p => (
+                {searchProducts.slice(0, 5).map(p => (
                   <Link
                     key={p.id}
                     href={`/products/${p.id}`}
@@ -296,20 +319,22 @@ export default function AssistantWidget() {
                   >
                     <span className="font-medium text-foreground">{p.name}</span>
                     <span className="text-muted-foreground"> — {p.unitPrice} RWF</span>
+                    {p.district && (
+                      <span className="text-muted-foreground"> · {String(p.district)}</span>
+                    )}
                   </Link>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Input area */}
           <div className="shrink-0 border-t border-border p-3 space-y-2">
             {mode === 'crop' && (
               <div className="space-y-2">
                 <input
                   type="text"
                   value={cropHint}
-                  onChange={e => setCropHint(e.target.value)}
+                  onChange={e => setCropHint(e.target.value.slice(0, 80))}
                   placeholder={t('assistant.crop.hintPlaceholder')}
                   className="w-full h-9 px-3 text-xs rounded-lg border border-border bg-background"
                 />
@@ -357,14 +382,14 @@ export default function AssistantWidget() {
                 <input
                   type="text"
                   value={cropName}
-                  onChange={e => setCropName(e.target.value)}
+                  onChange={e => setCropName(e.target.value.slice(0, 80))}
                   placeholder={t('assistant.price.cropPlaceholder')}
                   className="w-full h-9 px-3 text-xs rounded-lg border border-border bg-background"
                 />
                 <input
                   type="text"
                   value={district}
-                  onChange={e => setDistrict(e.target.value)}
+                  onChange={e => setDistrict(e.target.value.slice(0, 40))}
                   placeholder={t('assistant.price.districtPlaceholder')}
                   className="w-full h-9 px-3 text-xs rounded-lg border border-border bg-background"
                 />
@@ -385,7 +410,7 @@ export default function AssistantWidget() {
                 <input
                   type="text"
                   value={input}
-                  onChange={e => setInput(e.target.value)}
+                  onChange={e => setInput(e.target.value.slice(0, 500))}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
                   placeholder={
                     mode === 'search'
