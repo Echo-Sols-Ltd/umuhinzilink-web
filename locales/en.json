@@ -1857,5 +1857,102 @@
         "negotiationDeclined": "Negotiation declined"
       }
     }
+  },
+  "assistant": {
+    "title": "AI Assistant",
+    "subtitle": "Farming & marketplace help",
+    "subtitleBuyer": "Ask anything — find produce, prices, and help buying",
+    "open": "Open AI assistant",
+    "expand": "Full page",
+    "close": "Close",
+    "send": "Send message",
+    "backToChat": "Back to chat",
+    "signInPrompt": "Sign in to use the AI assistant.",
+    "welcome": "Ask about crops, prices, or farming tips for Rwanda.",
+    "welcomeBuyer": "Just type your question below — like texting a friend who knows the marketplace.",
+    "buyerHint": "Type naturally — e.g. “What can I buy?” or “Maize near Bugesera”",
+    "availableNow": "Available on UmuhinziLink now",
+    "noListingsYet": "No produce listed yet — check back soon or browse Products.",
+    "askAbout": "Tell me about",
+    "inputPlaceholderBuyer": "What are you looking for?",
+    "farmingPlaceholder": "Ask a farming question…",
+    "suggestions": {
+      "whatAvailable": "What can I buy today?",
+      "findProduce": "Find maize",
+      "howToBuy": "How do I place an order?"
+    },
+    "profile": {
+      "crops": "Your listings"
+    },
+    "thinking": "Thinking…",
+    "inputPlaceholder": "Ask anything…",
+    "errors": {
+      "generic": "AI assistant is unavailable. Try again later.",
+      "network": "Could not reach the server — check your connection and try again.",
+      "listings": "Could not load marketplace listings — open /products or try again shortly.",
+      "timeout": "That took too long — try a shorter question.",
+      "unavailable": "AI is not configured on the server yet.",
+      "emptyInput": "Please type a message or crop name first.",
+      "image": "Could not use that image — try another photo.",
+      "imageTooLarge": "Photo must be under 5MB.",
+      "session": "Session expired — please sign in again.",
+      "noResponse": "No answer received — try rephrasing your question.",
+      "cropAnalysis": "Could not analyze this photo — use a clear close-up of the leaves."
+    },
+    "modes": {
+      "chat": "Chat",
+      "farming": "Farming tips",
+      "crop": "Crop health",
+      "price": "Price advice",
+      "search": "Smart search"
+    },
+    "search": {
+      "placeholder": "e.g. 200kg tomatoes near Kigali",
+      "results": "Matching listings"
+    },
+    "crop": {
+      "hintPlaceholder": "Crop type (optional)",
+      "pickPhoto": "Upload crop photo",
+      "analyze": "Analyze disease",
+      "uploaded": "Uploaded crop photo for analysis",
+      "diagnosis": "Diagnosis",
+      "treatment": "Treatment",
+      "prevention": "Prevention",
+      "confidence": "Confidence"
+    },
+    "price": {
+      "for": "Price advice for",
+      "cropPlaceholder": "Crop name (e.g. tomatoes)",
+      "districtPlaceholder": "District (optional)",
+      "getAdvice": "Get price advice"
+    },
+    "page": {
+      "title": "UmuhinziLink AI",
+      "description": "Your expert for farming, fair prices, and finding produce in Rwanda.",
+      "descriptionBuyer": "Ask in plain language — no special commands needed.",
+      "hint": "Use the floating button (bottom-right) on any page to chat with the assistant."
+    },
+    "features": {
+      "chat": {
+        "title": "Multilingual chat",
+        "description": "Support in English and Kinyarwanda for marketplace and farming questions."
+      },
+      "farming": {
+        "title": "Farming tips",
+        "description": "Seasonal advice, soil health, and crop rotation for Rwandan farmers."
+      },
+      "crop": {
+        "title": "Crop disease detection",
+        "description": "Upload a photo to identify plant diseases and get treatment suggestions."
+      },
+      "price": {
+        "title": "Price guidance",
+        "description": "Fair market price ranges before you list produce on the marketplace."
+      },
+      "search": {
+        "title": "Smart search",
+        "description": "Describe what you need in plain language and find matching listings."
+      }
+    }
   }
 }

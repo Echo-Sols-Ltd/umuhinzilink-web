@@ -33,12 +33,14 @@ export default function Navbar() {
 
   const buyerLinks = [
     { label: 'Browse', href: '/products' },
+    { label: 'AI Assistant', href: '/assistant' },
     { label: 'My Orders', href: '/orders' },
     { label: 'Negotiations', href: '/negotiations' }
   ];
 
   const sellerLinks = [
     { label: 'Browse', href: '/products' },
+    { label: 'AI Assistant', href: '/assistant' },
     { label: 'My Listings', href: '/products/seller' },
     { label: 'My Orders', href: '/orders' },
     { label: 'Negotiations', href: '/negotiations' }

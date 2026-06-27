@@ -1857,5 +1857,102 @@
         "negotiationDeclined": "Ibiganiro byanzwe"
       }
     }
+  },
+  "assistant": {
+    "title": "Umufasha wa AI",
+    "subtitle": "Ubuhinzi n'isoko",
+    "subtitleBuyer": "Baza ikibazo icyo ari cyo cyose — gushaka ibicuruzwa, ibiciro, n'ubufasha bwo kugura",
+    "open": "Fungura umufasha wa AI",
+    "expand": "Urupapuro rwuzuye",
+    "close": "Funga",
+    "send": "Ohereza ubutumwa",
+    "backToChat": "Subira mu kiganiro",
+    "signInPrompt": "Injira kugirango ukoreshe umufasha wa AI.",
+    "welcome": "Baza ku buhinzi, ibiciro, cyangwa inama z'ibihingwa mu Rwanda.",
+    "welcomeBuyer": "Andika ikibazo cyawe hepfo — nko kohereza ubutumwa ku nshuti izi isoko.",
+    "buyerHint": "Andika uko bisanzwe — urugero: “Nshobora kugura iki?” cyangwa “Ibigori hafi ya Bugesera”",
+    "availableNow": "Biri ku UmuhinziLink ubu",
+    "noListingsYet": "Nta bicuruzwa biri — subira nyuma cyangwa reba Ibicuruzwa.",
+    "askAbout": "Mbwire kuri",
+    "inputPlaceholderBuyer": "Urashaka iki?",
+    "farmingPlaceholder": "Baza ikibazo cy'ubuhinzi…",
+    "suggestions": {
+      "whatAvailable": "Nshobora kugura iki uyu munsi?",
+      "findProduce": "Shaka ibigori",
+      "howToBuy": "Nagura nte?"
+    },
+    "profile": {
+      "crops": "Ibicuruzwa byawe"
+    },
+    "thinking": "Ndatekereza…",
+    "inputPlaceholder": "Baza ikibazo…",
+    "errors": {
+      "generic": "Umufasha wa AI ntiboneka. Ongera ugerageze.",
+      "network": "Ntitwashoboye guhuza na seriveri — reba interineti hanyuma ongera ugerageze.",
+      "listings": "Ntibishoboye kubona ibicuruzwa — fungura /products cyangwa ongera ugerageze.",
+      "timeout": "Byafashe igihe kinini — gerageza ikibazo gito.",
+      "unavailable": "AI ntirashyirwaho kuri seriveri.",
+      "emptyInput": "Andika ubutumwa cyangwa izina ry'igihingwa.",
+      "image": "Ifoto ntiyakoreshejwe — gerageza indi.",
+      "imageTooLarge": "Ifoto igomba kuba munsi ya 5MB.",
+      "session": "Igihe cyarangiye — injira nanone.",
+      "noResponse": "Nta gisubizo — gerageza kubaza mu buryo butandukanye.",
+      "cropAnalysis": "Ifoto ntiyasuzumwe — koresha ifoto isobanutse y'ibibabi."
+    },
+    "modes": {
+      "chat": "Ikiganiro",
+      "farming": "Inama z'ubuhinzi",
+      "crop": "Ubuzima bw'ibihingwa",
+      "price": "Inama y'ibiciro",
+      "search": "Shakisha byihuse"
+    },
+    "search": {
+      "placeholder": "urugero: kg 200 z'inyanya hafi ya Kigali",
+      "results": "Ibicuruzwa bihuye"
+    },
+    "crop": {
+      "hintPlaceholder": "Ubwoko bw'igihingwa (si ngombwa)",
+      "pickPhoto": "Shyiraho ifoto y'igihingwa",
+      "analyze": "Suzuma indwara",
+      "uploaded": "Ifoto y'igihingwa yoherejwe",
+      "diagnosis": "Isuzuma",
+      "treatment": "Ubuvuzi",
+      "prevention": "Kwirinda",
+      "confidence": "Icyizere"
+    },
+    "price": {
+      "for": "Inama y'ibiciro kuri",
+      "cropPlaceholder": "Izina ry'igihingwa (urugero: inyanya)",
+      "districtPlaceholder": "Akarere (si ngombwa)",
+      "getAdvice": "Bona inama y'ibiciro"
+    },
+    "page": {
+      "title": "UmuhinziLink AI",
+      "description": "Umujyanama wawe mu buhinzi, ibiciro byiza, no gushaka ibicuruzwa mu Rwanda.",
+      "descriptionBuyer": "Baza mu rurimi rusanzwe — nta mategeko yihariye akenewe.",
+      "hint": "Koresha buto buhagaze hasi iburyo ku rupapuro rwose kugirango uvugane n'umufasha."
+    },
+    "features": {
+      "chat": {
+        "title": "Ikiganiro mu ndimi nyinshi",
+        "description": "Ubufasha mu Cyongereza n'Ikinyarwanda ku bibazo by'isoko n'ubuhinzi."
+      },
+      "farming": {
+        "title": "Inama z'ubuhinzi",
+        "description": "Inama z'igihe, ubuzima bw'ubutaka, n'guhinduranya ibihingwa mu Rwanda."
+      },
+      "crop": {
+        "title": "Gukemura indwara z'ibihingwa",
+        "description": "Shyiraho ifoto kugirango umenye indwara n'inama yo kuvura."
+      },
+      "price": {
+        "title": "Inama y'ibiciro",
+        "description": "Ibiciro byiza mbere yo gushyira ibicuruzwa ku isoko."
+      },
+      "search": {
+        "title": "Gushakisha byihuse",
+        "description": "Sobanura ibyo ukeneye mu magambo yoroheje ubone ibicuruzwa bihuye."
+      }
+    }
   }
 }
