@@ -62,7 +62,11 @@ export default function AssistantChat({
 
   const isSeller = user?.role === UserRole.SELLER;
   const isBuyer = !isSeller;
-  const aiLocale = locale === 'rw' ? 'rw' : 'en';
+  const prefersKinyarwanda =
+    locale === 'rw'
+    || userContext?.language?.toLowerCase().includes('kinyarwanda')
+    || userContext?.language?.toLowerCase() === 'rw';
+  const aiLocale = prefersKinyarwanda ? 'rw' : 'en';
   const isFull = layout === 'full';
 
   useEffect(() => {
