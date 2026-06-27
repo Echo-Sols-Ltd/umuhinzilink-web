@@ -1863,7 +1863,7 @@
     "subtitle": "Farming & marketplace help",
     "open": "Open AI assistant",
     "expand": "Full page",
-    "welcome": "Ask about crops, prices, or finding produce on UmuhinziLink.",
+    "welcome": "Ask about crops, prices, or finding produce. For what's on the market, I'll only show real listings from UmuhinziLink.",
     "profile": {
       "crops": "Your listings"
     },
@@ -1871,6 +1871,8 @@
     "inputPlaceholder": "Ask anything…",
     "errors": {
       "generic": "AI assistant is unavailable. Try again later.",
+      "network": "Could not reach the server — check your connection and try again.",
+      "listings": "Could not load marketplace listings — open /products or try again shortly.",
       "timeout": "That took too long — try a shorter question.",
       "unavailable": "AI is not configured on the server yet.",
       "emptyInput": "Please type a message or crop name first.",

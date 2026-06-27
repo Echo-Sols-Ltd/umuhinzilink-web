@@ -1871,6 +1871,8 @@
     "inputPlaceholder": "Baza ikibazo…",
     "errors": {
       "generic": "Umufasha wa AI ntiboneka. Ongera ugerageze.",
+      "network": "Ntitwashoboye guhuza na seriveri — reba interineti hanyuma ongera ugerageze.",
+      "listings": "Ntibishoboye kubona ibicuruzwa — fungura /products cyangwa ongera ugerageze.",
       "timeout": "Byafashe igihe kinini — gerageza ikibazo gito.",
       "unavailable": "AI ntirashyirwaho kuri seriveri.",
       "emptyInput": "Andika ubutumwa cyangwa izina ry'igihingwa.",

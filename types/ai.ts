@@ -44,6 +44,8 @@ export interface AiChatResponse {
   capability: string;
   provider: string;
   locale: string;
+  /** Real marketplace listings when reply comes from the database */
+  products?: AiProductSummary[];
 }
 
 export interface AiCropDiseaseResponse {

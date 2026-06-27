@@ -1,4 +1,5 @@
 import { AI_CLIENT_LIMITS, AiChatTurn } from '@/types/ai';
+import { isAxiosError } from 'axios';
 
 type Translate = (key: string) => string;
 
@@ -12,6 +13,23 @@ export function resolveAiErrorMessage(
   }
   const lower = raw.toLowerCase();
 
+  if (
+    lower.includes('network error') ||
+    lower.includes('err_network') ||
+    lower.includes('network error after multiple retries') ||
+    lower.includes('failed to fetch')
+  ) {
+    return t('assistant.errors.network');
+  }
+  if (
+    lower.includes('marketplace listing') ||
+    lower.includes('marketplace search') ||
+    lower.includes('product search') ||
+    lower.includes('load marketplace') ||
+    lower.includes('browse /products')
+  ) {
+    return t('assistant.errors.listings');
+  }
   if (lower.includes('timeout') || lower.includes('timed out')) {
     return t('assistant.errors.timeout');
   }
@@ -61,6 +79,15 @@ export function compressHistory(history: AiChatTurn[]): AiChatTurn[] {
 }
 
 export function extractApiErrorMessage(err: unknown): string | undefined {
+  if (isAxiosError(err)) {
+    const data = err.response?.data as { message?: string } | undefined;
+    if (data?.message) {
+      return data.message;
+    }
+    if (err.message) {
+      return err.message;
+    }
+  }
   if (err instanceof Error) {
     return err.message;
   }

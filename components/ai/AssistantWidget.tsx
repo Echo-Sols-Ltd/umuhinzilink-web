@@ -157,6 +157,9 @@ export default function AssistantWidget() {
           return;
         }
         pushAssistant(res.data.reply);
+        if (res.data.products?.length) {
+          setSearchProducts(res.data.products);
+        }
       }
     } catch (err) {
       handleApiFailure(extractApiErrorMessage(err));

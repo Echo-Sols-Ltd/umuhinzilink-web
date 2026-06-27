@@ -13,6 +13,7 @@ import {
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
 import { timeoutConfigs } from '@/lib/timeout';
+import { retryConfigs } from '@/lib/retry';
 
 /** Gemini often needs 20–60s; default API timeout is only 10s. */
 const AI_TIMEOUT = timeoutConfigs.ai;
@@ -29,6 +30,7 @@ class AiService {
   async chat(request: AiChatRequest) {
     return apiClient.post<ApiResponse<AiChatResponse>>(API_ENDPOINTS.AI.CHAT, request, {
       timeout: AI_TIMEOUT,
+      retry: retryConfigs.networkRequest,
     });
   }
 
