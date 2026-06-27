@@ -340,10 +340,10 @@ class ApiClient {
     return withRetry(operation, retryConfigs.fileUpload);
   }
 
-  async postMultipart<T>(endpoint: string, formData: FormData): Promise<T> {
+  async postMultipart<T>(endpoint: string, formData: FormData, timeout?: number): Promise<T> {
     const response = await this.axiosInstance.post<T>(endpoint, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
-      timeout: timeoutConfigs.long,
+      timeout: timeout ?? timeoutConfigs.long,
     });
     return response.data;
   }

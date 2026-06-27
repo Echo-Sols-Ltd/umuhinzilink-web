@@ -47,6 +47,9 @@ export const timeoutConfigs = {
   // Long operations (file uploads, complex processing)
   long: 30000, // 30 seconds
 
+  // LLM calls (Gemini can take 30–60s)
+  ai: 90000, // 90 seconds
+
   // Critical operations (authentication, payment)
   critical: 15000, // 15 seconds
 
