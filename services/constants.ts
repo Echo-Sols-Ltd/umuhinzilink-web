@@ -115,6 +115,7 @@ export const API_ENDPOINTS = {
   },
   AI: {
     STATUS: '/ai/status',
+    CONTEXT: '/ai/context',
     CHAT: '/ai/chat',
     FARMING_TIPS: '/ai/farming-tips',
     CROP_DISEASE: '/ai/crop-disease',

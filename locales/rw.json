@@ -1864,6 +1864,9 @@
     "open": "Fungura umufasha wa AI",
     "expand": "Urupapuro rwuzuye",
     "welcome": "Baza ku byerekeye ibihingwa, ibiciro, cyangwa gushaka ibicuruzwa kuri UmuhinziLink.",
+    "profile": {
+      "crops": "Ibicuruzwa byawe"
+    },
     "thinking": "Ndatekereza…",
     "inputPlaceholder": "Baza ikibazo…",
     "errors": {

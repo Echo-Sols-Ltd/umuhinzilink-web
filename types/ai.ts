@@ -1,3 +1,14 @@
+export interface AiUserContext {
+  firstName?: string;
+  role?: string;
+  language?: string;
+  location?: string;
+  district?: string;
+  province?: string;
+  crops?: string[];
+  welcomeMessage?: string;
+}
+
 export interface AiProductSummary {
   id: string;
   name: string;

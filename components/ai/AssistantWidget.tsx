@@ -15,7 +15,7 @@ import {
   resolveAiErrorMessage,
   trimForAi,
 } from '@/lib/aiErrors';
-import { UserRole, AiChatTurn, AiProductSummary } from '@/types';
+import { UserRole, AiChatTurn, AiProductSummary, AiUserContext } from '@/types';
 import { cn } from '@/lib/utils';
 
 type AssistantMode = 'chat' | 'farming' | 'crop' | 'price' | 'search';
@@ -41,6 +41,7 @@ export default function AssistantWidget() {
 
   const [open, setOpen] = useState(false);
   const [available, setAvailable] = useState(false);
+  const [userContext, setUserContext] = useState<AiUserContext | null>(null);
   const [mode, setMode] = useState<AssistantMode>('chat');
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -56,6 +57,7 @@ export default function AssistantWidget() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const contextLoadedRef = useRef(false);
 
   const isAdmin = user?.role === UserRole.ADMIN;
   const isSeller = user?.role === UserRole.SELLER;
@@ -75,6 +77,23 @@ export default function AssistantWidget() {
       }
     }).catch(() => setAvailable(false));
   }, []);
+
+  useEffect(() => {
+    if (!open || !available || !isAuthenticated || contextLoadedRef.current) return;
+    aiService.getContext().then(res => {
+      if (res.success && res.data) {
+        contextLoadedRef.current = true;
+        setUserContext(res.data);
+        if (res.data.district) {
+          setDistrict(prev => prev || res.data!.district!);
+        }
+        if (res.data.crops?.length) {
+          setCropName(prev => prev || res.data!.crops![0]);
+          setCropHint(prev => prev || res.data!.crops![0]);
+        }
+      }
+    }).catch(() => setUserContext(null));
+  }, [open, available, isAuthenticated]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -218,6 +237,8 @@ export default function AssistantWidget() {
 
   if (hiddenOnRoute || !available) return null;
 
+  const welcomeText = userContext?.welcomeMessage ?? t('assistant.welcome');
+
   return (
     <>
       {!open && (
@@ -280,9 +301,15 @@ export default function AssistantWidget() {
 
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
             {history.length === 0 && (
-              <p className="text-xs text-muted-foreground text-center py-6">
-                {t('assistant.welcome')}
-              </p>
+              <div className="text-xs text-muted-foreground text-center py-6 space-y-2">
+                <p>{welcomeText}</p>
+                {userContext?.crops && userContext.crops.length > 0 && (
+                  <p className="text-[11px] text-muted-foreground/80">
+                    {t('assistant.profile.crops')}: {userContext.crops.slice(0, 4).join(', ')}
+                    {userContext.district && ` · ${userContext.district}`}
+                  </p>
+                )}
+              </div>
             )}
             {history.map((msg, i) => (
               <div

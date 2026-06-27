@@ -8,6 +8,7 @@ import {
   AiSmartSearchRequest,
   AiSmartSearchResponse,
   AiStatus,
+  AiUserContext,
 } from '@/types';
 import { apiClient } from './client';
 import { API_ENDPOINTS } from './constants';
@@ -19,6 +20,10 @@ const AI_TIMEOUT = timeoutConfigs.ai;
 class AiService {
   async getStatus() {
     return apiClient.get<ApiResponse<AiStatus>>(API_ENDPOINTS.AI.STATUS);
+  }
+
+  async getContext() {
+    return apiClient.get<ApiResponse<AiUserContext>>(API_ENDPOINTS.AI.CONTEXT);
   }
 
   async chat(request: AiChatRequest) {
