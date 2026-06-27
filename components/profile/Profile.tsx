@@ -19,7 +19,7 @@ import { Negotiation, NegotiationStatus, User as UserType, UserRole } from '@/ty
 import { imageUrl } from '@/lib/utils';
 import NegotiationCard from '@/components/negotiation/NegotiationCard';
 import { useI18n } from '@/contexts/I18nContext';
-import { formatCurrency } from '@/lib/localeFormat';
+import { INTL_LOCALE, formatCurrency as fmtCurrency, formatDate as fmtDate } from '@/lib/localeFormat';
 
 interface ProfileProps {
   user: UserType;
@@ -92,7 +92,7 @@ export default function Profile({
     if (!createdAt) return t('profile.overview.member');
     const date = new Date(createdAt);
     if (Number.isNaN(date.getTime())) return t('profile.overview.member');
-    const monthYear = date.toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-RW', {
+    const monthYear = date.toLocaleDateString(INTL_LOCALE[locale], {
       month: 'long',
       year: 'numeric',
     });

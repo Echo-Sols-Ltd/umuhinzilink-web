@@ -120,6 +120,7 @@ export default function ProfileEditPage() {
 
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
       await loadAuthState();
+      applyLocale(languageToLocale(form.language));
 
       if (user.role === UserRole.SELLER) {
         await userService.updateSellerProfile(user.id, sellerForm);

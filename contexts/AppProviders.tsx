@@ -13,6 +13,7 @@ import { BrowserNotificationProvider } from './BrowserNotificationContext';
 import { ThemeProvider } from './ThemeContext';
 import { NegotiationProvider } from './NegotiationContext';
 import AssistantWidget from '@/components/ai/AssistantWidget';
+import LocaleSync from '@/components/LocaleSync';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ export function AppProviders({ children }: AppProvidersProps) {
     <ThemeProvider>
       <I18nProvider>
         <AuthProvider>
+          <LocaleSync />
           <BrowserNotificationProvider>
             <SocketProvider>
               <UserProvider>

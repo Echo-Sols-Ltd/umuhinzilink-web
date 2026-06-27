@@ -1,7 +1,8 @@
 import en from '@/locales/en.json';
 import rw from '@/locales/rw.json';
+import fr from '@/locales/fr.json';
 
-export const supportedLocales = ['en', 'rw'] as const;
+export const supportedLocales = ['en', 'rw', 'fr'] as const;
 export type SupportedLocale = (typeof supportedLocales)[number];
 
 export const defaultLocale: SupportedLocale = 'en';
@@ -11,6 +12,7 @@ type Dict = Record<string, unknown>;
 const resources: Record<SupportedLocale, Dict> = {
   en: en as Dict,
   rw: rw as Dict,
+  fr: fr as Dict,
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {

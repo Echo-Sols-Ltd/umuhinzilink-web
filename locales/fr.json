@@ -1,0 +1,3313 @@
+{
+  "app": {
+    "name": "UmuhinziLink",
+    "description": "UmuhinziLink est une plateforme permettant aux agriculteurs de vendre leurs produits aux acheteurs."
+  },
+  "common": {
+    "dashboard": "Tableau de bord",
+    "back": "Retour",
+    "backToSettings": "Retour aux paramètres",
+    "goBack": "Retourner",
+    "user": "Utilisateur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "information": "Information",
+    "processing": "Traitement...",
+    "save": "Sauvegarder",
+    "saveChanges": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
+    "saved": "Sauvé !",
+    "error": "Erreur",
+    "preview": "Aperçu",
+    "or": "OU",
+    "continue": "Continuer",
+    "resend": "Renvoyer",
+    "retry": "Réessayer",
+    "noData": "Aucune donnée disponible",
+    "footerCopyright": "© Dreamize 2025",
+    "logout": "Déconnexion",
+    "farmer": "Agriculteur",
+    "status": {
+      "completed": "Complété",
+      "pending": "En attente",
+      "active": "Actif",
+      "processing": "Traitement",
+      "cancelled": "Annulé"
+    },
+    "productDetailMsg": {
+      "productNotFoundTitle": "Produit introuvable",
+      "productNotFoundDesc": "Ce produit est introuvable.",
+      "goBack": "Retourner",
+      "loadingProduct": "Chargement du produit...",
+      "failedToLoadProduct": "Échec du chargement des détails du produit",
+      "linkCopied": "Lien du produit copié dans le presse-papiers",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce produit ? Cette action ne peut pas être annulée.",
+      "deleteSuccess": "Produit supprimé avec succès",
+      "deleteFailed": "Échec de la suppression du produit"
+    },
+    "notificationPage": {
+      "title": "Notifications",
+      "unreadPlural": "{{count}} notifications non lues",
+      "unreadSingular": "1 notification non lue",
+      "caughtUp": "Vous êtes tous rattrapés !",
+      "markAllRead": "Marquer tout comme lu",
+      "searchPlaceholder": "Rechercher des notifications…",
+      "noResultsFound": "Aucun résultat trouvé",
+      "noUnreadNotifications": "Aucune notification non lue",
+      "noNotificationsYet": "Aucune notification pour l'instant",
+      "tryDifferentSearch": "Essayez un autre terme de recherche",
+      "checkBackLater": "Revenez plus tard",
+      "pageOf": "Page {{current}} sur {{total}}",
+      "totalElements": "({{total}} total)",
+      "tabs": {
+        "all": "Tous",
+        "unread": "Non lu",
+        "success": "Succès",
+        "messages": "Messages",
+        "warnings": "Avertissements",
+        "errors": "Erreurs",
+        "system": "Système",
+        "info": "Informations",
+        "products": "Produits",
+        "orders": "Ordres"
+      }
+    }
+  },
+  "errors": {
+    "unknown": "Une erreur inconnue s'est produite. Veuillez réessayer plus tard.",
+    "emptyResponse": "Réponse vide reçue du serveur."
+  },
+  "nav": {
+    "browse": "Parcourir",
+    "howItWorks": "Comment ça marche",
+    "aiAssistant": "Assistant IA",
+    "myOrders": "Mes commandes",
+    "negotiations": "Négociations",
+    "myListings": "Mes annonces",
+    "adminBadge": "Administrateur",
+    "profile": "Profil",
+    "adminConsole": "Console d'administration",
+    "systemSettings": "Paramètres système",
+    "sellerDashboard": "Tableau de bord du vendeur",
+    "becomeSeller": "Devenez vendeur",
+    "wallet": "Portefeuille",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "signIn": "Se connecter",
+    "getStarted": "Commencer",
+    "browseProducts": "Parcourir les produits",
+    "groups": {
+      "sell": "Vendre",
+      "shop": "Boutique",
+      "account": "Compte",
+      "manage": "Gérer",
+      "system": "Système"
+    },
+    "roles": {
+      "seller": "Vendeur",
+      "buyer": "Acheteur",
+      "admin": "Administrateur"
+    },
+    "adminTop": {
+      "console": "Console",
+      "users": "Utilisateurs",
+      "orders": "Commandes",
+      "products": "Produits",
+      "wallets": "Portefeuilles"
+    }
+  },
+  "negotiationsPage": {
+    "title": "Négociations",
+    "description": "Suivez les discussions sur les prix et les accords avec les acheteurs ou les vendeurs.",
+    "browseProducts": "Parcourir les produits",
+    "loadingLabel": "Chargement des négociations",
+    "loadingDescription": "Récupération de vos offres actives…",
+    "stats": {
+      "total": "Total",
+      "active": "Actif",
+      "accepted": "Accepté"
+    },
+    "searchPlaceholder": "Recherche par produit, numéro de commande ou nom…",
+    "tabs": {
+      "all": "Tous",
+      "active": "Actif",
+      "accepted": "Accepté",
+      "rejected": "Rejeté",
+      "expired": "Expiré"
+    },
+    "empty": {
+      "none": "Pas encore de négociations",
+      "noneFiltered": "Aucune négociation {{status}}",
+      "buyerHint": "Parcourez les produits et commencez à négocier avec les vendeurs.",
+      "sellerHint": "Les négociations des acheteurs apparaîtront ici.",
+      "noMatch": "Rien ne correspond à ce filtre.",
+      "productNone": "Aucune négociation pour ce produit pour l'instant",
+      "productHint": "Démarrez une négociation à partir de la page produit pour discuter des prix avec le vendeur.",
+      "viewProduct": "Voir le produit"
+    }
+  },
+  "ordersPage": {
+    "description": {
+      "buyer": "Consultez, payez ou annulez vos achats.",
+      "seller": "Suivez les ventes et les paiements des acheteurs."
+    },
+    "loadingLabel": "Chargement des commandes",
+    "loadingDescription": "Récupération de l’historique de vos commandes…",
+    "stats": {
+      "completedOnly": "complété seulement",
+      "awaitingPayment": "en attente de paiement"
+    },
+    "filter": "Filtre",
+    "results": "Résultat {{count}}",
+    "resultsPlural": "{{count}} résultats",
+    "table": {
+      "order": "Commande",
+      "total": "Total",
+      "qty": "Quantité"
+    },
+    "empty": {
+      "tryDifferentFilter": "Essayez un autre filtre",
+      "sellerHint": "Les commandes apparaîtront ici lorsque les acheteurs les passeront",
+      "buyerHint": "Vos commandes apparaîtront ici après votre achat"
+    },
+    "actions": {
+      "summary": "Résumé",
+      "open": "Ouvrir",
+      "payOrder": "Payer cette commande",
+      "viewSummary": "Afficher le récapitulatif de la commande",
+      "openFullPage": "Ouvrir la page de commande complète"
+    },
+    "pagination": {
+      "pageOf": "Page {{page}} sur {{totalPages}} · {{total}} commandes",
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "createModal": {
+      "title": "Créer une commande",
+      "quantity": "Quantité",
+      "paymentMethod": "Mode de paiement",
+      "notesOptional": "Remarques (facultatif)",
+      "notesPlaceholder": "Ajoutez des instructions ou des notes spéciales...",
+      "orderSummary": "Récapitulatif de la commande",
+      "unitPrice": "Prix ​​unitaire:",
+      "total": "Total:",
+      "perUnit": "par {{unit}}",
+      "createAndPay": "Créer et payer",
+      "processingPayment": "Traitement du paiement…",
+      "cancel": "Annuler",
+      "validation": {
+        "quantityMin": "La quantité doit être d'au moins 1",
+        "quantityMax": "La quantité ne peut pas dépasser le stock disponible ({{max}})",
+        "paymentMethod": "Veuillez sélectionner un mode de paiement"
+      }
+    },
+    "detailsModal": {
+      "title": "Détails de la commande",
+      "orderStatus": "Statut de la commande",
+      "customerInfo": "Informations client",
+      "productDetails": "Détails du produit",
+      "payment": "Paiement",
+      "orderDate": "Date de commande",
+      "payNow": "Payez maintenant",
+      "cancelOrder": "Annuler la commande",
+      "close": "Fermer",
+      "awaitingPayment": "En attente de paiement",
+      "notPaid": "Non payé",
+      "paid": "Payé",
+      "quantity": "Quantité:",
+      "unitPrice": "Prix ​​unitaire:",
+      "totalPrice": "Prix ​​total :"
+    },
+    "productOrder": {
+      "orderNow": "Commandez maintenant",
+      "notAvailable": "N / A"
+    }
+  },
+  "orders": {
+    "created": {
+      "success": "Commande créée avec succès.",
+      "error": "Échec de la création de la commande."
+    },
+    "statusUpdated": {
+      "success": "Le statut de la commande a été mis à jour avec succès.",
+      "error": "Échec de la mise à jour du statut de la commande."
+    },
+    "accepted": {
+      "success": "La commande a été acceptée.",
+      "error": "Échec de l'acceptation de la commande."
+    },
+    "cancelled": {
+      "success": "La commande a été annulée.",
+      "error": "Échec de l'annulation de la commande."
+    },
+    "rejected": {
+      "success": "La commande a été rejetée.",
+      "error": "Échec du rejet de la commande."
+    },
+    "payment": {
+      "loading": "Traitement du paiement depuis votre portefeuille...",
+      "error": "Une erreur s'est produite lors du traitement de votre paiement."
+    }
+  },
+  "products": {
+    "created": {
+      "success": "Produit créé avec succès.",
+      "error": "Échec de la création du produit."
+    },
+    "updated": {
+      "success": "Produit mis à jour avec succès.",
+      "error": "Échec de la mise à jour du produit."
+    },
+    "deleted": {
+      "success": "Produit supprimé avec succès.",
+      "error": "Échec de la suppression du produit."
+    },
+    "pagination": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "stockLeft": "{{quantity}} {{unit}} gauche",
+    "browse": {
+      "title": "Parcourir les produits",
+      "description": "Découvrez des produits frais et des fournitures agricoles auprès de vendeurs à travers le Rwanda.",
+      "searchPlaceholder": "Rechercher des annonces…",
+      "sort": {
+        "newest": "Le plus récent",
+        "name": "Nom",
+        "price": "Prix",
+        "stock": "Action"
+      },
+      "results": "{{count}} annonce trouvée",
+      "resultsPlural": "{{count}} fiches trouvées",
+      "resultsFor": "pour",
+      "empty": {
+        "filtered": "Aucune annonce ne correspond à vos filtres",
+        "none": "Aucune annonce pour l'instant",
+        "filteredHint": "Essayez d'ajuster votre recherche ou votre filtre pour trouver ce que vous recherchez."
+      }
+    },
+    "seller": {
+      "title": "Mes annonces",
+      "description": "Gérez vos produits, votre stock et votre visibilité.",
+      "newListing": "Nouvelle annonce",
+      "searchPlaceholder": "Rechercher des annonces…",
+      "filterAll": "Tous",
+      "addFirstListing": "Ajouter la première annonce",
+      "results": "{{count}} annonce trouvée",
+      "resultsPlural": "{{count}} fiches trouvées",
+      "sort": {
+        "views": "Vues"
+      },
+      "metrics": {
+        "total": "Total",
+        "inStock": "En stock",
+        "lowStock": "Stock faible",
+        "outOfStock": "En rupture de stock"
+      },
+      "empty": {
+        "filtered": "Aucune annonce ne correspond à vos filtres",
+        "none": "Aucune annonce pour l'instant",
+        "filteredHint": "Essayez d'ajuster votre recherche ou votre filtre.",
+        "noneHint": "Ajoutez votre premier produit et commencez à vendre à des acheteurs à travers le Rwanda."
+      }
+    },
+    "saved": {
+      "title": "Produits enregistrés",
+      "description": "Produits que vous avez enregistrés pour plus tard.",
+      "backLabel": "Profil",
+      "loadingLabel": "Chargement des produits enregistrés",
+      "loadingDescription": "Récupération de votre liste de souhaits…",
+      "empty": {
+        "title": "Aucun produit enregistré pour l'instant",
+        "description": "Appuyez sur le cœur d'un produit pour l'enregistrer ici.",
+        "browse": "Parcourir les produits"
+      }
+    },
+    "create": {
+      "breadcrumbs": {
+        "home": "Maison",
+        "myListings": "Mes annonces",
+        "newListing": "Nouvelle annonce"
+      },
+      "backLabel": "Mes annonces",
+      "publish": "Publier",
+      "publishing": "Édition…",
+      "publishListing": "Publier une annonce",
+      "cancel": "Annuler",
+      "success": {
+        "title": "Annonce publiée !",
+        "description": "{{name}} est désormais actif et visible pour les acheteurs à travers le Rwanda.",
+        "addAnother": "Ajouter une autre annonce",
+        "viewListings": "Voir mes annonces"
+      },
+      "image": {
+        "upload": "Télécharger une photo du produit",
+        "change": "Changer l'image",
+        "hint": "JPG, PNG jusqu'à 5 Mo"
+      },
+      "sections": {
+        "details": "Détails du produit",
+        "pricing": "Prix ​​et stock",
+        "location": "Emplacement"
+      },
+      "fields": {
+        "name": "Nom du produit",
+        "namePlaceholder": "par ex. Maïs frais, tomates, engrais NPK",
+        "description": "Description",
+        "descriptionOptional": "Facultatif",
+        "descriptionPlaceholder": "Qualité, date de récolte, conservation, variété…",
+        "category": "Catégorie",
+        "selectCategory": "Sélectionnez une catégorie",
+        "unitPrice": "Prix ​​unitaire (RWF)",
+        "quantity": "Quantité",
+        "measurementUnit": "Unité de mesure",
+        "selectUnit": "Sélectionnez l'unité",
+        "district": "District",
+        "selectDistrict": "Sélectionnez le quartier",
+        "negotiable": "Autoriser la négociation",
+        "negotiableHint": "Les acheteurs peuvent proposer un prix différent"
+      },
+      "categoryGroups": {
+        "produce": "Produire",
+        "inputs": "Intrants et équipements",
+        "other": "Autre"
+      },
+      "infoNote": "Le stock est réservé lorsqu'un acheteur passe une commande. Gardez votre quantité à jour pour éviter la survente.",
+      "validation": {
+        "nameRequired": "Le nom du produit est obligatoire",
+        "descriptionRequired": "Une description est requise",
+        "categoryRequired": "Sélectionnez une catégorie",
+        "priceInvalid": "Entrez un prix valide supérieur à 0",
+        "quantityInvalid": "Entrez une quantité valide supérieure à 0",
+        "unitRequired": "Sélectionnez une unité",
+        "districtRequired": "Sélectionnez votre quartier",
+        "imageRequired": "L'image du produit est requise",
+        "imageSize": "L'image doit faire moins de 5 Mo"
+      }
+    },
+    "edit": {
+      "loadingLabel": "Chargement du produit",
+      "loadingDescription": "Préparation de l'éditeur…",
+      "breadcrumbs": {
+        "home": "Maison",
+        "myListings": "Mes annonces",
+        "editListing": "Modifier la fiche"
+      },
+      "backLabel": "Mes annonces",
+      "save": "Sauvegarder",
+      "saving": "Économie…",
+      "saveChanges": "Enregistrer les modifications",
+      "savingChanges": "Enregistrement des modifications…",
+      "cancel": "Annuler",
+      "loadFailed": "Échec du chargement du produit",
+      "updateFailed": "Échec de la mise à jour du produit. Veuillez réessayer.",
+      "sections": {
+        "image": "Image du produit",
+        "imageSub": "Mettre à jour les photos que voient les acheteurs",
+        "details": "Détails du produit",
+        "detailsSub": "Informations essentielles sur votre annonce",
+        "pricing": "Prix ​​et stock",
+        "pricingSub": "Fixez votre prix et la quantité disponible",
+        "location": "Emplacement",
+        "locationSub": "Où ce produit est disponible"
+      },
+      "image": {
+        "upload": "Télécharger une image",
+        "change": "Changer l'image",
+        "hint": "JPG, PNG jusqu'à 5 Mo"
+      },
+      "fields": {
+        "name": "Nom du produit",
+        "namePlaceholder": "par ex. Maïs frais, engrais NPK",
+        "description": "Description",
+        "descriptionPlaceholder": "Qualité, variété, date de récolte, conditions de stockage…",
+        "category": "Catégorie",
+        "selectCategory": "Sélectionnez une catégorie",
+        "unitPrice": "Prix ​​unitaire (RWF)",
+        "quantity": "Quantité",
+        "measurementUnit": "Unité de mesure",
+        "selectUnit": "Sélectionnez l'unité",
+        "district": "District",
+        "selectDistrict": "Sélectionnez le quartier",
+        "negotiable": "Autoriser la négociation",
+        "negotiableHint": "Les acheteurs peuvent proposer un prix différent"
+      },
+      "categoryGroups": {
+        "produce": "Produire",
+        "inputs": "Intrants et équipements",
+        "other": "Autre"
+      },
+      "preview": {
+        "title": "Aperçu de l'acheteur",
+        "negotiable": "Négociable",
+        "namePlaceholder": "Nom du produit",
+        "descriptionPlaceholder": "La description apparaîtra ici...",
+        "left": "{{count}} reste",
+        "noDistrict": "Aucun quartier"
+      },
+      "tips": {
+        "title": "Conseils pour une meilleure visibilité",
+        "photo": "Utilisez des photos claires et bien éclairées du produit réel",
+        "details": "Mentionner la variété, le grade de qualité et la date de récolte",
+        "stock": "Tenir à jour la quantité de stock",
+        "negotiate": "Activez la négociation pour des ventes plus rapides"
+      },
+      "validation": {
+        "nameRequired": "Le nom est requis",
+        "descriptionRequired": "Une description est requise",
+        "categoryRequired": "Sélectionnez une catégorie",
+        "priceInvalid": "Entrez un prix valide",
+        "quantityInvalid": "Entrez une quantité valide",
+        "unitRequired": "Sélectionnez une unité",
+        "districtRequired": "Sélectionnez un district",
+        "imageSize": "L'image doit faire moins de 5 Mo"
+      }
+    },
+    "detail": {
+      "notFound": "Produit introuvable",
+      "notFoundMessage": "Ce produit est introuvable ou a peut-être été supprimé.",
+      "browseProducts": "Parcourir les produits",
+      "shareAria": "Partager le produit",
+      "deleteConfirm": "Supprimer cette annonce ? Cela ne peut pas être annulé.",
+      "linkCopied": "Lien copié dans le presse-papier",
+      "linkCopyFailed": "Impossible de copier le lien",
+      "breadcrumbs": {
+        "home": "Maison",
+        "products": "Produits"
+      }
+    },
+    "list": {
+      "negotiable": "Négociable",
+      "left": "{{quantity}} {{unit}} gauche",
+      "editListing": "Modifier la fiche",
+      "viewAsBuyer": "Afficher en tant qu'acheteur",
+      "deleteListing": "Supprimer l'annonce"
+    },
+    "buyModal": {
+      "steps": {
+        "details": "Détails",
+        "confirm": "Confirmer",
+        "done": "Fait"
+      },
+      "buyNow": "Acheter maintenant",
+      "negotiate": "Négocier",
+      "listedPrice": "Prix ​​affiché",
+      "available": "Disponible",
+      "quantity": "Quantité",
+      "yourOffer": "Votre offre par {{unit}}",
+      "validation": {
+        "priceInvalid": "Entrez un prix valide",
+        "priceTooHigh": "Votre offre ne peut pas dépasser le prix affiché",
+        "priceTooLow": "L'offre est trop basse : minimum 30 % du prix indiqué"
+      },
+      "discountBelow": "Vous proposez {{discount}} % en dessous du prix indiqué.",
+      "negotiateHint": "Le vendeur examinera votre offre et vous répondra par chat. Vous pouvez continuer à négocier là-bas.",
+      "proposedTotal": "Total proposé",
+      "total": "Total",
+      "continue": "Continuer",
+      "orderSummary": "Récapitulatif de la commande",
+      "product": "Produit",
+      "listedPriceLabel": "Prix ​​affiché",
+      "yourOfferLabel": "Votre offre",
+      "walletNote": "Le paiement sera déduit du solde de votre portefeuille. Assurez-vous de disposer de suffisamment de fonds avant de confirmer.",
+      "negotiateNote": "Votre offre sera envoyée au vendeur. Ils peuvent accepter, rejeter ou proposer un contre-prix via le chat de négociation.",
+      "back": "Dos",
+      "sendingOffer": "Envoi de l'offre…",
+      "processing": "Traitement…",
+      "sendOffer": "Envoyer l'offre",
+      "confirmPay": "Confirmer et payer",
+      "error": "Quelque chose s'est mal passé. Veuillez réessayer.",
+      "done": {
+        "offerSent": "Offre envoyée !",
+        "paymentSuccess": "Paiement réussi !",
+        "orderPaymentRequired": "Commande créée – paiement requis",
+        "orderPlaced": "Commande passée !",
+        "offerSentDesc": "Votre offre de {{price}} / {{unit}} a été envoyée à {{name}}. Vous serez averti lorsqu'ils répondront.",
+        "paymentSuccessDesc": "Le paiement de {{amount}} a été déduit de votre portefeuille. Le vendeur a été prévenu.",
+        "paymentRequiredDesc": "Votre commande a été créée mais le paiement a échoué. Ajoutez des fonds à votre portefeuille et payez depuis la page des commandes.",
+        "orderPlacedDesc": "Votre commande de {{quantity}} {{unit}} sur {{name}} a été créée.",
+        "viewNegotiation": "Voir la négociation",
+        "payFromOrders": "Payer à partir des commandes",
+        "viewOrder": "Voir la commande",
+        "continueShopping": "Continuer vos achats"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Gérer les informations de votre profil",
+    "sections": {
+      "personal": "Informations personnelles",
+      "contact": "Coordonnées",
+      "address": "Adresse"
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "district": "District",
+      "sector": "Secteur"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "save": "Sauvegarder",
+      "cancel": "Annuler",
+      "upload": "Télécharger",
+      "newImage": "Nouvelle image de profil"
+    },
+    "notProvided": "Non fourni",
+    "updated": {
+      "success": "Profil mis à jour avec succès.",
+      "error": "Échec de la mise à jour du profil."
+    },
+    "upload": {
+      "success": "Image de profil téléchargée avec succès.",
+      "error": "Échec du téléchargement de l'image. Veuillez réessayer."
+    },
+    "page": {
+      "title": "Mon profil",
+      "description": "Portefeuille, commandes et paramètres de compte.",
+      "loadingLabel": "Profil de chargement",
+      "loadingDescription": "Récupération des détails de votre compte…"
+    },
+    "overview": {
+      "member": "Membre",
+      "joined": "A rejoint {{monthYear}}",
+      "verified": "Vérifié",
+      "editProfile": "Modifier le profil",
+      "settings": "Paramètres",
+      "quickAccess": "Accès rapide",
+      "wallet": "Portefeuille",
+      "availableBalance": "Solde disponible",
+      "myListings": "Mes annonces",
+      "manage": "Gérer",
+      "productsYouSell": "Produits que vous vendez",
+      "orders": "Ordres",
+      "completed": "{{count}} terminé",
+      "viewHistory": "Afficher l'historique",
+      "negotiations": "Négociations",
+      "awaitingResponse": "En attente de réponse",
+      "viewAll": "Voir tout",
+      "saved": "Enregistré",
+      "savedForLater": "Enregistré pour plus tard",
+      "browseProducts": "Parcourir les produits",
+      "recentNegotiations": "Négociations récentes",
+      "seeAll": "Voir tout",
+      "noNegotiationsYet": "Pas encore de négociations",
+      "sellerNegotiationsHint": "Lorsque les acheteurs négocient sur vos produits, ils apparaîtront ici.",
+      "buyerNegotiationsHint": "Négociez un produit pour obtenir un meilleur prix auprès des vendeurs."
+    },
+    "edit": {
+      "title": "Modifier le profil",
+      "description": "Mettez à jour vos informations personnelles et vos préférences.",
+      "backLabel": "Profil",
+      "loadingLabel": "Profil de chargement",
+      "loadingDescription": "Préparation de l'éditeur…",
+      "saveChanges": "Enregistrer les modifications",
+      "profilePhoto": "Photo de profil",
+      "photoHint": "JPG ou PNG, maximum 5 Mo",
+      "language": "Langue",
+      "sellerProfile": "Profil du vendeur",
+      "businessName": "Nom de l'entreprise",
+      "location": "Emplacement",
+      "descriptionLabel": "Description",
+      "validation": {
+        "namesRequired": "Le prénom et le nom sont obligatoires"
+      },
+      "toast": {
+        "photoUploaded": "Photo téléchargée",
+        "invalidFile": "Fichier invalide",
+        "uploadFailed": "Échec du téléchargement de la photo",
+        "saved": "Profil mis à jour avec succès",
+        "saveFailed": "Échec de l'enregistrement du profil"
+      }
+    }
+  },
+  "chat": {
+    "messages": "Messages",
+    "searchPlaceholder": "Rechercher des conversations…",
+    "noResults": "Aucun résultat trouvé",
+    "noConversations": "Aucune conversation pour l'instant",
+    "tryDifferentName": "Essayez un autre nom",
+    "startChatting": "Commencez à discuter avec quelqu'un",
+    "typing": "dactylographie…",
+    "typingDots": "dactylographie...",
+    "sayHey": "Dis bonjour 👋",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "loginRequired": "Veuillez vous connecter pour accéder au chat.",
+    "noConversationSelected": "Aucune conversation sélectionnée",
+    "chooseFromSidebar": "Choisissez un utilisateur dans la barre latérale pour démarrer la messagerie",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce message ?",
+    "replyingTo": "Répondre à",
+    "messagePlaceholder": "Tapez votre message...",
+    "attachFile": "Joindre un fichier",
+    "addEmoji": "Ajouter des emoji"
+  },
+  "productCard": {
+    "loginToNegotiate": "Veuillez vous connecter pour négocier",
+    "authRequired": "Authentification requise",
+    "noProducerInfo": "Impossible de trouver les informations sur le producteur",
+    "unavailable": "Indisponible",
+    "negotiable": "Négociable",
+    "negotiateMessage": "Salut! Je suis intéressé par votre {productName}. Discutons d'un accord !",
+    "redirectingToChat": "Redirection pour discuter avec {ownerName}",
+    "inquirySent": "Demande envoyée",
+    "couldNotStartChat": "Impossible de démarrer la conversation",
+    "error": "Erreur",
+    "inStock": "En stock",
+    "lowStock": "Stock faible",
+    "outOfStock": "En rupture de stock",
+    "unitPrice": "Prix ​​unitaire",
+    "edit": "Modifier",
+    "editListing": "Modifier la fiche",
+    "negotiatePrice": "Négocier le prix",
+    "negotiate": "Négocier",
+    "buy": "Acheter",
+    "buyNow": "Acheter maintenant",
+    "removedFromSaved": "Supprimé de l'enregistrement",
+    "productSaved": "{{name}} enregistré"
+  },
+  "productRow": {
+    "loginToContact": "Veuillez vous connecter pour contacter les agriculteurs",
+    "noFarmerInfo": "Impossible de trouver des informations sur les agriculteurs pour ce produit",
+    "farmerNotAvailable": "Agriculteur non disponible",
+    "contactMessage": "Salut! Je suis intéressé par votre {productName}\n Envoyez-moi plus de détails sur ce produit pour me joindre",
+    "chatWithFarmer": "Vous pouvez désormais discuter avec {farmerName} à propos de {productName}",
+    "messageSent": "Message envoyé",
+    "tryAgainLater": "Veuillez réessayer plus tard",
+    "failedToSend": "Échec de l'envoi du message",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer « {productName} » ? Cette action ne peut pas être annulée.",
+    "deleteFailed": "Échec de la suppression du produit. Veuillez réessayer.",
+    "deleteTitle": "Échec de la suppression",
+    "available": "Disponible:",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteProduct": "Supprimer le produit",
+    "buyNow": "Acheter maintenant"
+  },
+  "enums": {
+    "categories": {
+      "CEREALS": "Céréales",
+      "LEGUMES_PULSES": "Légumineuses et légumineuses",
+      "ROOTS_TUBERS": "Racines et tubercules",
+      "BANANAS_PLANTAINS": "Bananes et plantains",
+      "VEGETABLES": "Légumes",
+      "FRUITS": "Fruits",
+      "CASH_CROPS": "Cultures commerciales",
+      "OILSEEDS": "Oléagineux",
+      "SPICES_HERBS": "Épices et herbes",
+      "FODDER_FORAGE": "Fourrage et fourrage",
+      "FERTILISER": "Engrais",
+      "FERTILIZER": "Engrais",
+      "PESTICIDE": "Pesticide",
+      "HERBICIDE": "Herbicide",
+      "FUNGICIDE": "Fongicide",
+      "SEEDS_SEEDLINGS": "Semences et plants",
+      "SEEDS": "Graines",
+      "IRRIGATION": "Équipement d'irrigation",
+      "HAND_TOOLS": "Outils à main",
+      "TOOLS": "Outils",
+      "MACHINERY": "Machinerie",
+      "STORAGE_EQUIPMENT": "Équipement de stockage",
+      "PACKAGING": "Matériel d'emballage",
+      "ANIMAL_FEED": "Alimentation animale",
+      "VETERINARY": "Produits vétérinaires",
+      "POST_HARVEST": "Après la récolte",
+      "ANIMAL_HEALTH": "Santé animale",
+      "SOIL_AMENDMENT": "Amendement du sol",
+      "ORGANIC_INPUT": "Apport biologique",
+      "GREENHOUSE": "Serre",
+      "ACCESSORIES": "Accessoires",
+      "OTHER": "Autre"
+    },
+    "units": {
+      "KG": "Kilogramme",
+      "G": "Gramme",
+      "TON": "Tonne métrique",
+      "LITER": "Litre",
+      "ML": "Millilitre",
+      "BAG_25KG": "Sac de 25 kg",
+      "BAG_50KG": "Sac de 50kg",
+      "BAG_100KG": "Sac de 100kg",
+      "CRATE": "Caisse",
+      "BUNDLE": "Paquet",
+      "BUNCH": "Bouquet",
+      "PIECE": "Morceau",
+      "DOZEN": "Douzaine",
+      "JERRICAN": "Jerrican",
+      "SACK": "Sac",
+      "BAG": "Sac"
+    },
+    "productStatus": {
+      "IN_STOCK": "En stock",
+      "LOW_STOCK": "Stock faible",
+      "OUT_OF_STOCK": "En rupture de stock",
+      "DRAFT": "Brouillon",
+      "DISCONTINUED": "Discontinué"
+    },
+    "orderStatus": {
+      "PENDING_PAYMENT": "En attente de paiement",
+      "PENDING": "En attente de paiement",
+      "COMPLETED": "Payé",
+      "CONFIRMED": "Payé",
+      "CANCELLED": "Annulé"
+    },
+    "paymentMethod": {
+      "MOBILE_MONEY": "Argent mobile",
+      "AIRTEL_MONEY": "Argent Airtel",
+      "BANK_TRANSFER": "Virement bancaire",
+      "CASH": "Espèces",
+      "WALLET": "Portefeuille"
+    },
+    "negotiationStatus": {
+      "PENDING": "Actif",
+      "ACCEPTED": "Accepté",
+      "REJECTED": "Rejeté",
+      "EXPIRED": "Expiré"
+    }
+  },
+  "sidebar": {
+    "a11y": {
+      "openNavigation": "Ouvrir la navigation"
+    },
+    "brand": {
+      "logoAlt": "Logo"
+    },
+    "groups": {
+      "overview": "Aperçu",
+      "communication": "Communication",
+      "account": "Compte",
+      "operations": "Opérations",
+      "administration": "Administration",
+      "monitoring": "Surveillance"
+    },
+    "items": {
+      "dashboard": "Tableau de bord",
+      "myProducts": "Mes produits",
+      "supplyMarket": "Marché d'approvisionnement",
+      "customerOrders": "Commandes clients",
+      "supplyOrders": "Commandes de fournitures",
+      "marketIntelligence": "Intelligence de marché",
+      "advisoryInsights": "Informations consultatives",
+      "messages": "Messages",
+      "notifications": "Notifications",
+      "alerts": "Alertes",
+      "wallet": "Portefeuille",
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "marketplace": "Marché",
+      "myOrders": "Mes commandes",
+      "favorites": "Favoris",
+      "farmerOrders": "Commandes des agriculteurs",
+      "userManagement": "Gestion des utilisateurs",
+      "orderManagement": "Gestion des commandes",
+      "productManagement": "Gestion des produits",
+      "platformAnalytics": "Analyse de plateforme",
+      "systemReports": "Rapports système",
+      "securityCenter": "Centre de sécurité",
+      "walletManagement": "Gestion du portefeuille",
+      "overview": "Aperçu",
+      "farmerOutput": "Production des agriculteurs",
+      "inputSupplyMonitoring": "Surveillance de l'alimentation en entrée",
+      "home": "Maison"
+    },
+    "roles": {
+      "farmer": "Fermier",
+      "buyer": "Acheteur",
+      "supplier": "Fournisseur",
+      "administrator": "Administrateur",
+      "governmentOfficial": "Fonctionnaire du gouverneur"
+    },
+    "user": {
+      "avatarAlt": "Avatar"
+    },
+    "actions": {
+      "settings": "Paramètres",
+      "signOut": "se déconnecter"
+    }
+  },
+  "auth": {
+    "login": {
+      "success": "Connecté avec succès.",
+      "error": "Échec de la connexion."
+    },
+    "register": {
+      "success": "Inscrit avec succès.",
+      "error": "Échec de l'inscription."
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "email": "E-mail",
+      "emailAddress": "Adresse email",
+      "phoneNumber": "Numéro de téléphone",
+      "accountType": "Type de compte",
+      "password": "Mot de passe",
+      "district": "District"
+    },
+    "placeholders": {
+      "firstName": "John",
+      "lastName": "Biche",
+      "email": "vous@exemple.com",
+      "enterYourEmail": "Entrez votre email",
+      "phoneNumber": "+250 7...",
+      "passwordDots": "••••••••"
+    },
+    "accountTypes": {
+      "farmer": "Fermier",
+      "supplier": "Fournisseur",
+      "buyer": "Acheteur"
+    },
+    "validation": {
+      "fixErrorsBelow": "Corrigez les erreurs ci-dessous",
+      "emailRequired": "L'e-mail est requis",
+      "invalidEmail": "E-mail invalide",
+      "invalidEmailAddress": "Adresse e-mail invalide",
+      "passwordRequired": "Le mot de passe est requis",
+      "minimumCharacters": "Au moins {{count}} caractères",
+      "fullNameRequired": "Le nom complet est requis",
+      "firstNameRequired": "Le prénom est obligatoire",
+      "lastNameRequired": "Le nom de famille est obligatoire",
+      "nameMinCharacters": "Le nom doit contenir au moins {{count}} caractères",
+      "phoneNumberRequired": "Numéro de téléphone requis",
+      "minimumDigits": "Au moins {{count}} chiffres",
+      "mustContainUppercase": "Doit contenir des majuscules",
+      "mustContainNumber": "Doit contenir un numéro",
+      "mustContainSpecialChar": "Doit contenir des caractères spéciaux",
+      "mustAgreeToTerms": "Vous devez accepter les conditions",
+      "districtRequired": "Le district est obligatoire",
+      "roleRequired": "Le type de compte est requis"
+    },
+    "signIn": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte",
+      "rememberMe": "Se souvenir de moi",
+      "forgot": "Oublié?",
+      "signingIn": "Connexion…",
+      "signIn": "Se connecter",
+      "noAccount": "Pas de compte ?",
+      "signUp": "S'inscrire",
+      "continueWithFacebook": "Continuer avec Facebook",
+      "continueWithGoogle": "Continuer avec Google",
+      "heroTitle": "Bon retour !",
+      "heroSubtitle": {
+        "line1": "Connectez-vous pour accéder à votre compte et continuer votre voyage",
+        "line2": "avec UmuhinziLink"
+      },
+      "toast": {
+        "loggedOut": {
+          "title": "Déconnecté",
+          "body": "Vous avez été déconnecté avec succès."
+        },
+        "registered": {
+          "title": "Compte créé",
+          "body": "Inscription réussie. Veuillez vous connecter pour continuer."
+        }
+      }
+    },
+    "signUp": {
+      "title": "Créer un compte",
+      "subtitle": "Inscrivez-vous via les réseaux sociaux ou le formulaire",
+      "agreeToTerms": "J'accepte les termes et conditions",
+      "creatingAccount": "Création d'un compte…",
+      "signUp": "S'inscrire",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter",
+      "continueWithFacebook": "Continuer avec Facebook",
+      "continueWithGoogle": "Continuer avec Google",
+      "buyerRegistration": "Inscription de l'acheteur",
+      "supplierRegistration": "Inscription des fournisseurs",
+      "farmerRegistration": "Inscription des agriculteurs",
+      "createBuyerAccount": "Créez votre compte acheteur",
+      "createSupplierAccount": "Créez votre compte fournisseur",
+      "createFarmerAccount": "Créez votre compte agriculteur",
+      "profileImage": "Image de profil",
+      "uploadProfileImage": "Télécharger l'image du profil",
+      "joinMarketplace": {
+        "buyer": "Rejoignez notre marché agricole et connectez-vous directement avec les agriculteurs",
+        "supplier": "Rejoignez notre marché agricole et connectez-vous avec les agriculteurs et les acheteurs",
+        "farmer": "Rejoignez notre marché agricole et connectez-vous directement avec les acheteurs"
+      },
+      "validation": {
+        "fileTooLarge": "L'image de profil doit faire moins de 5 Mo",
+        "invalidFileType": "Veuillez sélectionner un fichier image",
+        "selectImageFile": "Veuillez sélectionner un fichier image",
+        "fileSizeHint": "JPG, PNG, GIF jusqu'à 5 Mo"
+      },
+      "alt": {
+        "mountainRoad": "Route de montagne",
+        "profilePreview": "Aperçu du profil"
+      },
+      "heroTitle": "Accueillir!",
+      "heroSubtitle": {
+        "line1": "Utilisez ces superbes formulaires pour vous connecter ou créer un nouveau",
+        "line2": "compte dans votre projet gratuitement"
+      }
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié ?",
+      "description": "Entrez votre adresse e-mail et nous vous enverrons un code à 6 chiffres pour réinitialiser votre mot de passe.",
+      "backToSignIn": "Retour à la connexion",
+      "sending": "Envoi...",
+      "sendResetCode": "Envoyer le code de réinitialisation",
+      "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+      "submitted": {
+        "title": "Vérifiez votre courrier électronique",
+        "description": "Nous avons envoyé un code de réinitialisation à 6 chiffres à {{email}}.",
+        "cta": "Cliquez ici pour réinitialiser votre mot de passe"
+      },
+      "toast": {
+        "resetCodeSent": {
+          "title": "Code de réinitialisation envoyé",
+          "body": "Vérifiez votre courrier électronique pour le code de réinitialisation à 6 chiffres."
+        },
+        "resetCodeFailed": {
+          "body": "Échec de l'envoi du code de réinitialisation. Veuillez réessayer."
+        }
+      }
+    },
+    "resetPassword": {
+      "verifyCode": {
+        "title": "Vérifier le code de réinitialisation",
+        "description": "Saisissez le code à 6 chiffres envoyé à votre adresse email.",
+        "cta": "Vérifier le code"
+      },
+      "resetPassword": {
+        "title": "Réinitialiser le mot de passe",
+        "description": "Entrez votre nouveau mot de passe ci-dessous.",
+        "cta": "Réinitialiser le mot de passe"
+      },
+      "fields": {
+        "resetCode": "Réinitialiser le code",
+        "newPassword": "Nouveau mot de passe",
+        "confirmNewPassword": "Confirmer le nouveau mot de passe"
+      },
+      "placeholders": {
+        "resetCode": "Entrez le code à 6 chiffres",
+        "newPassword": "Entrez le nouveau mot de passe",
+        "confirmNewPassword": "Confirmer le nouveau mot de passe"
+      },
+      "verifying": "Vérification...",
+      "resetting": "Réinitialisation...",
+      "success": {
+        "title": "Réinitialisation du mot de passe réussie",
+        "description": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe."
+      },
+      "toast": {
+        "invalidEmail": {
+          "title": "E-mail invalide",
+          "body": "S'il vous plaît, mettez une adresse email valide."
+        },
+        "invalidCode": {
+          "title": "Code invalide",
+          "body": "Le code de réinitialisation doit comporter exactement 6 chiffres."
+        },
+        "codeVerified": {
+          "title": "Code vérifié",
+          "body": "Veuillez saisir votre nouveau mot de passe."
+        },
+        "verificationFailed": {
+          "title": "Échec de la vérification",
+          "body": "Code de réinitialisation invalide ou expiré."
+        },
+        "weakPassword": {
+          "title": "Mot de passe faible",
+          "body": "Le mot de passe doit comporter au moins 8 caractères."
+        },
+        "passwordMismatch": {
+          "title": "Incompatibilité de mot de passe",
+          "body": "Les mots de passe ne correspondent pas."
+        },
+        "resetSuccessful": {
+          "title": "Réinitialisation du mot de passe réussie",
+          "body": "Votre mot de passe a été réinitialisé avec succès."
+        },
+        "resetFailed": {
+          "title": "Échec de la réinitialisation",
+          "body": "Échec de la réinitialisation du mot de passe. Veuillez réessayer."
+        }
+      },
+      "invalidLink": {
+        "title": "Lien de réinitialisation invalide",
+        "description": "Ce lien de réinitialisation de mot de passe n'est pas valide ou a expiré. Les liens de réinitialisation ne sont valables que 15 minutes.",
+        "requestNew": "Demander un nouveau lien",
+        "backToSignIn": "Retour pour vous connecter"
+      },
+      "verifyingLink": {
+        "label": "Vérification du lien de réinitialisation",
+        "description": "Vérifier que votre lien est toujours valide…"
+      },
+      "setPassword": {
+        "title": "Définir un nouveau mot de passe",
+        "description": "Choisissez un mot de passe fort pour votre compte.",
+        "confirmPassword": "Confirmez le mot de passe",
+        "confirmPlaceholder": "Ressaisissez votre mot de passe",
+        "strength": "Force du mot de passe",
+        "passwordsMatch": "Les mots de passe correspondent",
+        "passwordsMismatch": "Les mots de passe ne correspondent pas",
+        "resetting": "Réinitialisation…",
+        "signInNow": "Connectez-vous maintenant"
+      },
+      "strength": {
+        "weak": "Faible",
+        "fair": "Équitable",
+        "good": "Bien",
+        "strong": "Fort"
+      },
+      "rules": {
+        "minLength": "Au moins 8 caractères",
+        "uppercase": "Une lettre majuscule",
+        "number": "Un numéro",
+        "special": "Un personnage spécial"
+      },
+      "validation": {
+        "passwordRequired": "Le mot de passe est requis",
+        "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+        "passwordTooWeak": "Le mot de passe est trop faible",
+        "confirmRequired": "Veuillez confirmer votre mot de passe",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "resetFailed": "Échec de la réinitialisation du mot de passe. Le lien a peut-être expiré."
+      }
+    },
+    "verifyOtp": {
+      "title": "Vérifiez votre e-mail",
+      "subtitle": "Entrez le code à 4 chiffres que nous avons envoyé à votre adresse e-mail.",
+      "didNotReceiveCode": "Vous n'avez pas reçu de code ?",
+      "resendIn": "Renvoyer dans {{time}}",
+      "haveAccount": "Vous avez un compte ?",
+      "validation": {
+        "completeCode": "Veuillez saisir le code complet à 4 chiffres"
+      }
+    },
+    "buyer": {
+      "fields": {
+        "buyerType": "Type d'acheteur",
+        "province": "Province",
+        "district": "District"
+      },
+      "placeholders": {
+        "selectBuyerType": "Sélectionnez le type d'acheteur",
+        "selectProvince": "Sélectionnez la province",
+        "selectDistrict": "Sélectionnez le quartier"
+      },
+      "validation": {
+        "buyerTypeRequired": "Le type d'acheteur est requis",
+        "provinceRequired": "La province est requise",
+        "districtRequired": "Le district est obligatoire",
+        "fixErrorsBelow": "Veuillez corriger les erreurs ci-dessous et réessayer"
+      },
+      "success": {
+        "accountCreated": "Compte acheteur créé avec succès !"
+      },
+      "error": {
+        "accountCreationFailed": "Échec de la création du compte acheteur. Veuillez réessayer."
+      },
+      "creatingAccount": "Création d'un compte...",
+      "finishCreatingAccount": "Terminer la création du compte"
+    },
+    "farmer": {
+      "fields": {
+        "farmSize": "Taille de la ferme",
+        "farmingExperience": "Expérience agricole"
+      },
+      "placeholders": {
+        "selectFarmSize": "Sélectionnez la taille de la ferme",
+        "selectExperienceLevel": "Sélectionnez le niveau d'expérience"
+      },
+      "validation": {
+        "farmSizeRequired": "La taille de la ferme est requise",
+        "experienceLevelRequired": "Un niveau d'expérience est requis",
+        "provinceRequired": "La province est requise",
+        "districtRequired": "Le district est obligatoire",
+        "cropsRequired": "Veuillez sélectionner au moins une culture",
+        "fixErrorsBelow": "Veuillez corriger les erreurs ci-dessous et réessayer"
+      },
+      "success": {
+        "accountCreated": "Compte d'agriculteur créé avec succès !"
+      },
+      "error": {
+        "accountCreationFailed": "Échec de la création du compte d'agriculteur. Veuillez réessayer."
+      },
+      "farmInformation": "Informations sur la ferme",
+      "farmLocation": "Emplacement de la ferme",
+      "cropsYouGrow": "Cultures que vous cultivez",
+      "changeImage": "Changer l'image",
+      "chooseImage": "Choisir une image",
+      "creatingAccount": "Création d'un compte...",
+      "finishCreatingAccount": "Terminer la création du compte"
+    },
+    "supplier": {
+      "fields": {
+        "businessName": "Nom de l'entreprise",
+        "supplierType": "Type de fournisseur"
+      },
+      "placeholders": {
+        "businessName": "Entrez le nom de votre entreprise",
+        "selectSupplierType": "Sélectionnez le type de fournisseur"
+      },
+      "validation": {
+        "businessNameRequired": "Le nom de l'entreprise est requis",
+        "businessNameMinLength": "Le nom de l'entreprise doit comporter au moins 2 caractères",
+        "supplierTypeRequired": "Le type de fournisseur est requis",
+        "provinceRequired": "La province est requise",
+        "districtRequired": "Le district est obligatoire",
+        "fixErrorsBelow": "Veuillez corriger les erreurs ci-dessous et réessayer"
+      },
+      "success": {
+        "accountCreated": "Compte fournisseur créé avec succès !"
+      },
+      "error": {
+        "accountCreationFailed": "Échec de la création du compte fournisseur. Veuillez réessayer."
+      },
+      "businessInformation": "Informations commerciales",
+      "businessLocation": "Emplacement de l'entreprise",
+      "chooseImage": "Choisir une image",
+      "creatingAccount": "Création d'un compte...",
+      "finishCreatingAccount": "Terminer la création du compte"
+    },
+    "googleRoleModal": {
+      "title": "Complétez votre profil",
+      "subtitle": "J'y suis presque ! Veuillez sélectionner votre type de compte et votre district pour continuer.",
+      "completeRegistration": "Terminer l'inscription",
+      "termsNote": "En complétant votre inscription, vous acceptez nos conditions générales."
+    },
+    "location": {
+      "notSupported": "La géolocalisation n'est pas supportée par votre navigateur",
+      "detected": "Emplacement détecté : {{district}}",
+      "notFound": "Impossible de déterminer votre district à partir de l'emplacement",
+      "error": "Erreur de détection de l'emplacement",
+      "denied": "Accès à la localisation refusé"
+    }
+  },
+  "dashboard": {
+    "loading": "Chargement du tableau de bord...",
+    "redirecting": "Redirection vers votre tableau de bord..."
+  },
+  "pages": {
+    "notFound": {
+      "title": "Champ introuvable",
+      "description": "On dirait que cette récolte s'est perdue sur le chemin du marché. La page que vous recherchez n'existe pas ou a été déplacée.",
+      "backToHome": "Retour à la maison",
+      "browseProducts": "Parcourir les produits",
+      "goBackPrevious": "Revenir à la page précédente",
+      "maybeLookingFor": "Peut-être que tu cherchais",
+      "links": {
+        "browseProducts": "Parcourir les produits",
+        "myNegotiations": "Mes négociations",
+        "sellerDashboard": "Tableau de bord du vendeur",
+        "wallet": "Portefeuille",
+        "signIn": "Se connecter"
+      }
+    },
+    "unauthorized": {
+      "title": "Accès refusé",
+      "description": "Vous n'êtes pas autorisé à accéder à cette page.",
+      "signedInAs": "Connecté en tant que :",
+      "role": "Rôle:",
+      "goToDashboard": "Aller au tableau de bord",
+      "signOut": "Se déconnecter",
+      "contactAdmin": "Si vous pensez qu'il s'agit d'une erreur, veuillez contacter votre administrateur."
+    },
+    "becomeSeller": {
+      "heroTitle": "Commencez à vendre sur UmuhinziLink",
+      "heroSubtitle": "Touchez les acheteurs à travers le Rwanda",
+      "benefits": {
+        "earnMore": {
+          "title": "Gagnez plus",
+          "body": "Vendez directement aux acheteurs à travers le Rwanda. Pas d'intermédiaire, plein tarif."
+        },
+        "reachBuyers": {
+          "title": "Toucher les acheteurs",
+          "body": "Vos annonces sont visibles par des milliers d'acheteurs dès le premier jour."
+        },
+        "negotiateFreely": {
+          "title": "Négocier librement",
+          "body": "Discutez et convenez de prix qui conviennent à vous et à votre acheteur."
+        }
+      },
+      "getStarted": "Commencer",
+      "alreadySeller": "Déjà vendeur ?",
+      "goToDashboard": "Aller au tableau de bord",
+      "back": "Dos",
+      "formTitle": "Votre profil de vendeur",
+      "formDescription": "C'est ce que les acheteurs verront lorsqu'ils consulteront vos annonces.",
+      "fields": {
+        "businessName": "Nom de la ferme ou de l'entreprise",
+        "district": "District",
+        "businessPhone": "Téléphone professionnel",
+        "whatYouSell": "Que vendez-vous ? (facultatif)"
+      },
+      "placeholders": {
+        "businessName": "par ex. Ferme de Mugisha, AgriSupplies Kigali",
+        "selectDistrict": "Sélectionnez votre quartier",
+        "phone": "78 000 0000",
+        "description": "par ex. Maïs frais, haricots et légumes de Musanze. Egalement des graines et de l'engrais."
+      },
+      "validation": {
+        "businessNameRequired": "Le nom de la ferme ou de l'entreprise est requis",
+        "districtRequired": "Veuillez sélectionner votre quartier",
+        "phoneRequired": "Le numéro de téléphone est requis",
+        "phoneInvalid": "Entrez un numéro de téléphone rwandais valide"
+      },
+      "dualAccountNote": "Vous pouvez toujours acheter des produits en tant qu’acheteur après être devenu vendeur. Votre compte fonctionne pour les deux.",
+      "settingUp": "Configuration de votre profil…",
+      "becomeSeller": "Devenez vendeur",
+      "successTitle": "Vous êtes vendeur ! 🌱",
+      "successDescription": "Votre profil de vendeur est prêt. Commencez par ajouter votre première annonce – cela ne prend qu'une minute.",
+      "verified": "Vérifié",
+      "addFirstListing": "Ajoutez votre première annonce"
+    }
+  },
+  "marketplace": {
+    "title": "Marché",
+    "tagline": "Frais de la ferme à votre table",
+    "verifiedFarmers": "Agriculteurs vérifiés",
+    "contactMessage": "Bonjour! Je suis intéressé par votre {{productName}}. Est-il toujours disponible ?",
+    "toasts": {
+      "authRequired": {
+        "title": "Authentification requise",
+        "body": "Veuillez vous connecter pour contacter l'agriculteur."
+      },
+      "farmerNotAvailable": {
+        "title": "Agriculteur indisponible",
+        "body": "Cet agriculteur n'est actuellement pas disponible pour contact."
+      },
+      "messageSent": {
+        "title": "Message envoyé",
+        "body": "Votre message a été envoyé à {{farmerName}} concernant {{productName}}."
+      },
+      "failedToSendMessage": {
+        "title": "Échec de l'envoi du message",
+        "body": "Une erreur s'est produite lors de la tentative d'envoi de votre message. Veuillez réessayer."
+      }
+    },
+    "searchPlaceholder": "Trouver des produits frais...",
+    "noProducts": "Aucun produit correspondant",
+    "noProductsDesc": "Nous n'avons pas trouvé ce que vous cherchez. Essayez une autre catégorie ou un autre emplacement.",
+    "filters": {
+      "label": "Filtres",
+      "category": "Catégorie",
+      "allRegions": "Toutes les régions"
+    }
+  },
+  "buyer": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Accès refusé",
+        "description": "Ce tableau de bord est uniquement disponible pour les acheteurs."
+      },
+      "title": "Tableau de bord de l'acheteur",
+      "subtitle": "Suivez vos commandes, gérez votre portefeuille et parcourez le marché",
+      "sections": {
+        "overview": "Aperçu",
+        "quickAccess": "Accès rapide",
+        "monthlySpending": "Dépenses mensuelles"
+      },
+      "metrics": {
+        "activeOrders": "Commandes actives",
+        "pendingOrders": "Commandes en attente",
+        "walletBalance": "Solde du portefeuille",
+        "totalSpent": "Total dépensé"
+      },
+      "actions": {
+        "trackOrders": "Suivre les commandes",
+        "browseMarketplace": "Parcourir le marché",
+        "savedProducts": "Produits enregistrés"
+      }
+    },
+    "purchases": {
+      "title": "Mes achats",
+      "subtitle": "Suivez vos commandes et gérez vos achats",
+      "stats": {
+        "totalPurchases": "Total des achats",
+        "completed": "Commandes terminées",
+        "inProgress": "En cours",
+        "totalSpent": "Total dépensé"
+      },
+      "filters": {
+        "all": "Tous",
+        "pending": "En attente",
+        "pendingPayment": "En attente de paiement",
+        "inProgress": "En cours",
+        "completed": "Complété",
+        "allCrops": "Toutes les cultures",
+        "searchPlaceholder": "Rechercher des commandes..."
+      },
+      "table": {
+        "orderId": "N° DE COMMANDE",
+        "product": "PRODUIT",
+        "farmer": "FERMIER",
+        "quantity": "QUANTITÉ",
+        "price": "PRIX",
+        "date": "DATE",
+        "status": "STATUT",
+        "actions": "ACTES"
+      },
+      "noOrders": "Aucune commande trouvée",
+      "tryAdjusting": "Essayez d'ajuster vos filtres",
+      "noOrdersYet": "Vous n'avez pas encore de commandes.",
+      "pay": "Payer",
+      "confirm": "Confirmer",
+      "viewDetails": "Afficher les détails",
+      "trackDelivery": "Suivre la livraison",
+      "confirmSafeDelivery": "Confirmer la livraison en toute sécurité",
+      "confirmSatisfaction": "Satisfaction confirmée",
+      "confirmSatisfactionMsg": "Merci d'avoir confirmé une livraison sûre !",
+      "paymentSuccess": "Paiement réussi",
+      "paymentSuccessMsg": "Votre commande a été payée avec succès."
+    },
+    "orders": {
+      "details": "Détails de la commande",
+      "backToPurchases": "Retour aux achats",
+      "orderNotFound": "Commande introuvable",
+      "orderNotFoundDesc": "La commande que vous recherchez n'existe pas.",
+      "accessDeniedDesc": "Cette commande a peut-être été supprimée ou vous n'y avez pas accès.",
+      "failedToLoad": "Échec du chargement des détails de la commande",
+      "loadingLabel": "Ordre de chargement",
+      "loadingDescription": "Récupération des détails de la commande…",
+      "yourOrder": "Votre commande",
+      "seller": "Vendeur",
+      "awaitingPayment": "En attente de paiement",
+      "notPaid": "Non payé",
+      "payNow": "Payez maintenant",
+      "cancelOrder": "Annuler la commande",
+      "detailsBreadcrumb": "Détails",
+      "total": "Total",
+      "product": "Produit",
+      "farmer": "Fermier",
+      "totalAmount": "Montant total",
+      "buyerInfo": "Informations sur l'acheteur",
+      "productDetails": "Détails du produit",
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "location": "Emplacement",
+      "productName": "Nom du produit",
+      "quantity": "Quantité",
+      "unitPrice": "Prix ​​unitaire",
+      "totalPrice": "Prix ​​total",
+      "paymentMethod": "Mode de paiement",
+      "paymentStatus": "Statut du paiement",
+      "paid": "PAYÉ",
+      "unpaid": "NON RÉMUNÉRÉ",
+      "deliveryTracking": "Suivi de livraison",
+      "deliveryNotAvailable": "Informations de livraison pas encore disponibles",
+      "deliveryNotAvailableDesc": "L'agriculteur mettra à jour le statut de livraison une fois la commande traitée."
+    },
+    "wallet": {
+      "title": "Mon portefeuille",
+      "subtitle": "Gérez vos finances et suivez les transactions",
+      "balance": "Solde actuel",
+      "active": "Actif",
+      "addMoney": "Ajouter de l'argent",
+      "stats": {
+        "totalDeposits": "Total des dépôts",
+        "totalPayments": "Paiements totaux",
+        "withdrawals": "Retraits",
+        "pending": "En attente"
+      },
+      "filters": {
+        "title": "Filtres",
+        "allTransactions": "toutes transactions",
+        "deposits": "Dépôts",
+        "payments": "Paiements",
+        "withdrawals": "Retraits",
+        "newestFirst": "Le plus récent en premier",
+        "oldestFirst": "Le plus âgé en premier",
+        "highestAmount": "Montant le plus élevé",
+        "lowestAmount": "Montant le plus bas",
+        "searchPlaceholder": "Rechercher des opérations...",
+        "transactionType": "Type de transaction",
+        "sortBy": "Trier par"
+      },
+      "history": "Historique des transactions",
+      "noTransactions": "Aucune transaction trouvée",
+      "historyDescription": "L'historique de vos transactions apparaîtra ici",
+      "tryAdjusting": "Essayez d'ajuster votre recherche ou vos filtres",
+      "modal": {
+        "title": "Ajouter de l'argent au portefeuille",
+        "amount": "Montant",
+        "description": "Description (Facultatif)",
+        "descriptionPlaceholder": "Ajouter une note pour ce dépôt",
+        "instructionsTitle": "Instructions de paiement",
+        "instructions": "Vous serez redirigé pour effectuer le paiement en utilisant la méthode sélectionnée. Les fonds seront disponibles dans votre portefeuille une fois le paiement confirmé.",
+        "cancel": "Annuler",
+        "confirm": "Ajouter de l'argent"
+      },
+      "export": "Exporter"
+    },
+    "saved": {
+      "title": "Favoris",
+      "sortBy": "Trier par:",
+      "sortOptions": {
+        "newest": "Le plus récent",
+        "priceLowHigh": "Prix : faible à élevé",
+        "priceHighLow": "Prix : haut à bas"
+      },
+      "available": "Disponible",
+      "buyNow": "Acheter maintenant",
+      "remove": "Retirer"
+    },
+    "productDetail": {
+      "title": "Informations sur le produit",
+      "supplierInfo": "Informations sur le fournisseur",
+      "farmerInfo": "Informations sur les agriculteurs",
+      "harvested": "Récolté",
+      "location": "Emplacement",
+      "category": "Catégorie",
+      "price": "Prix",
+      "certification": "Attestation",
+      "stock": {
+        "outOfStock": "En rupture de stock",
+        "lowStock": "Il ne reste que {{count}}",
+        "available": "{{count}} disponible",
+        "limitedWarning": "Stock limité disponible. Commandez vite pour éviter toute déception."
+      },
+      "perUnit": "par {{unit}}",
+      "actions": {
+        "purchase": "Acheter un produit",
+        "save": "Sauvegarder",
+        "saved": "Enregistré",
+        "share": "Partager",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "chat": "Discutez avec le propriétaire",
+        "negotiable": "Négociable"
+      },
+      "toasts": {
+        "addedToFavorites": "Produit ajouté aux favoris",
+        "removedFromFavorites": "Produit supprimé des favoris",
+        "linkCopied": "Lien du produit copié dans le presse-papiers"
+      },
+      "breadcrumbs": {
+        "home": "Maison",
+        "grainsAndCereals": "Céréales et céréales"
+      },
+      "badges": {
+        "freshHarvest": "Récolte fraîche"
+      },
+      "overallRating": "4.8",
+      "reviews": "(124 avis)",
+      "description": "Description",
+      "productDetails": "Détails du produit",
+      "details": {
+        "weight": "Poids",
+        "harvestDate": "Date de récolte",
+        "location": "Emplacement",
+        "variety": "Variété",
+        "storage": "Stockage",
+        "delivery": "Livraison"
+      },
+      "quantity": "Quantité",
+      "addToCart": "Ajouter au panier",
+      "saveToWishlist": "Enregistrer dans la liste de souhaits",
+      "soldBy": "Vendu par",
+      "farmerSince": "Agriculteur depuis",
+      "supplierSince": "Fournisseur depuis",
+      "sellerRating": "Notation",
+      "sales": "Ventes",
+      "onTimeDelivery": "Livraison à temps",
+      "messageSeller": "Message au vendeur",
+      "customerReviews": "Commentaires des clients",
+      "relatedProducts": "Produits associés",
+      "otherGrainsFromNearbyFarmers": "Autres céréales des agriculteurs voisins"
+    }
+  },
+  "farmer": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Accès refusé",
+        "description": "Ce tableau de bord est uniquement disponible pour les agriculteurs."
+      },
+      "title": "Tableau de bord des agriculteurs",
+      "subtitle": "Suivez vos revenus, gérez vos produits et surveillez votre croissance",
+      "sections": {
+        "financialOverview": "Aperçu financier",
+        "quickActions": "Actions rapides",
+        "recentOrders": "Commandes récentes"
+      },
+      "metrics": {
+        "totalEarnings": "Gains totaux",
+        "pendingOrders": "Commandes en attente",
+        "totalOrders": "Total des commandes",
+        "lowStockProducts": "Produits à faible stock"
+      },
+      "actions": {
+        "addProduct": "Ajouter un produit",
+        "viewPayments": "Afficher les paiements",
+        "manageInventory": "Gérer l'inventaire",
+        "viewAll": "Tout afficher"
+      },
+      "table": {
+        "orderId": "Numéro de commande",
+        "buyer": "Acheteur",
+        "status": "Statut",
+        "amount": "Montant",
+        "date": "Date",
+        "noOrders": "Aucune commande récente trouvée"
+      }
+    },
+    "products": {
+      "title": "Inventaire du marché",
+      "subtitle": "Gérez vos listes de produits et surveillez les niveaux de stock",
+      "addProduct": "Ajouter un produit",
+      "metrics": {
+        "listings": "Total des annonces",
+        "inStock": "En stock",
+        "outOfStock": "En rupture de stock",
+        "units": "Unités totales"
+      },
+      "filters": {
+        "search": "Recherchez vos produits...",
+        "allStatus": "Tous les statuts",
+        "inStock": "En stock",
+        "outOfStock": "En rupture de stock",
+        "pending": "En attente d'examen",
+        "reset": "Réinitialiser"
+      },
+      "activeListings": "Annonces actives",
+      "results": "Résultats",
+      "noListings": "Aucune annonce trouvée",
+      "noListingsDesc": "Essayez d'ajuster vos filtres ou créez une nouvelle liste de produits.",
+      "loading": "Chargement des produits..."
+    },
+    "profile": {
+      "title": "Profil",
+      "subtitle": "Gérez les informations de votre agriculteur",
+      "loading": "Chargement du profil...",
+      "notAvailable": "Les données de profil ne sont pas disponibles pour le moment.",
+      "registeredFarmer": "Agriculteur enregistré",
+      "farmSize": "Taille de la ferme",
+      "lastUpdated": "Dernière mise à jour",
+      "newProfileImage": "Nouvelle image de profil",
+      "upload": "Télécharger",
+      "cancel": "Annuler",
+      "sections": {
+        "personal": "Informations personnelles",
+        "contact": "Coordonnées",
+        "address": "Adresse",
+        "farming": "Détails de l'agriculture"
+      },
+      "fields": {
+        "firstName": "Prénom",
+        "lastName": "Nom de famille",
+        "phone": "Numéro de téléphone",
+        "email": "E-mail",
+        "district": "District",
+        "province": "Province",
+        "farmSize": "Taille de la ferme",
+        "crops": "Cultures",
+        "experience": "Niveau d'expérience",
+        "notProvided": "Non fourni"
+      },
+      "toasts": {
+        "imageUpdated": "Image mise à jour",
+        "imageUpdatedDesc": "Image de profil mise à jour avec succès",
+        "uploadFailed": "Échec du téléchargement",
+        "uploadFailedDesc": "Échec du téléchargement de l'image. Veuillez réessayer."
+      }
+    },
+    "settings": {
+      "title": "Paramètres",
+      "profile": {
+        "title": "Paramètres du profil",
+        "name": "Nom et prénom",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "district": "District",
+        "sector": "Secteur",
+        "save": "Enregistrer les modifications"
+      },
+      "password": {
+        "title": "Changer le mot de passe",
+        "current": "Mot de passe actuel",
+        "new": "Nouveau mot de passe",
+        "confirm": "Confirmer le nouveau mot de passe",
+        "update": "Mettre à jour le mot de passe"
+      },
+      "appearance": {
+        "title": "Apparence",
+        "darkMode": "Mode sombre",
+        "darkModeDesc": "Basculer le thème sombre/clair",
+        "language": "Langue",
+        "languageDesc": "Choisissez votre langue préférée"
+      },
+      "notifications": {
+        "title": "Préférences de notifications",
+        "email": "Notifications par courrier électronique",
+        "emailDesc": "Mises à jour et promotions des commandes",
+        "sms": "Notifications SMS",
+        "smsDesc": "Alertes critiques par SMS",
+        "updates": "Mises à jour des commandes",
+        "updatesDesc": "Statut de la commande en temps réel",
+        "alerts": "Alertes de prix",
+        "alertsDesc": "Modifications du prix des produits",
+        "marketing": "E-mails marketing",
+        "marketingDesc": "Promotions et actualités"
+      }
+    },
+    "orders": {
+      "title": "Ordres",
+      "subtitle": "Aperçu des commandes pour",
+      "export": "Exporter",
+      "metrics": {
+        "total": "Total des commandes",
+        "revenue": "Revenu",
+        "paid": "Payé",
+        "pending": "En attente",
+        "allTime": "Tout le temps",
+        "grossValue": "Valeur brute",
+        "paidDesc": "Commandes entièrement payées",
+        "pendingDesc": "En attente d'accomplissement"
+      },
+      "filters": {
+        "status": "Statut",
+        "clear": "Effacer le filtre",
+        "all": "Tous"
+      },
+      "status": {
+        "pending": "En attente",
+        "pendingPayment": "En attente de paiement",
+        "active": "En cours",
+        "processing": "Traitement",
+        "shipped": "Expédié",
+        "delivered": "Livré",
+        "completed": "Complété",
+        "cancelled": "Annulé"
+      },
+      "table": {
+        "orderId": "N° DE COMMANDE",
+        "buyer": "ACHETEUR",
+        "unknownBuyer": "Acheteur inconnu",
+        "date": "DATE",
+        "product": "PRODUIT",
+        "quantity": "QUANTITÉ",
+        "amount": "MONTANT",
+        "status": "STATUT",
+        "action": "ACTION",
+        "loading": "Chargement des commandes...",
+        "noOrders": "Aucune commande trouvée",
+        "noOrdersDesc": "Essayez d'ajuster vos filtres",
+        "approve": "Approuver",
+        "viewDetails": "Afficher les détails de la commande",
+        "tracking": "Détails du suivi"
+      },
+      "toasts": {
+        "confirmCancel": "Êtes-vous sûr de vouloir annuler cette commande ?",
+        "confirmSuccess": "L’acheteur a confirmé avec succès une livraison sûre !",
+        "confirmFailed": "Échec de la confirmation de la satisfaction. Veuillez réessayer.",
+        "orderNotFound": "Commande introuvable",
+        "failedToLoad": "Échec du chargement des détails de la commande",
+        "updateFailed": "Échec de la mise à jour du statut de livraison. Veuillez réessayer."
+      },
+      "detail": {
+        "orderNotFound": "Commande introuvable",
+        "orderNotFoundDesc": "La commande que vous recherchez n'existe pas.",
+        "backToOrders": "Retour aux commandes",
+        "title": "Détails de la commande",
+        "product": "Produit",
+        "customer": "Client",
+        "totalAmount": "Montant total",
+        "customerInfo": "Informations client",
+        "name": "Nom",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "deliveryAddress": "Adresse de livraison",
+        "productDetails": "Détails du produit",
+        "productName": "Nom du produit",
+        "quantity": "Quantité",
+        "unitPrice": "Prix ​​unitaire",
+        "totalPrice": "Prix ​​total",
+        "paymentMethod": "Mode de paiement",
+        "paymentStatus": "Statut du paiement",
+        "paid": "PAYÉ",
+        "unpaid": "NON RÉMUNÉRÉ",
+        "deliveryTracking": "Suivi de livraison"
+      }
+    },
+    "supplierOrders": {
+      "toasts": {
+        "orderNotFound": "Commande introuvable",
+        "failedToLoad": "Échec du chargement des détails de la commande",
+        "updateFailed": "Échec de la mise à jour du statut de livraison. Veuillez réessayer."
+      },
+      "detail": {
+        "orderNotFound": "Commande introuvable",
+        "orderNotFoundDesc": "La commande que vous recherchez n'existe pas.",
+        "backToOrders": "Retour aux commandes fournisseurs",
+        "title": "Détails de la commande",
+        "product": "Élément d'entrée",
+        "supplier": "Fournisseur",
+        "totalAmount": "Montant total",
+        "supplierInfo": "Informations sur le fournisseur",
+        "name": "Nom",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "supplierAddress": "Adresse du fournisseur",
+        "productDetails": "Détails de l'élément d'entrée",
+        "productName": "Nom d'entrée",
+        "quantity": "Quantité",
+        "unitPrice": "Prix ​​unitaire",
+        "totalPrice": "Prix ​​total",
+        "paymentMethod": "Mode de paiement",
+        "paymentStatus": "Statut du paiement",
+        "paid": "PAYÉ",
+        "unpaid": "NON RÉMUNÉRÉ",
+        "deliveryTracking": "Suivi de livraison"
+      }
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Accès refusé",
+        "description": "Ce tableau de bord est uniquement disponible pour les administrateurs."
+      },
+      "title": "Tableau de bord d'administration",
+      "subtitle": "Surveillez la santé du système, gérez les utilisateurs et suivez les métriques de la plate-forme",
+      "sections": {
+        "ecosystemOverview": "Aperçu de l'écosystème",
+        "platformPerformance": "Performances de la plateforme",
+        "engagementOperations": "Engagement et opérations",
+        "platformTrends": "Tendances des plateformes"
+      },
+      "metrics": {
+        "totalUsers": "Nombre total d'utilisateurs",
+        "totalFarmers": "Total des agriculteurs",
+        "totalBuyers": "Total des acheteurs",
+        "totalSuppliers": "Total des fournisseurs",
+        "totalOrders": "Total des commandes",
+        "transactionVolume": "Volume des transactions",
+        "platformRevenue": "Revenus de la plateforme",
+        "newRegistrations": "Nouvelles inscriptions (30j)",
+        "activeUsers": "Utilisateurs actifs (7j)",
+        "openSupportTickets": "Ouvrir les tickets de support"
+      }
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "subtitle": "Gérer et surveiller tous les membres de la plateforme",
+      "searchPlaceholder": "Rechercher des utilisateurs...",
+      "filters": {
+        "allRoles": "Tous les rôles",
+        "allStatus": "Tous les statuts",
+        "verified": "Vérifié",
+        "pending": "En attente"
+      },
+      "table": {
+        "profile": "PROFIL",
+        "status": "STATUT",
+        "role": "RÔLE",
+        "contactInfo": "INFORMATIONS DE CONTACT",
+        "actions": "ACTES",
+        "primaryContact": "Contact principal"
+      },
+      "status": {
+        "verified": "Vérifié",
+        "pending": "En attente",
+        "suspended": "Suspendu",
+        "verifiedAccount": "Compte vérifié",
+        "pendingVerification": "En attente de vérification"
+      },
+      "actions": {
+        "quickView": "Aperçu rapide",
+        "reactivateAccount": "Réactiver le compte",
+        "suspendAccount": "Suspendre le compte",
+        "close": "Fermer"
+      },
+      "empty": "Aucun utilisateur ne correspond à vos critères",
+      "pagination": "Page {{current}} sur {{total}}",
+      "modal": {
+        "phone": "Téléphone",
+        "joined": "Rejoint",
+        "notLinked": "Non lié"
+      },
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée.",
+      "toasts": {
+        "fetchFailed": "Échec de la récupération des utilisateurs",
+        "userSuspended": "Utilisateur suspendu avec succès",
+        "userActivated": "Utilisateur activé avec succès",
+        "roleUpdated": "Le rôle de l'utilisateur a été mis à jour avec succès",
+        "roleUpdateFailed": "Échec de la mise à jour du rôle utilisateur",
+        "deleteFailed": "Échec de la suppression de l'utilisateur",
+        "suspendFailed": "Échec de la suspension de l'utilisateur",
+        "activateFailed": "Échec de l'activation de l'utilisateur"
+      }
+    },
+    "usersDetail": {
+      "title": "Détails de l'utilisateur",
+      "backToUsers": "Retour aux utilisateurs",
+      "loadingLabel": "Chargement de l'utilisateur",
+      "loadingDescription": "Récupération des détails du compte…",
+      "notFoundTitle": "Utilisateur introuvable",
+      "notFoundDesc": "L'utilisateur que vous recherchez n'existe pas.",
+      "failedToLoad": "Échec du chargement de l'utilisateur",
+      "message": "Message",
+      "unsuspend": "Annuler la suspension",
+      "suspend": "Suspendre",
+      "userStatus": "Statut de l'utilisateur",
+      "userStatusDesc": "État actuel et informations de vérification",
+      "userId": "ID de l'utilisateur",
+      "role": "Rôle",
+      "joined": "Rejoint",
+      "personalInfo": "Informations personnelles",
+      "fullName": "Nom et prénom",
+      "email": "Adresse email",
+      "phone": "Numéro de téléphone",
+      "address": "Adresse",
+      "accountInfo": "Informations sur le compte",
+      "accountType": "Type de compte",
+      "verificationStatus": "Statut de vérification",
+      "accountStatus": "Statut du compte",
+      "active": "Actif",
+      "adminActions": "Actions d'administration",
+      "adminActionsDesc": "Contrôles administratifs pour cet utilisateur",
+      "sendMessage": "Envoyer un message",
+      "editUser": "Modifier l'utilisateur",
+      "viewActivity": "Afficher l'activité",
+      "toasts": {
+        "notAvailable": "La messagerie directe n'est disponible que lors des négociations de commande.",
+        "loadFailed": "Échec du chargement des détails de l'utilisateur",
+        "userSuspended": "Utilisateur suspendu avec succès",
+        "userActivated": "Utilisateur activé avec succès",
+        "suspendFailed": "Échec de la suspension de l'utilisateur",
+        "activateFailed": "Échec de l'activation de l'utilisateur"
+      }
+    },
+    "products": {
+      "title": "Produits agricoles",
+      "subtitle": "Modérer et superviser tous les produits répertoriés par les agriculteurs",
+      "searchPlaceholder": "Rechercher des produits ou des agriculteurs...",
+      "filters": {
+        "allCategories": "Toutes les catégories",
+        "vegetables": "Légumes",
+        "fruits": "Fruits",
+        "grains": "Grains",
+        "allStatus": "Tous les statuts"
+      },
+      "table": {
+        "product": "Produit",
+        "farmer": "Fermier",
+        "category": "Catégorie",
+        "price": "Prix",
+        "stock": "Action",
+        "status": "Statut",
+        "actions": "Actes",
+        "per": "par"
+      },
+      "empty": "Aucun produit trouvé",
+      "modal": {
+        "title": "Détails du produit",
+        "name": "Nom",
+        "category": "Catégorie",
+        "price": "Prix",
+        "stock": "Action",
+        "description": "Description"
+      },
+      "viewDetails": "Afficher les détails du produit",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce produit ? Cette action ne peut pas être annulée.",
+      "toasts": {
+        "moderated": "Produit {{action}}d avec succès",
+        "moderateFailed": "Échec de la modération du produit"
+      }
+    },
+    "productsDetail": {
+      "title": "Détails du produit",
+      "backToProducts": "Retour aux produits",
+      "loadingLabel": "Chargement du produit",
+      "loadingDescription": "Récupération des détails de l'annonce…",
+      "notFoundTitle": "Produit introuvable",
+      "notFoundDesc": "Ce produit est introuvable.",
+      "productLabel": "Produit",
+      "deleteProduct": "Supprimer le produit",
+      "adminActions": "Actions d'administration",
+      "adminActionsDesc": "Gérer le statut d'approbation et la visibilité de ce produit",
+      "productId": "Identifiant du produit :",
+      "ownerId": "Identifiant du propriétaire :",
+      "created": "Créé :",
+      "lastUpdated": "Dernière mise à jour :",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce produit ? Cette action ne peut pas être annulée.",
+      "toasts": {
+        "linkCopied": "Lien du produit copié dans le presse-papiers",
+        "deleteSuccess": "Produit supprimé avec succès",
+        "deleteFailed": "Échec de la suppression du produit"
+      }
+    },
+    "orders": {
+      "title": "Commandes des agriculteurs",
+      "subtitle": "Surveiller et gérer les transactions entre agriculteurs et acheteurs",
+      "table": {
+        "settlementInfo": "INFORMATIONS SUR LE RÈGLEMENT",
+        "participants": "PARTICIPANTS",
+        "executionDate": "DATE D'EXÉCUTION",
+        "status": "STATUT",
+        "actions": "ACTES",
+        "txRef": "TX-REF : {{id}}",
+        "farmerSettlementOrder": "Ordonnance de règlement pour les agriculteurs",
+        "sender": "Expéditeur",
+        "receiver": "Récepteur"
+      },
+      "empty": "Aucune transaction capturée",
+      "viewDetails": "Afficher les détails de la commande",
+      "archive": "Archive"
+    },
+    "ordersDetail": {
+      "title": "Détails de la commande",
+      "backToOrders": "Retour aux commandes",
+      "orderLabel": "Commande",
+      "loadingLabel": "Ordre de chargement",
+      "loadingDescription": "Récupération des détails de la commande…",
+      "notFoundTitle": "Commande introuvable",
+      "notFoundDesc": "La commande que vous recherchez n'existe pas.",
+      "share": "Partager",
+      "export": "Exporter",
+      "orderStatus": "Statut de la commande",
+      "orderStatusDesc": "Informations sur l'état actuel et la progression",
+      "orderId": "Numéro de commande",
+      "totalAmount": "Montant total",
+      "created": "Créé",
+      "customerInfo": "Informations client",
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "productInfo": "Informations sur le produit",
+      "productName": "Nom du produit",
+      "quantity": "Quantité",
+      "unitPrice": "Prix ​​unitaire",
+      "paymentStatus": "Statut du paiement",
+      "paid": "Payé",
+      "unpaid": "Non rémunéré",
+      "adminActions": "Actions d'administration",
+      "adminActionsDesc": "Contrôles administratifs pour cette commande",
+      "viewFullDetails": "Afficher tous les détails",
+      "viewTimeline": "Voir la chronologie",
+      "downloadInvoice": "Télécharger la facture",
+      "toasts": {
+        "loadFailed": "Échec du chargement des détails de la commande",
+        "linkCopied": "Lien de commande copié dans le presse-papiers"
+      }
+    },
+    "wallets": {
+      "title": "Gestion de trésorerie",
+      "subtitle": "Vérifier et surveiller les portefeuilles d'utilisateurs {{count}} dans l'ensemble de l'écosystème",
+      "tabs": {
+        "wallets": "Portefeuilles",
+        "transactions": "Transactions"
+      },
+      "searchPlaceholder": "Recherchez par nom, e-mail ou identifiant de portefeuille...",
+      "metrics": {
+        "systemLiquidity": "Liquidité du système",
+        "activeWallets": "Portefeuilles actifs",
+        "avgBalance": "Solde moyen"
+      },
+      "table": {
+        "walletOwner": "PROPRIÉTAIRE DU PORTEFEUILLE",
+        "balance": "ÉQUILIBRE",
+        "status": "STATUT",
+        "createdOn": "CRÉÉ LE",
+        "actions": "ACTES"
+      },
+      "status": {
+        "active": "Actif",
+        "locked": "Fermé"
+      },
+      "empty": "Aucun portefeuille trouvé",
+      "unknownUser": "Utilisateur inconnu",
+      "pagination": "Affichage de la PAGE {{current}} DE {{total}}",
+      "toasts": {
+        "fetchFailed": "Échec de la récupération des portefeuilles"
+      }
+    },
+    "walletsDetail": {
+      "title": "Résumé du grand livre",
+      "walletId": "Identifiant du portefeuille : {{id}}",
+      "backToWallets": "Retour à Portefeuilles",
+      "loadingLabel": "Chargement du portefeuille",
+      "loadingDescription": "Récupération des détails et des transactions du portefeuille…",
+      "notFound": "Portefeuille introuvable",
+      "accountHolder": "Titulaire du compte",
+      "availableBalance": "Solde disponible",
+      "currency": "Devise : {{currency}}",
+      "accountStatus": "Statut du compte",
+      "memberSince": "Membre depuis",
+      "status": {
+        "active": "Actif",
+        "restricted": "Limité"
+      },
+      "transactionAudit": "Vérification des transactions",
+      "recentActivities": "Activités récentes de {{count}}",
+      "loadingTransactions": "Décryptage du grand livre...",
+      "table": {
+        "type": "Taper",
+        "status": "Statut",
+        "amount": "Montant",
+        "date": "Date"
+      },
+      "emptyTransactions": "Aucun historique de transactions trouvé pour ce compte",
+      "toasts": {
+        "fetchFailed": "Échec de la récupération des détails du portefeuille"
+      }
+    },
+    "analytics": {
+      "title": "Tableau de bord d'analyse",
+      "subtitle": "Informations sur les revenus et mesures de la plateforme",
+      "loadingLabel": "Chargement des analyses",
+      "loadingDescription": "Analyse des métriques de la plateforme…",
+      "stats": {
+        "totalRevenue": "Revenu total",
+        "totalOrders": "Total des commandes",
+        "activeUsers": "Utilisateurs actifs",
+        "productsListed": "Produits répertoriés"
+      },
+      "vsLastPeriod": "vs la dernière période",
+      "timeRange": {
+        "week": "La semaine dernière",
+        "month": "Mois dernier",
+        "quarter": "Dernier trimestre",
+        "year": "L'année dernière"
+      },
+      "export": "Exporter",
+      "revenueTrend": "Tendance des revenus",
+      "ordersTrend": "Tendance des commandes",
+      "chartPlaceholder": "Visualisation du graphique des revenus",
+      "ordersChartPlaceholder": "Visualisation du graphique des commandes",
+      "chartIntegrate": "Intégrer avec Chart.js ou Recharts",
+      "topProducts": "Produits phares",
+      "topFarmers": "Meilleurs agriculteurs",
+      "ordersCount": "{{count}} commandes",
+      "productsCount": "{{count}} produits",
+      "monthlyPerformance": "Performance mensuelle",
+      "table": {
+        "month": "MOIS",
+        "revenue": "REVENU",
+        "orders": "ORDRES",
+        "newUsers": "NOUVEAUX UTILISATEURS",
+        "avgOrderValue": "VALEUR MOYENNE DE LA COMMANDE"
+      }
+    },
+    "settings": {
+      "title": "Paramètres système",
+      "subtitle": "Configurer les paramètres et préférences à l'échelle de la plateforme",
+      "saveSettings": "Enregistrer les paramètres",
+      "generalSettings": "Paramètres généraux",
+      "siteName": "Nom du site",
+      "contactEmail": "E-mail de contact",
+      "siteDescription": "Description du site"
+    }
+  },
+  "supplier": {
+    "profile": {
+      "businessInfo": "Informations commerciales",
+      "businessName": "Nom de l'entreprise",
+      "businessType": "Type d'entreprise"
+    },
+    "dashboard": {
+      "accessDenied": {
+        "title": "Accès refusé",
+        "description": "Ce tableau de bord est uniquement disponible pour les fournisseurs."
+      },
+      "title": "Tableau de bord des fournisseurs",
+      "subtitle": "Surveiller les livraisons, suivre les performances et gérer la logistique",
+      "sections": {
+        "performanceOverview": "Aperçu des performances",
+        "inventoryAlerts": "Alertes d'inventaire",
+        "revenueTrend": "Tendance des revenus (30 jours)",
+        "recentOrders": "Commandes récentes"
+      },
+      "metrics": {
+        "totalRevenue": "Revenu total",
+        "activeOrders": "Commandes actives",
+        "lowStockProducts": "Produits à faible stock",
+        "deliveryRate": "Livraison à temps"
+      },
+      "table": {
+        "farmer": "Fermier",
+        "product": "Produit",
+        "quantity": "Quantité",
+        "status": "Statut",
+        "deliveryDate": "La date de livraison",
+        "noOrders": "Aucune commande récente trouvée"
+      },
+      "alerts": {
+        "inStock": "en stock",
+        "min": "Min.",
+        "restock": "Réapprovisionner",
+        "allHealthy": "Tous les niveaux de stocks sont sains.",
+        "manageProducts": "Gérer les produits"
+      }
+    },
+    "orders": {
+      "toasts": {
+        "orderNotFound": "Commande introuvable",
+        "failedToLoad": "Échec du chargement des détails de la commande",
+        "updateFailed": "Échec de la mise à jour du statut de livraison. Veuillez réessayer."
+      },
+      "detail": {
+        "orderNotFound": "Commande introuvable",
+        "orderNotFoundDesc": "La commande que vous recherchez n'existe pas.",
+        "backToOrders": "Retour aux commandes",
+        "title": "Détails de la commande",
+        "product": "Élément d'entrée",
+        "farmer": "Fermier",
+        "totalAmount": "Montant total",
+        "farmerInfo": "Informations sur les agriculteurs",
+        "name": "Nom",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "deliveryAddress": "Adresse de livraison",
+        "productDetails": "Détails de l'élément d'entrée",
+        "productName": "Nom d'entrée",
+        "quantity": "Quantité",
+        "unitPrice": "Prix ​​unitaire",
+        "totalPrice": "Prix ​​total",
+        "paymentMethod": "Mode de paiement",
+        "paymentStatus": "Statut du paiement",
+        "paid": "PAYÉ",
+        "unpaid": "NON RÉMUNÉRÉ",
+        "deliveryTracking": "Suivi de livraison"
+      }
+    },
+    "products": {
+      "title": "Inventaire des intrants",
+      "subtitle": "Gérez et mettez à jour vos fournitures agricoles pour les agriculteurs",
+      "addProduct": "Ajouter une nouvelle entrée",
+      "activeListings": "Annonces actives",
+      "results": "Résultats",
+      "noListings": "Aucune entrée trouvée",
+      "noListingsDesc": "Commencez par lister votre premier intrant agricole.",
+      "addTitle": "Ajouter une nouvelle entrée",
+      "editTitle": "Modifier l'entrée",
+      "filters": {
+        "search": "Recherchez votre inventaire..."
+      },
+      "form": {
+        "details": "Détails du produit",
+        "selectType": "Sélectionnez le type de produit",
+        "descPlaceholder": "Décrivez votre produit d'entrée...",
+        "price": "Prix ​​(RWF)",
+        "measurement": "Mesures",
+        "selectUnit": "Sélectionnez l'unité",
+        "quantity": "Quantité en stock",
+        "certification": "Attestation",
+        "none": "Aucun",
+        "media": "Médias produits",
+        "update": "Mettre à jour la liste",
+        "list": "Entrée de liste"
+      }
+    }
+  },
+  "delivery": {
+    "tracking": {
+      "title": "Suivi de livraison",
+      "noDeliveryInfo": "Aucune information de livraison disponible",
+      "currentStatus": "Statut actuel",
+      "updateTo": "Mettre à jour vers {{status}}",
+      "updateStatus": "Mettre à jour le statut de livraison",
+      "confirmUpdate": "Voulez-vous vraiment mettre à jour l'état de livraison sur <strong>{{status}}</strong> ?",
+      "confirmButton": "Confirmer la mise à jour",
+      "cancelButton": "Annuler",
+      "updating": "Mise à jour...",
+      "estimatedDelivery": "Livraison estimée : {{date}}",
+      "deliveryTimeline": "Délai de livraison",
+      "origin": "ORIGINE",
+      "destination": "DESTINATION",
+      "statusLabels": {
+        "pending": "En attente",
+        "preparing": "Préparation",
+        "inTransit": "En transit",
+        "delivered": "Livré",
+        "failed": "Échoué"
+      },
+      "steps": {
+        "orderReceived": {
+          "label": "Commande reçue",
+          "description": "La commande a été reçue et est en cours de traitement"
+        },
+        "preparingOrder": {
+          "label": "Préparation de la commande",
+          "description": "La commande est en préparation pour la livraison"
+        },
+        "inTransit": {
+          "label": "En transit",
+          "description": "La commande est en route vers le lieu de livraison"
+        },
+        "delivered": {
+          "label": "Livré",
+          "description": "La commande a été livrée avec succès"
+        }
+      },
+      "completed": "Terminé : {{date}}",
+      "pendingDate": "Date en attente"
+    }
+  },
+  "government": {
+    "dashboard": {
+      "accessDenied": {
+        "title": "Accès refusé",
+        "description": "Ce tableau de bord est uniquement disponible pour les représentants du gouvernement."
+      },
+      "title": "Tableau de bord du gouvernement",
+      "subtitle": "Surveillez les données agricoles, suivez la conformité et analysez l’impact économique",
+      "sections": {
+        "agriOverview": "Aperçu de l'agriculture",
+        "productionAnalytics": "Analyse de la production",
+        "foodSecurityCompliance": "Sécurité alimentaire et conformité",
+        "economicImpact": "Impact économique",
+        "keyIndicators": "Indicateurs clés",
+        "regionalStats": "Statistiques régionales"
+      },
+      "metrics": {
+        "registeredFarmers": "Agriculteurs enregistrés",
+        "totalProduction": "Production totale",
+        "marketValue": "Valeur marchande",
+        "exportVolume": "Volume d'exportation",
+        "foodSecurityIndex": "Indice de sécurité alimentaire",
+        "sustainabilityScore": "Score de durabilité",
+        "complianceRate": "Taux de conformité",
+        "subsidyDistributed": "Subvention distribuée"
+      },
+      "stats": {
+        "totalRegistered": "Total inscrit",
+        "tonsProduced": "Tonnes produites",
+        "tonsExported": "Tonnes exportées"
+      }
+    }
+  },
+  "landing": {
+    "nav": {
+      "home": "Maison",
+      "marketplace": "Produits",
+      "howItWorks": "Comment ça marche",
+      "aboutUs": "À propos de nous",
+      "features": "Caractéristiques",
+      "agribusiness": "AgriBusiness",
+      "lenders": "Prêteurs",
+      "contact": "Contactez-nous"
+    },
+    "hero": {
+      "title": {
+        "line1": "Connectez les agriculteurs à",
+        "highlight": "Marchés numériques"
+      },
+      "subtitle": "Donner aux petits exploitants agricoles du Rwanda les moyens technologiques d'accéder aux marchés, d'obtenir des conseils agricoles basés sur l'IA et d'obtenir des prêts agricoles",
+      "cta": {
+        "getStarted": "Commencer",
+        "viewDemo": "Voir la démo"
+      },
+      "stats": {
+        "registeredFarmers": "Agriculteurs enregistrés",
+        "inputSuppliers": "Fournisseurs d’intrants",
+        "transactionsCompleted": "Transactions complétées"
+      },
+      "imageAlt": "Agriculteur utilisant la technologie numérique sur le terrain"
+    },
+    "about": {
+      "badge": "À propos d'UmuhinzinLink",
+      "title": "Combler le fossé entre les agriculteurs et les marchés",
+      "description": "UmuhinzinLink est la première plateforme agricole numérique complète du Rwanda, conçue spécifiquement pour les petits exploitants agricoles. Nous combinons une technologie de pointe avec une compréhension approfondie des pratiques agricoles locales pour créer des solutions durables.",
+      "images": {
+        "primaryAlt": "Femme souriante tenant des légumes frais",
+        "secondaryAlt": "Panier de tomates fraîches"
+      },
+      "points": {
+        "marketAccess": {
+          "title": "Accès au marché",
+          "description": "Connexion directe aux acheteurs et prix équitables"
+        },
+        "aiAdvice": {
+          "title": "Conseils basés sur l'IA",
+          "description": "Recommandations agricoles intelligentes dans la langue locale"
+        },
+        "financialInclusion": {
+          "title": "Inclusion financière",
+          "description": "Accès aux prêts et crédits agricoles"
+        }
+      },
+      "learnMore": "Apprendre encore plus"
+    },
+    "whoWeServe": {
+      "title": "Qui nous servons",
+      "subtitle": "Trois communautés interconnectées, moteurs de la croissance agricole",
+      "groups": {
+        "farmers": {
+          "title": "Agriculteurs",
+          "items": {
+            "mobileOtp": "Prise en charge du OTP mobile et du kinyarwanda",
+            "aiTips": "Conseils d'agronomie basés sur l'IA",
+            "creditAccess": "Accès au crédit pour les intrants",
+            "marketTrends": "Tendances des prix du marché"
+          }
+        },
+        "suppliers": {
+          "title": "Fournisseurs",
+          "items": {
+            "listInputs": "Répertorier les intrants agricoles et l'inventaire",
+            "demandMatching": "Correspondance avec la demande des agriculteurs",
+            "creditRequests": "Gestion des demandes de crédit",
+            "salesAnalytics": "Suivi et analyses des ventes"
+          }
+        },
+        "buyers": {
+          "title": "Acheteurs",
+          "items": {
+            "browseProduce": "Parcourez les produits frais",
+            "filter": "Filtrer par région et prix",
+            "directContact": "Contact direct avec les agriculteurs",
+            "securePayments": "Traitement des paiements sécurisé"
+          }
+        }
+      }
+    },
+    "features": {
+      "title": "Fonctionnalités de la plateforme",
+      "subtitle": "Des outils complets pour une agriculture moderne",
+      "items": {
+        "aiAdvisory": {
+          "title": "Conseil basé sur l'IA",
+          "description": "Recevez des conseils agronomiques personnalisés via chatbot et SMS en fonction de vos cultures et des conditions locales.",
+          "points": {
+            "cropGuidance": "Conseils spécifiques aux cultures",
+            "weatherRecommendations": "Recommandations basées sur la météo",
+            "soilAnalysis": "Analyse de l'état du sol"
+          }
+        },
+        "marketAccess": {
+          "title": "Accès au marché",
+          "description": "Connectez-vous directement avec les acheteurs et accédez en temps réel aux informations du marché et aux tendances de prix.",
+          "points": {
+            "directBuyerMatching": "Correspondance directe des acheteurs",
+            "priceTrendAnalysis": "Analyse de l'évolution des prix",
+            "demandForecasting": "Prévision de la demande"
+          }
+        },
+        "inputCredit": {
+          "title": "Crédit d'entrée",
+          "description": "Accéder aux intrants agricoles à crédit grâce à des partenariats avec des ONG et des institutions de microfinance.",
+          "points": {
+            "seedsAndFertilizerCredit": "Crédit semences et engrais",
+            "ngoPartnerships": "Partenariats avec des ONG",
+            "flexiblePaymentTerms": "Conditions de paiement flexibles"
+          }
+        },
+        "offlineSupport": {
+          "title": "Assistance hors ligne",
+          "description": "Restez connecté même dans les zones à faible connectivité grâce aux fonctionnalités et notifications par SMS.",
+          "points": {
+            "smsLoginAndTips": "Connexion SMS et conseils",
+            "offlineNotifications": "Notifications hors ligne",
+            "lowBandwidthDesign": "Conception à faible bande passante"
+          }
+        },
+        "kinyarwandaSupport": {
+          "title": "Soutien en kinyarwanda",
+          "description": "Prise en charge complète de la plateforme en kinyarwanda pour l'interface utilisateur, les interactions avec les chatbots et les communications SMS.",
+          "points": {
+            "nativeUi": "Interface utilisateur en langue maternelle",
+            "chatbot": "Chatbot kinyarwanda",
+            "smsSupport": "Prise en charge des SMS locaux"
+          }
+        },
+        "inventoryManagement": {
+          "title": "Gestion des stocks",
+          "description": "Gérez vos listes de produits et votre inventaire d'entrées avec des mises à jour et un suivi en temps réel.",
+          "points": {
+            "realTimeInventory": "Inventaire en temps réel",
+            "automatedUpdates": "Mises à jour automatisées",
+            "orderTracking": "Suivi des commandes"
+          }
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Comment fonctionne UmuhinziLink",
+      "subtitle": "Des étapes simples pour transformer votre entreprise agricole",
+      "steps": {
+        "register": {
+          "title": "Registre",
+          "description": "Inscrivez-vous via OTP mobile ou par e-mail. Processus d'inscription rapide et sécurisé."
+        },
+        "listRequest": {
+          "title": "Liste et demande",
+          "description": "Listez vos produits ou demandez des intrants agricoles à crédit via notre plateforme."
+        },
+        "connect": {
+          "title": "Connecter",
+          "description": "Soyez mis en relation avec des acheteurs, des fournisseurs et recevez des conseils agricoles basés sur l'IA."
+        },
+        "grow": {
+          "title": "Grandir",
+          "description": "Gérez les transactions, suivez la croissance et faites évoluer vos opérations agricoles."
+        }
+      }
+    },
+    "impact": {
+      "title": "Impacts et réussites",
+      "subtitle": "De vrais agriculteurs, de vrais résultats de notre projet pilote de Nyagatare",
+      "metrics": {
+        "registeredFarmers": "Agriculteurs enregistrés",
+        "activeSuppliers": "Fournisseurs actifs",
+        "averageYieldIncrease": "Augmentation du rendement moyen",
+        "totalTransactions": "Total des transactions"
+      },
+      "testimonials": {
+        "marie": {
+          "role": "Producteur de maïs, Nyagatare",
+          "quote": "UmuhinziLink m'a aidé à vendre mon maïs directement aux acheteurs à de meilleurs prix. Les conseils SMS ont amélioré ma récolte de 30%."
+        },
+        "jean": {
+          "role": "Producteur de haricots, Nyagatare",
+          "quote": "Obtenir un crédit pour des semences via une plateforme a changé la donne. Maintenant, je peux mieux planifier mes saisons."
+        },
+        "agnes": {
+          "role": "Producteur de légumes, Nyagatare",
+          "quote": "Le chatbot IA en kinyarwanda répond à toutes mes questions agricoles. C'est comme avoir un expert dans ma poche."
+        }
+      }
+    },
+    "cta": {
+      "title": "Prêt à transformer votre agriculture ?",
+      "subtitle": "Rejoignez des milliers d'agriculteurs qui utilisent déjà UmuhinziLink pour développer leur entreprise",
+      "buttons": {
+        "farmers": "Commencez - Agriculteurs",
+        "business": "Rejoignez-nous en tant qu'entreprise",
+        "sms": "SMS : *123*456#"
+      },
+      "noSmartphone": "Pas de smartphone ? Aucun problème! Accès par SMS en kinyarwanda"
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "getInTouch": "Entrer en contact",
+      "description": "Vous avez des questions ou besoin d'aide ? Vous pouvez nous joindre via l'une des méthodes suivantes :",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "location": "Emplacement",
+      "sendMessage": "Envoyez-nous un message",
+      "yourName": "Votre nom",
+      "yourEmail": "Votre e-mail",
+      "subject": "Sujet",
+      "message": "Message",
+      "sendAction": "Envoyer un message",
+      "placeholders": {
+        "name": "John Doe",
+        "email": "vous@exemple.com",
+        "subject": "Sujet ici",
+        "message": "Écrivez votre message..."
+      }
+    },
+    "footer": {
+      "description": "Autonomiser les agriculteurs rwandais grâce à l’agriculture numérique et à des solutions basées sur l’IA.",
+      "about": {
+        "title": "À propos",
+        "mission": "Notre Mission",
+        "team": "Équipe",
+        "partners": "Partenaires",
+        "careers": "Carrières"
+      },
+      "support": {
+        "title": "Soutien",
+        "helpCenter": "Centre d'aide",
+        "contactUs": "Contactez-nous",
+        "smsSupport": "Assistance SMS",
+        "training": "Entraînement"
+      },
+      "contact": {
+        "title": "Coordonnées",
+        "location": "Kigali, Rwanda"
+      },
+      "browseProducts": "Parcourir les produits",
+      "becomeSeller": "Devenez vendeur",
+      "signIn": "Se connecter",
+      "copyright": "© 2025 UmuhinziLink. Tous droits réservés. Conçu pour les agriculteurs rwandais avec ❤️"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profileSettings": "Paramètres du profil",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "updatePassword": "Mettre à jour le mot de passe",
+    "appearance": "Apparence",
+    "darkMode": "Mode sombre",
+    "toggleTheme": "Basculer le thème sombre/clair",
+    "language": "Langue",
+    "chooseLanguage": "Choisissez votre langue préférée",
+    "notifications": "Préférences de notifications",
+    "emailNotifications": {
+      "label": "Notifications par courrier électronique",
+      "description": "Mises à jour et promotions des commandes"
+    },
+    "smsNotifications": {
+      "label": "Notifications SMS",
+      "description": "Alertes critiques par SMS"
+    },
+    "orderUpdates": {
+      "label": "Mises à jour des commandes",
+      "description": "Statut de la commande en temps réel"
+    },
+    "priceAlerts": {
+      "label": "Alertes de prix",
+      "description": "Modifications du prix des produits"
+    },
+    "marketingEmails": {
+      "label": "E-mails marketing",
+      "description": "Promotions et actualités"
+    },
+    "hub": {
+      "title": "Paramètres",
+      "description": "Gérer les paramètres et préférences de votre compte",
+      "moreFields": "+{{count}} plus",
+      "sections": {
+        "business": {
+          "title": "Informations sur les entreprises/fermes",
+          "description": "Gérez les détails de votre ferme ou de votre entreprise visibles pour les acheteurs.",
+          "fields": {
+            "businessName": "Nom de l'entreprise",
+            "district": "District",
+            "sector": "Secteur",
+            "gpsLocation": "Localisation GPS",
+            "farmSize": "Taille de la ferme",
+            "cropTypes": "Types de cultures"
+          }
+        },
+        "payments": {
+          "title": "Paiements et versements",
+          "description": "Configurez la manière dont vous recevez les paiements.",
+          "fields": {
+            "mobileMoneyProvider": "Fournisseur d'argent mobile",
+            "mobileMoneyNumber": "Numéro d'argent mobile",
+            "bankAccount": "Compte bancaire"
+          }
+        },
+        "notifications": {
+          "title": "Notifications",
+          "description": "Choisissez comment vous recevez les alertes.",
+          "fields": {
+            "smsNotifications": "Notifications SMS",
+            "emailNotifications": "Notifications par courrier électronique",
+            "orderAlerts": "Alertes de commande",
+            "priceAlerts": "Alertes de prix"
+          }
+        },
+        "localization": {
+          "title": "Langue et région",
+          "description": "Ajustez la langue et la devise de la plateforme.",
+          "fields": {
+            "language": "Langue",
+            "currency": "Devise",
+            "timeZone": "Fuseau horaire",
+            "dateFormat": "Format des dates"
+          }
+        },
+        "security": {
+          "title": "Sécurité",
+          "description": "Gérez la sécurité de votre compte.",
+          "fields": {
+            "twoFactorAuthentication": "Authentification à deux facteurs",
+            "activeSessions": "Séances actives",
+            "dataDownload": "Téléchargement de données",
+            "accountDeletion": "Suppression de compte"
+          }
+        },
+        "account": {
+          "title": "Paramètres du compte",
+          "description": "Gérez votre profil et vos préférences de compte.",
+          "fields": {
+            "profileInformation": "Informations sur le profil",
+            "passwordChange": "Changement de mot de passe",
+            "emailPreferences": "Préférences de courrier électronique",
+            "privacySettings": "Paramètres de confidentialité"
+          }
+        }
+      },
+      "quickActions": {
+        "title": "Actions rapides",
+        "viewProfile": {
+          "title": "Voir le profil",
+          "description": "Gérer votre profil public"
+        },
+        "messages": {
+          "title": "Messages",
+          "description": "Vérifiez vos messages"
+        },
+        "notifications": {
+          "title": "Notifications",
+          "description": "Afficher les alertes récentes"
+        }
+      }
+    },
+    "orderStatus": {
+      "tracker": {
+        "orderPlaced": {
+          "label": "Commande passée",
+          "description": "Votre commande a été reçue"
+        },
+        "paymentPending": {
+          "label": "Paiement en attente",
+          "description": "En attente de paiement via wallet"
+        },
+        "orderConfirmed": {
+          "label": "Commande confirmée",
+          "description": "Le vendeur a confirmé votre commande"
+        },
+        "processing": {
+          "label": "Traitement",
+          "description": "Votre commande est en préparation"
+        },
+        "shipped": {
+          "label": "Expédié",
+          "description": "Votre commande est en route"
+        },
+        "delivered": {
+          "label": "Livré",
+          "description": "Votre commande a été livrée"
+        },
+        "completed": {
+          "label": "Complété",
+          "description": "Votre commande a été finalisée"
+        },
+        "cancelled": {
+          "label": "Commande annulée",
+          "description": "Cette commande a été annulée"
+        },
+        "currentStatus": "Statut actuel : {{status}}"
+      }
+    },
+    "orderManagement": {
+      "dashboard": {
+        "searchPlaceholder": "Rechercher des commandes...",
+        "filters": "Filtres",
+        "export": "Exporter",
+        "status": "Statut",
+        "sortBy": "Trier par",
+        "allOrders": "Toutes les commandes",
+        "pending": "En attente",
+        "active": "Actif",
+        "completed": "Complété",
+        "cancelled": "Annulé",
+        "newestFirst": "Le plus récent en premier",
+        "oldestFirst": "Le plus âgé en premier",
+        "highestAmount": "Montant le plus élevé",
+        "lowestAmount": "Montant le plus bas"
+      }
+    },
+    "localization": {
+      "pageTitle": "Langue et région",
+      "pageDescription": "Ajuster la langue de la plateforme et les préférences régionales",
+      "sections": {
+        "languagePreferences": "Préférences linguistiques",
+        "currencyAndNumbers": "Devise et chiffres",
+        "timeAndDate": "Heure et date"
+      },
+      "labels": {
+        "displayLanguage": "Langue d'affichage",
+        "defaultCurrency": "Devise par défaut",
+        "numberFormat": "Format des nombres",
+        "timeZone": "Fuseau horaire",
+        "timeFormat": "Format de l'heure",
+        "dateFormat": "Format des dates"
+      },
+      "helperText": {
+        "language": "Cela changera la langue utilisée sur toute la plateforme",
+        "currency": "Utilisé pour afficher les prix et les informations financières",
+        "numberFormatExample": "Exemple : {{example}}",
+        "timeZoneOffset": "Décalage actuel : {{offset}}",
+        "timeFormatExample": "Exemple : {{example}}",
+        "dateFormatExample": "Exemple : {{example}}"
+      },
+      "preview": {
+        "samplePrice": "Exemple de prix :",
+        "sampleDate": "Date de l'échantillon :",
+        "sampleTime": "Temps d'échantillonnage :"
+      },
+      "saveState": {
+        "successCheck": "✓",
+        "errorCross": "✗"
+      },
+      "options": {
+        "language": {
+          "en": "Anglais",
+          "rw": "kinyarwanda",
+          "fr": "Français"
+        },
+        "currency": {
+          "rwf": "Franc rwandais (RWF)",
+          "usd": "Dollar américain (USD)",
+          "eur": "euros (EUR)"
+        },
+        "timezone": {
+          "kigali": "Kigali (GMT+2)",
+          "nairobi": "Nairobi (GMT+3)",
+          "utc": "UTC (GMT+0)"
+        },
+        "dateFormat": {
+          "ddmmyyyy": "JJ/MM/AAAA (31/12/2024)",
+          "mmddyyyy": "MM/JJ/AAAA (31/12/2024)",
+          "yyyymmdd": "AAAA-MM-JJ (2024-12-31)"
+        },
+        "timeFormat": {
+          "h24": "24 heures (14h30)",
+          "h12": "12 heures (14h30)"
+        },
+        "numberFormat": {
+          "commaDecimal": "1 234,56 (virgule décimale)",
+          "dotComma": "1.234,56 (Point virgule)",
+          "spaceComma": "1 234,56 (Espace virgule)"
+        }
+      }
+    },
+    "account": {
+      "sections": {
+        "profileInformation": "Informations sur le profil",
+        "changePassword": "Changer le mot de passe",
+        "privacyPreferences": "Préférences de confidentialité"
+      },
+      "changePhoto": "Changer de photo",
+      "photoHint": "JPG, PNG ou GIF. Taille maximale 2 Mo",
+      "fields": {
+        "firstName": "Prénom",
+        "lastName": "Nom de famille",
+        "emailAddress": "Adresse email",
+        "phoneNumber": "Numéro de téléphone",
+        "bio": "Biographie",
+        "currentPassword": "Mot de passe actuel",
+        "newPassword": "Nouveau mot de passe",
+        "confirmNewPassword": "Confirmer le nouveau mot de passe",
+        "profileVisibility": "Visibilité du profil"
+      },
+      "placeholders": {
+        "firstName": "Entrez votre prénom",
+        "lastName": "Entrez votre nom de famille",
+        "email": "votre.email@exemple.com",
+        "phone": "+250 788 123 456",
+        "bio": "Parlez-nous de vous...",
+        "currentPassword": "Entrez le mot de passe actuel",
+        "newPassword": "Entrez le nouveau mot de passe",
+        "confirmNewPassword": "Confirmer le nouveau mot de passe"
+      },
+      "passwordRequirements": {
+        "title": "Exigences relatives au mot de passe :",
+        "length": "Au moins 8 caractères",
+        "case": "Contient des lettres majuscules et minuscules",
+        "number": "Contient au moins un chiffre",
+        "special": "Contient au moins un caractère spécial"
+      },
+      "visibility": {
+        "public": "Public - Tout le monde peut voir votre profil",
+        "registered": "Enregistré - Uniquement les utilisateurs enregistrés",
+        "private": "Privé - Seulement vous"
+      },
+      "emailNotifications": {
+        "label": "Notifications par courrier électronique",
+        "description": "Recevoir des e-mails liés au compte"
+      }
+    },
+    "business": {
+      "sections": {
+        "basicInformation": "Informations de base",
+        "locationDetails": "Détails de l'emplacement",
+        "farmDetails": "Détails de la ferme",
+        "contactInformation": "Coordonnées"
+      },
+      "fields": {
+        "businessName": "Nom de l'entreprise/de la ferme *",
+        "establishedYear": "Année d'établissement",
+        "businessDescription": "Description de l'entreprise",
+        "district": "District *",
+        "sector": "Secteur *",
+        "gpsCoordinates": "Coordonnées GPS",
+        "farmSize": "Taille de la ferme (hectares)",
+        "cropTypes": "Types de cultures",
+        "phoneNumber": "Numéro de téléphone",
+        "emailAddress": "Adresse email",
+        "website": "Site web"
+      },
+      "placeholders": {
+        "businessName": "Entrez le nom de votre ferme ou de votre entreprise",
+        "establishedYear": "par exemple, 2020",
+        "businessDescription": "Décrivez votre ferme ou votre entreprise...",
+        "selectDistrict": "Sélectionnez le quartier",
+        "selectSector": "Sélectionnez un secteur",
+        "gpsCoordinates": "par exemple, -1,9444, 30,0614",
+        "farmSize": "0,0",
+        "phone": "+250 788 123 456",
+        "email": "entreprise@exemple.com",
+        "website": "https://votresiteweb.com"
+      },
+      "gpsHint": "Facultatif : aide les acheteurs à localiser votre ferme avec précision",
+      "crops": {
+        "tomatoes": "Tomates",
+        "cabbage": "Chou",
+        "carrots": "Carottes",
+        "onions": "Oignons",
+        "potatoes": "Pommes de terre",
+        "maize": "Maïs",
+        "beans": "Haricots",
+        "coffee": "Café",
+        "tea": "Thé",
+        "fruits": "Fruits",
+        "vegetables": "Légumes",
+        "bananas": "Bananes",
+        "sorghum": "Sorgho",
+        "wheat": "Blé",
+        "rice": "Riz"
+      }
+    },
+    "notificationSettings": {
+      "categories": {
+        "orderAlerts": {
+          "title": "Alertes de commande et de transaction",
+          "orderUpdates": {
+            "label": "Mises à jour des commandes",
+            "description": "Modifications du statut des commandes en temps réel"
+          },
+          "paymentReminders": {
+            "label": "Rappels de paiement",
+            "description": "Dates d’échéance et confirmations de paiement"
+          }
+        },
+        "marketIntelligence": {
+          "title": "Intelligence de marché et d'affaires",
+          "priceAlerts": {
+            "label": "Alertes de prix du marché",
+            "description": "Changements et tendances des prix des produits"
+          },
+          "weeklyReports": {
+            "label": "Rapports hebdomadaires",
+            "description": "Résumé de vos activités commerciales"
+          }
+        },
+        "communicationChannels": {
+          "title": "Canaux de communication"
+        },
+        "marketing": {
+          "title": "Commercialisation et promotions"
+        },
+        "systemUpdates": {
+          "title": "Mises à jour du système",
+          "systemUpdates": {
+            "label": "Mises à jour du système",
+            "description": "Maintenance de la plateforme et nouvelles fonctionnalités"
+          }
+        }
+      }
+    },
+    "payments": {
+      "sections": {
+        "mobileMoney": "Configuration de l'argent mobile",
+        "bankAccount": "Détails du compte bancaire",
+        "paymentPreferences": "Préférences de paiement",
+        "securityNotice": "Sécurité et vérification"
+      },
+      "fields": {
+        "mobileMoneyProvider": "Fournisseur d'argent mobile *",
+        "mobileMoneyNumber": "Numéro d'argent mobile *",
+        "bankName": "Nom de la banque",
+        "accountHolderName": "Nom du titulaire du compte",
+        "bankAccountNumber": "Numéro de compte bancaire",
+        "preferredPaymentMethod": "Mode de paiement préféré"
+      },
+      "providers": {
+        "mtnMomo": "Argent mobile MTN",
+        "airtelMoney": "Argent Airtel",
+        "fastSecure": "Paiements rapides et sécurisés"
+      },
+      "placeholders": {
+        "mobileMoneyNumber": "07xxxxxxxxx",
+        "selectBank": "Sélectionnez la banque",
+        "accountHolderName": "Entrez le nom du titulaire du compte",
+        "bankAccountNumber": "Entrez le numéro de compte bancaire"
+      },
+      "mobileMoneyHint": "Format : 07xxxxxxxx (numéro mobile rwandais)",
+      "bankAccountHint": "Facultatif : pour les virements bancaires directs",
+      "methods": {
+        "mobileMoney": "Argent mobile",
+        "bankTransfer": "Virement bancaire",
+        "both": "Les deux"
+      },
+      "toggles": {
+        "autoWithdrawal": {
+          "label": "Retrait automatique",
+          "description": "Transférer automatiquement des fonds à la banque"
+        },
+        "paymentNotifications": {
+          "label": "Avis de paiement",
+          "description": "Recevez des alertes pour les paiements"
+        }
+      },
+      "securityDescription": "Vos informations de paiement sont cryptées et stockées en toute sécurité. Nous vérifions tous les modes de paiement pour garantir la sécurité des transactions.",
+      "securityFeatures": {
+        "ssl": "Cryptage SSL 256 bits",
+        "pci": "Conforme à la norme PCI DSS",
+        "audits": "Audits de sécurité réguliers"
+      }
+    },
+    "security": {
+      "sections": {
+        "authentication": "Sécurité de l'authentification",
+        "activeSessions": "Séances actives",
+        "privacy": "Paramètres de confidentialité",
+        "dataManagement": "Gestion des données",
+        "securityStatus": "Statut de sécurité"
+      },
+      "fields": {
+        "sessionTimeout": "Délai d'expiration de la session (minutes)",
+        "profileVisibility": "Visibilité du profil"
+      },
+      "twoFactorAuth": {
+        "label": "Authentification à deux facteurs",
+        "description": "Ajoutez une couche de sécurité supplémentaire à votre compte"
+      },
+      "sessionTimeoutHint": "Déconnexion automatique après une période d'inactivité",
+      "loginAlerts": {
+        "label": "Alertes de connexion",
+        "description": "Soyez averti lorsque quelqu'un se connecte à votre compte"
+      },
+      "currentSession": "Actuel",
+      "signOutOtherSessions": "Se déconnecter de toutes les autres sessions",
+      "dataSharing": {
+        "label": "Partage de données",
+        "description": "Partagez des données anonymisées pour améliorer la plateforme"
+      },
+      "downloadData": {
+        "label": "Télécharger mes données",
+        "description": "Exportez vos données personnelles"
+      },
+      "deleteAccount": {
+        "label": "Supprimer le compte",
+        "description": "Supprimez définitivement votre compte",
+        "warning": "La suppression du compte est définitive et ne peut être annulée. Toutes vos données seront définitivement supprimées."
+      },
+      "status": {
+        "strongPassword": "Le mot de passe est fort",
+        "twoFactorEnabled": "Authentification à deux facteurs activée",
+        "twoFactorDisabled": "Authentification à deux facteurs désactivée",
+        "noThreats": "Aucune menace de sécurité récente détectée"
+      },
+      "sessionTimeoutOptions": {
+        "15": "15 minutes",
+        "30": "30 minutes",
+        "60": "1 heure",
+        "120": "2 heures",
+        "240": "4 heures"
+      }
+    },
+    "negotiations": {
+      "loading": "Chargement de la négociation...",
+      "connectionLost": "Connexion perdue – actualisation toutes les 30 s",
+      "backToNegotiations": "Retour aux négociations",
+      "proposed": "Proposé",
+      "listed": "Inscrit",
+      "agreed": "Convenu",
+      "agreedPriceLabel": "Prix ​​convenu",
+      "typeMessage": "Tapez un message...",
+      "typeMessageSeller": "Tapez un message au vendeur...",
+      "setAgreedPrice": "Fixer le prix convenu",
+      "decline": "Déclin",
+      "acceptPrice": "Accepter RWF {{price}}",
+      "confirm": {
+        "acceptOffer": "Accepter {{price}} ?",
+        "acceptOfferDefault": "Accepter cette offre ?",
+        "acceptPaymentNote": "Le paiement sera traité à partir du portefeuille de l'acheteur.",
+        "rejectNegotiation": "Rejeter cette négociation ? La commande sera annulée.",
+        "processing": "Traitement…",
+        "yesAccept": "Oui, accepte",
+        "yesReject": "Oui, rejeter"
+      },
+      "cancel": "Annuler",
+      "counter": "Comptoir",
+      "reject": "Rejeter",
+      "accept": "Accepter",
+      "expired": "Expiré",
+      "countered": "Contré",
+      "pending": "En attente",
+      "accepted": "Accepté",
+      "rejected": "Rejeté",
+      "loadingLabel": "Chargement de la négociation",
+      "loadingDescription": "Récupération des messages et des détails de l'offre…",
+      "openingLabel": "Ouverture des négociations",
+      "openingDescription": "Chargement des messages et des détails de la transaction…",
+      "seller": "Vendeur",
+      "unknown": "Inconnu",
+      "typing": "dactylographie…",
+      "buyerOfferedBanner": "L'acheteur a offert {{price}} pour {{quantity}} {{unit}}",
+      "startConversation": "Démarrer la conversation",
+      "emptySellerHint": "Répondez à l'acheteur ou fixez votre prix à droite",
+      "emptyBuyerHint": "Discutez avec le vendeur pour convenir d'un prix",
+      "negotiationClosed": "La négociation est close",
+      "sendFailed": "Échec de l'envoi du message",
+      "chat": "Chat",
+      "view": "Voir",
+      "offered": "Offert",
+      "agreedLabel": "Convenu",
+      "expiringSoon": "Expire bientôt",
+      "timeLeft": "{{time}} reste",
+      "timeAgo": {
+        "justNow": "Tout à l' heure",
+        "minutes": "il y a {{count}} mois",
+        "hours": "Il y a {{count}}h",
+        "days": "Il y a {{count}}d"
+      },
+      "panel": {
+        "negotiationPanel": "Groupe de négociation",
+        "offerDetails": "Détails de l'offre",
+        "prices": "Tarifs",
+        "listed": "Inscrit",
+        "buyersOffer": "Offre de l'acheteur",
+        "yourOffer": "Votre offre",
+        "yourCounter": "Votre compteur",
+        "sellersCounter": "Comptoir du vendeur",
+        "orderTotal": "Total de la commande",
+        "awaitingPayment": "En attente de paiement",
+        "paidCompleted": "Payé et terminé",
+        "setCounterPrice": "Fixez votre prix au compteur",
+        "send": "Envoyer",
+        "or": "ou",
+        "acceptOffer": "Acceptez {{price}}",
+        "updateOffer": "Mettez à jour votre offre",
+        "update": "Mise à jour",
+        "dealAgreedHint": "Accord conclu ! Rechargez votre portefeuille si nécessaire, puis payez pour finaliser la commande.",
+        "pay": "Payer {{price}}",
+        "sellerCounterHint": "Le vendeur a contré à {{price}} par unité. Acceptez de payer automatiquement ou refusez d'annuler.",
+        "acceptAndPay": "Accepter et payer",
+        "waitingForSeller": "En attente que le vendeur accepte votre offre ou envoie un contre-prix.",
+        "negotiationCancelled": "Négociation annulée",
+        "negotiationExpiredLabel": "Négociation expirée",
+        "orderCompleted": "Commande terminée",
+        "finalTotal": "Finale : {{price}}",
+        "expiresInTime": "Expire dans {{time}}"
+      },
+      "validation": {
+        "enterValidPrice": "Entrez un prix valide",
+        "exceedsListedPrice": "Ne peut pas dépasser le prix indiqué"
+      },
+      "noMessages": "Aucun message pour l'instant. Démarrez la conversation.",
+      "emptyStateTitle": "Aucune négociation active",
+      "emptyStateDescription": "Entamez une conversation avec un vendeur pour obtenir le meilleur prix pour vos produits agricoles.",
+      "browseProducts": "Parcourez les produits pour commencer à négocier",
+      "none": "Aucun",
+      "expiresIn": "Expire dans",
+      "negotiationExpired": "Négociation expirée",
+      "proximityVeryClose": "Très proche du prix affiché",
+      "proximityReasonable": "Offre raisonnable",
+      "proximityFar": "L'offre est loin du prix affiché",
+      "confirmActions": {
+        "acceptTitle": "Accepter la négociation",
+        "acceptDesc": "Acceptez le prix proposé et procédez au paiement",
+        "declineTitle": "Refuser la négociation",
+        "declineDesc": "Refuser cette proposition de prix",
+        "counterTitle": "Faire une contre-offre",
+        "counterDesc": "Proposer un prix différent",
+        "rejectFinalTitle": "Rejeter le prix final",
+        "rejectFinalDesc": "Rejeter le prix final convenu par le vendeur. Cela mettra fin à la négociation.",
+        "messageTitle": "Envoyer un message",
+        "messageDesc": "Envoyer un message sur cette négociation",
+        "confirmTitle": "Confirmer l'action",
+        "confirmDesc": "Veuillez confirmer cette action",
+        "priceDetails": "Détails du prix",
+        "buyerProposed": "L'acheteur a proposé :",
+        "yourCounter": "Votre compteur :",
+        "total": "Total ({{count}} unités) :",
+        "counterPriceLabel": "Votre prix au comptoir (par unité)",
+        "enterPrice": "Entrez votre prix...",
+        "difference": "Différence : RWF {{amount}} {{direction}} par rapport à la proposition",
+        "higher": "plus haut",
+        "lower": "inférieur",
+        "reasonLabel": "Raison du refus (facultatif)",
+        "reasonPlaceholder": "Facultatif : Informez l'acheteur de la raison pour laquelle vous refusez...",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Tapez votre message..."
+      },
+      "notifications": {
+        "priceAgreed": "Prix ​​convenu — vous pouvez maintenant procéder au paiement",
+        "enterPrice": "Veuillez entrer un prix",
+        "priceRange": "Le prix doit être compris entre RWF {{min}} et RWF {{max}}",
+        "limitReached": "Nombre maximum de contre-offres atteint : vous ne pouvez qu'accepter ou rejeter",
+        "counterSent": "Contre-offre envoyée",
+        "negotiationDeclined": "Négociation refusée"
+      }
+    }
+  },
+  "assistant": {
+    "title": "Assistant IA",
+    "subtitle": "Aide à l'agriculture et au marché",
+    "subtitleBuyer": "Demandez n'importe quoi : trouvez les produits, les prix et aidez à acheter",
+    "open": "Assistant IA ouvert",
+    "expand": "Pleine page",
+    "close": "Fermer",
+    "send": "Envoyer un message",
+    "backToChat": "Retour au chat",
+    "signInPrompt": "Connectez-vous pour utiliser l'assistant IA.",
+    "welcome": "Renseignez-vous sur les récoltes, les prix ou les conseils agricoles pour le Rwanda.",
+    "welcomeBuyer": "Tapez simplement votre question ci-dessous, comme si vous envoyiez un SMS à un ami qui connaît le marché.",
+    "buyerHint": "Tapez naturellement - par ex. « Que puis-je acheter ? » ou « Maïs près du Bugesera »",
+    "availableNow": "Disponible sur UmuhinziLink maintenant",
+    "noListingsYet": "Aucun produit répertorié pour l'instant - revenez bientôt ou parcourez les produits.",
+    "askAbout": "Parlez-moi de",
+    "inputPlaceholderBuyer": "Que recherchez-vous ?",
+    "farmingPlaceholder": "Posez une question agricole…",
+    "suggestions": {
+      "whatAvailable": "Que puis-je acheter aujourd'hui ?",
+      "findProduce": "Trouver du maïs",
+      "howToBuy": "Comment passer une commande ?"
+    },
+    "profile": {
+      "crops": "Vos annonces"
+    },
+    "thinking": "Pensée…",
+    "inputPlaceholder": "Demandez n'importe quoi…",
+    "errors": {
+      "generic": "L'assistant IA n'est pas disponible. Réessayez plus tard.",
+      "network": "Impossible d'atteindre le serveur : vérifiez votre connexion et réessayez.",
+      "listings": "Impossible de charger les listes de places de marché : ouvrez /products ou réessayez sous peu.",
+      "timeout": "Cela a pris trop de temps – essayez une question plus courte.",
+      "unavailable": "L'IA n'est pas encore configurée sur le serveur.",
+      "emptyInput": "Veuillez d'abord saisir un message ou un nom de culture.",
+      "image": "Impossible d'utiliser cette image : essayez une autre photo.",
+      "imageTooLarge": "La photo doit faire moins de 5 Mo.",
+      "session": "Session expirée — veuillez vous reconnecter.",
+      "noResponse": "Aucune réponse reçue – essayez de reformuler votre question.",
+      "cropAnalysis": "Impossible d'analyser cette photo - utilisez un gros plan clair des feuilles."
+    },
+    "modes": {
+      "chat": "Chat",
+      "farming": "Conseils agricoles",
+      "crop": "Santé des cultures",
+      "price": "Conseils de prix",
+      "search": "Recherche intelligente"
+    },
+    "search": {
+      "placeholder": "par ex. 200kg de tomates près de Kigali",
+      "results": "Annonces correspondantes"
+    },
+    "crop": {
+      "hintPlaceholder": "Type de culture (facultatif)",
+      "pickPhoto": "Télécharger une photo de recadrage",
+      "analyze": "Analyser la maladie",
+      "uploaded": "Photo de recadrage téléchargée pour analyse",
+      "diagnosis": "Diagnostic",
+      "treatment": "Traitement",
+      "prevention": "Prévention",
+      "confidence": "Confiance"
+    },
+    "price": {
+      "for": "Conseils de prix pour",
+      "cropPlaceholder": "Nom de la culture (par exemple tomates)",
+      "districtPlaceholder": "Quartier (facultatif)",
+      "getAdvice": "Obtenez des conseils sur les prix"
+    },
+    "page": {
+      "title": "UmuhinziLink AI",
+      "description": "Votre expert pour l'agriculture, des prix équitables et la recherche de produits au Rwanda.",
+      "descriptionBuyer": "Demandez dans un langage simple – aucune commande spéciale n’est nécessaire.",
+      "hint": "Utilisez le bouton flottant (en bas à droite) sur n'importe quelle page pour discuter avec l'assistant."
+    },
+    "features": {
+      "chat": {
+        "title": "Chat multilingue",
+        "description": "Support en anglais et kinyarwanda pour les questions de marché et d'agriculture."
+      },
+      "farming": {
+        "title": "Conseils agricoles",
+        "description": "Conseils saisonniers, santé des sols et rotation des cultures pour les agriculteurs rwandais."
+      },
+      "crop": {
+        "title": "Détection des maladies des cultures",
+        "description": "Téléchargez une photo pour identifier les maladies des plantes et obtenir des suggestions de traitement."
+      },
+      "price": {
+        "title": "Conseils de prix",
+        "description": "Des fourchettes de prix équitables avant de mettre les produits sur le marché."
+      },
+      "search": {
+        "title": "Recherche intelligente",
+        "description": "Décrivez ce dont vous avez besoin dans un langage simple et trouvez les annonces correspondantes."
+      }
+    }
+  },
+  "layout": {
+    "loading": "Chargement",
+    "loadingPage": {
+      "label": "Chargement de la page",
+      "description": "Juste un instant pendant que nous préparons votre contenu…"
+    },
+    "settingsBack": "Paramètres"
+  },
+  "dashboardTopbar": {
+    "openNavigation": "Ouvrir la navigation",
+    "admin": "Administrateur",
+    "notifications": "Notifications",
+    "profile": "Profil"
+  },
+  "errorHandler": {
+    "connectionProblem": {
+      "title": "Problème de connexion",
+      "messageOnline": "Impossible de se connecter à nos serveurs. Veuillez vérifier votre connexion Internet et réessayer.",
+      "messageOffline": "Vous semblez être hors ligne. Veuillez vérifier votre connexion Internet."
+    },
+    "timeout": {
+      "title": "Délai d'expiration de la demande",
+      "message": "La demande a mis trop de temps à être complétée. Cela peut être dû à une connexion lente ou à des problèmes de serveur."
+    },
+    "auth": {
+      "title": "Authentification requise",
+      "message": "Votre session a expiré. Veuillez vous reconnecter pour continuer."
+    },
+    "permission": {
+      "title": "Accès refusé",
+      "message": "Vous n'êtes pas autorisé à effectuer cette action."
+    },
+    "notFound": {
+      "title": "Introuvable",
+      "message": "La ressource demandée est introuvable."
+    },
+    "server": {
+      "title": "Erreur de serveur",
+      "message": "Quelque chose s'est mal passé de notre côté. Notre équipe a été informée et travaille sur un correctif."
+    },
+    "generic": {
+      "title": "Quelque chose s'est mal passé"
+    },
+    "tryAgain": "Essayer à nouveau",
+    "close": "Fermer"
+  },
+  "notificationPermission": {
+    "modal": {
+      "title": "Activer les notifications",
+      "subtitle": "Restez à jour avec des alertes en temps réel",
+      "description": "Recevez des notifications instantanées pour les nouveaux messages, les mises à jour de commandes et les modifications de produits. Restez connecté et ne manquez jamais les mises à jour importantes.",
+      "benefits": {
+        "messages": {
+          "title": "Nouveaux messages",
+          "description": "Soyez averti lorsque quelqu'un vous envoie un message"
+        },
+        "orders": {
+          "title": "Mises à jour des commandes",
+          "description": "Suivez vos commandes en temps réel"
+        },
+        "products": {
+          "title": "Nouveaux produits",
+          "description": "Découvrez de nouveaux articles sur le marché"
+        }
+      },
+      "requesting": "Demande d'autorisation...",
+      "enable": "Activer les notifications",
+      "skip": "Sauter",
+      "askLater": "Demander plus tard",
+      "manageBrowserSettings": "Gérer les paramètres du navigateur"
+    },
+    "prompt": {
+      "title": "Activer les notifications ?",
+      "description": "Recevez des alertes instantanées pour les messages, les commandes et les mises à jour",
+      "requesting": "Demander...",
+      "enableNow": "Activer maintenant",
+      "notNow": "Pas maintenant"
+    }
+  },
+  "googleLogin": {
+    "ariaLabel": "Connectez-vous avec Google"
+  }
+}

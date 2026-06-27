@@ -144,7 +144,7 @@ function CategoryPicker({ value, error, onChange, t }: {
 function PreviewCard({ form, previewUrl, originalImage, t, locale }: {
   form: Partial<Product>; previewUrl: string | null; originalImage: string;
   t: (key: string, vars?: Record<string, string | number>) => string;
-  locale: 'en' | 'rw';
+  locale: import('@/lib/i18n').SupportedLocale;
 }) {
   const img = previewUrl ?? (originalImage ? imageUrl(originalImage) : null);
   const unitKey = Object.entries(MeasurementUnit).find(([, v]) => v === form.measurementUnit)?.[0];

@@ -2711,13 +2711,11 @@
         "dateFormat": "Uko itariki igaragara"
       },
       "helperText": {
-        "language": "Ibi bihindura ururimi rukoreshwa muri porogaramu yose",
-        "currency": "Bikoreshwa kugaragaza ibiciro n'amakuru y'imari",
-        "numberFormatExample": "Urugero: {{example}}",
-        "timeZoneOffset": "Itandukaniro rigezweho: {{offset}}",
-        "timeFormatExample": "Urugero: {{example}}",
-        "dateFormatExample": "Urugero: {{example}}"
+        "language": "Ibi bihindura ururimi rukoreshwa muri porogaramu yose"
       },
+      "saved": "Ihitamo ry'ururimi ryabitswe",
+      "saveFailed": "Ntibyashoboka kubika ururimi",
+      "profileSync": "Byabitswe ku mwirondoro wawe nka {{language}}",
       "preview": {
         "samplePrice": "Igiciro cy'icyitegererezo:",
         "sampleDate": "Itariki y'icyitegererezo:",

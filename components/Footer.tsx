@@ -2,12 +2,20 @@
 
 import Link from 'next/link';
 import { Sprout, Mail, Phone, MapPin } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { switchLanguage } from '@/lib/language-switch';
+import { applyLocale } from '@/lib/localeUser';
+import type { SupportedLocale } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 export default function Footer() {
   const { t, locale } = useI18n();
+  const { user, loadAuthState } = useAuth();
+
+  const setLanguage = async (code: SupportedLocale) => {
+    await applyLocale(code, user ? { userId: user.id, persist: true } : undefined);
+    if (user) await loadAuthState();
+  };
 
   return (
     <footer className="border-t border-border bg-white dark:bg-gray-900 mt-8">
@@ -93,7 +101,7 @@ export default function Footer() {
             <div className="flex gap-2 mt-4">
               <button
                 type="button"
-                onClick={() => switchLanguage('en')}
+                onClick={() => setLanguage('en')}
                 className={cn(
                   'px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors',
                   locale === 'en'
@@ -105,7 +113,7 @@ export default function Footer() {
               </button>
               <button
                 type="button"
-                onClick={() => switchLanguage('rw')}
+                onClick={() => setLanguage('rw')}
                 className={cn(
                   'px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors',
                   locale === 'rw'
@@ -114,6 +122,18 @@ export default function Footer() {
                 )}
               >
                 {t('settings.localization.options.language.rw')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('fr')}
+                className={cn(
+                  'px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors',
+                  locale === 'fr'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-muted-foreground hover:text-foreground',
+                )}
+              >
+                {t('settings.localization.options.language.fr')}
               </button>
             </div>
           </div>

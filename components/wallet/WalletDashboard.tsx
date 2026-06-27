@@ -20,6 +20,7 @@ import {
 import { Wallet as IWallet, Transaction } from '@/types';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';
+import { formatCurrency as fmtCurrency, formatDate as fmtDate } from '@/lib/localeFormat';
 import PageLoading from '@/components/layout/PageLoading';
 
 interface WalletDashboardProps {
@@ -162,23 +163,13 @@ const WalletDashboard: React.FC<WalletDashboardProps> = ({
     return { totalDeposits, totalPayments, totalWithdrawals, pendingTransactions };
   }, [transactions]);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(locale === 'rw' ? 'rw-RW' : 'en-US', {
-      style: 'currency',
-      currency: wallet?.currency || 'RWF',
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
+  const formatCurrency = (amount: number) => fmtCurrency(amount, locale);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+  const formatDate = (dateString: string) =>
+    fmtDate(dateString, locale, {
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {

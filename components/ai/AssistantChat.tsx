@@ -15,6 +15,7 @@ import {
   trimForAi,
 } from '@/lib/aiErrors';
 import { shouldUseSmartSearch } from '@/lib/assistantRouting';
+import { toAiLocale } from '@/lib/localeFormat';
 import { UserRole, AiChatTurn, AiProductSummary, AiUserContext } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -62,11 +63,7 @@ export default function AssistantChat({
 
   const isSeller = user?.role === UserRole.SELLER;
   const isBuyer = !isSeller;
-  const prefersKinyarwanda =
-    locale === 'rw'
-    || userContext?.language?.toLowerCase().includes('kinyarwanda')
-    || userContext?.language?.toLowerCase() === 'rw';
-  const aiLocale = prefersKinyarwanda ? 'rw' : 'en';
+  const aiLocale = toAiLocale(locale);
   const isFull = layout === 'full';
 
   useEffect(() => {

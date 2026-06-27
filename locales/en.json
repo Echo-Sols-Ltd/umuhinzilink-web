@@ -2711,13 +2711,11 @@
         "dateFormat": "Date Format"
       },
       "helperText": {
-        "language": "This will change the language used throughout the platform",
-        "currency": "Used for displaying prices and financial information",
-        "numberFormatExample": "Example: {{example}}",
-        "timeZoneOffset": "Current offset: {{offset}}",
-        "timeFormatExample": "Example: {{example}}",
-        "dateFormatExample": "Example: {{example}}"
+        "language": "This will change the language used throughout the platform"
       },
+      "saved": "Language preference saved",
+      "saveFailed": "Could not save language preference",
+      "profileSync": "Saved to your profile as {{language}}",
       "preview": {
         "samplePrice": "Sample Price:",
         "sampleDate": "Sample Date:",
