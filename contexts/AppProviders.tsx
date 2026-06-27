@@ -12,6 +12,7 @@ import { NotificationProvider } from './NotificationContext';
 import { BrowserNotificationProvider } from './BrowserNotificationContext';
 import { ThemeProvider } from './ThemeContext';
 import { NegotiationProvider } from './NegotiationContext';
+import AssistantWidget from '@/components/ai/AssistantWidget';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -31,6 +32,7 @@ export function AppProviders({ children }: AppProvidersProps) {
                       <OrderProvider>
                         <NegotiationProvider>
                           {children}
+                          <AssistantWidget />
                         </NegotiationProvider>
                       </OrderProvider>
                     </WalletProvider>

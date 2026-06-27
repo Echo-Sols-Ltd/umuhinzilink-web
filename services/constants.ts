@@ -112,7 +112,16 @@ export const API_ENDPOINTS = {
   CHAT: {
     ALL: '/chat/users',
     BY_USER: (id: string) => `/chat/${id}`
-  }
+  },
+  AI: {
+    STATUS: '/ai/status',
+    CHAT: '/ai/chat',
+    FARMING_TIPS: '/ai/farming-tips',
+    CROP_DISEASE: '/ai/crop-disease',
+    PRICE_ADVICE: '/ai/price-advice',
+    SMART_SEARCH: '/ai/smart-search',
+    NEGOTIATION_HINT: '/ai/negotiation-hint',
+  },
 };
 
 export const HTTP_STATUS = {

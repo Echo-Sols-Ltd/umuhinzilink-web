@@ -10,3 +10,4 @@ export * from './navigation';
 export * from './dashboard';
 export * from './notification';
 export * from './data';
+export * from './ai';

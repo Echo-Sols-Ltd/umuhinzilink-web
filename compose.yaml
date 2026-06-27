@@ -1,0 +1,22 @@
+services:
+  web:
+    container_name: umuhinzilink-web
+    image: ghcr.io/echo-sols-ltd/umuhinzilink-web:latest
+    restart: unless-stopped
+    network_mode: host
+    mem_limit: 1g
+    cpus: "2"
+    env_file:
+      - .env
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "try { require('http').get('http://localhost:7023', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)}) } catch(e) { process.exit(1) }",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

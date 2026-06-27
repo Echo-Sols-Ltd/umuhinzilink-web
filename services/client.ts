@@ -340,6 +340,14 @@ class ApiClient {
     return withRetry(operation, retryConfigs.fileUpload);
   }
 
+  async postMultipart<T>(endpoint: string, formData: FormData): Promise<T> {
+    const response = await this.axiosInstance.post<T>(endpoint, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: timeoutConfigs.long,
+    });
+    return response.data;
+  }
+
   async getWithRetry<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
     return this.get(endpoint, params, { retry: retryConfigs.networkRequest });
   }
