@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import {
     LayoutGrid, Package, ShoppingCart, Store, BarChart2,
     MessageSquare, Mail, Bell, Wallet, User, Settings,
@@ -14,6 +15,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { SidebarProps, UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
+import { ADMIN_NAV_GROUPS, isAdminNavActive } from '@/config/adminNav';
+import { getAdminHomePath } from '@/lib/appPaths';
 import DashboardTopbar from './DashboardTopbar';
 
 // ─── types ────────────────────────────────────────────────────────
@@ -60,27 +63,8 @@ function getNavGroups(role: UserRole): NavGroup[] {
             },
         ];
 
-        case UserRole.ADMIN: return [
-            {
-                label: 'Administration', items: [
-                    { icon: <LayoutDashboard size={16}/>, label: 'Dashboard',    href: '/admin/dashboard' },
-                    { icon: <Users       size={16} />, label: 'Users',           href: '/admin/users' },
-                    { icon: <Truck       size={16} />, label: 'Orders',          href: '/admin/orders' },
-                    { icon: <Sprout      size={16} />, label: 'Products',        href: '/admin/products' },
-                    { icon: <Wallet      size={16} />, label: 'Wallets',         href: '/admin/wallets' },
-                    { icon: <BarChart2   size={16} />, label: 'Analytics',       href: '/admin/analytics' },
-                    { icon: <AlertCircle size={16} />, label: 'Reports',         href: '/admin/reports' },
-                    { icon: <Shield      size={16} />, label: 'Security',        href: '/admin/security' },
-                ],
-            },
-            {
-                label: 'Account', items: [
-                    { icon: <Mail        size={16} />, label: 'Messages',        href: '/chat' },
-                    { icon: <User        size={16} />, label: 'Profile',         href: '/profile' },
-                    { icon: <Settings    size={16} />, label: 'Settings',        href: '/settings' },
-                ],
-            },
-        ];
+        case UserRole.ADMIN:
+            return ADMIN_NAV_GROUPS;
 
         default: return [{
             items: [
@@ -102,6 +86,7 @@ const ROLE_BADGE: Record<UserRole, { bg: string; text: string; dot: string; labe
 export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarProps) {
     const [currentActive, setCurrentActive] = useState(activeItem);
     const [mobileOpen, setMobileOpen]       = useState(false);
+    const pathname = usePathname();
 
     const { navigate }    = useNavigationWithLoading();
     const { user, logout } = useAuth();
@@ -132,6 +117,18 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
         navigate(item.href);
     };
 
+    const isItemActive = (item: NavItem) => {
+        if (role === UserRole.ADMIN) {
+            return isAdminNavActive(pathname, item.href);
+        }
+        return currentActive === item.label;
+    };
+
+    const handleBrandClick = () => {
+        setMobileOpen(false);
+        navigate(role === UserRole.ADMIN ? getAdminHomePath() : '/dashboard');
+    };
+
     const handleLogout = async () => {
         await logout();
         navigate('/auth/signin');
@@ -142,7 +139,11 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
         <div className="flex flex-col h-full">
 
             {/* brand */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-border shrink-0">
+            <button
+                type="button"
+                onClick={handleBrandClick}
+                className="flex items-center gap-3 px-5 py-4 border-b border-border shrink-0 w-full text-left hover:bg-accent/50 transition-colors"
+            >
                 <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 bg-muted flex items-center justify-center">
                     <img src="/logo.png" alt="UmuhinziLink" className="w-10 h-10 object-cover" />
                 </div>
@@ -153,7 +154,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
                         {badge.label}
                     </span>
                 </div>
-            </div>
+            </button>
 
             {/* nav */}
             <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-4 scrollbar-hide">
@@ -166,7 +167,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
                         )}
                         <ul className="space-y-0.5">
                             {group.items.map(item => {
-                                const isActive = currentActive === item.label;
+                                const isActive = isItemActive(item);
                                 return (
                                     <li key={item.label}>
                                         <button

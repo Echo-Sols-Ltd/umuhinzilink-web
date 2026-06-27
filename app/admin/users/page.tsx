@@ -30,7 +30,6 @@ import { useAdmin } from '@/contexts/AdminContext';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { AdminPages, User, UserRole } from '@/types';
-import AdminGuard from '@/contexts/guard/AdminGuard';
 import { notify } from '@/lib/notify';
 import { adminService } from '@/services/admin';
 import {
@@ -471,9 +470,5 @@ function UserManagement() {
 }
 
 export default function UserManagementPage() {
-  return (
-    <AdminGuard>
-      <UserManagement />
-    </AdminGuard>
-  );
+  return <UserManagement />;
 }

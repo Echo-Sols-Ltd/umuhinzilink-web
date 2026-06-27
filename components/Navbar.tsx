@@ -7,7 +7,9 @@ import { useNotificationContext } from '@/contexts/NotificationContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { UserRole } from '@/types';
 import { useState } from 'react';
-import { Bell, ChevronDown, Menu, X, ShoppingBag, LayoutDashboard, ListChecks, LogOut, User, Sprout, Wallet, Settings } from 'lucide-react';
+import { Bell, ChevronDown, Menu, X, LayoutDashboard, LogOut, User, Settings, Sprout, Wallet } from 'lucide-react';
+import { ADMIN_TOP_NAV_LINKS, isAdminNavActive } from '@/config/adminNav';
+import { getAdminHomePath } from '@/lib/appPaths';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -18,7 +20,9 @@ export default function Navbar() {
   const [avatarOpen, setAvatarOpen] = useState(false);
 
   const isSeller = user?.role === UserRole.SELLER;
-  const isActive = (href: string) => pathname === href;
+  const isAdmin = user?.role === UserRole.ADMIN;
+  const isActive = (href: string) =>
+    isAdmin ? isAdminNavActive(pathname, href) : pathname === href;
 
   // ── Nav links by role ─────────────────────────────────────────────────────
 
@@ -40,7 +44,15 @@ export default function Navbar() {
     { label: 'Negotiations', href: '/negotiations' }
   ];
 
-  const navLinks = !user ? guestLinks : isSeller ? sellerLinks : buyerLinks;
+  const navLinks = !user
+    ? guestLinks
+    : isAdmin
+      ? ADMIN_TOP_NAV_LINKS
+      : isSeller
+        ? sellerLinks
+        : buyerLinks;
+
+  const homeHref = isAdmin ? getAdminHomePath() : '/';
 
   // ── Link className helper ──────────────────────────────────────────────────
 
@@ -55,10 +67,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1.5 shrink-0">
-          <Sprout size={20} className="text-primary" />
+        <Link href={homeHref} className="flex items-center gap-1.5 shrink-0">
           <span className="text-xl font-extrabold text-primary">Umuhinzi</span>
           <span className="text-xl font-extrabold text-foreground">Link</span>
+          {isAdmin && (
+            <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase bg-rose-500/15 text-rose-600">
+              Admin
+            </span>
+          )}
         </Link>
 
         {/* Desktop nav links */}
@@ -127,7 +143,22 @@ export default function Navbar() {
                           onClick={() => setAvatarOpen(false)}
                         />
 
-                        {isSeller ? (
+                        {isAdmin ? (
+                          <>
+                            <DropdownLink
+                              href="/admin/dashboard"
+                              icon={<LayoutDashboard size={15} />}
+                              label="Admin Console"
+                              onClick={() => setAvatarOpen(false)}
+                            />
+                            <DropdownLink
+                              href="/admin/settings"
+                              icon={<Settings size={15} />}
+                              label="System Settings"
+                              onClick={() => setAvatarOpen(false)}
+                            />
+                          </>
+                        ) : isSeller ? (
                           <DropdownLink
                             href="/seller/dashboard"
                             icon={<LayoutDashboard size={15} />}
@@ -143,19 +174,23 @@ export default function Navbar() {
                           />
                         )}
 
-                        <DropdownLink
-                          href="/wallet"
-                          icon={<Wallet size={15} />}
-                          label="Wallet"
-                          onClick={() => setAvatarOpen(false)}
-                        />
+                        {!isAdmin && (
+                          <DropdownLink
+                            href="/wallet"
+                            icon={<Wallet size={15} />}
+                            label="Wallet"
+                            onClick={() => setAvatarOpen(false)}
+                          />
+                        )}
 
-                        <DropdownLink
-                          href="/settings"
-                          icon={<Settings size={15} />}
-                          label="Settings"
-                          onClick={() => setAvatarOpen(false)}
-                        />
+                        {!isAdmin && (
+                          <DropdownLink
+                            href="/settings"
+                            icon={<Settings size={15} />}
+                            label="Settings"
+                            onClick={() => setAvatarOpen(false)}
+                          />
+                        )}
                       </div>
 
                       {/* Logout */}
