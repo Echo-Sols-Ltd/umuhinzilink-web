@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useI18n } from '@/contexts/I18nContext';
 import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   CreditCard,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 
 export default function PaymentsSettingsPage() {
+  const { t } = useI18n();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [payments, setPayments] = useState({
@@ -47,8 +49,8 @@ export default function PaymentsSettingsPage() {
   };
 
   const mobileMoneyProviders = [
-    { value: 'mtn_momo', label: 'MTN Mobile Money', color: 'bg-yellow-500', icon: '📱' },
-    { value: 'airtel_money', label: 'Airtel Money', color: 'bg-red-500', icon: '📱' }
+    { value: 'mtn_momo', labelKey: 'settings.payments.providers.mtnMomo', color: 'bg-yellow-500', icon: '📱' },
+    { value: 'airtel_money', labelKey: 'settings.payments.providers.airtelMoney', color: 'bg-red-500', icon: '📱' }
   ];
 
   const rwandaBanks = [
@@ -66,8 +68,8 @@ export default function PaymentsSettingsPage() {
 
   return (
     <SettingsSubLayout
-      title="Payments & Payouts"
-      description="Configure how you receive payments"
+      title={t('settings.hub.sections.payments.title')}
+      description={t('settings.hub.sections.payments.description')}
     >
       <div className="space-y-6">
             {/* Mobile Money Settings */}
@@ -76,13 +78,13 @@ export default function PaymentsSettingsPage() {
                 <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
                   <Smartphone className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Mobile Money Configuration</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.payments.sections.mobileMoney')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Mobile Money Provider *
+                    {t('settings.payments.fields.mobileMoneyProvider')}
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {mobileMoneyProviders.map(provider => (
@@ -103,8 +105,8 @@ export default function PaymentsSettingsPage() {
                               <span className="text-sm">{provider.icon}</span>
                             </div>
                             <div>
-                              <div className="font-medium text-foreground">{provider.label}</div>
-                              <div className="text-xs text-muted-foreground">Fast and secure payments</div>
+                              <div className="font-medium text-foreground">{t(provider.labelKey)}</div>
+                              <div className="text-xs text-muted-foreground">{t('settings.payments.providers.fastSecure')}</div>
                             </div>
                           </div>
                         </div>
@@ -115,18 +117,18 @@ export default function PaymentsSettingsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Mobile Money Number *
+                    {t('settings.payments.fields.mobileMoneyNumber')}
                   </label>
                   <input
                     type="tel"
                     value={payments.mobile_money_number}
                     onChange={(e) => handleChange('mobile_money_number', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="07xxxxxxxx"
+                    placeholder={t('settings.payments.placeholders.mobileMoneyNumber')}
                     pattern="^07[2-9]\d{7}$"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Format: 07xxxxxxxx (Rwanda mobile number)
+                    {t('settings.payments.mobileMoneyHint')}
                   </p>
                 </div>
               </div>
@@ -138,20 +140,20 @@ export default function PaymentsSettingsPage() {
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
                   <Building className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Bank Account Details</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.payments.sections.bankAccount')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Bank Name
+                    {t('settings.payments.fields.bankName')}
                   </label>
                   <select
                     value={payments.bank_name}
                     onChange={(e) => handleChange('bank_name', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
                   >
-                    <option value="">Select Bank</option>
+                    <option value="">{t('settings.payments.placeholders.selectBank')}</option>
                     {rwandaBanks.map(bank => (
                       <option key={bank} value={bank}>{bank}</option>
                     ))}
@@ -160,30 +162,30 @@ export default function PaymentsSettingsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Account Holder Name
+                    {t('settings.payments.fields.accountHolderName')}
                   </label>
                   <input
                     type="text"
                     value={payments.account_holder_name}
                     onChange={(e) => handleChange('account_holder_name', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="Enter account holder name"
+                    placeholder={t('settings.payments.placeholders.accountHolderName')}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Bank Account Number
+                    {t('settings.payments.fields.bankAccountNumber')}
                   </label>
                   <input
                     type="text"
                     value={payments.bank_account_number}
                     onChange={(e) => handleChange('bank_account_number', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="Enter bank account number"
+                    placeholder={t('settings.payments.placeholders.bankAccountNumber')}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Optional: For direct bank transfers
+                    {t('settings.payments.bankAccountHint')}
                   </p>
                 </div>
               </div>
@@ -195,30 +197,30 @@ export default function PaymentsSettingsPage() {
                 <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                   <Banknote className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Payment Preferences</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.payments.sections.paymentPreferences')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Preferred Payment Method
+                    {t('settings.payments.fields.preferredPaymentMethod')}
                   </label>
                   <select
                     value={payments.preferred_payment_method}
                     onChange={(e) => handleChange('preferred_payment_method', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
                   >
-                    <option value="mobile_money">Mobile Money</option>
-                    <option value="bank_transfer">Bank Transfer</option>
-                    <option value="both">Both</option>
+                    <option value="mobile_money">{t('settings.payments.methods.mobileMoney')}</option>
+                    <option value="bank_transfer">{t('settings.payments.methods.bankTransfer')}</option>
+                    <option value="both">{t('settings.payments.methods.both')}</option>
                   </select>
                 </div>
 
                 <div className="space-y-3">
                   <label className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
                     <div>
-                      <div className="font-medium text-foreground">Auto Withdrawal</div>
-                      <div className="text-sm text-muted-foreground">Automatically transfer funds to bank</div>
+                      <div className="font-medium text-foreground">{t('settings.payments.toggles.autoWithdrawal.label')}</div>
+                      <div className="text-sm text-muted-foreground">{t('settings.payments.toggles.autoWithdrawal.description')}</div>
                     </div>
                     <button
                       onClick={() => handleChange('auto_withdrawal', !payments.auto_withdrawal)}
@@ -236,8 +238,8 @@ export default function PaymentsSettingsPage() {
 
                   <label className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
                     <div>
-                      <div className="font-medium text-foreground">Payment Notifications</div>
-                      <div className="text-sm text-muted-foreground">Receive alerts for payments</div>
+                      <div className="font-medium text-foreground">{t('settings.payments.toggles.paymentNotifications.label')}</div>
+                      <div className="text-sm text-muted-foreground">{t('settings.payments.toggles.paymentNotifications.description')}</div>
                     </div>
                     <button
                       onClick={() => handleChange('payment_notifications', !payments.payment_notifications)}
@@ -263,22 +265,22 @@ export default function PaymentsSettingsPage() {
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Security & Verification</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{t('settings.payments.sections.securityNotice')}</h3>
                   <p className="text-muted-foreground mb-3">
-                    Your payment information is encrypted and securely stored. We verify all payment methods to ensure safe transactions.
+                    {t('settings.payments.securityDescription')}
                   </p>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm text-foreground">256-bit SSL encryption</span>
+                      <span className="text-sm text-foreground">{t('settings.payments.securityFeatures.ssl')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm text-foreground">PCI DSS compliant</span>
+                      <span className="text-sm text-foreground">{t('settings.payments.securityFeatures.pci')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm text-foreground">Regular security audits</span>
+                      <span className="text-sm text-foreground">{t('settings.payments.securityFeatures.audits')}</span>
                     </div>
                   </div>
                 </div>
@@ -295,22 +297,22 @@ export default function PaymentsSettingsPage() {
               {saveStatus === 'saving' ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  {t('common.saving')}
                 </>
               ) : saveStatus === 'success' ? (
                 <>
                   <span>✓</span>
-                  Saved!
+                  {t('common.saved')}
                 </>
               ) : saveStatus === 'error' ? (
                 <>
                   <span>✗</span>
-                  Error
+                  {t('common.error')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Save Changes
+                  {t('common.saveChanges')}
                 </>
               )}
             </button>

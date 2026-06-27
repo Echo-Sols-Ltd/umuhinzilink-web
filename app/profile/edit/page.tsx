@@ -9,6 +9,7 @@ import PageLoading from '@/components/layout/PageLoading';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { userService } from '@/services/users';
 import { uploadService } from '@/services/upload';
 import { notify } from '@/lib/notify';
@@ -18,6 +19,7 @@ import { imageUrl } from '@/lib/utils';
 const STORAGE_KEYS = { USER: 'user' };
 
 export default function ProfileEditPage() {
+  const { t } = useI18n();
   const { user, loading: authLoading, loadAuthState } = useAuth();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -74,7 +76,7 @@ export default function ProfileEditPage() {
 
     const validation = uploadService.validateFile(file);
     if (!validation.valid) {
-      notify.error(validation.error ?? 'Invalid file', 'Upload');
+      notify.error(validation.error ?? t('profile.edit.toast.invalidFile'), t('profile.actions.upload'));
       return;
     }
 
@@ -84,12 +86,12 @@ export default function ProfileEditPage() {
       const res = await uploadService.uploadUserProfile(resized);
       if (res.success && res.data) {
         setForm(prev => ({ ...prev, profilePicture: res.data! }));
-        notify.success('Photo uploaded', 'Success');
+        notify.success(t('profile.edit.toast.photoUploaded'), t('common.success'));
       } else {
         throw new Error(res.message || 'Upload failed');
       }
     } catch {
-      notify.error('Failed to upload photo', 'Error');
+      notify.error(t('profile.edit.toast.uploadFailed'), t('common.error'));
     } finally {
       setUploading(false);
     }
@@ -98,7 +100,7 @@ export default function ProfileEditPage() {
   const handleSave = async () => {
     if (!user) return;
     if (!form.firstName.trim() || !form.lastName.trim()) {
-      notify.error('First and last name are required', 'Validation');
+      notify.error(t('profile.edit.validation.namesRequired'), t('common.warning'));
       return;
     }
 
@@ -118,22 +120,23 @@ export default function ProfileEditPage() {
 
       localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(res.data));
       await loadAuthState();
+      applyLocale(languageToLocale(form.language));
 
       if (user.role === UserRole.SELLER) {
         await userService.updateSellerProfile(user.id, sellerForm);
       }
 
-      notify.success('Profile updated successfully', 'Saved');
+      notify.success(t('profile.edit.toast.saved'), t('common.saved'));
       router.push('/profile');
     } catch (err) {
-      notify.error(err instanceof Error ? err.message : 'Failed to save profile', 'Error');
+      notify.error(err instanceof Error ? err.message : t('profile.edit.toast.saveFailed'), t('common.error'));
     } finally {
       setSaving(false);
     }
   };
 
   if (authLoading || !user) {
-    return <PageLoading label="Loading profile" description="Preparing the editor…" />;
+    return <PageLoading label={t('profile.edit.loadingLabel')} description={t('profile.edit.loadingDescription')} />;
   }
 
   const initials = `${form.firstName[0] ?? ''}${form.lastName[0] ?? ''}`.toUpperCase();
@@ -141,17 +144,17 @@ export default function ProfileEditPage() {
   return (
     <AppLayout maxWidth="max-w-2xl">
       <PageHeader
-        title="Edit profile"
-        description="Update your personal information and preferences."
+        title={t('profile.edit.title')}
+        description={t('profile.edit.description')}
         backHref="/profile"
-        backLabel="Profile"
+        backLabel={t('profile.edit.backLabel')}
         actions={
           <Button
             onClick={handleSave}
             disabled={saving || uploading}
             className="rounded-xl bg-green-600 hover:bg-green-700">
             {saving ? <Loader2 size={16} className="animate-spin mr-2" /> : <Save size={16} className="mr-2" />}
-            Save changes
+            {t('profile.edit.saveChanges')}
           </Button>
         }
       />
@@ -173,14 +176,14 @@ export default function ProfileEditPage() {
           </button>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
           <div>
-            <p className="text-sm font-semibold text-foreground">Profile photo</p>
-            <p className="text-xs text-muted-foreground mt-0.5">JPG or PNG, max 5MB</p>
+            <p className="text-sm font-semibold text-foreground">{t('profile.edit.profilePhoto')}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{t('profile.edit.photoHint')}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">First name</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('profile.fields.firstName')}</label>
             <Input
               value={form.firstName}
               onChange={e => setForm(prev => ({ ...prev, firstName: e.target.value }))}
@@ -188,7 +191,7 @@ export default function ProfileEditPage() {
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Last name</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('profile.fields.lastName')}</label>
             <Input
               value={form.lastName}
               onChange={e => setForm(prev => ({ ...prev, lastName: e.target.value }))}
@@ -198,12 +201,12 @@ export default function ProfileEditPage() {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Email</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('profile.fields.email')}</label>
           <Input value={user.email} disabled className="h-11 rounded-xl bg-muted/30" />
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Phone number</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('profile.fields.phone')}</label>
           <Input
             value={form.phoneNumber}
             onChange={e => setForm(prev => ({ ...prev, phoneNumber: e.target.value }))}
@@ -213,22 +216,22 @@ export default function ProfileEditPage() {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Language</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('profile.edit.language')}</label>
           <select
             value={form.language}
             onChange={e => setForm(prev => ({ ...prev, language: e.target.value as Language }))}
             className="w-full h-11 px-3 text-sm bg-muted/50 border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-green-500">
-            <option value={Language.ENGLISH}>English</option>
-            <option value={Language.KINYARWANDA}>Kinyarwanda</option>
-            <option value={Language.FRENCH}>French</option>
+            <option value={Language.ENGLISH}>{t('settings.localization.options.language.en')}</option>
+            <option value={Language.KINYARWANDA}>{t('settings.localization.options.language.rw')}</option>
+            <option value={Language.FRENCH}>{t('settings.localization.options.language.fr')}</option>
           </select>
         </div>
 
         {user.role === UserRole.SELLER && (
           <div className="pt-4 border-t border-border space-y-4">
-            <h2 className="text-sm font-bold text-foreground">Seller profile</h2>
+            <h2 className="text-sm font-bold text-foreground">{t('profile.edit.sellerProfile')}</h2>
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Business name</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('profile.edit.businessName')}</label>
               <Input
                 value={sellerForm.displayName}
                 onChange={e => setSellerForm(prev => ({ ...prev, displayName: e.target.value }))}
@@ -236,7 +239,7 @@ export default function ProfileEditPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Location</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('profile.edit.location')}</label>
               <Input
                 value={sellerForm.location}
                 onChange={e => setSellerForm(prev => ({ ...prev, location: e.target.value }))}
@@ -244,7 +247,7 @@ export default function ProfileEditPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Description</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('profile.edit.descriptionLabel')}</label>
               <textarea
                 value={sellerForm.description}
                 onChange={e => setSellerForm(prev => ({ ...prev, description: e.target.value }))}

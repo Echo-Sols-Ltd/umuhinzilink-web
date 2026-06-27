@@ -17,6 +17,7 @@ import { SellerDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
 import DashboardChart from '../common/DashboardChart';
 import { useI18n } from '@/contexts/I18nContext';
+import { formatDate as fmtDate } from '@/lib/localeFormat';
 import { DashboardSkeleton } from '@/components/layout/PageLoading';
 
 export default function SellerDashboard() {
@@ -195,7 +196,7 @@ export default function SellerDashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-muted-foreground">
-                        {new Date(order.deliveryDate).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US')}
+                        {fmtDate(order.deliveryDate, locale)}
                       </td>
                     </tr>
                   ))}

@@ -1,12 +1,19 @@
 "use client"
 
 import Link from 'next/link';
+import { useI18n } from '@/contexts/I18nContext';
 import { Sprout, Home, ArrowLeft, Search, Wheat } from 'lucide-react';
 
-// ── This file goes at: app/not-found.tsx ─────────────────────────────────────
-// Next.js 13+ automatically renders this for 404 routes.
-
 export default function NotFound() {
+    const { t } = useI18n();
+
+    const helpfulLinks = [
+        { label: t('pages.notFound.links.browseProducts'), href: '/products' },
+        { label: t('pages.notFound.links.myNegotiations'), href: '/negotiations' },
+        { label: t('pages.notFound.links.sellerDashboard'), href: '/seller/dashboard' },
+        { label: t('pages.notFound.links.wallet'), href: '/wallet' },
+        { label: t('pages.notFound.links.signIn'), href: '/auth/signin' },
+    ];
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col items-center justify-center px-4 relative overflow-hidden">
 
@@ -63,10 +70,10 @@ export default function NotFound() {
 
                 {/* Text */}
                 <h1 className="text-3xl font-extrabold text-foreground leading-tight">
-                    Field not found
+                    {t('pages.notFound.title')}
                 </h1>
                 <p className="text-muted-foreground text-sm mt-3 leading-relaxed max-w-xs mx-auto">
-                    Looks like this harvest got lost on the way to market. The page you're looking for doesn't exist or has been moved.
+                    {t('pages.notFound.description')}
                 </p>
 
                 {/* Actions */}
@@ -75,13 +82,13 @@ export default function NotFound() {
                         href="/"
                         className="w-full sm:w-auto flex items-center justify-center gap-2 h-11 px-6 bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white text-sm font-semibold rounded-xl transition-all">
                         <Home size={15} />
-                        Back to home
+                        {t('pages.notFound.backToHome')}
                     </Link>
                     <Link
                         href="/products"
                         className="w-full sm:w-auto flex items-center justify-center gap-2 h-11 px-6 bg-white dark:bg-gray-900 border border-border hover:bg-gray-50 dark:hover:bg-gray-800/50 text-foreground text-sm font-medium rounded-xl transition-colors">
                         <Search size={15} />
-                        Browse products
+                        {t('pages.notFound.browseProducts')}
                     </Link>
                 </div>
 
@@ -90,20 +97,14 @@ export default function NotFound() {
                     onClick={() => window.history.back()}
                     className="mt-6 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mx-auto">
                     <ArrowLeft size={13} />
-                    Go back to previous page
+                    {t('pages.notFound.goBackPrevious')}
                 </button>
 
                 {/* Helpful links */}
                 <div className="mt-12 pt-8 border-t border-border">
-                    <p className="text-xs text-muted-foreground mb-4 font-medium">Maybe you were looking for</p>
+                    <p className="text-xs text-muted-foreground mb-4 font-medium">{t('pages.notFound.maybeLookingFor')}</p>
                     <div className="flex flex-wrap justify-center gap-2">
-                        {[
-                            { label: 'Browse products', href: '/products' },
-                            { label: 'My negotiations', href: '/negotiations' },
-                            { label: 'Seller dashboard', href: '/seller/dashboard' },
-                            { label: 'Wallet', href: '/wallet' },
-                            { label: 'Sign in', href: '/auth/signin' },
-                        ].map(({ label, href }) => (
+                        {helpfulLinks.map(({ label, href }) => (
                             <Link
                                 key={href}
                                 href={href}

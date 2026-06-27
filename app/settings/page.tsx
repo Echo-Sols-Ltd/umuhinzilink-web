@@ -8,13 +8,12 @@ import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import {
   Building,
-  CreditCard,
   Bell,
   Globe,
   Shield,
   ChevronRight,
   User,
-  Mail
+  CreditCard,
 } from 'lucide-react';
 
 const ROLE_MAP: Record<string, string> = {
@@ -23,101 +22,63 @@ const ROLE_MAP: Record<string, string> = {
   ADMIN: 'admin',
 };
 
-// Settings Configuration
 const settingsConfig = {
-  "sections": [
+  sections: [
     {
-      "id": "business",
-      "titleKey": "settings.hub.sections.business.title",
-      "descriptionKey": "settings.hub.sections.business.description",
-      "roles": ["seller"],
-      "icon": Building,
-      "href": "/settings/business",
-      "color": "bg-blue-500",
-      "fieldsKeys": [
-        "settings.hub.sections.business.fields.businessName",
-        "settings.hub.sections.business.fields.district",
-        "settings.hub.sections.business.fields.sector",
-        "settings.hub.sections.business.fields.gpsLocation",
-        "settings.hub.sections.business.fields.farmSize",
-        "settings.hub.sections.business.fields.cropTypes"
-      ]
+      id: 'business',
+      titleKey: 'settings.hub.sections.business.title',
+      descriptionKey: 'settings.hub.sections.business.description',
+      roles: ['seller'],
+      icon: Building,
+      href: '/settings/business',
+      color: 'bg-blue-500',
     },
     {
-      "id": "payments",
-      "titleKey": "settings.hub.sections.payments.title",
-      "descriptionKey": "settings.hub.sections.payments.description",
-      "roles": ["seller"],
-      "icon": CreditCard,
-      "href": "/settings/payments",
-      "color": "bg-green-500",
-      "fieldsKeys": [
-        "settings.hub.sections.payments.fields.mobileMoneyProvider",
-        "settings.hub.sections.payments.fields.mobileMoneyNumber",
-        "settings.hub.sections.payments.fields.bankAccount"
-      ]
+      id: 'payments',
+      titleKey: 'settings.hub.sections.payments.title',
+      descriptionKey: 'settings.hub.sections.payments.description',
+      roles: ['seller'],
+      icon: CreditCard,
+      href: '/settings/payments',
+      color: 'bg-green-500',
     },
     {
-      "id": "notifications",
-      "titleKey": "settings.hub.sections.notifications.title",
-      "descriptionKey": "settings.hub.sections.notifications.description",
-      "roles": ["seller", "buyer", "admin"],
-      "icon": Bell,
-      "href": "/settings/notifications",
-      "color": "bg-purple-500",
-      "fieldsKeys": [
-        "settings.hub.sections.notifications.fields.smsNotifications",
-        "settings.hub.sections.notifications.fields.emailNotifications",
-        "settings.hub.sections.notifications.fields.orderAlerts",
-        "settings.hub.sections.notifications.fields.priceAlerts"
-      ]
+      id: 'notifications',
+      titleKey: 'settings.hub.sections.notifications.title',
+      descriptionKey: 'settings.hub.sections.notifications.description',
+      roles: ['seller', 'buyer', 'admin'],
+      icon: Bell,
+      href: '/settings/notifications',
+      color: 'bg-purple-500',
     },
     {
-      "id": "localization",
-      "titleKey": "settings.hub.sections.localization.title",
-      "descriptionKey": "settings.hub.sections.localization.description",
-      "roles": ["seller", "buyer", "admin"],
-      "icon": Globe,
-      "href": "/settings/localization",
-      "color": "bg-orange-500",
-      "fieldsKeys": [
-        "settings.hub.sections.localization.fields.language",
-        "settings.hub.sections.localization.fields.currency",
-        "settings.hub.sections.localization.fields.timeZone",
-        "settings.hub.sections.localization.fields.dateFormat"
-      ]
+      id: 'localization',
+      titleKey: 'settings.hub.sections.localization.title',
+      descriptionKey: 'settings.hub.sections.localization.description',
+      roles: ['seller', 'buyer', 'admin'],
+      icon: Globe,
+      href: '/settings/localization',
+      color: 'bg-orange-500',
     },
     {
-      "id": "security",
-      "titleKey": "settings.hub.sections.security.title",
-      "descriptionKey": "settings.hub.sections.security.description",
-      "roles": ["seller", "buyer", "admin"],
-      "icon": Shield,
-      "href": "/settings/security",
-      "color": "bg-red-500",
-      "fieldsKeys": [
-        "settings.hub.sections.security.fields.twoFactorAuthentication",
-        "settings.hub.sections.security.fields.activeSessions",
-        "settings.hub.sections.security.fields.dataDownload",
-        "settings.hub.sections.security.fields.accountDeletion"
-      ]
+      id: 'security',
+      titleKey: 'settings.hub.sections.security.title',
+      descriptionKey: 'settings.hub.sections.security.description',
+      roles: ['seller', 'buyer', 'admin'],
+      icon: Shield,
+      href: '/settings/security',
+      color: 'bg-red-500',
     },
     {
-      "id": "account",
-      "titleKey": "settings.hub.sections.account.title",
-      "descriptionKey": "settings.hub.sections.account.description",
-      "roles": ["seller", "buyer", "admin"],
-      "icon": User,
-      "href": "/settings/account",
-      "color": "bg-indigo-500",
-      "fieldsKeys": [
-        "settings.hub.sections.account.fields.profileInformation",
-        "settings.hub.sections.account.fields.passwordChange",
-        "settings.hub.sections.account.fields.emailPreferences",
-        "settings.hub.sections.account.fields.privacySettings"
-      ]
-    }
-  ]
+      id: 'account',
+      titleKey: 'settings.hub.sections.account.title',
+      descriptionKey: 'settings.hub.sections.account.description',
+      roles: ['seller', 'buyer', 'admin'],
+      icon: User,
+      href: '/settings/account',
+      color: 'bg-indigo-500',
+    },
+  ],
 };
 
 export default function GlobalSettingsPage() {
@@ -127,108 +88,41 @@ export default function GlobalSettingsPage() {
 
   const userRole = ROLE_MAP[user?.role ?? 'BUYER'] ?? 'buyer';
   const availableSections = settingsConfig.sections.filter(
-    section => section.roles.includes(userRole)
+    section => section.roles.includes(userRole),
   );
 
-  const handleSectionClick = (href: string) => {
-    router.push(href);
-  };
-
   return (
-    <AppLayout maxWidth="max-w-6xl">
+    <AppLayout maxWidth="max-w-4xl">
       <PageHeader
         title={t('settings.hub.title')}
         description={t('settings.hub.description')}
       />
 
-      {/* Settings Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {availableSections.map((section) => {
           const Icon = section.icon;
           return (
-            <div
+            <button
               key={section.id}
-              onClick={() => handleSectionClick(section.href)}
-              className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6 hover:shadow-lg transition-all cursor-pointer hover:border-success/50 group"
+              type="button"
+              onClick={() => router.push(section.href)}
+              className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5 hover:shadow-md transition-all text-left hover:border-success/50 group"
             >
-              {/* Icon and Title */}
-              <div className="flex items-center justify-between mb-4">
-                <div className={`w-12 h-12 ${section.color} rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform`}>
-                  <Icon className="w-6 h-6" />
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-11 h-11 ${section.color} rounded-lg flex items-center justify-center text-white`}>
+                  <Icon className="w-5 h-5" />
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-success transition-colors" />
               </div>
-
-              {/* Content */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-foreground group-hover:text-success transition-colors">
-                  {t(section.titleKey)}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t(section.descriptionKey)}
-                </p>
-
-                {/* Fields Preview */}
-                <div className="pt-3 border-t border-border">
-                  <div className="flex flex-wrap gap-1">
-                    {section.fieldsKeys.slice(0, 3).map((fieldKey, index) => (
-                      <span
-                        key={index}
-                        className="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground"
-                      >
-                        {t(fieldKey)}
-                      </span>
-                    ))}
-                    {section.fieldsKeys.length > 3 && (
-                      <span className="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground">
-                        {t('settings.hub.moreFields', { count: section.fieldsKeys.length - 3 })}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+              <h3 className="text-base font-semibold text-foreground group-hover:text-success transition-colors">
+                {t(section.titleKey)}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                {t(section.descriptionKey)}
+              </p>
+            </button>
           );
         })}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
-        <h2 className="text-xl font-semibold text-foreground mb-4">{t('settings.hub.quickActions.title')}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
-            onClick={() => router.push('/profile')}
-            className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
-          >
-            <User className="w-5 h-5 text-muted-foreground" />
-            <div>
-              <div className="font-medium text-foreground">{t('settings.hub.quickActions.viewProfile.title')}</div>
-              <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.viewProfile.description')}</div>
-            </div>
-          </button>
-
-          <button
-            onClick={() => router.push('/negotiations')}
-            className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
-          >
-            <Mail className="w-5 h-5 text-muted-foreground" />
-            <div>
-              <div className="font-medium text-foreground">{t('settings.hub.quickActions.messages.title')}</div>
-              <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.messages.description')}</div>
-            </div>
-          </button>
-
-          <button
-            onClick={() => router.push('/notifications')}
-            className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-left"
-          >
-            <Bell className="w-5 h-5 text-muted-foreground" />
-            <div>
-              <div className="font-medium text-foreground">{t('settings.hub.quickActions.notifications.title')}</div>
-              <div className="text-sm text-muted-foreground">{t('settings.hub.quickActions.notifications.description')}</div>
-            </div>
-          </button>
-        </div>
       </div>
     </AppLayout>
   );

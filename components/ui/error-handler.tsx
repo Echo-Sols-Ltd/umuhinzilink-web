@@ -3,6 +3,7 @@
 import React from 'react';
 import { AlertTriangle, RefreshCw, Wifi, WifiOff, X } from 'lucide-react';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface ErrorDisplayProps {
   error: Error | string;
@@ -19,6 +20,7 @@ export function ErrorDisplay({
   className = '',
   variant = 'inline'
 }: ErrorDisplayProps) {
+  const { t } = useI18n();
   const errorMessage = typeof error === 'string' ? error : error.message;
   const { isOnline } = useNetworkStatus();
 
@@ -38,57 +40,57 @@ export function ErrorDisplay({
     switch (type) {
       case 'network':
         return {
-          title: 'Connection Problem',
+          title: t('errorHandler.connectionProblem.title'),
           message: isOnline 
-            ? 'Unable to connect to our servers. Please check your internet connection and try again.'
-            : 'You appear to be offline. Please check your internet connection.',
+            ? t('errorHandler.connectionProblem.messageOnline')
+            : t('errorHandler.connectionProblem.messageOffline'),
           icon: isOnline ? Wifi : WifiOff,
           color: 'red',
           showRetry: true,
         };
       case 'timeout':
         return {
-          title: 'Request Timeout',
-          message: 'The request took too long to complete. This might be due to a slow connection or server issues.',
+          title: t('errorHandler.timeout.title'),
+          message: t('errorHandler.timeout.message'),
           icon: AlertTriangle,
           color: 'yellow',
           showRetry: true,
         };
       case 'auth':
         return {
-          title: 'Authentication Required',
-          message: 'Your session has expired. Please sign in again to continue.',
+          title: t('errorHandler.auth.title'),
+          message: t('errorHandler.auth.message'),
           icon: AlertTriangle,
           color: 'red',
           showRetry: false,
         };
       case 'permission':
         return {
-          title: 'Access Denied',
-          message: 'You don\'t have permission to perform this action.',
+          title: t('errorHandler.permission.title'),
+          message: t('errorHandler.permission.message'),
           icon: AlertTriangle,
           color: 'red',
           showRetry: false,
         };
       case 'notfound':
         return {
-          title: 'Not Found',
-          message: 'The requested resource could not be found.',
+          title: t('errorHandler.notFound.title'),
+          message: t('errorHandler.notFound.message'),
           icon: AlertTriangle,
           color: 'yellow',
           showRetry: false,
         };
       case 'server':
         return {
-          title: 'Server Error',
-          message: 'Something went wrong on our end. Our team has been notified and is working on a fix.',
+          title: t('errorHandler.server.title'),
+          message: t('errorHandler.server.message'),
           icon: AlertTriangle,
           color: 'red',
           showRetry: true,
         };
       default:
         return {
-          title: 'Something went wrong',
+          title: t('errorHandler.generic.title'),
           message: errorMessage,
           icon: AlertTriangle,
           color: 'red',
@@ -132,7 +134,7 @@ export function ErrorDisplay({
                 onClick={onRetry}
                 className={`mt-2 text-xs ${colors.button} text-white px-3 py-1 rounded transition-colors`}
               >
-                Try Again
+                {t('errorHandler.tryAgain')}
               </button>
             )}
           </div>
@@ -167,7 +169,7 @@ export function ErrorDisplay({
                 className={`flex-1 ${colors.button} text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center space-x-2`}
               >
                 <RefreshCw className="w-4 h-4" />
-                <span>Try Again</span>
+                <span>{t('errorHandler.tryAgain')}</span>
               </button>
             )}
             {onDismiss && (
@@ -175,7 +177,7 @@ export function ErrorDisplay({
                 onClick={onDismiss}
                 className="flex-1 bg-secondary text-secondary-foreground px-4 py-2 rounded-lg hover:bg-secondary/90 transition-colors"
               >
-                Close
+                {t('errorHandler.close')}
               </button>
             )}
           </div>
@@ -198,7 +200,7 @@ export function ErrorDisplay({
               className={`mt-3 ${colors.button} text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 text-sm`}
             >
               <RefreshCw className="w-4 h-4" />
-              <span>Try Again</span>
+              <span>{t('errorHandler.tryAgain')}</span>
             </button>
           )}
         </div>

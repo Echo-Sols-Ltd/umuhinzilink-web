@@ -11,6 +11,7 @@ import { Product } from '@/types';
 import { notify } from '@/lib/notify';
 import { useProduct } from '@/contexts/ProductContext';
 import { useProductAction } from '@/hooks/useProductAction';
+import { useI18n } from '@/contexts/I18nContext';
 
 function ProductSkeleton() {
   return (
@@ -28,13 +29,14 @@ function ProductSkeleton() {
 }
 
 function ProductError({ message, onBack }: { message: string; onBack: () => void }) {
+  const { t } = useI18n();
   return (
     <div className="py-16 flex items-center justify-center">
       <div className="text-center max-w-sm">
         <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-4">
           <Sprout size={28} className="text-red-400" />
         </div>
-        <h1 className="text-xl font-bold text-foreground mb-2">Product not found</h1>
+        <h1 className="text-xl font-bold text-foreground mb-2">{t('products.detail.notFound')}</h1>
         <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{message}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
@@ -42,13 +44,13 @@ function ProductError({ message, onBack }: { message: string; onBack: () => void
             onClick={onBack}
             className="h-10 px-5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
-            Go back
+            {t('common.goBack')}
           </button>
           <Link
             href="/products"
             className="h-10 px-5 flex items-center justify-center bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors"
           >
-            Browse products
+            {t('products.detail.browseProducts')}
           </Link>
         </div>
       </div>
@@ -57,6 +59,7 @@ function ProductError({ message, onBack }: { message: string; onBack: () => void
 }
 
 export default function ProductDetailPage() {
+  const { t } = useI18n();
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -78,16 +81,16 @@ export default function ProductDetailPage() {
       try {
         const res = await fetchProductById(productId);
         setProduct(res);
-        if (!res) setError('This product could not be found or may have been removed.');
+        if (!res) setError(t('products.detail.notFoundMessage'));
       } catch {
-        setError('This product could not be found or may have been removed.');
+        setError(t('products.detail.notFoundMessage'));
       } finally {
         setLoading(false);
       }
     };
 
     load();
-  }, [productId, fetchProductById]);
+  }, [productId, fetchProductById, t]);
 
   const handleShare = () => {
     const url = window.location.href;
@@ -99,21 +102,21 @@ export default function ProductDetailPage() {
       }).catch(() => null);
     } else {
       navigator.clipboard.writeText(url).then(() => {
-        notify.success('Link copied to clipboard');
+        notify.success(t('products.detail.linkCopied'));
       }).catch(() => {
-        notify.error('Could not copy link');
+        notify.error(t('products.detail.linkCopyFailed'));
       });
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this listing? This cannot be undone.')) return;
+    if (!confirm(t('products.detail.deleteConfirm'))) return;
     await deleteProduct(id);
   };
 
   const breadcrumbs = [
-    { label: 'Home', href: '/dashboard' },
-    { label: 'Products', href: '/products' },
+    { label: t('products.detail.breadcrumbs.home'), href: '/dashboard' },
+    { label: t('products.detail.breadcrumbs.products'), href: '/products' },
     ...(product ? [{ label: product.name }] : []),
   ];
 
@@ -127,7 +130,7 @@ export default function ProductDetailPage() {
             type="button"
             onClick={handleShare}
             className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Share product"
+            aria-label={t('products.detail.shareAria')}
           >
             <Share2 size={14} />
           </button>
@@ -137,7 +140,7 @@ export default function ProductDetailPage() {
       {loading ? (
         <ProductSkeleton />
       ) : error || !product ? (
-        <ProductError message={error ?? 'Product not found'} onBack={() => router.back()} />
+        <ProductError message={error ?? t('products.detail.notFound')} onBack={() => router.back()} />
       ) : (
         <ProductDetail
           product={product}

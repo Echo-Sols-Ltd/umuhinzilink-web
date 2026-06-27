@@ -10,8 +10,10 @@ import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function ProfilePage() {
+  const { t } = useI18n();
   const { user, loading: authLoading } = useAuth();
   const { wallet } = useWallet();
   const { orders, ordersTotalElements, completedBuyingOrders, completedSellingOrders } = useOrder();
@@ -19,7 +21,12 @@ export default function ProfilePage() {
   const router = useRouter();
 
   if (authLoading) {
-    return <PageLoading label="Loading profile" description="Fetching your account details…" />;
+    return (
+      <PageLoading
+        label={t('profile.page.loadingLabel')}
+        description={t('profile.page.loadingDescription')}
+      />
+    );
   }
 
   if (!user) {
@@ -40,8 +47,8 @@ export default function ProfilePage() {
   return (
     <AppLayout maxWidth="max-w-6xl" mainClassName="space-y-0">
       <PageHeader
-        title="My profile"
-        description="Wallet, orders, and account settings."
+        title={t('profile.page.title')}
+        description={t('profile.page.description')}
       />
       <ProfileComponent
         user={user}

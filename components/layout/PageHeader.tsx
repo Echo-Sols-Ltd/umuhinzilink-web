@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface PageHeaderProps {
   title: string;
@@ -17,10 +18,13 @@ export default function PageHeader({
   title,
   description,
   backHref,
-  backLabel = 'Back',
+  backLabel,
   actions,
   className,
 }: PageHeaderProps) {
+  const { t } = useI18n();
+  const resolvedBackLabel = backLabel ?? t('common.back');
+
   return (
     <div className={cn('flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4', className)}>
       <div className="min-w-0">
@@ -29,7 +33,7 @@ export default function PageHeader({
             href={backHref}
             className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-2">
             <ChevronLeft size={14} />
-            {backLabel}
+            {resolvedBackLabel}
           </Link>
         )}
         <h1 className="text-xl font-bold text-foreground tracking-tight">{title}</h1>

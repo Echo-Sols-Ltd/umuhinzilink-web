@@ -5,7 +5,8 @@ import { X, ShoppingCart, Calculator, CreditCard, AlertCircle, CheckCircle } fro
 import Image from 'next/image';
 import { Product, PaymentMethod, OrderRequest } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
-import { useOrder } from '@/contexts/OrderContext';
+import { useI18n } from '@/contexts/I18nContext';
+import { formatCurrency } from '@/lib/localeFormat';
 import useOrderAction from '@/hooks/useOrderAction';
 
 interface OrderCreationModalProps {
@@ -19,6 +20,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   onClose,
   product,
 }) => {
+  const { t, locale } = useI18n();
   const [quantity, setQuantity] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.WALLET);
   const [notes, setNotes] = useState('');
@@ -50,13 +52,13 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (quantity < 1) {
-      newErrors.quantity = 'Quantity must be at least 1';
+      newErrors.quantity = t('ordersPage.createModal.validation.quantityMin');
     }
     if (quantity > maxQuantity) {
-      newErrors.quantity = `Quantity cannot exceed available stock (${maxQuantity})`;
+      newErrors.quantity = t('ordersPage.createModal.validation.quantityMax', { max: maxQuantity });
     }
     if (!paymentMethod) {
-      newErrors.paymentMethod = 'Please select a payment method';
+      newErrors.paymentMethod = t('ordersPage.createModal.validation.paymentMethod');
     }
 
     setErrors(newErrors);
@@ -94,6 +96,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
 
   const isOutOfStock = maxQuantity === 0;
   const isLowStock = maxQuantity > 0 && maxQuantity <= 10;
+  const unit = product?.measurementUnit?.toLowerCase() ?? '';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85">
@@ -102,7 +105,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center space-x-3">
             <ShoppingCart className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">Create Order</h2>
+            <h2 className="text-xl font-semibold text-foreground">{t('ordersPage.createModal.title')}</h2>
           </div>
           <button
             onClick={onClose}
@@ -130,9 +133,11 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
               <div className="flex items-center justify-between mt-2">
                 <div className="flex items-center space-x-4">
                   <span className="text-lg font-semibold text-primary">
-                    {product?.unitPrice?.toLocaleString()} RWF
+                    {formatCurrency(product?.unitPrice ?? 0, locale)}
                   </span>
-                  <span className="text-sm text-muted-foreground">per {product?.measurementUnit}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('ordersPage.createModal.perUnit', { unit })}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className={cn(
@@ -143,7 +148,9 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                     'text-sm font-medium',
                     isOutOfStock ? 'text-destructive' : isLowStock ? 'text-warning' : 'text-success'
                   )}>
-                    {isOutOfStock ? 'Out of Stock' : `${maxQuantity} available`}
+                    {isOutOfStock
+                      ? t('buyer.productDetail.stock.outOfStock')
+                      : t('buyer.productDetail.stock.available', { count: maxQuantity })}
                   </span>
                 </div>
               </div>
@@ -156,7 +163,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
           {/* Quantity */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              Quantity
+              {t('ordersPage.createModal.quantity')}
             </label>
             <div className="flex items-center space-x-3">
               <button
@@ -203,7 +210,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
           {/* Payment Method */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-3">
-              Payment Method
+              {t('ordersPage.createModal.paymentMethod')}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {Object.values(PaymentMethod).map((method) => (
@@ -227,7 +234,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                   <div className="flex items-center space-x-2">
                     <CreditCard size={16} className="text-muted-foreground" />
                     <span className="text-sm font-medium">
-                      {method.replace('_', ' ')}
+                      {t(`enums.paymentMethod.${method}`)}
                     </span>
                   </div>
                   {paymentMethod === method && (
@@ -247,12 +254,12 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
           {/* Notes */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              Notes (Optional)
+              {t('ordersPage.createModal.notesOptional')}
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add any special instructions or notes..."
+              placeholder={t('ordersPage.createModal.notesPlaceholder')}
               rows={3}
               className="w-full border border-border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
             />
@@ -262,21 +269,21 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
           <div className="bg-card rounded-lg p-4">
             <h4 className="text-sm font-medium text-foreground mb-3 flex items-center">
               <Calculator size={16} className="mr-2" />
-              Order Summary
+              {t('ordersPage.createModal.orderSummary')}
             </h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Unit Price:</span>
-                <span className="font-medium">{unitPrice.toLocaleString()} RWF</span>
+                <span className="text-muted-foreground">{t('ordersPage.createModal.unitPrice')}</span>
+                <span className="font-medium">{formatCurrency(unitPrice, locale)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Quantity:</span>
+                <span className="text-muted-foreground">{t('buyer.orders.quantity')}:</span>
                 <span className="font-medium">{quantity} {product?.measurementUnit}</span>
               </div>
               <div className="border-t pt-2 flex justify-between">
-                <span className="font-semibold text-foreground">Total:</span>
+                <span className="font-semibold text-foreground">{t('ordersPage.createModal.total')}</span>
                 <span className="font-semibold text-lg text-primary">
-                  {totalPrice.toLocaleString()} RWF
+                  {formatCurrency(totalPrice, locale)}
                 </span>
               </div>
             </div>
@@ -289,7 +296,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
               onClick={onClose}
               className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-background transition-colors"
             >
-              Cancel
+              {t('ordersPage.createModal.cancel')}
             </button>
             <button
               type="submit"
@@ -302,7 +309,11 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
                 loading && 'opacity-50 cursor-not-allowed'
               )}
             >
-              {loading ? 'Processing payment…' : (isOutOfStock ? 'Out of Stock' : 'Create & pay')}
+              {loading
+                ? t('ordersPage.createModal.processingPayment')
+                : (isOutOfStock
+                  ? t('buyer.productDetail.stock.outOfStock')
+                  : t('ordersPage.createModal.createAndPay'))}
             </button>
           </div>
         </form>

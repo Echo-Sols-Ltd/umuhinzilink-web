@@ -12,6 +12,7 @@ import { Product } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
+import { INTL_LOCALE, formatCurrency as fmtCurrency, formatDate as fmtDate } from '@/lib/localeFormat';
 import { notify } from '@/lib/notify';
 import BuyModal from './BuyModal';
 
@@ -79,19 +80,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const isLowStock = product.status === 'LOW_STOCK';
   const isOwner = user?.id === product.owner?.id;
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat(locale === 'rw' ? 'rw-RW' : 'en-US', {
-      style: 'currency',
-      currency: 'RWF',
-      minimumFractionDigits: 0,
-    }).format(price);
+  const formatPrice = (price: number) => fmtCurrency(price, locale);
 
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+  const formatDate = (dateString: string) => fmtDate(dateString, locale);
 
   const handleChatWithOwner = () => {
     if (!user) {

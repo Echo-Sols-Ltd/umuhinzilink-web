@@ -4,10 +4,11 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Plus, Search, Package, ArrowUpDown,
-  LayoutGrid, List, CheckCircle, AlertTriangle, XCircle, FileText, PauseCircle,
+  LayoutGrid, List,
 } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import { useProduct } from '@/contexts/ProductContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { Product, ProductStatus } from '@/types';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
@@ -16,15 +17,8 @@ import { ProductGridSkeleton } from '@/components/layout/PageLoading';
 type SortKey = 'name' | 'unitPrice' | 'stockQuantity' | 'viewCount' | 'createdAt';
 type ViewMode = 'grid' | 'list';
 
-const STATUS_CONFIG: Record<ProductStatus, { label: string; icon: React.ElementType }> = {
-  IN_STOCK: { label: 'In stock', icon: CheckCircle },
-  LOW_STOCK: { label: 'Low stock', icon: AlertTriangle },
-  OUT_OF_STOCK: { label: 'Out of stock', icon: XCircle },
-  DRAFT: { label: 'Draft', icon: FileText },
-  DISCONTINUED: { label: 'Discontinued', icon: PauseCircle },
-};
-
 function SummaryBar({ listings }: { listings: Product[] }) {
+  const { t } = useI18n();
   const total = listings.length;
   const inStock = listings.filter((l) => l.status === 'IN_STOCK').length;
   const lowStock = listings.filter((l) => l.status === 'LOW_STOCK').length;
@@ -33,10 +27,10 @@ function SummaryBar({ listings }: { listings: Product[] }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {[
-        { label: 'Total', value: total, color: 'text-foreground' },
-        { label: 'In stock', value: inStock, color: 'text-emerald-600 dark:text-emerald-400' },
-        { label: 'Low stock', value: lowStock, color: 'text-amber-600 dark:text-amber-400' },
-        { label: 'Out of stock', value: outOfStock, color: 'text-red-500' },
+        { label: t('products.seller.metrics.total'), value: total, color: 'text-foreground' },
+        { label: t('products.seller.metrics.inStock'), value: inStock, color: 'text-emerald-600 dark:text-emerald-400' },
+        { label: t('products.seller.metrics.lowStock'), value: lowStock, color: 'text-amber-600 dark:text-amber-400' },
+        { label: t('products.seller.metrics.outOfStock'), value: outOfStock, color: 'text-red-500' },
       ].map(({ label, value, color }) => (
         <div
           key={label}
@@ -51,25 +45,26 @@ function SummaryBar({ listings }: { listings: Product[] }) {
 }
 
 function EmptyState({ filtered }: { filtered: boolean }) {
+  const { t } = useI18n();
   return (
     <div className="py-20 flex flex-col items-center text-center">
       <div className="w-16 h-16 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mb-4">
         <Package size={28} className="text-green-400" />
       </div>
       <h3 className="text-base font-bold text-foreground">
-        {filtered ? 'No listings match your filters' : 'No listings yet'}
+        {filtered ? t('products.seller.empty.filtered') : t('products.seller.empty.none')}
       </h3>
       <p className="text-sm text-muted-foreground mt-1 max-w-xs">
         {filtered
-          ? 'Try adjusting your search or filter.'
-          : 'Add your first product and start selling to buyers across Rwanda.'}
+          ? t('products.seller.empty.filteredHint')
+          : t('products.seller.empty.noneHint')}
       </p>
       {!filtered && (
         <Link
           href="/products/create"
           className="mt-5 flex items-center gap-2 h-10 px-5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors"
         >
-          <Plus size={15} /> Add first listing
+          <Plus size={15} /> {t('products.seller.addFirstListing')}
         </Link>
       )}
     </div>
@@ -77,6 +72,7 @@ function EmptyState({ filtered }: { filtered: boolean }) {
 }
 
 export default function SellerListings() {
+  const { t } = useI18n();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ProductStatus | 'ALL'>('ALL');
   const [sortKey, setSortKey] = useState<SortKey>('createdAt');
@@ -111,17 +107,25 @@ export default function SellerListings() {
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
 
+  const statusFilters = [
+    'ALL',
+    ProductStatus.IN_STOCK,
+    ProductStatus.LOW_STOCK,
+    ProductStatus.OUT_OF_STOCK,
+    ProductStatus.DRAFT,
+  ] as const;
+
   return (
     <AppLayout maxWidth="max-w-6xl">
       <PageHeader
-        title="My Listings"
-        description="Manage your products, stock, and visibility."
+        title={t('products.seller.title')}
+        description={t('products.seller.description')}
         actions={
           <Link
             href="/products/create"
             className="flex items-center gap-1.5 h-9 px-4 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-xl transition-colors"
           >
-            <Plus size={13} /> New listing
+            <Plus size={13} /> {t('products.seller.newListing')}
           </Link>
         }
       />
@@ -136,7 +140,7 @@ export default function SellerListings() {
           />
           <input
             type="text"
-            placeholder="Search listings…"
+            placeholder={t('products.seller.searchPlaceholder')}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -147,15 +151,7 @@ export default function SellerListings() {
         </div>
 
         <div className="flex items-center gap-1.5 flex-wrap">
-          {(
-            [
-              'ALL',
-              ProductStatus.IN_STOCK,
-              ProductStatus.LOW_STOCK,
-              ProductStatus.OUT_OF_STOCK,
-              ProductStatus.DRAFT,
-            ] as const
-          ).map((s) => (
+          {statusFilters.map((s) => (
             <button
               key={s}
               type="button"
@@ -169,7 +165,7 @@ export default function SellerListings() {
                   : 'bg-white dark:bg-gray-900 border-border text-muted-foreground hover:text-foreground'
               }`}
             >
-              {s === 'ALL' ? 'All' : STATUS_CONFIG[s].label}
+              {s === 'ALL' ? t('products.seller.filterAll') : t(`enums.productStatus.${s}`)}
             </button>
           ))}
         </div>
@@ -183,11 +179,11 @@ export default function SellerListings() {
             }}
             className="h-9 px-2.5 text-xs bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
           >
-            <option value="createdAt">Newest</option>
-            <option value="name">Name</option>
-            <option value="unitPrice">Price</option>
-            <option value="stockQuantity">Stock</option>
-            <option value="viewCount">Views</option>
+            <option value="createdAt">{t('products.browse.sort.newest')}</option>
+            <option value="name">{t('products.browse.sort.name')}</option>
+            <option value="unitPrice">{t('products.browse.sort.price')}</option>
+            <option value="stockQuantity">{t('products.browse.sort.stock')}</option>
+            <option value="viewCount">{t('products.seller.sort.views')}</option>
           </select>
           <button
             type="button"
@@ -217,7 +213,9 @@ export default function SellerListings() {
 
       {search || statusFilter !== 'ALL' ? (
         <p className="text-xs text-muted-foreground">
-          {filtered.length} listing{filtered.length !== 1 ? 's' : ''} found
+          {filtered.length === 1
+            ? t('products.seller.results', { count: filtered.length })
+            : t('products.seller.resultsPlural', { count: filtered.length })}
         </p>
       ) : null}
 
@@ -249,7 +247,7 @@ export default function SellerListings() {
             disabled={page === 1}
             className="h-9 px-4 text-sm font-medium bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
-            Prev
+            {t('products.pagination.prev')}
           </button>
           <div className="flex items-center gap-1">
             {Array.from({ length: totalPages }).map((_, i) => (
@@ -273,7 +271,7 @@ export default function SellerListings() {
             disabled={page === totalPages}
             className="h-9 px-4 text-sm font-medium bg-white dark:bg-gray-900 border border-border rounded-xl text-foreground disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
-            Next
+            {t('products.pagination.next')}
           </button>
         </div>
       )}

@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import {
     Heart, MessageSquare, MapPin, Eye,
     ShoppingBag, Edit3, Trash2, User,
-    AlertTriangle, XCircle, TrendingUp,
+    AlertTriangle, XCircle,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { notify } from '@/lib/notify';
+import { formatCurrency } from '@/lib/localeFormat';
 import { cn, imageUrl } from '@/lib/utils';
-import { Product } from '@/types';
+import { MeasurementUnit, Product, ProductCategory } from '@/types';
 import BuyModal from './BuyModal';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -25,8 +26,25 @@ interface ProductCardProps {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function formatRWF(price: number) {
-    return new Intl.NumberFormat('rw-RW').format(price) + ' RWF';
+function categoryLabel(category: string, t: (key: string) => string): string {
+    const direct = t(`enums.categories.${category}`);
+    if (direct !== `enums.categories.${category}`) return direct;
+    const enumKey = Object.keys(ProductCategory).find(
+        (k) => ProductCategory[k as keyof typeof ProductCategory] === category,
+    );
+    if (enumKey) {
+        const translated = t(`enums.categories.${enumKey}`);
+        if (translated !== `enums.categories.${enumKey}`) return translated;
+    }
+    return category;
+}
+
+function unitLabel(unit: string, t: (key: string) => string): string {
+    const byKey = t(`enums.units.${unit}`);
+    if (byKey !== `enums.units.${unit}`) return byKey.toLowerCase();
+    const entry = Object.entries(MeasurementUnit).find(([, v]) => v === unit);
+    if (entry) return t(`enums.units.${entry[0]}`).toLowerCase();
+    return unit?.toLowerCase() ?? '';
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -38,7 +56,7 @@ export default function ProductCard({
     isSaved: isSavedProp,
 }: ProductCardProps) {
     const { user, toggleSavedProduct, isProductSaved } = useAuth();
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
     const router = useRouter();
     const [buyOpen, setBuyOpen] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -49,7 +67,7 @@ export default function ProductCard({
     const isOwner = user?.id === product.owner?.id;
     const isOutOfStock = product.status === 'OUT_OF_STOCK';
     const isLowStock = product.status === 'LOW_STOCK';
-    const isInStock = product.status === 'IN_STOCK';
+    const unit = unitLabel(String(product.measurementUnit), t);
 
     // ── Handlers ──────────────────────────────────────────────────────────
 
@@ -70,7 +88,9 @@ export default function ProductCard({
         const wasSaved = isSaved;
         const ok = await toggleSavedProduct(product.id);
         if (ok) {
-            notify.success(wasSaved ? 'Removed from saved' : `${product.name} saved`);
+            notify.success(
+                wasSaved ? t('productCard.removedFromSaved') : t('productCard.productSaved', { name: product.name }),
+            );
         }
         setSaving(false);
     };
@@ -105,11 +125,11 @@ export default function ProductCard({
 
     const stockBadge = isOutOfStock ? (
         <span className="flex items-center gap-1 text-xs font-medium text-red-500 bg-red-50 dark:bg-red-950/30 px-2 py-0.5 rounded-full">
-            <XCircle size={10} /> Out of stock
+            <XCircle size={10} /> {t('productCard.outOfStock')}
         </span>
     ) : isLowStock ? (
         <span className="flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-full">
-            <AlertTriangle size={10} /> Low stock
+            <AlertTriangle size={10} /> {t('productCard.lowStock')}
         </span>
     ) : null;
 
@@ -140,7 +160,7 @@ export default function ProductCard({
                     {isOutOfStock && (
                         <div className="absolute inset-0 bg-white/60 dark:bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
                             <span className="text-xs font-bold text-red-500 uppercase tracking-widest bg-white dark:bg-gray-900 px-3 py-1 rounded-full border border-red-200">
-                                Unavailable
+                                {t('productCard.unavailable')}
                             </span>
                         </div>
                     )}
@@ -149,7 +169,7 @@ export default function ProductCard({
                     <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
                         {product.isNegotiable && (
                             <span className="text-xs font-semibold text-white bg-green-600/90 px-2 py-0.5 rounded-full backdrop-blur-sm">
-                                Negotiable
+                                {t('productCard.negotiable')}
                             </span>
                         )}
                     </div>
@@ -204,16 +224,18 @@ export default function ProductCard({
                         <h3 className="text-sm font-bold text-foreground leading-snug line-clamp-1">
                             {product.name}
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">{product.category}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                            {categoryLabel(String(product.category), t)}
+                        </p>
                     </div>
 
                     {/* Price */}
                     <div className="flex items-baseline gap-1.5 mb-2">
                         <p className="text-base font-extrabold text-green-700 dark:text-green-400">
-                            {formatRWF(product.unitPrice)}
+                            {formatCurrency(product.unitPrice, locale)}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                            / {product.measurementUnit?.toLowerCase()}
+                            / {unit}
                         </p>
                     </div>
 
@@ -221,7 +243,7 @@ export default function ProductCard({
                     <div className="flex items-center justify-between mb-3">
                         {stockBadge ?? (
                             <span className="text-xs text-muted-foreground">
-                                {product.stockQuantity} {product.measurementUnit?.toLowerCase()} left
+                                {t('products.stockLeft', { quantity: product.stockQuantity, unit })}
                             </span>
                         )}
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -248,7 +270,7 @@ export default function ProductCard({
                             <button
                                 onClick={handleEdit}
                                 className="flex-1 h-9 flex items-center justify-center gap-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-foreground text-xs font-semibold rounded-xl transition-colors">
-                                <Edit3 size={13} /> Edit listing
+                                <Edit3 size={13} /> {t('productCard.editListing')}
                             </button>
                         ) : (
                             <>
@@ -257,7 +279,7 @@ export default function ProductCard({
                                     disabled={isOutOfStock}
                                     className="flex-1 h-9 flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-xl transition-colors active:scale-[0.97]">
                                     <ShoppingBag size={13} />
-                                    {product.isNegotiable ? 'Negotiate' : 'Buy now'}
+                                    {product.isNegotiable ? t('productCard.negotiate') : t('productCard.buyNow')}
                                 </button>
                                 <button
                                     onClick={handleChat}

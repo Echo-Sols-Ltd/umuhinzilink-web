@@ -5,39 +5,33 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
     Package, Eye, CheckCircle, XCircle,
-    AlertCircle, Clock, TrendingUp, Wallet,
-    Sprout, ChevronRight, User, CreditCard,
+    AlertCircle, TrendingUp, Wallet,
+    ChevronRight, User, CreditCard,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
+import { useI18n } from '@/contexts/I18nContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import OrderDetailsModal from '@/components/orders/OrderDetailsModal';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
+import { formatCurrency, formatDate } from '@/lib/localeFormat';
 import { OrderStatus, Order, UserRole, isUnpaidOrder } from '@/types';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const ITEMS_PER_PAGE = 10;
 
-const STATUS_CONFIG: Partial<Record<OrderStatus, { label: string; icon: React.ElementType; cls: string; dot: string }>> = {
-    PENDING_PAYMENT: { label: 'Pending payment', icon: AlertCircle, cls: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400', dot: 'bg-amber-500' },
-    PENDING: { label: 'Pending payment', icon: AlertCircle, cls: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400', dot: 'bg-amber-500' },
-    COMPLETED: { label: 'Paid', icon: CheckCircle, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400', dot: 'bg-emerald-500' },
-    CONFIRMED: { label: 'Paid', icon: CheckCircle, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400', dot: 'bg-emerald-500' },
-    CANCELLED: { label: 'Cancelled', icon: XCircle, cls: 'text-red-500   bg-red-50    dark:bg-red-950/30    dark:text-red-400', dot: 'bg-red-500' },
+const STATUS_CONFIG: Partial<Record<OrderStatus, { icon: React.ElementType; cls: string; dot: string }>> = {
+    PENDING_PAYMENT: { icon: AlertCircle, cls: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400', dot: 'bg-amber-500' },
+    PENDING: { icon: AlertCircle, cls: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400', dot: 'bg-amber-500' },
+    COMPLETED: { icon: CheckCircle, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400', dot: 'bg-emerald-500' },
+    CONFIRMED: { icon: CheckCircle, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400', dot: 'bg-emerald-500' },
+    CANCELLED: { icon: XCircle, cls: 'text-red-500   bg-red-50    dark:bg-red-950/30    dark:text-red-400', dot: 'bg-red-500' },
 };
 
 const DEFAULT_STATUS = STATUS_CONFIG.PENDING_PAYMENT!;
-
-function fmt(n: number) {
-    return new Intl.NumberFormat('rw-RW').format(n) + ' RWF';
-}
-
-function fmtDate(s: string) {
-    return new Date(s).toLocaleDateString('en-RW', { year: 'numeric', month: 'short', day: 'numeric' });
-}
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -59,7 +53,9 @@ function StatCard({ label, value, sub, icon: Icon, accent }: {
 }
 
 function StatusBadge({ status }: { status: OrderStatus }) {
-    const { label, icon: Icon, cls } = STATUS_CONFIG[status] ?? DEFAULT_STATUS;
+    const { t } = useI18n();
+    const { icon: Icon, cls } = STATUS_CONFIG[status] ?? DEFAULT_STATUS;
+    const label = t(`enums.orderStatus.${status}`);
     return (
         <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${cls}`}>
             <Icon size={10} /> {label}
@@ -82,6 +78,7 @@ function SkeletonRow({ columnCount }: { columnCount: number }) {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function OrdersPage() {
+    const { t, locale } = useI18n();
     const { user, loading: authLoading, isAuthenticated } = useAuth();
     const router = useRouter();
     const isSeller = user?.role === UserRole.SELLER;
@@ -145,6 +142,16 @@ export default function OrdersPage() {
         }
     };
 
+    const getFilterLabel = (s: OrderStatus | 'ALL') => {
+        if (s === 'ALL') {
+            return isSeller ? t('farmer.orders.filters.all') : t('buyer.purchases.filters.all');
+        }
+        if (s === 'PENDING_PAYMENT') {
+            return t('enums.orderStatus.PENDING_PAYMENT');
+        }
+        return t(`enums.orderStatus.${s}`);
+    };
+
     // ── Metrics ───────────────────────────────────────────────────────────
 
     const metrics = useMemo(() => ({
@@ -166,6 +173,27 @@ export default function OrdersPage() {
 
     const tableColumnCount = isSeller ? 8 : 7;
 
+    const tableHeaders = isSeller
+        ? [
+            t('ordersPage.table.order'),
+            t('farmer.orders.table.buyer'),
+            t('farmer.orders.table.product'),
+            t('ordersPage.table.qty'),
+            t('ordersPage.table.total'),
+            t('farmer.orders.table.status'),
+            t('farmer.orders.table.date'),
+            t('farmer.orders.table.action'),
+        ]
+        : [
+            t('ordersPage.table.order'),
+            t('buyer.purchases.table.product'),
+            t('ordersPage.table.qty'),
+            t('ordersPage.table.total'),
+            t('buyer.purchases.table.status'),
+            t('buyer.purchases.table.date'),
+            t('buyer.purchases.table.actions'),
+        ];
+
     if (!authLoading && !isAuthenticated) {
         return null;
     }
@@ -173,7 +201,11 @@ export default function OrdersPage() {
     if (authLoading) {
         return (
             <AppLayout maxWidth="max-w-6xl">
-                <PageLoading fullScreen={false} label="Loading orders" description="Fetching your order history…" />
+                <PageLoading
+                    fullScreen={false}
+                    label={t('ordersPage.loadingLabel')}
+                    description={t('ordersPage.loadingDescription')}
+                />
             </AppLayout>
         );
     }
@@ -181,47 +213,63 @@ export default function OrdersPage() {
     return (
         <AppLayout maxWidth="max-w-6xl">
             <PageHeader
-                title="My Orders"
-                description={isSeller ? 'Track sales and payments from buyers.' : 'View, pay, or cancel your purchases.'}
+                title={isSeller ? t('farmer.orders.title') : t('buyer.purchases.title')}
+                description={isSeller ? t('ordersPage.description.seller') : t('ordersPage.description.buyer')}
                 actions={
                     <Link
                         href="/dashboard"
                         className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-                        Dashboard <ChevronRight size={12} />
+                        {t('common.dashboard')} <ChevronRight size={12} />
                     </Link>
                 }
             />
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <StatCard icon={Package} label="Total orders" value={metrics.total} accent />
+                    <StatCard
+                        icon={Package}
+                        label={isSeller ? t('farmer.orders.metrics.total') : t('buyer.purchases.stats.totalPurchases')}
+                        value={metrics.total}
+                        accent
+                    />
                     <StatCard
                         icon={isSeller ? TrendingUp : Wallet}
-                        label={isSeller ? 'Revenue' : 'Total spent'}
-                        value={fmt(metrics.revenue)}
-                        sub="completed only"
+                        label={isSeller ? t('farmer.orders.metrics.revenue') : t('buyer.purchases.stats.totalSpent')}
+                        value={formatCurrency(metrics.revenue, locale)}
+                        sub={t('ordersPage.stats.completedOnly')}
                     />
-                    <StatCard icon={AlertCircle} label="Pending payment" value={metrics.pending} sub="awaiting payment" />
-                    <StatCard icon={CheckCircle} label="Completed" value={metrics.completed} />
+                    <StatCard
+                        icon={AlertCircle}
+                        label={t('buyer.purchases.filters.pendingPayment')}
+                        value={metrics.pending}
+                        sub={t('ordersPage.stats.awaitingPayment')}
+                    />
+                    <StatCard
+                        icon={CheckCircle}
+                        label={isSeller ? t('farmer.orders.status.completed') : t('buyer.purchases.stats.completed')}
+                        value={metrics.completed}
+                    />
                 </div>
 
                 {/* Toolbar */}
                 <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-medium text-muted-foreground">Filter</span>
-                    {(['ALL', 'PENDING_PAYMENT', 'COMPLETED', 'CANCELLED'] as const).map(s => (
+                    <span className="text-xs font-medium text-muted-foreground">{t('ordersPage.filter')}</span>
+                    {(['ALL', OrderStatus.PENDING_PAYMENT, OrderStatus.COMPLETED, OrderStatus.CANCELLED] as const).map(s => (
                         <button
                             key={s}
-                            onClick={() => setStatusFilter(s === 'ALL' ? 'ALL' : s as OrderStatus)}
+                            onClick={() => setStatusFilter(s === 'ALL' ? 'ALL' : s)}
                             className={`h-8 px-3 text-xs font-semibold rounded-xl border transition-colors ${statusFilter === s
                                 ? 'bg-green-600 border-green-600 text-white'
                                 : 'bg-white dark:bg-gray-900 border-border text-muted-foreground hover:text-foreground'
                                 }`}>
-                            {s === 'ALL' ? 'All' : s === 'PENDING_PAYMENT' ? 'Pending payment' : STATUS_CONFIG[s]?.label ?? s}
+                            {getFilterLabel(s)}
                         </button>
                     ))}
                     {statusFilter !== 'ALL' && (
                         <span className="text-xs text-muted-foreground ml-1">
-                            {filtered.length} result{filtered.length !== 1 ? 's' : ''}
+                            {filtered.length === 1
+                                ? t('ordersPage.results', { count: filtered.length })
+                                : t('ordersPage.resultsPlural', { count: filtered.length })}
                         </span>
                     )}
                 </div>
@@ -232,10 +280,7 @@ export default function OrdersPage() {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-border bg-gray-50 dark:bg-gray-800/50">
-                                    {(isSeller
-                                        ? ['Order', 'Buyer', 'Product', 'Qty', 'Total', 'Status', 'Date', 'Actions']
-                                        : ['Order', 'Product', 'Qty', 'Total', 'Status', 'Date', 'Actions']
-                                    ).map((h) => (
+                                    {tableHeaders.map((h) => (
                                         <th key={h} className="px-4 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider whitespace-nowrap">
                                             {h}
                                         </th>
@@ -249,13 +294,15 @@ export default function OrdersPage() {
                                     <tr>
                                         <td colSpan={tableColumnCount} className="py-20 text-center">
                                             <Package size={32} className="text-gray-300 mx-auto mb-3" />
-                                            <p className="text-sm font-semibold text-foreground">No orders found</p>
+                                            <p className="text-sm font-semibold text-foreground">
+                                                {isSeller ? t('farmer.orders.table.noOrders') : t('buyer.purchases.noOrders')}
+                                            </p>
                                             <p className="text-xs text-muted-foreground mt-1">
                                                 {statusFilter !== 'ALL'
-                                                    ? 'Try a different filter'
+                                                    ? t('ordersPage.empty.tryDifferentFilter')
                                                     : isSeller
-                                                        ? 'Orders will appear here when buyers place them'
-                                                        : 'Your orders will appear here after you buy'}
+                                                        ? t('ordersPage.empty.sellerHint')
+                                                        : t('ordersPage.empty.buyerHint')}
                                             </p>
                                         </td>
                                     </tr>
@@ -304,7 +351,7 @@ export default function OrdersPage() {
                                         {/* Total */}
                                         <td className="px-4 py-3">
                                             <p className="text-xs font-bold text-green-700 dark:text-green-400">
-                                                {fmt(order.totalPrice)}
+                                                {formatCurrency(order.totalPrice, locale)}
                                             </p>
                                         </td>
 
@@ -316,7 +363,7 @@ export default function OrdersPage() {
                                         {/* Date */}
                                         <td className="px-4 py-3">
                                             <p className="text-xs text-muted-foreground whitespace-nowrap">
-                                                {fmtDate(order.createdAt)}
+                                                {formatDate(order.createdAt, locale)}
                                             </p>
                                         </td>
 
@@ -328,28 +375,28 @@ export default function OrdersPage() {
                                                         type="button"
                                                         onClick={() => handlePay(order)}
                                                         disabled={actionLoading}
-                                                        aria-label="Pay for this order"
+                                                        aria-label={t('ordersPage.actions.payOrder')}
                                                         className="h-8 px-2.5 flex items-center gap-1.5 text-xs font-semibold rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-950/50 disabled:opacity-50 transition-colors"
                                                     >
                                                         <CreditCard size={13} />
-                                                        Pay
+                                                        {t('buyer.purchases.pay')}
                                                     </button>
                                                 )}
                                                 <button
                                                     type="button"
                                                     onClick={() => handleOpenOrder(order)}
-                                                    aria-label="View order summary"
+                                                    aria-label={t('ordersPage.actions.viewSummary')}
                                                     className="h-8 px-2.5 flex items-center gap-1.5 text-xs font-medium rounded-lg border border-border bg-white dark:bg-gray-900 text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                                                 >
                                                     <Eye size={13} />
-                                                    Summary
+                                                    {t('ordersPage.actions.summary')}
                                                 </button>
                                                 <Link
                                                     href={`/orders/${order.id}`}
-                                                    aria-label="Open full order page"
+                                                    aria-label={t('ordersPage.actions.openFullPage')}
                                                     className="h-8 px-2.5 flex items-center gap-1.5 text-xs font-medium rounded-lg border border-border bg-white dark:bg-gray-900 text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                                                 >
-                                                    Open
+                                                    {t('ordersPage.actions.open')}
                                                     <ChevronRight size={13} />
                                                 </Link>
                                             </div>
@@ -364,14 +411,18 @@ export default function OrdersPage() {
                     {totalPages > 1 && (
                         <div className="px-4 py-3 border-t border-border flex items-center justify-between bg-gray-50 dark:bg-gray-800/50">
                             <p className="text-xs text-muted-foreground">
-                                Page {page} of {totalPages} · {totalElements} orders
+                                {t('ordersPage.pagination.pageOf', {
+                                    page,
+                                    totalPages,
+                                    total: totalElements,
+                                })}
                             </p>
                             <div className="flex items-center gap-1.5">
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={page === 1 || loading}
                                     className="h-8 px-3 text-xs border border-border rounded-lg bg-white dark:bg-gray-900 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                    Prev
+                                    {t('ordersPage.pagination.prev')}
                                 </button>
                                 {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
                                     const n = i + 1;
@@ -391,7 +442,7 @@ export default function OrdersPage() {
                                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                     disabled={page === totalPages || loading}
                                     className="h-8 px-3 text-xs border border-border rounded-lg bg-white dark:bg-gray-900 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                    Next
+                                    {t('ordersPage.pagination.next')}
                                 </button>
                             </div>
                         </div>

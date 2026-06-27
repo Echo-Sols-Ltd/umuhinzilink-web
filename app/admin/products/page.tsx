@@ -15,6 +15,7 @@ import {
     ImageIcon,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { adminService } from '@/services/admin';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
@@ -33,6 +34,7 @@ import { imageUrl } from '@/lib/utils';
 
 function FarmerProductManagement() {
     const { products, refreshProducts } = useAdmin();
+    const { t } = useI18n();
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -67,16 +69,16 @@ function FarmerProductManagement() {
         try {
             await adminService.moderateProduct(productId, action, '');
             await refreshProducts();
-            notify.success(`Product ${action}d successfully`, 'Success');
+            notify.success(t('admin.products.toasts.moderated', { action }), t('common.success'));
         } catch (error) {
-            notify.error('Failed to moderate product', 'Error');
+            notify.error(t('admin.products.toasts.moderateFailed'), t('common.error'));
         } finally {
             setActionLoading(null);
         }
     };
 
     const handleDeleteProduct = async (productId: string) => {
-        if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+        if (!confirm(t('admin.products.confirmDelete'))) {
             return;
         }
 
@@ -97,15 +99,15 @@ function FarmerProductManagement() {
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <AdminPageHeader
-                    title="Farmer Products"
-                    description="Moderate and oversee all farmer-listed produce"
+                    title={t('admin.products.title')}
+                    description={t('admin.products.subtitle')}
                     toolbar={
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             <div className="relative flex-1 max-w-md">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                                 <input
                                     type="text"
-                                    placeholder="Search products or farmers..."
+                                    placeholder={t('admin.products.searchPlaceholder')}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
@@ -117,20 +119,20 @@ function FarmerProductManagement() {
                                     onChange={(e) => setCategoryFilter(e.target.value)}
                                     className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
                                 >
-                                    <option value="all">All Categories</option>
-                                    <option value="vegetables">Vegetables</option>
-                                    <option value="fruits">Fruits</option>
-                                    <option value="grains">Grains</option>
+                                    <option value="all">{t('admin.products.filters.allCategories')}</option>
+                                    <option value="vegetables">{t('admin.products.filters.vegetables')}</option>
+                                    <option value="fruits">{t('admin.products.filters.fruits')}</option>
+                                    <option value="grains">{t('admin.products.filters.grains')}</option>
                                 </select>
                                 <select
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
                                     className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
                                 >
-                                    <option value="all">All Status</option>
-                                    <option value="IN_STOCK">In Stock</option>
-                                    <option value="OUT_OF_STOCK">Out of Stock</option>
-                                    <option value="LOW_STOCK">Low Stock</option>
+                                    <option value="all">{t('admin.products.filters.allStatus')}</option>
+                                    <option value="IN_STOCK">{t('productCard.inStock')}</option>
+                                    <option value="OUT_OF_STOCK">{t('productCard.outOfStock')}</option>
+                                    <option value="LOW_STOCK">{t('productCard.lowStock')}</option>
                                 </select>
                             </div>
                         </div>
@@ -142,13 +144,13 @@ function FarmerProductManagement() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Product</TableHead>
-                                    <TableHead>Farmer</TableHead>
-                                    <TableHead>Category</TableHead>
-                                    <TableHead>Price</TableHead>
-                                    <TableHead>Stock</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
+                                    <TableHead>{t('admin.products.table.product')}</TableHead>
+                                    <TableHead>{t('admin.products.table.farmer')}</TableHead>
+                                    <TableHead>{t('admin.products.table.category')}</TableHead>
+                                    <TableHead>{t('admin.products.table.price')}</TableHead>
+                                    <TableHead>{t('admin.products.table.stock')}</TableHead>
+                                    <TableHead>{t('admin.products.table.status')}</TableHead>
+                                    <TableHead className="text-right">{t('admin.products.table.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -157,7 +159,7 @@ function FarmerProductManagement() {
                                         <TableCell colSpan={7} className="text-center py-8">
                                             <div className="flex flex-col items-center text-muted-foreground">
                                                 <Package className="w-8 h-8 mb-2" />
-                                                <p>No products found</p>
+                                                <p>{t('admin.products.empty')}</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -188,7 +190,7 @@ function FarmerProductManagement() {
                                             </TableCell>
                                             <TableCell>
                                                 <p className="font-medium text-foreground">{product.unitPrice || 0} RWF</p>
-                                                <p className="text-sm text-muted-foreground">per {product.measurementUnit}</p>
+                                                <p className="text-sm text-muted-foreground">{t('admin.products.table.per')} {product.measurementUnit}</p>
                                             </TableCell>
                                             <TableCell>
                                                 <p className="font-medium text-foreground">{product.stockQuantity}</p>
@@ -204,7 +206,7 @@ function FarmerProductManagement() {
                                                     <button
                                                         onClick={() => router.push(`/admin/products/${product.id}`)}
                                                         className="p-2 text-info hover:text-info/90 hover:bg-info/10 rounded-lg transition-colors"
-                                                        title="View product details"
+                                                        title={t('admin.products.viewDetails')}
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </button>
@@ -237,7 +239,7 @@ function FarmerProductManagement() {
                             <div className="bg-card rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
                                 <div className="p-6">
                                     <div className="flex items-center justify-between mb-6">
-                                        <h2 className="text-xl font-semibold text-foreground">Product Details</h2>
+                                        <h2 className="text-xl font-semibold text-foreground">{t('admin.products.modal.title')}</h2>
                                         <button
                                             onClick={() => {
                                                 setShowProductModal(false);
@@ -251,24 +253,24 @@ function FarmerProductManagement() {
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <p className="text-sm text-muted-foreground">Name</p>
+                                                <p className="text-sm text-muted-foreground">{t('admin.products.modal.name')}</p>
                                                 <p className="font-medium text-foreground">{selectedProduct.name}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-muted-foreground">Category</p>
+                                                <p className="text-sm text-muted-foreground">{t('admin.products.modal.category')}</p>
                                                 <p className="font-medium text-foreground">{selectedProduct.category}</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-muted-foreground">Price</p>
+                                                <p className="text-sm text-muted-foreground">{t('admin.products.modal.price')}</p>
                                                 <p className="font-medium text-foreground">{selectedProduct.unitPrice} RWF</p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-muted-foreground">Stock</p>
+                                                <p className="text-sm text-muted-foreground">{t('admin.products.modal.stock')}</p>
                                                 <p className="font-medium text-foreground">{selectedProduct.stockQuantity} {selectedProduct.measurementUnit}</p>
                                             </div>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-muted-foreground">Description</p>
+                                            <p className="text-sm text-muted-foreground">{t('admin.products.modal.description')}</p>
                                             <p className="text-foreground">{selectedProduct.description}</p>
                                         </div>
                                     </div>

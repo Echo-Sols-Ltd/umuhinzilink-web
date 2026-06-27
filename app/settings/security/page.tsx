@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useI18n } from '@/contexts/I18nContext';
 import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   Shield,
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function SecuritySettingsPage() {
+  const { t } = useI18n();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [security, setSecurity] = useState({
@@ -89,8 +91,8 @@ export default function SecuritySettingsPage() {
 
   return (
     <SettingsSubLayout
-      title="Security"
-      description="Manage your account security and privacy"
+      title={t('settings.hub.sections.security.title')}
+      description={t('settings.hub.sections.security.description')}
     >
       <div className="space-y-6">
             {/* Authentication Security */}
@@ -99,14 +101,14 @@ export default function SecuritySettingsPage() {
                 <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white">
                   <Lock className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Authentication Security</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.security.sections.authentication')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
                   <div>
-                    <div className="font-medium text-foreground">Two-Factor Authentication</div>
-                    <div className="text-sm text-muted-foreground">Add an extra layer of security to your account</div>
+                    <div className="font-medium text-foreground">{t('settings.security.twoFactorAuth.label')}</div>
+                    <div className="text-sm text-muted-foreground">{t('settings.security.twoFactorAuth.description')}</div>
                   </div>
                   <button
                     onClick={() => handleChange('two_factor_auth', !security.two_factor_auth)}
@@ -124,28 +126,28 @@ export default function SecuritySettingsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Session Timeout (minutes)
+                    {t('settings.security.fields.sessionTimeout')}
                   </label>
                   <select
                     value={security.session_timeout}
                     onChange={(e) => handleChange('session_timeout', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
                   >
-                    <option value="15">15 minutes</option>
-                    <option value="30">30 minutes</option>
-                    <option value="60">1 hour</option>
-                    <option value="120">2 hours</option>
-                    <option value="240">4 hours</option>
+                    <option value="15">{t('settings.security.sessionTimeoutOptions.15')}</option>
+                    <option value="30">{t('settings.security.sessionTimeoutOptions.30')}</option>
+                    <option value="60">{t('settings.security.sessionTimeoutOptions.60')}</option>
+                    <option value="120">{t('settings.security.sessionTimeoutOptions.120')}</option>
+                    <option value="240">{t('settings.security.sessionTimeoutOptions.240')}</option>
                   </select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Automatically log out after period of inactivity
+                    {t('settings.security.sessionTimeoutHint')}
                   </p>
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
                   <div>
-                    <div className="font-medium text-foreground">Login Alerts</div>
-                    <div className="text-sm text-muted-foreground">Get notified when someone logs into your account</div>
+                    <div className="font-medium text-foreground">{t('settings.security.loginAlerts.label')}</div>
+                    <div className="text-sm text-muted-foreground">{t('settings.security.loginAlerts.description')}</div>
                   </div>
                   <button
                     onClick={() => handleChange('login_alerts', !security.login_alerts)}
@@ -169,7 +171,7 @@ export default function SecuritySettingsPage() {
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
                   <Monitor className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Active Sessions</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.security.sections.activeSessions')}</h2>
               </div>
 
               <div className="space-y-3">
@@ -192,7 +194,7 @@ export default function SecuritySettingsPage() {
                     <div className="flex items-center gap-2">
                       {session.current && (
                         <span className="text-xs px-2 py-1 bg-success/10 text-success rounded-full">
-                          Current
+                          {t('settings.security.currentSession')}
                         </span>
                       )}
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -205,7 +207,7 @@ export default function SecuritySettingsPage() {
               </div>
 
               <button className="mt-4 text-sm text-destructive hover:text-destructive/80 transition-colors">
-                Sign out all other sessions
+                {t('settings.security.signOutOtherSessions')}
               </button>
             </div>
 
@@ -215,29 +217,29 @@ export default function SecuritySettingsPage() {
                 <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                   <Eye className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Privacy Settings</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.security.sections.privacy')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Profile Visibility
+                    {t('settings.security.fields.profileVisibility')}
                   </label>
                   <select
                     value={security.profile_visibility}
                     onChange={(e) => handleChange('profile_visibility', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
                   >
-                    <option value="public">Public - Everyone can see your profile</option>
-                    <option value="registered">Registered - Only registered users</option>
-                    <option value="private">Private - Only you</option>
+                    <option value="public">{t('settings.account.visibility.public')}</option>
+                    <option value="registered">{t('settings.account.visibility.registered')}</option>
+                    <option value="private">{t('settings.account.visibility.private')}</option>
                   </select>
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
                   <div>
-                    <div className="font-medium text-foreground">Data Sharing</div>
-                    <div className="text-sm text-muted-foreground">Share anonymized data for platform improvements</div>
+                    <div className="font-medium text-foreground">{t('settings.security.dataSharing.label')}</div>
+                    <div className="text-sm text-muted-foreground">{t('settings.security.dataSharing.description')}</div>
                   </div>
                   <button
                     onClick={() => handleChange('data_sharing', !security.data_sharing)}
@@ -261,7 +263,7 @@ export default function SecuritySettingsPage() {
                 <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center text-white">
                   <Download className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Data Management</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.security.sections.dataManagement')}</h2>
               </div>
 
               <div className="space-y-3">
@@ -272,8 +274,8 @@ export default function SecuritySettingsPage() {
                   <div className="flex items-center gap-3">
                     <Download className="w-5 h-5 text-muted-foreground" />
                     <div>
-                      <div className="font-medium text-foreground">Download My Data</div>
-                      <div className="text-sm text-muted-foreground">Export your personal data</div>
+                      <div className="font-medium text-foreground">{t('settings.security.downloadData.label')}</div>
+                      <div className="text-sm text-muted-foreground">{t('settings.security.downloadData.description')}</div>
                     </div>
                   </div>
                   <div className="w-5 h-5 text-muted-foreground">
@@ -288,8 +290,8 @@ export default function SecuritySettingsPage() {
                   <div className="flex items-center gap-3">
                     <Trash2 className="w-5 h-5 text-destructive" />
                     <div>
-                      <div className="font-medium text-destructive">Delete Account</div>
-                      <div className="text-sm text-muted-foreground">Permanently delete your account</div>
+                      <div className="font-medium text-destructive">{t('settings.security.deleteAccount.label')}</div>
+                      <div className="text-sm text-muted-foreground">{t('settings.security.deleteAccount.description')}</div>
                     </div>
                   </div>
                   <div className="w-5 h-5 text-destructive">
@@ -302,7 +304,7 @@ export default function SecuritySettingsPage() {
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 text-orange-600 dark:text-orange-400 mt-0.5" />
                   <div className="text-sm text-orange-800 dark:text-orange-200">
-                    <strong>Warning:</strong> Account deletion is permanent and cannot be undone. All your data will be permanently removed.
+                    <strong>{t('common.warning')}:</strong> {t('settings.security.deleteAccount.warning')}
                   </div>
                 </div>
               </div>
@@ -310,11 +312,11 @@ export default function SecuritySettingsPage() {
 
             {/* Security Status */}
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
-              <h2 className="text-lg font-semibold text-foreground mb-4">Security Status</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">{t('settings.security.sections.securityStatus')}</h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm text-foreground">Password is strong</span>
+                  <span className="text-sm text-foreground">{t('settings.security.status.strongPassword')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {security.two_factor_auth ? (
@@ -323,12 +325,14 @@ export default function SecuritySettingsPage() {
                     <AlertTriangle className="w-4 h-4 text-orange-500" />
                   )}
                   <span className="text-sm text-foreground">
-                    Two-factor authentication {security.two_factor_auth ? 'enabled' : 'disabled'}
+                    {security.two_factor_auth
+                      ? t('settings.security.status.twoFactorEnabled')
+                      : t('settings.security.status.twoFactorDisabled')}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span className="text-sm text-foreground">No recent security threats detected</span>
+                  <span className="text-sm text-foreground">{t('settings.security.status.noThreats')}</span>
                 </div>
               </div>
             </div>
@@ -343,22 +347,22 @@ export default function SecuritySettingsPage() {
               {saveStatus === 'saving' ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  {t('common.saving')}
                 </>
               ) : saveStatus === 'success' ? (
                 <>
                   <span>✓</span>
-                  Saved!
+                  {t('common.saved')}
                 </>
               ) : saveStatus === 'error' ? (
                 <>
                   <span>✗</span>
-                  Error
+                  {t('common.error')}
                 </>
               ) : (
                 <>
                   <Shield className="w-4 h-4" />
-                  Save Changes
+                  {t('common.saveChanges')}
                 </>
               )}
             </button>

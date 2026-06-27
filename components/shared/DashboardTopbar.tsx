@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, ShoppingCart, Menu, ChevronRight } from 'lucide-react';
+import { Bell, Menu, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,6 +8,7 @@ import { useNotificationContext } from '@/contexts/NotificationContext';
 import { UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
 import { getAdminHomePath } from '@/lib/appPaths';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface Props {
     onMenuClick: () => void;
@@ -24,6 +25,7 @@ function getPageTitle(pathname: string): string {
 
 
 export default function DashboardTopbar({ onMenuClick, title }: Props) {
+    const { t } = useI18n();
     const { user } = useAuth();
     const { unreadCount } = useNotificationContext();
     const pathname = usePathname();
@@ -44,18 +46,18 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
                 <button
                     onClick={onMenuClick}
                     className="lg:hidden p-1.5 -ml-1 text-muted-foreground hover:text-foreground rounded-xl hover:bg-accent transition-colors"
-                    aria-label="Open navigation"
+                    aria-label={t('dashboardTopbar.openNavigation')}
                 >
                     <Menu size={18} />
                 </button>
                 <div className="flex items-center gap-1.5 text-sm">
-                    <span className="hidden lg:block text-muted-foreground font-medium">UmuhinziLink</span>
+                    <span className="hidden lg:block text-muted-foreground font-medium">{t('app.name')}</span>
                     {isAdmin && (
                         <Link
                             href={getAdminHomePath()}
                             className="hidden lg:block text-muted-foreground font-medium hover:text-foreground transition-colors"
                         >
-                            Admin
+                            {t('dashboardTopbar.admin')}
                         </Link>
                     )}
                     <ChevronRight size={13} className="hidden lg:block text-muted-foreground/50" />
@@ -69,7 +71,7 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
 
                 <Link href={'/notifications'}
                     className="relative p-2 text-muted-foreground hover:text-foreground rounded-xl hover:bg-accent transition-colors"
-                    title="Notifications">
+                    title={t('dashboardTopbar.notifications')}>
                     <Bell size={18} />
                     {unreadCount > 0 && (
                         <span className="absolute top-1 right-1 min-w-4 h-4 px-1 flex items-center justify-center bg-destructive text-white text-[9px] font-bold rounded-full">
@@ -80,7 +82,7 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
 
                 <Link href={profileHref}
                     className="ml-1 flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-accent transition-colors"
-                    title="Profile">
+                    title={t('dashboardTopbar.profile')}>
                     <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center overflow-hidden shrink-0">
                         {user?.profilePicture
                             ? <img src={imageUrl(user.profilePicture)} alt={firstName} className="w-7 h-7 object-cover" />

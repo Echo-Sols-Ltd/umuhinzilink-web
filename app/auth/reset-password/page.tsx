@@ -13,10 +13,9 @@ import { notify } from '@/lib/notify';
 import { authService } from '@/services';
 import { ResetPasswordRequest } from '@/types';
 import PageLoading from '@/components/layout/PageLoading';
+import { useI18n } from '@/contexts/I18nContext';
 
-// ── Password strength ─────────────────────────────────────────────────────────
-
-function getStrength(password: string): {
+function getStrength(password: string, t: (key: string) => string): {
     score: number; label: string; color: string; bars: string[];
 } {
     let score = 0;
@@ -28,22 +27,23 @@ function getStrength(password: string): {
 
     const configs = [
         { label: '', color: 'bg-gray-200 dark:bg-gray-700', bars: ['bg-gray-200', 'bg-gray-200', 'bg-gray-200', 'bg-gray-200'] },
-        { label: 'Weak', color: 'bg-red-500', bars: ['bg-red-500', 'bg-gray-200', 'bg-gray-200', 'bg-gray-200'] },
-        { label: 'Fair', color: 'bg-amber-500', bars: ['bg-amber-500', 'bg-amber-500', 'bg-gray-200', 'bg-gray-200'] },
-        { label: 'Good', color: 'bg-blue-500', bars: ['bg-blue-500', 'bg-blue-500', 'bg-blue-500', 'bg-gray-200'] },
-        { label: 'Strong', color: 'bg-green-500', bars: ['bg-green-500', 'bg-green-500', 'bg-green-500', 'bg-green-500'] },
-        { label: 'Strong', color: 'bg-green-500', bars: ['bg-green-500', 'bg-green-500', 'bg-green-500', 'bg-green-500'] },
+        { label: t('auth.resetPassword.strength.weak'), color: 'bg-red-500', bars: ['bg-red-500', 'bg-gray-200', 'bg-gray-200', 'bg-gray-200'] },
+        { label: t('auth.resetPassword.strength.fair'), color: 'bg-amber-500', bars: ['bg-amber-500', 'bg-amber-500', 'bg-gray-200', 'bg-gray-200'] },
+        { label: t('auth.resetPassword.strength.good'), color: 'bg-blue-500', bars: ['bg-blue-500', 'bg-blue-500', 'bg-blue-500', 'bg-gray-200'] },
+        { label: t('auth.resetPassword.strength.strong'), color: 'bg-green-500', bars: ['bg-green-500', 'bg-green-500', 'bg-green-500', 'bg-green-500'] },
+        { label: t('auth.resetPassword.strength.strong'), color: 'bg-green-500', bars: ['bg-green-500', 'bg-green-500', 'bg-green-500', 'bg-green-500'] },
     ];
 
     return { score, ...configs[score] };
 }
 
-const RULES = [
-    { label: 'At least 8 characters', test: (p: string) => p.length >= 8 },
-    { label: 'One uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
-    { label: 'One number', test: (p: string) => /[0-9]/.test(p) },
-    { label: 'One special character', test: (p: string) => /[^A-Za-z0-9]/.test(p) },
-];
+const RULE_KEYS = ['minLength', 'uppercase', 'number', 'special'] as const;
+const RULE_TESTS: Record<typeof RULE_KEYS[number], (p: string) => boolean> = {
+    minLength: (p) => p.length >= 8,
+    uppercase: (p) => /[A-Z]/.test(p),
+    number: (p) => /[0-9]/.test(p),
+    special: (p) => /[^A-Za-z0-9]/.test(p),
+};
 
 // ── Input component ───────────────────────────────────────────────────────────
 
@@ -89,6 +89,7 @@ function PasswordInput({
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 function ResetPasswordContent() {
+    const { t } = useI18n();
     const router = useRouter();
     const searchParams = useSearchParams();
     const code = searchParams.get('code');
@@ -100,7 +101,7 @@ function ResetPasswordContent() {
     const [done, setDone] = useState(false);
     const [codeValid, setCodeValid] = useState<boolean | null>(null); // null = checking
 
-    const strength = getStrength(password);
+    const strength = getStrength(password, t);
 
     // ── Validate code on mount ────────────────────────────────────────────
 
@@ -127,16 +128,16 @@ function ResetPasswordContent() {
     const validate = (): boolean => {
         const e: typeof errors = {};
         if (!password) {
-            e.password = 'Password is required';
+            e.password = t('auth.resetPassword.validation.passwordRequired');
         } else if (password.length < 8) {
-            e.password = 'Password must be at least 8 characters';
+            e.password = t('auth.resetPassword.validation.passwordMinLength');
         } else if (strength.score < 2) {
-            e.password = 'Password is too weak';
+            e.password = t('auth.resetPassword.validation.passwordTooWeak');
         }
         if (!confirm) {
-            e.confirm = 'Please confirm your password';
+            e.confirm = t('auth.resetPassword.validation.confirmRequired');
         } else if (confirm !== password) {
-            e.confirm = 'Passwords do not match';
+            e.confirm = t('auth.resetPassword.validation.passwordMismatch');
         }
         setErrors(e);
         return Object.keys(e).length === 0;
@@ -155,12 +156,12 @@ function ResetPasswordContent() {
             }
             const res = await authService.resetPassword(data);
             if (!res.success) {
-                notify.error(res.message || 'Failed to reset password. The link may have expired.');
+                notify.error(res.message || t('auth.resetPassword.validation.resetFailed'));
                 return;
             }
             setDone(true);
         } catch {
-            notify.error('Failed to reset password. The link may have expired.');
+            notify.error(t('auth.resetPassword.validation.resetFailed'));
         } finally {
             setLoading(false);
         }
@@ -171,8 +172,8 @@ function ResetPasswordContent() {
     if (codeValid === null) {
         return (
             <PageLoading
-                label="Verifying reset link"
-                description="Checking that your link is still valid…"
+                label={t('auth.resetPassword.verifyingLink.label')}
+                description={t('auth.resetPassword.verifyingLink.description')}
             />
         );
     }
@@ -186,20 +187,20 @@ function ResetPasswordContent() {
                     <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-5">
                         <AlertCircle size={28} className="text-red-500" />
                     </div>
-                    <h1 className="text-xl font-extrabold text-foreground">Invalid reset link</h1>
+                    <h1 className="text-xl font-extrabold text-foreground">{t('auth.resetPassword.invalidLink.title')}</h1>
                     <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                        This password reset link is invalid or has expired. Reset links are only valid for 15 minutes.
+                        {t('auth.resetPassword.invalidLink.description')}
                     </p>
                     <div className="flex flex-col gap-3 mt-6">
                         <Link
                             href="/auth/forgot-password"
                             className="w-full h-11 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl flex items-center justify-center transition-colors">
-                            Request a new link
+                            {t('auth.resetPassword.invalidLink.requestNew')}
                         </Link>
                         <Link
                             href="/auth/signin"
                             className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1.5">
-                            <ArrowLeft size={13} /> Back to sign in
+                            <ArrowLeft size={13} /> {t('auth.resetPassword.invalidLink.backToSignIn')}
                         </Link>
                     </div>
                 </div>
@@ -216,14 +217,14 @@ function ResetPasswordContent() {
                     <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/40 flex items-center justify-center mx-auto mb-5">
                         <ShieldCheck size={36} className="text-green-600" />
                     </div>
-                    <h1 className="text-2xl font-extrabold text-foreground">Password reset!</h1>
+                    <h1 className="text-2xl font-extrabold text-foreground">{t('auth.resetPassword.success.title')}</h1>
                     <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                        Your password has been updated successfully. You can now sign in with your new password.
+                        {t('auth.resetPassword.success.description')}
                     </p>
                     <Link
                         href="/auth/signin"
                         className="mt-6 w-full h-11 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl flex items-center justify-center transition-colors active:scale-[0.98]">
-                        Sign in now
+                        {t('auth.resetPassword.setPassword.signInNow')}
                     </Link>
                 </div>
             </div>
@@ -251,9 +252,9 @@ function ResetPasswordContent() {
                     <div className="w-14 h-14 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mx-auto mb-4">
                         <Lock size={24} className="text-green-600" />
                     </div>
-                    <h1 className="text-2xl font-extrabold text-foreground">Set new password</h1>
+                    <h1 className="text-2xl font-extrabold text-foreground">{t('auth.resetPassword.setPassword.title')}</h1>
                     <p className="text-sm text-muted-foreground mt-1.5">
-                        Choose a strong password for your account.
+                        {t('auth.resetPassword.setPassword.description')}
                     </p>
                 </div>
 
@@ -263,7 +264,7 @@ function ResetPasswordContent() {
 
                         <PasswordInput
                             id="password"
-                            label="New password"
+                            label={t('auth.resetPassword.fields.newPassword')}
                             value={password}
                             onChange={v => {
                                 setPassword(v);
@@ -276,7 +277,7 @@ function ResetPasswordContent() {
                         {password.length > 0 && (
                             <div className="space-y-2 animate-in fade-in duration-300">
                                 <div className="flex items-center justify-between">
-                                    <p className="text-xs text-muted-foreground">Password strength</p>
+                                    <p className="text-xs text-muted-foreground">{t('auth.resetPassword.setPassword.strength')}</p>
                                     <p className={cn(
                                         'text-xs font-semibold',
                                         strength.score <= 1 && 'text-red-500',
@@ -300,10 +301,11 @@ function ResetPasswordContent() {
 
                                 {/* Rules */}
                                 <div className="grid grid-cols-2 gap-1.5 mt-1">
-                                    {RULES.map(({ label, test }) => {
-                                        const passed = test(password);
+                                    {RULE_KEYS.map((key) => {
+                                        const passed = RULE_TESTS[key](password);
+                                        const label = t(`auth.resetPassword.rules.${key}`);
                                         return (
-                                            <div key={label} className="flex items-center gap-1.5">
+                                            <div key={key} className="flex items-center gap-1.5">
                                                 <CheckCircle
                                                     size={11}
                                                     className={passed ? 'text-green-500' : 'text-gray-300 dark:text-gray-600'}
@@ -323,14 +325,14 @@ function ResetPasswordContent() {
 
                         <PasswordInput
                             id="confirm"
-                            label="Confirm password"
+                            label={t('auth.resetPassword.setPassword.confirmPassword')}
                             value={confirm}
                             onChange={v => {
                                 setConfirm(v);
                                 if (errors.confirm) setErrors(p => ({ ...p, confirm: undefined }));
                             }}
                             error={errors.confirm}
-                            placeholder="Re-enter your password"
+                            placeholder={t('auth.resetPassword.setPassword.confirmPlaceholder')}
                         />
 
                         {/* Match indicator */}
@@ -340,8 +342,8 @@ function ResetPasswordContent() {
                                 confirm === password ? 'text-green-600' : 'text-red-500'
                             )}>
                                 {confirm === password
-                                    ? <><CheckCircle size={12} /> Passwords match</>
-                                    : <><AlertCircle size={12} /> Passwords don't match</>
+                                    ? <><CheckCircle size={12} /> {t('auth.resetPassword.setPassword.passwordsMatch')}</>
+                                    : <><AlertCircle size={12} /> {t('auth.resetPassword.setPassword.passwordsMismatch')}</>
                                 }
                             </div>
                         )}
@@ -351,9 +353,9 @@ function ResetPasswordContent() {
                             disabled={loading}
                             className="w-full h-11 bg-green-600 hover:bg-green-700 disabled:opacity-60 active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all mt-2">
                             {loading ? (
-                                <><Loader2 size={15} className="animate-spin" /> Resetting…</>
+                                <><Loader2 size={15} className="animate-spin" /> {t('auth.resetPassword.setPassword.resetting')}</>
                             ) : (
-                                <><ShieldCheck size={15} /> Reset password</>
+                                <><ShieldCheck size={15} /> {t('auth.resetPassword.resetPassword.cta')}</>
                             )}
                         </button>
                     </form>
@@ -363,7 +365,7 @@ function ResetPasswordContent() {
                 <Link
                     href="/auth/signin"
                     className="flex items-center justify-center gap-1.5 mt-5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    <ArrowLeft size={13} /> Back to sign in
+                    <ArrowLeft size={13} /> {t('auth.resetPassword.invalidLink.backToSignIn')}
                 </Link>
             </div>
         </div>
@@ -371,10 +373,11 @@ function ResetPasswordContent() {
 }
 
 export default function ResetPassword() {
+    const { t } = useI18n();
     return (
         <Suspense fallback={
             <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-                <p className="text-sm text-muted-foreground">Loading…</p>
+                <p className="text-sm text-muted-foreground">{t('common.processing')}</p>
             </div>
         }>
             <ResetPasswordContent />

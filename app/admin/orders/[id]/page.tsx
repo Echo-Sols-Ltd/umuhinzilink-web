@@ -8,6 +8,7 @@ import PageLoading from '@/components/layout/PageLoading';
 import { Order, UserRole, isPaidOrder } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +29,7 @@ import {
 export default function AdminOrderDetailPage() {
     const params = useParams();
     const router = useRouter();
+    const { t } = useI18n();
     const { user } = useAuth();
     const {
         currentOrder,
@@ -60,10 +62,10 @@ export default function AdminOrderDetailPage() {
             } catch (error) {
                 if (!cancelled) {
                     console.error('Failed to fetch order:', error);
-                    setError('Order not found');
+                    setError(t('admin.ordersDetail.notFoundDesc'));
                     showToast({
-                        title: "Error",
-                        description: "Failed to load order details",
+                        title: t('common.error'),
+                        description: t('admin.ordersDetail.toasts.loadFailed'),
                         variant: "default"
                     });
                 }
@@ -94,7 +96,7 @@ export default function AdminOrderDetailPage() {
         } else {
             navigator.clipboard.writeText(window.location.href);
             showToast({
-                description: 'Order link copied to clipboard',
+                description: t('admin.ordersDetail.toasts.linkCopied'),
                 variant: 'default',
             });
         }
@@ -129,8 +131,8 @@ export default function AdminOrderDetailPage() {
                 <main className="flex-1 flex items-center justify-center">
                     <PageLoading
                         variant="section"
-                        label="Loading order"
-                        description="Fetching order details…"
+                        label={t('admin.ordersDetail.loadingLabel')}
+                        description={t('admin.ordersDetail.loadingDescription')}
                         className="bg-transparent dark:bg-transparent"
                     />
                 </main>
@@ -145,10 +147,10 @@ export default function AdminOrderDetailPage() {
                 <main className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                         <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                        <h2 className="text-xl font-semibold text-foreground mb-2">Order Not Found</h2>
+                        <h2 className="text-xl font-semibold text-foreground mb-2">{t('admin.ordersDetail.notFoundTitle')}</h2>
                         <p className="text-muted-foreground">{error}</p>
                         <Button onClick={handleBack} className="mt-4">
-                            Back to Orders
+                            {t('admin.ordersDetail.backToOrders')}
                         </Button>
                     </div>
                 </main>
@@ -165,10 +167,10 @@ export default function AdminOrderDetailPage() {
                 <main className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                         <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                        <h2 className="text-xl font-semibold text-foreground mb-2">Order Not Found</h2>
-                        <p className="text-muted-foreground">The order you're looking for doesn't exist.</p>
+                        <h2 className="text-xl font-semibold text-foreground mb-2">{t('admin.ordersDetail.notFoundTitle')}</h2>
+                        <p className="text-muted-foreground">{t('admin.ordersDetail.notFoundDesc')}</p>
                         <Button onClick={handleBack} className="mt-4">
-                            Back to Orders
+                            {t('admin.ordersDetail.backToOrders')}
                         </Button>
                     </div>
                 </main>
@@ -182,10 +184,10 @@ export default function AdminOrderDetailPage() {
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <AdminPageHeader
-                    title="Order Details"
-                    description={`#${order.id.slice(0, 8)} • Order`}
+                    title={t('admin.ordersDetail.title')}
+                    description={`#${order.id.slice(0, 8)} • ${t('admin.ordersDetail.orderLabel')}`}
                     backHref="/admin/orders"
-                    backLabel="Back to Orders"
+                    backLabel={t('admin.ordersDetail.backToOrders')}
                     actions={
                         <>
                             <Button
@@ -194,14 +196,14 @@ export default function AdminOrderDetailPage() {
                                 onClick={() => handleShareOrder(order)}
                             >
                                 <Share2 className="w-4 h-4 mr-2" />
-                                Share
+                                {t('admin.ordersDetail.share')}
                             </Button>
                             <Button
                                 variant="outline"
                                 size="sm"
                             >
                                 <Download className="w-4 h-4 mr-2" />
-                                Export
+                                {t('admin.ordersDetail.export')}
                             </Button>
                         </>
                     }
@@ -213,9 +215,9 @@ export default function AdminOrderDetailPage() {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <CardTitle className="text-lg">Order Status</CardTitle>
+                                    <CardTitle className="text-lg">{t('admin.ordersDetail.orderStatus')}</CardTitle>
                                     <CardDescription>
-                                        Current status and progress information
+                                        {t('admin.ordersDetail.orderStatusDesc')}
                                     </CardDescription>
                                 </div>
                                 <Badge className={getStatusColor(order.status)}>
@@ -229,15 +231,15 @@ export default function AdminOrderDetailPage() {
                         <CardContent>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Order ID</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.orderId')}</p>
                                     <p className="font-medium">#{order.id.slice(0, 8)}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Total Amount</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.totalAmount')}</p>
                                     <p className="font-medium">RWF {order.totalPrice?.toLocaleString()}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Created</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.created')}</p>
                                     <p className="font-medium">
                                         {new Date(order.createdAt).toLocaleDateString()}
                                     </p>
@@ -253,23 +255,23 @@ export default function AdminOrderDetailPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center">
                                     <User className="w-5 h-5 mr-2" />
-                                    Customer Information
+                                    {t('admin.ordersDetail.customerInfo')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Name</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.name')}</p>
                                     <p className="font-medium">
                                         {order.buyer?.firstName} {order.buyer?.lastName}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Email</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.email')}</p>
                                     <p className="font-medium">{order.buyer?.email}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Phone</p>
-                                    <p className="font-medium">{order.buyer?.phoneNumber || 'N/A'}</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.phone')}</p>
+                                    <p className="font-medium">{order.buyer?.phoneNumber || t('profile.notProvided')}</p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -279,30 +281,30 @@ export default function AdminOrderDetailPage() {
                             <CardHeader>
                                 <CardTitle className="flex items-center">
                                     <Package className="w-5 h-5 mr-2" />
-                                    Product Information
+                                    {t('admin.ordersDetail.productInfo')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Product Name</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.productName')}</p>
                                     <p className="font-medium">{order.product?.name}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Quantity</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.quantity')}</p>
                                     <p className="font-medium">
                                         {order.quantity} {order.product?.measurementUnit}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Unit Price</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.unitPrice')}</p>
                                     <p className="font-medium">
                                         RWF {(order.totalPrice / order.quantity).toLocaleString()}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Payment Status</p>
+                                    <p className="text-sm text-muted-foreground">{t('admin.ordersDetail.paymentStatus')}</p>
                                     <Badge className={isPaidOrder(order.status) ? 'text-success bg-success/10' : 'text-destructive bg-destructive/10'}>
-                                        {isPaidOrder(order.status) ? 'Paid' : 'Unpaid'}
+                                        {isPaidOrder(order.status) ? t('admin.ordersDetail.paid') : t('admin.ordersDetail.unpaid')}
                                     </Badge>
                                 </div>
                             </CardContent>
@@ -312,24 +314,24 @@ export default function AdminOrderDetailPage() {
                     {/* Additional Actions */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Admin Actions</CardTitle>
+                            <CardTitle>{t('admin.ordersDetail.adminActions')}</CardTitle>
                             <CardDescription>
-                                Administrative controls for this order
+                                {t('admin.ordersDetail.adminActionsDesc')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-wrap gap-2">
                                 <Button variant="outline" size="sm">
                                     <Eye className="w-4 h-4 mr-2" />
-                                    View Full Details
+                                    {t('admin.ordersDetail.viewFullDetails')}
                                 </Button>
                                 <Button variant="outline" size="sm">
                                     <Calendar className="w-4 h-4 mr-2" />
-                                    View Timeline
+                                    {t('admin.ordersDetail.viewTimeline')}
                                 </Button>
                                 <Button variant="outline" size="sm">
                                     <Download className="w-4 h-4 mr-2" />
-                                    Download Invoice
+                                    {t('admin.ordersDetail.downloadInvoice')}
                                 </Button>
                             </div>
                         </CardContent>

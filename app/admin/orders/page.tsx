@@ -13,6 +13,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useI18n } from '@/contexts/I18nContext';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { UserRole as UserType } from '@/types';
@@ -28,6 +29,7 @@ import { Badge } from '@/components/ui/badge';
 
 function FarmerOrderManagement() {
   const router = useRouter();
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const { orders } = useAdmin();
 
@@ -53,8 +55,8 @@ function FarmerOrderManagement() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <AdminPageHeader
-          title="Farmer Orders"
-          description="Monitor and manage farmer-to-buyer transactions"
+          title={t('admin.orders.title')}
+          description={t('admin.orders.subtitle')}
         />
 
         <main className="flex-1 overflow-auto p-4 sm:p-6">
@@ -63,11 +65,11 @@ function FarmerOrderManagement() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-card/30">
-                  <TableHead className="py-6 pl-8 font-semibold">SETTLEMENT INFO</TableHead>
-                  <TableHead className="font-semibold">PARTICIPANTS</TableHead>
-                  <TableHead className="font-semibold">EXECUTION DATE</TableHead>
-                  <TableHead className="font-semibold">STATUS</TableHead>
-                  <TableHead className="text-right pr-8 font-semibold">ACTIONS</TableHead>
+                  <TableHead className="py-6 pl-8 font-semibold">{t('admin.orders.table.settlementInfo')}</TableHead>
+                  <TableHead className="font-semibold">{t('admin.orders.table.participants')}</TableHead>
+                  <TableHead className="font-semibold">{t('admin.orders.table.executionDate')}</TableHead>
+                  <TableHead className="font-semibold">{t('admin.orders.table.status')}</TableHead>
+                  <TableHead className="text-right pr-8 font-semibold">{t('admin.orders.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -76,7 +78,7 @@ function FarmerOrderManagement() {
                     <TableCell colSpan={5} className="py-24 text-center">
                       <div className="flex flex-col items-center justify-center opacity-20">
                         <Search className="w-16 h-16 mb-4" />
-                        <p className="text-xl font-semibold text-foreground">No Transactions Captured</p>
+                        <p className="text-xl font-semibold text-foreground">{t('admin.orders.empty')}</p>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -85,17 +87,17 @@ function FarmerOrderManagement() {
                     <TableRow key={order.id} className="group hover:bg-card/50 transition-all">
                       <TableCell className="py-5 pl-8">
                         <div className="flex flex-col">
-                          <span className="text-[10px] font-semibold text-success uppercase  mb-1">TX-REF: {order.id.slice(0, 8)}</span>
+                          <span className="text-[10px] font-semibold text-success uppercase  mb-1">{t('admin.orders.table.txRef', { id: order.id.slice(0, 8) })}</span>
                           <span className="text-gray-900 text-base leading-tight ">
                             RWF {order.totalPrice.toLocaleString()}
                           </span>
-                          <span className="text-[11px] text-muted-foreground font-medium">Farmer Settlement Order</span>
+                          <span className="text-[11px] text-muted-foreground font-medium">{t('admin.orders.table.farmerSettlementOrder')}</span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-6">
                           <div className="flex flex-col">
-                            <span className="text-[10px] font-semibold text-muted-foreground uppercase ">Sender</span>
+                            <span className="text-[10px] font-semibold text-muted-foreground uppercase ">{t('admin.orders.table.sender')}</span>
                             <span className="text-sm text-foreground flex items-center gap-1.5">
                               <User className="w-3.5 h-3.5 text-info" />
                               {order.buyer.firstName} {order.buyer.lastName}
@@ -103,7 +105,7 @@ function FarmerOrderManagement() {
                           </div>
                           <div className="w-4 h-px bg-divider" />
                           <div className="flex flex-col">
-                            <span className="text-[10px] font-semibold text-muted-foreground uppercase ">Receiver</span>
+                            <span className="text-[10px] font-semibold text-muted-foreground uppercase ">{t('admin.orders.table.receiver')}</span>
                             <span className="text-sm text-foreground flex items-center gap-1.5">
                               <User className="w-3.5 h-3.5 text-success" />
                               {order.product.owner?.firstName} {order.product.owner?.lastName}
@@ -130,11 +132,11 @@ function FarmerOrderManagement() {
                           <button
                             onClick={() => router.push(`/admin/orders/${order.id}`)}
                             className="p-3 text-muted-foreground hover:text-success hover:bg-success/10 rounded-2xl transition-all"
-                            title="View order details"
+                            title={t('admin.orders.viewDetails')}
                           >
                             <Eye className="w-5 h-5" />
                           </button>
-                          <button className="p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-2xl transition-all" title="Archive">
+                          <button className="p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-2xl transition-all" title={t('admin.orders.archive')}>
                             <Trash2 className="w-5 h-5" />
                           </button>
                         </div>

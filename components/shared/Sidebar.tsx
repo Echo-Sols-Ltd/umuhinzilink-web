@@ -20,45 +20,45 @@ import { getAdminHomePath } from '@/lib/appPaths';
 import DashboardTopbar from './DashboardTopbar';
 
 // ─── types ────────────────────────────────────────────────────────
-interface NavItem { icon: React.ReactNode; label: string; href: string; badge?: number | string }
-interface NavGroup { label?: string; items: NavItem[] }
+interface NavItem { icon: React.ReactNode; labelKey: string; href: string; badge?: number | string }
+interface NavGroup { labelKey?: string; items: NavItem[] }
 
 // ─── nav config ───────────────────────────────────────────────────
 function getNavGroups(role: UserRole): NavGroup[] {
     switch (role) {
         case UserRole.SELLER: return [
             {
-                label: 'Sell', items: [
-                    { icon: <LayoutGrid size={16} />, label: 'Dashboard',        href: '/dashboard' },
-                    { icon: <Package     size={16} />, label: 'My Products',     href: '/products/mine' },
-                    { icon: <ShoppingCart size={16}/>, label: 'Customer Orders', href: '/orders' },
+                labelKey: 'nav.groups.sell', items: [
+                    { icon: <LayoutGrid size={16} />, labelKey: 'sidebar.items.dashboard',        href: '/dashboard' },
+                    { icon: <Package     size={16} />, labelKey: 'sidebar.items.myProducts',     href: '/products/mine' },
+                    { icon: <ShoppingCart size={16}/>, labelKey: 'sidebar.items.customerOrders', href: '/orders' },
                 ],
             },
             {
-                label: 'Account', items: [
-                    { icon: <Wallet      size={16} />, label: 'Wallet',          href: '/wallet' },
-                    { icon: <Mail        size={16} />, label: 'Messages',        href: '/chat' },
-                    { icon: <User        size={16} />, label: 'Profile',         href: '/profile' },
-                    { icon: <Settings    size={16} />, label: 'Settings',        href: '/settings' },
+                labelKey: 'nav.groups.account', items: [
+                    { icon: <Wallet      size={16} />, labelKey: 'sidebar.items.wallet',   href: '/wallet' },
+                    { icon: <Mail        size={16} />, labelKey: 'sidebar.items.messages', href: '/chat' },
+                    { icon: <User        size={16} />, labelKey: 'sidebar.items.profile',  href: '/profile' },
+                    { icon: <Settings    size={16} />, labelKey: 'sidebar.items.settings', href: '/settings' },
                 ],
             },
         ];
 
         case UserRole.BUYER: return [
             {
-                label: 'Shop', items: [
-                    { icon: <LayoutGrid  size={16} />, label: 'Dashboard',       href: '/dashboard' },
-                    { icon: <FilePlus    size={16} />, label: 'Browse Products', href: '/dashboard' },
-                    { icon: <ShoppingCart size={16}/>, label: 'My Orders',       href: '/orders' },
-                    { icon: <Heart       size={16} />, label: 'Saved',           href: '/products/saved' },
+                labelKey: 'nav.groups.shop', items: [
+                    { icon: <LayoutGrid  size={16} />, labelKey: 'sidebar.items.dashboard',   href: '/dashboard' },
+                    { icon: <FilePlus    size={16} />, labelKey: 'nav.browseProducts',       href: '/dashboard' },
+                    { icon: <ShoppingCart size={16}/>, labelKey: 'sidebar.items.myOrders',    href: '/orders' },
+                    { icon: <Heart       size={16} />, labelKey: 'sidebar.items.favorites',   href: '/products/saved' },
                 ],
             },
             {
-                label: 'Account', items: [
-                    { icon: <Wallet      size={16} />, label: 'Wallet',          href: '/wallet' },
-                    { icon: <Mail        size={16} />, label: 'Messages',        href: '/chat' },
-                    { icon: <User        size={16} />, label: 'Profile',         href: '/profile' },
-                    { icon: <Settings    size={16} />, label: 'Settings',        href: '/settings' },
+                labelKey: 'nav.groups.account', items: [
+                    { icon: <Wallet      size={16} />, labelKey: 'sidebar.items.wallet',   href: '/wallet' },
+                    { icon: <Mail        size={16} />, labelKey: 'sidebar.items.messages', href: '/chat' },
+                    { icon: <User        size={16} />, labelKey: 'sidebar.items.profile',  href: '/profile' },
+                    { icon: <Settings    size={16} />, labelKey: 'sidebar.items.settings', href: '/settings' },
                 ],
             },
         ];
@@ -68,18 +68,18 @@ function getNavGroups(role: UserRole): NavGroup[] {
 
         default: return [{
             items: [
-                { icon: <Home        size={16} />, label: 'Home',     href: '/' },
-                { icon: <Settings    size={16} />, label: 'Settings', href: '/settings' },
+                { icon: <Home        size={16} />, labelKey: 'sidebar.items.home',     href: '/' },
+                { icon: <Settings    size={16} />, labelKey: 'sidebar.items.settings', href: '/settings' },
             ],
         }];
     }
 }
 
 // ─── role badge ───────────────────────────────────────────────────
-const ROLE_BADGE: Record<UserRole, { bg: string; text: string; dot: string; label: string }> = {
-    [UserRole.SELLER]: { bg: 'bg-emerald-500/15', text: 'text-emerald-500', dot: 'bg-emerald-400', label: 'Seller' },
-    [UserRole.BUYER]:  { bg: 'bg-blue-500/15',    text: 'text-blue-500',    dot: 'bg-blue-400',    label: 'Buyer' },
-    [UserRole.ADMIN]:  { bg: 'bg-rose-500/15',    text: 'text-rose-500',    dot: 'bg-rose-400',    label: 'Admin' },
+const ROLE_BADGE: Record<UserRole, { bg: string; text: string; dot: string; labelKey: string }> = {
+    [UserRole.SELLER]: { bg: 'bg-emerald-500/15', text: 'text-emerald-500', dot: 'bg-emerald-400', labelKey: 'nav.roles.seller' },
+    [UserRole.BUYER]:  { bg: 'bg-blue-500/15',    text: 'text-blue-500',    dot: 'bg-blue-400',    labelKey: 'nav.roles.buyer' },
+    [UserRole.ADMIN]:  { bg: 'bg-rose-500/15',    text: 'text-rose-500',    dot: 'bg-rose-400',    labelKey: 'nav.roles.admin' },
 };
 
 // ─── component ────────────────────────────────────────────────────
@@ -95,7 +95,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
     const role      = (user?.role || userType) as UserRole;
     const firstName = user?.firstName || '';
     const lastName  = user?.lastName  || '';
-    const fullName  = `${firstName} ${lastName}`.trim() || 'User';
+    const fullName  = `${firstName} ${lastName}`.trim() || t('common.user');
     const initials  = fullName !== 'User'
         ? fullName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
         : 'UL';
@@ -112,7 +112,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
     }, [mobileOpen]);
 
     const handleNav = (item: NavItem) => {
-        setCurrentActive(item.label);
+        setCurrentActive(item.href);
         setMobileOpen(false);
         navigate(item.href);
     };
@@ -121,7 +121,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
         if (role === UserRole.ADMIN) {
             return isAdminNavActive(pathname, item.href);
         }
-        return currentActive === item.label;
+        return pathname === item.href || pathname.startsWith(`${item.href}/`);
     };
 
     const handleBrandClick = () => {
@@ -151,7 +151,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
                     <p className="font-semibold text-[14px] text-foreground leading-tight">UmuhinziLink</p>
                     <span className={`inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase ${badge.bg} ${badge.text}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
-                        {badge.label}
+                        {t(badge.labelKey)}
                     </span>
                 </div>
             </button>
@@ -160,16 +160,16 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
             <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-4 scrollbar-hide">
                 {groups.map((group, gi) => (
                     <div key={gi}>
-                        {group.label && (
+                        {group.labelKey && (
                             <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground select-none">
-                                {group.label}
+                                {t(group.labelKey)}
                             </p>
                         )}
                         <ul className="space-y-0.5">
                             {group.items.map(item => {
                                 const isActive = isItemActive(item);
                                 return (
-                                    <li key={item.label}>
+                                    <li key={item.href}>
                                         <button
                                             onClick={() => handleNav(item)}
                                             className={`
@@ -186,7 +186,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
                                             <span className={`shrink-0 ${isActive ? 'text-primary-foreground' : 'text-foreground/50 group-hover:text-foreground'}`}>
                                                 {item.icon}
                                             </span>
-                                            <span className="flex-1 truncate">{item.label}</span>
+                                            <span className="flex-1 truncate">{t(item.labelKey)}</span>
                                             {item.badge !== undefined && (
                                                 <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full
                                                     ${isActive ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-destructive/10 text-destructive'}`}>
@@ -222,7 +222,7 @@ export default function Sidebar({ activeItem = 'Dashboard', userType }: SidebarP
                         <ThemeToggle />
                         <button
                             onClick={handleLogout}
-                            title="Sign out"
+                            title={t('sidebar.actions.signOut')}
                             className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
                         >
                             <LogOut size={15} />

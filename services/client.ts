@@ -3,6 +3,7 @@ import { API_CONFIG, API_ENDPOINTS, HTTP_STATUS } from './constants';
 import { ApiResponse, AuthResponse } from '@/types';
 import { withRetry, retryConfigs, RetryOptions, isTransientRequestError } from '@/lib/retry';
 import { withTimeout, timeoutConfigs, TimeoutError } from '@/lib/timeout';
+import { getStoredLocale } from '@/lib/language-switch';
 
 function isIdempotentRequest(config: InternalAxiosRequestConfig): boolean {
   const method = config.method?.toUpperCase() ?? 'GET';
@@ -31,6 +32,7 @@ class ApiClient {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+        config.headers['Accept-Language'] = getStoredLocale();
         return config;
       },
       error => Promise.reject(error)

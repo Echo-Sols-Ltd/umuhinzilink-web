@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/contexts/I18nContext';
 
 export interface BreadcrumbItem {
   label: string;
@@ -48,11 +49,14 @@ export default function DetailPageShell({
   breadcrumbs = [],
   backHref,
   onBack,
-  backLabel = 'Back',
+  backLabel,
   actions,
   maxWidth = 'max-w-6xl',
   className,
 }: DetailPageShellProps) {
+  const { t } = useI18n();
+  const resolvedBackLabel = backLabel ?? t('common.back');
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Navbar />
@@ -84,7 +88,7 @@ export default function DetailPageShell({
                 className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft size={13} />
-                {backLabel}
+                {resolvedBackLabel}
               </Link>
             ) : onBack ? (
               <button
@@ -93,7 +97,7 @@ export default function DetailPageShell({
                 className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft size={13} />
-                {backLabel}
+                {resolvedBackLabel}
               </button>
             ) : null}
             {actions}

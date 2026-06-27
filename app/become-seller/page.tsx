@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { SellerRegistration } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -34,23 +35,8 @@ const DISTRICTS = [
 
 // ── Benefit cards data ────────────────────────────────────────────────────────
 
-const BENEFITS = [
-    {
-        icon: TrendingUp,
-        title: 'Earn more',
-        body: 'Sell directly to buyers across Rwanda. No middlemen, full price.',
-    },
-    {
-        icon: Users,
-        title: 'Reach buyers',
-        body: 'Your listings are visible to thousands of buyers from day one.',
-    },
-    {
-        icon: ShoppingBag,
-        title: 'Negotiate freely',
-        body: 'Chat and agree on prices that work for both you and your buyer.',
-    },
-];
+const BENEFIT_KEYS = ['earnMore', 'reachBuyers', 'negotiateFreely'] as const;
+const BENEFIT_ICONS = [TrendingUp, Users, ShoppingBag] as const;
 
 // ── Step indicator ────────────────────────────────────────────────────────────
 
@@ -95,7 +81,8 @@ function Field({
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function BecomeSeller() {
-    const [step, setStep] = useState(0); // 0 = intro, 1 = form, 2 = success
+    const { t } = useI18n();
+    const [step, setStep] = useState(0);
     const [formData, setFormData] = useState<SellerRegistration>({
         businessName: '',
         location: '',
@@ -118,13 +105,13 @@ export default function BecomeSeller() {
     const validate = (): boolean => {
         const e: Partial<SellerRegistration> = {};
         if (!formData.businessName.trim())
-            e.businessName = 'Farm or business name is required';
+            e.businessName = t('pages.becomeSeller.validation.businessNameRequired');
         if (!formData.location)
-            e.location = 'Please select your district';
+            e.location = t('pages.becomeSeller.validation.districtRequired');
         if (!formData.phoneNumber.trim())
-            e.phoneNumber = 'Phone number is required';
+            e.phoneNumber = t('pages.becomeSeller.validation.phoneRequired');
         else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(formData.phoneNumber.replace(/\s/g, '')))
-            e.phoneNumber = 'Enter a valid Rwandan phone number';
+            e.phoneNumber = t('pages.becomeSeller.validation.phoneInvalid');
         setErrors(e);
         return Object.keys(e).length === 0;
     };
@@ -196,43 +183,45 @@ export default function BecomeSeller() {
                                         <Sprout size={22} className="text-white" />
                                     </div>
                                     <h1 className="text-2xl font-extrabold text-white leading-tight">
-                                        Start selling<br />on UmuhinziLink
+                                        {t('pages.becomeSeller.heroTitle')}
                                     </h1>
                                     <p className="text-green-200 text-sm mt-1">
-                                        Reach buyers across Rwanda
+                                        {t('pages.becomeSeller.heroSubtitle')}
                                     </p>
                                 </div>
                             </div>
 
                             {/* Benefits */}
                             <div className="space-y-3 mb-8">
-                                {BENEFITS.map(({ icon: Icon, title, body }) => (
+                                {BENEFIT_KEYS.map((key, index) => {
+                                    const Icon = BENEFIT_ICONS[index];
+                                    return (
                                     <div
-                                        key={title}
+                                        key={key}
                                         className="flex items-start gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl border border-border">
                                         <div className="w-9 h-9 rounded-lg bg-green-50 dark:bg-green-950/40 flex items-center justify-center shrink-0">
                                             <Icon size={17} className="text-green-600" />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-semibold text-foreground">{title}</p>
-                                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{body}</p>
+                                            <p className="text-sm font-semibold text-foreground">{t(`pages.becomeSeller.benefits.${key}.title`)}</p>
+                                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{t(`pages.becomeSeller.benefits.${key}.body`)}</p>
                                         </div>
                                     </div>
-                                ))}
+                                );})}
                             </div>
 
                             {/* CTA */}
                             <button
                                 onClick={() => setStep(1)}
                                 className="w-full h-12 bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all">
-                                Get started
+                                {t('pages.becomeSeller.getStarted')}
                                 <ArrowRight size={16} />
                             </button>
 
                             <p className="text-center text-xs text-muted-foreground mt-4">
-                                Already a seller?{' '}
+                                {t('pages.becomeSeller.alreadySeller')}{' '}
                                 <Link href="/seller/dashboard" className="text-green-600 font-medium hover:underline">
-                                    Go to dashboard
+                                    {t('pages.becomeSeller.goToDashboard')}
                                 </Link>
                             </p>
                         </div>
@@ -248,50 +237,50 @@ export default function BecomeSeller() {
                                     onClick={() => setStep(0)}
                                     className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
                                     <ChevronLeft size={16} />
-                                    Back
+                                    {t('pages.becomeSeller.back')}
                                 </button>
                                 <StepDots current={0} total={1} />
                             </div>
 
                             <div className="mb-6">
-                                <h2 className="text-xl font-bold text-foreground">Your seller profile</h2>
+                                <h2 className="text-xl font-bold text-foreground">{t('pages.becomeSeller.formTitle')}</h2>
                                 <p className="text-sm text-muted-foreground mt-1">
-                                    This is what buyers will see when they view your listings.
+                                    {t('pages.becomeSeller.formDescription')}
                                 </p>
                             </div>
 
                             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-5 space-y-4">
 
-                                <Field label="Farm or business name" error={errors.businessName}>
+                                <Field label={t('pages.becomeSeller.fields.businessName')} error={errors.businessName}>
                                     <input
                                         type="text"
-                                        placeholder="e.g. Mugisha's Farm, AgriSupplies Kigali"
+                                        placeholder={t('pages.becomeSeller.placeholders.businessName')}
                                         value={formData.businessName}
                                         onChange={e => handleChange('businessName', e.target.value)}
                                         className={inputCls('businessName')}
                                     />
                                 </Field>
 
-                                <Field label="District" error={errors.location}>
+                                <Field label={t('pages.becomeSeller.fields.district')} error={errors.location}>
                                     <select
                                         value={formData.location}
                                         onChange={e => handleChange('location', e.target.value)}
                                         className={inputCls('location')}>
-                                        <option value="">Select your district</option>
+                                        <option value="">{t('pages.becomeSeller.placeholders.selectDistrict')}</option>
                                         {DISTRICTS.map(d => (
                                             <option key={d} value={d.toUpperCase()}>{d}</option>
                                         ))}
                                     </select>
                                 </Field>
 
-                                <Field label="Business phone" error={errors.phoneNumber}>
+                                <Field label={t('pages.becomeSeller.fields.businessPhone')} error={errors.phoneNumber}>
                                     <div className="relative">
                                         <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground select-none">
                                             +250
                                         </span>
                                         <input
                                             type="tel"
-                                            placeholder="78 000 0000"
+                                            placeholder={t('pages.becomeSeller.placeholders.phone')}
                                             value={formData.phoneNumber}
                                             onChange={e => handleChange('phoneNumber', e.target.value)}
                                             className={`${inputCls('phoneNumber')} pl-14`}
@@ -299,10 +288,10 @@ export default function BecomeSeller() {
                                     </div>
                                 </Field>
 
-                                <Field label="What do you sell? (optional)" error={errors.description}>
+                                <Field label={t('pages.becomeSeller.fields.whatYouSell')} error={errors.description}>
                                     <textarea
                                         rows={3}
-                                        placeholder="e.g. Fresh maize, beans, and vegetables from Musanze. Also seeds and fertilizer."
+                                        placeholder={t('pages.becomeSeller.placeholders.description')}
                                         value={formData.description}
                                         onChange={e => handleChange('description', e.target.value)}
                                         className={`${inputCls('description')} h-auto py-3 resize-none`}
@@ -314,7 +303,7 @@ export default function BecomeSeller() {
                             <div className="flex items-start gap-2.5 mt-4 px-1">
                                 <CheckCircle size={14} className="text-green-500 mt-0.5 shrink-0" />
                                 <p className="text-xs text-muted-foreground leading-relaxed">
-                                    You can still buy products as a buyer after becoming a seller. Your account works for both.
+                                    {t('pages.becomeSeller.dualAccountNote')}
                                 </p>
                             </div>
 
@@ -328,11 +317,11 @@ export default function BecomeSeller() {
                                         <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                                             <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="32" strokeDashoffset="12" />
                                         </svg>
-                                        Setting up your profile…
+                                        {t('pages.becomeSeller.settingUp')}
                                     </>
                                 ) : (
                                     <>
-                                        Become a seller
+                                        {t('pages.becomeSeller.becomeSeller')}
                                         <ChevronRight size={16} />
                                     </>
                                 )}
@@ -350,10 +339,10 @@ export default function BecomeSeller() {
                             </div>
 
                             <h2 className="text-2xl font-extrabold text-foreground">
-                                You're a seller! 🌱
+                                {t('pages.becomeSeller.successTitle')}
                             </h2>
                             <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-xs mx-auto">
-                                Your seller profile is ready. Start by adding your first listing — it only takes a minute.
+                                {t('pages.becomeSeller.successDescription')}
                             </p>
 
                             {/* Profile preview card */}
@@ -370,7 +359,7 @@ export default function BecomeSeller() {
                                         </p>
                                     </div>
                                     <span className="ml-auto text-xs text-green-600 bg-green-50 dark:bg-green-950/40 px-2 py-1 rounded-full font-medium border border-green-200 dark:border-green-800">
-                                        Verified
+                                        {t('pages.becomeSeller.verified')}
                                     </span>
                                 </div>
                                 {formData.description && (
@@ -386,12 +375,12 @@ export default function BecomeSeller() {
                                     href="/products/create"
                                     className="w-full h-12 bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all">
                                     <Package size={16} />
-                                    Add your first listing
+                                    {t('pages.becomeSeller.addFirstListing')}
                                 </Link>
                                 <Link
                                     href="/dashboard"
                                     className="w-full h-11 bg-white dark:bg-gray-900 border border-border hover:bg-gray-50 dark:hover:bg-gray-800/50 text-foreground font-medium text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
-                                    Go to dashboard
+                                    {t('pages.becomeSeller.goToDashboard')}
                                 </Link>
                             </div>
                         </div>

@@ -1,21 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useI18n } from '@/contexts/I18nContext';
 import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import {
   User,
   Save,
   Lock,
-  Mail,
   Eye,
   EyeOff,
   Camera,
-  Upload,
   Shield,
-  Bell
 } from 'lucide-react';
 
 export default function AccountSettingsPage() {
+  const { t } = useI18n();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   
   const [account, setAccount] = useState({
@@ -54,11 +53,10 @@ export default function AccountSettingsPage() {
   const handleSave = async () => {
     setSaveStatus('saving');
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       setSaveStatus('success');
       setTimeout(() => setSaveStatus('idle'), 3000);
-    } catch (error) {
+    } catch {
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
@@ -70,20 +68,18 @@ export default function AccountSettingsPage() {
 
   return (
     <SettingsSubLayout
-      title="Account Settings"
-      description="Manage your profile and account preferences"
+      title={t('settings.hub.sections.account.title')}
+      description={t('settings.hub.sections.account.description')}
     >
       <div className="space-y-6">
-            {/* Profile Information */}
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center text-white">
                   <User className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Profile Information</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.account.sections.profileInformation')}</h2>
               </div>
 
-              {/* Profile Picture */}
               <div className="mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center">
@@ -95,10 +91,10 @@ export default function AccountSettingsPage() {
                       className="flex items-center gap-2 px-4 py-2 bg-success text-white rounded-lg hover:bg-success/90 transition-colors"
                     >
                       <Camera className="w-4 h-4" />
-                      Change Photo
+                      {t('settings.account.changePhoto')}
                     </button>
                     <p className="text-xs text-muted-foreground mt-1">
-                      JPG, PNG or GIF. Max size 2MB
+                      {t('settings.account.photoHint')}
                     </p>
                   </div>
                 </div>
@@ -107,84 +103,83 @@ export default function AccountSettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    First Name
+                    {t('settings.account.fields.firstName')}
                   </label>
                   <input
                     type="text"
                     value={account.first_name}
                     onChange={(e) => handleChange('first_name', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="Enter your first name"
+                    placeholder={t('settings.account.placeholders.firstName')}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Last Name
+                    {t('settings.account.fields.lastName')}
                   </label>
                   <input
                     type="text"
                     value={account.last_name}
                     onChange={(e) => handleChange('last_name', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="Enter your last name"
+                    placeholder={t('settings.account.placeholders.lastName')}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Email Address
+                    {t('settings.account.fields.emailAddress')}
                   </label>
                   <input
                     type="email"
                     value={account.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="your.email@example.com"
+                    placeholder={t('settings.account.placeholders.email')}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Phone Number
+                    {t('settings.account.fields.phoneNumber')}
                   </label>
                   <input
                     type="tel"
                     value={account.phone}
                     onChange={(e) => handleChange('phone', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="+250 788 123 456"
+                    placeholder={t('settings.account.placeholders.phone')}
                   />
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Bio
+                    {t('settings.account.fields.bio')}
                   </label>
                   <textarea
                     value={account.bio}
                     onChange={(e) => handleChange('bio', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                    placeholder="Tell us about yourself..."
+                    placeholder={t('settings.account.placeholders.bio')}
                     rows={3}
                   />
                 </div>
               </div>
             </div>
 
-            {/* Password Change */}
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white">
                   <Lock className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Change Password</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.account.sections.changePassword')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Current Password
+                    {t('settings.account.fields.currentPassword')}
                   </label>
                   <div className="relative">
                     <input
@@ -192,7 +187,7 @@ export default function AccountSettingsPage() {
                       value={account.current_password}
                       onChange={(e) => handleChange('current_password', e.target.value)}
                       className="w-full px-3 py-2 pr-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                      placeholder="Enter current password"
+                      placeholder={t('settings.account.placeholders.currentPassword')}
                     />
                     <button
                       type="button"
@@ -206,7 +201,7 @@ export default function AccountSettingsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    New Password
+                    {t('settings.account.fields.newPassword')}
                   </label>
                   <div className="relative">
                     <input
@@ -214,7 +209,7 @@ export default function AccountSettingsPage() {
                       value={account.new_password}
                       onChange={(e) => handleChange('new_password', e.target.value)}
                       className="w-full px-3 py-2 pr-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                      placeholder="Enter new password"
+                      placeholder={t('settings.account.placeholders.newPassword')}
                     />
                     <button
                       type="button"
@@ -228,7 +223,7 @@ export default function AccountSettingsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Confirm New Password
+                    {t('settings.account.fields.confirmNewPassword')}
                   </label>
                   <div className="relative">
                     <input
@@ -236,7 +231,7 @@ export default function AccountSettingsPage() {
                       value={account.confirm_password}
                       onChange={(e) => handleChange('confirm_password', e.target.value)}
                       className="w-full px-3 py-2 pr-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
-                      placeholder="Confirm new password"
+                      placeholder={t('settings.account.placeholders.confirmNewPassword')}
                     />
                     <button
                       type="button"
@@ -251,46 +246,45 @@ export default function AccountSettingsPage() {
 
               <div className="mt-4 p-4 bg-muted/30 rounded-lg">
                 <div className="text-sm text-muted-foreground">
-                  <strong>Password requirements:</strong>
+                  <strong>{t('settings.account.passwordRequirements.title')}</strong>
                   <ul className="mt-2 space-y-1">
-                    <li>• At least 8 characters long</li>
-                    <li>• Contains uppercase and lowercase letters</li>
-                    <li>• Contains at least one number</li>
-                    <li>• Contains at least one special character</li>
+                    <li>• {t('settings.account.passwordRequirements.length')}</li>
+                    <li>• {t('settings.account.passwordRequirements.case')}</li>
+                    <li>• {t('settings.account.passwordRequirements.number')}</li>
+                    <li>• {t('settings.account.passwordRequirements.special')}</li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            {/* Privacy Preferences */}
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
                   <Shield className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground">Privacy Preferences</h2>
+                <h2 className="text-lg font-semibold text-foreground">{t('settings.account.sections.privacyPreferences')}</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Profile Visibility
+                    {t('settings.account.fields.profileVisibility')}
                   </label>
                   <select
                     value={account.profile_visibility}
                     onChange={(e) => handleChange('profile_visibility', e.target.value)}
                     className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-success"
                   >
-                    <option value="public">Public - Everyone can see your profile</option>
-                    <option value="registered">Registered - Only registered users</option>
-                    <option value="private">Private - Only you</option>
+                    <option value="public">{t('settings.account.visibility.public')}</option>
+                    <option value="registered">{t('settings.account.visibility.registered')}</option>
+                    <option value="private">{t('settings.account.visibility.private')}</option>
                   </select>
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
                   <div>
-                    <div className="font-medium text-foreground">Email Notifications</div>
-                    <div className="text-sm text-muted-foreground">Receive account-related emails</div>
+                    <div className="font-medium text-foreground">{t('settings.account.emailNotifications.label')}</div>
+                    <div className="text-sm text-muted-foreground">{t('settings.account.emailNotifications.description')}</div>
                   </div>
                   <button
                     onClick={() => handleChange('email_notifications', !account.email_notifications)}
@@ -308,7 +302,6 @@ export default function AccountSettingsPage() {
               </div>
             </div>
 
-          {/* Save Button */}
           <div className="flex justify-end mt-8">
             <button
               onClick={handleSave}
@@ -318,22 +311,22 @@ export default function AccountSettingsPage() {
               {saveStatus === 'saving' ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  {t('common.saving')}
                 </>
               ) : saveStatus === 'success' ? (
                 <>
                   <span>✓</span>
-                  Saved!
+                  {t('common.saved')}
                 </>
               ) : saveStatus === 'error' ? (
                 <>
                   <span>✗</span>
-                  Error
+                  {t('common.error')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Save Changes
+                  {t('common.saveChanges')}
                 </>
               )}
             </button>

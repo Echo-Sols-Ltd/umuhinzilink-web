@@ -77,6 +77,152 @@
     "unknown": "An unknown error occurred. Please try again later.",
     "emptyResponse": "Empty response received from the server."
   },
+  "nav": {
+    "browse": "Browse",
+    "howItWorks": "How it works",
+    "aiAssistant": "AI Assistant",
+    "myOrders": "My Orders",
+    "negotiations": "Negotiations",
+    "myListings": "My Listings",
+    "adminBadge": "Admin",
+    "profile": "Profile",
+    "adminConsole": "Admin Console",
+    "systemSettings": "System Settings",
+    "sellerDashboard": "Seller Dashboard",
+    "becomeSeller": "Become a Seller",
+    "wallet": "Wallet",
+    "settings": "Settings",
+    "logout": "Logout",
+    "signIn": "Sign in",
+    "getStarted": "Get started",
+    "browseProducts": "Browse Products",
+    "groups": {
+      "sell": "Sell",
+      "shop": "Shop",
+      "account": "Account",
+      "manage": "Manage",
+      "system": "System"
+    },
+    "roles": {
+      "seller": "Seller",
+      "buyer": "Buyer",
+      "admin": "Admin"
+    },
+    "adminTop": {
+      "console": "Console",
+      "users": "Users",
+      "orders": "Orders",
+      "products": "Products",
+      "wallets": "Wallets"
+    }
+  },
+  "negotiationsPage": {
+    "title": "Negotiations",
+    "description": "Track price discussions and deals with buyers or sellers.",
+    "browseProducts": "Browse products",
+    "loadingLabel": "Loading negotiations",
+    "loadingDescription": "Fetching your active deals…",
+    "stats": {
+      "total": "Total",
+      "active": "Active",
+      "accepted": "Accepted"
+    },
+    "searchPlaceholder": "Search by product, order number or name…",
+    "tabs": {
+      "all": "All",
+      "active": "Active",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "expired": "Expired"
+    },
+    "empty": {
+      "none": "No negotiations yet",
+      "noneFiltered": "No {{status}} negotiations",
+      "buyerHint": "Browse products and start negotiating with sellers.",
+      "sellerHint": "Negotiations from buyers will appear here.",
+      "noMatch": "Nothing matches this filter.",
+      "productNone": "No negotiation for this product yet",
+      "productHint": "Start a negotiation from the product page to discuss pricing with the seller.",
+      "viewProduct": "View product"
+    }
+  },
+  "ordersPage": {
+    "description": {
+      "buyer": "View, pay, or cancel your purchases.",
+      "seller": "Track sales and payments from buyers."
+    },
+    "loadingLabel": "Loading orders",
+    "loadingDescription": "Fetching your order history…",
+    "stats": {
+      "completedOnly": "completed only",
+      "awaitingPayment": "awaiting payment"
+    },
+    "filter": "Filter",
+    "results": "{{count}} result",
+    "resultsPlural": "{{count}} results",
+    "table": {
+      "order": "Order",
+      "total": "Total",
+      "qty": "Qty"
+    },
+    "empty": {
+      "tryDifferentFilter": "Try a different filter",
+      "sellerHint": "Orders will appear here when buyers place them",
+      "buyerHint": "Your orders will appear here after you buy"
+    },
+    "actions": {
+      "summary": "Summary",
+      "open": "Open",
+      "payOrder": "Pay for this order",
+      "viewSummary": "View order summary",
+      "openFullPage": "Open full order page"
+    },
+    "pagination": {
+      "pageOf": "Page {{page}} of {{totalPages}} · {{total}} orders",
+      "prev": "Prev",
+      "next": "Next"
+    },
+    "createModal": {
+      "title": "Create Order",
+      "quantity": "Quantity",
+      "paymentMethod": "Payment Method",
+      "notesOptional": "Notes (Optional)",
+      "notesPlaceholder": "Add any special instructions or notes...",
+      "orderSummary": "Order Summary",
+      "unitPrice": "Unit Price:",
+      "total": "Total:",
+      "perUnit": "per {{unit}}",
+      "createAndPay": "Create & pay",
+      "processingPayment": "Processing payment…",
+      "cancel": "Cancel",
+      "validation": {
+        "quantityMin": "Quantity must be at least 1",
+        "quantityMax": "Quantity cannot exceed available stock ({{max}})",
+        "paymentMethod": "Please select a payment method"
+      }
+    },
+    "detailsModal": {
+      "title": "Order Details",
+      "orderStatus": "Order Status",
+      "customerInfo": "Customer Information",
+      "productDetails": "Product Details",
+      "payment": "Payment",
+      "orderDate": "Order Date",
+      "payNow": "Pay Now",
+      "cancelOrder": "Cancel order",
+      "close": "Close",
+      "awaitingPayment": "Awaiting payment",
+      "notPaid": "Not paid",
+      "paid": "Paid",
+      "quantity": "Quantity:",
+      "unitPrice": "Unit Price:",
+      "totalPrice": "Total Price:"
+    },
+    "productOrder": {
+      "orderNow": "Order Now",
+      "notAvailable": "N/A"
+    }
+  },
   "orders": {
     "created": {
       "success": "Order created successfully.",
@@ -115,6 +261,276 @@
     "deleted": {
       "success": "Product deleted successfully.",
       "error": "Failed to delete product."
+    },
+    "pagination": {
+      "prev": "Prev",
+      "next": "Next"
+    },
+    "stockLeft": "{{quantity}} {{unit}} left",
+    "browse": {
+      "title": "Browse products",
+      "description": "Discover fresh produce and farm supplies from sellers across Rwanda.",
+      "searchPlaceholder": "Search listings…",
+      "sort": {
+        "newest": "Newest",
+        "name": "Name",
+        "price": "Price",
+        "stock": "Stock"
+      },
+      "results": "{{count}} listing found",
+      "resultsPlural": "{{count}} listings found",
+      "resultsFor": "for",
+      "empty": {
+        "filtered": "No listings match your filters",
+        "none": "No listings yet",
+        "filteredHint": "Try adjusting your search or filter to find what you are looking for."
+      }
+    },
+    "seller": {
+      "title": "My Listings",
+      "description": "Manage your products, stock, and visibility.",
+      "newListing": "New listing",
+      "searchPlaceholder": "Search listings…",
+      "filterAll": "All",
+      "addFirstListing": "Add first listing",
+      "results": "{{count}} listing found",
+      "resultsPlural": "{{count}} listings found",
+      "sort": {
+        "views": "Views"
+      },
+      "metrics": {
+        "total": "Total",
+        "inStock": "In stock",
+        "lowStock": "Low stock",
+        "outOfStock": "Out of stock"
+      },
+      "empty": {
+        "filtered": "No listings match your filters",
+        "none": "No listings yet",
+        "filteredHint": "Try adjusting your search or filter.",
+        "noneHint": "Add your first product and start selling to buyers across Rwanda."
+      }
+    },
+    "saved": {
+      "title": "Saved products",
+      "description": "Products you saved for later.",
+      "backLabel": "Profile",
+      "loadingLabel": "Loading saved products",
+      "loadingDescription": "Fetching your wishlist…",
+      "empty": {
+        "title": "No saved products yet",
+        "description": "Tap the heart on a product to save it here.",
+        "browse": "Browse products"
+      }
+    },
+    "create": {
+      "breadcrumbs": {
+        "home": "Home",
+        "myListings": "My listings",
+        "newListing": "New listing"
+      },
+      "backLabel": "My listings",
+      "publish": "Publish",
+      "publishing": "Publishing…",
+      "publishListing": "Publish listing",
+      "cancel": "Cancel",
+      "success": {
+        "title": "Listing published!",
+        "description": "{{name}} is now live and visible to buyers across Rwanda.",
+        "addAnother": "Add another listing",
+        "viewListings": "View my listings"
+      },
+      "image": {
+        "upload": "Upload product photo",
+        "change": "Change image",
+        "hint": "JPG, PNG up to 5 MB"
+      },
+      "sections": {
+        "details": "Product details",
+        "pricing": "Pricing & stock",
+        "location": "Location"
+      },
+      "fields": {
+        "name": "Product name",
+        "namePlaceholder": "e.g. Fresh Maize, Tomatoes, Fertiliser NPK",
+        "description": "Description",
+        "descriptionOptional": "Optional",
+        "descriptionPlaceholder": "Quality, harvest date, storage, variety…",
+        "category": "Category",
+        "selectCategory": "Select a category",
+        "unitPrice": "Unit price (RWF)",
+        "quantity": "Quantity",
+        "measurementUnit": "Measurement unit",
+        "selectUnit": "Select unit",
+        "district": "District",
+        "selectDistrict": "Select district",
+        "negotiable": "Allow negotiation",
+        "negotiableHint": "Buyers can propose a different price"
+      },
+      "categoryGroups": {
+        "produce": "Produce",
+        "inputs": "Inputs & Equipment",
+        "other": "Other"
+      },
+      "infoNote": "Stock is reserved when a buyer places an order. Keep your quantity updated to avoid overselling.",
+      "validation": {
+        "nameRequired": "Product name is required",
+        "descriptionRequired": "Description is required",
+        "categoryRequired": "Select a category",
+        "priceInvalid": "Enter a valid price greater than 0",
+        "quantityInvalid": "Enter a valid quantity greater than 0",
+        "unitRequired": "Select a unit",
+        "districtRequired": "Select your district",
+        "imageRequired": "Product image is required",
+        "imageSize": "Image must be under 5 MB"
+      }
+    },
+    "edit": {
+      "loadingLabel": "Loading product",
+      "loadingDescription": "Preparing the editor…",
+      "breadcrumbs": {
+        "home": "Home",
+        "myListings": "My listings",
+        "editListing": "Edit listing"
+      },
+      "backLabel": "My listings",
+      "save": "Save",
+      "saving": "Saving…",
+      "saveChanges": "Save changes",
+      "savingChanges": "Saving changes…",
+      "cancel": "Cancel",
+      "loadFailed": "Failed to load product",
+      "updateFailed": "Failed to update product. Please try again.",
+      "sections": {
+        "image": "Product image",
+        "imageSub": "Update the photo buyers see",
+        "details": "Product details",
+        "detailsSub": "Essential information about your listing",
+        "pricing": "Pricing & stock",
+        "pricingSub": "Set your price and available quantity",
+        "location": "Location",
+        "locationSub": "Where this product is available"
+      },
+      "image": {
+        "upload": "Upload image",
+        "change": "Change image",
+        "hint": "JPG, PNG up to 5 MB"
+      },
+      "fields": {
+        "name": "Product name",
+        "namePlaceholder": "e.g. Fresh Maize, NPK Fertiliser",
+        "description": "Description",
+        "descriptionPlaceholder": "Quality, variety, harvest date, storage conditions…",
+        "category": "Category",
+        "selectCategory": "Select a category",
+        "unitPrice": "Unit price (RWF)",
+        "quantity": "Quantity",
+        "measurementUnit": "Measurement unit",
+        "selectUnit": "Select unit",
+        "district": "District",
+        "selectDistrict": "Select district",
+        "negotiable": "Allow negotiation",
+        "negotiableHint": "Buyers can propose a different price"
+      },
+      "categoryGroups": {
+        "produce": "Produce",
+        "inputs": "Inputs & Equipment",
+        "other": "Other"
+      },
+      "preview": {
+        "title": "Buyer preview",
+        "negotiable": "Negotiable",
+        "namePlaceholder": "Product name",
+        "descriptionPlaceholder": "Description will appear here...",
+        "left": "{{count}} left",
+        "noDistrict": "No district"
+      },
+      "tips": {
+        "title": "Tips for better visibility",
+        "photo": "Use clear, well-lit photos of the actual product",
+        "details": "Mention variety, quality grade, and harvest date",
+        "stock": "Keep stock quantity up to date",
+        "negotiate": "Enable negotiation for faster sales"
+      },
+      "validation": {
+        "nameRequired": "Name is required",
+        "descriptionRequired": "Description is required",
+        "categoryRequired": "Select a category",
+        "priceInvalid": "Enter a valid price",
+        "quantityInvalid": "Enter a valid quantity",
+        "unitRequired": "Select a unit",
+        "districtRequired": "Select a district",
+        "imageSize": "Image must be under 5 MB"
+      }
+    },
+    "detail": {
+      "notFound": "Product not found",
+      "notFoundMessage": "This product could not be found or may have been removed.",
+      "browseProducts": "Browse products",
+      "shareAria": "Share product",
+      "deleteConfirm": "Delete this listing? This cannot be undone.",
+      "linkCopied": "Link copied to clipboard",
+      "linkCopyFailed": "Could not copy link",
+      "breadcrumbs": {
+        "home": "Home",
+        "products": "Products"
+      }
+    },
+    "list": {
+      "negotiable": "Negotiable",
+      "left": "{{quantity}} {{unit}} left",
+      "editListing": "Edit listing",
+      "viewAsBuyer": "View as buyer",
+      "deleteListing": "Delete listing"
+    },
+    "buyModal": {
+      "steps": {
+        "details": "Details",
+        "confirm": "Confirm",
+        "done": "Done"
+      },
+      "buyNow": "Buy now",
+      "negotiate": "Negotiate",
+      "listedPrice": "Listed price",
+      "available": "Available",
+      "quantity": "Quantity",
+      "yourOffer": "Your offer per {{unit}}",
+      "validation": {
+        "priceInvalid": "Enter a valid price",
+        "priceTooHigh": "Your offer cannot exceed the listed price",
+        "priceTooLow": "Offer is too low — minimum 30% of listed price"
+      },
+      "discountBelow": "You're offering {{discount}}% below listed price",
+      "negotiateHint": "The seller will review your offer and respond via chat. You can continue negotiating there.",
+      "proposedTotal": "Proposed total",
+      "total": "Total",
+      "continue": "Continue",
+      "orderSummary": "Order summary",
+      "product": "Product",
+      "listedPriceLabel": "Listed price",
+      "yourOfferLabel": "Your offer",
+      "walletNote": "Payment will be deducted from your wallet balance. Make sure you have enough funds before confirming.",
+      "negotiateNote": "Your offer will be sent to the seller. They can accept, reject, or propose a counter-price through the negotiation chat.",
+      "back": "Back",
+      "sendingOffer": "Sending offer…",
+      "processing": "Processing…",
+      "sendOffer": "Send offer",
+      "confirmPay": "Confirm & pay",
+      "error": "Something went wrong. Please try again.",
+      "done": {
+        "offerSent": "Offer sent!",
+        "paymentSuccess": "Payment successful!",
+        "orderPaymentRequired": "Order created — payment required",
+        "orderPlaced": "Order placed!",
+        "offerSentDesc": "Your offer of {{price}} / {{unit}} has been sent to {{name}}. You'll be notified when they respond.",
+        "paymentSuccessDesc": "Payment of {{amount}} was deducted from your wallet. The seller has been notified.",
+        "paymentRequiredDesc": "Your order was created but payment failed. Add funds to your wallet and pay from the orders page.",
+        "orderPlacedDesc": "Your order for {{quantity}} {{unit}} of {{name}} has been created.",
+        "viewNegotiation": "View negotiation",
+        "payFromOrders": "Pay from orders",
+        "viewOrder": "View order",
+        "continueShopping": "Continue shopping"
+      }
     }
   },
   "profile": {
@@ -148,6 +564,64 @@
     "upload": {
       "success": "Profile image uploaded successfully.",
       "error": "Failed to upload image. Please try again."
+    },
+    "page": {
+      "title": "My profile",
+      "description": "Wallet, orders, and account settings.",
+      "loadingLabel": "Loading profile",
+      "loadingDescription": "Fetching your account details…"
+    },
+    "overview": {
+      "member": "Member",
+      "joined": "Joined {{monthYear}}",
+      "verified": "Verified",
+      "editProfile": "Edit profile",
+      "settings": "Settings",
+      "quickAccess": "Quick access",
+      "wallet": "Wallet",
+      "availableBalance": "Available balance",
+      "myListings": "My listings",
+      "manage": "Manage",
+      "productsYouSell": "Products you sell",
+      "orders": "Orders",
+      "completed": "{{count}} completed",
+      "viewHistory": "View history",
+      "negotiations": "Negotiations",
+      "awaitingResponse": "Awaiting response",
+      "viewAll": "View all",
+      "saved": "Saved",
+      "savedForLater": "Saved for later",
+      "browseProducts": "Browse products",
+      "recentNegotiations": "Recent negotiations",
+      "seeAll": "See all",
+      "noNegotiationsYet": "No negotiations yet",
+      "sellerNegotiationsHint": "When buyers negotiate on your products, they will appear here.",
+      "buyerNegotiationsHint": "Negotiate on a product to get a better price from sellers."
+    },
+    "edit": {
+      "title": "Edit profile",
+      "description": "Update your personal information and preferences.",
+      "backLabel": "Profile",
+      "loadingLabel": "Loading profile",
+      "loadingDescription": "Preparing the editor…",
+      "saveChanges": "Save changes",
+      "profilePhoto": "Profile photo",
+      "photoHint": "JPG or PNG, max 5MB",
+      "language": "Language",
+      "sellerProfile": "Seller profile",
+      "businessName": "Business name",
+      "location": "Location",
+      "descriptionLabel": "Description",
+      "validation": {
+        "namesRequired": "First and last name are required"
+      },
+      "toast": {
+        "photoUploaded": "Photo uploaded",
+        "invalidFile": "Invalid file",
+        "uploadFailed": "Failed to upload photo",
+        "saved": "Profile updated successfully",
+        "saveFailed": "Failed to save profile"
+      }
     }
   },
   "chat": {
@@ -176,6 +650,7 @@
     "authRequired": "Authentication Required",
     "noProducerInfo": "Unable to find producer information",
     "unavailable": "Unavailable",
+    "negotiable": "Negotiable",
     "negotiateMessage": "Hi! I'm interested in your {productName}. Let's discuss a deal!",
     "redirectingToChat": "Redirecting to chat with {ownerName}",
     "inquirySent": "Inquiry Sent",
@@ -186,8 +661,13 @@
     "outOfStock": "Out of Stock",
     "unitPrice": "Unit Price",
     "edit": "Edit",
+    "editListing": "Edit listing",
     "negotiatePrice": "Negotiate Price",
-    "buy": "Buy"
+    "negotiate": "Negotiate",
+    "buy": "Buy",
+    "buyNow": "Buy now",
+    "removedFromSaved": "Removed from saved",
+    "productSaved": "{{name}} saved"
   },
   "productRow": {
     "loginToContact": "Please log in to contact farmers",
@@ -209,20 +689,38 @@
   },
   "enums": {
     "categories": {
+      "CEREALS": "Cereals",
+      "LEGUMES_PULSES": "Legumes & Pulses",
+      "ROOTS_TUBERS": "Roots & Tubers",
+      "BANANAS_PLANTAINS": "Bananas & Plantains",
+      "VEGETABLES": "Vegetables",
+      "FRUITS": "Fruits",
+      "CASH_CROPS": "Cash Crops",
+      "OILSEEDS": "Oilseeds",
+      "SPICES_HERBS": "Spices & Herbs",
+      "FODDER_FORAGE": "Fodder & Forage",
+      "FERTILISER": "Fertiliser",
       "FERTILIZER": "Fertilizer",
-      "SEEDS": "Seeds",
       "PESTICIDE": "Pesticide",
+      "HERBICIDE": "Herbicide",
+      "FUNGICIDE": "Fungicide",
+      "SEEDS_SEEDLINGS": "Seeds & Seedlings",
+      "SEEDS": "Seeds",
+      "IRRIGATION": "Irrigation Equipment",
+      "HAND_TOOLS": "Hand Tools",
       "TOOLS": "Tools",
-      "IRRIGATION": "Irrigation",
       "MACHINERY": "Machinery",
+      "STORAGE_EQUIPMENT": "Storage Equipment",
+      "PACKAGING": "Packaging Material",
+      "ANIMAL_FEED": "Animal Feed",
+      "VETERINARY": "Veterinary Products",
       "POST_HARVEST": "Post Harvest",
       "ANIMAL_HEALTH": "Animal Health",
-      "ANIMAL_FEED": "Animal Feed",
       "SOIL_AMENDMENT": "Soil Amendment",
       "ORGANIC_INPUT": "Organic Input",
-      "PACKAGING": "Packaging",
       "GREENHOUSE": "Greenhouse",
-      "ACCESSORIES": "Accessories"
+      "ACCESSORIES": "Accessories",
+      "OTHER": "Other"
     },
     "units": {
       "KG": "Kilogram",
@@ -239,7 +737,35 @@
       "PIECE": "Piece",
       "DOZEN": "Dozen",
       "JERRICAN": "Jerrican",
-      "SACK": "Sack"
+      "SACK": "Sack",
+      "BAG": "Bag"
+    },
+    "productStatus": {
+      "IN_STOCK": "In stock",
+      "LOW_STOCK": "Low stock",
+      "OUT_OF_STOCK": "Out of stock",
+      "DRAFT": "Draft",
+      "DISCONTINUED": "Discontinued"
+    },
+    "orderStatus": {
+      "PENDING_PAYMENT": "Pending payment",
+      "PENDING": "Pending payment",
+      "COMPLETED": "Paid",
+      "CONFIRMED": "Paid",
+      "CANCELLED": "Cancelled"
+    },
+    "paymentMethod": {
+      "MOBILE_MONEY": "Mobile Money",
+      "AIRTEL_MONEY": "Airtel Money",
+      "BANK_TRANSFER": "Bank Transfer",
+      "CASH": "Cash",
+      "WALLET": "Wallet"
+    },
+    "negotiationStatus": {
+      "PENDING": "Active",
+      "ACCEPTED": "Accepted",
+      "REJECTED": "Rejected",
+      "EXPIRED": "Expired"
     }
   },
   "sidebar": {
@@ -502,6 +1028,47 @@
           "title": "Reset Failed",
           "body": "Failed to reset password. Please try again."
         }
+      },
+      "invalidLink": {
+        "title": "Invalid reset link",
+        "description": "This password reset link is invalid or has expired. Reset links are only valid for 15 minutes.",
+        "requestNew": "Request a new link",
+        "backToSignIn": "Back to sign in"
+      },
+      "verifyingLink": {
+        "label": "Verifying reset link",
+        "description": "Checking that your link is still valid…"
+      },
+      "setPassword": {
+        "title": "Set new password",
+        "description": "Choose a strong password for your account.",
+        "confirmPassword": "Confirm password",
+        "confirmPlaceholder": "Re-enter your password",
+        "strength": "Password strength",
+        "passwordsMatch": "Passwords match",
+        "passwordsMismatch": "Passwords don't match",
+        "resetting": "Resetting…",
+        "signInNow": "Sign in now"
+      },
+      "strength": {
+        "weak": "Weak",
+        "fair": "Fair",
+        "good": "Good",
+        "strong": "Strong"
+      },
+      "rules": {
+        "minLength": "At least 8 characters",
+        "uppercase": "One uppercase letter",
+        "number": "One number",
+        "special": "One special character"
+      },
+      "validation": {
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "passwordTooWeak": "Password is too weak",
+        "confirmRequired": "Please confirm your password",
+        "passwordMismatch": "Passwords do not match",
+        "resetFailed": "Failed to reset password. The link may have expired."
       }
     },
     "verifyOtp": {
@@ -618,6 +1185,81 @@
     "loading": "Loading dashboard...",
     "redirecting": "Redirecting to your dashboard..."
   },
+  "pages": {
+    "notFound": {
+      "title": "Field not found",
+      "description": "Looks like this harvest got lost on the way to market. The page you're looking for doesn't exist or has been moved.",
+      "backToHome": "Back to home",
+      "browseProducts": "Browse products",
+      "goBackPrevious": "Go back to previous page",
+      "maybeLookingFor": "Maybe you were looking for",
+      "links": {
+        "browseProducts": "Browse products",
+        "myNegotiations": "My negotiations",
+        "sellerDashboard": "Seller dashboard",
+        "wallet": "Wallet",
+        "signIn": "Sign in"
+      }
+    },
+    "unauthorized": {
+      "title": "Access Denied",
+      "description": "You don't have permission to access this page.",
+      "signedInAs": "Signed in as:",
+      "role": "Role:",
+      "goToDashboard": "Go to Dashboard",
+      "signOut": "Sign Out",
+      "contactAdmin": "If you believe this is an error, please contact your administrator."
+    },
+    "becomeSeller": {
+      "heroTitle": "Start selling on UmuhinziLink",
+      "heroSubtitle": "Reach buyers across Rwanda",
+      "benefits": {
+        "earnMore": {
+          "title": "Earn more",
+          "body": "Sell directly to buyers across Rwanda. No middlemen, full price."
+        },
+        "reachBuyers": {
+          "title": "Reach buyers",
+          "body": "Your listings are visible to thousands of buyers from day one."
+        },
+        "negotiateFreely": {
+          "title": "Negotiate freely",
+          "body": "Chat and agree on prices that work for both you and your buyer."
+        }
+      },
+      "getStarted": "Get started",
+      "alreadySeller": "Already a seller?",
+      "goToDashboard": "Go to dashboard",
+      "back": "Back",
+      "formTitle": "Your seller profile",
+      "formDescription": "This is what buyers will see when they view your listings.",
+      "fields": {
+        "businessName": "Farm or business name",
+        "district": "District",
+        "businessPhone": "Business phone",
+        "whatYouSell": "What do you sell? (optional)"
+      },
+      "placeholders": {
+        "businessName": "e.g. Mugisha's Farm, AgriSupplies Kigali",
+        "selectDistrict": "Select your district",
+        "phone": "78 000 0000",
+        "description": "e.g. Fresh maize, beans, and vegetables from Musanze. Also seeds and fertilizer."
+      },
+      "validation": {
+        "businessNameRequired": "Farm or business name is required",
+        "districtRequired": "Please select your district",
+        "phoneRequired": "Phone number is required",
+        "phoneInvalid": "Enter a valid Rwandan phone number"
+      },
+      "dualAccountNote": "You can still buy products as a buyer after becoming a seller. Your account works for both.",
+      "settingUp": "Setting up your profile…",
+      "becomeSeller": "Become a seller",
+      "successTitle": "You're a seller! 🌱",
+      "successDescription": "Your seller profile is ready. Start by adding your first listing — it only takes a minute.",
+      "verified": "Verified",
+      "addFirstListing": "Add your first listing"
+    }
+  },
   "marketplace": {
     "title": "Marketplace",
     "tagline": "Fresh from the farm to your table",
@@ -721,7 +1363,18 @@
       "backToPurchases": "Back to Purchases",
       "orderNotFound": "Order Not Found",
       "orderNotFoundDesc": "The order you're looking for doesn't exist.",
+      "accessDeniedDesc": "This order may have been removed or you do not have access.",
       "failedToLoad": "Failed to load order details",
+      "loadingLabel": "Loading order",
+      "loadingDescription": "Fetching order details…",
+      "yourOrder": "Your order",
+      "seller": "Seller",
+      "awaitingPayment": "Awaiting payment",
+      "notPaid": "Not paid",
+      "payNow": "Pay now",
+      "cancelOrder": "Cancel order",
+      "detailsBreadcrumb": "Details",
+      "total": "Total",
       "product": "Product",
       "farmer": "Farmer",
       "totalAmount": "Total Amount",
@@ -809,8 +1462,10 @@
       "stock": {
         "outOfStock": "Out of Stock",
         "lowStock": "Only {{count}} left",
-        "available": "{{count}} available"
+        "available": "{{count}} available",
+        "limitedWarning": "Limited stock available. Order soon to avoid disappointment."
       },
+      "perUnit": "per {{unit}}",
       "actions": {
         "purchase": "Purchase Product",
         "save": "Save",
@@ -1130,6 +1785,316 @@
         "activeUsers": "Active Users (7d)",
         "openSupportTickets": "Open Support Tickets"
       }
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Manage and monitor all platform members",
+      "searchPlaceholder": "Search users...",
+      "filters": {
+        "allRoles": "All Roles",
+        "allStatus": "All Status",
+        "verified": "Verified",
+        "pending": "Pending"
+      },
+      "table": {
+        "profile": "PROFILE",
+        "status": "STATUS",
+        "role": "ROLE",
+        "contactInfo": "CONTACT INFO",
+        "actions": "ACTIONS",
+        "primaryContact": "Primary Contact"
+      },
+      "status": {
+        "verified": "Verified",
+        "pending": "Pending",
+        "suspended": "Suspended",
+        "verifiedAccount": "Verified Account",
+        "pendingVerification": "Pending Verification"
+      },
+      "actions": {
+        "quickView": "Quick View",
+        "reactivateAccount": "Reactivate Account",
+        "suspendAccount": "Suspend Account",
+        "close": "Close"
+      },
+      "empty": "No users match your criteria",
+      "pagination": "Page {{current}} of {{total}}",
+      "modal": {
+        "phone": "Phone",
+        "joined": "Joined",
+        "notLinked": "Not linked"
+      },
+      "confirmDelete": "Are you sure you want to delete this user? This action cannot be undone.",
+      "toasts": {
+        "fetchFailed": "Failed to fetch users",
+        "userSuspended": "User suspended successfully",
+        "userActivated": "User activated successfully",
+        "roleUpdated": "User role updated successfully",
+        "roleUpdateFailed": "Failed to update user role",
+        "deleteFailed": "Failed to delete user",
+        "suspendFailed": "Failed to suspend user",
+        "activateFailed": "Failed to activate user"
+      }
+    },
+    "usersDetail": {
+      "title": "User Details",
+      "backToUsers": "Back to Users",
+      "loadingLabel": "Loading user",
+      "loadingDescription": "Fetching account details…",
+      "notFoundTitle": "User Not Found",
+      "notFoundDesc": "The user you're looking for doesn't exist.",
+      "failedToLoad": "Failed to load user",
+      "message": "Message",
+      "unsuspend": "Unsuspend",
+      "suspend": "Suspend",
+      "userStatus": "User Status",
+      "userStatusDesc": "Current status and verification information",
+      "userId": "User ID",
+      "role": "Role",
+      "joined": "Joined",
+      "personalInfo": "Personal Information",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "address": "Address",
+      "accountInfo": "Account Information",
+      "accountType": "Account Type",
+      "verificationStatus": "Verification Status",
+      "accountStatus": "Account Status",
+      "active": "Active",
+      "adminActions": "Admin Actions",
+      "adminActionsDesc": "Administrative controls for this user",
+      "sendMessage": "Send Message",
+      "editUser": "Edit User",
+      "viewActivity": "View Activity",
+      "toasts": {
+        "notAvailable": "Direct messaging is only available through order negotiations.",
+        "loadFailed": "Failed to load user details",
+        "userSuspended": "User suspended successfully",
+        "userActivated": "User activated successfully",
+        "suspendFailed": "Failed to suspend user",
+        "activateFailed": "Failed to activate user"
+      }
+    },
+    "products": {
+      "title": "Farmer Products",
+      "subtitle": "Moderate and oversee all farmer-listed produce",
+      "searchPlaceholder": "Search products or farmers...",
+      "filters": {
+        "allCategories": "All Categories",
+        "vegetables": "Vegetables",
+        "fruits": "Fruits",
+        "grains": "Grains",
+        "allStatus": "All Status"
+      },
+      "table": {
+        "product": "Product",
+        "farmer": "Farmer",
+        "category": "Category",
+        "price": "Price",
+        "stock": "Stock",
+        "status": "Status",
+        "actions": "Actions",
+        "per": "per"
+      },
+      "empty": "No products found",
+      "modal": {
+        "title": "Product Details",
+        "name": "Name",
+        "category": "Category",
+        "price": "Price",
+        "stock": "Stock",
+        "description": "Description"
+      },
+      "viewDetails": "View product details",
+      "confirmDelete": "Are you sure you want to delete this product? This action cannot be undone.",
+      "toasts": {
+        "moderated": "Product {{action}}d successfully",
+        "moderateFailed": "Failed to moderate product"
+      }
+    },
+    "productsDetail": {
+      "title": "Product Details",
+      "backToProducts": "Back to Products",
+      "loadingLabel": "Loading product",
+      "loadingDescription": "Fetching listing details…",
+      "notFoundTitle": "Product Not Found",
+      "notFoundDesc": "This product could not be found.",
+      "productLabel": "Product",
+      "deleteProduct": "Delete Product",
+      "adminActions": "Admin Actions",
+      "adminActionsDesc": "Manage this product's approval status and visibility",
+      "productId": "Product ID:",
+      "ownerId": "Owner ID:",
+      "created": "Created:",
+      "lastUpdated": "Last Updated:",
+      "confirmDelete": "Are you sure you want to delete this product? This action cannot be undone.",
+      "toasts": {
+        "linkCopied": "Product link copied to clipboard",
+        "deleteSuccess": "Product deleted successfully",
+        "deleteFailed": "Failed to delete product"
+      }
+    },
+    "orders": {
+      "title": "Farmer Orders",
+      "subtitle": "Monitor and manage farmer-to-buyer transactions",
+      "table": {
+        "settlementInfo": "SETTLEMENT INFO",
+        "participants": "PARTICIPANTS",
+        "executionDate": "EXECUTION DATE",
+        "status": "STATUS",
+        "actions": "ACTIONS",
+        "txRef": "TX-REF: {{id}}",
+        "farmerSettlementOrder": "Farmer Settlement Order",
+        "sender": "Sender",
+        "receiver": "Receiver"
+      },
+      "empty": "No Transactions Captured",
+      "viewDetails": "View order details",
+      "archive": "Archive"
+    },
+    "ordersDetail": {
+      "title": "Order Details",
+      "backToOrders": "Back to Orders",
+      "orderLabel": "Order",
+      "loadingLabel": "Loading order",
+      "loadingDescription": "Fetching order details…",
+      "notFoundTitle": "Order Not Found",
+      "notFoundDesc": "The order you're looking for doesn't exist.",
+      "share": "Share",
+      "export": "Export",
+      "orderStatus": "Order Status",
+      "orderStatusDesc": "Current status and progress information",
+      "orderId": "Order ID",
+      "totalAmount": "Total Amount",
+      "created": "Created",
+      "customerInfo": "Customer Information",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "productInfo": "Product Information",
+      "productName": "Product Name",
+      "quantity": "Quantity",
+      "unitPrice": "Unit Price",
+      "paymentStatus": "Payment Status",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "adminActions": "Admin Actions",
+      "adminActionsDesc": "Administrative controls for this order",
+      "viewFullDetails": "View Full Details",
+      "viewTimeline": "View Timeline",
+      "downloadInvoice": "Download Invoice",
+      "toasts": {
+        "loadFailed": "Failed to load order details",
+        "linkCopied": "Order link copied to clipboard"
+      }
+    },
+    "wallets": {
+      "title": "Treasury Management",
+      "subtitle": "Verify and monitor {{count}} user wallets across ecosystem",
+      "tabs": {
+        "wallets": "Wallets",
+        "transactions": "Transactions"
+      },
+      "searchPlaceholder": "Search by name, email, or wallet ID...",
+      "metrics": {
+        "systemLiquidity": "System Liquidity",
+        "activeWallets": "Active Wallets",
+        "avgBalance": "Avg Balance"
+      },
+      "table": {
+        "walletOwner": "WALLET OWNER",
+        "balance": "BALANCE",
+        "status": "STATUS",
+        "createdOn": "CREATED ON",
+        "actions": "ACTIONS"
+      },
+      "status": {
+        "active": "Active",
+        "locked": "Locked"
+      },
+      "empty": "No Wallets Found",
+      "unknownUser": "Unknown User",
+      "pagination": "Showing PAGE {{current}} OF {{total}}",
+      "toasts": {
+        "fetchFailed": "Failed to fetch wallets"
+      }
+    },
+    "walletsDetail": {
+      "title": "Ledger Summary",
+      "walletId": "Wallet ID: {{id}}",
+      "backToWallets": "Back to Wallets",
+      "loadingLabel": "Loading wallet",
+      "loadingDescription": "Fetching wallet details and transactions…",
+      "notFound": "Wallet not found",
+      "accountHolder": "Account Holder",
+      "availableBalance": "Available Balance",
+      "currency": "Currency: {{currency}}",
+      "accountStatus": "Account Status",
+      "memberSince": "Member Since",
+      "status": {
+        "active": "Active",
+        "restricted": "Restricted"
+      },
+      "transactionAudit": "Transaction Audit",
+      "recentActivities": "Recent {{count}} Activities",
+      "loadingTransactions": "Decrypting Ledger...",
+      "table": {
+        "type": "Type",
+        "status": "Status",
+        "amount": "Amount",
+        "date": "Date"
+      },
+      "emptyTransactions": "No transaction history found for this account",
+      "toasts": {
+        "fetchFailed": "Failed to fetch wallet details"
+      }
+    },
+    "analytics": {
+      "title": "Analytics Dashboard",
+      "subtitle": "Revenue insights and platform metrics",
+      "loadingLabel": "Loading analytics",
+      "loadingDescription": "Crunching platform metrics…",
+      "stats": {
+        "totalRevenue": "Total Revenue",
+        "totalOrders": "Total Orders",
+        "activeUsers": "Active Users",
+        "productsListed": "Products Listed"
+      },
+      "vsLastPeriod": "vs last period",
+      "timeRange": {
+        "week": "Last Week",
+        "month": "Last Month",
+        "quarter": "Last Quarter",
+        "year": "Last Year"
+      },
+      "export": "Export",
+      "revenueTrend": "Revenue Trend",
+      "ordersTrend": "Orders Trend",
+      "chartPlaceholder": "Revenue chart visualization",
+      "ordersChartPlaceholder": "Orders chart visualization",
+      "chartIntegrate": "Integrate with Chart.js or Recharts",
+      "topProducts": "Top Products",
+      "topFarmers": "Top Farmers",
+      "ordersCount": "{{count}} orders",
+      "productsCount": "{{count}} products",
+      "monthlyPerformance": "Monthly Performance",
+      "table": {
+        "month": "MONTH",
+        "revenue": "REVENUE",
+        "orders": "ORDERS",
+        "newUsers": "NEW USERS",
+        "avgOrderValue": "AVG ORDER VALUE"
+      }
+    },
+    "settings": {
+      "title": "System Settings",
+      "subtitle": "Configure platform-wide settings and preferences",
+      "saveSettings": "Save Settings",
+      "generalSettings": "General Settings",
+      "siteName": "Site Name",
+      "contactEmail": "Contact Email",
+      "siteDescription": "Site Description"
     }
   },
   "supplier": {
@@ -1548,8 +2513,12 @@
         "training": "Training"
       },
       "contact": {
-        "title": "Contact Info"
+        "title": "Contact Info",
+        "location": "Kigali, Rwanda"
       },
+      "browseProducts": "Browse products",
+      "becomeSeller": "Become a seller",
+      "signIn": "Sign in",
       "copyright": "© 2025 UmuhinziLink. All rights reserved. Built for Rwandan farmers with ❤️"
     }
   },
@@ -1742,13 +2711,11 @@
         "dateFormat": "Date Format"
       },
       "helperText": {
-        "language": "This will change the language used throughout the platform",
-        "currency": "Used for displaying prices and financial information",
-        "numberFormatExample": "Example: {{example}}",
-        "timeZoneOffset": "Current offset: {{offset}}",
-        "timeFormatExample": "Example: {{example}}",
-        "dateFormatExample": "Example: {{example}}"
+        "language": "This will change the language used throughout the platform"
       },
+      "saved": "Language preference saved",
+      "saveFailed": "Could not save language preference",
+      "profileSync": "Saved to your profile as {{language}}",
       "preview": {
         "samplePrice": "Sample Price:",
         "sampleDate": "Sample Date:",
@@ -1790,6 +2757,242 @@
         }
       }
     },
+    "account": {
+      "sections": {
+        "profileInformation": "Profile Information",
+        "changePassword": "Change Password",
+        "privacyPreferences": "Privacy Preferences"
+      },
+      "changePhoto": "Change Photo",
+      "photoHint": "JPG, PNG or GIF. Max size 2MB",
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "emailAddress": "Email Address",
+        "phoneNumber": "Phone Number",
+        "bio": "Bio",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmNewPassword": "Confirm New Password",
+        "profileVisibility": "Profile Visibility"
+      },
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name",
+        "email": "your.email@example.com",
+        "phone": "+250 788 123 456",
+        "bio": "Tell us about yourself...",
+        "currentPassword": "Enter current password",
+        "newPassword": "Enter new password",
+        "confirmNewPassword": "Confirm new password"
+      },
+      "passwordRequirements": {
+        "title": "Password requirements:",
+        "length": "At least 8 characters long",
+        "case": "Contains uppercase and lowercase letters",
+        "number": "Contains at least one number",
+        "special": "Contains at least one special character"
+      },
+      "visibility": {
+        "public": "Public - Everyone can see your profile",
+        "registered": "Registered - Only registered users",
+        "private": "Private - Only you"
+      },
+      "emailNotifications": {
+        "label": "Email Notifications",
+        "description": "Receive account-related emails"
+      }
+    },
+    "business": {
+      "sections": {
+        "basicInformation": "Basic Information",
+        "locationDetails": "Location Details",
+        "farmDetails": "Farm Details",
+        "contactInformation": "Contact Information"
+      },
+      "fields": {
+        "businessName": "Business/Farm Name *",
+        "establishedYear": "Established Year",
+        "businessDescription": "Business Description",
+        "district": "District *",
+        "sector": "Sector *",
+        "gpsCoordinates": "GPS Coordinates",
+        "farmSize": "Farm Size (hectares)",
+        "cropTypes": "Crop Types",
+        "phoneNumber": "Phone Number",
+        "emailAddress": "Email Address",
+        "website": "Website"
+      },
+      "placeholders": {
+        "businessName": "Enter your farm or business name",
+        "establishedYear": "e.g., 2020",
+        "businessDescription": "Describe your farm or business...",
+        "selectDistrict": "Select District",
+        "selectSector": "Select Sector",
+        "gpsCoordinates": "e.g., -1.9444, 30.0614",
+        "farmSize": "0.0",
+        "phone": "+250 788 123 456",
+        "email": "business@example.com",
+        "website": "https://yourwebsite.com"
+      },
+      "gpsHint": "Optional: Helps buyers locate your farm precisely",
+      "crops": {
+        "tomatoes": "Tomatoes",
+        "cabbage": "Cabbage",
+        "carrots": "Carrots",
+        "onions": "Onions",
+        "potatoes": "Potatoes",
+        "maize": "Maize",
+        "beans": "Beans",
+        "coffee": "Coffee",
+        "tea": "Tea",
+        "fruits": "Fruits",
+        "vegetables": "Vegetables",
+        "bananas": "Bananas",
+        "sorghum": "Sorghum",
+        "wheat": "Wheat",
+        "rice": "Rice"
+      }
+    },
+    "notificationSettings": {
+      "categories": {
+        "orderAlerts": {
+          "title": "Order & Transaction Alerts",
+          "orderUpdates": {
+            "label": "Order Updates",
+            "description": "Real-time order status changes"
+          },
+          "paymentReminders": {
+            "label": "Payment Reminders",
+            "description": "Payment due dates and confirmations"
+          }
+        },
+        "marketIntelligence": {
+          "title": "Market & Business Intelligence",
+          "priceAlerts": {
+            "label": "Market Price Alerts",
+            "description": "Product price changes and trends"
+          },
+          "weeklyReports": {
+            "label": "Weekly Reports",
+            "description": "Summary of your business activities"
+          }
+        },
+        "communicationChannels": {
+          "title": "Communication Channels"
+        },
+        "marketing": {
+          "title": "Marketing & Promotions"
+        },
+        "systemUpdates": {
+          "title": "System Updates",
+          "systemUpdates": {
+            "label": "System Updates",
+            "description": "Platform maintenance and new features"
+          }
+        }
+      }
+    },
+    "payments": {
+      "sections": {
+        "mobileMoney": "Mobile Money Configuration",
+        "bankAccount": "Bank Account Details",
+        "paymentPreferences": "Payment Preferences",
+        "securityNotice": "Security & Verification"
+      },
+      "fields": {
+        "mobileMoneyProvider": "Mobile Money Provider *",
+        "mobileMoneyNumber": "Mobile Money Number *",
+        "bankName": "Bank Name",
+        "accountHolderName": "Account Holder Name",
+        "bankAccountNumber": "Bank Account Number",
+        "preferredPaymentMethod": "Preferred Payment Method"
+      },
+      "providers": {
+        "mtnMomo": "MTN Mobile Money",
+        "airtelMoney": "Airtel Money",
+        "fastSecure": "Fast and secure payments"
+      },
+      "placeholders": {
+        "mobileMoneyNumber": "07xxxxxxxx",
+        "selectBank": "Select Bank",
+        "accountHolderName": "Enter account holder name",
+        "bankAccountNumber": "Enter bank account number"
+      },
+      "mobileMoneyHint": "Format: 07xxxxxxxx (Rwanda mobile number)",
+      "bankAccountHint": "Optional: For direct bank transfers",
+      "methods": {
+        "mobileMoney": "Mobile Money",
+        "bankTransfer": "Bank Transfer",
+        "both": "Both"
+      },
+      "toggles": {
+        "autoWithdrawal": {
+          "label": "Auto Withdrawal",
+          "description": "Automatically transfer funds to bank"
+        },
+        "paymentNotifications": {
+          "label": "Payment Notifications",
+          "description": "Receive alerts for payments"
+        }
+      },
+      "securityDescription": "Your payment information is encrypted and securely stored. We verify all payment methods to ensure safe transactions.",
+      "securityFeatures": {
+        "ssl": "256-bit SSL encryption",
+        "pci": "PCI DSS compliant",
+        "audits": "Regular security audits"
+      }
+    },
+    "security": {
+      "sections": {
+        "authentication": "Authentication Security",
+        "activeSessions": "Active Sessions",
+        "privacy": "Privacy Settings",
+        "dataManagement": "Data Management",
+        "securityStatus": "Security Status"
+      },
+      "fields": {
+        "sessionTimeout": "Session Timeout (minutes)",
+        "profileVisibility": "Profile Visibility"
+      },
+      "twoFactorAuth": {
+        "label": "Two-Factor Authentication",
+        "description": "Add an extra layer of security to your account"
+      },
+      "sessionTimeoutHint": "Automatically log out after period of inactivity",
+      "loginAlerts": {
+        "label": "Login Alerts",
+        "description": "Get notified when someone logs into your account"
+      },
+      "currentSession": "Current",
+      "signOutOtherSessions": "Sign out all other sessions",
+      "dataSharing": {
+        "label": "Data Sharing",
+        "description": "Share anonymized data for platform improvements"
+      },
+      "downloadData": {
+        "label": "Download My Data",
+        "description": "Export your personal data"
+      },
+      "deleteAccount": {
+        "label": "Delete Account",
+        "description": "Permanently delete your account",
+        "warning": "Account deletion is permanent and cannot be undone. All your data will be permanently removed."
+      },
+      "status": {
+        "strongPassword": "Password is strong",
+        "twoFactorEnabled": "Two-factor authentication enabled",
+        "twoFactorDisabled": "Two-factor authentication disabled",
+        "noThreats": "No recent security threats detected"
+      },
+      "sessionTimeoutOptions": {
+        "15": "15 minutes",
+        "30": "30 minutes",
+        "60": "1 hour",
+        "120": "2 hours",
+        "240": "4 hours"
+      }
+    },
     "negotiations": {
       "loading": "Loading negotiation...",
       "connectionLost": "Connection lost — refreshing every 30s",
@@ -1811,6 +3014,75 @@
       "expired": "Expired",
       "countered": "Countered",
       "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "loadingLabel": "Loading negotiation",
+      "loadingDescription": "Fetching messages and offer details…",
+      "openingLabel": "Opening negotiation",
+      "openingDescription": "Loading messages and deal details…",
+      "seller": "Seller",
+      "unknown": "Unknown",
+      "typing": "typing…",
+      "buyerOfferedBanner": "Buyer offered {{price}} for {{quantity}} {{unit}}",
+      "startConversation": "Start the conversation",
+      "emptySellerHint": "Reply to the buyer or set your price on the right",
+      "emptyBuyerHint": "Chat with the seller to agree on a price",
+      "negotiationClosed": "Negotiation is closed",
+      "sendFailed": "Failed to send message",
+      "chat": "Chat",
+      "view": "View",
+      "offered": "Offered",
+      "agreedLabel": "Agreed",
+      "expiringSoon": "Expiring soon",
+      "timeLeft": "{{time}} left",
+      "timeAgo": {
+        "justNow": "Just now",
+        "minutes": "{{count}}m ago",
+        "hours": "{{count}}h ago",
+        "days": "{{count}}d ago"
+      },
+      "panel": {
+        "negotiationPanel": "Negotiation Panel",
+        "offerDetails": "Offer Details",
+        "prices": "Prices",
+        "listed": "Listed",
+        "buyersOffer": "Buyer's offer",
+        "yourOffer": "Your offer",
+        "yourCounter": "Your counter",
+        "sellersCounter": "Seller's counter",
+        "orderTotal": "Order total",
+        "awaitingPayment": "Awaiting payment",
+        "paidCompleted": "Paid & completed",
+        "setCounterPrice": "Set your counter price",
+        "send": "Send",
+        "or": "or",
+        "acceptOffer": "Accept {{price}}",
+        "updateOffer": "Update your offer",
+        "update": "Update",
+        "dealAgreedHint": "Deal agreed! Top up your wallet if needed, then pay to complete the order.",
+        "pay": "Pay {{price}}",
+        "sellerCounterHint": "Seller countered at {{price}} per unit. Accept to pay automatically, or reject to cancel.",
+        "acceptAndPay": "Accept & pay",
+        "waitingForSeller": "Waiting for the seller to accept your offer or send a counter price.",
+        "negotiationCancelled": "Negotiation cancelled",
+        "negotiationExpiredLabel": "Negotiation expired",
+        "orderCompleted": "Order completed",
+        "finalTotal": "Final: {{price}}",
+        "expiresInTime": "Expires in {{time}}"
+      },
+      "confirm": {
+        "acceptOffer": "Accept {{price}}?",
+        "acceptOfferDefault": "Accept this offer?",
+        "acceptPaymentNote": "Payment will be processed from the buyer's wallet.",
+        "rejectNegotiation": "Reject this negotiation? The order will be cancelled.",
+        "processing": "Processing…",
+        "yesAccept": "Yes, accept",
+        "yesReject": "Yes, reject"
+      },
+      "validation": {
+        "enterValidPrice": "Enter a valid price",
+        "exceedsListedPrice": "Can't exceed listed price"
+      },
       "noMessages": "No messages yet. Start the conversation.",
       "emptyStateTitle": "No active negotiations",
       "emptyStateDescription": "Start a conversation with a seller to get the best price for your agricultural products.",
@@ -1954,5 +3226,87 @@
         "description": "Describe what you need in plain language and find matching listings."
       }
     }
+  },
+  "layout": {
+    "loading": "Loading",
+    "loadingPage": {
+      "label": "Loading page",
+      "description": "Just a moment while we prepare your content…"
+    },
+    "settingsBack": "Settings"
+  },
+  "dashboardTopbar": {
+    "openNavigation": "Open navigation",
+    "admin": "Admin",
+    "notifications": "Notifications",
+    "profile": "Profile"
+  },
+  "errorHandler": {
+    "connectionProblem": {
+      "title": "Connection Problem",
+      "messageOnline": "Unable to connect to our servers. Please check your internet connection and try again.",
+      "messageOffline": "You appear to be offline. Please check your internet connection."
+    },
+    "timeout": {
+      "title": "Request Timeout",
+      "message": "The request took too long to complete. This might be due to a slow connection or server issues."
+    },
+    "auth": {
+      "title": "Authentication Required",
+      "message": "Your session has expired. Please sign in again to continue."
+    },
+    "permission": {
+      "title": "Access Denied",
+      "message": "You don't have permission to perform this action."
+    },
+    "notFound": {
+      "title": "Not Found",
+      "message": "The requested resource could not be found."
+    },
+    "server": {
+      "title": "Server Error",
+      "message": "Something went wrong on our end. Our team has been notified and is working on a fix."
+    },
+    "generic": {
+      "title": "Something went wrong"
+    },
+    "tryAgain": "Try Again",
+    "close": "Close"
+  },
+  "notificationPermission": {
+    "modal": {
+      "title": "Enable Notifications",
+      "subtitle": "Stay updated with real-time alerts",
+      "description": "Get instant notifications for new messages, order updates, and product changes. Stay connected and never miss important updates.",
+      "benefits": {
+        "messages": {
+          "title": "New Messages",
+          "description": "Get notified when someone sends you a message"
+        },
+        "orders": {
+          "title": "Order Updates",
+          "description": "Track your orders in real-time"
+        },
+        "products": {
+          "title": "New Products",
+          "description": "Discover new items in the marketplace"
+        }
+      },
+      "requesting": "Requesting Permission...",
+      "enable": "Enable Notifications",
+      "skip": "Skip",
+      "askLater": "Ask Later",
+      "manageBrowserSettings": "Manage browser settings"
+    },
+    "prompt": {
+      "title": "Enable Notifications?",
+      "description": "Get instant alerts for messages, orders, and updates",
+      "requesting": "Requesting...",
+      "enableNow": "Enable Now",
+      "notNow": "Not Now"
+    }
+  },
+  "googleLogin": {
+    "ariaLabel": "Sign in with Google"
   }
 }

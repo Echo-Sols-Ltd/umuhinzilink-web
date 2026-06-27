@@ -8,9 +8,10 @@ import {
     CheckCircle, MapPin, User, Package,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
+import { formatCurrency } from '@/lib/localeFormat';
 import { cn, imageUrl } from '@/lib/utils';
-import { OrderRequest, PaymentMethod, Product } from '@/types';
+import { MeasurementUnit, OrderRequest, PaymentMethod, Product } from '@/types';
 import { notify } from '@/lib/notify';
 import useOrderAction from '@/hooks/useOrderAction';
 
@@ -26,12 +27,16 @@ interface BuyModalProps {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function formatRWF(n: number) {
-    return new Intl.NumberFormat('rw-RW').format(n) + ' RWF';
-}
-
 function clamp(val: number, min: number, max: number) {
     return Math.min(max, Math.max(min, val));
+}
+
+function unitLabel(unit: string, t: (key: string) => string): string {
+    const byKey = t(`enums.units.${unit}`);
+    if (byKey !== `enums.units.${unit}`) return byKey.toLowerCase();
+    const entry = Object.entries(MeasurementUnit).find(([, v]) => v === unit);
+    if (entry) return t(`enums.units.${entry[0]}`).toLowerCase();
+    return unit?.toLowerCase() ?? 'unit';
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -46,8 +51,13 @@ function ModalOverlay({ onClose }: { onClose: () => void }) {
 }
 
 function Stepper({ step }: { step: Step }) {
+    const { t } = useI18n();
     const steps: Step[] = ['config', 'confirm', 'done'];
-    const labels = ['Details', 'Confirm', 'Done'];
+    const labels = [
+        t('products.buyModal.steps.details'),
+        t('products.buyModal.steps.confirm'),
+        t('products.buyModal.steps.done'),
+    ];
     const current = steps.indexOf(step);
     return (
         <div className="flex items-center justify-center gap-2 mb-6">
@@ -77,7 +87,7 @@ function Stepper({ step }: { step: Step }) {
 // ── Main Modal ────────────────────────────────────────────────────────────────
 
 export default function BuyModal({ product, onClose }: BuyModalProps) {
-    const { user } = useAuth();
+    const { t, locale } = useI18n();
     const router = useRouter();
     const { createOrder } = useOrderAction()
     const [mode, setMode] = useState<Mode>(product.isNegotiable ? 'negotiate' : 'buy');
@@ -106,7 +116,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
     const totalPrice = unitPrice * quantity;
     const proposedPriceNum = parseFloat(proposedPrice.replace(/,/g, ''));
     const proposedTotal = proposedPriceNum * quantity;
-    const unit = product.measurementUnit?.toLowerCase() ?? 'unit';
+    const unit = unitLabel(String(product.measurementUnit), t);
     const maxQty = product.stockQuantity;
 
     const discount = proposedPriceNum && proposedPriceNum < unitPrice
@@ -118,15 +128,15 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
     const validatePrice = (): boolean => {
         if (mode === 'buy') return true;
         if (!proposedPrice || isNaN(proposedPriceNum) || proposedPriceNum <= 0) {
-            setPriceError('Enter a valid price');
+            setPriceError(t('products.buyModal.validation.priceInvalid'));
             return false;
         }
         if (proposedPriceNum > unitPrice) {
-            setPriceError('Your offer cannot exceed the listed price');
+            setPriceError(t('products.buyModal.validation.priceTooHigh'));
             return false;
         }
         if (proposedPriceNum < unitPrice * 0.3) {
-            setPriceError('Offer is too low — minimum 30% of listed price');
+            setPriceError(t('products.buyModal.validation.priceTooLow'));
             return false;
         }
         setPriceError('');
@@ -163,7 +173,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
             }
             setStep('done');
         } catch {
-            notify.error('Something went wrong. Please try again.');
+            notify.error(t('products.buyModal.error'));
         } finally {
             setLoading(false);
         }
@@ -178,6 +188,8 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
         onClose();
         router.push('/orders');
     };
+
+    const formatPrice = (amount: number) => formatCurrency(amount, locale);
 
     // ── Modal content ─────────────────────────────────────────────────────
 
@@ -246,8 +258,8 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                                         : 'text-muted-foreground hover:text-foreground'
                                                 )}>
                                                 {m === 'buy'
-                                                    ? <><ShoppingBag size={13} /> Buy now</>
-                                                    : <><TrendingUp size={13} /> Negotiate</>
+                                                    ? <><ShoppingBag size={13} /> {t('products.buyModal.buyNow')}</>
+                                                    : <><TrendingUp size={13} /> {t('products.buyModal.negotiate')}</>
                                                 }
                                             </button>
                                         ))}
@@ -257,13 +269,13 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                 {/* Price info */}
                                 <div className="bg-green-50 dark:bg-green-950/30 rounded-xl p-3.5 border border-green-100 dark:border-green-900">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-xs text-muted-foreground">Listed price</span>
+                                        <span className="text-xs text-muted-foreground">{t('products.buyModal.listedPrice')}</span>
                                         <span className="text-sm font-bold text-green-700 dark:text-green-400">
-                                            {formatRWF(unitPrice)} / {unit}
+                                            {formatPrice(unitPrice)} / {unit}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between mt-1">
-                                        <span className="text-xs text-muted-foreground">Available</span>
+                                        <span className="text-xs text-muted-foreground">{t('products.buyModal.available')}</span>
                                         <span className="text-xs font-medium text-foreground">
                                             {maxQty} {unit}
                                         </span>
@@ -272,7 +284,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
 
                                 {/* Quantity */}
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">Quantity</label>
+                                    <label className="text-sm font-medium text-foreground">{t('products.buyModal.quantity')}</label>
                                     <div className="flex items-center gap-3">
                                         <button
                                             onClick={() => setQuantity(q => clamp(q - 1, 1, maxQty))}
@@ -302,7 +314,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                 {mode === 'negotiate' && (
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-foreground">
-                                            Your offer per {unit}
+                                            {t('products.buyModal.yourOffer', { unit })}
                                         </label>
                                         <div className="relative">
                                             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">RWF</span>
@@ -329,11 +341,11 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                         )}
                                         {proposedPriceNum > 0 && !priceError && discount > 0 && (
                                             <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                                                You're offering {discount}% below listed price
+                                                {t('products.buyModal.discountBelow', { discount })}
                                             </p>
                                         )}
                                         <p className="text-xs text-muted-foreground leading-relaxed">
-                                            The seller will review your offer and respond via chat. You can continue negotiating there.
+                                            {t('products.buyModal.negotiateHint')}
                                         </p>
                                     </div>
                                 )}
@@ -341,12 +353,14 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                 {/* Total preview */}
                                 <div className="flex items-center justify-between py-3 border-t border-border">
                                     <span className="text-sm text-muted-foreground">
-                                        {mode === 'negotiate' && proposedPriceNum > 0 ? 'Proposed total' : 'Total'}
+                                        {mode === 'negotiate' && proposedPriceNum > 0
+                                            ? t('products.buyModal.proposedTotal')
+                                            : t('products.buyModal.total')}
                                     </span>
                                     <span className="text-lg font-extrabold text-green-700 dark:text-green-400">
                                         {mode === 'negotiate' && proposedPriceNum > 0
-                                            ? formatRWF(proposedTotal)
-                                            : formatRWF(totalPrice)
+                                            ? formatPrice(proposedTotal)
+                                            : formatPrice(totalPrice)
                                         }
                                     </span>
                                 </div>
@@ -354,7 +368,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                 <button
                                     onClick={() => { if (validatePrice()) setStep('confirm'); }}
                                     className="w-full h-11 bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all">
-                                    Continue <ChevronRight size={15} />
+                                    {t('products.buyModal.continue')} <ChevronRight size={15} />
                                 </button>
                             </>
                         )}
@@ -365,17 +379,19 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                 <Stepper step="confirm" />
 
                                 <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-4 space-y-3">
-                                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Order summary</p>
+                                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                        {t('products.buyModal.orderSummary')}
+                                    </p>
 
                                     {[
-                                        { label: 'Product', value: product.name },
-                                        { label: 'Quantity', value: `${quantity} ${unit}` },
-                                        { label: 'Listed price', value: formatRWF(unitPrice) + ` / ${unit}` },
+                                        { label: t('products.buyModal.product'), value: product.name },
+                                        { label: t('products.buyModal.quantity'), value: `${quantity} ${unit}` },
+                                        { label: t('products.buyModal.listedPriceLabel'), value: `${formatPrice(unitPrice)} / ${unit}` },
                                         ...(mode === 'negotiate' ? [
-                                            { label: 'Your offer', value: formatRWF(proposedPriceNum) + ` / ${unit}` },
-                                            { label: 'Proposed total', value: formatRWF(proposedTotal), bold: true },
+                                            { label: t('products.buyModal.yourOfferLabel'), value: `${formatPrice(proposedPriceNum)} / ${unit}` },
+                                            { label: t('products.buyModal.proposedTotal'), value: formatPrice(proposedTotal), bold: true },
                                         ] : [
-                                            { label: 'Total', value: formatRWF(totalPrice), bold: true },
+                                            { label: t('products.buyModal.total'), value: formatPrice(totalPrice), bold: true },
                                         ]),
                                     ].map(({ label, value, bold }) => (
                                         <div key={label} className="flex items-center justify-between">
@@ -391,7 +407,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                     <div className="flex items-start gap-2.5 p-3.5 bg-blue-50 dark:bg-blue-950/20 rounded-xl border border-blue-100 dark:border-blue-900">
                                         <Wallet size={15} className="text-blue-500 mt-0.5 shrink-0" />
                                         <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
-                                            Payment will be deducted from your wallet balance. Make sure you have enough funds before confirming.
+                                            {t('products.buyModal.walletNote')}
                                         </p>
                                     </div>
                                 )}
@@ -400,7 +416,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                     <div className="flex items-start gap-2.5 p-3.5 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-100 dark:border-amber-900">
                                         <TrendingUp size={15} className="text-amber-600 mt-0.5 shrink-0" />
                                         <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
-                                            Your offer will be sent to the seller. They can accept, reject, or propose a counter-price through the negotiation chat.
+                                            {t('products.buyModal.negotiateNote')}
                                         </p>
                                     </div>
                                 )}
@@ -409,7 +425,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                     <button
                                         onClick={() => setStep('config')}
                                         className="flex-1 h-11 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                        Back
+                                        {t('products.buyModal.back')}
                                     </button>
                                     <button
                                         onClick={handleSubmit}
@@ -420,10 +436,14 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                                                 <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                                                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="32" strokeDashoffset="12" />
                                                 </svg>
-                                                {mode === 'negotiate' ? 'Sending offer…' : 'Processing…'}
+                                                {mode === 'negotiate'
+                                                    ? t('products.buyModal.sendingOffer')
+                                                    : t('products.buyModal.processing')}
                                             </>
                                         ) : (
-                                            mode === 'negotiate' ? 'Send offer' : 'Confirm & pay'
+                                            mode === 'negotiate'
+                                                ? t('products.buyModal.sendOffer')
+                                                : t('products.buyModal.confirmPay')
                                         )}
                                     </button>
                                 </div>
@@ -441,33 +461,45 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
 
                                 <h3 className="text-lg font-extrabold text-foreground">
                                     {mode === 'negotiate'
-                                        ? 'Offer sent!'
+                                        ? t('products.buyModal.done.offerSent')
                                         : orderPaid
-                                            ? 'Payment successful!'
+                                            ? t('products.buyModal.done.paymentSuccess')
                                             : paymentRequired
-                                                ? 'Order created — payment required'
-                                                : 'Order placed!'}
+                                                ? t('products.buyModal.done.orderPaymentRequired')
+                                                : t('products.buyModal.done.orderPlaced')}
                                 </h3>
                                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-xs mx-auto">
                                     {mode === 'negotiate'
-                                        ? `Your offer of ${formatRWF(proposedPriceNum)} / ${unit} has been sent to ${product.owner?.firstName}. You'll be notified when they respond.`
+                                        ? t('products.buyModal.done.offerSentDesc', {
+                                            price: formatPrice(proposedPriceNum),
+                                            unit,
+                                            name: product.owner?.firstName ?? '',
+                                        })
                                         : orderPaid
-                                            ? `Payment of ${formatRWF(totalPrice)} was deducted from your wallet. The seller has been notified.`
+                                            ? t('products.buyModal.done.paymentSuccessDesc', { amount: formatPrice(totalPrice) })
                                             : paymentRequired
-                                                ? `Your order was created but payment failed. Add funds to your wallet and pay from the orders page.`
-                                                : `Your order for ${quantity} ${unit} of ${product.name} has been created.`}
+                                                ? t('products.buyModal.done.paymentRequiredDesc')
+                                                : t('products.buyModal.done.orderPlacedDesc', {
+                                                    quantity,
+                                                    unit,
+                                                    name: product.name,
+                                                })}
                                 </p>
 
                                 <div className="flex flex-col gap-2.5 mt-6">
                                     <button
                                         onClick={mode === 'negotiate' ? handleGoToNegotiation : handleGoToOrders}
                                         className="w-full h-11 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl transition-colors">
-                                        {mode === 'negotiate' ? 'View negotiation' : paymentRequired ? 'Pay from orders' : 'View order'}
+                                        {mode === 'negotiate'
+                                            ? t('products.buyModal.done.viewNegotiation')
+                                            : paymentRequired
+                                                ? t('products.buyModal.done.payFromOrders')
+                                                : t('products.buyModal.done.viewOrder')}
                                     </button>
                                     <button
                                         onClick={onClose}
                                         className="w-full h-10 border border-border text-foreground text-sm font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                        Continue shopping
+                                        {t('products.buyModal.done.continueShopping')}
                                     </button>
                                 </div>
                             </div>

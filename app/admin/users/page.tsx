@@ -27,6 +27,7 @@ import {
   UserX,
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useI18n } from '@/contexts/I18nContext';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { AdminPages, User, UserRole } from '@/types';
@@ -55,6 +56,7 @@ const isSuspended = (user: User) => user.active === false;
 
 function UserManagement() {
   const { deleteUser } = useAdmin();
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all');
@@ -81,7 +83,7 @@ function UserManagement() {
       setTotalUsers(response.totalElements);
       setCurrentPage(page);
     } catch (error) {
-      notify.error('Failed to fetch users', 'Error');
+      notify.error(t('admin.users.toasts.fetchFailed'), t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -112,9 +114,9 @@ function UserManagement() {
     try {
       await adminService.toggleUserStatus(userId, suspend);
       await fetchUsers(currentPage);
-      notify.success(`User ${suspend ? 'suspended' : 'activated'} successfully`, 'Success');
+      notify.success(suspend ? t('admin.users.toasts.userSuspended') : t('admin.users.toasts.userActivated'), t('common.success'));
     } catch (error) {
-      notify.error(`Failed to ${suspend ? 'suspend' : 'activate'} user`, 'Error');
+      notify.error(suspend ? t('admin.users.toasts.suspendFailed') : t('admin.users.toasts.activateFailed'), t('common.error'));
     } finally {
       setActionLoading(null);
     }
@@ -125,16 +127,16 @@ function UserManagement() {
     try {
       await adminService.updateUserRole(userId, newRole);
       await fetchUsers(currentPage);
-      notify.success('User role updated successfully', 'Success');
+      notify.success(t('admin.users.toasts.roleUpdated'), t('common.success'));
     } catch (error) {
-      notify.error('Failed to update user role', 'Error');
+      notify.error(t('admin.users.toasts.roleUpdateFailed'), t('common.error'));
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+    if (!confirm(t('admin.users.confirmDelete'))) {
       return;
     }
 
@@ -143,7 +145,7 @@ function UserManagement() {
       await deleteUser(userId);
       await fetchUsers(currentPage);
     } catch (error) {
-      notify.error('Failed to delete user', 'Error');
+      notify.error(t('admin.users.toasts.deleteFailed'), t('common.error'));
     } finally {
       setActionLoading(null);
     }
@@ -160,15 +162,15 @@ function UserManagement() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <AdminPageHeader
-          title="User Management"
-          description="Manage and monitor all platform members"
+          title={t('admin.users.title')}
+          description={t('admin.users.subtitle')}
           toolbar={
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <input
                   type="text"
-                  placeholder="Search users..."
+                  placeholder={t('admin.users.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
@@ -177,25 +179,25 @@ function UserManagement() {
               <div className="flex items-center gap-2">
                 <Select value={roleFilter} onValueChange={setRoleFilter}>
                   <SelectTrigger className="w-32 rounded-lg border border-border">
-                    <SelectValue placeholder="All Roles" />
+                    <SelectValue placeholder={t('admin.users.filters.allRoles')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Roles</SelectItem>
-                    <SelectItem value="FARMER">Farmer</SelectItem>
-                    <SelectItem value="BUYER">Buyer</SelectItem>
-                    <SelectItem value="SUPPLIER">Supplier</SelectItem>
-                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="all">{t('admin.users.filters.allRoles')}</SelectItem>
+                    <SelectItem value="FARMER">{t('auth.accountTypes.farmer')}</SelectItem>
+                    <SelectItem value="BUYER">{t('auth.accountTypes.buyer')}</SelectItem>
+                    <SelectItem value="SUPPLIER">{t('auth.accountTypes.supplier')}</SelectItem>
+                    <SelectItem value="ADMIN">{t('nav.roles.admin')}</SelectItem>
                   </SelectContent>
                 </Select>
 
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-32 rounded-lg border border-border">
-                    <SelectValue placeholder="All Status" />
+                    <SelectValue placeholder={t('admin.users.filters.allStatus')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="verified">Verified</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="all">{t('admin.users.filters.allStatus')}</SelectItem>
+                    <SelectItem value="verified">{t('admin.users.filters.verified')}</SelectItem>
+                    <SelectItem value="pending">{t('admin.users.filters.pending')}</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -216,11 +218,11 @@ function UserManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>PROFILE</TableHead>
-                  <TableHead>STATUS</TableHead>
-                  <TableHead>ROLE</TableHead>
-                  <TableHead>CONTACT INFO</TableHead>
-                  <TableHead className="text-right">ACTIONS</TableHead>
+                  <TableHead>{t('admin.users.table.profile')}</TableHead>
+                  <TableHead>{t('admin.users.table.status')}</TableHead>
+                  <TableHead>{t('admin.users.table.role')}</TableHead>
+                  <TableHead>{t('admin.users.table.contactInfo')}</TableHead>
+                  <TableHead className="text-right">{t('admin.users.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -265,11 +267,11 @@ function UserManagement() {
                       <TableCell>
                         <div className="flex flex-wrap gap-1.5">
                           <Badge variant={usersItem.emailVerified ? 'success' : 'warning'} className="font-semibold text-[9px] uppercase  px-2 py-0.5">
-                            {usersItem.emailVerified ? 'Verified' : 'Pending'}
+                            {usersItem.emailVerified ? t('admin.users.status.verified') : t('admin.users.status.pending')}
                           </Badge>
                           {isSuspended(usersItem) && (
                             <Badge variant="destructive" className="font-semibold text-[9px] uppercase  px-2 py-0.5">
-                              Suspended
+                              {t('admin.users.status.suspended')}
                             </Badge>
                           )}
                         </div>
@@ -282,7 +284,7 @@ function UserManagement() {
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-sm text-foreground font-medium">{usersItem.phoneNumber || '—'}</span>
-                          <span className="text-[10px] text-muted-foreground uppercase ">Primary Contact</span>
+                          <span className="text-[10px] text-muted-foreground uppercase ">{t('admin.users.table.primaryContact')}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -290,7 +292,7 @@ function UserManagement() {
                           <button
                             onClick={() => handleViewUser(usersItem)}
                             className="p-2 text-muted-foreground hover:text-info hover:bg-info/10 rounded-lg transition-all"
-                            title="Quick View"
+                            title={t('admin.users.actions.quickView')}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -326,7 +328,7 @@ function UserManagement() {
                     <TableCell colSpan={5} className="py-24 text-center">
                       <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <Users className="w-16 h-16 mb-4 opacity-10" />
-                        <p className="text-lg font-medium">No users match your criteria</p>
+                        <p className="text-lg font-medium">{t('admin.users.empty')}</p>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -337,7 +339,7 @@ function UserManagement() {
             {totalPages > 0 && (
               <div className="p-4 border-t border-border flex items-center justify-between bg-card">
                 <div className="text-sm text-muted-foreground font-medium">
-                  Page <span className="text-foreground">{currentPage + 1}</span> of <span className="text-foreground">{totalPages}</span>
+                  {t('admin.users.pagination', { current: currentPage + 1, total: totalPages })}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -425,21 +427,21 @@ function UserManagement() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-card rounded-xl border border-border">
-                    <p className="text-[10px] uppercase  font-semibold text-muted-foreground mb-1">Phone</p>
-                    <p className="text-sm font-semibold text-foreground">{selectedUser.phoneNumber || 'Not linked'}</p>
+                    <p className="text-[10px] uppercase  font-semibold text-muted-foreground mb-1">{t('admin.users.modal.phone')}</p>
+                    <p className="text-sm font-semibold text-foreground">{selectedUser.phoneNumber || t('admin.users.modal.notLinked')}</p>
                   </div>
                   <div className="p-3 bg-card rounded-xl border border-border">
-                    <p className="text-[10px] uppercase  font-semibold text-muted-foreground mb-1">Joined</p>
+                    <p className="text-[10px] uppercase  font-semibold text-muted-foreground mb-1">{t('admin.users.modal.joined')}</p>
                     <p className="text-sm font-semibold text-foreground">{new Date(selectedUser.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <Badge variant={selectedUser.emailVerified ? 'success' : 'warning'} className="font-semibold">
-                    {selectedUser.emailVerified ? 'Verified Account' : 'Pending Verification'}
+                    {selectedUser.emailVerified ? t('admin.users.status.verifiedAccount') : t('admin.users.status.pendingVerification')}
                   </Badge>
                   {isSuspended(selectedUser) && (
-                    <Badge variant="destructive" className="font-semibold">Suspended</Badge>
+                    <Badge variant="destructive" className="font-semibold">{t('admin.users.status.suspended')}</Badge>
                   )}
                 </div>
 
@@ -451,13 +453,13 @@ function UserManagement() {
                       : 'bg-warning text-white hover:bg-warning/90 shadow-md shadow-warning/20'
                       }`}
                   >
-                    {isSuspended(selectedUser) ? 'Reactivate Account' : 'Suspend Account'}
+                    {isSuspended(selectedUser) ? t('admin.users.actions.reactivateAccount') : t('admin.users.actions.suspendAccount')}
                   </button>
                   <button
                     onClick={() => setShowUserModal(false)}
                     className="px-6 py-2.5 bg-muted text-muted-foreground font-semibold text-sm rounded-xl hover:bg-muted/80 transition-all"
                   >
-                    Close
+                    {t('admin.users.actions.close')}
                   </button>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface AdminPageHeaderProps {
   title: string;
@@ -18,11 +19,14 @@ export default function AdminPageHeader({
   title,
   description,
   backHref,
-  backLabel = 'Back',
+  backLabel,
   actions,
   toolbar,
   className,
 }: AdminPageHeaderProps) {
+  const { t } = useI18n();
+  const resolvedBackLabel = backLabel ?? t('common.back');
+
   return (
     <header className={cn('bg-card/90 backdrop-blur-md border-b border-border shrink-0', className)}>
       <div className="px-4 sm:px-6 py-4 space-y-4">
@@ -31,7 +35,7 @@ export default function AdminPageHeader({
             href={backHref}
             className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
             <ChevronLeft size={14} />
-            {backLabel}
+            {resolvedBackLabel}
           </Link>
         )}
 

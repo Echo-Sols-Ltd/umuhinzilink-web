@@ -20,6 +20,7 @@ import {
     ShieldCheck
 } from 'lucide-react';
 import { notify } from '@/lib/notify';
+import { useI18n } from '@/contexts/I18nContext';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import {
@@ -36,6 +37,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 
 export default function AdminWalletsPage() {
     const router = useRouter();
+    const { t } = useI18n();
     const [wallets, setWallets] = useState<IWallet[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -60,10 +62,10 @@ export default function AdminWalletsPage() {
                 setTotalPages(response.totalPages || 1);
                 setTotalElements(response.totalElements || response.data.length);
             } else {
-                notify.error(response.message || 'Failed to fetch wallets', 'Error');
+                notify.error(response.message || t('admin.wallets.toasts.fetchFailed'), t('common.error'));
             }
         } catch (error) {
-            notify.error('Failed to fetch wallets', 'Error');
+            notify.error(t('admin.wallets.toasts.fetchFailed'), t('common.error'));
         } finally {
             setLoading(false);
         }
@@ -93,16 +95,16 @@ export default function AdminWalletsPage() {
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <AdminPageHeader
-                    title="Treasury Management"
-                    description={`Verify and monitor ${totalElements} user wallets across ecosystem`}
+                    title={t('admin.wallets.title')}
+                    description={t('admin.wallets.subtitle', { count: totalElements })}
                     actions={
                         <div className="bg-card p-1 rounded-lg shadow-sm border border-border flex">
                             <button className="px-4 py-2 bg-success/10 text-success text-xs font-semibold rounded-xl flex items-center gap-2">
                                 <TrendingUp className="w-4 h-4" />
-                                Wallets
+                                {t('admin.wallets.tabs.wallets')}
                             </button>
                             <button className="px-4 py-2 text-muted-foreground text-xs font-semibold rounded-xl hover:text-foreground transition-all">
-                                Transactions
+                                {t('admin.wallets.tabs.transactions')}
                             </button>
                         </div>
                     }
@@ -112,7 +114,7 @@ export default function AdminWalletsPage() {
                                 <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                                 <input
                                     type="text"
-                                    placeholder="Search by name, email, or wallet ID..."
+                                    placeholder={t('admin.wallets.searchPlaceholder')}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="w-full pl-14 pr-6 py-3 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-success shadow-sm font-medium"
@@ -132,7 +134,7 @@ export default function AdminWalletsPage() {
                                 <Wallet className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-semibold text-muted-foreground uppercase  mb-1.5">System Liquidity</p>
+                                <p className="text-xs font-semibold text-muted-foreground uppercase  mb-1.5">{t('admin.wallets.metrics.systemLiquidity')}</p>
                                 <p className="text-2xl font-semibold text-foreground ">RWF {wallets.reduce((acc, w) => acc + w.balance, 0).toLocaleString()}+</p>
                             </div>
                         </div>
@@ -141,7 +143,7 @@ export default function AdminWalletsPage() {
                                 <History className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-semibold text-muted-foreground uppercase  mb-1.5">Active Wallets</p>
+                                <p className="text-xs font-semibold text-muted-foreground uppercase  mb-1.5">{t('admin.wallets.metrics.activeWallets')}</p>
                                 <p className="text-2xl font-semibold text-foreground">{totalElements}</p>
                             </div>
                         </div>
@@ -150,7 +152,7 @@ export default function AdminWalletsPage() {
                                 <CreditCard className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">Avg Balance</p>
+                                <p className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">{t('admin.wallets.metrics.avgBalance')}</p>
                                 <p className="text-2xl font-semibold text-foreground">RWF {(wallets.length ? wallets.reduce((acc, w) => acc + w.balance, 0) / wallets.length : 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                             </div>
                         </div>
@@ -161,11 +163,11 @@ export default function AdminWalletsPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-card/50">
-                                    <TableHead className="font-semibold py-6 pl-8">WALLET OWNER</TableHead>
-                                    <TableHead className="font-semibold">BALANCE</TableHead>
-                                    <TableHead className="font-semibold">STATUS</TableHead>
-                                    <TableHead className="font-semibold">CREATED ON</TableHead>
-                                    <TableHead className="text-right font-semibold pr-8">ACTIONS</TableHead>
+                                    <TableHead className="font-semibold py-6 pl-8">{t('admin.wallets.table.walletOwner')}</TableHead>
+                                    <TableHead className="font-semibold">{t('admin.wallets.table.balance')}</TableHead>
+                                    <TableHead className="font-semibold">{t('admin.wallets.table.status')}</TableHead>
+                                    <TableHead className="font-semibold">{t('admin.wallets.table.createdOn')}</TableHead>
+                                    <TableHead className="text-right font-semibold pr-8">{t('admin.wallets.table.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -192,7 +194,7 @@ export default function AdminWalletsPage() {
                                                         <User className="w-5 h-5" />
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-foreground font-semibold group-hover:text-success transition-colors uppercase ">{wallet.user.firstName + ' ' + wallet.user.lastName || 'Unknown User'}</span>
+                                                        <span className="text-foreground font-semibold group-hover:text-success transition-colors uppercase ">{wallet.user.firstName + ' ' + wallet.user.lastName || t('admin.wallets.unknownUser')}</span>
                                                         <span className="text-[11px] text-muted-foreground font-medium">{wallet.user.email}</span>
                                                     </div>
                                                 </div>
@@ -209,7 +211,7 @@ export default function AdminWalletsPage() {
                                                     variant={wallet.isActive ? 'success' : 'destructive'}
                                                     className="font-semibold text-xs px-3 py-1  rounded-full"
                                                 >
-                                                    {wallet.isActive ? 'Active' : 'Locked'}
+                                                    {wallet.isActive ? t('admin.wallets.status.active') : t('admin.wallets.status.locked')}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground font-medium text-sm">
@@ -233,7 +235,7 @@ export default function AdminWalletsPage() {
                                         <TableCell colSpan={5} className="py-24 text-center">
                                             <div className="flex flex-col items-center justify-center opacity-20">
                                                 <Wallet className="w-20 h-20 mb-4" />
-                                                <p className="text-xl font-semibold ">No Wallets Found</p>
+                                                <p className="text-xl font-semibold ">{t('admin.wallets.empty')}</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -246,7 +248,7 @@ export default function AdminWalletsPage() {
                     {!loading && totalPages > 1 && (
                         <div className="flex items-center justify-between px-8 py-6 bg-card rounded-4xl border border-border shadow-sm">
                             <p className="text-sm text-muted-foreground font-semibold">
-                                Showing PAGE <span className="text-foreground">{page + 1}</span> OF <span className="text-foreground">{totalPages}</span>
+                                {t('admin.wallets.pagination', { current: page + 1, total: totalPages })}
                             </p>
                             <div className="flex items-center gap-3">
                                 <button

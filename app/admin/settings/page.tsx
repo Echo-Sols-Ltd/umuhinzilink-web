@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import { useI18n } from '@/contexts/I18nContext';
 import { UserRole } from '@/types';
 
 interface SystemSettings {
@@ -52,6 +53,7 @@ interface SystemSettings {
 
 function SystemSettingsPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const [settings, setSettings] = useState<SystemSettings>({
     siteName: 'UmuhinziLink',
     siteDescription: 'Connecting farmers and buyers in Rwanda',
@@ -120,8 +122,8 @@ function SystemSettingsPage() {
       />
       <div className="flex-1 flex flex-col overflow-hidden">
         <AdminPageHeader
-          title="System Settings"
-          description="Configure platform-wide settings and preferences"
+          title={t('admin.settings.title')}
+          description={t('admin.settings.subtitle')}
           actions={
             <button
               onClick={handleSave}
@@ -131,12 +133,12 @@ function SystemSettingsPage() {
               {saveStatus === 'saving' ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  {t('common.saving')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Save Settings
+                  {t('admin.settings.saveSettings')}
                 </>
               )}
             </button>
@@ -144,12 +146,11 @@ function SystemSettingsPage() {
         />
 
         <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
-          {/* General Settings */}
           <div className="bg-card rounded-lg border border-border shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">General Settings</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{t('admin.settings.generalSettings')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Site Name</label>
+                <label className="block text-sm font-medium text-foreground mb-2">{t('admin.settings.siteName')}</label>
                 <input
                   type="text"
                   value={settings.siteName}
@@ -158,7 +159,7 @@ function SystemSettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Contact Email</label>
+                <label className="block text-sm font-medium text-foreground mb-2">{t('admin.settings.contactEmail')}</label>
                 <input
                   type="email"
                   value={settings.contactEmail}
@@ -168,7 +169,7 @@ function SystemSettingsPage() {
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-medium text-foreground mb-2">Site Description</label>
+              <label className="block text-sm font-medium text-foreground mb-2">{t('admin.settings.siteDescription')}</label>
               <textarea
                 value={settings.siteDescription}
                 onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
