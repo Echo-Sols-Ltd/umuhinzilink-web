@@ -366,6 +366,31 @@ export default function AssistantChat({
             isFull ? 'text-sm max-w-2xl mx-auto text-center' : 'text-xs text-center',
           )}>
             <p className="leading-relaxed">{welcomeText}</p>
+            {isBuyer && userContext?.availableProducts && userContext.availableProducts.length > 0 && (
+              <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left">
+                <p className="text-xs font-semibold text-foreground mb-2">
+                  {t('assistant.availableNow')}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {userContext.availableProducts.map(name => (
+                    <button
+                      key={name}
+                      type="button"
+                      disabled={loading}
+                      onClick={() => handleSend(`${t('assistant.askAbout')} ${name}`)}
+                      className="px-2.5 py-1 rounded-full bg-background border border-border text-foreground text-xs hover:border-primary/40 hover:bg-accent transition-colors"
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {isBuyer && userContext?.availableProducts?.length === 0 && (
+              <p className="text-[11px] text-muted-foreground/80 italic">
+                {t('assistant.noListingsYet')}
+              </p>
+            )}
             {isBuyer && (
               <div className="flex flex-wrap justify-center gap-2 pt-2">
                 {BUYER_SUGGESTION_KEYS.map(key => (

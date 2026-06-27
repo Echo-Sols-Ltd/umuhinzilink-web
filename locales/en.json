@@ -1871,6 +1871,9 @@
     "welcome": "Ask about crops, prices, or farming tips for Rwanda.",
     "welcomeBuyer": "Just type your question below — like texting a friend who knows the marketplace.",
     "buyerHint": "Type naturally — e.g. “What can I buy?” or “Maize near Bugesera”",
+    "availableNow": "Available on UmuhinziLink now",
+    "noListingsYet": "No produce listed yet — check back soon or browse Products.",
+    "askAbout": "Tell me about",
     "inputPlaceholderBuyer": "What are you looking for?",
     "farmingPlaceholder": "Ask a farming question…",
     "suggestions": {

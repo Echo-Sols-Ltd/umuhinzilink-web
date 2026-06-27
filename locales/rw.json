@@ -1871,6 +1871,9 @@
     "welcome": "Baza ku buhinzi, ibiciro, cyangwa inama z'ibihingwa mu Rwanda.",
     "welcomeBuyer": "Andika ikibazo cyawe hepfo — nko kohereza ubutumwa ku nshuti izi isoko.",
     "buyerHint": "Andika uko bisanzwe — urugero: “Nshobora kugura iki?” cyangwa “Ibigori hafi ya Bugesera”",
+    "availableNow": "Biri ku UmuhinziLink ubu",
+    "noListingsYet": "Nta bicuruzwa biri — subira nyuma cyangwa reba Ibicuruzwa.",
+    "askAbout": "Mbwire kuri",
     "inputPlaceholderBuyer": "Urashaka iki?",
     "farmingPlaceholder": "Baza ikibazo cy'ubuhinzi…",
     "suggestions": {

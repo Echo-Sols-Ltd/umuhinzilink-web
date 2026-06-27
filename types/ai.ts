@@ -6,6 +6,8 @@ export interface AiUserContext {
   district?: string;
   province?: string;
   crops?: string[];
+  /** Active listing names from DB (buyers) */
+  availableProducts?: string[];
   welcomeMessage?: string;
 }
 
