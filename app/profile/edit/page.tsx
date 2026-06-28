@@ -15,6 +15,7 @@ import { uploadService } from '@/services/upload';
 import { notify } from '@/lib/notify';
 import { Language, UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
+import { applyLocale, languageToLocale } from '@/lib/localeUser';
 
 const STORAGE_KEYS = { USER: 'user' };
 

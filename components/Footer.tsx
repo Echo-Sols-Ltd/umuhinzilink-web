@@ -4,6 +4,7 @@ import Link from 'next/link';
 import NavAnchorLink from '@/components/NavAnchorLink';
 import { Sprout, Mail, Phone, MapPin } from '@/lib/icons';
 import { useI18n } from '@/contexts/I18nContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { applyLocale } from '@/lib/localeUser';
 import type { SupportedLocale } from '@/lib/i18n';
 import { cn } from '@/lib/utils';

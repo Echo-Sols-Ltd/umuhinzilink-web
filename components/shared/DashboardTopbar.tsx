@@ -9,6 +9,7 @@ import { ROUTES } from '@/lib/routes';
 import { imageUrl } from '@/lib/utils';
 import { getAdminHomePath } from '@/lib/appPaths';
 import { useI18n } from '@/contexts/I18nContext';
+import { UserRole } from '@/types';
 
 interface Props {
     onMenuClick: () => void;

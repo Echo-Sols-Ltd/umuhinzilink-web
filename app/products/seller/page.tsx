@@ -81,6 +81,7 @@ export default function SellerListings() {
 }
 
 function SellerListingsContent() {
+  const { t } = useI18n();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ProductStatus | 'ALL'>('ALL');
   const [sortKey, setSortKey] = useState<SortKey>('createdAt');

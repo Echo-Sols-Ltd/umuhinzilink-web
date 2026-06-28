@@ -13,6 +13,7 @@ import {
   Trash2,
 } from '@/lib/icons';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useI18n } from '@/contexts/I18nContext';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import {
   Table,

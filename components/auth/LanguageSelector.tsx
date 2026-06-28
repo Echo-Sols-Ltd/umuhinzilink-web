@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, Globe } from '@/lib/icons';
 import { useI18n } from '@/contexts/I18nContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { applyLocale } from '@/lib/localeUser';
 import type { SupportedLocale } from '@/lib/i18n';
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { Product, ProductStatus } from "@/types";
+import { MeasurementUnit, Product, ProductCategory, ProductStatus } from "@/types";
 import { AlertTriangle, CheckCircle, Eye, FileText, MoreVertical, Package, PauseCircle, Trash2, XCircle } from '@/lib/icons';
 import Link from "next/link";
 import { Edit3 } from '@/lib/icons';

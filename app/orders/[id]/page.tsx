@@ -8,6 +8,7 @@ import { useI18n } from '@/contexts/I18nContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import { UserRole, isPaidOrder, isUnpaidOrder } from '@/types';
 import { notify } from '@/lib/notify';
+import { formatCurrency } from '@/lib/localeFormat';
 import { Package, User, CreditCard, XCircle } from '@/lib/icons';
 import { orderService } from '@/services/orders';
 import OrderStatusTracker from '@/components/orders/OrderStatusTracker';

@@ -12,7 +12,7 @@ import { useI18n } from '@/contexts/I18nContext';
 import { notify } from '@/lib/notify';
 import { formatCurrency } from '@/lib/localeFormat';
 import { cn, imageUrl } from '@/lib/utils';
-import { Product, UserRole } from '@/types';
+import { MeasurementUnit, Product, ProductCategory, UserRole } from '@/types';
 import BuyModal from './BuyModal';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
