@@ -76,4 +76,5 @@ export interface SidebarItem {
 export interface SidebarProps {
   activeItem?: string;
   userType?: UserRole;
+  hideTopbar?: boolean;
 }

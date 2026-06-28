@@ -10,7 +10,7 @@ interface AdminShellProps {
 export default function AdminShell({ children }: AdminShellProps) {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={UserRole.ADMIN} />
+      <Sidebar userType={UserRole.ADMIN} hideTopbar />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {children}
       </div>

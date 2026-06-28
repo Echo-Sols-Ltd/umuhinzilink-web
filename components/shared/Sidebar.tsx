@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Users, Truck, Sprout, BarChart2,
   Wallet, User, Settings, LogOut, X, ChevronRight,
-  MessageSquare,
+  MessageSquare, Menu,
 } from '@/lib/icons';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -64,7 +64,7 @@ const ROLE_BADGE: Record<UserRole, { bg: string; text: string; dot: string; labe
   [UserRole.ADMIN]: { bg: 'bg-rose-500/15', text: 'text-rose-500', dot: 'bg-rose-400', label: 'Admin' },
 };
 
-export default function Sidebar({ userType }: SidebarProps) {
+export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
@@ -183,7 +183,20 @@ export default function Sidebar({ userType }: SidebarProps) {
 
   return (
     <>
-      <DashboardTopbar onMenuClick={() => setMobileOpen(true)} />
+      {!hideTopbar && (
+        <DashboardTopbar onMenuClick={() => setMobileOpen(true)} />
+      )}
+
+      {hideTopbar && (
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          className="lg:hidden fixed top-3 left-3 z-40 p-2 bg-card border border-border rounded-xl text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Open navigation"
+        >
+          <Menu size={18} />
+        </button>
+      )}
 
       {mobileOpen && (
         <div

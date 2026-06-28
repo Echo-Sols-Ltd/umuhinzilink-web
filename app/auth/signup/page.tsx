@@ -16,7 +16,7 @@ import { ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 const inputClass =
-  'bg-muted/50 border border-border h-9 rounded-lg text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary';
+  'bg-muted/50 border border-border/80 h-9 rounded-lg text-sm shadow-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors';
 
 function Field({
   label, error, children,
@@ -217,8 +217,8 @@ export default function SignUp() {
             <p className="text-muted-foreground text-xs mt-0.5">{t('auth.signUp.subtitle')}</p>
           </div>
 
-          <div className="shrink-0 mb-3">
-            <GoogleLogin size="medium" />
+          <div className="w-full shrink-0 mb-3">
+            <GoogleLogin mode="signup" />
           </div>
 
           <div className="flex items-center gap-2 mb-3 shrink-0">
@@ -324,7 +324,7 @@ export default function SignUp() {
 
             <Button
               type="submit"
-              className="w-full h-9 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm transition-colors shadow-sm"
+              className="w-full h-9 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm transition-colors shadow-none"
               disabled={loading}
             >
               {loading ? t('auth.signUp.creatingAccount') : t('auth.signUp.signUp')}

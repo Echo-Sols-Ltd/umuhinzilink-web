@@ -150,8 +150,8 @@ export default function SignIn() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`bg-muted/50 border border-border h-12 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${
-                  touched.email && fieldErrors.email ? 'border-destructive focus-visible:ring-destructive' : ''
+                className={`bg-muted/50 border border-border/80 h-12 rounded-xl text-sm shadow-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors ${
+                  touched.email && fieldErrors.email ? 'border-destructive focus-visible:ring-destructive/30' : ''
                 }`}
               />
               {touched.email && fieldErrors.email && (
@@ -170,8 +170,8 @@ export default function SignIn() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`bg-muted/50 border border-border h-12 rounded-xl text-sm pr-10 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${
-                  touched.password && fieldErrors.password ? 'border-destructive focus-visible:ring-destructive' : ''
+                className={`bg-muted/50 border border-border/80 h-12 rounded-xl text-sm pr-10 shadow-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors ${
+                  touched.password && fieldErrors.password ? 'border-destructive focus-visible:ring-destructive/30' : ''
                 }`}
               />
               <button
@@ -188,7 +188,7 @@ export default function SignIn() {
 
             {/* Forgot password */}
             <div className="flex justify-end">
-              <Link href="/auth/forgot-password" className="text-sm text-muted-foreground hover:text-primary font-medium hover:underline">
+              <Link href="/auth/forgot-password" className="text-xs text-muted-foreground hover:text-primary font-medium hover:underline">
                 {t('auth.signIn.forgot')}
               </Link>
             </div>
@@ -197,7 +197,7 @@ export default function SignIn() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-base shadow-sm transition-colors"
+              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-base shadow-none transition-colors"
             >
               {loading ? t('auth.signIn.signingIn') : t('auth.signIn.signIn')}
             </Button>
@@ -211,10 +211,8 @@ export default function SignIn() {
           </div>
 
           {/* Social buttons */}
-          <div className="grid grid-cols-1 gap-3">
-            <div className="flex justify-center">
-              <GoogleLogin />
-            </div>
+          <div className="w-full">
+            <GoogleLogin mode="signin" />
           </div>
 
           {/* Sign up link */}

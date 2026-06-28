@@ -19,17 +19,17 @@
   --popover-foreground: #141C19;
 
   /* --- Brand Colors --- */
-  /* 🌱 Primary: Confident Growth Green */
-  --primary: #1a8f00; 
+  /* Primary: Confident Growth Green */
+  --primary: #188A04;
   --primary-foreground: #F8FAF9;
 
-  /* 🌊 Secondary: Modern Irrigation Teal */
-  --secondary: #30a117;
+  /* Secondary: Fresh Leaf Green (gradients, secondary actions) */
+  --secondary: #2EAD49;
   --secondary-foreground: #F8FAF9;
 
-  /* 🌾 Accent: Harvest Gold / Market Amber */
-  --accent: #D98E32;
-  --accent-foreground: #FFFFFF;
+  /* Accent: Soft Sage (hovers, subtle highlights) */
+  --accent: #E4F4E8;
+  --accent-foreground: #14532D;
 
   /* --- UI Neutrals --- */
   --muted: #EDF2F0;
@@ -37,7 +37,7 @@
 
   --border: #E2E9E6;
   --input: #E2E9E6;
-  --ring: #1a6511;
+  --ring: #188A04;
 
   /* --- Status --- */
   --destructive: #D94452;
@@ -50,10 +50,10 @@
   --info-foreground: #FFFFFF;
 
   /* --- Charts --- */
-  --chart-1: #2c631b;
-  --chart-2: #347d40;
-  --chart-3: #D98E32;
-  --chart-4: #4acc16;
+  --chart-1: #166534;
+  --chart-2: #22A045;
+  --chart-3: #4ADE80;
+  --chart-4: #86EFAC;
   --chart-5: #64748B;
 
   --radius: 0.75rem;
@@ -62,12 +62,12 @@
   /* --- Sidebar --- */
   --sidebar: #F1F5F3;
   --sidebar-foreground: #141C19;
-  --sidebar-primary: #26631b;
+  --sidebar-primary: #188A04;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E2E9E6;
-  --sidebar-accent-foreground: #28631b;
+  --sidebar-accent: #E4F4E8;
+  --sidebar-accent-foreground: #14532D;
   --sidebar-border: #E2E9E6;
-  --sidebar-ring: #20631b;
+  --sidebar-ring: #188A04;
 }
 
 .dark {
@@ -82,14 +82,14 @@
   --popover-foreground: #ECF2F0;
 
   /* --- Brand (Vibrant for Dark Mode) --- */
-  --primary: #44b32b; 
-  --primary-foreground: #1d1e1d;
+  --primary: #4ADE68;
+  --primary-foreground: #0F1A12;
 
-  --secondary: #30a117;
-  --secondary-foreground: #1d1e1d;
+  --secondary: #34C759;
+  --secondary-foreground: #0F1A12;
 
-  --accent: #F2A84B;
-  --accent-foreground: #1d1e1d;
+  --accent: #1A2E21;
+  --accent-foreground: #BBF7D0;
 
   /* --- UI Neutrals --- */
   --muted: #1A2421;
@@ -97,7 +97,7 @@
 
   --border: #24302C;
   --input: #24302C;
-  --ring: #39b32b;
+  --ring: #4ADE68;
 
   /* --- Status --- */
   --destructive: #FF5C6D;
@@ -112,12 +112,12 @@
   /* --- Sidebar --- */
   --sidebar: #292929;
   --sidebar-foreground: #ECF2F0;
-  --sidebar-primary: #2db32b;
-  --sidebar-primary-foreground: #0B0F0E;
-  --sidebar-accent: #1A2421;
-  --sidebar-accent-foreground: #34b32b;
+  --sidebar-primary: #4ADE68;
+  --sidebar-primary-foreground: #0F1A12;
+  --sidebar-accent: #1A2E21;
+  --sidebar-accent-foreground: #86EFAC;
   --sidebar-border: #24302C;
-  --sidebar-ring: #42b32b;
+  --sidebar-ring: #4ADE68;
 }
 
 @theme inline {
