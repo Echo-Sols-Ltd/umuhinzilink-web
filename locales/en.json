@@ -1024,14 +1024,20 @@
     "forgotPassword": {
       "title": "Forgot Password?",
       "description": "Enter your email address and we'll send you a 6-digit code to reset your password.",
+      "heroTitle": "Reset your password",
+      "heroSubtitle": {
+        "line1": "Enter the email linked to your account",
+        "line2": "and we'll send you a secure reset code."
+      },
       "backToSignIn": "Back to Sign In",
       "sending": "Sending...",
       "sendResetCode": "Send Reset Code",
       "rememberPassword": "Remember your password?",
       "submitted": {
         "title": "Check Your Email",
-        "description": "We've sent a 6-digit reset code to {{email}}.",
-        "cta": "Click here to reset your password"
+        "description": "If an account exists for {{email}}, we sent a password reset link.",
+        "inboxHint": "Check your inbox and spam folder for the 6-digit code.",
+        "cta": "Back to Sign In"
       },
       "toast": {
         "resetCodeSent": {
