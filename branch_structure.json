@@ -1,0 +1,21 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "main",
+    "origin",
+    "web-redesign",
+    "wigothehacker"
+  ],
+  "parent": {
+    "main": null,
+    "origin": "main",
+    "web-redesign": "main",
+    "wigothehacker": "main"
+  },
+  "order": [
+    "main",
+    "origin",
+    "web-redesign",
+    "wigothehacker"
+  ]
+}
