@@ -79,6 +79,20 @@
   },
   "nav": {
     "browse": "Shakisha",
+    "dashboard": "Ikibaho",
+    "saved": "Byabitswe",
+    "addListing": "Ongeraho igicuruzwa",
+    "users": "Abakoresha",
+    "orders": "Ibyatumijwe",
+    "products": "Ibicuruzwa",
+    "wallets": "Wallet",
+    "analytics": "Isesengura",
+    "notifications": "Amakuru",
+    "adminDashboard": "Ikibaho cya Admin",
+    "platformWallets": "Wallet z'urubuga",
+    "adminSettings": "Igenamiterere rya Admin",
+    "marketplace": "Isoko",
+    "logOut": "Gusohoka",
     "howItWorks": "Uko bikora",
     "aiAssistant": "Umufasha wa AI",
     "myOrders": "Ibyatumijwe byanjye",
@@ -840,7 +854,8 @@
       "account": "Konti",
       "operations": "Ibikorwa",
       "administration": "Ubuyobozi",
-      "monitoring": "Gukurikirana"
+      "monitoring": "Gukurikirana",
+      "marketplace": "Isoko"
     },
     "items": {
       "dashboard": "Dashboard",
@@ -880,7 +895,8 @@
       "governmentOfficial": "Uhagarariye leta"
     },
     "user": {
-      "avatarAlt": "Ifoto"
+      "avatarAlt": "Ifoto",
+      "defaultName": "Ukoresha"
     },
     "actions": {
       "settings": "Igenamiterere",

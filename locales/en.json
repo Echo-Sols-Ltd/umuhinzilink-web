@@ -79,6 +79,20 @@
   },
   "nav": {
     "browse": "Browse",
+    "dashboard": "Dashboard",
+    "saved": "Saved",
+    "addListing": "Add Listing",
+    "users": "Users",
+    "orders": "Orders",
+    "products": "Products",
+    "wallets": "Wallets",
+    "analytics": "Analytics",
+    "notifications": "Notifications",
+    "adminDashboard": "Admin Dashboard",
+    "platformWallets": "Platform Wallets",
+    "adminSettings": "Admin Settings",
+    "marketplace": "Marketplace",
+    "logOut": "Log out",
     "howItWorks": "How it works",
     "aiAssistant": "AI Assistant",
     "myOrders": "My Orders",
@@ -840,7 +854,8 @@
       "account": "Account",
       "operations": "Operations",
       "administration": "Administration",
-      "monitoring": "Monitoring"
+      "monitoring": "Monitoring",
+      "marketplace": "Marketplace"
     },
     "items": {
       "dashboard": "Dashboard",
@@ -880,7 +895,8 @@
       "governmentOfficial": "Gov. Official"
     },
     "user": {
-      "avatarAlt": "Avatar"
+      "avatarAlt": "Avatar",
+      "defaultName": "User"
     },
     "actions": {
       "settings": "Settings",

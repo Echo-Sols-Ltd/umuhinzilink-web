@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
 import { Languages } from '@/lib/icons';
 import { type SupportedLocale } from '@/lib/i18n';
-import { applyLocale, languageToLocale } from '@/lib/localeUser';
+import { applyLocale } from '@/lib/localeUser';
 import { notify } from '@/lib/notify';
 
 const LANGUAGE_OPTIONS: { locale: SupportedLocale; labelKey: string; flag: string }[] = [
@@ -19,15 +19,6 @@ export default function LocalizationSettingsPage() {
   const { t, locale } = useI18n();
   const { user, loadAuthState } = useAuth();
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (user?.language) {
-      const profileLocale = languageToLocale(user.language);
-      if (profileLocale !== locale) {
-        applyLocale(profileLocale);
-      }
-    }
-  }, [user?.language, user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLanguageChange = async (nextLocale: SupportedLocale) => {
     if (nextLocale === locale || saving) return;

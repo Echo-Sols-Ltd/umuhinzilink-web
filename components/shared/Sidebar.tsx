@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { SidebarProps, UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
 import {
@@ -39,71 +40,72 @@ interface NavGroup {
 }
 
 const NAV_ICONS: Record<string, React.ReactNode> = {
-  Browse: <Package size={16} />,
-  Dashboard: <LayoutDashboard size={16} />,
-  'My Orders': <Truck size={16} />,
-  Negotiations: <MessageSquare size={16} />,
-  Saved: <Heart size={16} />,
-  'My Listings': <Sprout size={16} />,
-  'Add Listing': <Plus size={16} />,
-  Users: <Users size={16} />,
-  Orders: <Truck size={16} />,
-  Products: <Sprout size={16} />,
-  Wallets: <Wallet size={16} />,
-  Analytics: <BarChart2 size={16} />,
-  Wallet: <Wallet size={16} />,
-  Profile: <User size={16} />,
-  Notifications: <Bell size={16} />,
-  Settings: <Settings size={16} />,
+  [ROUTES.products]: <Package size={16} />,
+  [ROUTES.dashboard]: <LayoutDashboard size={16} />,
+  [ROUTES.orders]: <Truck size={16} />,
+  [ROUTES.negotiations]: <MessageSquare size={16} />,
+  [ROUTES.savedProducts]: <Heart size={16} />,
+  [ROUTES.sellerProducts]: <Sprout size={16} />,
+  [ROUTES.productCreate]: <Plus size={16} />,
+  [ROUTES.admin.dashboard]: <LayoutDashboard size={16} />,
+  [ROUTES.admin.users]: <Users size={16} />,
+  [ROUTES.admin.orders]: <Truck size={16} />,
+  [ROUTES.admin.products]: <Sprout size={16} />,
+  [ROUTES.admin.wallets]: <Wallet size={16} />,
+  [ROUTES.admin.analytics]: <BarChart2 size={16} />,
+  [ROUTES.admin.settings]: <Settings size={16} />,
+  [ROUTES.wallet]: <Wallet size={16} />,
+  [ROUTES.profile]: <User size={16} />,
+  [ROUTES.notifications]: <Bell size={16} />,
+  [ROUTES.settings]: <Settings size={16} />,
 };
 
-function mapNavItems(items: AdminNavItem[]): NavItem[] {
+function mapNavItems(items: AdminNavItem[], t: (key: string) => string): NavItem[] {
   return items.map((item) => ({
-    icon: NAV_ICONS[item.label] ?? <LayoutDashboard size={16} />,
-    label: item.label,
+    icon: NAV_ICONS[item.href] ?? <LayoutDashboard size={16} />,
+    label: t(item.labelKey),
     href: item.href,
     matchPrefix: item.matchPrefix,
   }));
 }
 
-function getNavGroups(role: UserRole): NavGroup[] {
+function getNavGroups(role: UserRole, t: (key: string) => string): NavGroup[] {
   switch (role) {
     case UserRole.ADMIN:
       return [
-        { label: 'Administration', items: mapNavItems(ADMIN_SIDEBAR_NAV) },
-        { label: 'Account', items: mapNavItems(ADMIN_SIDEBAR_ACCOUNT) },
+        { label: t('sidebar.groups.administration'), items: mapNavItems(ADMIN_SIDEBAR_NAV, t) },
+        { label: t('sidebar.groups.account'), items: mapNavItems(ADMIN_SIDEBAR_ACCOUNT, t) },
       ];
     case UserRole.SELLER:
       return [
-        { label: 'Marketplace', items: mapNavItems(SELLER_SIDEBAR_NAV) },
-        { label: 'Account', items: mapNavItems(SELLER_SIDEBAR_ACCOUNT) },
+        { label: t('sidebar.groups.marketplace'), items: mapNavItems(SELLER_SIDEBAR_NAV, t) },
+        { label: t('sidebar.groups.account'), items: mapNavItems(SELLER_SIDEBAR_ACCOUNT, t) },
       ];
     case UserRole.BUYER:
     default:
       return [
-        { label: 'Marketplace', items: mapNavItems(BUYER_SIDEBAR_NAV) },
-        { label: 'Account', items: mapNavItems(BUYER_SIDEBAR_ACCOUNT) },
+        { label: t('sidebar.groups.marketplace'), items: mapNavItems(BUYER_SIDEBAR_NAV, t) },
+        { label: t('sidebar.groups.account'), items: mapNavItems(BUYER_SIDEBAR_ACCOUNT, t) },
       ];
   }
 }
 
-const ROLE_BADGE: Record<UserRole, { bg: string; text: string; dot: string; label: string }> = {
-  [UserRole.SELLER]: { bg: 'bg-emerald-500/15', text: 'text-emerald-500', dot: 'bg-emerald-400', label: 'Seller' },
-  [UserRole.BUYER]: { bg: 'bg-blue-500/15', text: 'text-blue-500', dot: 'bg-blue-400', label: 'Buyer' },
-  [UserRole.ADMIN]: { bg: 'bg-rose-500/15', text: 'text-rose-500', dot: 'bg-rose-400', label: 'Admin' },
+const ROLE_BADGE_KEYS: Record<UserRole, { bg: string; text: string; dot: string; labelKey: string }> = {
+  [UserRole.SELLER]: { bg: 'bg-emerald-500/15', text: 'text-emerald-500', dot: 'bg-emerald-400', labelKey: 'nav.roles.seller' },
+  [UserRole.BUYER]: { bg: 'bg-blue-500/15', text: 'text-blue-500', dot: 'bg-blue-400', labelKey: 'nav.roles.buyer' },
+  [UserRole.ADMIN]: { bg: 'bg-rose-500/15', text: 'text-rose-500', dot: 'bg-rose-400', labelKey: 'nav.roles.admin' },
 };
 
 const PROFILE_MENU_ICONS: Record<string, React.ReactNode> = {
-  Profile: <User size={15} />,
-  Dashboard: <LayoutDashboard size={15} />,
-  'Seller Dashboard': <LayoutDashboard size={15} />,
-  'Admin Dashboard': <LayoutDashboard size={15} />,
-  'Become a Seller': <Sprout size={15} />,
-  Wallet: <Wallet size={15} />,
-  'Platform Wallets': <Wallet size={15} />,
-  Notifications: <Bell size={15} />,
-  Settings: <Settings size={15} />,
-  'Admin Settings': <Settings size={15} />,
+  [ROUTES.profile]: <User size={15} />,
+  [ROUTES.dashboard]: <LayoutDashboard size={15} />,
+  [ROUTES.admin.dashboard]: <LayoutDashboard size={15} />,
+  [ROUTES.becomeSeller]: <Sprout size={15} />,
+  [ROUTES.wallet]: <Wallet size={15} />,
+  [ROUTES.admin.wallets]: <Wallet size={15} />,
+  [ROUTES.notifications]: <Bell size={15} />,
+  [ROUTES.settings]: <Settings size={15} />,
+  [ROUTES.admin.settings]: <Settings size={15} />,
 };
 
 function ProfileMenuLink({
@@ -137,18 +139,22 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
 
   const { navigate } = useNavigationWithLoading();
   const { user, logout } = useAuth();
+  const { t } = useI18n();
 
   const role = (user?.role ?? userType ?? UserRole.BUYER) as UserRole;
   const firstName = user?.firstName || '';
   const lastName = user?.lastName || '';
-  const fullName = `${firstName} ${lastName}`.trim() || 'User';
-  const initials = fullName !== 'User'
+  const fullName = `${firstName} ${lastName}`.trim() || t('sidebar.user.defaultName');
+  const initials = fullName !== t('sidebar.user.defaultName')
     ? fullName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
     : 'UL';
   const email = user?.email || '';
-  const badge = ROLE_BADGE[role] ?? ROLE_BADGE[UserRole.BUYER];
-  const groups = getNavGroups(role);
-  const profileLinks = getProfileMenuLinks(role);
+  const badge = ROLE_BADGE_KEYS[role] ?? ROLE_BADGE_KEYS[UserRole.BUYER];
+  const groups = getNavGroups(role, t);
+  const profileLinks = getProfileMenuLinks(role).map((link) => ({
+    ...link,
+    label: t(link.labelKey),
+  }));
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
@@ -200,7 +206,7 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
           <p className="font-semibold text-[14px] text-foreground leading-tight">UmuhinziLink</p>
           <span className={`inline-flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase ${badge.bg} ${badge.text}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
-            {badge.label}
+            {t(badge.labelKey)}
           </span>
         </div>
       </div>
@@ -259,7 +265,7 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
                     key={link.href}
                     label={link.label}
                     href={link.href}
-                    icon={PROFILE_MENU_ICONS[link.label] ?? <User size={15} />}
+                    icon={PROFILE_MENU_ICONS[link.href] ?? <User size={15} />}
                     onSelect={handleProfileNav}
                   />
                 ))}
@@ -271,7 +277,7 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
                   className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] text-destructive hover:bg-destructive/10 transition-colors"
                 >
                   <LogOut size={15} />
-                  Log out
+                  {t('sidebar.actions.signOut')}
                 </button>
               </div>
             </div>
@@ -320,7 +326,7 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
           type="button"
           onClick={() => setMobileOpen(true)}
           className="lg:hidden fixed top-3 left-3 z-40 p-2 bg-card border border-border rounded-xl text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Open navigation"
+          aria-label={t('sidebar.a11y.openNavigation')}
         >
           <Menu size={18} />
         </button>

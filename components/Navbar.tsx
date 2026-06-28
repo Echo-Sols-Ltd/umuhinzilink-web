@@ -23,7 +23,7 @@ import {
   Wallet,
   Settings,
 } from '@/lib/icons';
-import { getNavbarLinks, isNavLinkActive, ROUTES, type NavLink } from '@/lib/routes';
+import { getNavbarLinks, isNavLinkActive, ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 
 const GUEST_LINK_KEYS: { labelKey: string; href: string }[] = [
@@ -48,7 +48,10 @@ export default function Navbar() {
     href,
   }));
 
-  const appLinks: NavLink[] = getNavbarLinks(user?.role);
+  const appLinks = getNavbarLinks(user?.role).map((link) => ({
+    label: t(link.labelKey),
+    href: link.href,
+  }));
   const navLinks = user ? appLinks : guestLinks;
 
   const navLinkCls = (href: string) =>
@@ -143,19 +146,19 @@ export default function Navbar() {
                               <DropdownLink
                                 href={ROUTES.admin.dashboard}
                                 icon={<LayoutDashboard size={15} />}
-                                label="Admin Dashboard"
+                                label={t('nav.adminDashboard')}
                                 onClick={() => setAvatarOpen(false)}
                               />
                               <DropdownLink
                                 href={ROUTES.admin.wallets}
                                 icon={<Wallet size={15} />}
-                                label="Platform Wallets"
+                                label={t('nav.platformWallets')}
                                 onClick={() => setAvatarOpen(false)}
                               />
                               <DropdownLink
                                 href={ROUTES.admin.settings}
                                 icon={<Settings size={15} />}
-                                label="Admin Settings"
+                                label={t('nav.adminSettings')}
                                 onClick={() => setAvatarOpen(false)}
                               />
                             </>
@@ -164,14 +167,14 @@ export default function Navbar() {
                               <DropdownLink
                                 href={ROUTES.profile}
                                 icon={<User size={15} />}
-                                label="Profile"
+                                label={t('nav.profile')}
                                 onClick={() => setAvatarOpen(false)}
                               />
                               {isSeller ? (
                                 <DropdownLink
                                   href={ROUTES.dashboard}
                                   icon={<LayoutDashboard size={15} />}
-                                  label="Seller Dashboard"
+                                  label={t('nav.sellerDashboard')}
                                   onClick={() => setAvatarOpen(false)}
                                 />
                               ) : (
@@ -179,13 +182,13 @@ export default function Navbar() {
                                   <DropdownLink
                                     href={ROUTES.dashboard}
                                     icon={<LayoutDashboard size={15} />}
-                                    label="Dashboard"
+                                    label={t('nav.dashboard')}
                                     onClick={() => setAvatarOpen(false)}
                                   />
                                   <DropdownLink
                                     href={ROUTES.becomeSeller}
                                     icon={<Sprout size={15} />}
-                                    label="Become a Seller"
+                                    label={t('nav.becomeSeller')}
                                     onClick={() => setAvatarOpen(false)}
                                   />
                                 </>
@@ -193,13 +196,13 @@ export default function Navbar() {
                               <DropdownLink
                                 href={ROUTES.wallet}
                                 icon={<Wallet size={15} />}
-                                label="Wallet"
+                                label={t('nav.wallet')}
                                 onClick={() => setAvatarOpen(false)}
                               />
                               <DropdownLink
                                 href={ROUTES.settings}
                                 icon={<Settings size={15} />}
-                                label="Settings"
+                                label={t('nav.settings')}
                                 onClick={() => setAvatarOpen(false)}
                               />
                             </>
@@ -216,7 +219,7 @@ export default function Navbar() {
                             className="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950/20"
                           >
                             <LogOut size={15} />
-                            Logout
+                            {t('nav.logout')}
                           </button>
                         </div>
                       </div>
@@ -297,7 +300,7 @@ function NavLinksScroll({
   navLinkCls,
   className,
 }: {
-  links: NavLink[];
+  links: { label: string; href: string }[];
   navLinkCls: (href: string) => string;
   className?: string;
 }) {

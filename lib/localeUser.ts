@@ -1,5 +1,5 @@
 import type { SupportedLocale } from '@/lib/i18n';
-import { getStoredLocale, switchLanguage } from '@/lib/language-switch';
+import { switchLanguage } from '@/lib/language-switch';
 import { userService } from '@/services/users';
 import { Language } from '@/types';
 
@@ -34,9 +34,7 @@ export async function applyLocale(
   locale: SupportedLocale,
   options?: { userId?: string; persist?: boolean },
 ): Promise<void> {
-  if (getStoredLocale() !== locale) {
-    switchLanguage(locale);
-  }
+  switchLanguage(locale);
 
   if (options?.persist && options.userId) {
     await userService.updateProfile(options.userId, {
@@ -46,8 +44,5 @@ export async function applyLocale(
 }
 
 export function syncLocaleFromProfile(language?: Language | string | null): void {
-  const locale = languageToLocale(language);
-  if (getStoredLocale() !== locale) {
-    switchLanguage(locale);
-  }
+  switchLanguage(languageToLocale(language));
 }

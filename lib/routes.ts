@@ -41,7 +41,7 @@ export const ROUTES = {
 } as const;
 
 export interface NavLink {
-  label: string;
+  labelKey: string;
   href: string;
 }
 
@@ -51,75 +51,75 @@ export interface AdminNavItem extends NavLink {
 }
 
 const GUEST_NAV: NavLink[] = [
-  { label: 'Who is it for', href: ROUTES.homeWho },
-  { label: 'Features', href: ROUTES.homeFeatures },
-  { label: 'Become a seller', href: ROUTES.becomeSeller },
+  { labelKey: 'landing.nav.whoIsItFor', href: ROUTES.homeWho },
+  { labelKey: 'landing.nav.features', href: ROUTES.homeFeatures },
+  { labelKey: 'landing.nav.becomeSeller', href: ROUTES.becomeSeller },
 ];
 
 const BUYER_NAV: NavLink[] = [
-  { label: 'Browse', href: ROUTES.products },
-  { label: 'Dashboard', href: ROUTES.dashboard },
-  { label: 'My Orders', href: ROUTES.orders },
-  { label: 'Negotiations', href: ROUTES.negotiations },
+  { labelKey: 'nav.browse', href: ROUTES.products },
+  { labelKey: 'nav.dashboard', href: ROUTES.dashboard },
+  { labelKey: 'nav.myOrders', href: ROUTES.orders },
+  { labelKey: 'nav.negotiations', href: ROUTES.negotiations },
 ];
 
 const SELLER_NAV: NavLink[] = [
-  { label: 'Dashboard', href: ROUTES.dashboard },
-  { label: 'My Listings', href: ROUTES.sellerProducts },
-  { label: 'My Orders', href: ROUTES.orders },
-  { label: 'Negotiations', href: ROUTES.negotiations },
+  { labelKey: 'nav.dashboard', href: ROUTES.dashboard },
+  { labelKey: 'nav.myListings', href: ROUTES.sellerProducts },
+  { labelKey: 'nav.myOrders', href: ROUTES.orders },
+  { labelKey: 'nav.negotiations', href: ROUTES.negotiations },
 ];
 
 const ADMIN_NAV: NavLink[] = [
-  { label: 'Dashboard', href: ROUTES.admin.dashboard },
-  { label: 'Users', href: ROUTES.admin.users },
-  { label: 'Orders', href: ROUTES.admin.orders },
-  { label: 'Products', href: ROUTES.admin.products },
-  { label: 'Wallets', href: ROUTES.admin.wallets },
+  { labelKey: 'nav.dashboard', href: ROUTES.admin.dashboard },
+  { labelKey: 'nav.users', href: ROUTES.admin.users },
+  { labelKey: 'nav.orders', href: ROUTES.admin.orders },
+  { labelKey: 'nav.products', href: ROUTES.admin.products },
+  { labelKey: 'nav.wallets', href: ROUTES.admin.wallets },
 ];
 
 export const ADMIN_SIDEBAR_NAV: AdminNavItem[] = [
-  { label: 'Dashboard', href: ROUTES.admin.dashboard },
-  { label: 'Users', href: ROUTES.admin.users, matchPrefix: true },
-  { label: 'Orders', href: ROUTES.admin.orders, matchPrefix: true },
-  { label: 'Products', href: ROUTES.admin.products, matchPrefix: true },
-  { label: 'Wallets', href: ROUTES.admin.wallets, matchPrefix: true },
-  { label: 'Analytics', href: ROUTES.admin.analytics },
-  { label: 'Settings', href: ROUTES.admin.settings },
+  { labelKey: 'nav.dashboard', href: ROUTES.admin.dashboard },
+  { labelKey: 'nav.users', href: ROUTES.admin.users, matchPrefix: true },
+  { labelKey: 'nav.orders', href: ROUTES.admin.orders, matchPrefix: true },
+  { labelKey: 'nav.products', href: ROUTES.admin.products, matchPrefix: true },
+  { labelKey: 'nav.wallets', href: ROUTES.admin.wallets, matchPrefix: true },
+  { labelKey: 'nav.analytics', href: ROUTES.admin.analytics },
+  { labelKey: 'nav.settings', href: ROUTES.admin.settings },
 ];
 
 export const BUYER_SIDEBAR_NAV: AdminNavItem[] = [
-  { label: 'Browse', href: ROUTES.products, matchPrefix: true },
-  { label: 'Dashboard', href: ROUTES.dashboard },
-  { label: 'My Orders', href: ROUTES.orders, matchPrefix: true },
-  { label: 'Negotiations', href: ROUTES.negotiations, matchPrefix: true },
-  { label: 'Saved', href: ROUTES.savedProducts },
+  { labelKey: 'nav.browse', href: ROUTES.products, matchPrefix: true },
+  { labelKey: 'nav.dashboard', href: ROUTES.dashboard },
+  { labelKey: 'nav.myOrders', href: ROUTES.orders, matchPrefix: true },
+  { labelKey: 'nav.negotiations', href: ROUTES.negotiations, matchPrefix: true },
+  { labelKey: 'nav.saved', href: ROUTES.savedProducts },
 ];
 
 export const BUYER_SIDEBAR_ACCOUNT: AdminNavItem[] = [
-  { label: 'Wallet', href: ROUTES.wallet },
-  { label: 'Profile', href: ROUTES.profile, matchPrefix: true },
-  { label: 'Notifications', href: ROUTES.notifications },
-  { label: 'Settings', href: ROUTES.settings },
+  { labelKey: 'nav.wallet', href: ROUTES.wallet },
+  { labelKey: 'nav.profile', href: ROUTES.profile, matchPrefix: true },
+  { labelKey: 'nav.notifications', href: ROUTES.notifications },
+  { labelKey: 'nav.settings', href: ROUTES.settings },
 ];
 
 export const SELLER_SIDEBAR_NAV: AdminNavItem[] = [
-  { label: 'Dashboard', href: ROUTES.dashboard },
-  { label: 'My Listings', href: ROUTES.sellerProducts, matchPrefix: true },
-  { label: 'Add Listing', href: ROUTES.productCreate },
-  { label: 'My Orders', href: ROUTES.orders, matchPrefix: true },
-  { label: 'Negotiations', href: ROUTES.negotiations, matchPrefix: true },
+  { labelKey: 'nav.dashboard', href: ROUTES.dashboard },
+  { labelKey: 'nav.myListings', href: ROUTES.sellerProducts, matchPrefix: true },
+  { labelKey: 'nav.addListing', href: ROUTES.productCreate },
+  { labelKey: 'nav.myOrders', href: ROUTES.orders, matchPrefix: true },
+  { labelKey: 'nav.negotiations', href: ROUTES.negotiations, matchPrefix: true },
 ];
 
 export const SELLER_SIDEBAR_ACCOUNT: AdminNavItem[] = [
-  { label: 'Wallet', href: ROUTES.wallet },
-  { label: 'Profile', href: ROUTES.profile, matchPrefix: true },
-  { label: 'Notifications', href: ROUTES.notifications },
-  { label: 'Settings', href: ROUTES.settings },
+  { labelKey: 'nav.wallet', href: ROUTES.wallet },
+  { labelKey: 'nav.profile', href: ROUTES.profile, matchPrefix: true },
+  { labelKey: 'nav.notifications', href: ROUTES.notifications },
+  { labelKey: 'nav.settings', href: ROUTES.settings },
 ];
 
 export const ADMIN_SIDEBAR_ACCOUNT: AdminNavItem[] = [
-  { label: 'Notifications', href: ROUTES.notifications },
+  { labelKey: 'nav.notifications', href: ROUTES.notifications },
 ];
 
 /** Marketplace routes reserved for buyers and sellers — not admins. */
@@ -202,28 +202,28 @@ export function getProfileMenuLinks(role: UserRole): NavLink[] {
   switch (role) {
     case UserRole.ADMIN:
       return [
-        { label: 'Profile', href: ROUTES.admin.settings },
-        { label: 'Admin Dashboard', href: ROUTES.admin.dashboard },
-        { label: 'Platform Wallets', href: ROUTES.admin.wallets },
-        { label: 'Notifications', href: ROUTES.notifications },
+        { labelKey: 'nav.profile', href: ROUTES.admin.settings },
+        { labelKey: 'nav.adminDashboard', href: ROUTES.admin.dashboard },
+        { labelKey: 'nav.platformWallets', href: ROUTES.admin.wallets },
+        { labelKey: 'nav.notifications', href: ROUTES.notifications },
       ];
     case UserRole.SELLER:
       return [
-        { label: 'Profile', href: ROUTES.profile },
-        { label: 'Seller Dashboard', href: ROUTES.dashboard },
-        { label: 'Wallet', href: ROUTES.wallet },
-        { label: 'Notifications', href: ROUTES.notifications },
-        { label: 'Settings', href: ROUTES.settings },
+        { labelKey: 'nav.profile', href: ROUTES.profile },
+        { labelKey: 'nav.sellerDashboard', href: ROUTES.dashboard },
+        { labelKey: 'nav.wallet', href: ROUTES.wallet },
+        { labelKey: 'nav.notifications', href: ROUTES.notifications },
+        { labelKey: 'nav.settings', href: ROUTES.settings },
       ];
     case UserRole.BUYER:
     default:
       return [
-        { label: 'Profile', href: ROUTES.profile },
-        { label: 'Dashboard', href: ROUTES.dashboard },
-        { label: 'Become a Seller', href: ROUTES.becomeSeller },
-        { label: 'Wallet', href: ROUTES.wallet },
-        { label: 'Notifications', href: ROUTES.notifications },
-        { label: 'Settings', href: ROUTES.settings },
+        { labelKey: 'nav.profile', href: ROUTES.profile },
+        { labelKey: 'nav.dashboard', href: ROUTES.dashboard },
+        { labelKey: 'nav.becomeSeller', href: ROUTES.becomeSeller },
+        { labelKey: 'nav.wallet', href: ROUTES.wallet },
+        { labelKey: 'nav.notifications', href: ROUTES.notifications },
+        { labelKey: 'nav.settings', href: ROUTES.settings },
       ];
   }
 }
