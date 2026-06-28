@@ -1,11 +1,11 @@
 'use client';
 
-import { Bell, Menu, ChevronRight } from 'lucide-react';
+import { Bell, ShoppingCart, Menu, ChevronRight } from '@/lib/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotificationContext } from '@/contexts/NotificationContext';
-import { UserRole } from '@/types';
+import { ROUTES } from '@/lib/routes';
 import { imageUrl } from '@/lib/utils';
 import { getAdminHomePath } from '@/lib/appPaths';
 import { useI18n } from '@/contexts/I18nContext';
@@ -69,7 +69,7 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
             <div className="flex items-center gap-1">
 
 
-                <Link href={'/notifications'}
+                <Link href={ROUTES.notifications}
                     className="relative p-2 text-muted-foreground hover:text-foreground rounded-xl hover:bg-accent transition-colors"
                     title={t('dashboardTopbar.notifications')}>
                     <Bell size={18} />
@@ -80,7 +80,7 @@ export default function DashboardTopbar({ onMenuClick, title }: Props) {
                     )}
                 </Link>
 
-                <Link href={profileHref}
+                <Link href={ROUTES.profile}
                     className="ml-1 flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-accent transition-colors"
                     title={t('dashboardTopbar.profile')}>
                     <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center overflow-hidden shrink-0">

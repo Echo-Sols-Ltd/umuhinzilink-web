@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Heart, Package } from 'lucide-react';
+import { Heart, Package } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import { useI18n } from '@/contexts/I18nContext';

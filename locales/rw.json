@@ -249,6 +249,65 @@
       "error": "Habaye ikibazo mu kwishyura."
     }
   },
+  "orderStatus": {
+    "tracker": {
+      "orderPlaced": {
+        "label": "Igitumizwa cyashyizweho",
+        "description": "Igitumizwa cyawe cyakiriwe"
+      },
+      "paymentPending": {
+        "label": "Kwishyura bitegereje",
+        "description": "Tegereza kwishyura ukoresheje wallet"
+      },
+      "paymentComplete": {
+        "label": "Kwishyura byakiriwe",
+        "description": "Kwishyura byemejwe ukoresheje wallet"
+      },
+      "orderConfirmed": {
+        "label": "Igitumizwa cyemewe",
+        "description": "Umucuruzi yemeje igitekerezo cyawe"
+      },
+      "processing": {
+        "label": "Biri gutunganywa",
+        "description": "Igitumizwa cyawe kiritegurwa"
+      },
+      "shipped": {
+        "label": "Byoherejwe",
+        "description": "Igitumizwa cyawe kirimo gutwara"
+      },
+      "delivered": {
+        "label": "Byatanzwe",
+        "description": "Igitumizwa cyawe cyatanzwe"
+      },
+      "completed": {
+        "label": "Byarangiye",
+        "description": "Igitumizwa cyawe cyarangiye"
+      },
+      "cancelled": {
+        "label": "Igitumizwa cyahagaritswe",
+        "description": "Iki gitumizwa cyahagaritswe"
+      },
+      "currentStatus": "Imiterere y'ikigereranyo: {{status}}"
+    }
+  },
+  "orderManagement": {
+    "dashboard": {
+      "searchPlaceholder": "Shakisha ibitumwa...",
+      "filters": "Muyunguruzo",
+      "export": "Kohereza hanze",
+      "status": "Imiterere",
+      "sortBy": "Gura nkurikije",
+      "allOrders": "Ibitumwa byose",
+      "pending": "Bitegereje",
+      "active": "Biri gukora",
+      "completed": "Byarangiye",
+      "cancelled": "Byakuweho",
+      "newestFirst": "Ibya vuba mbere",
+      "oldestFirst": "Ibya kera mbere",
+      "highestAmount": "Amafaranga menshi",
+      "lowestAmount": "Amafaranga make"
+    }
+  },
   "products": {
     "created": {
       "success": "Igicuruzwa cyakozwe neza.",
@@ -884,7 +943,7 @@
       "title": "Murakaza neza",
       "subtitle": "Injira muri konti yawe",
       "rememberMe": "Nyibuka",
-      "forgot": "Wibagiwe?",
+      "forgot": "Wibagiwe ijambo ry'ibanga",
       "signingIn": "Birimo kwinjira…",
       "signIn": "Injira",
       "noAccount": "Nta konti ufite?",
@@ -2138,6 +2197,49 @@
         "manageProducts": "Gucunga ibicuruzwa"
       }
     },
+    "wallet": {
+      "title": "Wallet y'Umucuruzi",
+      "subtitle": "Kurikirana amafaranga winjiza, ibyakuruwe, n'amateka y'ibikorwa",
+      "balance": "Amafaranga Ahari",
+      "active": "Irakora",
+      "addMoney": "Ongeramo Amafaranga",
+      "stats": {
+        "totalEarnings": "Amafaranga Yinjiye",
+        "totalDeposits": "Abyinjijwe",
+        "withdrawals": "Ibyakuruwe",
+        "pending": "Bitegereje"
+      },
+      "filters": {
+        "allTransactions": "Byose",
+        "earnings": "Amafaranga winjije",
+        "deposits": "Abyinjijwe",
+        "payments": "Kwishyura",
+        "withdrawals": "Ibyakuruwe",
+        "newestFirst": "Bishya mbere",
+        "oldestFirst": "Bya kera mbere",
+        "highestAmount": "Amafaranga menshi",
+        "lowestAmount": "Amafaranga make",
+        "searchPlaceholder": "Shakisha ibikorwa…"
+      },
+      "history": "Amateka y'ibikorwa",
+      "noTransactions": "Nta bikorwa birahari",
+      "historyDescription": "Kwishyura kw'ubucuruzi n'ibikorwa bya wallet bizagaragara hano",
+      "tryAdjusting": "Gerageza gushakisha cyangwa guhindura filter",
+      "modal": {
+        "title": "Ongeramo amafaranga muri wallet",
+        "amount": "Amafaranga",
+        "description": "Ibisobanuro (si ngombwa)",
+        "descriptionPlaceholder": "Ongeramo inyandiko ku byinjijwe",
+        "instructionsTitle": "Amabwiriza yo kwishyura",
+        "instructions": "Soza kwishyura ukoresheje uburyo wahisemo. Amafaranga azagaragara muri wallet yawe nyuma yo kwemezwa.",
+        "cancel": "Hagarika",
+        "confirm": "Ongeramo amafaranga"
+      },
+      "quickLinks": {
+        "listings": "Ibicuruzwa byanjye",
+        "orders": "Ibisabwa byanjye"
+      }
+    },
     "orders": {
       "toasts": {
         "orderNotFound": "Igitumizwa Ntikibonetse",
@@ -2281,20 +2383,34 @@
       "marketplace": "Ibicuruzwa",
       "howItWorks": "Uko bikora",
       "aboutUs": "Bitwerekeyeho",
+      "why": "Impamvu wa UmuhinziLink",
+      "whoIsItFor": "Ni abahe?",
       "features": "Ibiranga",
+      "becomeSeller": "Ba umucuruzi",
+      "signIn": "Injira",
+      "getStarted": "Tangira",
       "agribusiness": "Ubuhinzi n'Ubucuruzi",
       "lenders": "Abaguriza",
       "contact": "Twandikire"
     },
     "hero": {
+      "badge": "Isoko ya digitale y'ubuhinzi mu Rwanda — irakora ubu",
       "title": {
-        "line1": "Huza abahinzi na",
-        "highlight": "amasoko ya digitale"
+        "line1": "Gura. Gucuruza. Gukura.",
+        "line2": "Byose hamwe, ahantu hamwe.",
+        "highlight": "Kuva ku murima kugeza ku isoko."
       },
-      "subtitle": "Dufasha abahinzi bato mu Rwanda gukoresha ikoranabuhanga kugirango babone amasoko, bahabwe inama z'ubuhinzi zishingiye kuri AI kandi babone inguzanyo z'ubuhinzi.",
+      "subtitle": "Huza n'abahinzi n'abaguzi bemejwe ako kanya — reba ibicuruzwa, gana ibiciro, kandi ugurishe mu buryo bwizewe ahantu hamwe.",
       "cta": {
-        "getStarted": "Tangira",
-        "viewDemo": "Reba demo"
+        "getStarted": "Reba isoko",
+        "viewDemo": "Uko bikora"
+      },
+      "socialProof": "Abahinzi n'abaguzi barenga 5,000 bahujwe",
+      "slides": {
+        "marketplace": "Abahinzi n'abaguzi kuri UmuhinziLink",
+        "market": "Imboga n'imbuto nshya ku masoko",
+        "farmer": "Umuhinzi ukoresha ikoranabuhanga mu murima",
+        "produce": "Umusaruro mushya witeguye kugurishwa"
       },
       "stats": {
         "registeredFarmers": "Abahinzi biyandikishije",
@@ -2328,8 +2444,22 @@
       "learnMore": "Menya byinshi"
     },
     "whoWeServe": {
-      "title": "Abaduha serivisi",
-      "subtitle": "Imiryango itatu ihuza iterambere ry'ubuhinzi",
+      "title": "Abahinzi, abagabuzi n'abaguzi bose",
+      "subtitle": "Abahinzi, abagabuzi b'inyongeramusaruro n'abaguzi — imiryango itatu itera imbere ubuhinzi mu Rwanda, ihuza ku rubuga rumwe.",
+      "cards": {
+        "farmers": {
+          "title": "Abahinzi",
+          "description": "Shyiraho umusaruro, bona inama z'ubuhinzi za AI, ubone inguzanyo y'inyongeramusaruro, ukurikirane ibiciro — hamwe na OTP kuri telefone n'Ikinyarwanda."
+        },
+        "suppliers": {
+          "title": "Abagabuzi",
+          "description": "Genzura ububiko bw'inyongeramusaruro, huza ibyifuzo by'abahinzi, ucunge ibisabwa by'inguzanyo, ukurikirane igurishwa n'isesengura."
+        },
+        "buyers": {
+          "title": "Abaguzi",
+          "description": "Reba umusaruro mushya, shungura ukurikije akarere n'igiciro, vugana n'umuhinzi, wishyure mu buryo butekanye binyuze ku rubuga."
+        }
+      },
       "groups": {
         "farmers": {
           "title": "Abahinzi",
@@ -2361,8 +2491,53 @@
       }
     },
     "features": {
-      "title": "Ibiranga urubuga",
-      "subtitle": "Ibikoresho byuzuye by'ubuhinzi bugezweho",
+      "title": "Twubake urubuga, noneho ni ugutera imbere",
+      "subtitle": "Waba ugura umusaruro cyangwa ugurisha ku isambu, byose byagenewe kugenda byoroshye.",
+      "tabs": {
+        "ariaLabel": "Ibiranga urubuga ukurikije uruhare",
+        "buyer": "Umuguzi",
+        "seller": "Umucuruzi"
+      },
+      "buyer": {
+        "cards": {
+          "browse": {
+            "title": "Reba umusaruro",
+            "description": "Shakisha ibicuruzwa bishya, shungura ukurikije akarere n'igiciro, ubone ibyo ukeneye."
+          },
+          "order": {
+            "title": "Tanga ibyatumijwe",
+            "description": "Hitamo abacuruzi bemewe utange ibyatumijwe ku isoko."
+          },
+          "negotiate": {
+            "title": "Ganira ku biciro",
+            "description": "Ibiganiro byose hagati y'umuguzi n'umucuruzi n'ibiciro ahantu hamwe."
+          },
+          "trust": {
+            "title": "Gura wizeye",
+            "description": "Hitamo abacuruzi ukurikije amanota, isuzuma n'imyirondoro yemewe."
+          }
+        }
+      },
+      "seller": {
+        "cards": {
+          "list": {
+            "title": "Tangaza umusaruro",
+            "description": "Ongeramo amafoto, shiraho ibiciro, utangaze ibicuruzwa mu minota."
+          },
+          "findBuyers": {
+            "title": "Shaka abaguzi",
+            "description": "Huza n'abaguzi bashaka ibihingwa byawe n'ibikoresho by'ubuhinzi."
+          },
+          "collaborate": {
+            "title": "Vugana n'abaguzi",
+            "description": "Ganira, tunganya ibyatumijwe utavuye ku rubuga."
+          },
+          "monetize": {
+            "title": "Bona amafaranga mu mutekano",
+            "description": "Hindura umusaruro wawe amafaranga ukoresheje kwishyura guteranye kandi mutekanye."
+          }
+        }
+      },
       "items": {
         "aiAdvisory": {
           "title": "Inama zishingiye kuri AI",

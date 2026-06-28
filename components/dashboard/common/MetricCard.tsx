@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus } from '@/lib/icons';
 import { MetricCardProps } from '@/types';
 import { cn } from '@/lib/utils';
 

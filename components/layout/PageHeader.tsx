@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';
 
@@ -36,9 +36,9 @@ export default function PageHeader({
             {resolvedBackLabel}
           </Link>
         )}
-        <h1 className="text-xl font-bold text-foreground tracking-tight">{title}</h1>
+        <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{title}</h1>
         {description && (
-          <p className="text-sm text-muted-foreground mt-1">{description}</p>
+          <p className="mt-1 text-sm font-normal leading-relaxed text-muted-foreground">{description}</p>
         )}
       </div>
       {actions && (

@@ -13,7 +13,7 @@ import {
   MoreVertical,
   Calendar,
   DollarSign
-} from 'lucide-react';
+} from '@/lib/icons';
 import Image from 'next/image';
 import { Order, OrderStatus, isUnpaidOrder, isPaidOrder, getOrderStatusLabel, matchesOrderStatusFilter } from '@/types';
 import { cn } from '@/lib/utils';

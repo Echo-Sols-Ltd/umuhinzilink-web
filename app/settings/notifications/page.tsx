@@ -12,7 +12,7 @@ import {
   TrendingUp,
   Megaphone,
   Settings
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function NotificationsSettingsPage() {
   const { t } = useI18n();

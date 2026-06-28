@@ -18,7 +18,7 @@ import { apiClient } from '@/services/client';
 import { socketService } from '@/services/socket';
 import { userService } from '@/services/users';
 import { HTTP_STATUS } from '@/services/constants';
-import { getHomePathForRole } from '@/lib/appPaths';
+import { getPostAuthRouteFromWindow } from '@/lib/routes';
 
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
@@ -208,7 +208,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.data.user.role === UserRole.SELLER) {
         await fetchSeller();
       }
-      router.replace(getHomePathForRole(res.data.user.role));
+      router.replace(getPostAuthRouteFromWindow(res.data.user.role));
     } catch {
       notify.error('Please try again', 'Error logging in');
     } finally {
@@ -233,7 +233,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         await fetchSeller();
       }
 
-      router.replace(getHomePathForRole(res.data.user.role));
+      router.replace(getPostAuthRouteFromWindow(res.data.user.role));
     } catch {
       notify.error('Please try again', 'Error logging in');
     } finally {
@@ -258,7 +258,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       persistSession(res.data.token, res.data.refreshToken, res.data.user);
       setIsAuthenticated(true);
       notify.success('Account created successfully', 'Register Success');
-      router.replace(getHomePathForRole(res.data.user.role));
+      router.replace(getPostAuthRouteFromWindow(res.data.user.role));
     } catch {
       notify.error('Please try again', 'Error registering');
     } finally {
@@ -310,6 +310,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(true);
       await fetchSeller();
       notify.success('Seller profile created successfully', 'Register Success');
+      router.replace(getPostAuthRouteFromWindow(res.data.user.role));
     } catch {
       notify.error('Please try again', 'Error registering seller');
     } finally {
@@ -330,7 +331,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       persistSession(res.data.token, res.data.refreshToken, res.data.user);
       setIsAuthenticated(true);
       notify.success('Email verified successfully', 'Verify Success');
-      router.replace(getHomePathForRole(res.data.user.role));
+      router.replace(getPostAuthRouteFromWindow(res.data.user.role));
     } catch {
       notify.error('Please try again', 'Error verifying');
     } finally {

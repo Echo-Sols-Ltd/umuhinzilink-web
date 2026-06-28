@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { Sprout, Share2 } from 'lucide-react';
+import { Sprout, Share2 } from '@/lib/icons';
+import { ROUTES } from '@/lib/routes';
 import Link from 'next/link';
 import ProductDetail from '@/components/products/ProductDetail';
 import DetailPageShell from '@/components/layout/DetailPageShell';
@@ -115,8 +116,8 @@ export default function ProductDetailPage() {
   };
 
   const breadcrumbs = [
-    { label: t('products.detail.breadcrumbs.home'), href: '/dashboard' },
-    { label: t('products.detail.breadcrumbs.products'), href: '/products' },
+    { label: 'Home', href: ROUTES.home },
+    { label: 'Products', href: ROUTES.products },
     ...(product ? [{ label: product.name }] : []),
   ];
 

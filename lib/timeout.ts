@@ -41,8 +41,8 @@ export const timeoutConfigs = {
   // Quick operations (form submissions, simple API calls)
   quick: 5000, // 5 seconds
 
-  // Standard operations (data fetching, search)
-  standard: 10000, // 10 seconds
+  // Standard operations (data fetching, search) — keep in sync with API_CONFIG.TIMEOUT
+  standard: 20000, // 20 seconds
 
   // Long operations (file uploads, complex processing)
   long: 30000, // 30 seconds

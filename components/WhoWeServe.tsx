@@ -1,187 +1,52 @@
 'use client';
 
+import { Sprout, Store, ShoppingBag } from '@/lib/icons';
 import { useI18n } from '@/contexts/I18nContext';
 
-const LucideIcons = {
-  Phone: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M3 5a2 2 0 012-2h2.5a1 1 0 011 .78l1 4a1 1 0 01-.25.92l-1.5 1.5a16 16 0 006.72 6.72l1.5-1.5a1 1 0 01.92-.25l4 1a1 1 0 01.78 1V19a2 2 0 01-2 2h-1C9.163 21 3 14.837 3 7V5z"
-      />
-    </svg>
-  ),
-  Leaf: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M5 13c0 5 4 9 9 9s9-4 9-9-4-9-9-9H5v9z"
-      />
-    </svg>
-  ),
-  CreditCard: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <rect x="2" y="5" width="20" height="14" rx="2" ry="2" />
-      <path d="M2 10h20" />
-    </svg>
-  ),
-  ChartBar: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path d="M3 3v18h18" />
-      <path d="M18 17V9" />
-      <path d="M13 17V5" />
-      <path d="M8 17v-3" />
-    </svg>
-  ),
-  ClipboardList: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path d="M9 5h6M9 3h6v2H9z" />
-      <rect x="5" y="5" width="14" height="14" rx="2" ry="2" />
-      <path d="M9 9h6M9 13h6M9 17h6" />
-    </svg>
-  ),
-  Users: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path d="M17 21v-2a4 4 0 00-3-3.87" />
-      <path d="M9 21v-2a4 4 0 013-3.87" />
-      <path d="M7 4a4 4 0 100 8 4 4 0 000-8z" />
-      <path d="M17 4a4 4 0 100 8 4 4 0 000-8z" />
-    </svg>
-  ),
-  Search: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  ),
-  Lock: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0110 0v4" />
-    </svg>
-  ),
-};
+const CARD_ICONS = {
+  farmers: Sprout,
+  suppliers: Store,
+  buyers: ShoppingBag,
+} as const;
+
+const CARD_KEYS = ['farmers', 'suppliers', 'buyers'] as const;
 
 export default function WhoWeServe() {
   const { t } = useI18n();
-  const data = [
-    {
-      titleKey: 'landing.whoWeServe.groups.farmers.title',
-      color: 'bg-success/10',
-      iconColor: 'text-success',
-      items: [
-        { icon: LucideIcons.Phone, textKey: 'landing.whoWeServe.groups.farmers.items.mobileOtp' },
-        { icon: LucideIcons.Leaf, textKey: 'landing.whoWeServe.groups.farmers.items.aiTips' },
-        { icon: LucideIcons.CreditCard, textKey: 'landing.whoWeServe.groups.farmers.items.creditAccess' },
-        { icon: LucideIcons.ChartBar, textKey: 'landing.whoWeServe.groups.farmers.items.marketTrends' },
-      ],
-    },
-    {
-      titleKey: 'landing.whoWeServe.groups.suppliers.title',
-      color: 'bg-info/10',
-      iconColor: 'text-info',
-      items: [
-        { icon: LucideIcons.ClipboardList, textKey: 'landing.whoWeServe.groups.suppliers.items.listInputs' },
-        { icon: LucideIcons.Users, textKey: 'landing.whoWeServe.groups.suppliers.items.demandMatching' },
-        { icon: LucideIcons.CreditCard, textKey: 'landing.whoWeServe.groups.suppliers.items.creditRequests' },
-        { icon: LucideIcons.ChartBar, textKey: 'landing.whoWeServe.groups.suppliers.items.salesAnalytics' },
-      ],
-    },
-    {
-      titleKey: 'landing.whoWeServe.groups.buyers.title',
-      color: 'bg-warning/10',
-      iconColor: 'text-warning',
-      items: [
-        { icon: LucideIcons.Search, textKey: 'landing.whoWeServe.groups.buyers.items.browseProduce' },
-        { icon: LucideIcons.ClipboardList, textKey: 'landing.whoWeServe.groups.buyers.items.filter' },
-        { icon: LucideIcons.Phone, textKey: 'landing.whoWeServe.groups.buyers.items.directContact' },
-        { icon: LucideIcons.Lock, textKey: 'landing.whoWeServe.groups.buyers.items.securePayments' },
-      ],
-    },
-  ];
 
   return (
-    <section className="py-12 bg-background">
-      <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-semibold text-foreground">{t('landing.whoWeServe.title')}</h2>
-        <p className="text-center text-muted-foreground mt-2">
-          {t('landing.whoWeServe.subtitle')}
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          {data.map(group => (
-            <div key={group.titleKey} className={`${group.color} rounded-lg shadow-sm p-6`}>
-              <h3 className="text-lg font-semibold text-foreground">{t(group.titleKey)}</h3>
-              <ul className="mt-4 space-y-3">
-                {group.items.map((item, idx) => (
-                  <li key={idx} className="flex items-start space-x-3">
-                    <span className={`${group.iconColor}`}>{item.icon}</span>
-                    <span className="text-foreground text-sm">{t(item.textKey)}</span>
-                  </li>
-                ))}
-              </ul>
+    <div className="landing-who-section py-16 sm:py-20 lg:py-24 bg-background">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="landing-content-block">
+          <div className="landing-h2-block-2col">
+            <h2 className="landing-h2">{t('landing.whoWeServe.title')}</h2>
+            <div className="landing-h2-subheader-w">
+              <p className="landing-h-subheader">{t('landing.whoWeServe.subtitle')}</p>
             </div>
-          ))}
+          </div>
+
+          <div className="landing-3col-grid">
+            {CARD_KEYS.map((key) => {
+              const Icon = CARD_ICONS[key];
+              return (
+                <div key={key} className="landing-benefit-card">
+                  <div className="landing-benefit-card-icon-w">
+                    <Icon size={23} strokeWidth={1.75} className="text-primary" />
+                  </div>
+                  <div className="landing-benefit-card-header-w">
+                    <h3 className="landing-benefit-card-header">
+                      {t(`landing.whoWeServe.cards.${key}.title`)}
+                    </h3>
+                    <p className="landing-benefit-card-text">
+                      {t(`landing.whoWeServe.cards.${key}.description`)}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

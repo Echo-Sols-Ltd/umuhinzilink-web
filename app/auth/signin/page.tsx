@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from '@/lib/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import AuthFooter from '@/components/auth/AuthFooter';
 import GoogleLogin from '@/components/GoogleLogin';
+import { ROUTES } from '@/lib/routes';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -119,12 +120,16 @@ export default function SignIn() {
         {/* RIGHT – Form panel */}
         <div className="w-full md:w-[58%] flex flex-col justify-center px-6 py-8 sm:px-10">
           {/* Logo + brand */}
-          <div className="flex items-center gap-3 mb-6">
+          <Link
+            href={ROUTES.home}
+            className="flex items-center gap-3 mb-6 w-fit rounded-lg transition-opacity hover:opacity-80"
+            aria-label="UmuhinziLink home"
+          >
             <div className="w-10 h-10 rounded-full flex items-center justify-center">
-              <img src="/icon.png" alt="Logo" className="w-10 h-10 object-contain" />
+              <img src="/icon.png" alt="" className="w-10 h-10 object-contain" />
             </div>
             <span className="font-bold text-lg text-foreground">UmuhinziLink</span>
-          </div>
+          </Link>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-1">
             {t('auth.signIn.title')}
@@ -145,8 +150,8 @@ export default function SignIn() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`bg-muted/50 border border-border h-12 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${
-                  touched.email && fieldErrors.email ? 'border-destructive focus-visible:ring-destructive' : ''
+                className={`bg-muted/50 border border-border/80 h-12 rounded-xl text-sm shadow-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors ${
+                  touched.email && fieldErrors.email ? 'border-destructive focus-visible:ring-destructive/30' : ''
                 }`}
               />
               {touched.email && fieldErrors.email && (
@@ -165,8 +170,8 @@ export default function SignIn() {
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                className={`bg-muted/50 border border-border h-12 rounded-xl text-sm pr-10 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${
-                  touched.password && fieldErrors.password ? 'border-destructive focus-visible:ring-destructive' : ''
+                className={`bg-muted/50 border border-border/80 h-12 rounded-xl text-sm pr-10 shadow-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors ${
+                  touched.password && fieldErrors.password ? 'border-destructive focus-visible:ring-destructive/30' : ''
                 }`}
               />
               <button
@@ -183,7 +188,7 @@ export default function SignIn() {
 
             {/* Forgot password */}
             <div className="flex justify-end">
-              <Link href="/auth/forgot-password" className="text-sm text-muted-foreground hover:text-primary font-medium hover:underline">
+              <Link href="/auth/forgot-password" className="text-xs text-muted-foreground hover:text-primary font-medium hover:underline">
                 {t('auth.signIn.forgot')}
               </Link>
             </div>
@@ -192,7 +197,7 @@ export default function SignIn() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-base shadow-sm transition-colors"
+              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-base shadow-none transition-colors"
             >
               {loading ? t('auth.signIn.signingIn') : t('auth.signIn.signIn')}
             </Button>
@@ -206,10 +211,8 @@ export default function SignIn() {
           </div>
 
           {/* Social buttons */}
-          <div className="grid grid-cols-1 gap-3">
-            <div className="flex justify-center">
-              <GoogleLogin />
-            </div>
+          <div className="w-full">
+            <GoogleLogin mode="signin" />
           </div>
 
           {/* Sign up link */}

@@ -11,7 +11,8 @@ import {
   EyeOff,
   Camera,
   Shield,
-} from 'lucide-react';
+  Bell
+} from '@/lib/icons';
 
 export default function AccountSettingsPage() {
   const { t } = useI18n();

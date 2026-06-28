@@ -1,14 +1,15 @@
-import type { Metadata, Viewport } from 'next'; // Add Viewport import
-import { Poppins } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import { AppProviders } from '@/contexts/AppProviders';
 import ModalToastContainer from '@/components/ui/modal-toast-container';
 import { OfflineIndicator } from '@/components/ui/progressive-loading';
 import './globals.css';
 
-const poppins = Poppins({
-  variable: '--font-poppins',
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'], // Add subsets
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -27,8 +28,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${poppins.variable} antialiased`}>
-      <body className="bg-background text-foreground min-h-screen overflow-x-hidden">
+    <html lang="en" className={`${inter.variable} antialiased`}>
+      <body className="min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
         <OfflineIndicator />
         <AppProviders>
           <main id="main-content" tabIndex={-1} >

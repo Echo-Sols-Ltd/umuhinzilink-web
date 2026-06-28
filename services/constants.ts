@@ -1,10 +1,12 @@
 // API Configuration Constants
 
 const PROD_SERVER = 'https://api.umuhinzilink.echo-solution.com';
-const DEV_SERVER = 'http://localhost:7022'
+const DEV_SERVER = 'http://localhost:7022';
 
 export const API_CONFIG = {
-  BASE_URL: process.env.NODE_ENV === 'development' ? DEV_SERVER : PROD_SERVER,
+  BASE_URL:
+    process.env.NEXT_PUBLIC_API_BASE_URL ??
+    (process.env.NODE_ENV === 'development' ? DEV_SERVER : PROD_SERVER),
   API_VERSION: 'v1',
   TIMEOUT: 20000,
 };
@@ -36,6 +38,10 @@ export const API_ENDPOINTS = {
     BY_ID: (id: string) => `/sellers/${id}`,
     ME: '/sellers/me',
   },
+  BUYER: {
+    ME: '/buyers/me',
+    BY_ID: (id: string) => `/buyers/${id}`,
+  },
   DASHBOARD: {
     SELLER_STATS: '/dashboard/seller',
     BUYER_STATS: '/dashboard/buyer',
@@ -59,11 +65,13 @@ export const API_ENDPOINTS = {
     SELLER_ALL: '/orders/seller',
   },
   NEGOTIATION: {
-    ALL: '/negotiations',
     BY_ID: (id: string) => `/negotiations/${id}`,
     MESSAGES: (id: string) => `/negotiations/${id}/messages`,
     BUYER: '/negotiations/buyer',
+    BUYER_ACTIVE: '/negotiations/buyer/active',
     SELLER: '/negotiations/seller',
+    SELLER_ACTIVE: '/negotiations/seller/active',
+    BY_ORDER: (orderId: string) => `/negotiations/order/${orderId}`,
     SET_AGREED_PRICE: (id: string) => `/negotiations/${id}/set-agreed-price`,
     SET_BUYER_PRICE: (id: string) => `/negotiations/${id}/set-buyer-price`,
     BUYER_ACCEPT: (id: string) => `/negotiations/${id}/accept`,
@@ -76,6 +84,8 @@ export const API_ENDPOINTS = {
     ORDERS: '/admin/orders',
     BUYERS: '/admin/buyers',
     SELLERS: '/admin/sellers',
+    ANALYTICS: '/admin/analytics',
+    CONFIG: '/admin/config',
     USERS_BY_ID: (id: string) => `/admin/users/${id}`,
     PRODUCTS_BY_ID: (id: string) => `/admin/products/${id}`,
     ORDERS_BY_ID: (id: string) => `/admin/orders/${id}`,

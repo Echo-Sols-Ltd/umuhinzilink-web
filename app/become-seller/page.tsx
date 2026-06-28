@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 import { useRouter } from 'next/navigation';
 import {
     Sprout, MapPin, Phone, FileText, ChevronRight,
     ChevronLeft, CheckCircle, Package, TrendingUp,
     Users, ArrowRight, Wheat, Leaf, ShoppingBag
-} from 'lucide-react';
+} from '@/lib/icons';
 import { SellerRegistration } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
@@ -219,9 +220,9 @@ export default function BecomeSeller() {
                             </button>
 
                             <p className="text-center text-xs text-muted-foreground mt-4">
-                                {t('pages.becomeSeller.alreadySeller')}{' '}
-                                <Link href="/seller/dashboard" className="text-green-600 font-medium hover:underline">
-                                    {t('pages.becomeSeller.goToDashboard')}
+                                Already a seller?{' '}
+                                <Link href={ROUTES.dashboard} className="text-green-600 font-medium hover:underline">
+                                    Go to dashboard
                                 </Link>
                             </p>
                         </div>
@@ -378,7 +379,7 @@ export default function BecomeSeller() {
                                     {t('pages.becomeSeller.addFirstListing')}
                                 </Link>
                                 <Link
-                                    href="/dashboard"
+                                    href={ROUTES.home}
                                     className="w-full h-11 bg-white dark:bg-gray-900 border border-border hover:bg-gray-50 dark:hover:bg-gray-800/50 text-foreground font-medium text-sm rounded-xl flex items-center justify-center gap-2 transition-colors">
                                     {t('pages.becomeSeller.goToDashboard')}
                                 </Link>

@@ -4,8 +4,8 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Plus, Search, Package, ArrowUpDown,
-  LayoutGrid, List,
-} from 'lucide-react';
+  LayoutGrid, List, CheckCircle, AlertTriangle, XCircle, FileText, PauseCircle,
+} from '@/lib/icons';
 import ProductCard from '@/components/products/ProductCard';
 import { useProduct } from '@/contexts/ProductContext';
 import { useI18n } from '@/contexts/I18nContext';
@@ -13,6 +13,7 @@ import { Product, ProductStatus } from '@/types';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import { ProductGridSkeleton } from '@/components/layout/PageLoading';
+import SellerGuard from '@/contexts/guard/SellerGuard';
 
 type SortKey = 'name' | 'unitPrice' | 'stockQuantity' | 'viewCount' | 'createdAt';
 type ViewMode = 'grid' | 'list';
@@ -72,7 +73,14 @@ function EmptyState({ filtered }: { filtered: boolean }) {
 }
 
 export default function SellerListings() {
-  const { t } = useI18n();
+  return (
+    <SellerGuard>
+      <SellerListingsContent />
+    </SellerGuard>
+  );
+}
+
+function SellerListingsContent() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ProductStatus | 'ALL'>('ALL');
   const [sortKey, setSortKey] = useState<SortKey>('createdAt');

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWallet } from '@/contexts/WalletContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -7,7 +8,6 @@ import { useNegotiation } from '@/contexts/NegotiationContext';
 import { useRouter } from 'next/navigation';
 import ProfileComponent from '@/components/profile/Profile';
 import AppLayout from '@/components/layout/AppLayout';
-import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
 import { useI18n } from '@/contexts/I18nContext';
@@ -20,6 +20,12 @@ export default function ProfilePage() {
   const { negotiations, loading: negotiationsLoading } = useNegotiation();
   const router = useRouter();
 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/auth/signin?redirect=/profile');
+    }
+  }, [authLoading, user, router]);
+
   if (authLoading) {
     return (
       <PageLoading
@@ -30,8 +36,7 @@ export default function ProfilePage() {
   }
 
   if (!user) {
-    router.push('/auth/signin');
-    return null;
+    return <PageLoading label="Redirecting" description="Taking you to sign in…" />;
   }
 
   const walletBalance = wallet?.balance ?? 0;
@@ -45,11 +50,7 @@ export default function ProfilePage() {
   );
 
   return (
-    <AppLayout maxWidth="max-w-6xl" mainClassName="space-y-0">
-      <PageHeader
-        title={t('profile.page.title')}
-        description={t('profile.page.description')}
-      />
+    <AppLayout maxWidth="max-w-6xl" mainClassName="space-y-6 pb-8">
       <ProfileComponent
         user={user}
         walletBalance={walletBalance}

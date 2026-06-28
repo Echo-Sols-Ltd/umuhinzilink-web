@@ -1,380 +1,266 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   BarChart3,
-  TrendingUp,
-  TrendingDown,
   DollarSign,
   Users,
   ShoppingCart,
   Package,
-  ChevronLeft,
-  Calendar,
   Download,
-  Filter,
-} from 'lucide-react';
-import Sidebar from '@/components/shared/Sidebar';
+  RefreshCw,
+} from '@/lib/icons';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import PageLoading from '@/components/layout/PageLoading';
-import { useI18n } from '@/contexts/I18nContext';
-import { UserRole as UserType } from '@/types';
-
-interface AnalyticsData {
-  revenue: {
-    current: number;
-    previous: number;
-    growth: number;
-  };
-  orders: {
-    current: number;
-    previous: number;
-    growth: number;
-  };
-  users: {
-    current: number;
-    previous: number;
-    growth: number;
-  };
-  products: {
-    current: number;
-    previous: number;
-    growth: number;
-  };
-  topProducts: Array<{
-    name: string;
-    revenue: number;
-    orders: number;
-  }>;
-  topFarmers: Array<{
-    name: string;
-    revenue: number;
-    orders: number;
-    products: number;
-  }>;
-  monthlyData: Array<{
-    month: string;
-    revenue: number;
-    orders: number;
-    users: number;
-  }>;
-}
+import AdminStatCard from '@/components/admin/AdminStatCard';
+import AdminDashboardSection from '@/components/admin/AdminDashboardSection';
+import {
+  MonthlyOverviewChart,
+  OrdersTrendChart,
+  RevenueTrendChart,
+  TopProductsChart,
+  TopSellersChart,
+} from '@/components/admin/AdminAnalyticsCharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { AdminAnalyticsViewModel } from '@/types/adminAnalytics';
+import { fetchAdminAnalytics, formatRwf } from '@/services/adminAnalytics';
+import { analyticsService } from '@/services/analytics';
+import { notify } from '@/lib/notify';
 
 function RevenueAnalytics() {
-  const router = useRouter();
-  const { t } = useI18n();
-  const [timeRange, setTimeRange] = useState('month');
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [analytics, setAnalytics] = useState<AdminAnalyticsViewModel | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadAnalytics = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    setError(null);
+
+    try {
+      const data = await fetchAdminAnalytics();
+      setAnalytics(data);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load analytics';
+      setError(message);
+      notify.error(message, 'Analytics');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-    // Simulate loading analytics data
-    setTimeout(() => {
-      setAnalytics({
-        revenue: {
-          current: 125000,
-          previous: 100000,
-          growth: 25,
-        },
-        orders: {
-          current: 1250,
-          previous: 1000,
-          growth: 25,
-        },
-        users: {
-          current: 2500,
-          previous: 2000,
-          growth: 25,
-        },
-        products: {
-          current: 500,
-          previous: 400,
-          growth: 25,
-        },
-        topProducts: [
-          { name: 'Fresh Tomatoes', revenue: 15000, orders: 150 },
-          { name: 'Organic Lettuce', revenue: 12000, orders: 120 },
-          { name: 'Farm Eggs', revenue: 10000, orders: 100 },
-        ],
-        topFarmers: [
-          { name: 'Green Valley Farm', revenue: 25000, orders: 250, products: 15 },
-          { name: 'Sunshine Acres', revenue: 20000, orders: 200, products: 12 },
-          { name: 'Happy Harvest', revenue: 18000, orders: 180, products: 10 },
-        ],
-        monthlyData: [
-          { month: 'Jan', revenue: 20000, orders: 200, users: 400 },
-          { month: 'Feb', revenue: 22000, orders: 220, users: 440 },
-          { month: 'Mar', revenue: 25000, orders: 250, users: 500 },
-        ],
-      });
-      setLoading(false);
-    }, 1000);
-  }, [timeRange]);
+    loadAnalytics();
+  }, [loadAnalytics]);
 
-  if (!analytics) {
+  const handleExport = () => {
+    if (!analytics?.monthlyData.length) {
+      notify.error('No monthly data available to export yet.');
+      return;
+    }
+    analyticsService.exportToCSV(analytics.monthlyData, 'umuhinzilink-admin-analytics');
+  };
+
+  if (loading) {
     return (
-      <div className="flex h-screen bg-background overflow-hidden">
-        <Sidebar userType={UserType.ADMIN} activeItem="Analytics" />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <AdminPageHeader
-            title={t('admin.analytics.title')}
-            description={t('admin.analytics.subtitle')}
+      <>
+        <AdminPageHeader
+          title="Analytics Dashboard"
+          description="Revenue insights and platform metrics"
+        />
+        <main className="flex flex-1 items-center justify-center">
+          <PageLoading
+            variant="section"
+            label="Loading analytics"
+            description="Fetching platform metrics from the API…"
+            className="bg-transparent dark:bg-transparent"
           />
-          <main className="flex-1 flex items-center justify-center">
-            <PageLoading
-              variant="section"
-              label={t('admin.analytics.loadingLabel')}
-              description={t('admin.analytics.loadingDescription')}
-              className="bg-transparent dark:bg-transparent"
-            />
-          </main>
-        </div>
-      </div>
+        </main>
+      </>
+    );
+  }
+
+  if (error || !analytics) {
+    return (
+      <>
+        <AdminPageHeader
+          title="Analytics Dashboard"
+          description="Revenue insights and platform metrics"
+        />
+        <main className="flex flex-1 items-center justify-center p-6">
+          <div className="max-w-md space-y-4 text-center">
+            <BarChart3 className="mx-auto h-10 w-10 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
+              {error ?? 'Analytics data is unavailable right now.'}
+            </p>
+            <Button onClick={() => loadAnalytics()}>Retry</Button>
+          </div>
+        </main>
+      </>
     );
   }
 
   const statCards = [
     {
-      titleKey: 'admin.analytics.stats.totalRevenue',
-      value: `$${(analytics.revenue.current || 0).toLocaleString()}`,
-      change: `${analytics.revenue.growth > 0 ? '+' : ''}${analytics.revenue.growth || 0}%`,
-      changeType: analytics.revenue.growth > 0 ? 'positive' : 'negative',
+      title: 'Platform Revenue',
+      value: analytics.revenue.current,
+      format: 'currency' as const,
+      change: `${analytics.revenue.growth > 0 ? '+' : ''}${analytics.revenue.growth}% vs last period`,
+      changeType:
+        analytics.revenue.growth >= 0
+          ? ('positive' as const)
+          : ('negative' as const),
       icon: DollarSign,
-      color: 'bg-green-500',
+      iconClassName: 'bg-emerald-500',
     },
     {
-      titleKey: 'admin.analytics.stats.totalOrders',
-      value: (analytics.orders.current || 0).toLocaleString(),
-      change: `${analytics.orders.growth > 0 ? '+' : ''}${analytics.orders.growth || 0}%`,
-      changeType: analytics.orders.growth > 0 ? 'positive' : 'negative',
+      title: 'Total Orders',
+      value: analytics.orders.current,
+      format: 'number' as const,
+      change: `${analytics.orders.growth > 0 ? '+' : ''}${analytics.orders.growth}% vs last period`,
+      changeType:
+        analytics.orders.growth >= 0 ? ('positive' as const) : ('negative' as const),
       icon: ShoppingCart,
-      color: 'bg-blue-500',
+      iconClassName: 'bg-blue-500',
     },
     {
-      titleKey: 'admin.analytics.stats.activeUsers',
-      value: (analytics.users.current || 0).toLocaleString(),
-      change: `${analytics.users.growth > 0 ? '+' : ''}${analytics.users.growth || 0}%`,
-      changeType: analytics.users.growth > 0 ? 'positive' : 'negative',
+      title: 'Registered Users',
+      value: analytics.users.current,
+      format: 'number' as const,
+      change: `${analytics.users.growth > 0 ? '+' : ''}${analytics.users.growth}% vs last period`,
+      changeType:
+        analytics.users.growth >= 0 ? ('positive' as const) : ('negative' as const),
       icon: Users,
-      color: 'bg-purple-500',
+      iconClassName: 'bg-violet-500',
     },
     {
-      titleKey: 'admin.analytics.stats.productsListed',
-      value: (analytics.products.current || 0).toLocaleString(),
-      change: `${analytics.products.growth > 0 ? '+' : ''}${analytics.products.growth || 0}%`,
-      changeType: analytics.products.growth > 0 ? 'positive' : 'negative',
+      title: 'Products Listed',
+      value: analytics.products.current,
+      format: 'number' as const,
+      change: `${analytics.products.growth > 0 ? '+' : ''}${analytics.products.growth}% vs last period`,
+      changeType:
+        analytics.products.growth >= 0 ? ('positive' as const) : ('negative' as const),
       icon: Package,
-      color: 'bg-yellow-500',
+      iconClassName: 'bg-amber-500',
     },
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar
-        userType={UserType.ADMIN}
-        activeItem='Analytics'
+    <>
+      <AdminPageHeader
+        title="Analytics Dashboard"
+        description="Live platform metrics from the admin API"
+        actions={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={handleExport}
+            title="Export monthly data"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+        }
+        toolbar={
+          <Button
+            type="button"
+            onClick={() => loadAnalytics(true)}
+            disabled={refreshing}
+            className="gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Refresh data
+          </Button>
+        }
       />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminPageHeader
-          title={t('admin.analytics.title')}
-          description={t('admin.analytics.subtitle')}
-          actions={
-            <>
-              <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
-                <Download className="w-4 h-4" />
-              </button>
-              <button className="p-2 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-colors">
-                <Filter className="w-4 h-4" />
-              </button>
-            </>
-          }
-          toolbar={
-            <div className="flex items-center gap-3">
-              <select
-                value={timeRange}
-                onChange={e => setTimeRange(e.target.value)}
-                className="px-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-success"
-              >
-                <option value="week">{t('admin.analytics.timeRange.week')}</option>
-                <option value="month">{t('admin.analytics.timeRange.month')}</option>
-                <option value="quarter">{t('admin.analytics.timeRange.quarter')}</option>
-                <option value="year">{t('admin.analytics.timeRange.year')}</option>
-              </select>
-              <button className="bg-success text-white px-4 py-2 rounded-lg hover:bg-success/90 flex items-center space-x-2 text-sm">
-                <Download className="w-4 h-4" />
-                <span>{t('admin.analytics.export')}</span>
-              </button>
-            </div>
-          }
-        />
 
-        <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {statCards.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div key={index} className="bg-card rounded-lg p-4 border border-border shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">{t(stat.titleKey)}</p>
-                      <p className="text-2xl font-semibold text-foreground">{stat.value}</p>
-                    </div>
-                    <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center`}>
-                      <Icon className="w-5 h-5 text-white" />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    {stat.changeType === 'positive' ? (
-                      <TrendingUp className="w-4 h-4 text-success" />
-                    ) : (
-                      <TrendingDown className="w-4 h-4 text-destructive" />
-                    )}
-                    <span className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-success' : 'text-destructive'}`}>
-                      {stat.change}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{t('admin.analytics.vsLastPeriod')}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      <main className="flex-1 space-y-8 overflow-auto p-4 pb-8 sm:p-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {statCards.map((stat) => (
+            <AdminStatCard key={stat.title} {...stat} />
+          ))}
+        </div>
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Revenue Chart */}
-            <div className="bg-card rounded-lg shadow-sm p-6 border">
-              <h2 className="text-lg font-semibold text-foreground mb-4">{t('admin.analytics.revenueTrend')}</h2>
-              <div className="h-64 flex items-center justify-center bg-card rounded-lg">
-                <div className="text-center">
-                  <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-500">{t('admin.analytics.chartPlaceholder')}</p>
-                  <p className="text-sm text-gray-400 mt-1">{t('admin.analytics.chartIntegrate')}</p>
-                </div>
+        <AdminDashboardSection
+          title="Trends"
+          description="Revenue and order activity over recent months"
+          contentClassName="grid grid-cols-1 gap-6 lg:grid-cols-2"
+        >
+          <RevenueTrendChart data={analytics.monthlyData} />
+          <OrdersTrendChart data={analytics.monthlyData} />
+        </AdminDashboardSection>
+
+        <AdminDashboardSection
+          title="Performance breakdown"
+          description="Combined monthly view of revenue, orders, and user growth"
+        >
+          <MonthlyOverviewChart data={analytics.monthlyData} />
+        </AdminDashboardSection>
+
+        <AdminDashboardSection
+          title="Marketplace leaders"
+          description="Top products and sellers by revenue"
+          contentClassName="grid grid-cols-1 gap-6 lg:grid-cols-2"
+        >
+          <TopProductsChart products={analytics.topProducts} />
+          <TopSellersChart sellers={analytics.topFarmers} />
+        </AdminDashboardSection>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Monthly Performance</CardTitle>
+            <CardDescription>Detailed month-by-month platform metrics</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {analytics.monthlyData.length === 0 ? (
+              <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-border bg-muted/20">
+                <p className="text-sm text-muted-foreground">No monthly breakdown available yet.</p>
               </div>
-            </div>
-
-            {/* Orders Chart */}
-            <div className="bg-card rounded-lg shadow-sm p-6 border">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('admin.analytics.ordersTrend')}</h2>
-              <div className="h-64 flex items-center justify-center bg-card rounded-lg">
-                <div className="text-center">
-                  <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-500">{t('admin.analytics.ordersChartPlaceholder')}</p>
-                  <p className="text-sm text-gray-400 mt-1">{t('admin.analytics.chartIntegrate')}</p>
-                </div>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-border">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/40 hover:bg-muted/40">
+                      <TableHead>Month</TableHead>
+                      <TableHead>Revenue</TableHead>
+                      <TableHead>Orders</TableHead>
+                      <TableHead>New users</TableHead>
+                      <TableHead className="text-right">Avg order value</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {analytics.monthlyData.map((month) => (
+                      <TableRow key={month.month}>
+                        <TableCell className="font-medium">{month.month}</TableCell>
+                        <TableCell>{formatRwf(month.revenue)}</TableCell>
+                        <TableCell>{month.orders.toLocaleString()}</TableCell>
+                        <TableCell>{month.users.toLocaleString()}</TableCell>
+                        <TableCell className="text-right">
+                          {month.orders > 0
+                            ? formatRwf(Math.round(month.revenue / month.orders))
+                            : '—'}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
-            </div>
-          </div>
-
-          {/* Top Products and Farmers */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Top Products */}
-            <div className="bg-card rounded-lg shadow-sm p-6 border">
-              <h2 className="text-lg font-semibold text-foreground mb-4">{t('admin.analytics.topProducts')}</h2>
-              <div className="space-y-4">
-                {analytics.topProducts.map((product, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-card rounded-lg"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center text-sm font-medium text-success">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">{product.name}</p>
-                        <p className="text-sm text-muted-foreground">{t('admin.analytics.ordersCount', { count: product.orders })}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium text-foreground">${product.revenue.toLocaleString()}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Top Farmers */}
-            <div className="bg-card rounded-lg shadow-sm p-6 border">
-              <h2 className="text-lg font-semibold text-foreground mb-4">{t('admin.analytics.topFarmers')}</h2>
-              <div className="space-y-4">
-                {analytics.topFarmers.map((farmer, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-card rounded-lg"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-info/10 rounded-full flex items-center justify-center text-sm font-medium text-info">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">{farmer.name}</p>
-                        <p className="text-sm text-muted-foreground">{t('admin.analytics.productsCount', { count: farmer.products })}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium text-foreground">${farmer.revenue.toLocaleString()}</p>
-                      <p className="text-sm text-muted-foreground">{t('admin.analytics.ordersCount', { count: farmer.orders })}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Monthly Data Table */}
-          <div className="bg-card rounded-lg shadow-sm p-6 border">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t('admin.analytics.monthlyPerformance')}</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-card border-b border-border">
-                  <tr>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
-                      {t('admin.analytics.table.month')}
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
-                      {t('admin.analytics.table.revenue')}
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
-                      {t('admin.analytics.table.orders')}
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
-                      {t('admin.analytics.table.newUsers')}
-                    </th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">
-                      {t('admin.analytics.table.avgOrderValue')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {analytics.monthlyData.map((month, index) => (
-                    <tr key={index} className="hover:bg-card">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
-                        {month.month}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                        ${(month.revenue || 0).toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                        {(month.orders || 0).toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                        {(month.users || 0).toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                        ${(month.revenue / month.orders).toFixed(2)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
+            )}
+          </CardContent>
+        </Card>
+      </main>
+    </>
   );
 }
 

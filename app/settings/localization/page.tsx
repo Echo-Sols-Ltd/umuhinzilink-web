@@ -5,15 +5,14 @@ import { Languages } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import SettingsSubLayout from '@/components/layout/SettingsSubLayout';
-import { applyLocale, languageToLocale } from '@/lib/localeUser';
-import type { SupportedLocale } from '@/lib/i18n';
-import { notify } from '@/lib/notify';
-
-const LANGUAGE_OPTIONS: { locale: SupportedLocale; labelKey: string; flag: string }[] = [
-  { locale: 'en', labelKey: 'settings.localization.options.language.en', flag: '🇺🇸' },
-  { locale: 'rw', labelKey: 'settings.localization.options.language.rw', flag: '🇷🇼' },
-  { locale: 'fr', labelKey: 'settings.localization.options.language.fr', flag: '🇫🇷' },
-];
+import { switchLanguage } from '@/lib/language-switch';
+import {
+  Save,
+  Clock,
+  Calendar,
+  DollarSign,
+  Languages
+} from '@/lib/icons';
 
 export default function LocalizationSettingsPage() {
   const { t, locale } = useI18n();

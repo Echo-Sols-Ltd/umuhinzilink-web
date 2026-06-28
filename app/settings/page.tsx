@@ -13,8 +13,8 @@ import {
   Shield,
   ChevronRight,
   User,
-  CreditCard,
-} from 'lucide-react';
+  Mail
+} from '@/lib/icons';
 
 const ROLE_MAP: Record<string, string> = {
   BUYER: 'buyer',

@@ -17,7 +17,7 @@ import {
     ChevronRight,
     RefreshCw,
     X,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { useNotification } from '@/hooks/useNotification';

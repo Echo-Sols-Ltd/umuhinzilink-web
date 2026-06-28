@@ -13,7 +13,7 @@ import {
   Mail,
   Globe,
   Camera
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function BusinessSettingsPage() {
   const { t } = useI18n();

@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 import { useRouter } from 'next/navigation';
 import {
     Package, Eye, CheckCircle, XCircle,
-    AlertCircle, TrendingUp, Wallet,
-    ChevronRight, User, CreditCard,
-} from 'lucide-react';
+    AlertCircle, Clock, TrendingUp, Wallet,
+    Sprout, ChevronRight, User, CreditCard,
+} from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import { useI18n } from '@/contexts/I18nContext';
@@ -105,17 +106,24 @@ export default function OrdersPage() {
     }, [isSeller, fetchBuyingOrders, fetchSellingOrders]);
 
     useEffect(() => {
-        if (!authLoading && !isAuthenticated) {
+        if (authLoading) return;
+
+        if (!isAuthenticated) {
             router.replace('/auth/signin?redirect=/orders');
+            return;
         }
-    }, [authLoading, isAuthenticated, router]);
+
+        if (user?.role === UserRole.ADMIN) {
+            router.replace(ROUTES.admin.orders);
+        }
+    }, [authLoading, isAuthenticated, user?.role, router]);
 
     const userId = user?.id;
 
     useEffect(() => {
-        if (!userId) return;
+        if (!userId || user?.role === UserRole.ADMIN) return;
         fetchOrders(page - 1);
-    }, [page, userId, isSeller, fetchOrders]);
+    }, [page, userId, user?.role, isSeller, fetchOrders]);
 
     useEffect(() => {
         setPage(1);
@@ -198,7 +206,7 @@ export default function OrdersPage() {
         return null;
     }
 
-    if (authLoading) {
+    if (authLoading || user?.role === UserRole.ADMIN) {
         return (
             <AppLayout maxWidth="max-w-6xl">
                 <PageLoading
@@ -217,7 +225,7 @@ export default function OrdersPage() {
                 description={isSeller ? t('ordersPage.description.seller') : t('ordersPage.description.buyer')}
                 actions={
                     <Link
-                        href="/dashboard"
+                        href={ROUTES.home}
                         className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
                         {t('common.dashboard')} <ChevronRight size={12} />
                     </Link>

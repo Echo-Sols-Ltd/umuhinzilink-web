@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Sprout, Mail, Phone, MapPin } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import NavAnchorLink from '@/components/NavAnchorLink';
+import { Sprout, Mail, Phone, MapPin } from '@/lib/icons';
 import { useI18n } from '@/contexts/I18nContext';
 import { applyLocale } from '@/lib/localeUser';
 import type { SupportedLocale } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/lib/routes';
 
 export default function Footer() {
   const { t, locale } = useI18n();
@@ -22,7 +23,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-3">
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href={ROUTES.home} className="flex items-center gap-2">
               <Sprout size={20} className="text-green-600" />
               <span className="font-extrabold text-base">
                 <span className="text-green-600">Umuhinzi</span>
@@ -40,18 +41,13 @@ export default function Footer() {
             </p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <Link href="/about" className="hover:text-foreground transition-colors">
-                  {t('landing.footer.about.mission')}
+                <Link href={ROUTES.products} className="hover:text-foreground transition-colors">
+                  Browse products
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="hover:text-foreground transition-colors">
-                  {t('landing.footer.browseProducts')}
-                </Link>
-              </li>
-              <li>
-                <Link href="/become-seller" className="hover:text-foreground transition-colors">
-                  {t('landing.footer.becomeSeller')}
+                <Link href={ROUTES.becomeSeller} className="hover:text-foreground transition-colors">
+                  Become a seller
                 </Link>
               </li>
             </ul>
@@ -63,18 +59,18 @@ export default function Footer() {
             </p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <Link href="/about#contact" className="hover:text-foreground transition-colors">
+                <NavAnchorLink href={ROUTES.homeContact} className="hover:text-foreground transition-colors">
                   {t('landing.footer.support.helpCenter')}
-                </Link>
+                </NavAnchorLink>
               </li>
               <li>
-                <Link href="/about#contact" className="hover:text-foreground transition-colors">
+                <NavAnchorLink href={ROUTES.homeContact} className="hover:text-foreground transition-colors">
                   {t('landing.footer.support.contactUs')}
-                </Link>
+                </NavAnchorLink>
               </li>
               <li>
-                <Link href="/auth/signin" className="hover:text-foreground transition-colors">
-                  {t('landing.footer.signIn')}
+                <Link href={ROUTES.signIn} className="hover:text-foreground transition-colors">
+                  Sign in
                 </Link>
               </li>
             </ul>

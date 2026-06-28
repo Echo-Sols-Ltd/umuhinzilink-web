@@ -47,6 +47,7 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
   const currentNegotiationIdRef = useRef<string | null>(null);
   const viewingNegotiationIdRef = useRef<string | null>(null);
   const prevUserIdRef = useRef<string | undefined>(undefined);
+  const prevUserRoleRef = useRef<string | undefined>(undefined);
   const fetchNegotiationByIdRef = useRef<
     ((id: string, silent?: boolean) => Promise<void>) | null
   >(null);
@@ -78,25 +79,41 @@ function NegotiationProvider({ children }: { children: ReactNode }) {
     fetchNegotiationsRef.current = fetchNegotiations;
   }, [fetchNegotiations]);
 
+  const clearNegotiationState = useCallback(() => {
+    setNegotiations([]);
+    setCurrentNegotiation(null);
+    setNegotiationMessages([]);
+    setError(null);
+    setLoading(false);
+    setDetailLoading(false);
+    viewingNegotiationIdRef.current = null;
+  }, []);
+
   useEffect(() => {
     const previousUserId = prevUserIdRef.current;
+    const previousUserRole = prevUserRoleRef.current;
     prevUserIdRef.current = userId;
+    prevUserRoleRef.current = userRole;
 
     if (!userId) {
-      if (previousUserId) {
-        setNegotiations([]);
-        setCurrentNegotiation(null);
-        setNegotiationMessages([]);
-        setError(null);
+      if (previousUserId !== undefined) {
+        clearNegotiationState();
       }
       return;
     }
 
-    if (userId !== previousUserId) {
+    const userChanged = userId !== previousUserId;
+    const roleChanged = userRole !== previousUserRole;
+
+    if (userChanged || roleChanged) {
+      if (previousUserId !== undefined || previousUserRole !== undefined) {
+        clearNegotiationState();
+      }
+
       setLoading(true);
       fetchNegotiations().finally(() => setLoading(false));
     }
-  }, [userId, fetchNegotiations]);
+  }, [userId, userRole, fetchNegotiations, clearNegotiationState]);
 
   const fetchNegotiationMessages = useCallback(async (negotiationId: string) => {
     try {

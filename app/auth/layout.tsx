@@ -1,17 +1,18 @@
-'use client'
+'use client';
 
-import { useAuth } from "@/contexts/AuthContext"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
-import { getHomePathForRole } from '@/lib/appPaths'
+import { useAuth } from '@/contexts/AuthContext';
+import { getPostAuthRouteFromWindow } from '@/lib/routes';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-    const { isAuthenticated, user } = useAuth()
-    const router = useRouter()
-    useEffect(() => {
-        if (isAuthenticated) {
-            router.replace(getHomePathForRole(user?.role));
-        }
-    }, [isAuthenticated, user, router]);
-    return <>{children}</>
+  const { isAuthenticated, user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading || !isAuthenticated || !user) return;
+    router.replace(getPostAuthRouteFromWindow(user.role));
+  }, [isAuthenticated, user, loading, router]);
+
+  return <>{children}</>;
 }

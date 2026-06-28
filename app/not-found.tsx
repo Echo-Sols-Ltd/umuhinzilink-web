@@ -1,8 +1,8 @@
 "use client"
 
 import Link from 'next/link';
-import { useI18n } from '@/contexts/I18nContext';
-import { Sprout, Home, ArrowLeft, Search, Wheat } from 'lucide-react';
+import { ROUTES } from '@/lib/routes';
+import { Sprout, Home, ArrowLeft, Search, Wheat } from '@/lib/icons';
 
 export default function NotFound() {
     const { t } = useI18n();
@@ -104,7 +104,13 @@ export default function NotFound() {
                 <div className="mt-12 pt-8 border-t border-border">
                     <p className="text-xs text-muted-foreground mb-4 font-medium">{t('pages.notFound.maybeLookingFor')}</p>
                     <div className="flex flex-wrap justify-center gap-2">
-                        {helpfulLinks.map(({ label, href }) => (
+                        {[
+                            { label: 'Browse products', href: ROUTES.products },
+                            { label: 'My negotiations', href: ROUTES.negotiations },
+                            { label: 'Dashboard', href: ROUTES.dashboard },
+                            { label: 'Wallet', href: ROUTES.wallet },
+                            { label: 'Sign in', href: ROUTES.signIn },
+                        ].map(({ label, href }) => (
                             <Link
                                 key={href}
                                 href={href}

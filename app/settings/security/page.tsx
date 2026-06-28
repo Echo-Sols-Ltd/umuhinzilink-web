@@ -14,7 +14,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function SecuritySettingsPage() {
   const { t } = useI18n();

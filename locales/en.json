@@ -249,6 +249,65 @@
       "error": "An error occurred while processing your payment."
     }
   },
+  "orderStatus": {
+    "tracker": {
+      "orderPlaced": {
+        "label": "Order Placed",
+        "description": "Your order has been received"
+      },
+      "paymentPending": {
+        "label": "Payment Pending",
+        "description": "Waiting for payment via wallet"
+      },
+      "paymentComplete": {
+        "label": "Payment Received",
+        "description": "Payment confirmed via wallet"
+      },
+      "orderConfirmed": {
+        "label": "Order Confirmed",
+        "description": "Seller has confirmed your order"
+      },
+      "processing": {
+        "label": "Processing",
+        "description": "Your order is being prepared"
+      },
+      "shipped": {
+        "label": "Shipped",
+        "description": "Your order is on way"
+      },
+      "delivered": {
+        "label": "Delivered",
+        "description": "Your order has been delivered"
+      },
+      "completed": {
+        "label": "Completed",
+        "description": "Your order has been completed"
+      },
+      "cancelled": {
+        "label": "Order Cancelled",
+        "description": "This order has been cancelled"
+      },
+      "currentStatus": "Current Status: {{status}}"
+    }
+  },
+  "orderManagement": {
+    "dashboard": {
+      "searchPlaceholder": "Search orders...",
+      "filters": "Filters",
+      "export": "Export",
+      "status": "Status",
+      "sortBy": "Sort By",
+      "allOrders": "All Orders",
+      "pending": "Pending",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "newestFirst": "Newest First",
+      "oldestFirst": "Oldest First",
+      "highestAmount": "Highest Amount",
+      "lowestAmount": "Lowest Amount"
+    }
+  },
   "products": {
     "created": {
       "success": "Product created successfully.",
@@ -884,7 +943,7 @@
       "title": "Welcome Back",
       "subtitle": "Sign in to your account",
       "rememberMe": "Remember me",
-      "forgot": "Forgot?",
+      "forgot": "Forgot password",
       "signingIn": "Signing in…",
       "signIn": "Sign In",
       "noAccount": "No account?",
@@ -2138,6 +2197,49 @@
         "manageProducts": "Manage Products"
       }
     },
+    "wallet": {
+      "title": "Seller Wallet",
+      "subtitle": "Track your earnings, payouts, and transaction history",
+      "balance": "Available Balance",
+      "active": "Active",
+      "addMoney": "Add Funds",
+      "stats": {
+        "totalEarnings": "Total Earnings",
+        "totalDeposits": "Deposits",
+        "withdrawals": "Withdrawals",
+        "pending": "Pending"
+      },
+      "filters": {
+        "allTransactions": "All",
+        "earnings": "Earnings",
+        "deposits": "Deposits",
+        "payments": "Payments",
+        "withdrawals": "Withdrawals",
+        "newestFirst": "Newest first",
+        "oldestFirst": "Oldest first",
+        "highestAmount": "Highest amount",
+        "lowestAmount": "Lowest amount",
+        "searchPlaceholder": "Search transactions…"
+      },
+      "history": "Transaction history",
+      "noTransactions": "No transactions yet",
+      "historyDescription": "Sales payouts and wallet activity will appear here",
+      "tryAdjusting": "Try a different search or filter",
+      "modal": {
+        "title": "Add funds to wallet",
+        "amount": "Amount",
+        "description": "Description (optional)",
+        "descriptionPlaceholder": "Add a note for this deposit",
+        "instructionsTitle": "Payment instructions",
+        "instructions": "Complete payment with your selected method. Funds will appear in your wallet once confirmed.",
+        "cancel": "Cancel",
+        "confirm": "Add funds"
+      },
+      "quickLinks": {
+        "listings": "My listings",
+        "orders": "My orders"
+      }
+    },
     "orders": {
       "toasts": {
         "orderNotFound": "Order Not Found",
@@ -2281,20 +2383,34 @@
       "marketplace": "Products",
       "howItWorks": "How it Works",
       "aboutUs": "About Us",
+      "why": "Why UmuhinziLink",
+      "whoIsItFor": "Who is it for",
       "features": "Features",
+      "becomeSeller": "Become a seller",
+      "signIn": "Sign in",
+      "getStarted": "Get started",
       "agribusiness": "AgriBussiness",
       "lenders": "Lenders",
       "contact": "Contact Us"
     },
     "hero": {
+      "badge": "Rwanda's digital agri-marketplace — live now",
       "title": {
-        "line1": "Connect Farmers to",
-        "highlight": "Digital Markets"
+        "line1": "Buy. Sell. Grow.",
+        "line2": "Finally, all in one place.",
+        "highlight": "From farm to market."
       },
-      "subtitle": "Empowering smallholder farmers in Rwanda with Technology to access markets, get AI-powered farming advice and secure agricultural loans",
+      "subtitle": "Instantly connect with verified farmers and buyers — browse produce, negotiate prices, and trade securely in one seamless space.",
       "cta": {
-        "getStarted": "Get Started",
-        "viewDemo": "View Demo"
+        "getStarted": "Browse Marketplace",
+        "viewDemo": "How it works"
+      },
+      "socialProof": "5,000+ farmers and buyers connected",
+      "slides": {
+        "marketplace": "Farmers and buyers on UmuhinziLink",
+        "market": "Fresh produce at local markets",
+        "farmer": "Farmer using digital tools in the field",
+        "produce": "Fresh harvest ready for sale"
       },
       "stats": {
         "registeredFarmers": "Registered Farmers",
@@ -2328,8 +2444,22 @@
       "learnMore": "Learn More"
     },
     "whoWeServe": {
-      "title": "Who We Serve",
-      "subtitle": "Three interconnected communities driving agricultural growth",
+      "title": "For everyone who grows, supplies, and buys",
+      "subtitle": "Farmers, input suppliers, and buyers — three communities driving Rwanda's agricultural growth, connected on one platform.",
+      "cards": {
+        "farmers": {
+          "title": "Farmers",
+          "description": "List produce, get AI agronomy tips, access credit for inputs, and track market prices — with mobile OTP and Kinyarwanda support."
+        },
+        "suppliers": {
+          "title": "Suppliers",
+          "description": "Manage agri-input inventory, match farmer demand, handle credit requests, and track sales with built-in analytics."
+        },
+        "buyers": {
+          "title": "Buyers",
+          "description": "Browse fresh produce, filter by region and price, contact farmers directly, and pay securely through the platform."
+        }
+      },
       "groups": {
         "farmers": {
           "title": "Farmers",
@@ -2361,8 +2491,53 @@
       }
     },
     "features": {
-      "title": "Platform Features",
-      "subtitle": "Comprehensive tools for modern agriculture",
+      "title": "We've built the platform, now it's your turn to grow",
+      "subtitle": "Whether you're buying produce or selling from the farm, everything is designed to flow effortlessly.",
+      "tabs": {
+        "ariaLabel": "Features by role",
+        "buyer": "Buyer",
+        "seller": "Seller"
+      },
+      "buyer": {
+        "cards": {
+          "browse": {
+            "title": "Browse produce",
+            "description": "Explore fresh listings, filter by region and price, and find exactly what you need."
+          },
+          "order": {
+            "title": "Place orders",
+            "description": "Choose verified sellers and place orders directly from the marketplace."
+          },
+          "negotiate": {
+            "title": "Negotiate prices",
+            "description": "All buyer–seller conversations and price talks in one place."
+          },
+          "trust": {
+            "title": "Buy with confidence",
+            "description": "Choose sellers based on ratings, reviews, and verified profiles."
+          }
+        }
+      },
+      "seller": {
+        "cards": {
+          "list": {
+            "title": "List your produce",
+            "description": "Add photos, set prices, and publish listings in minutes."
+          },
+          "findBuyers": {
+            "title": "Reach buyers",
+            "description": "Get matched with buyers looking for your crops and farm supplies."
+          },
+          "collaborate": {
+            "title": "Collaborate with buyers",
+            "description": "Chat, negotiate, and manage orders without leaving the platform."
+          },
+          "monetize": {
+            "title": "Get paid securely",
+            "description": "Turn your harvest into income with transparent, secure payments."
+          }
+        }
+      },
       "items": {
         "aiAdvisory": {
           "title": "AI–Powered Advisory",

@@ -10,7 +10,7 @@ import {
   Heart,
   ChevronRight,
   TrendingUp
-} from 'lucide-react';
+} from '@/lib/icons';
 import Link from 'next/link';
 import MetricCard from '../common/MetricCard';
 import { DashboardSection } from '../common/DashboardGrid';

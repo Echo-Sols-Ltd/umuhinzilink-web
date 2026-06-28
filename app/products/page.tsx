@@ -2,9 +2,12 @@
 
 import { useState, useMemo } from 'react';
 import {
-    Search, Package, ArrowUpDown,
-    LayoutGrid, List,
-} from 'lucide-react';
+    Plus, Search, Package, Eye, Edit3, Trash2,
+    ChevronRight, MoreVertical, TrendingUp,
+    AlertTriangle, XCircle, FileText, Filter,
+    LayoutGrid, List, Sprout, ArrowUpDown,
+    CheckCircle, Clock, PauseCircle,
+} from '@/lib/icons';
 import { useProduct } from '@/contexts/ProductContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { Product, ProductCategory } from '@/types';

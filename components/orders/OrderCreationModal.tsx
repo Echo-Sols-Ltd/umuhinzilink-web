@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, ShoppingCart, Calculator, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
+import { X, ShoppingCart, Calculator, CreditCard, AlertCircle, CheckCircle } from '@/lib/icons';
 import Image from 'next/image';
 import { Product, PaymentMethod, OrderRequest } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';

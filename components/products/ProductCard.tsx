@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import {
     Heart, MessageSquare, MapPin, Eye,
     ShoppingBag, Edit3, Trash2, User,
-    AlertTriangle, XCircle,
-} from 'lucide-react';
+    AlertTriangle, XCircle, TrendingUp,
+} from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { notify } from '@/lib/notify';
 import { formatCurrency } from '@/lib/localeFormat';
 import { cn, imageUrl } from '@/lib/utils';
-import { MeasurementUnit, Product, ProductCategory } from '@/types';
+import { Product, UserRole } from '@/types';
 import BuyModal from './BuyModal';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -65,6 +65,8 @@ export default function ProductCard({
     const isSaved = isSavedProp ?? isProductSaved(product.id);
 
     const isOwner = user?.id === product.owner?.id;
+    const isAdmin = user?.role === UserRole.ADMIN;
+    const canParticipate = Boolean(user) && !isAdmin;
     const isOutOfStock = product.status === 'OUT_OF_STOCK';
     const isLowStock = product.status === 'LOW_STOCK';
     const unit = unitLabel(String(product.measurementUnit), t);
@@ -118,6 +120,10 @@ export default function ProductCard({
     };
 
     const handleCardClick = () => {
+        if (isAdmin) {
+            router.push(`/admin/products/${product.id}`);
+            return;
+        }
         router.push(`/products/${product.id}`);
     };
 
@@ -189,7 +195,7 @@ export default function ProductCard({
                                     <Trash2 size={13} />
                                 </button>
                             </>
-                        ) : (
+                        ) : canParticipate ? (
                             <button
                                 type="button"
                                 onClick={handleSave}
@@ -204,7 +210,7 @@ export default function ProductCard({
                                     )}
                                 />
                             </button>
-                        )}
+                        ) : null}
                     </div>
 
                     {/* View count — bottom left */}
@@ -272,7 +278,7 @@ export default function ProductCard({
                                 className="flex-1 h-9 flex items-center justify-center gap-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-foreground text-xs font-semibold rounded-xl transition-colors">
                                 <Edit3 size={13} /> {t('productCard.editListing')}
                             </button>
-                        ) : (
+                        ) : canParticipate ? (
                             <>
                                 <button
                                     onClick={handleBuy}
@@ -287,7 +293,7 @@ export default function ProductCard({
                                     <MessageSquare size={14} />
                                 </button>
                             </>
-                        )}
+                        ) : null}
                     </div>
                 </div>
             </div>

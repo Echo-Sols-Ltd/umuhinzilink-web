@@ -25,10 +25,8 @@ import {
   ChevronRight,
   UserCheck,
   UserX,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAdmin } from '@/contexts/AdminContext';
-import { useI18n } from '@/contexts/I18nContext';
-import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { AdminPages, User, UserRole } from '@/types';
 import { notify } from '@/lib/notify';
@@ -157,13 +155,10 @@ function UserManagement() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={UserRole.ADMIN} activeItem="User Management" />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminPageHeader
-          title={t('admin.users.title')}
-          description={t('admin.users.subtitle')}
+    <>
+      <AdminPageHeader
+          title="User Management"
+          description="Manage and monitor all platform members"
           toolbar={
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <div className="relative flex-1 max-w-md">
@@ -390,7 +385,6 @@ function UserManagement() {
             )}
           </div>
         </main>
-      </div>
 
       {showUserModal && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -467,7 +461,7 @@ function UserManagement() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

@@ -13,13 +13,12 @@ import {
     X,
     Package,
     ImageIcon,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { adminService } from '@/services/admin';
-import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
-import { Product, UserRole } from '@/types';
+import { Product } from '@/types';
 import { notify } from '@/lib/notify';
 import {
     Table,
@@ -94,13 +93,10 @@ function FarmerProductManagement() {
     };
 
     return (
-        <div className="flex h-screen bg-background overflow-hidden">
-            <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
-
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <AdminPageHeader
-                    title={t('admin.products.title')}
-                    description={t('admin.products.subtitle')}
+        <>
+            <AdminPageHeader
+                    title="Farmer Products"
+                    description="Moderate and oversee all farmer-listed produce"
                     toolbar={
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             <div className="relative flex-1 max-w-md">
@@ -279,8 +275,7 @@ function FarmerProductManagement() {
                         </div>
                     )}
                 </main>
-            </div>
-        </div>
+        </>
     );
 }
 

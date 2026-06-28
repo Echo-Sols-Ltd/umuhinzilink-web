@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from 'lucide-react';
+import { User } from '@/lib/icons';
 import { useI18n } from '@/contexts/I18nContext';
 
 export default function ImpactStories() {

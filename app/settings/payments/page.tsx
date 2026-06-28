@@ -11,7 +11,7 @@ import {
   Banknote,
   Shield,
   CheckCircle
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function PaymentsSettingsPage() {
   const { t } = useI18n();

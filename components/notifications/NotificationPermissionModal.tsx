@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Bell, MessageCircle, Package, ShoppingBag, Settings } from 'lucide-react';
+import { X, Bell, MessageCircle, Package, ShoppingBag, Settings } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { useBrowserNotification } from '@/hooks/useBrowserNotification';
 import { useI18n } from '@/contexts/I18nContext';

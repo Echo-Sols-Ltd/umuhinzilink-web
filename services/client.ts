@@ -15,6 +15,7 @@ class ApiClient {
   private logoutListeners: (() => void)[] = [];
   private maxRefreshAttempts: number = 3;
   private refreshPromise: Promise<boolean> | null = null;
+  private readonly defaultTimeout = API_CONFIG.TIMEOUT;
 
   constructor() {
     this.axiosInstance = axios.create({
@@ -209,7 +210,7 @@ class ApiClient {
     const operation = async () => {
       const response = await this.axiosInstance.get<T>(endpoint, {
         params,
-        timeout: options?.timeout || timeoutConfigs.standard
+        timeout: options?.timeout ?? this.defaultTimeout
       });
       return response.data;
     };
@@ -219,7 +220,7 @@ class ApiClient {
     }
 
     try {
-      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
+      return await withTimeout(operation(), options?.timeout ?? this.defaultTimeout);
     } catch (error) {
       if (error instanceof TimeoutError) {
         throw new Error(`Request timed out after ${error.timeout}ms`);
@@ -231,7 +232,7 @@ class ApiClient {
   async post<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
       const response = await this.axiosInstance.post<T>(endpoint, data, {
-        timeout: options?.timeout || timeoutConfigs.standard
+        timeout: options?.timeout ?? this.defaultTimeout
       });
       return response.data;
     };
@@ -241,7 +242,7 @@ class ApiClient {
     }
 
     try {
-      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
+      return await withTimeout(operation(), options?.timeout ?? this.defaultTimeout);
     } catch (error) {
       if (error instanceof TimeoutError) {
         throw new Error(`Request timed out after ${error.timeout}ms`);
@@ -253,7 +254,7 @@ class ApiClient {
   async put<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
       const response = await this.axiosInstance.put<T>(endpoint, data, {
-        timeout: options?.timeout || timeoutConfigs.standard
+        timeout: options?.timeout ?? this.defaultTimeout
       });
       return response.data;
     };
@@ -263,7 +264,7 @@ class ApiClient {
     }
 
     try {
-      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
+      return await withTimeout(operation(), options?.timeout ?? this.defaultTimeout);
     } catch (error) {
       if (error instanceof TimeoutError) {
         throw new Error(`Request timed out after ${error.timeout}ms`);
@@ -275,7 +276,7 @@ class ApiClient {
   async patch<T>(endpoint: string, data?: unknown, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
       const response = await this.axiosInstance.patch<T>(endpoint, data, {
-        timeout: options?.timeout || timeoutConfigs.standard
+        timeout: options?.timeout ?? this.defaultTimeout
       });
       return response.data;
     };
@@ -285,7 +286,7 @@ class ApiClient {
     }
 
     try {
-      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
+      return await withTimeout(operation(), options?.timeout ?? this.defaultTimeout);
     } catch (error) {
       if (error instanceof TimeoutError) {
         throw new Error(`Request timed out after ${error.timeout}ms`);
@@ -297,7 +298,7 @@ class ApiClient {
   async delete<T>(endpoint: string, options?: { timeout?: number; retry?: RetryOptions }): Promise<T> {
     const operation = async () => {
       const response = await this.axiosInstance.delete<T>(endpoint, {
-        timeout: options?.timeout || timeoutConfigs.standard
+        timeout: options?.timeout ?? this.defaultTimeout
       });
       return response.data;
     };
@@ -307,7 +308,7 @@ class ApiClient {
     }
 
     try {
-      return await withTimeout(operation(), options?.timeout || timeoutConfigs.standard);
+      return await withTimeout(operation(), options?.timeout ?? this.defaultTimeout);
     } catch (error) {
       if (error instanceof TimeoutError) {
         throw new Error(`Request timed out after ${error.timeout}ms`);

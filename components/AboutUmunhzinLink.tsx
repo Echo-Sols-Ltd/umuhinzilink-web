@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CheckIcon } from 'lucide-react';
+import { CheckIcon } from '@/lib/icons';
 import { useI18n } from '@/contexts/I18nContext';
 
 const AboutUmuhinzinLink: React.FC = () => {

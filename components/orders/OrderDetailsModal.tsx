@@ -10,8 +10,8 @@ import {
     Truck,
     XCircle,
     Clock,
-} from 'lucide-react';
-import { Order, OrderStatus, isUnpaidOrder, isPaidOrder } from '@/types';
+} from '@/lib/icons';
+import { Order, OrderStatus, isUnpaidOrder, isPaidOrder, getOrderStatusLabel } from '@/types';
 import OrderStatusTracker from './OrderStatusTracker';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';

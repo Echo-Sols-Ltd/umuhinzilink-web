@@ -4,26 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Settings,
-  ChevronLeft,
   Save,
-  Bell,
-  Shield,
-  Database,
-  Mail,
-  Globe,
-  CreditCard,
-  Smartphone,
-  ToggleLeft,
-  ToggleRight,
-  CheckCircle,
-  AlertTriangle,
-  Info,
-} from 'lucide-react';
-import Sidebar from '@/components/shared/Sidebar';
+} from '@/lib/icons';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
-import { useI18n } from '@/contexts/I18nContext';
-import { UserRole } from '@/types';
 
 interface SystemSettings {
   siteName: string;
@@ -115,15 +98,10 @@ function SystemSettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar
-        userType={UserRole.ADMIN}
-        activeItem='Settings'
-      />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminPageHeader
-          title={t('admin.settings.title')}
-          description={t('admin.settings.subtitle')}
+    <>
+      <AdminPageHeader
+          title="System Settings"
+          description="Configure platform-wide settings and preferences"
           actions={
             <button
               onClick={handleSave}
@@ -179,8 +157,7 @@ function SystemSettingsPage() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
+    </>
   );
 }
 

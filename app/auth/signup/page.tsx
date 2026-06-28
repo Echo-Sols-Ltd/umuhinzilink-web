@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, MapPin, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from '@/lib/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
@@ -12,17 +12,22 @@ import { useI18n } from '@/contexts/I18nContext';
 import { UserRequest, UserRole } from '@/types';
 import AuthFooter from '@/components/auth/AuthFooter';
 import GoogleLogin from '@/components/GoogleLogin';
+import { ROUTES } from '@/lib/routes';
+import { cn } from '@/lib/utils';
+
+const inputClass =
+  'bg-muted/50 border border-border/80 h-9 rounded-lg text-sm shadow-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary/25 focus-visible:border-primary transition-colors';
 
 function Field({
   label, error, children,
 }: { label: string; error?: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1 relative">
-      <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+    <div className="space-y-1">
+      <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
         {label}
       </label>
       {children}
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-[11px] text-destructive leading-tight">{error}</p>}
     </div>
   );
 }
@@ -168,62 +173,63 @@ export default function SignUp() {
     setLoading(false);
   };
 
+  const fieldError = (name: keyof typeof fieldErrors) =>
+    touched[name] && fieldErrors[name] ? fieldErrors[name] : undefined;
+
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-muted/40 dark:bg-background p-4 sm:p-6 md:p-8">
-      {/* Floating card */}
-      <div className="w-full max-w-5xl bg-card border border-border rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row h-[600px]">
+    <div className="min-h-dvh w-full flex items-center justify-center bg-muted/40 dark:bg-background p-3 sm:p-4">
+      <div className="w-full max-w-5xl max-h-[calc(100dvh-1.5rem)] bg-card border border-border rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
 
         {/* LEFT – Hero panel */}
-        <div className="hidden md:flex relative md:w-[42%] bg-gradient-to-br from-primary to-secondary rounded-2xl m-3 overflow-hidden flex-col justify-between p-8">
-          {/* Background image */}
+        <div className="hidden md:flex relative md:w-[42%] shrink-0 bg-gradient-to-br from-primary to-secondary rounded-2xl m-2 overflow-hidden flex-col justify-between p-6">
           <Image
             src="/hero.png"
             alt="background"
             fill
             className="absolute inset-0 object-cover opacity-20"
           />
-          {/* Text */}
           <div className="relative z-10">
-            <h2 className="text-white text-3xl font-extrabold leading-tight">
+            <h2 className="text-white text-2xl font-extrabold leading-tight">
               {t('auth.signIn.heroTitle')}
             </h2>
-            <div className="mt-2 w-16 h-1 bg-white/60 rounded-full" />
-            <p className="text-white/80 text-sm mt-4 leading-relaxed">
+            <div className="mt-2 w-12 h-0.5 bg-white/60 rounded-full" />
+            <p className="text-white/80 text-xs mt-3 leading-relaxed">
               {t('auth.signIn.heroSubtitle.line1')} {t('auth.signIn.heroSubtitle.line2')}
             </p>
           </div>
         </div>
 
         {/* RIGHT – Form Section */}
-        <div className="w-full md:w-[62%] flex flex-col px-6 py-8 sm:px-10 overflow-y-scroll">
-          {/* Logo/Brand */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center">
-              <img src="/icon.png" alt="Logo" className="w-10 h-10 object-contain" />
+        <div className="w-full md:w-[58%] flex flex-col min-h-0 min-w-0 px-4 py-4 sm:px-6 sm:py-5 overflow-y-auto overscroll-contain">
+          <Link
+            href={ROUTES.home}
+            className="flex items-center gap-2 mb-2 shrink-0 w-fit rounded-lg transition-opacity hover:opacity-80"
+            aria-label="UmuhinziLink home"
+          >
+            <div className="w-8 h-8 rounded-full flex items-center justify-center">
+              <img src="/icon.png" alt="" className="w-8 h-8 object-contain" />
             </div>
-            <span className="font-bold text-lg text-foreground">UmuhinziLink</span>
+            <span className="font-bold text-base text-foreground">UmuhinziLink</span>
+          </Link>
+
+          <div className="shrink-0 mb-3">
+            <h1 className="text-xl font-extrabold text-foreground">{t('auth.signUp.title')}</h1>
+            <p className="text-muted-foreground text-xs mt-0.5">{t('auth.signUp.subtitle')}</p>
           </div>
 
-          <h1 className="text-2xl font-extrabold text-foreground mb-1">{t('auth.signUp.title')}</h1>
-          <p className="text-muted-foreground text-sm mb-6">{t('auth.signUp.subtitle')}</p>
-
-          {/* Social Login Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-6">
-            <div className="flex-1 flex justify-center items-center">
-              <GoogleLogin />
-            </div>
+          <div className="w-full shrink-0 mb-3">
+            <GoogleLogin mode="signup" />
           </div>
 
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center gap-2 mb-3 shrink-0">
             <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground">{t('common.or')}</span>
+            <span className="text-[11px] text-muted-foreground">{t('common.or')}</span>
             <div className="flex-1 h-px bg-border" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Names Field */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label={t('auth.fields.firstName')} error={touched.firstName && fieldErrors.firstName ? fieldErrors.firstName : undefined}>
+          <form onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-1 space-y-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2.5">
+              <Field label={t('auth.fields.firstName')} error={fieldError('firstName')}>
                 <Input
                   id="firstName"
                   name="firstName"
@@ -233,10 +239,10 @@ export default function SignUp() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   disabled={loading}
-                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.firstName && fieldErrors.firstName ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={cn(inputClass, touched.firstName && fieldErrors.firstName && 'border-destructive focus-visible:ring-destructive')}
                 />
               </Field>
-              <Field label={t('auth.fields.lastName')} error={touched.lastName && fieldErrors.lastName ? fieldErrors.lastName : undefined}>
+              <Field label={t('auth.fields.lastName')} error={fieldError('lastName')}>
                 <Input
                   id="lastName"
                   name="lastName"
@@ -246,14 +252,13 @@ export default function SignUp() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   disabled={loading}
-                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.lastName && fieldErrors.lastName ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={cn(inputClass, touched.lastName && fieldErrors.lastName && 'border-destructive focus-visible:ring-destructive')}
                 />
               </Field>
             </div>
 
-            {/* Email & Phone Field */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label={t('auth.fields.email')} error={touched.email && fieldErrors.email ? fieldErrors.email : undefined}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2.5">
+              <Field label={t('auth.fields.email')} error={fieldError('email')}>
                 <Input
                   id="email"
                   name="email"
@@ -263,10 +268,10 @@ export default function SignUp() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   disabled={loading}
-                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.email && fieldErrors.email ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={cn(inputClass, touched.email && fieldErrors.email && 'border-destructive focus-visible:ring-destructive')}
                 />
               </Field>
-              <Field label={t('auth.fields.phoneNumber')} error={touched.phoneNumber && fieldErrors.phoneNumber ? fieldErrors.phoneNumber : undefined}>
+              <Field label={t('auth.fields.phoneNumber')} error={fieldError('phoneNumber')}>
                 <Input
                   id="phoneNumber"
                   name="phoneNumber"
@@ -276,13 +281,12 @@ export default function SignUp() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   disabled={loading}
-                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.phoneNumber && fieldErrors.phoneNumber ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={cn(inputClass, touched.phoneNumber && fieldErrors.phoneNumber && 'border-destructive focus-visible:ring-destructive')}
                 />
               </Field>
             </div>
 
-            {/* Password Field */}
-            <Field label={t('auth.fields.password')} error={touched.password && fieldErrors.password ? fieldErrors.password : undefined}>
+            <Field label={t('auth.fields.password')} error={fieldError('password')}>
               <div className="relative">
                 <Input
                   id="password"
@@ -293,39 +297,46 @@ export default function SignUp() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   disabled={loading}
-                  className={`bg-muted/50 border border-border h-11 rounded-xl text-sm pr-10 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary ${touched.password && fieldErrors.password ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={cn(inputClass, 'pr-9', touched.password && fieldErrors.password && 'border-destructive focus-visible:ring-destructive')}
                 />
-                <button type="button" className="absolute right-3 top-3 text-muted-foreground hover:text-foreground" onClick={() => setShowPassword(v => !v)}>
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                <button
+                  type="button"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPassword(v => !v)}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </Field>
 
-            {/* Terms Agreement */}
-            <div className="flex items-start gap-3 cursor-pointer">
-              <input id='agree' type="checkbox" checked={agreeToTerms}
+            <div className="flex items-start gap-2 pt-0.5">
+              <input
+                id="agree"
+                type="checkbox"
+                checked={agreeToTerms}
                 onChange={e => setAgreeToTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary" />
-              <Label htmlFor='agree' className="text-sm leading-normal text-muted-foreground cursor-pointer select-none">
+                className="mt-0.5 w-3.5 h-3.5 rounded border-border text-primary focus:ring-primary accent-primary shrink-0"
+              />
+              <Label htmlFor="agree" className="text-xs leading-snug text-muted-foreground cursor-pointer select-none">
                 {t('auth.signUp.agreeToTerms')}
               </Label>
             </div>
 
-            {/* Submit Button */}
-            <Button type="submit" className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm transition-colors shadow-sm" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full h-9 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm transition-colors shadow-none"
+              disabled={loading}
+            >
               {loading ? t('auth.signUp.creatingAccount') : t('auth.signUp.signUp')}
             </Button>
 
-            {/* Sign In Link */}
-            <p className="text-sm text-center text-muted-foreground mt-4">
+            <p className="text-xs text-center text-muted-foreground">
               {t('auth.signUp.alreadyHaveAccount')}{' '}
               <Link href="/auth/signin" className="text-primary font-semibold hover:underline">{t('auth.signUp.signIn')}</Link>
             </p>
           </form>
 
-          <div className="mt-4">
-            <AuthFooter />
-          </div>
+          <AuthFooter className="mt-2 px-0 py-2 border-t-0 bg-transparent" />
         </div>
       </div>
     </div>
