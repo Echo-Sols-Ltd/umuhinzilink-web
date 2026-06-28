@@ -193,8 +193,15 @@ function FeatureCardVisual({ card, title }: { card: FeatureCardConfig; title: st
 
   return (
     <div className="landing-features-visual landing-features-visual--card4">
-      <div className="landing-features-phone landing-features-phone--card4">
-        <Image src={images.primary} alt={title} fill className="object-cover" sizes="260px" />
+      <div className="landing-features-card4-media">
+        <Image
+          src={images.primary}
+          alt={title}
+          fill
+          className="object-cover object-center"
+          sizes="(max-width: 768px) 100vw, 560px"
+        />
+        <div className="landing-features-card4-media-fade" aria-hidden />
       </div>
       <div className="landing-features-float-card landing-features-float-card--review">
         <div className="landing-features-stars" aria-hidden>

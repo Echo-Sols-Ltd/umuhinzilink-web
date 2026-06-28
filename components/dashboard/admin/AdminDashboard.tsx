@@ -1,146 +1,160 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
   Users,
-  TrendingUp,
   DollarSign,
-  AlertTriangle,
   ShoppingCart,
-  CheckCircle,
-  Clock,
-  Briefcase,
-  Store,
   UserCheck,
-  Activity
+  RefreshCw,
+  BarChart3,
+  ArrowRight,
 } from '@/lib/icons';
-import MetricCard from '../common/MetricCard';
-import { DashboardSection } from '../common/DashboardGrid';
+import AdminStatCard from '@/components/admin/AdminStatCard';
+import AdminDashboardSection from '@/components/admin/AdminDashboardSection';
+import { RevenueTrendChart, UserGrowthChart } from '@/components/admin/AdminDashboardCharts';
 import { AdminDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
-import DashboardChart from '../common/DashboardChart';
 import { useI18n } from '@/contexts/I18nContext';
 import { DashboardSkeleton } from '@/components/layout/PageLoading';
+import { Button } from '@/components/ui/button';
+import { notify } from '@/lib/notify';
 
 export default function AdminDashboard() {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const { t } = useI18n();
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const response = await dashboardService.getAdminDashboard();
-        if (response.success) {
-          setDashboardData(response.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch admin dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchDashboardData = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
 
+    try {
+      const response = await dashboardService.getAdminDashboard();
+      if (response.success) {
+        setDashboardData(response.data);
+      } else {
+        notify.error(t('common.error'), 'Dashboard');
+      }
+    } catch (error) {
+      console.error('Failed to fetch admin dashboard data:', error);
+      notify.error(t('common.error'), 'Dashboard');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [fetchDashboardData]);
 
   if (loading) {
-    return <DashboardSkeleton />;
+    return <DashboardSkeleton cards={4} />;
   }
 
   if (!dashboardData) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">{t('common.error')}</p>
+      <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-border p-8 text-center">
+        <BarChart3 className="h-8 w-8 text-muted-foreground" />
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-foreground">{t('common.error')}</p>
+          <p className="text-xs text-muted-foreground">Unable to load dashboard metrics right now.</p>
+        </div>
+        <Button onClick={() => fetchDashboardData()} variant="outline" size="sm">
+          Retry
+        </Button>
       </div>
     );
   }
 
-  // Fallbacks if data is missing during API migration
-  const fallbackChartData = {
-    userGrowthTrend: dashboardData.userGrowthTrend || dashboardData.userGrowth,
-    revenueTrend: dashboardData.revenueTrend || dashboardData.revenueByUserType
-  };
+  const userGrowthTrend =
+    dashboardData.userGrowthTrend ?? dashboardData.userGrowth ?? null;
+  const revenueTrend =
+    dashboardData.revenueTrend ?? dashboardData.revenueByUserType ?? null;
+
+  const activeUsers =
+    dashboardData.activeUsersLast7Days ?? dashboardData.activeSessions ?? 0;
+  const newRegistrations =
+    dashboardData.newRegistrationsLast30Days ?? dashboardData.newRegistrations ?? 0;
+
+  const kpiCards = [
+    {
+      title: t('admin.dashboard.metrics.totalUsers'),
+      value: dashboardData.totalUsers ?? 0,
+      format: 'number' as const,
+      icon: Users,
+      iconClassName: 'bg-violet-500/10 text-violet-600 dark:text-violet-400',
+      hint: `${newRegistrations.toLocaleString()} new in the last 30 days`,
+    },
+    {
+      title: t('admin.dashboard.metrics.platformRevenue'),
+      value: dashboardData.platformRevenue ?? 0,
+      format: 'currency' as const,
+      icon: DollarSign,
+      iconClassName: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+      hint: 'Total platform earnings',
+    },
+    {
+      title: t('admin.dashboard.metrics.totalOrders'),
+      value: dashboardData.totalOrders ?? 0,
+      format: 'number' as const,
+      icon: ShoppingCart,
+      iconClassName: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+      hint: 'All-time order count',
+    },
+    {
+      title: t('admin.dashboard.metrics.activeUsers'),
+      value: activeUsers,
+      format: 'number' as const,
+      icon: UserCheck,
+      iconClassName: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
+      hint: 'Active in the last 7 days',
+    },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* Section 1: Ecosystem Overview */}
-      <DashboardSection title={t('admin.dashboard.sections.ecosystemOverview')} cols={4}>
-        <MetricCard
-          title={t('admin.dashboard.metrics.totalUsers')}
-          value={dashboardData.totalUsers}
-          icon={<Users className="w-5 h-5 text-primary" />}
-        />
-        <MetricCard
-          title={t('admin.dashboard.metrics.totalFarmers')}
-          value={dashboardData.totalFarmers || 0}
-          icon={<Briefcase className="w-5 h-5 text-green-500" />}
-        />
-        <MetricCard
-          title={t('admin.dashboard.metrics.totalBuyers')}
-          value={dashboardData.totalBuyers || 0}
-          icon={<ShoppingCart className="w-5 h-5 text-blue-500" />}
-        />
-        <MetricCard
-          title={t('admin.dashboard.metrics.totalSuppliers')}
-          value={dashboardData.totalSuppliers || 0}
-          icon={<Store className="w-5 h-5 text-orange-500" />}
-        />
-      </DashboardSection>
+    <div className="space-y-8 pb-2">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-muted-foreground">
+          Key platform metrics at a glance.
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchDashboardData(true)}
+            disabled={refreshing}
+            className="gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Button asChild size="sm" className="gap-2">
+            <Link href="/admin/analytics">
+              View all analytics
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
 
-      {/* Section 2: Platform Performance */}
-      <DashboardSection title={t('admin.dashboard.sections.platformPerformance')} cols={4}>
-        <MetricCard
-          title={t('admin.dashboard.metrics.totalOrders')}
-          value={dashboardData.totalOrders || 0}
-          icon={<ShoppingCart className="w-5 h-5 text-blue-500" />}
-        />
-        <MetricCard
-          title={t('admin.dashboard.metrics.transactionVolume')}
-          value={dashboardData.transactionVolume}
-          format="currency"
-          icon={<Activity className="w-5 h-5 text-purple-500" />}
-        />
-        <MetricCard
-          title={t('admin.dashboard.metrics.platformRevenue')}
-          value={dashboardData.platformRevenue}
-          format="currency"
-          icon={<DollarSign className="w-5 h-5 text-green-500" />}
-        />
-        <MetricCard
-          title={t('admin.dashboard.metrics.newRegistrations')}
-          value={dashboardData.newRegistrationsLast30Days || dashboardData.newRegistrations || 0}
-          icon={<TrendingUp className="w-5 h-5 text-teal-500" />}
-        />
-      </DashboardSection>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {kpiCards.map((card) => (
+          <AdminStatCard key={card.title} variant="featured" {...card} />
+        ))}
+      </div>
 
-      {/* Section 3: Engagement and Operational Health */}
-      <DashboardSection title={t('admin.dashboard.sections.engagementOperations')} cols={2}>
-        <MetricCard
-          title={t('admin.dashboard.metrics.activeUsers')}
-          value={dashboardData.activeUsersLast7Days || dashboardData.activeSessions || 0}
-          icon={<UserCheck className="w-5 h-5 text-indigo-500" />}
-        />
-        <MetricCard
-          title={t('admin.dashboard.metrics.openSupportTickets')}
-          value={dashboardData.openSupportTickets}
-          icon={<AlertTriangle className={`w-5 h-5 ${dashboardData.openSupportTickets > 10 ? 'text-red-500' : 'text-green-500'}`} />}
-        />
-      </DashboardSection>
-
-      {/* Section 4: Charts */}
-      {fallbackChartData.userGrowthTrend && fallbackChartData.revenueTrend && (
-        <DashboardSection title={t('admin.dashboard.sections.platformTrends')} cols={2}>
-          <DashboardChart
-            config={fallbackChartData.userGrowthTrend}
-            height={300}
-          />
-          <DashboardChart
-            config={fallbackChartData.revenueTrend}
-            height={300}
-          />
-        </DashboardSection>
-      )}
+      <AdminDashboardSection
+        title={t('admin.dashboard.sections.platformTrends')}
+        description="User growth and revenue over recent periods"
+        contentClassName="grid grid-cols-1 gap-6 lg:grid-cols-2"
+      >
+        <UserGrowthChart config={userGrowthTrend} />
+        <RevenueTrendChart config={revenueTrend} />
+      </AdminDashboardSection>
     </div>
   );
 }

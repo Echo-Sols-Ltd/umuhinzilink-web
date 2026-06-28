@@ -68,7 +68,7 @@ function MessageBubble({
                 </div>
             )}
 
-            <div className="max-w-[70%]">
+            <div className="max-w-[85%] sm:max-w-[75%] lg:max-w-[70%]">
                 {/* Bubble */}
                 <div className={`relative px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${isOwn
                     ? 'bg-green-600 text-white rounded-tr-sm'
@@ -203,7 +203,7 @@ export default function NegotiationChat({
         return (
             <PageLoading
                 fullScreen={false}
-                className="h-full min-h-[320px] bg-gray-50 dark:bg-gray-950"
+                className="h-full min-h-[320px] min-w-0 bg-gray-50 dark:bg-gray-950"
                 label="Loading negotiation"
                 description="Fetching messages and offer details…"
             />
@@ -221,15 +221,16 @@ export default function NegotiationChat({
     // ── Render ────────────────────────────────────────────────────────────
 
     return (
-        <div className={cn(
-            'flex h-full min-h-0 bg-gray-50 dark:bg-gray-950 overflow-hidden',
-        )}>
-
-            {/* ── Chat panel ───────────────────────────────────────────── */}
-            <div className={cn(
-                'flex flex-col w-full h-full min-h-0',
-                isSeller ? 'flex-1' : 'flex-1'
-            )}>
+        <div
+            className={cn(
+                'grid h-full min-h-0 w-full min-w-0 overflow-hidden bg-gray-50 dark:bg-gray-950',
+                negotiation
+                    ? 'grid-rows-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_260px] lg:grid-rows-1'
+                    : 'grid-cols-1',
+            )}
+        >
+            {/* Chat — shrinks so the side panel always stays in view */}
+            <div className="flex min-h-0 min-w-0 flex-col overflow-hidden">
 
                 {/* Chat header */}
                 <div className="h-14 bg-white dark:bg-gray-900 border-b border-border flex items-center justify-between px-4 shrink-0">
@@ -278,11 +279,17 @@ export default function NegotiationChat({
 
                     {/* System message at top */}
                     {negotiation && (
-                        <div className="flex justify-center mb-4">
-                            <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 border border-border rounded-full text-xs text-muted-foreground shadow-sm">
-                                <TrendingUp size={12} className="text-amber-500" />
-                                Buyer offered <span className="font-bold text-foreground mx-1">{fmt(negotiation.buyerProposedPrice)}</span>
-                                for {negotiation.order.quantity} {negotiation.order.product.measurementUnit?.toLowerCase()}
+                        <div className="mb-4 flex justify-center px-1">
+                            <div className="max-w-full rounded-full border border-border bg-white px-3 py-2 text-center text-[11px] text-muted-foreground shadow-sm dark:bg-gray-900 sm:text-xs">
+                                <span className="inline-flex flex-wrap items-center justify-center gap-x-1 gap-y-0.5">
+                                    <TrendingUp size={12} className="shrink-0 text-amber-500" />
+                                    <span>Buyer offered</span>
+                                    <span className="font-bold text-foreground">{fmt(negotiation.buyerProposedPrice)}</span>
+                                    <span>
+                                        for {negotiation.order.quantity}{' '}
+                                        {negotiation.order.product.measurementUnit?.toLowerCase()}
+                                    </span>
+                                </span>
                             </div>
                         </div>
                     )}
@@ -355,9 +362,9 @@ export default function NegotiationChat({
                 </div>
             </div>
 
-            {/* ── Seller right panel ────────────────────────────────────── */}
+            {/* Side panel — fixed width, scrolls independently */}
             {negotiation && (
-                <div className="w-72 border-l border-border">
+                <div className="flex max-h-[40vh] min-h-0 min-w-0 flex-col overflow-hidden border-t border-border lg:max-h-none lg:border-l lg:border-t-0">
                     <SellerPricePanel
                         negotiation={negotiation}
                         onSetSellerOffer={(price) => setSellerOffer(negotiationId, price)}

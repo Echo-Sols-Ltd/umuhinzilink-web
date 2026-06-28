@@ -139,10 +139,9 @@ export const adminService = {
   },
 
   // Get system analytics
-  getSystemAnalytics: async () => {
+  getSystemAnalytics: async (): Promise<ApiResponse<Record<string, unknown>>> => {
     try {
-      const response = await apiClient.get<ApiResponse<any>>('/admin/analytics');
-      return response.data;
+      return await apiClient.get<ApiResponse<Record<string, unknown>>>(API_ENDPOINTS.ADMIN.ANALYTICS);
     } catch (error) {
       console.error('Error fetching analytics:', error);
       throw error;
@@ -164,7 +163,7 @@ export const adminService = {
   // Update system configuration
   updateSystemConfig: async (config: Record<string, any>) => {
     try {
-      const response = await apiClient.put<ApiResponse<any>>('/admin/config', config);
+      const response = await apiClient.put<ApiResponse<any>>(API_ENDPOINTS.ADMIN.CONFIG, config);
       return response.data;
     } catch (error) {
       console.error('Error updating system config:', error);

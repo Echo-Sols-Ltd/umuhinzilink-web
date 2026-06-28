@@ -12,6 +12,7 @@ import { Product, ProductStatus } from '@/types';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import { ProductGridSkeleton } from '@/components/layout/PageLoading';
+import SellerGuard from '@/contexts/guard/SellerGuard';
 
 type SortKey = 'name' | 'unitPrice' | 'stockQuantity' | 'viewCount' | 'createdAt';
 type ViewMode = 'grid' | 'list';
@@ -77,6 +78,14 @@ function EmptyState({ filtered }: { filtered: boolean }) {
 }
 
 export default function SellerListings() {
+  return (
+    <SellerGuard>
+      <SellerListingsContent />
+    </SellerGuard>
+  );
+}
+
+function SellerListingsContent() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ProductStatus | 'ALL'>('ALL');
   const [sortKey, setSortKey] = useState<SortKey>('createdAt');

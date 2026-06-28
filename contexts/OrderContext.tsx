@@ -58,6 +58,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { showNotification } = useBrowserNotification();
   const currentOrderIdRef = useRef<string | null>(null);
   const prevUserIdRef = useRef<string | undefined>(undefined);
+  const prevUserRoleRef = useRef<UserRole | undefined>(undefined);
   const showNotificationRef = useRef(showNotification);
 
   const userId = user?.id;
@@ -115,16 +116,42 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Warm cache for profile / navbar — only when the signed-in user changes
+  const clearOrderState = useCallback(() => {
+    setOrders([]);
+    setOrdersTotalPages(0);
+    setOrdersTotalElements(0);
+    setCurrentOrder(null);
+    setCurrentProduct(null);
+    setLoading(false);
+    setMutationLoadingState(false);
+  }, []);
+
+  // Warm cache for profile / navbar — only when the signed-in user or role changes
   useEffect(() => {
     const previousUserId = prevUserIdRef.current;
+    const previousUserRole = prevUserRoleRef.current;
     prevUserIdRef.current = userId;
+    prevUserRoleRef.current = userRole;
 
-    if (!userId || previousUserId === userId) return;
+    if (!userId) {
+      if (previousUserId !== undefined) {
+        clearOrderState();
+      }
+      return;
+    }
 
-    if (userRole === UserRole.BUYER) fetchBuyingOrders(0, 10);
-    if (userRole === UserRole.SELLER) fetchSellingOrders(0, 10);
-  }, [userId, userRole, fetchBuyingOrders, fetchSellingOrders]);
+    const userChanged = previousUserId !== userId;
+    const roleChanged = previousUserRole !== userRole;
+
+    if (userChanged || roleChanged) {
+      if (previousUserId !== undefined || previousUserRole !== undefined) {
+        clearOrderState();
+      }
+
+      if (userRole === UserRole.BUYER) fetchBuyingOrders(0, 10);
+      else if (userRole === UserRole.SELLER) fetchSellingOrders(0, 10);
+    }
+  }, [userId, userRole, fetchBuyingOrders, fetchSellingOrders, clearOrderState]);
 
   const addOrder = useCallback((data: Order) => {
     setOrders(prev => [data, ...prev]);

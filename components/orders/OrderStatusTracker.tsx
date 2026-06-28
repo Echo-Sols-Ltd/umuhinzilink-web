@@ -54,8 +54,12 @@ const OrderStatusTracker: React.FC<OrderStatusTrackerProps> = ({
       ...baseSteps,
       {
         id: 'payment',
-        labelKey: 'orderStatus.tracker.paymentPending.label',
-        descriptionKey: 'orderStatus.tracker.paymentPending.description',
+        labelKey: paymentComplete
+          ? 'orderStatus.tracker.paymentComplete.label'
+          : 'orderStatus.tracker.paymentPending.label',
+        descriptionKey: paymentComplete
+          ? 'orderStatus.tracker.paymentComplete.description'
+          : 'orderStatus.tracker.paymentPending.description',
         icon: DollarSign,
         status: paymentComplete ? 'completed' : paymentActive ? 'active' : 'pending' as const,
         timestamp: paymentComplete ? updatedAt : undefined,

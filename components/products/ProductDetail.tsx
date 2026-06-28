@@ -8,7 +8,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Product } from '@/types';
+import { Product, UserRole } from '@/types';
 import { cn, imageUrl } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
@@ -78,6 +78,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const isOutOfStock = product.stockQuantity === 0 || product.status === 'OUT_OF_STOCK';
   const isLowStock = product.status === 'LOW_STOCK';
   const isOwner = user?.id === product.owner?.id;
+  const isAdmin = user?.role === UserRole.ADMIN;
+  const canParticipate = Boolean(user) && !isAdmin;
+  const showParticipantActions = showActions && canParticipate && !isOwner;
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat(locale === 'rw' ? 'rw-RW' : 'en-US', {
@@ -209,7 +212,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </dl>
             </div>
 
-            {showActions && !isOwner && (
+            {showParticipantActions && (
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-foreground shrink-0">
@@ -298,7 +301,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </div>
             )}
 
-            {showActions && isOwner && (
+            {showActions && isOwner && !isAdmin && (
               <div className="flex gap-2">
                 <Link
                   href={`/products/${product.id}/edit`}

@@ -92,7 +92,7 @@ class AnalyticsService {
 
   async getAdminDashboardMetrics(filters?: AnalyticsFilters): Promise<DashboardMetrics> {
     return this.fetchWithCache<DashboardMetrics>(
-      '/admin/dashboard/stats',
+      API_ENDPOINTS.DASHBOARD.ADMIN_STATS,
       filters
     );
   }

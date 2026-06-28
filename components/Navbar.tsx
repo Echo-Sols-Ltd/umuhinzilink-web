@@ -138,56 +138,72 @@ export default function Navbar() {
                         </div>
 
                         <div className="py-1">
-                          <DropdownLink
-                            href={ROUTES.profile}
-                            icon={<User size={15} />}
-                            label="Profile"
-                            onClick={() => setAvatarOpen(false)}
-                          />
-
                           {isAdmin ? (
-                            <DropdownLink
-                              href={ROUTES.admin.dashboard}
-                              icon={<LayoutDashboard size={15} />}
-                              label="Admin Dashboard"
-                              onClick={() => setAvatarOpen(false)}
-                            />
-                          ) : isSeller ? (
-                            <DropdownLink
-                              href={ROUTES.dashboard}
-                              icon={<LayoutDashboard size={15} />}
-                              label="Seller Dashboard"
-                              onClick={() => setAvatarOpen(false)}
-                            />
-                          ) : (
                             <>
                               <DropdownLink
-                                href={ROUTES.dashboard}
+                                href={ROUTES.admin.dashboard}
                                 icon={<LayoutDashboard size={15} />}
-                                label="Dashboard"
+                                label="Admin Dashboard"
                                 onClick={() => setAvatarOpen(false)}
                               />
                               <DropdownLink
-                                href={ROUTES.becomeSeller}
-                                icon={<Sprout size={15} />}
-                                label="Become a Seller"
+                                href={ROUTES.admin.wallets}
+                                icon={<Wallet size={15} />}
+                                label="Platform Wallets"
+                                onClick={() => setAvatarOpen(false)}
+                              />
+                              <DropdownLink
+                                href={ROUTES.admin.settings}
+                                icon={<Settings size={15} />}
+                                label="Admin Settings"
+                                onClick={() => setAvatarOpen(false)}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <DropdownLink
+                                href={ROUTES.profile}
+                                icon={<User size={15} />}
+                                label="Profile"
+                                onClick={() => setAvatarOpen(false)}
+                              />
+                              {isSeller ? (
+                                <DropdownLink
+                                  href={ROUTES.dashboard}
+                                  icon={<LayoutDashboard size={15} />}
+                                  label="Seller Dashboard"
+                                  onClick={() => setAvatarOpen(false)}
+                                />
+                              ) : (
+                                <>
+                                  <DropdownLink
+                                    href={ROUTES.dashboard}
+                                    icon={<LayoutDashboard size={15} />}
+                                    label="Dashboard"
+                                    onClick={() => setAvatarOpen(false)}
+                                  />
+                                  <DropdownLink
+                                    href={ROUTES.becomeSeller}
+                                    icon={<Sprout size={15} />}
+                                    label="Become a Seller"
+                                    onClick={() => setAvatarOpen(false)}
+                                  />
+                                </>
+                              )}
+                              <DropdownLink
+                                href={ROUTES.wallet}
+                                icon={<Wallet size={15} />}
+                                label="Wallet"
+                                onClick={() => setAvatarOpen(false)}
+                              />
+                              <DropdownLink
+                                href={ROUTES.settings}
+                                icon={<Settings size={15} />}
+                                label="Settings"
                                 onClick={() => setAvatarOpen(false)}
                               />
                             </>
                           )}
-
-                          <DropdownLink
-                            href={ROUTES.wallet}
-                            icon={<Wallet size={15} />}
-                            label="Wallet"
-                            onClick={() => setAvatarOpen(false)}
-                          />
-                          <DropdownLink
-                            href={ROUTES.settings}
-                            icon={<Settings size={15} />}
-                            label="Settings"
-                            onClick={() => setAvatarOpen(false)}
-                          />
                         </div>
 
                         <div className="border-t border-border py-1">

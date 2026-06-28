@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Home, LogOut } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
+import { getDashboardRoute } from '@/lib/routes';
 
 export default function Unauthorized() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function Unauthorized() {
 
   const handleGoToDashboard = () => {
     if (user) {
-      router.push('/');
+      router.push(getDashboardRoute(user.role));
     } else {
       router.push('/auth/signin');
     }

@@ -8,7 +8,6 @@ import { useNegotiation } from '@/contexts/NegotiationContext';
 import { useRouter } from 'next/navigation';
 import ProfileComponent from '@/components/profile/Profile';
 import AppLayout from '@/components/layout/AppLayout';
-import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
 
@@ -44,11 +43,7 @@ export default function ProfilePage() {
   );
 
   return (
-    <AppLayout maxWidth="max-w-6xl" mainClassName="space-y-0">
-      <PageHeader
-        title="My profile"
-        description="Wallet, orders, and account settings."
-      />
+    <AppLayout maxWidth="max-w-6xl" mainClassName="space-y-6 pb-8">
       <ProfileComponent
         user={user}
         walletBalance={walletBalance}

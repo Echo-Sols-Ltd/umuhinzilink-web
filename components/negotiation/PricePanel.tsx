@@ -126,15 +126,17 @@ export default function PricePanel({
     };
 
     return (
-        <div className="flex flex-col h-screen bg-white dark:bg-gray-900 border-l border-border overflow-auto">
-            <div className="px-4 py-3.5 border-b border-border shrink-0">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+        <div className="flex h-full min-h-0 w-full min-w-0 max-w-full flex-col overflow-hidden bg-white dark:bg-gray-900">
+            <div className="shrink-0 border-b border-border px-3 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                     {isSeller ? 'Negotiation Panel' : 'Offer Details'}
                 </p>
-                <p className="text-sm font-bold text-foreground mt-0.5">{negotiation.order.orderNumber}</p>
+                <p className="mt-0.5 truncate text-sm font-bold text-foreground">
+                    {negotiation.order.orderNumber}
+                </p>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-3 space-y-3">
                 <div className={cn(
                     'flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold',
                     isActive && 'bg-amber-50 dark:bg-amber-950/30 text-amber-700',
@@ -170,23 +172,25 @@ export default function PricePanel({
 
                 <div className="space-y-2">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Prices</p>
-                    <div className="flex justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-xs">
-                        <span className="text-muted-foreground">Listed</span>
-                        <span className="font-bold">{fmt(listedPrice)}</span>
+                    <div className="flex justify-between gap-2 py-2 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-xs min-w-0">
+                        <span className="shrink-0 text-muted-foreground">Listed</span>
+                        <span className="truncate font-bold text-right">{fmt(listedPrice)}</span>
                     </div>
-                    <div className="flex justify-between py-2 px-3 bg-amber-50 dark:bg-amber-950/20 rounded-xl text-xs">
-                        <span className="text-muted-foreground">{isSeller ? "Buyer's offer" : 'Your offer'}</span>
-                        <span className="font-extrabold text-amber-600">{fmt(buyerPrice)}{discount > 0 ? ` (-${discount}%)` : ''}</span>
+                    <div className="flex justify-between gap-2 py-2 px-3 bg-amber-50 dark:bg-amber-950/20 rounded-xl text-xs min-w-0">
+                        <span className="shrink-0 text-muted-foreground">{isSeller ? "Buyer's offer" : 'Your offer'}</span>
+                        <span className="truncate text-right font-extrabold text-amber-600">
+                            {fmt(buyerPrice)}{discount > 0 ? ` (-${discount}%)` : ''}
+                        </span>
                     </div>
                     {sellerPrice && (
-                        <div className="flex justify-between py-2 px-3 bg-green-50 dark:bg-green-950/20 rounded-xl border border-green-200 text-xs">
-                            <span className="text-muted-foreground">{isSeller ? 'Your counter' : "Seller's counter"}</span>
-                            <span className="font-extrabold text-green-700">{fmt(sellerPrice)}</span>
+                        <div className="flex justify-between gap-2 py-2 px-3 bg-green-50 dark:bg-green-950/20 rounded-xl border border-green-200 text-xs min-w-0">
+                            <span className="shrink-0 text-muted-foreground">{isSeller ? 'Your counter' : "Seller's counter"}</span>
+                            <span className="truncate text-right font-extrabold text-green-700">{fmt(sellerPrice)}</span>
                         </div>
                     )}
-                    <div className="flex justify-between py-2.5 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border text-xs">
-                        <span className="font-semibold">Order total</span>
-                        <span className="font-extrabold text-green-700">
+                    <div className="flex justify-between gap-2 py-2.5 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border text-xs min-w-0">
+                        <span className="shrink-0 font-semibold">Order total</span>
+                        <span className="truncate text-right font-extrabold text-green-700">
                             {fmt((sellerPrice ?? buyerPrice) * negotiation.order.quantity)}
                         </span>
                     </div>
@@ -216,17 +220,17 @@ export default function PricePanel({
                     <>
                         <div className="space-y-2">
                             <p className="text-xs font-bold text-muted-foreground uppercase">Set your counter price</p>
-                            <div className="flex gap-2">
+                            <div className="flex min-w-0 gap-2">
                                 <input
                                     type="number"
                                     placeholder={String(Math.round(buyerPrice * 1.1))}
                                     value={offerInput}
                                     onChange={e => { setOfferInput(e.target.value); setOfferError(''); }}
                                     onKeyDown={e => { if (e.key === 'Enter') submitOffer(); }}
-                                    className={cn('flex-1 h-10 px-3 text-sm border rounded-xl', offerError ? 'border-red-400' : 'border-border')}
+                                    className={cn('min-w-0 flex-1 h-9 px-2.5 text-sm border rounded-xl', offerError ? 'border-red-400' : 'border-border')}
                                 />
                                 <button onClick={submitOffer} disabled={loading || !offerInput}
-                                    className="h-10 px-3 bg-green-600 text-white text-xs font-bold rounded-xl disabled:opacity-50 flex items-center gap-1">
+                                    className="h-9 shrink-0 px-2.5 bg-green-600 text-white text-[11px] font-bold rounded-xl disabled:opacity-50 flex items-center gap-1">
                                     {loading ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />} Send
                                 </button>
                             </div>
@@ -243,14 +247,15 @@ export default function PricePanel({
                             <ConfirmBox type={confirming} price={confirming === 'accept' ? buyerPrice : undefined}
                                 loading={loading} onConfirm={handleConfirm} onCancel={() => setConfirming(null)} />
                         ) : (
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="flex flex-col gap-2">
                                 <button onClick={() => setConfirming('accept')}
-                                    className="h-9 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1">
-                                    <CheckCircle size={13} /> Accept {fmt(buyerPrice)}
+                                    className="h-9 w-full border border-emerald-200 text-emerald-700 text-[11px] font-bold rounded-xl flex items-center justify-center gap-1 px-2">
+                                    <CheckCircle size={13} className="shrink-0" />
+                                    <span className="truncate">Accept {fmt(buyerPrice)}</span>
                                 </button>
                                 <button onClick={() => setConfirming('reject')}
-                                    className="h-9 border border-red-200 text-red-600 text-xs font-bold rounded-xl flex items-center justify-center gap-1">
-                                    <XCircle size={13} /> Reject
+                                    className="h-9 w-full border border-red-200 text-red-600 text-[11px] font-bold rounded-xl flex items-center justify-center gap-1">
+                                    <XCircle size={13} className="shrink-0" /> Reject
                                 </button>
                             </div>
                         )}
@@ -261,17 +266,17 @@ export default function PricePanel({
                 {!isSeller && isActive && (
                     <div className="space-y-2">
                         <p className="text-xs font-bold text-muted-foreground uppercase">Update your offer</p>
-                        <div className="flex gap-2">
+                        <div className="flex min-w-0 gap-2">
                             <input
                                 type="number"
                                 placeholder={String(buyerPrice)}
                                 value={offerInput}
                                 onChange={e => { setOfferInput(e.target.value); setOfferError(''); }}
                                 onKeyDown={e => { if (e.key === 'Enter') submitOffer(); }}
-                                className={cn('flex-1 h-10 px-3 text-sm border rounded-xl', offerError ? 'border-red-400' : 'border-border')}
+                                className={cn('min-w-0 flex-1 h-9 px-2.5 text-sm border rounded-xl', offerError ? 'border-red-400' : 'border-border')}
                             />
                             <button onClick={submitOffer} disabled={loading || !offerInput}
-                                className="h-10 px-3 bg-amber-600 text-white text-xs font-bold rounded-xl disabled:opacity-50">
+                                className="h-9 shrink-0 px-2.5 bg-amber-600 text-white text-[11px] font-bold rounded-xl disabled:opacity-50">
                                 Update
                             </button>
                         </div>
@@ -290,13 +295,13 @@ export default function PricePanel({
                             <ConfirmBox type={confirming} price={confirming === 'accept' ? sellerPrice! : undefined}
                                 loading={loading} onConfirm={handleConfirm} onCancel={() => setConfirming(null)} />
                         ) : (
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="flex flex-col gap-2">
                                 <button onClick={() => setConfirming('reject')}
-                                    className="h-10 border border-red-200 text-red-600 text-xs font-bold rounded-xl">
+                                    className="h-9 w-full border border-red-200 text-red-600 text-[11px] font-bold rounded-xl">
                                     Decline
                                 </button>
                                 <button onClick={() => setConfirming('accept')}
-                                    className="h-10 bg-green-600 text-white text-xs font-bold rounded-xl">
+                                    className="h-9 w-full bg-green-600 text-white text-[11px] font-bold rounded-xl">
                                     Accept & pay
                                 </button>
                             </div>

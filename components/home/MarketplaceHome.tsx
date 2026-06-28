@@ -1,7 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowRight } from '@/lib/icons';
+import { useAuth } from '@/contexts/AuthContext';
 import { useProduct } from '@/contexts/ProductContext';
 import ProductCard from '@/components/products/ProductCard';
 import Navbar from '@/components/Navbar';
@@ -13,11 +16,29 @@ import ImpactStories from '@/components/ImpactStories';
 import CallToAction from '@/components/CallToAction';
 import Footer from '@/components/Footer';
 import HomeScrollAnchor from '@/components/home/HomeScrollAnchor';
-import { ProductGridSkeleton } from '@/components/layout/PageLoading';
-import { ROUTES } from '@/lib/routes';
+import PageLoading, { ProductGridSkeleton } from '@/components/layout/PageLoading';
+import { getDashboardRoute, ROUTES } from '@/lib/routes';
 
 export default function MarketplaceHome() {
   const { products, loading } = useProduct();
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (isAuthenticated && user) {
+      router.replace(getDashboardRoute(user.role));
+    }
+  }, [authLoading, isAuthenticated, user, router]);
+
+  if (authLoading || (isAuthenticated && user)) {
+    return (
+      <PageLoading
+        label="Taking you to your dashboard"
+        description="Redirecting to your workspace…"
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">

@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Plus, ArrowRight } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import AppLayout from '@/components/layout/AppLayout';
@@ -9,6 +11,7 @@ import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import BuyerDashboard from '@/components/dashboard/buyer/BuyerDashboard';
 import SellerDashboard from '@/components/dashboard/seller/SellerDashboard';
+import { Button } from '@/components/ui/button';
 import { UserRole } from '@/types';
 import { ROUTES } from '@/lib/routes';
 
@@ -61,15 +64,39 @@ export default function DashboardPage() {
 
   return (
     <AppLayout maxWidth="max-w-6xl">
-      <PageHeader
-        title={isSeller ? 'Seller dashboard' : 'Buyer dashboard'}
-        description={
-          isSeller
-            ? 'Overview of your listings, orders, and sales.'
-            : 'Overview of your orders, wallet, and saved products.'
-        }
-      />
-      {isSeller ? <SellerDashboard /> : <BuyerDashboard />}
+      <div className="space-y-6 pb-8">
+        <PageHeader
+          title={
+            isSeller
+              ? t('farmer.dashboard.title')
+              : t('buyer.dashboard.title')
+          }
+          description={
+            isSeller
+              ? t('farmer.dashboard.subtitle')
+              : t('buyer.dashboard.subtitle')
+          }
+          actions={
+            isSeller ? (
+              <>
+                <Button asChild className="gap-2">
+                  <Link href={ROUTES.productCreate}>
+                    <Plus size={16} />
+                    {t('farmer.dashboard.actions.addProduct')}
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="sm" className="gap-1">
+                  <Link href={ROUTES.sellerProducts}>
+                    {t('supplier.wallet.quickLinks.listings')}
+                    <ArrowRight size={14} />
+                  </Link>
+                </Button>
+              </>
+            ) : undefined
+          }
+        />
+        {isSeller ? <SellerDashboard /> : <BuyerDashboard />}
+      </div>
     </AppLayout>
   );
 }

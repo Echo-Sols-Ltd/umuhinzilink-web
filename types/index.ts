@@ -8,5 +8,6 @@ export * from './message';
 export * from './wallet';
 export * from './navigation';
 export * from './dashboard';
+export * from './adminAnalytics';
 export * from './notification';
 export * from './data';

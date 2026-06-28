@@ -14,6 +14,7 @@ import { cn, imageUrl } from '@/lib/utils';
 import { useNegotiation } from '@/contexts/NegotiationContext';
 import NegotiationCard from '@/components/negotiation/NegotiationCard';
 import { UserRole } from '@/types';
+import { ROUTES } from '@/lib/routes';
 import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
@@ -97,10 +98,17 @@ export default function NegotiationsPage() {
     const [sellerFilter, setSellerFilter] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!authLoading && !isAuthenticated) {
+        if (authLoading) return;
+
+        if (!isAuthenticated) {
             router.replace('/auth/signin?redirect=/negotiations');
+            return;
         }
-    }, [authLoading, isAuthenticated, router]);
+
+        if (user?.role === UserRole.ADMIN) {
+            router.replace(ROUTES.admin.dashboard);
+        }
+    }, [authLoading, isAuthenticated, user?.role, router]);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -145,7 +153,7 @@ export default function NegotiationsPage() {
         return null;
     }
 
-    if (authLoading || !user) {
+    if (authLoading || !user || user.role === UserRole.ADMIN) {
         return (
             <AppLayout maxWidth="max-w-6xl">
                 <PageLoading fullScreen={false} label="Loading negotiations" description="Fetching your active deals…" />

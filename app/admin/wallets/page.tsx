@@ -1,267 +1,306 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { walletService } from '@/services/wallet';
-import { Wallet as IWallet, Transaction} from '@/types';
+import { Wallet as IWallet } from '@/types';
 import {
-    Wallet,
-    Search,
-    Loader2,
-    ChevronLeft,
-    ChevronRight,
-    CreditCard,
-    ArrowUpRight,
-    RefreshCw,
-    User,
-    History,
-    TrendingUp,
-    ShieldCheck
+  Wallet,
+  Search,
+  ChevronRight,
+  RefreshCw,
+  User,
+  ShieldCheck,
+  TrendingUp,
 } from '@/lib/icons';
 import { notify } from '@/lib/notify';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import AdminStatCard from '@/components/admin/AdminStatCard';
+import { formatRwf } from '@/services/adminAnalytics';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Pagination } from '@/components/ui/pagination';
 import { useAdmin } from '@/contexts/AdminContext';
 
+function getOwnerName(wallet: IWallet): string {
+  const first = wallet.user?.firstName?.trim() ?? '';
+  const last = wallet.user?.lastName?.trim() ?? '';
+  const name = `${first} ${last}`.trim();
+  return name || 'Unknown user';
+}
+
 export default function AdminWalletsPage() {
-    const router = useRouter();
-    const [wallets, setWallets] = useState<IWallet[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [page, setPage] = useState(0);
-    const [pageSize] = useState(20);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
-    const { systemWallet } = useAdmin()
+  const router = useRouter();
+  const { systemWallet } = useAdmin();
+  const [wallets, setWallets] = useState<IWallet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(0);
+  const pageSize = 20;
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
 
-    const fetchWallets = async () => {
-        try {
-            setLoading(true);
-            const response = await walletService.getAllWallets({
-                page,
-                size: pageSize,
-                sortBy: 'createdAt',
-                sortDir: 'desc',
-            });
+  const fetchWallets = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) setRefreshing(true);
+      else setLoading(true);
 
-            if (response.success && response.data) {
-                setWallets(response.data);
-                setTotalPages(response.totalPages || 1);
-                setTotalElements(response.totalElements || response.data.length);
-            } else {
-                notify.error(response.message || 'Failed to fetch wallets', 'Error');
-            }
-        } catch (error) {
-            notify.error('Failed to fetch wallets', 'Error');
-        } finally {
-            setLoading(false);
+      const response = await walletService.getAllWallets({
+        page,
+        size: pageSize,
+        sortBy: 'createdAt',
+        sortDir: 'desc',
+      });
+
+      if (response.success && response.data) {
+        setWallets(response.data);
+        setTotalPages(response.totalPages || 1);
+        setTotalElements(response.totalElements || response.data.length);
+      } else {
+        notify.error(response.message || 'Failed to fetch wallets', 'Error');
+      }
+    } catch {
+      notify.error('Failed to fetch wallets', 'Error');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    fetchWallets();
+  }, [fetchWallets]);
+
+  const filteredWallets = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return wallets;
+
+    return wallets.filter((wallet) => {
+      const email = wallet.user?.email?.toLowerCase() ?? '';
+      const firstName = wallet.user?.firstName?.toLowerCase() ?? '';
+      const lastName = wallet.user?.lastName?.toLowerCase() ?? '';
+      const id = wallet.id?.toLowerCase() ?? '';
+      return (
+        email.includes(query) ||
+        firstName.includes(query) ||
+        lastName.includes(query) ||
+        id.includes(query)
+      );
+    });
+  }, [wallets, searchTerm]);
+
+  const pageStats = useMemo(() => {
+    const activeCount = filteredWallets.filter((w) => w.isActive).length;
+    const totalBalance = filteredWallets.reduce((acc, w) => acc + w.balance, 0);
+    const avgBalance = filteredWallets.length ? totalBalance / filteredWallets.length : 0;
+    return { activeCount, totalBalance, avgBalance };
+  }, [filteredWallets]);
+
+  const handleWalletClick = (wallet: IWallet) => {
+    router.push(`/admin/wallets/${wallet.id}`);
+  };
+
+  return (
+    <>
+      <AdminPageHeader
+        title="Wallet Management"
+        description={`Monitor ${totalElements.toLocaleString()} user wallets across the platform`}
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1 sm:max-w-md">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search by name, email, or wallet ID…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchWallets(true)}
+              disabled={refreshing || loading}
+              className="gap-2 shrink-0"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         }
-    };
+      />
 
+      <main className="flex-1 space-y-8 overflow-auto p-4 pb-8 sm:p-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <AdminStatCard
+            variant="featured"
+            title="Platform wallet"
+            value={systemWallet?.balance ?? 0}
+            format="currency"
+            icon={ShieldCheck}
+            iconClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+            hint="System treasury balance"
+          />
+          <AdminStatCard
+            variant="featured"
+            title="Total wallets"
+            value={totalElements}
+            format="number"
+            icon={Wallet}
+            iconClassName="bg-violet-500/10 text-violet-600 dark:text-violet-400"
+            hint="Registered user wallets"
+          />
+          <AdminStatCard
+            variant="featured"
+            title="Active on page"
+            value={pageStats.activeCount}
+            format="number"
+            icon={TrendingUp}
+            iconClassName="bg-blue-500/10 text-blue-600 dark:text-blue-400"
+            hint={`${filteredWallets.length} shown after filters`}
+          />
+          <AdminStatCard
+            variant="featured"
+            title="Avg balance"
+            value={pageStats.avgBalance}
+            format="currency"
+            icon={Wallet}
+            iconClassName="bg-amber-500/10 text-amber-600 dark:text-amber-400"
+            hint="Average on current view"
+          />
+        </div>
 
-    const handleWalletClick = (wallet: IWallet) => {
-        router.push(`/admin/wallets/${wallet.id}`);
-    };
-
-    useEffect(() => {
-        fetchWallets();
-    }, [page]);
-
-    const filteredWallets = wallets.filter(
-        (wallet) =>
-            wallet.user?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            wallet.user?.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            wallet.user?.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            wallet.id?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-
-    return (
-        <>
-            <AdminPageHeader
-                    title="Treasury Management"
-                    description={`Verify and monitor ${totalElements} user wallets across ecosystem`}
-                    actions={
-                        <div className="bg-card p-1 rounded-lg shadow-sm border border-border flex">
-                            <button className="px-4 py-2 bg-success/10 text-success text-xs font-semibold rounded-xl flex items-center gap-2">
-                                <TrendingUp className="w-4 h-4" />
-                                Wallets
-                            </button>
-                            <button className="px-4 py-2 text-muted-foreground text-xs font-semibold rounded-xl hover:text-foreground transition-all">
-                                Transactions
-                            </button>
-                        </div>
-                    }
-                    toolbar={
-                        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
-                            <div className="relative flex-1 max-w-xl">
-                                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                                <input
-                                    type="text"
-                                    placeholder="Search by name, email, or wallet ID..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-14 pr-6 py-3 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-success shadow-sm font-medium"
-                                />
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle>All wallets</CardTitle>
+            <CardDescription>
+              Click a row to view wallet details and transaction history
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40 hover:bg-muted/40">
+                    <TableHead className="pl-6">Owner</TableHead>
+                    <TableHead>Balance</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead className="pr-6 text-right"> </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    Array.from({ length: 6 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell className="pl-6">
+                          <div className="flex items-center gap-3">
+                            <Skeleton className="h-9 w-9 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-32" />
+                              <Skeleton className="h-3 w-40" />
                             </div>
-                            <button onClick={fetchWallets} className="p-3 bg-card border border-border rounded-lg hover:bg-card transition-all shadow-sm shrink-0">
-                                <RefreshCw className={`w-5 h-5 text-muted-foreground ${loading ? 'animate-spin text-success' : ''}`} />
-                            </button>
-                        </div>
-                    }
-                />
-
-                <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-card p-6 rounded-lg border border-border shadow-sm flex items-center gap-5">
-                            <div className="p-4 bg-success rounded-lg text-white shadow-lg shadow-success/20">
-                                <Wallet className="w-6 h-6" />
+                          </div>
+                        </TableCell>
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-16 rounded-full" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                        <TableCell className="pr-6"><Skeleton className="ml-auto h-4 w-4" /></TableCell>
+                      </TableRow>
+                    ))
+                  ) : filteredWallets.length > 0 ? (
+                    filteredWallets.map((wallet) => (
+                      <TableRow
+                        key={wallet.id}
+                        onClick={() => handleWalletClick(wallet)}
+                        className="cursor-pointer hover:bg-muted/30"
+                      >
+                        <TableCell className="pl-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                              <User className="h-4 w-4" />
                             </div>
-                            <div>
-                                <p className="text-xs font-semibold text-muted-foreground uppercase  mb-1.5">System Liquidity</p>
-                                <p className="text-2xl font-semibold text-foreground ">RWF {wallets.reduce((acc, w) => acc + w.balance, 0).toLocaleString()}+</p>
+                            <div className="min-w-0">
+                              <p className="truncate font-medium text-foreground">
+                                {getOwnerName(wallet)}
+                              </p>
+                              <p className="truncate text-xs text-muted-foreground">
+                                {wallet.user?.email ?? '—'}
+                              </p>
                             </div>
-                        </div>
-                        <div className="bg-card p-6 rounded-lg border border-border shadow-sm flex items-center gap-5">
-                            <div className="p-4 bg-info rounded-lg text-white shadow-lg shadow-info/20">
-                                <History className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <p className="text-xs font-semibold text-muted-foreground uppercase  mb-1.5">Active Wallets</p>
-                                <p className="text-2xl font-semibold text-foreground">{totalElements}</p>
-                            </div>
-                        </div>
-                        <div className="bg-card p-6 rounded-lg border border-border shadow-sm flex items-center gap-5">
-                            <div className="p-4 bg-purple-600 rounded-lg text-white shadow-lg shadow-purple-100">
-                                <CreditCard className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <p className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">Avg Balance</p>
-                                <p className="text-2xl font-semibold text-foreground">RWF {(wallets.length ? wallets.reduce((acc, w) => acc + w.balance, 0) / wallets.length : 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Table */}
-                    <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="bg-card/50">
-                                    <TableHead className="font-semibold py-6 pl-8">WALLET OWNER</TableHead>
-                                    <TableHead className="font-semibold">BALANCE</TableHead>
-                                    <TableHead className="font-semibold">STATUS</TableHead>
-                                    <TableHead className="font-semibold">CREATED ON</TableHead>
-                                    <TableHead className="text-right font-semibold pr-8">ACTIONS</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {loading ? (
-                                    Array.from({ length: 5 }).map((_, i) => (
-                                        <TableRow key={i}>
-                                            <TableCell className="pl-8"><Skeleton className="h-12 w-48" /></TableCell>
-                                            <TableCell><Skeleton className="h-6 w-24" /></TableCell>
-                                            <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
-                                            <TableCell><Skeleton className="h-6 w-24" /></TableCell>
-                                            <TableCell className="text-right pr-8"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : filteredWallets.length > 0 ? (
-                                    filteredWallets.map((wallet) => (
-                                        <TableRow
-                                            key={wallet.id}
-                                            onClick={() => handleWalletClick(wallet)}
-                                            className="group cursor-pointer hover:bg-card/50 transition-all font-medium"
-                                        >
-                                            <TableCell className="py-5 pl-8">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center text-success border border-success/20 group-hover:scale-110 transition-transform">
-                                                        <User className="w-5 h-5" />
-                                                    </div>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-foreground font-semibold group-hover:text-success transition-colors uppercase ">{wallet.user.firstName + ' ' + wallet.user.lastName || 'Unknown User'}</span>
-                                                        <span className="text-[11px] text-muted-foreground font-medium">{wallet.user.email}</span>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-col">
-                                                    <span className="text-lg font-semibold text-foreground">
-                                                        {wallet.balance.toLocaleString()} {wallet.currency}
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge
-                                                    variant={wallet.isActive ? 'success' : 'destructive'}
-                                                    className="font-semibold text-xs px-3 py-1  rounded-full"
-                                                >
-                                                    {wallet.isActive ? 'Active' : 'Locked'}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground font-medium text-sm">
-                                                {new Date(wallet.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                                            </TableCell>
-                                            <TableCell className="text-right pr-8">
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleWalletClick(wallet);
-                                                    }}
-                                                    className="p-3 text-muted-foreground hover:text-success hover:bg-success/10 rounded-lg transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 group-hover:block"
-                                                >
-                                                    <ArrowUpRight className="w-5 h-5" />
-                                                </button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="py-24 text-center">
-                                            <div className="flex flex-col items-center justify-center opacity-20">
-                                                <Wallet className="w-20 h-20 mb-4" />
-                                                <p className="text-xl font-semibold ">No Wallets Found</p>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-
-                    {/* Pagination */}
-                    {!loading && totalPages > 1 && (
-                        <div className="flex items-center justify-between px-8 py-6 bg-card rounded-4xl border border-border shadow-sm">
-                            <p className="text-sm text-muted-foreground font-semibold">
-                                Showing PAGE <span className="text-foreground">{page + 1}</span> OF <span className="text-foreground">{totalPages}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-medium text-foreground">
+                          {formatRwf(wallet.balance)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={wallet.isActive ? 'success' : 'destructive'}>
+                            {wallet.isActive ? 'Active' : 'Locked'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {new Date(wallet.createdAt).toLocaleDateString(undefined, {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </TableCell>
+                        <TableCell className="pr-6 text-right">
+                          <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="py-16 text-center">
+                        <div className="mx-auto flex max-w-sm flex-col items-center gap-3">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                            <Wallet className="h-6 w-6 text-muted-foreground" />
+                          </div>
+                          <div className="space-y-1">
+                            <p className="font-medium text-foreground">No wallets found</p>
+                            <p className="text-sm text-muted-foreground">
+                              {searchTerm
+                                ? 'Try a different search term.'
+                                : 'Wallets will appear here once users register.'}
                             </p>
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={() => setPage(Math.max(0, page - 1))}
-                                    disabled={page === 0}
-                                    className="p-2 text-muted-foreground hover:text-success disabled:opacity-30 disabled:hover:text-muted-foreground transition-all border border-border rounded-lg"
-                                >
-                                    <ChevronLeft className="w-5 h-5" />
-                                </button>
-                                <button
-                                    onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                                    disabled={page >= totalPages - 1}
-                                    className="p-2 text-muted-foreground hover:text-success disabled:opacity-30 disabled:hover:text-muted-foreground transition-all border border-border rounded-lg"
-                                >
-                                    <ChevronRight className="w-5 h-5" />
-                                </button>
-                            </div>
+                          </div>
                         </div>
-                    )}
-                </main>
-        </>
-    );
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {!loading && totalPages > 1 && (
+              <div className="border-t border-border px-6 py-4">
+                <Pagination
+                  currentPage={page + 1}
+                  totalPages={totalPages}
+                  onPageChange={(next) => setPage(next - 1)}
+                  showSummary
+                  totalItems={totalElements}
+                  itemsPerPage={pageSize}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </main>
+    </>
+  );
 }

@@ -50,17 +50,15 @@ export default function HeroSlider() {
           >
             {HERO_SLIDES.map((slide, index) => (
               <SwiperSlide key={slide.src} className="hero-main-slide">
-                <div className="hero-main-slide-img-w">
-                  <div className="hero-main-slide-img-inner">
-                    <Image
-                      src={slide.src}
-                      alt={t(slide.altKey)}
-                      fill
-                      priority={index === 0}
-                      className="hero-main-slide-img"
-                      sizes="(max-width: 1024px) 90vw, 560px"
-                    />
-                  </div>
+                <div className="hero-main-slide-media">
+                  <Image
+                    src={slide.src}
+                    alt={t(slide.altKey)}
+                    fill
+                    priority={index === 0}
+                    className="hero-main-slide-img object-cover object-center"
+                    sizes="(max-width: 1024px) 90vw, 560px"
+                  />
                 </div>
               </SwiperSlide>
             ))}

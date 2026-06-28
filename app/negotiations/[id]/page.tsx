@@ -1,7 +1,8 @@
 'use client';
 
 import NegotiationChat from '@/components/negotiation/NegotiationChat';
-import Navbar from '@/components/Navbar';
+import PortalShell from '@/components/layout/PortalShell';
+import ParticipantGuard from '@/contexts/guard/ParticipantGuard';
 import PageLoading from '@/components/layout/PageLoading';
 import { useAuth } from '@/contexts/AuthContext';
 import { useParams, useRouter } from 'next/navigation';
@@ -47,15 +48,16 @@ export default function NegotiationDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
-      <Navbar />
-      <div className="flex-1 pt-16 min-h-0 flex flex-col max-h-[calc(100dvh-4rem)]">
-        <NegotiationChat
-          negotiationId={negotiationId}
-          currentRole={user.role}
-          onBack={() => router.push('/negotiations')}
-        />
-      </div>
-    </div>
+    <PortalShell>
+      <ParticipantGuard>
+        <div className="flex h-full min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden">
+          <NegotiationChat
+            negotiationId={negotiationId}
+            currentRole={user.role}
+            onBack={() => router.push('/negotiations')}
+          />
+        </div>
+      </ParticipantGuard>
+    </PortalShell>
   );
 }

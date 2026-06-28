@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, Users, Truck, Sprout, BarChart2,
-  Wallet, User, Settings, LogOut, X, ChevronRight,
-  MessageSquare, Menu,
+  Wallet, User, Settings, LogOut, X, ChevronRight, ChevronDown,
+  MessageSquare, Menu, Package, Plus, Heart, Bell,
 } from '@/lib/icons';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -12,7 +12,18 @@ import { useNavigationWithLoading } from '@/lib/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProps, UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
-import { ADMIN_SIDEBAR_NAV, ROUTES, isNavLinkActive, type AdminNavItem } from '@/lib/routes';
+import {
+  ADMIN_SIDEBAR_NAV,
+  ADMIN_SIDEBAR_ACCOUNT,
+  BUYER_SIDEBAR_NAV,
+  BUYER_SIDEBAR_ACCOUNT,
+  SELLER_SIDEBAR_NAV,
+  SELLER_SIDEBAR_ACCOUNT,
+  ROUTES,
+  isNavLinkActive,
+  getProfileMenuLinks,
+  type AdminNavItem,
+} from '@/lib/routes';
 import DashboardTopbar from './DashboardTopbar';
 
 interface NavItem {
@@ -27,35 +38,53 @@ interface NavGroup {
   items: NavItem[];
 }
 
-const ADMIN_NAV_ICONS: Record<string, React.ReactNode> = {
+const NAV_ICONS: Record<string, React.ReactNode> = {
+  Browse: <Package size={16} />,
   Dashboard: <LayoutDashboard size={16} />,
+  'My Orders': <Truck size={16} />,
+  Negotiations: <MessageSquare size={16} />,
+  Saved: <Heart size={16} />,
+  'My Listings': <Sprout size={16} />,
+  'Add Listing': <Plus size={16} />,
   Users: <Users size={16} />,
   Orders: <Truck size={16} />,
   Products: <Sprout size={16} />,
   Wallets: <Wallet size={16} />,
   Analytics: <BarChart2 size={16} />,
+  Wallet: <Wallet size={16} />,
+  Profile: <User size={16} />,
+  Notifications: <Bell size={16} />,
   Settings: <Settings size={16} />,
 };
 
-function getAdminNavGroups(): NavGroup[] {
-  const adminItems: NavItem[] = ADMIN_SIDEBAR_NAV.map((item: AdminNavItem) => ({
-    icon: ADMIN_NAV_ICONS[item.label] ?? <LayoutDashboard size={16} />,
+function mapNavItems(items: AdminNavItem[]): NavItem[] {
+  return items.map((item) => ({
+    icon: NAV_ICONS[item.label] ?? <LayoutDashboard size={16} />,
     label: item.label,
     href: item.href,
     matchPrefix: item.matchPrefix,
   }));
+}
 
-  return [
-    { label: 'Administration', items: adminItems },
-    {
-      label: 'Account',
-      items: [
-        { icon: <MessageSquare size={16} />, label: 'Negotiations', href: ROUTES.negotiations },
-        { icon: <User size={16} />, label: 'Profile', href: ROUTES.profile },
-        { icon: <Settings size={16} />, label: 'Settings', href: ROUTES.settings },
-      ],
-    },
-  ];
+function getNavGroups(role: UserRole): NavGroup[] {
+  switch (role) {
+    case UserRole.ADMIN:
+      return [
+        { label: 'Administration', items: mapNavItems(ADMIN_SIDEBAR_NAV) },
+        { label: 'Account', items: mapNavItems(ADMIN_SIDEBAR_ACCOUNT) },
+      ];
+    case UserRole.SELLER:
+      return [
+        { label: 'Marketplace', items: mapNavItems(SELLER_SIDEBAR_NAV) },
+        { label: 'Account', items: mapNavItems(SELLER_SIDEBAR_ACCOUNT) },
+      ];
+    case UserRole.BUYER:
+    default:
+      return [
+        { label: 'Marketplace', items: mapNavItems(BUYER_SIDEBAR_NAV) },
+        { label: 'Account', items: mapNavItems(BUYER_SIDEBAR_ACCOUNT) },
+      ];
+  }
 }
 
 const ROLE_BADGE: Record<UserRole, { bg: string; text: string; dot: string; label: string }> = {
@@ -64,14 +93,52 @@ const ROLE_BADGE: Record<UserRole, { bg: string; text: string; dot: string; labe
   [UserRole.ADMIN]: { bg: 'bg-rose-500/15', text: 'text-rose-500', dot: 'bg-rose-400', label: 'Admin' },
 };
 
+const PROFILE_MENU_ICONS: Record<string, React.ReactNode> = {
+  Profile: <User size={15} />,
+  Dashboard: <LayoutDashboard size={15} />,
+  'Seller Dashboard': <LayoutDashboard size={15} />,
+  'Admin Dashboard': <LayoutDashboard size={15} />,
+  'Become a Seller': <Sprout size={15} />,
+  Wallet: <Wallet size={15} />,
+  'Platform Wallets': <Wallet size={15} />,
+  Notifications: <Bell size={15} />,
+  Settings: <Settings size={15} />,
+  'Admin Settings': <Settings size={15} />,
+};
+
+function ProfileMenuLink({
+  label,
+  href,
+  icon,
+  onSelect,
+}: {
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+  onSelect: (href: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(href)}
+      className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] text-foreground/80 hover:text-foreground hover:bg-accent transition-colors"
+    >
+      <span className="text-foreground/50">{icon}</span>
+      {label}
+    </button>
+  );
+}
+
 export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   const { navigate } = useNavigationWithLoading();
   const { user, logout } = useAuth();
 
-  const role = (user?.role ?? userType ?? UserRole.ADMIN) as UserRole;
+  const role = (user?.role ?? userType ?? UserRole.BUYER) as UserRole;
   const firstName = user?.firstName || '';
   const lastName = user?.lastName || '';
   const fullName = `${firstName} ${lastName}`.trim() || 'User';
@@ -79,13 +146,31 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
     ? fullName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
     : 'UL';
   const email = user?.email || '';
-  const badge = ROLE_BADGE[role] ?? ROLE_BADGE[UserRole.ADMIN];
-  const groups = getAdminNavGroups();
+  const badge = ROLE_BADGE[role] ?? ROLE_BADGE[UserRole.BUYER];
+  const groups = getNavGroups(role);
+  const profileLinks = getProfileMenuLinks(role);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
+
+  useEffect(() => {
+    setProfileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!profileOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [profileOpen]);
 
   const handleNav = (item: NavItem) => {
     setMobileOpen(false);
@@ -93,8 +178,16 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
   };
 
   const handleLogout = async () => {
+    setProfileOpen(false);
+    setMobileOpen(false);
     await logout();
     navigate(ROUTES.signIn);
+  };
+
+  const handleProfileNav = (href: string) => {
+    setProfileOpen(false);
+    setMobileOpen(false);
+    navigate(href);
   };
 
   const SidebarBody = () => (
@@ -124,7 +217,7 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
               {group.items.map(item => {
                 const isActive = isNavLinkActive(pathname, item.href, item.matchPrefix);
                 return (
-                  <li key={item.label}>
+                  <li key={item.href}>
                     <button
                       onClick={() => handleNav(item)}
                       className={`
@@ -152,29 +245,64 @@ export default function Sidebar({ userType, hideTopbar = false }: SidebarProps) 
         ))}
       </nav>
 
-      <div className="shrink-0 border-t border-border px-4 py-3">
-        <div className="flex items-center gap-2.5">
-          <div className="relative shrink-0">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center overflow-hidden">
-              {user?.profilePicture
-                ? <img src={imageUrl(user.profilePicture)} alt={fullName} className="w-8 h-8 object-cover" />
-                : <span className="text-[11px] font-semibold text-primary-foreground">{initials}</span>}
+      <div className="shrink-0 border-t border-border px-3 py-3">
+        <div ref={profileRef} className="relative">
+          {profileOpen && (
+            <div className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-border bg-card shadow-lg z-50">
+              <div className="border-b border-border px-3 py-2.5">
+                <p className="text-[12px] font-semibold text-foreground truncate">{fullName}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{email}</p>
+              </div>
+              <div className="py-1">
+                {profileLinks.map((link) => (
+                  <ProfileMenuLink
+                    key={link.href}
+                    label={link.label}
+                    href={link.href}
+                    icon={PROFILE_MENU_ICONS[link.label] ?? <User size={15} />}
+                    onSelect={handleProfileNav}
+                  />
+                ))}
+              </div>
+              <div className="border-t border-border py-1">
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] text-destructive hover:bg-destructive/10 transition-colors"
+                >
+                  <LogOut size={15} />
+                  Log out
+                </button>
+              </div>
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-background rounded-full" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-semibold text-foreground truncate leading-tight">{fullName}</p>
-            <p className="text-[11px] text-muted-foreground truncate leading-tight">{email}</p>
-          </div>
-          <div className="flex items-center gap-0.5 shrink-0">
-            <ThemeToggle />
+          )}
+
+          <div className="flex items-center gap-2">
             <button
-              onClick={handleLogout}
-              title="Sign out"
-              className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+              type="button"
+              onClick={() => setProfileOpen((open) => !open)}
+              className="flex flex-1 min-w-0 items-center gap-2.5 rounded-xl px-1.5 py-1.5 text-left hover:bg-accent transition-colors"
+              aria-expanded={profileOpen}
+              aria-haspopup="menu"
             >
-              <LogOut size={15} />
+              <div className="relative shrink-0">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center overflow-hidden">
+                  {user?.profilePicture
+                    ? <img src={imageUrl(user.profilePicture)} alt={fullName} className="w-8 h-8 object-cover" />
+                    : <span className="text-[11px] font-semibold text-primary-foreground">{initials}</span>}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-background rounded-full" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-semibold text-foreground truncate leading-tight">{fullName}</p>
+                <p className="text-[11px] text-muted-foreground truncate leading-tight">{email}</p>
+              </div>
+              <ChevronDown
+                size={14}
+                className={`shrink-0 text-muted-foreground transition-transform ${profileOpen ? 'rotate-180' : ''}`}
+              />
             </button>
+            <ThemeToggle />
           </div>
         </div>
       </div>

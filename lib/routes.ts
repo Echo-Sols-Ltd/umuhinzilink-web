@@ -64,7 +64,6 @@ const BUYER_NAV: NavLink[] = [
 ];
 
 const SELLER_NAV: NavLink[] = [
-  { label: 'Browse', href: ROUTES.products },
   { label: 'Dashboard', href: ROUTES.dashboard },
   { label: 'My Listings', href: ROUTES.sellerProducts },
   { label: 'My Orders', href: ROUTES.orders },
@@ -72,10 +71,11 @@ const SELLER_NAV: NavLink[] = [
 ];
 
 const ADMIN_NAV: NavLink[] = [
-  { label: 'Browse', href: ROUTES.products },
-  { label: 'Admin', href: ROUTES.admin.dashboard },
-  { label: 'Orders', href: ROUTES.orders },
-  { label: 'Negotiations', href: ROUTES.negotiations },
+  { label: 'Dashboard', href: ROUTES.admin.dashboard },
+  { label: 'Users', href: ROUTES.admin.users },
+  { label: 'Orders', href: ROUTES.admin.orders },
+  { label: 'Products', href: ROUTES.admin.products },
+  { label: 'Wallets', href: ROUTES.admin.wallets },
 ];
 
 export const ADMIN_SIDEBAR_NAV: AdminNavItem[] = [
@@ -88,6 +88,102 @@ export const ADMIN_SIDEBAR_NAV: AdminNavItem[] = [
   { label: 'Settings', href: ROUTES.admin.settings },
 ];
 
+export const BUYER_SIDEBAR_NAV: AdminNavItem[] = [
+  { label: 'Browse', href: ROUTES.products, matchPrefix: true },
+  { label: 'Dashboard', href: ROUTES.dashboard },
+  { label: 'My Orders', href: ROUTES.orders, matchPrefix: true },
+  { label: 'Negotiations', href: ROUTES.negotiations, matchPrefix: true },
+  { label: 'Saved', href: ROUTES.savedProducts },
+];
+
+export const BUYER_SIDEBAR_ACCOUNT: AdminNavItem[] = [
+  { label: 'Wallet', href: ROUTES.wallet },
+  { label: 'Profile', href: ROUTES.profile, matchPrefix: true },
+  { label: 'Notifications', href: ROUTES.notifications },
+  { label: 'Settings', href: ROUTES.settings },
+];
+
+export const SELLER_SIDEBAR_NAV: AdminNavItem[] = [
+  { label: 'Dashboard', href: ROUTES.dashboard },
+  { label: 'My Listings', href: ROUTES.sellerProducts, matchPrefix: true },
+  { label: 'Add Listing', href: ROUTES.productCreate },
+  { label: 'My Orders', href: ROUTES.orders, matchPrefix: true },
+  { label: 'Negotiations', href: ROUTES.negotiations, matchPrefix: true },
+];
+
+export const SELLER_SIDEBAR_ACCOUNT: AdminNavItem[] = [
+  { label: 'Wallet', href: ROUTES.wallet },
+  { label: 'Profile', href: ROUTES.profile, matchPrefix: true },
+  { label: 'Notifications', href: ROUTES.notifications },
+  { label: 'Settings', href: ROUTES.settings },
+];
+
+export const ADMIN_SIDEBAR_ACCOUNT: AdminNavItem[] = [
+  { label: 'Notifications', href: ROUTES.notifications },
+];
+
+/** Marketplace routes reserved for buyers and sellers — not admins. */
+const PARTICIPANT_ROUTE_PREFIXES = ['/products', '/orders', '/negotiations', '/profile'] as const;
+const PARTICIPANT_ROUTE_EXACT = ['/dashboard', '/wallet', '/become-seller', '/settings'] as const;
+
+export function isParticipantMarketplaceRoute(pathname: string): boolean {
+  if (pathname.startsWith('/admin')) return false;
+  if (PARTICIPANT_ROUTE_EXACT.some((route) => pathname === route || pathname.startsWith(`${route}/`))) {
+    return true;
+  }
+  return PARTICIPANT_ROUTE_PREFIXES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+}
+
+/** Map a participant URL to the closest admin oversight screen. */
+export function getAdminRedirectForRoute(pathname: string): string {
+  if (pathname.startsWith('/products/') && pathname !== '/products/create' && pathname !== '/products/seller' && pathname !== '/products/saved') {
+    const segments = pathname.split('/').filter(Boolean);
+    const productId = segments[1];
+    if (productId && productId !== 'create' && productId !== 'seller' && productId !== 'saved') {
+      return ROUTES.admin.productDetail(productId);
+    }
+  }
+  if (pathname.startsWith('/products')) return ROUTES.admin.products;
+  if (pathname.startsWith('/orders/')) {
+    const orderId = pathname.split('/')[2];
+    if (orderId) return ROUTES.admin.orderDetail(orderId);
+  }
+  if (pathname.startsWith('/orders')) return ROUTES.admin.orders;
+  if (pathname.startsWith('/wallet')) return ROUTES.admin.wallets;
+  if (pathname.startsWith('/settings') || pathname.startsWith('/profile')) return ROUTES.admin.settings;
+  return ROUTES.admin.dashboard;
+}
+
+/** Default landing route after sign-in, by role. */
+export function getDashboardRoute(role?: UserRole | null): string {
+  if (role === UserRole.ADMIN) return ROUTES.admin.dashboard;
+  return ROUTES.dashboard;
+}
+
+/** Resolve a safe internal redirect after auth; falls back to the role dashboard. */
+export function resolvePostAuthRoute(role?: UserRole | null, redirect?: string | null): string {
+  const fallback = getDashboardRoute(role);
+  if (!redirect) return fallback;
+
+  const path = redirect.trim();
+  if (!path.startsWith('/') || path.startsWith('//') || path.startsWith('/auth/')) {
+    return fallback;
+  }
+  if (role === UserRole.ADMIN && isParticipantMarketplaceRoute(path)) {
+    return getAdminRedirectForRoute(path);
+  }
+  return path;
+}
+
+/** Read optional ?redirect= from the current URL and resolve the post-auth destination. */
+export function getPostAuthRouteFromWindow(role?: UserRole | null): string {
+  if (typeof window === 'undefined') return getDashboardRoute(role);
+  const redirect = new URLSearchParams(window.location.search).get('redirect');
+  return resolvePostAuthRoute(role, redirect);
+}
+
 export function getNavbarLinks(role?: UserRole | null): NavLink[] {
   if (!role) return GUEST_NAV;
   switch (role) {
@@ -98,6 +194,37 @@ export function getNavbarLinks(role?: UserRole | null): NavLink[] {
     case UserRole.BUYER:
     default:
       return BUYER_NAV;
+  }
+}
+
+/** Avatar / profile menu links shown in sidebar and navbar dropdowns. */
+export function getProfileMenuLinks(role: UserRole): NavLink[] {
+  switch (role) {
+    case UserRole.ADMIN:
+      return [
+        { label: 'Profile', href: ROUTES.admin.settings },
+        { label: 'Admin Dashboard', href: ROUTES.admin.dashboard },
+        { label: 'Platform Wallets', href: ROUTES.admin.wallets },
+        { label: 'Notifications', href: ROUTES.notifications },
+      ];
+    case UserRole.SELLER:
+      return [
+        { label: 'Profile', href: ROUTES.profile },
+        { label: 'Seller Dashboard', href: ROUTES.dashboard },
+        { label: 'Wallet', href: ROUTES.wallet },
+        { label: 'Notifications', href: ROUTES.notifications },
+        { label: 'Settings', href: ROUTES.settings },
+      ];
+    case UserRole.BUYER:
+    default:
+      return [
+        { label: 'Profile', href: ROUTES.profile },
+        { label: 'Dashboard', href: ROUTES.dashboard },
+        { label: 'Become a Seller', href: ROUTES.becomeSeller },
+        { label: 'Wallet', href: ROUTES.wallet },
+        { label: 'Notifications', href: ROUTES.notifications },
+        { label: 'Settings', href: ROUTES.settings },
+      ];
   }
 }
 

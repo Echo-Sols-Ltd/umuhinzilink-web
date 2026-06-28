@@ -13,7 +13,7 @@ export default function AdminDashboardPage() {
         title={t('admin.dashboard.title')}
         description={t('admin.dashboard.subtitle')}
       />
-      <main className="flex-1 overflow-auto p-4 sm:p-6">
+      <main className="flex-1 overflow-auto p-4 pb-8 sm:p-6">
         <AdminDashboard />
       </main>
     </>

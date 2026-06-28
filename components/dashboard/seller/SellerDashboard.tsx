@@ -1,216 +1,354 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   DollarSign,
   Package,
   AlertTriangle,
-  Truck,
+  ShoppingCart,
   TrendingUp,
-  ChevronRight,
-  ArrowRight
+  Plus,
+  Wallet,
+  Sprout,
+  ArrowRight,
 } from '@/lib/icons';
-import Link from 'next/link';
 import { ROUTES } from '@/lib/routes';
-import MetricCard from '../common/MetricCard';
-import { DashboardSection } from '../common/DashboardGrid';
+import AdminStatCard from '@/components/admin/AdminStatCard';
+import AdminDashboardSection from '@/components/admin/AdminDashboardSection';
+import { RevenueTrendChart } from '@/components/admin/AdminDashboardCharts';
 import { SellerDashboardData } from '@/types';
 import { dashboardService } from '@/services/dashboardService';
-import DashboardChart from '../common/DashboardChart';
 import { useI18n } from '@/contexts/I18nContext';
 import { DashboardSkeleton } from '@/components/layout/PageLoading';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+function getStatusVariant(
+  status: string,
+): 'success' | 'warning' | 'destructive' | 'secondary' | 'info' {
+  switch (status) {
+    case 'Delivered':
+    case 'Completed':
+      return 'success';
+    case 'Pending':
+    case 'Processing':
+      return 'warning';
+    case 'In Transit':
+    case 'Shipped':
+      return 'info';
+    case 'Cancelled':
+    case 'Failed':
+      return 'destructive';
+    default:
+      return 'secondary';
+  }
+}
 
 export default function SellerDashboard() {
   const [dashboardData, setDashboardData] = useState<SellerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const { t, locale } = useI18n();
+  const router = useRouter();
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const response = await dashboardService.getSellerDashboard();
-        if (response.success) {
-          setDashboardData(response.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch seller dashboard data:', error);
-      } finally {
-        setLoading(false);
+  const fetchDashboardData = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const response = await dashboardService.getSellerDashboard();
+      if (response.success) {
+        setDashboardData(response.data);
       }
-    };
-
-    fetchDashboardData();
+    } catch (error) {
+      console.error('Failed to fetch seller dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case 'Delivered':
+      case 'Completed':
+        return t('common.status.completed');
+      case 'Pending':
+        return t('common.status.pending');
+      case 'Processing':
+        return t('common.status.processing');
+      case 'In Transit':
+      case 'Shipped':
+        return t('common.status.active');
+      case 'Cancelled':
+        return t('common.status.cancelled');
+      default:
+        return status;
+    }
+  };
+
   if (loading) {
-    return <DashboardSkeleton />;
+    return <DashboardSkeleton cards={4} />;
   }
 
   if (!dashboardData) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">{t('common.error')}</p>
+      <div className="flex min-h-[280px] flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-border p-8 text-center">
+        <Package className="h-8 w-8 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground">{t('common.error')}</p>
+        <Button variant="outline" size="sm" onClick={() => fetchDashboardData()}>
+          {t('common.retry')}
+        </Button>
       </div>
     );
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Delivered': return 'text-green-600 bg-green-100 dark:bg-green-900/30 dark:text-green-400';
-      case 'Pending': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'In Transit': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400';
-      case 'Cancelled': return 'text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400';
-      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-800 dark:text-gray-400';
-    }
-  };
-
-  const translateStatus = (status: string) => {
-    switch (status) {
-      case 'Delivered': return t('common.status.completed'); // Using completed for delivered
-      case 'Pending': return t('common.status.pending');
-      case 'In Transit': return t('common.status.active'); // Using active for in transit
-      case 'Cancelled': return t('common.status.cancelled');
-      default: return status;
-    }
-  };
-
+  const totalRevenue =
+    dashboardData.totalRevenue ?? (dashboardData as { totalIncome?: number }).totalIncome ?? 0;
   const recentOrders = dashboardData.recentOrders ?? [];
+  const lowStockItems = dashboardData.lowStockItems ?? [];
+  const revenueTrend = dashboardData.revenueTrend ?? null;
 
-  const lowStockItems = dashboardData.lowStockItems || [
-    { id: 'ITEM-1', name: 'Fertilizer NPK 15-15-15', currentStock: 12, minThreshold: 50 },
-    { id: 'ITEM-2', name: 'Maize Seeds', currentStock: 5, minThreshold: 20 },
-    { id: 'ITEM-3', name: 'Watering Cans', currentStock: 2, minThreshold: 10 }
+  const quickActions = [
+    {
+      title: t('farmer.dashboard.actions.addProduct'),
+      description: 'List new produce',
+      href: ROUTES.productCreate,
+      icon: Plus,
+      iconClassName: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+    },
+    {
+      title: t('farmer.dashboard.actions.manageInventory'),
+      description: 'Edit your listings',
+      href: ROUTES.sellerProducts,
+      icon: Sprout,
+      iconClassName: 'bg-violet-500/10 text-violet-600 dark:text-violet-400',
+    },
+    {
+      title: t('farmer.dashboard.actions.viewPayments'),
+      description: 'Wallet & earnings',
+      href: ROUTES.wallet,
+      icon: Wallet,
+      iconClassName: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+    },
+    {
+      title: t('farmer.dashboard.actions.viewAll'),
+      description: 'Track buyer orders',
+      href: ROUTES.orders,
+      icon: ShoppingCart,
+      iconClassName: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+    },
   ];
 
   return (
     <div className="space-y-8">
-      {/* Section 1: KPI Cards */}
-      <DashboardSection title={t('supplier.dashboard.sections.performanceOverview')} cols={4}>
-        <MetricCard
-          title={t('supplier.dashboard.metrics.totalRevenue')}
-          value={dashboardData.totalRevenue || (dashboardData as any).totalIncome || 0}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <AdminStatCard
+          variant="featured"
+          title={t('farmer.dashboard.metrics.totalEarnings')}
+          value={totalRevenue}
           format="currency"
-          icon={<DollarSign className="w-5 h-5 text-green-500" />}
+          icon={DollarSign}
+          iconClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+          hint="From completed sales"
         />
-        <MetricCard
-          title={t('supplier.dashboard.metrics.activeOrders')}
-          value={dashboardData.activeOrders}
-          icon={<Package className="w-5 h-5 text-blue-500" />}
+        <AdminStatCard
+          variant="featured"
+          title={t('farmer.dashboard.metrics.pendingOrders')}
+          value={dashboardData.activeOrders ?? 0}
+          format="number"
+          icon={ShoppingCart}
+          iconClassName="bg-blue-500/10 text-blue-600 dark:text-blue-400"
+          hint="Orders awaiting action"
         />
-        <MetricCard
-          title={t('supplier.dashboard.metrics.lowStockProducts')}
-          value={dashboardData.lowStockProducts}
-          icon={<AlertTriangle className={`w-5 h-5 ${dashboardData.lowStockProducts > 0 ? 'text-red-500' : 'text-green-500'}`} />}
+        <AdminStatCard
+          variant="featured"
+          title={t('farmer.dashboard.metrics.lowStockProducts')}
+          value={dashboardData.lowStockProducts ?? 0}
+          format="number"
+          icon={AlertTriangle}
+          iconClassName={
+            (dashboardData.lowStockProducts ?? 0) > 0
+              ? 'bg-red-500/10 text-red-600 dark:text-red-400'
+              : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+          }
+          hint={
+            (dashboardData.lowStockProducts ?? 0) > 0
+              ? 'Needs restocking'
+              : 'Stock levels healthy'
+          }
         />
-        <MetricCard
+        <AdminStatCard
+          variant="featured"
           title={t('supplier.dashboard.metrics.deliveryRate')}
-          value={`${dashboardData.onTimeDeliveryRate}%`}
-          icon={<Truck className={`w-5 h-5 ${dashboardData.onTimeDeliveryRate < 90 ? 'text-orange-500' : 'text-teal-500'}`} />}
+          value={`${dashboardData.onTimeDeliveryRate ?? 0}%`}
+          format="raw"
+          icon={TrendingUp}
+          iconClassName="bg-violet-500/10 text-violet-600 dark:text-violet-400"
+          hint="On-time fulfillment"
         />
-      </DashboardSection>
+      </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        {/* Section 2: Inventory Snapshot & Delivery Analytics */}
+      <AdminDashboardSection
+        title={t('farmer.dashboard.sections.quickActions')}
+        contentClassName="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4"
+      >
+        {quickActions.map((action) => {
+          const Icon = action.icon;
+          return (
+            <Link key={action.href} href={action.href} className="group block h-full">
+              <Card className="h-full transition-colors hover:bg-muted/30">
+                <CardContent className="flex items-start gap-3 p-4">
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${action.iconClassName}`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary">
+                      {action.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{action.description}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
+      </AdminDashboardSection>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="xl:col-span-1 space-y-6">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-red-500" />
-                {t('supplier.dashboard.sections.inventoryAlerts')}
-              </h2>
-            </div>
-
-            <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col gap-1 p-3">
-              {lowStockItems.length > 0 ? (
-                lowStockItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                    <div>
-                      <h4 className="font-medium text-sm">{item.name}</h4>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        <span className="text-red-500 font-semibold">{item.currentStock}</span>
-                        {' '}{t('supplier.dashboard.alerts.inStock')} ({t('supplier.dashboard.alerts.min')}: {item.minThreshold})
+          {lowStockItems.length > 0 && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  {t('supplier.dashboard.sections.inventoryAlerts')}
+                </CardTitle>
+                <CardDescription>Products running low on stock</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {lowStockItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/20 p-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{item.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium text-amber-600 dark:text-amber-400">
+                          {item.currentStock}
+                        </span>{' '}
+                        {t('supplier.dashboard.alerts.inStock')} · {t('supplier.dashboard.alerts.min')}{' '}
+                        {item.minThreshold}
                       </p>
                     </div>
-                    <Link href={ROUTES.productEdit(item.id)} className="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md font-medium transition-colors">
-                      {t('supplier.dashboard.alerts.restock')}
-                    </Link>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={ROUTES.productEdit(item.id)}>
+                        {t('supplier.dashboard.alerts.restock')}
+                      </Link>
+                    </Button>
                   </div>
-                ))
-              ) : (
-                <div className="p-8 text-center text-muted-foreground">
-                  <Package className="w-10 h-10 mx-auto mb-3 opacity-20" />
-                  <p>{t('supplier.dashboard.alerts.allHealthy')}</p>
-                </div>
-              )}
-
-              <Link href={ROUTES.sellerProducts} className="text-sm text-primary hover:underline mt-2 text-center py-2 flex items-center justify-center gap-1">
-                {t('supplier.dashboard.alerts.manageProducts')}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Optional Trend Chart */}
-          {dashboardData.revenueTrend && (
-            <div>
-              <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                {t('supplier.dashboard.sections.revenueTrend')}
-              </h2>
-              <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-                <DashboardChart config={dashboardData.revenueTrend} height={180} />
-              </div>
-            </div>
+                ))}
+                <Button asChild variant="ghost" size="sm" className="mt-1 w-full gap-1">
+                  <Link href={ROUTES.sellerProducts}>
+                    {t('supplier.dashboard.alerts.manageProducts')}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
           )}
+
+          <RevenueTrendChart config={revenueTrend} />
         </div>
 
-        {/* Section 3: Recent Orders */}
         <div className="xl:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">{t('supplier.dashboard.sections.recentOrders')}</h2>
-            <Link href={ROUTES.orders} className="text-sm text-primary hover:underline">
-              {t('farmer.dashboard.actions.viewAll')}
-            </Link>
-          </div>
-          <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
-                  <tr>
-                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.farmer')}</th>
-                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.product')}</th>
-                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.quantity')}</th>
-                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.status')}</th>
-                    <th className="px-6 py-4 font-medium">{t('supplier.dashboard.table.deliveryDate')}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {recentOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4 font-medium text-foreground">{order.farmer}</td>
-                      <td className="px-6 py-4">{order.product}</td>
-                      <td className="px-6 py-4">{order.quantity}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {translateStatus(order.status)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-muted-foreground">
-                        {new Date(order.deliveryDate).toLocaleDateString(locale === 'rw' ? 'rw-RW' : 'en-US')}
-                      </td>
-                    </tr>
-                  ))}
-                  {recentOrders.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
-                        {t('supplier.dashboard.table.noOrders')}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <Card className="h-full">
+            <CardHeader className="pb-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <CardTitle>{t('farmer.dashboard.sections.recentOrders')}</CardTitle>
+                  <CardDescription>Latest orders from your buyers</CardDescription>
+                </div>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={ROUTES.orders}>
+                    {t('farmer.dashboard.actions.viewAll')}
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {recentOrders.length === 0 ? (
+                <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                    <ShoppingCart className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {t('farmer.dashboard.table.noOrders')}
+                  </p>
+                  <Button asChild size="sm">
+                    <Link href={ROUTES.productCreate}>
+                      {t('farmer.dashboard.actions.addProduct')}
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/40 hover:bg-muted/40">
+                        <TableHead className="pl-6">{t('farmer.dashboard.table.buyer')}</TableHead>
+                        <TableHead>{t('supplier.dashboard.table.product')}</TableHead>
+                        <TableHead>{t('supplier.dashboard.table.quantity')}</TableHead>
+                        <TableHead>{t('farmer.dashboard.table.status')}</TableHead>
+                        <TableHead className="pr-6">{t('farmer.dashboard.table.date')}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {recentOrders.map((order) => (
+                        <TableRow
+                          key={order.id}
+                          className="cursor-pointer hover:bg-muted/30"
+                          onClick={() => router.push(ROUTES.orderDetail(order.id))}
+                        >
+                          <TableCell className="pl-6 font-medium">{order.farmer}</TableCell>
+                          <TableCell>{order.product}</TableCell>
+                          <TableCell>{order.quantity}</TableCell>
+                          <TableCell>
+                            <Badge variant={getStatusVariant(order.status)}>
+                              {translateStatus(order.status)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="pr-6 text-sm text-muted-foreground">
+                            {new Date(order.deliveryDate).toLocaleDateString(
+                              locale === 'rw' ? 'rw-RW' : 'en-US',
+                              { month: 'short', day: 'numeric', year: 'numeric' },
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

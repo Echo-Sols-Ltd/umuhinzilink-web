@@ -362,6 +362,27 @@ function EditProductForm() {
 
   // ── Render ────────────────────────────────────────────────────────────
 
+  const footer = (
+    <div className="flex items-center gap-3">
+      <Link
+        href="/products/seller"
+        className="flex h-11 flex-1 items-center justify-center rounded-xl border border-border text-sm font-medium text-foreground transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
+        Cancel
+      </Link>
+      <button
+        type="submit"
+        form="edit-product-form"
+        disabled={submitting}
+        className="flex h-11 flex-[2] items-center justify-center gap-2 rounded-xl bg-green-600 text-sm font-semibold text-white transition-all hover:bg-green-700 active:scale-[0.98] disabled:opacity-60">
+        {submitting ? (
+          <><Loader2 size={15} className="animate-spin" /> Saving changes…</>
+        ) : (
+          <><Check size={15} /> Save changes</>
+        )}
+      </button>
+    </div>
+  );
+
   return (
     <DetailPageShell
       maxWidth="max-w-5xl"
@@ -373,9 +394,9 @@ function EditProductForm() {
       backHref="/products/seller"
       backLabel="My listings"
       actions={saveButton}
-      className="pb-24"
+      footer={footer}
     >
-        <form onSubmit={handleSubmit}>
+        <form id="edit-product-form" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {/* ── Left: Form ─────────────────────────────────── */}
@@ -606,27 +627,6 @@ function EditProductForm() {
               </div>
             </div>
 
-          </div>
-
-          {/* Bottom bar */}
-          <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-border px-4 py-3">
-            <div className="max-w-5xl mx-auto flex items-center gap-3">
-              <Link
-                href="/products/seller"
-                className="flex-1 h-11 border border-border rounded-xl text-sm font-medium text-foreground flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-[2] h-11 bg-green-600 hover:bg-green-700 disabled:opacity-60 active:scale-[0.98] text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-all">
-                {submitting ? (
-                  <><Loader2 size={15} className="animate-spin" /> Saving changes…</>
-                ) : (
-                  <><Check size={15} /> Save changes</>
-                )}
-              </button>
-            </div>
           </div>
 
         </form>

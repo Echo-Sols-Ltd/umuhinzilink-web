@@ -102,29 +102,53 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         if (!userId) return;
         setLoading(true);
         try {
-            const res = await notificationService.getNotifications(params.page, params.size);
-            applyPage(res);
-            await refreshUnreadCount();
+            const [listResult, countResult] = await Promise.allSettled([
+                notificationService.getNotifications(params.page, params.size),
+                notificationService.getUnreadCount(),
+            ]);
+
+            if (listResult.status === 'fulfilled') {
+                applyPage(listResult.value);
+            } else {
+                throw listResult.reason;
+            }
+
+            if (countResult.status === 'fulfilled') {
+                setUnreadCount(countResult.value);
+            }
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
+            notify.error('Could not load notifications. Please try again.', 'Notifications');
         } finally {
             setLoading(false);
         }
-    }, [userId, applyPage, refreshUnreadCount]);
+    }, [userId, applyPage]);
 
     const fetchUnread = useCallback(async (params: { page: number; size: number }) => {
         if (!userId) return;
         setLoading(true);
         try {
-            const res = await notificationService.getUnreadNotifications(params.page, params.size);
-            applyPage(res);
-            await refreshUnreadCount();
+            const [listResult, countResult] = await Promise.allSettled([
+                notificationService.getUnreadNotifications(params.page, params.size),
+                notificationService.getUnreadCount(),
+            ]);
+
+            if (listResult.status === 'fulfilled') {
+                applyPage(listResult.value);
+            } else {
+                throw listResult.reason;
+            }
+
+            if (countResult.status === 'fulfilled') {
+                setUnreadCount(countResult.value);
+            }
         } catch (error) {
             console.error('Failed to fetch unread notifications:', error);
+            notify.error('Could not load notifications. Please try again.', 'Notifications');
         } finally {
             setLoading(false);
         }
-    }, [userId, applyPage, refreshUnreadCount]);
+    }, [userId, applyPage]);
 
     const fetchByType = useCallback(async (type: NotificationType, params: { page: number; size: number }) => {
         if (!userId) return;
@@ -214,24 +238,18 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         let cancelled = false;
 
         (async () => {
-            setLoading(true);
             try {
-                const res = await notificationService.getNotifications(0, 15);
-                if (cancelled) return;
-                applyPage(res);
                 const count = await notificationService.getUnreadCount();
                 if (!cancelled) setUnreadCount(count);
             } catch (error) {
-                if (!cancelled) console.error('Failed to fetch notifications:', error);
-            } finally {
-                if (!cancelled) setLoading(false);
+                if (!cancelled) console.error('Failed to fetch notification count:', error);
             }
         })();
 
         return () => {
             cancelled = true;
         };
-    }, [userId, applyPage]);
+    }, [userId]);
 
     useEffect(() => {
         if (!userId) return;
