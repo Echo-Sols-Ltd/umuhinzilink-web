@@ -1,7 +1,8 @@
 "use client"
 
 import Link from 'next/link';
-import { Sprout, Home, ArrowLeft, Search, Wheat } from 'lucide-react';
+import { ROUTES } from '@/lib/routes';
+import { Sprout, Home, ArrowLeft, Search, Wheat } from '@/lib/icons';
 
 // ── This file goes at: app/not-found.tsx ─────────────────────────────────────
 // Next.js 13+ automatically renders this for 404 routes.
@@ -98,11 +99,11 @@ export default function NotFound() {
                     <p className="text-xs text-muted-foreground mb-4 font-medium">Maybe you were looking for</p>
                     <div className="flex flex-wrap justify-center gap-2">
                         {[
-                            { label: 'Browse products', href: '/products' },
-                            { label: 'My negotiations', href: '/negotiations' },
-                            { label: 'Seller dashboard', href: '/seller/dashboard' },
-                            { label: 'Wallet', href: '/wallet' },
-                            { label: 'Sign in', href: '/auth/signin' },
+                            { label: 'Browse products', href: ROUTES.products },
+                            { label: 'My negotiations', href: ROUTES.negotiations },
+                            { label: 'Dashboard', href: ROUTES.dashboard },
+                            { label: 'Wallet', href: ROUTES.wallet },
+                            { label: 'Sign in', href: ROUTES.signIn },
                         ].map(({ label, href }) => (
                             <Link
                                 key={href}

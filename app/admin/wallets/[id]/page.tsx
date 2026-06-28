@@ -14,9 +14,8 @@ import {
     History,
     User,
     ArrowLeft
-} from 'lucide-react';
+} from '@/lib/icons';
 import { notify } from '@/lib/notify';
-import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import {
@@ -106,43 +105,34 @@ export default function WalletDetailPage() {
 
     if (loading) {
         return (
-            <div className="flex h-screen bg-background overflow-hidden">
-                <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
-                <main className="flex-1 overflow-auto bg-background">
-                    <div className="p-8 max-w-7xl mx-auto">
-                        <PageLoading
-                            variant="section"
-                            label="Loading wallet"
-                            description="Fetching wallet details and transactions…"
-                            className="bg-transparent dark:bg-transparent"
-                        />
-                    </div>
-                </main>
-            </div>
+            <main className="flex-1 overflow-auto bg-background">
+                <div className="p-8 max-w-7xl mx-auto">
+                    <PageLoading
+                        variant="section"
+                        label="Loading wallet"
+                        description="Fetching wallet details and transactions…"
+                        className="bg-transparent dark:bg-transparent"
+                    />
+                </div>
+            </main>
         );
     }
 
     if (!wallet) {
         return (
-            <div className="flex h-screen bg-background overflow-hidden">
-                <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
-                <main className="flex-1 overflow-auto bg-background">
-                    <div className="p-8 max-w-7xl mx-auto">
-                        <div className="text-center">
-                            <p className="text-muted-foreground font-semibold uppercase text-xs">Wallet not found</p>
-                        </div>
+            <main className="flex-1 overflow-auto bg-background">
+                <div className="p-8 max-w-7xl mx-auto">
+                    <div className="text-center">
+                        <p className="text-muted-foreground font-semibold uppercase text-xs">Wallet not found</p>
                     </div>
-                </main>
-            </div>
+                </div>
+            </main>
         );
     }
 
     return (
-        <div className="flex h-screen bg-background overflow-hidden">
-            <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
-
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <AdminPageHeader
+        <>
+            <AdminPageHeader
                     title="Ledger Summary"
                     description={`Wallet ID: ${wallet.id}`}
                     backHref="/admin/wallets"
@@ -244,7 +234,7 @@ export default function WalletDetailPage() {
                         </div>
                     </div>
                 </main>
-            </div>
-        </div>
+        </>
     );
 }
+

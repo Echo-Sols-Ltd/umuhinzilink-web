@@ -1,7 +1,7 @@
 import { Negotiation, NegotiationStatus, UserRole } from "@/types";
 import { imageUrl } from "@/lib/utils";
 import Link from "next/link";
-import { Package, User, Calendar, Clock, ChevronRight, MessageSquare, AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { Package, User, Calendar, Clock, ChevronRight, MessageSquare, AlertCircle, CheckCircle, XCircle } from '@/lib/icons';
 import { cn } from "@/lib/utils";
 
 

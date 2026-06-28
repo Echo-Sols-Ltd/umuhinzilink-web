@@ -1,110 +1,323 @@
 'use client';
 
-import { Brain, Signal, ShoppingBag, CreditCard, Languages, ClipboardList } from 'lucide-react';
+import { useState } from 'react';
+import Image from 'next/image';
 import { useI18n } from '@/contexts/I18nContext';
+import { cn } from '@/lib/utils';
+
+type FeatureTab = 'buyer' | 'seller';
+type CardLayout = 'wide' | 'narrow';
+type CardBlock = 'card1' | 'card2' | 'card3' | 'card4';
+type CardTone = 'neutral' | 'lavender' | 'mint';
+
+interface FeatureCardConfig {
+  id: string;
+  layout: CardLayout;
+  block: CardBlock;
+  tone: CardTone;
+  images: {
+    primary: string;
+    secondary?: string;
+    accent?: string;
+  };
+}
+
+const BUYER_CARDS: FeatureCardConfig[] = [
+  {
+    id: 'browse',
+    layout: 'wide',
+    block: 'card1',
+    tone: 'neutral',
+    images: { primary: '/market.jpg', secondary: '/fresh-yellow-corn.png' },
+  },
+  {
+    id: 'order',
+    layout: 'narrow',
+    block: 'card2',
+    tone: 'lavender',
+    images: { primary: '/african-farmer-woman.png', accent: '/hero.png' },
+  },
+  {
+    id: 'negotiate',
+    layout: 'narrow',
+    block: 'card3',
+    tone: 'mint',
+    images: { primary: '/african-woman-farmer.png', secondary: '/produve.png' },
+  },
+  {
+    id: 'trust',
+    layout: 'wide',
+    block: 'card4',
+    tone: 'neutral',
+    images: { primary: '/fresh-potatoes.png', secondary: '/avocados.png' },
+  },
+];
+
+const SELLER_CARDS: FeatureCardConfig[] = [
+  {
+    id: 'list',
+    layout: 'wide',
+    block: 'card1',
+    tone: 'neutral',
+    images: { primary: '/maize.png', secondary: '/garden-hoe-tool.png' },
+  },
+  {
+    id: 'findBuyers',
+    layout: 'narrow',
+    block: 'card2',
+    tone: 'lavender',
+    images: { primary: '/market.jpg', accent: '/fresh-green-beans.png' },
+  },
+  {
+    id: 'collaborate',
+    layout: 'narrow',
+    block: 'card3',
+    tone: 'mint',
+    images: { primary: '/african-farmer-woman.png', secondary: '/green-beans.png' },
+  },
+  {
+    id: 'monetize',
+    layout: 'wide',
+    block: 'card4',
+    tone: 'neutral',
+    images: { primary: '/fresh-orange-carrots.png', secondary: '/npk-fertilizer-bag.png' },
+  },
+];
+
+function FeatureCardVisual({ card, title }: { card: FeatureCardConfig; title: string }) {
+  const { block, images } = card;
+
+  if (block === 'card1') {
+    return (
+      <div className="landing-features-visual landing-features-visual--card1">
+        <div className="landing-features-float-card landing-features-float-card--meta">
+          <div className="landing-features-float-row">
+            <span className="landing-features-float-dot" />
+            <span>Fresh listings near you</span>
+          </div>
+          <div className="landing-features-float-row">
+            <span className="landing-features-float-dot" />
+            <span>Filter by region &amp; price</span>
+          </div>
+          <div className="landing-features-float-row">
+            <span className="landing-features-float-dot" />
+            <span>Verified seller profiles</span>
+          </div>
+        </div>
+        <div className="landing-features-phone">
+          <Image src={images.primary} alt={title} fill className="object-cover" sizes="280px" />
+        </div>
+        {images.secondary && (
+          <Image
+            src={images.secondary}
+            alt=""
+            width={280}
+            height={200}
+            className="landing-features-img landing-features-img--card1-secondary"
+            sizes="280px"
+          />
+        )}
+      </div>
+    );
+  }
+
+  if (block === 'card2') {
+    return (
+      <div className="landing-features-visual landing-features-visual--card2">
+        {images.accent && (
+          <Image
+            src={images.accent}
+            alt=""
+            width={320}
+            height={240}
+            className="landing-features-img landing-features-img--card2-accent"
+            sizes="320px"
+          />
+        )}
+        <div className="landing-features-profile-card">
+          <div className="landing-features-profile-top">
+            <div className="landing-features-profile-avatar">
+              <Image src={images.primary} alt={title} fill className="object-cover" sizes="56px" />
+            </div>
+            <div>
+              <p className="landing-features-profile-name">Verified seller</p>
+              <p className="landing-features-profile-meta">5.0★ · Farm fresh</p>
+            </div>
+          </div>
+          <div className="landing-features-profile-gallery">
+            {[images.primary, images.accent ?? images.primary, images.primary].map((src, i) => (
+              <div key={i} className="landing-features-profile-thumb">
+                <Image src={src} alt="" fill className="object-cover" sizes="80px" />
+              </div>
+            ))}
+          </div>
+          <p className="landing-features-profile-quote">Ready to fulfill your order this week.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (block === 'card3') {
+    return (
+      <div className="landing-features-visual landing-features-visual--card3">
+        <div className="landing-features-card3-stack">
+          <div className="landing-features-phone landing-features-phone--card3">
+            <div className="landing-features-phone-header">
+              <span>Messages</span>
+              <span className="landing-features-phone-badge">3</span>
+            </div>
+            <div className="landing-features-chat-preview">
+              <div className="landing-features-chat-avatar">
+                <Image src={images.primary} alt="" fill className="object-cover" sizes="40px" />
+              </div>
+              <div>
+                <p className="landing-features-chat-name">Seller</p>
+                <p className="landing-features-chat-msg">Can we agree on RWF 2,500/kg?</p>
+              </div>
+            </div>
+          </div>
+          {images.secondary && (
+            <Image
+              src={images.secondary}
+              alt=""
+              width={400}
+              height={90}
+              className="landing-features-img landing-features-img--card3-strip"
+              sizes="400px"
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="landing-features-visual landing-features-visual--card4">
+      <div className="landing-features-phone landing-features-phone--card4">
+        <Image src={images.primary} alt={title} fill className="object-cover" sizes="260px" />
+      </div>
+      <div className="landing-features-float-card landing-features-float-card--review">
+        <div className="landing-features-stars" aria-hidden>
+          {'★★★★☆'}
+        </div>
+        <p className="landing-features-review-text">
+          Great quality produce — delivery was fast and exactly as listed.
+        </p>
+        <div className="landing-features-review-user">
+          <div className="landing-features-review-avatar">
+            {images.secondary && (
+              <Image src={images.secondary} alt="" fill className="object-cover" sizes="36px" />
+            )}
+          </div>
+          <div>
+            <p className="landing-features-review-name">Happy buyer</p>
+            <p className="landing-features-review-role">5.0★ · Verified</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FeatureCard({
+  card,
+  title,
+  description,
+}: {
+  card: FeatureCardConfig;
+  title: string;
+  description: string;
+}) {
+  return (
+    <article
+      className={cn(
+        'landing-features-card',
+        `landing-features-card--${card.tone}`,
+        card.layout === 'wide' ? 'landing-features-card--wide' : 'landing-features-card--narrow',
+      )}
+    >
+      <div className="landing-features-card-header">
+        <h3 className="landing-features-h3">{title}</h3>
+        <p className="landing-features-item-desc">{description}</p>
+      </div>
+      <FeatureCardVisual card={card} title={title} />
+    </article>
+  );
+}
 
 export default function PlatformFeatures() {
   const { t } = useI18n();
-  const features = [
-    {
-      titleKey: 'landing.features.items.aiAdvisory.title',
-      bg: 'bg-green-100',
-      iconBg: 'bg-green-500',
-      icon: <Brain className="w-6 h-6 text-white" />,
-      descriptionKey: 'landing.features.items.aiAdvisory.description',
-      pointsKeys: [
-        'landing.features.items.aiAdvisory.points.cropGuidance',
-        'landing.features.items.aiAdvisory.points.weatherRecommendations',
-        'landing.features.items.aiAdvisory.points.soilAnalysis',
-      ],
-    },
-    {
-      titleKey: 'landing.features.items.marketAccess.title',
-      bg: 'bg-blue-100',
-      iconBg: 'bg-blue-500',
-      icon: <ShoppingBag className="w-6 h-6 text-white" />,
-      descriptionKey: 'landing.features.items.marketAccess.description',
-      pointsKeys: [
-        'landing.features.items.marketAccess.points.directBuyerMatching',
-        'landing.features.items.marketAccess.points.priceTrendAnalysis',
-        'landing.features.items.marketAccess.points.demandForecasting',
-      ],
-    },
-    {
-      titleKey: 'landing.features.items.inputCredit.title',
-      bg: 'bg-orange-100',
-      iconBg: 'bg-orange-500',
-      icon: <CreditCard className="w-6 h-6 text-white" />,
-      descriptionKey: 'landing.features.items.inputCredit.description',
-      pointsKeys: [
-        'landing.features.items.inputCredit.points.seedsAndFertilizerCredit',
-        'landing.features.items.inputCredit.points.ngoPartnerships',
-        'landing.features.items.inputCredit.points.flexiblePaymentTerms',
-      ],
-    },
-    {
-      titleKey: 'landing.features.items.offlineSupport.title',
-      bg: 'bg-green-50',
-      iconBg: 'bg-green-500',
-      icon: <Signal className="w-6 h-6 text-white" />,
-      descriptionKey: 'landing.features.items.offlineSupport.description',
-      pointsKeys: [
-        'landing.features.items.offlineSupport.points.smsLoginAndTips',
-        'landing.features.items.offlineSupport.points.offlineNotifications',
-        'landing.features.items.offlineSupport.points.lowBandwidthDesign',
-      ],
-    },
-    {
-      titleKey: 'landing.features.items.kinyarwandaSupport.title',
-      bg: 'bg-purple-50',
-      iconBg: 'bg-purple-500',
-      icon: <Languages className="w-6 h-6 text-white" />,
-      descriptionKey: 'landing.features.items.kinyarwandaSupport.description',
-      pointsKeys: [
-        'landing.features.items.kinyarwandaSupport.points.nativeUi',
-        'landing.features.items.kinyarwandaSupport.points.chatbot',
-        'landing.features.items.kinyarwandaSupport.points.smsSupport',
-      ],
-    },
-    {
-      titleKey: 'landing.features.items.inventoryManagement.title',
-      bg: 'bg-red-50',
-      iconBg: 'bg-red-500',
-      icon: <ClipboardList className="w-6 h-6 text-white" />,
-      descriptionKey: 'landing.features.items.inventoryManagement.description',
-      pointsKeys: [
-        'landing.features.items.inventoryManagement.points.realTimeInventory',
-        'landing.features.items.inventoryManagement.points.automatedUpdates',
-        'landing.features.items.inventoryManagement.points.orderTracking',
-      ],
-    },
-  ];
+  const [activeTab, setActiveTab] = useState<FeatureTab>('buyer');
 
   return (
-    <section className="py-12 bg-background">
-      <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-center text-2xl font-semibold text-foreground">{t('landing.features.title')}</h2>
-        <p className="text-center text-muted-foreground mt-2">{t('landing.features.subtitle')}</p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-          {features.map((feature, idx) => (
-            <div key={idx} className={`bg-card rounded-lg shadow-sm p-6`}>
-              <div className="flex items-center space-x-3">
-                <div className={`${feature.iconBg} rounded-full p-3`}>{feature.icon}</div>
-                <h3 className="text-lg font-semibold text-foreground">{t(feature.titleKey)}</h3>
+    <div className="landing-features-section py-16 sm:py-20 lg:py-24 bg-background">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="landing-features-content-block">
+          <div className="landing-features-intro">
+            <div className="landing-features-h2-block">
+              <h2 className="landing-features-h2">{t('landing.features.title')}</h2>
+              <div className="landing-features-h2-subheader-w">
+                <p className="landing-h-subheader">{t('landing.features.subtitle')}</p>
               </div>
-              <p className="text-muted-foreground text-sm mt-3">{t(feature.descriptionKey)}</p>
-              <ul className="mt-3 space-y-1">
-                {feature.pointsKeys.map((pointKey, i) => (
-                  <li key={i} className="text-muted-foreground text-sm">
-                    • {t(pointKey)}
-                  </li>
-                ))}
-              </ul>
             </div>
-          ))}
+
+            <div className="landing-features-tabs-menu-wrap">
+              <div
+                className="landing-features-tabs-menu"
+                role="tablist"
+                aria-label={t('landing.features.tabs.ariaLabel')}
+              >
+                {(['buyer', 'seller'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    role="tab"
+                    id={`features-tab-${tab}`}
+                    aria-selected={activeTab === tab}
+                    aria-controls={`features-panel-${tab}`}
+                    className={cn(
+                      'landing-features-tab-button',
+                      activeTab === tab && 'is-active',
+                    )}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {t(`landing.features.tabs.${tab}`)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="landing-features-tabs" data-current={activeTab}>
+            <div className="landing-features-tab-content">
+              {(['buyer', 'seller'] as const).map((tab) => (
+                <div
+                  key={tab}
+                  id={`features-panel-${tab}`}
+                  role="tabpanel"
+                  aria-labelledby={`features-tab-${tab}`}
+                  hidden={activeTab !== tab}
+                  className={cn(
+                    'landing-features-tab-pane',
+                    activeTab === tab && 'is-active',
+                  )}
+                >
+                  <div className="landing-features-tab-grid">
+                    {(tab === 'buyer' ? BUYER_CARDS : SELLER_CARDS).map((card) => (
+                      <FeatureCard
+                        key={`${tab}-${card.id}`}
+                        card={card}
+                        title={t(`landing.features.${tab}.cards.${card.id}.title`)}
+                        description={t(`landing.features.${tab}.cards.${card.id}.description`)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

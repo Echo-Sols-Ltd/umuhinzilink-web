@@ -5,7 +5,7 @@ import { Negotiation } from "@/types";
 import {
     AlertCircle, CheckCircle, Clock, Loader2,
     Package, Send, XCircle, Wallet, Info,
-} from "lucide-react";
+} from '@/lib/icons';
 import { useState } from "react";
 
 function fmt(n: number) {

@@ -8,7 +8,7 @@ import {
   ImageIcon, Eye, Info, Upload, Check,
   Loader2, X, ToggleLeft, ToggleRight,
   ChevronDown, AlertCircle,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { notify } from '@/lib/notify';
 import { imageUrl } from '@/lib/utils';

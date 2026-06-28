@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWallet } from '@/contexts/WalletContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -18,13 +19,18 @@ export default function ProfilePage() {
   const { negotiations, loading: negotiationsLoading } = useNegotiation();
   const router = useRouter();
 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/auth/signin?redirect=/profile');
+    }
+  }, [authLoading, user, router]);
+
   if (authLoading) {
     return <PageLoading label="Loading profile" description="Fetching your account details…" />;
   }
 
   if (!user) {
-    router.push('/auth/signin');
-    return null;
+    return <PageLoading label="Redirecting" description="Taking you to sign in…" />;
   }
 
   const walletBalance = wallet?.balance ?? 0;

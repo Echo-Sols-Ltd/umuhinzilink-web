@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
-import { Upload, X, Image as ImageIcon, File, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, X, ImageIcon, File, AlertCircle, CheckCircle } from '@/lib/icons';
 import { uploadService, UploadProgress } from '@/services/upload';
 import { cn } from '@/lib/utils';
 

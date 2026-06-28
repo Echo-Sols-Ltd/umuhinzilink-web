@@ -1,6 +1,6 @@
 'use client';
 
-import { Sprout, Loader2 } from 'lucide-react';
+import { Sprout, Loader2 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 type PageLoadingVariant = 'fullscreen' | 'section' | 'inline';

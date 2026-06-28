@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import AdminGuard from '@/contexts/guard/AdminGuard';
 import {
   BarChart3,
   TrendingUp,
@@ -16,11 +15,9 @@ import {
   Calendar,
   Download,
   Filter,
-} from 'lucide-react';
-import Sidebar from '@/components/shared/Sidebar';
+} from '@/lib/icons';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import PageLoading from '@/components/layout/PageLoading';
-import { UserRole as UserType } from '@/types';
 
 interface AnalyticsData {
   revenue: {
@@ -114,23 +111,20 @@ function RevenueAnalytics() {
 
   if (!analytics) {
     return (
-      <div className="flex h-screen bg-background overflow-hidden">
-        <Sidebar userType={UserType.ADMIN} activeItem="Analytics" />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <AdminPageHeader
-            title="Analytics Dashboard"
-            description="Revenue insights and platform metrics"
+      <>
+        <AdminPageHeader
+          title="Analytics Dashboard"
+          description="Revenue insights and platform metrics"
+        />
+        <main className="flex-1 flex items-center justify-center">
+          <PageLoading
+            variant="section"
+            label="Loading analytics"
+            description="Crunching platform metrics…"
+            className="bg-transparent dark:bg-transparent"
           />
-          <main className="flex-1 flex items-center justify-center">
-            <PageLoading
-              variant="section"
-              label="Loading analytics"
-              description="Crunching platform metrics…"
-              className="bg-transparent dark:bg-transparent"
-            />
-          </main>
-        </div>
-      </div>
+        </main>
+      </>
     );
   }
 
@@ -170,13 +164,8 @@ function RevenueAnalytics() {
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar
-        userType={UserType.ADMIN}
-        activeItem='Analytics'
-      />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminPageHeader
+    <>
+      <AdminPageHeader
           title="Analytics Dashboard"
           description="Revenue insights and platform metrics"
           actions={
@@ -372,15 +361,10 @@ function RevenueAnalytics() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
+    </>
   );
 }
 
 export default function AnalyticsPage() {
-  return (
-    <AdminGuard>
-      <RevenueAnalytics />
-    </AdminGuard>
-  );
+  return <RevenueAnalytics />;
 }

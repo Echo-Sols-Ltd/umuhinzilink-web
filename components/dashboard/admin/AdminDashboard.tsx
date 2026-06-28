@@ -13,7 +13,7 @@ import {
   Store,
   UserCheck,
   Activity
-} from 'lucide-react';
+} from '@/lib/icons';
 import MetricCard from '../common/MetricCard';
 import { DashboardSection } from '../common/DashboardGrid';
 import { AdminDashboardData } from '@/types';

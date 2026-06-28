@@ -14,7 +14,7 @@ import {
   Wallet,
   MessageSquare,
   Settings,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { Negotiation, NegotiationStatus, User as UserType, UserRole } from '@/types';
 import { imageUrl } from '@/lib/utils';
 import NegotiationCard from '@/components/negotiation/NegotiationCard';

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
@@ -26,7 +25,7 @@ import {
     Edit,
     Ban,
     MessageSquare
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useToast } from '@/components/ui/use-toast';
 
 export default function AdminUserDetailPage() {
@@ -142,46 +141,37 @@ export default function AdminUserDetailPage() {
 
     if (loading) {
         return (
-            <div className="flex h-screen bg-background">
-                <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
-                <main className="flex-1 flex items-center justify-center">
-                    <PageLoading
-                        variant="section"
-                        label="Loading user"
-                        description="Fetching account details…"
-                        className="bg-transparent dark:bg-transparent"
-                    />
-                </main>
-            </div>
+            <main className="flex-1 flex items-center justify-center">
+                <PageLoading
+                    variant="section"
+                    label="Loading user"
+                    description="Fetching account details…"
+                    className="bg-transparent dark:bg-transparent"
+                />
+            </main>
         );
     }
 
     if (error || !selectedUser) {
         return (
-            <div className="flex h-screen bg-background">
-                <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
-                <main className="flex-1 flex items-center justify-center">
-                    <div className="text-center">
-                        <UserIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                        <h2 className="text-xl font-semibold text-foreground mb-2">User Not Found</h2>
-                        <p className="text-muted-foreground">{error || 'The user you\'re looking for doesn\'t exist.'}</p>
-                        <Button onClick={handleBack} className="mt-4">
-                            Back to Users
-                        </Button>
-                    </div>
-                </main>
-            </div>
+            <main className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                    <UserIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                    <h2 className="text-xl font-semibold text-foreground mb-2">User Not Found</h2>
+                    <p className="text-muted-foreground">{error || 'The user you\'re looking for doesn\'t exist.'}</p>
+                    <Button onClick={handleBack} className="mt-4">
+                        Back to Users
+                    </Button>
+                </div>
+            </main>
         );
     }
 
     const user = selectedUser;
 
     return (
-        <div className="flex h-screen bg-background overflow-hidden">
-            <Sidebar userType={UserRole.ADMIN} activeItem="Users" />
-
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <AdminPageHeader
+        <>
+            <AdminPageHeader
                     title="User Details"
                     description={`#${user.id.slice(0, 8)} • ${user.role}`}
                     backHref="/admin/users"
@@ -355,7 +345,7 @@ export default function AdminUserDetailPage() {
                         </CardContent>
                     </Card>
                 </main>
-            </div>
-        </div>
+        </>
     );
 }
+

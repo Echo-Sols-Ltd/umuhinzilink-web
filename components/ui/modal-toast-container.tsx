@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle, Loader2 } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, Info, AlertTriangle, Loader2 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { useToast, ToastData } from './use-toast';
 

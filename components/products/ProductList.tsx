@@ -1,9 +1,9 @@
 'use client'
 
 import { Product, ProductStatus } from "@/types";
-import { AlertTriangle, CheckCircle, Eye, FileText, MoreVertical, Package, PauseCircle, Trash2, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle, Eye, FileText, MoreVertical, Package, PauseCircle, Trash2, XCircle } from '@/lib/icons';
 import Link from "next/link";
-import { Edit3 } from "lucide-react";
+import { Edit3 } from '@/lib/icons';
 import { useState } from "react";
 import { imageUrl } from "@/lib/utils";
 

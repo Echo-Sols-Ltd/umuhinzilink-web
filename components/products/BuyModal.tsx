@@ -6,7 +6,7 @@ import {
     X, Minus, Plus, ShoppingBag, TrendingUp,
     Wallet, AlertCircle, ChevronRight,
     CheckCircle, MapPin, User, Package,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';

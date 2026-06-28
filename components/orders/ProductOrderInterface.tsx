@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, MapPin, Calendar, Award, Info } from '@/lib/icons';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { cn } from '@/lib/utils';

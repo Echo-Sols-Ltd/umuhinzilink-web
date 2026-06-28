@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 import { useRouter } from 'next/navigation';
 import {
     Package, Eye, CheckCircle, XCircle,
     AlertCircle, Clock, TrendingUp, Wallet,
     Sprout, ChevronRight, User, CreditCard,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
@@ -185,7 +186,7 @@ export default function OrdersPage() {
                 description={isSeller ? 'Track sales and payments from buyers.' : 'View, pay, or cancel your purchases.'}
                 actions={
                     <Link
-                        href="/dashboard"
+                        href={ROUTES.home}
                         className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
                         Dashboard <ChevronRight size={12} />
                     </Link>

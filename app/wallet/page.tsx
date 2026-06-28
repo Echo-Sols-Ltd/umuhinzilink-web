@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, ChevronRight } from 'lucide-react';
+import { Plus, ChevronRight } from '@/lib/icons';
 import WalletDashboard from '@/components/wallet/WalletDashboard';
 import { useWallet } from '@/contexts/WalletContext';
 import { useI18n } from '@/contexts/I18nContext';

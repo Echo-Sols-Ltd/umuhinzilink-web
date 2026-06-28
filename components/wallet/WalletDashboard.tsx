@@ -16,7 +16,7 @@ import {
   CreditCard,
   X,
   Loader2,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { Wallet as IWallet, Transaction } from '@/types';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';

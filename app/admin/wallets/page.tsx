@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserRole } from '@/types';
 import { walletService } from '@/services/wallet';
 import { Wallet as IWallet, Transaction} from '@/types';
 import {
@@ -18,9 +17,8 @@ import {
     History,
     TrendingUp,
     ShieldCheck
-} from 'lucide-react';
+} from '@/lib/icons';
 import { notify } from '@/lib/notify';
-import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import {
     Table,
@@ -88,11 +86,8 @@ export default function AdminWalletsPage() {
 
 
     return (
-        <div className="flex h-screen bg-background overflow-hidden">
-            <Sidebar userType={UserRole.ADMIN} activeItem="Wallets" />
-
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <AdminPageHeader
+        <>
+            <AdminPageHeader
                     title="Treasury Management"
                     description={`Verify and monitor ${totalElements} user wallets across ecosystem`}
                     actions={
@@ -267,7 +262,6 @@ export default function AdminWalletsPage() {
                         </div>
                     )}
                 </main>
-            </div>
-        </div>
+        </>
     );
 }

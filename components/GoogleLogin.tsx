@@ -4,7 +4,11 @@ import { useEffect } from "react";
 
 declare global { interface Window { google: any } }
 
-export default function GoogleLogin() {
+type GoogleLoginProps = {
+    size?: "large" | "medium" | "small";
+};
+
+export default function GoogleLogin({ size = "large" }: GoogleLoginProps) {
     const { setGoogleToken } = useAuth()
     useEffect(() => {
         const script = document.createElement("script");
@@ -23,10 +27,10 @@ export default function GoogleLogin() {
 
             window.google.accounts.id.renderButton(
                 document.getElementById("googleBtn"),
-                { theme: "outline", size: "large" },
+                { theme: "outline", size },
             );
         };
-    }, []);
+    }, [size]);
 
-    return <div id="googleBtn" className="w-full" />;
+    return <div id="googleBtn" className="w-full [&>div]:!w-full [&>div]:!justify-center" />;
 }

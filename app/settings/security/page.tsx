@@ -13,7 +13,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function SecuritySettingsPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');

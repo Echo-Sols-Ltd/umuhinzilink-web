@@ -7,7 +7,7 @@ import {
     Package, MapPin,
     DollarSign, Info, ImagePlus, AlertCircle,
     ToggleLeft, ToggleRight,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { District, MeasurementUnit, ProductCategory, ProductRequest } from '@/types';
 import { useProductAction } from '@/hooks/useProductAction';
 import DetailPageShell from '@/components/layout/DetailPageShell';

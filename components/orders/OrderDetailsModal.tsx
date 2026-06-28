@@ -10,7 +10,7 @@ import {
     Truck,
     XCircle,
     Clock,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { Order, OrderStatus, isUnpaidOrder, isPaidOrder, getOrderStatusLabel } from '@/types';
 import OrderStatusTracker from './OrderStatusTracker';
 import { useAuth } from '@/contexts/AuthContext';

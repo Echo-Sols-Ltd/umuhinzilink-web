@@ -15,7 +15,7 @@ import {
   ChevronRight,
   User,
   Mail
-} from 'lucide-react';
+} from '@/lib/icons';
 
 const ROLE_MAP: Record<string, string> = {
   BUYER: 'buyer',

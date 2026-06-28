@@ -7,7 +7,7 @@ import { useOrder } from '@/contexts/OrderContext';
 import useOrderAction from '@/hooks/useOrderAction';
 import { UserRole, isPaidOrder, isUnpaidOrder, getOrderStatusLabel } from '@/types';
 import { notify } from '@/lib/notify';
-import { Package, User, CreditCard, XCircle } from 'lucide-react';
+import { Package, User, CreditCard, XCircle } from '@/lib/icons';
 import { orderService } from '@/services/orders';
 import OrderStatusTracker from '@/components/orders/OrderStatusTracker';
 import DetailPageShell, { ContentCard } from '@/components/layout/DetailPageShell';

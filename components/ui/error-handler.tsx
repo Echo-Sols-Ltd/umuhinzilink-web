@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AlertTriangle, RefreshCw, Wifi, WifiOff, X } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Wifi, WifiOff, X } from '@/lib/icons';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 
 interface ErrorDisplayProps {

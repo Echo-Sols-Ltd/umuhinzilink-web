@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   Plus, Search, Package, ArrowUpDown,
   LayoutGrid, List, CheckCircle, AlertTriangle, XCircle, FileText, PauseCircle,
-} from 'lucide-react';
+} from '@/lib/icons';
 import ProductCard from '@/components/products/ProductCard';
 import { useProduct } from '@/contexts/ProductContext';
 import { Product, ProductStatus } from '@/types';

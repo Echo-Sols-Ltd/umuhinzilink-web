@@ -8,7 +8,7 @@ import {
     AlertTriangle, XCircle, FileText, Filter,
     LayoutGrid, List, Sprout, ArrowUpDown,
     CheckCircle, Clock, PauseCircle,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useProduct } from '@/contexts/ProductContext';
 import { Product } from '@/types';
 import ProductCard from '@/components/products/ProductCard';

@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from '@/lib/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import AuthFooter from '@/components/auth/AuthFooter';
 import GoogleLogin from '@/components/GoogleLogin';
+import { ROUTES } from '@/lib/routes';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -119,12 +120,16 @@ export default function SignIn() {
         {/* RIGHT – Form panel */}
         <div className="w-full md:w-[58%] flex flex-col justify-center px-6 py-8 sm:px-10">
           {/* Logo + brand */}
-          <div className="flex items-center gap-3 mb-6">
+          <Link
+            href={ROUTES.home}
+            className="flex items-center gap-3 mb-6 w-fit rounded-lg transition-opacity hover:opacity-80"
+            aria-label="UmuhinziLink home"
+          >
             <div className="w-10 h-10 rounded-full flex items-center justify-center">
-              <img src="/icon.png" alt="Logo" className="w-10 h-10 object-contain" />
+              <img src="/icon.png" alt="" className="w-10 h-10 object-contain" />
             </div>
             <span className="font-bold text-lg text-foreground">UmuhinziLink</span>
-          </div>
+          </Link>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-1">
             {t('auth.signIn.title')}

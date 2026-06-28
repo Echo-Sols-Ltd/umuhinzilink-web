@@ -10,7 +10,7 @@ import {
   Banknote,
   Shield,
   CheckCircle
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function PaymentsSettingsPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');

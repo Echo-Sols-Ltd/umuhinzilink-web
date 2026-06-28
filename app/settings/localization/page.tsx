@@ -10,7 +10,7 @@ import {
   Calendar,
   DollarSign,
   Languages
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function LocalizationSettingsPage() {
   const { t } = useI18n();

@@ -7,7 +7,7 @@ import {
     Sprout, Eye, EyeOff, CheckCircle,
     AlertCircle, Lock, ArrowLeft, Loader2,
     ShieldCheck,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { notify } from '@/lib/notify';
 import { authService } from '@/services';

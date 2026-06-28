@@ -11,12 +11,9 @@ import {
   Calendar,
   Eye,
   Trash2,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAdmin } from '@/contexts/AdminContext';
-import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
-import { UserRole as UserType } from '@/types';
-import AdminGuard from '@/contexts/guard/AdminGuard';
 import {
   Table,
   TableBody,
@@ -49,16 +46,13 @@ function FarmerOrderManagement() {
   });
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={UserType.ADMIN} activeItem="Order Management" />
+    <>
+      <AdminPageHeader
+        title="Farmer Orders"
+        description="Monitor and manage farmer-to-buyer transactions"
+      />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminPageHeader
-          title="Farmer Orders"
-          description="Monitor and manage farmer-to-buyer transactions"
-        />
-
-        <main className="flex-1 overflow-auto p-4 sm:p-6">
+      <main className="flex-1 overflow-auto p-4 sm:p-6">
           {/* Table Container */}
           <div className="bg-card overflow-hidden">
             <Table>
@@ -147,15 +141,10 @@ function FarmerOrderManagement() {
             </Table>
           </div>
         </main>
-      </div>
-    </div>
+    </>
   );
 }
 
 export default function FarmerOrdersPage() {
-  return (
-    <AdminGuard>
-      <FarmerOrderManagement />
-    </AdminGuard>
-  );
+  return <FarmerOrderManagement />;
 }

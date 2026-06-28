@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle, Clock, XCircle, DollarSign } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, DollarSign } from '@/lib/icons';
 import { OrderStatus, isUnpaidOrder, isPaidOrder, getOrderStatusLabel } from '@/types';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';

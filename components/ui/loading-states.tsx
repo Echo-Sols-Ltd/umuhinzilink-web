@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Loader2, Wifi, WifiOff, AlertCircle, CheckCircle } from 'lucide-react';
+import { Loader2, Wifi, WifiOff, AlertCircle, CheckCircle } from '@/lib/icons';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';

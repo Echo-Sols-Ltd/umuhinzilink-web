@@ -9,8 +9,9 @@ import {
   TrendingUp,
   ChevronRight,
   ArrowRight
-} from 'lucide-react';
+} from '@/lib/icons';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 import MetricCard from '../common/MetricCard';
 import { DashboardSection } from '../common/DashboardGrid';
 import { SellerDashboardData } from '@/types';
@@ -130,7 +131,7 @@ export default function SellerDashboard() {
                         {' '}{t('supplier.dashboard.alerts.inStock')} ({t('supplier.dashboard.alerts.min')}: {item.minThreshold})
                       </p>
                     </div>
-                    <Link href={`/supplier/products/restock/${item.id}`} className="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md font-medium transition-colors">
+                    <Link href={ROUTES.productEdit(item.id)} className="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md font-medium transition-colors">
                       {t('supplier.dashboard.alerts.restock')}
                     </Link>
                   </div>
@@ -142,7 +143,7 @@ export default function SellerDashboard() {
                 </div>
               )}
 
-              <Link href="/supplier/products" className="text-sm text-primary hover:underline mt-2 text-center py-2 flex items-center justify-center gap-1">
+              <Link href={ROUTES.sellerProducts} className="text-sm text-primary hover:underline mt-2 text-center py-2 flex items-center justify-center gap-1">
                 {t('supplier.dashboard.alerts.manageProducts')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -167,7 +168,7 @@ export default function SellerDashboard() {
         <div className="xl:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">{t('supplier.dashboard.sections.recentOrders')}</h2>
-            <Link href="/supplier/orders" className="text-sm text-primary hover:underline">
+            <Link href={ROUTES.orders} className="text-sm text-primary hover:underline">
               {t('farmer.dashboard.actions.viewAll')}
             </Link>
           </div>

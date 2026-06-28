@@ -6,7 +6,7 @@ import {
     Heart, MessageSquare, MapPin, Eye,
     ShoppingBag, Edit3, Trash2, User,
     AlertTriangle, XCircle, TrendingUp,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { notify } from '@/lib/notify';

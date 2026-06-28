@@ -13,7 +13,7 @@ import {
   Upload,
   Shield,
   Bell
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function AccountSettingsPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');

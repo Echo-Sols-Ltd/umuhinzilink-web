@@ -11,7 +11,7 @@ import {
   TrendingUp,
   Megaphone,
   Settings
-} from 'lucide-react';
+} from '@/lib/icons';
 
 export default function NotificationsSettingsPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');

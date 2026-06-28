@@ -1316,20 +1316,34 @@
       "marketplace": "Products",
       "howItWorks": "How it Works",
       "aboutUs": "About Us",
+      "why": "Why UmuhinziLink",
+      "whoIsItFor": "Who is it for",
       "features": "Features",
+      "becomeSeller": "Become a seller",
+      "signIn": "Sign in",
+      "getStarted": "Get started",
       "agribusiness": "AgriBussiness",
       "lenders": "Lenders",
       "contact": "Contact Us"
     },
     "hero": {
+      "badge": "Rwanda's digital agri-marketplace — live now",
       "title": {
-        "line1": "Connect Farmers to",
-        "highlight": "Digital Markets"
+        "line1": "Buy. Sell. Grow.",
+        "line2": "Finally, all in one place.",
+        "highlight": "From farm to market."
       },
-      "subtitle": "Empowering smallholder farmers in Rwanda with Technology to access markets, get AI-powered farming advice and secure agricultural loans",
+      "subtitle": "Instantly connect with verified farmers and buyers — browse produce, negotiate prices, and trade securely in one seamless space.",
       "cta": {
-        "getStarted": "Get Started",
-        "viewDemo": "View Demo"
+        "getStarted": "Browse Marketplace",
+        "viewDemo": "How it works"
+      },
+      "socialProof": "5,000+ farmers and buyers connected",
+      "slides": {
+        "marketplace": "Farmers and buyers on UmuhinziLink",
+        "market": "Fresh produce at local markets",
+        "farmer": "Farmer using digital tools in the field",
+        "produce": "Fresh harvest ready for sale"
       },
       "stats": {
         "registeredFarmers": "Registered Farmers",
@@ -1363,8 +1377,22 @@
       "learnMore": "Learn More"
     },
     "whoWeServe": {
-      "title": "Who We Serve",
-      "subtitle": "Three interconnected communities driving agricultural growth",
+      "title": "For everyone who grows, supplies, and buys",
+      "subtitle": "Farmers, input suppliers, and buyers — three communities driving Rwanda's agricultural growth, connected on one platform.",
+      "cards": {
+        "farmers": {
+          "title": "Farmers",
+          "description": "List produce, get AI agronomy tips, access credit for inputs, and track market prices — with mobile OTP and Kinyarwanda support."
+        },
+        "suppliers": {
+          "title": "Suppliers",
+          "description": "Manage agri-input inventory, match farmer demand, handle credit requests, and track sales with built-in analytics."
+        },
+        "buyers": {
+          "title": "Buyers",
+          "description": "Browse fresh produce, filter by region and price, contact farmers directly, and pay securely through the platform."
+        }
+      },
       "groups": {
         "farmers": {
           "title": "Farmers",
@@ -1396,8 +1424,53 @@
       }
     },
     "features": {
-      "title": "Platform Features",
-      "subtitle": "Comprehensive tools for modern agriculture",
+      "title": "We've built the platform, now it's your turn to grow",
+      "subtitle": "Whether you're buying produce or selling from the farm, everything is designed to flow effortlessly.",
+      "tabs": {
+        "ariaLabel": "Features by role",
+        "buyer": "Buyer",
+        "seller": "Seller"
+      },
+      "buyer": {
+        "cards": {
+          "browse": {
+            "title": "Browse produce",
+            "description": "Explore fresh listings, filter by region and price, and find exactly what you need."
+          },
+          "order": {
+            "title": "Place orders",
+            "description": "Choose verified sellers and place orders directly from the marketplace."
+          },
+          "negotiate": {
+            "title": "Negotiate prices",
+            "description": "All buyer–seller conversations and price talks in one place."
+          },
+          "trust": {
+            "title": "Buy with confidence",
+            "description": "Choose sellers based on ratings, reviews, and verified profiles."
+          }
+        }
+      },
+      "seller": {
+        "cards": {
+          "list": {
+            "title": "List your produce",
+            "description": "Add photos, set prices, and publish listings in minutes."
+          },
+          "findBuyers": {
+            "title": "Reach buyers",
+            "description": "Get matched with buyers looking for your crops and farm supplies."
+          },
+          "collaborate": {
+            "title": "Collaborate with buyers",
+            "description": "Chat, negotiate, and manage orders without leaving the platform."
+          },
+          "monetize": {
+            "title": "Get paid securely",
+            "description": "Turn your harvest into income with transparent, secure payments."
+          }
+        }
+      },
       "items": {
         "aiAdvisory": {
           "title": "AI–Powered Advisory",

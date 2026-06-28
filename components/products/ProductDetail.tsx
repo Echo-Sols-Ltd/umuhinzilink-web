@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import {
   Heart, Share2, MapPin, Package, MessageSquare,
   Minus, Plus, User, Edit, Trash2, Sprout,
-} from 'lucide-react';
+} from '@/lib/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

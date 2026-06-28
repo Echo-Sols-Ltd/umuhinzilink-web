@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Product, ProductStatus } from '@/types';
-import Sidebar from '@/components/shared/Sidebar';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import { UserRole } from '@/types';
@@ -15,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { AlertTriangle, CheckCircle, XCircle, Eye } from '@/lib/icons';
 
 export default function AdminProductDetailPage() {
   const params = useParams();
@@ -89,37 +88,31 @@ export default function AdminProductDetailPage() {
 
   if (pageLoading) {
     return (
-      <div className="flex h-screen bg-background">
-        <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
-        <main className="flex-1 flex items-center justify-center">
-          <PageLoading
-            variant="section"
-            label="Loading product"
-            description="Fetching listing details…"
-            className="bg-transparent dark:bg-transparent"
-          />
-        </main>
-      </div>
+      <main className="flex-1 flex items-center justify-center">
+        <PageLoading
+          variant="section"
+          label="Loading product"
+          description="Fetching listing details…"
+          className="bg-transparent dark:bg-transparent"
+        />
+      </main>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="flex h-screen bg-background">
-        <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
-            <p className="text-muted-foreground mb-4">{error || 'This product could not be found.'}</p>
-            <button
-              onClick={() => router.back()}
-              className="px-4 py-2 bg-success text-white rounded-lg hover:bg-success/90 transition-colors"
-            >
-              Go Back
-            </button>
-          </div>
-        </main>
-      </div>
+      <main className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
+          <p className="text-muted-foreground mb-4">{error || 'This product could not be found.'}</p>
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-2 bg-success text-white rounded-lg hover:bg-success/90 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </main>
     );
   }
 
@@ -157,11 +150,8 @@ export default function AdminProductDetailPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar userType={UserRole.ADMIN} activeItem="Product Management" />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminPageHeader
+    <>
+      <AdminPageHeader
           title={product.name}
           description={`Product • ${product.category}`}
           backHref="/admin/products"
@@ -221,7 +211,7 @@ export default function AdminProductDetailPage() {
           />
           </div>
         </main>
-      </div>
-    </div>
+    </>
   );
 }
+

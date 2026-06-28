@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Home, LogOut } from 'lucide-react';
+import { AlertTriangle, Home, LogOut } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Unauthorized() {

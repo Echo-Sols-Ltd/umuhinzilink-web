@@ -8,7 +8,7 @@ import {
     XCircle, AlertCircle, Package, User,
     ChevronRight, Search, Filter, Loader2,
     MessageSquare, DollarSign, Calendar,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { useNegotiation } from '@/contexts/NegotiationContext';

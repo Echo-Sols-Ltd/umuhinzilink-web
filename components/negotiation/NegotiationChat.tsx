@@ -7,7 +7,7 @@ import {
     TrendingUp, XCircle, CheckCircle, User,
     ArrowLeft, MoreVertical, Phone, Package,
     DollarSign, Info, Loader2, CornerUpLeft,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn, imageUrl } from '@/lib/utils';
 import { notify } from '@/lib/notify';
