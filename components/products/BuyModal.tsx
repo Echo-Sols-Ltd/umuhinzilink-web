@@ -8,6 +8,7 @@ import {
     CheckCircle, MapPin, User, Package,
 } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/lib/routes';
 import { useI18n } from '@/contexts/I18nContext';
 import { formatCurrency } from '@/lib/localeFormat';
 import { cn, imageUrl } from '@/lib/utils';
@@ -99,6 +100,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
     const [mounted, setMounted] = useState(false);
     const [orderPaid, setOrderPaid] = useState(false);
     const [paymentRequired, setPaymentRequired] = useState(false);
+    const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => { setMounted(true); }, []);
@@ -150,6 +152,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
         setLoading(true);
         setOrderPaid(false);
         setPaymentRequired(false);
+        setCreatedOrderId(null);
         try {
             if (mode === 'buy') {
                 const requestData: OrderRequest = {
@@ -159,6 +162,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                 };
                 const result = await createOrder(requestData, { payImmediately: true });
                 if (!result) return;
+                setCreatedOrderId(result.order.id);
                 setOrderPaid(result.paid);
                 setPaymentRequired(!result.paid);
             } else {
@@ -170,6 +174,7 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                 };
                 const result = await createOrder(requestData);
                 if (!result) return;
+                setCreatedOrderId(result.order.id);
             }
             setStep('done');
         } catch {
@@ -185,8 +190,13 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
     };
 
     const handleGoToOrders = () => {
+        const target = paymentRequired
+            ? `${ROUTES.orders}?payment=required${createdOrderId ? `&orderId=${createdOrderId}` : ''}`
+            : createdOrderId
+                ? ROUTES.orderDetail(createdOrderId)
+                : ROUTES.orders;
         onClose();
-        router.push('/orders');
+        router.push(target);
     };
 
     const formatPrice = (amount: number) => formatCurrency(amount, locale);
@@ -455,8 +465,17 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
                             <div className="text-center py-4 animate-in fade-in zoom-in-95 duration-400">
                                 <Stepper step="done" />
 
-                                <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-950/40 flex items-center justify-center mx-auto mb-4">
-                                    <CheckCircle size={32} className="text-green-600" />
+                                <div className={cn(
+                                    'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4',
+                                    paymentRequired && mode === 'buy'
+                                        ? 'bg-amber-100 dark:bg-amber-950/40'
+                                        : 'bg-green-100 dark:bg-green-950/40',
+                                )}>
+                                    {paymentRequired && mode === 'buy' ? (
+                                        <AlertCircle size={32} className="text-amber-600" />
+                                    ) : (
+                                        <CheckCircle size={32} className="text-green-600" />
+                                    )}
                                 </div>
 
                                 <h3 className="text-lg font-extrabold text-foreground">

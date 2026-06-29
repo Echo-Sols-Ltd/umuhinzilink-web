@@ -184,6 +184,11 @@
       "sellerHint": "Orders will appear here when buyers place them",
       "buyerHint": "Your orders will appear here after you buy"
     },
+    "paymentRequiredBanner": {
+      "title": "Payment required",
+      "description": "Your order was created but payment could not be completed. Top up your wallet, then tap Pay on the order below.",
+      "topUpWallet": "Top up wallet"
+    },
     "actions": {
       "summary": "Summary",
       "open": "Open",

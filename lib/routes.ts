@@ -249,5 +249,7 @@ export const LEGACY_ROUTE_REDIRECTS: Record<string, string> = {
   '/admin/profile': ROUTES.profile,
   '/supplier/products': ROUTES.sellerProducts,
   '/supplier/orders': ROUTES.orders,
+  '/buyer/orders': ROUTES.orders,
+  '/purchases': ROUTES.orders,
   '/about': ROUTES.home,
 };

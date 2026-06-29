@@ -24,14 +24,14 @@ type WalletContextValue = {
   fetchTransactions: () => Promise<Transaction[] | null>;
 
   deposit: (amount: number, description?: string) => Promise<Transaction | null>;
-  payOrder: (orderId: string, description?: string) => Promise<boolean>;
+  payOrder: (orderId: string, options?: { quiet?: boolean }) => Promise<boolean>;
   processPayment: (request: PaymentRequest) => Promise<Transaction | null>;
 
   refreshWalletData: () => Promise<void>;
   getPaymentStatus: (transactionId: string) => Promise<Transaction | null>;
 
   handleDeposit: (amount: number, description?: string) => Promise<Transaction | null>;
-  handleWalletPayment: (orderId: string, description?: string) => Promise<boolean>;
+  handleWalletPayment: (orderId: string, options?: { quiet?: boolean }) => Promise<boolean>;
   handleExternalPayment: (request: PaymentRequest) => Promise<Transaction | null>;
   checkPaymentStatus: (transactionId: string) => Promise<Transaction | null>;
   refreshData: () => Promise<void>;
@@ -165,7 +165,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Pay for order using wallet
-  const payOrder = async (orderId: string, _description?: string): Promise<boolean> => {
+  const payOrder = async (orderId: string, options?: { quiet?: boolean }): Promise<boolean> => {
     try {
       setLoading(true);
       setError(null);
@@ -174,17 +174,23 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       if (!res.success) {
         const errorMessage = res.message || 'Failed to process payment';
         setError(errorMessage);
-        notify.error(errorMessage, 'Payment Failed');
+        if (!options?.quiet) {
+          notify.error(errorMessage, 'Payment Failed');
+        }
         return false;
       }
 
-      notify.success('Your order has been paid successfully.', 'Payment Successful');
+      if (!options?.quiet) {
+        notify.success('Your order has been paid successfully.', 'Payment Successful');
+      }
       await fetchWallet();
       return true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to process payment';
       setError(errorMessage);
-      notify.error(errorMessage, 'Payment Failed');
+      if (!options?.quiet) {
+        notify.error(errorMessage, 'Payment Failed');
+      }
       return false;
     } finally {
       setLoading(false);
@@ -255,8 +261,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     return result;
   };
 
-  const handleWalletPayment = async (orderId: string, description?: string): Promise<boolean> => {
-    return payOrder(orderId, description);
+  const handleWalletPayment = async (orderId: string, options?: { quiet?: boolean }): Promise<boolean> => {
+    return payOrder(orderId, options);
   };
 
   const handleExternalPayment = async (request: PaymentRequest): Promise<Transaction | null> => {

@@ -184,6 +184,11 @@
       "sellerHint": "Ibitumwa bizagaragara hano abaguzi babitumije",
       "buyerHint": "Ibitumwa byawe bizagaragara hano nyuma yo kugura"
     },
+    "paymentRequiredBanner": {
+      "title": "Kwishyura birakenewe",
+      "description": "Itegeko ryakozwe ariko kwishyura byanze. Ongeraho amafaranga mu wallet, hanyuma ukande Kwishyura hepfo.",
+      "topUpWallet": "Ongeraho mu wallet"
+    },
     "actions": {
       "summary": "Incamake",
       "open": "Fungura",

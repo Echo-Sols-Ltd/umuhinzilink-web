@@ -40,8 +40,8 @@ export default function AssistantWidget() {
       )}
 
       {open && (
-        <div className="fixed bottom-4 right-4 z-50 w-[min(100vw-2rem,420px)] h-[min(85vh,600px)]">
-          <AssistantChat layout="panel" onClose={() => setOpen(false)} className="h-full" />
+        <div className="fixed bottom-4 right-4 z-50 flex flex-col w-[min(100vw-2rem,420px)] h-[min(85vh,640px)] max-h-[calc(100dvh-1rem)]">
+          <AssistantChat layout="panel" onClose={() => setOpen(false)} className="h-full min-h-0 flex-1" />
         </div>
       )}
     </>
