@@ -1,7 +1,7 @@
 import SockJS from 'sockjs-client'
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs'
 import { SocketResponse, ChatTyping, Order, NegotiationMessage, NegotiationMessageRequest, Notification } from '@/types'
-import { API_CONFIG, SOCKET_EVENTS } from './constants'
+import { API_CONFIG, SOCKET_EVENTS, resolveSockJsTransports } from './constants'
 
 class SocketService {
     public stompClient: Client
@@ -27,9 +27,10 @@ class SocketService {
                     throw new Error('Missing access token')
                 }
                 const wsUrl = `${API_CONFIG.BASE_URL}/api/${API_CONFIG.API_VERSION}/ws?token=${encodeURIComponent(token)}`
+                const transports = resolveSockJsTransports()
                 return new SockJS(wsUrl, null, {
-                    transports: ['websocket', 'xhr-polling', 'eventsource'],
-                    timeout: 10000,
+                    transports,
+                    timeout: 15000,
                 })
             },
             reconnectDelay: 3000,

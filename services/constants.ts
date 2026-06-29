@@ -11,6 +11,31 @@ export const API_CONFIG = {
   TIMEOUT: 20000,
 };
 
+/** SockJS transports — production API is cross-origin behind nginx (WS upgrade often 405). */
+export function resolveSockJsTransports(): Array<'websocket' | 'xhr-streaming' | 'xhr-polling'> {
+  const mode = process.env.NEXT_PUBLIC_WS_TRANSPORTS?.trim().toLowerCase();
+  if (mode === 'polling') {
+    return ['xhr-streaming', 'xhr-polling'];
+  }
+  if (mode === 'websocket') {
+    return ['websocket'];
+  }
+
+  const base = (process.env.NEXT_PUBLIC_API_BASE_URL ?? '').toLowerCase();
+  const isLocalApi =
+    !base ||
+    base.includes('localhost') ||
+    base.includes('127.0.0.1') ||
+    base.includes('10.0.2.2');
+
+  if (!isLocalApi && base.startsWith('https://')) {
+    // Prefer HTTP long-polling first — works when nginx lacks WebSocket Upgrade headers.
+    return ['xhr-streaming', 'xhr-polling', 'websocket'];
+  }
+
+  return ['websocket', 'xhr-streaming', 'xhr-polling'];
+}
+
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
