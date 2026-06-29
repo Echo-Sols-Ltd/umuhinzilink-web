@@ -155,7 +155,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
   const addOrder = useCallback((data: Order) => {
     setOrders(prev => [data, ...prev]);
-    updateProductState(data.product.id, data.product);
+    if (data.product?.id) {
+      updateProductState(data.product.id, data.product);
+    }
     setCurrentOrder(data);
   }, [updateProductState]);
 

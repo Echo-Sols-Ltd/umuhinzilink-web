@@ -18,6 +18,7 @@ import { shouldUseSmartSearch } from '@/lib/assistantRouting';
 import { toAiLocale } from '@/lib/localeFormat';
 import { UserRole, AiChatTurn, AiProductSummary, AiUserContext } from '@/types';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/lib/routes';
 
 type SellerTool = 'chat' | 'farming' | 'crop' | 'price';
 
@@ -239,7 +240,7 @@ export default function AssistantChat({
       )}>
         <Brain size={32} className="text-primary mb-3" />
         <p className="text-sm text-muted-foreground mb-4">{t('assistant.signInPrompt')}</p>
-        <Link href="/auth/login" className="text-sm font-semibold text-primary hover:underline">
+        <Link href={ROUTES.signIn} className="text-sm font-semibold text-primary hover:underline">
           {t('auth.signIn.signIn')}
         </Link>
       </div>
@@ -273,7 +274,7 @@ export default function AssistantChat({
   return (
     <div
       className={cn(
-        'flex flex-col border border-border bg-card shadow-sm overflow-hidden',
+        'flex flex-col min-h-0 border border-border bg-card shadow-sm overflow-hidden',
         isFull
           ? 'w-full min-h-[calc(100vh-7rem)] max-h-[calc(100vh-7rem)] rounded-2xl'
           : 'w-full h-full rounded-2xl shadow-2xl',
@@ -281,7 +282,10 @@ export default function AssistantChat({
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-primary/5 shrink-0">
+      <div className={cn(
+        'flex items-center justify-between border-b border-border bg-primary/5 shrink-0',
+        isFull ? 'px-4 py-3' : 'px-3 py-2.5',
+      )}>
         <div className="flex items-center gap-2 min-w-0">
           <Brain size={isFull ? 22 : 18} className="text-primary shrink-0" />
           <div className="min-w-0">
@@ -318,7 +322,10 @@ export default function AssistantChat({
 
       {/* Seller tools — optional, not tabs for buyers */}
       {isSeller && (
-        <div className="flex flex-wrap gap-2 px-4 py-2.5 border-b border-border bg-muted/30 shrink-0">
+        <div className={cn(
+          'flex flex-wrap gap-1.5 border-b border-border bg-muted/30 shrink-0',
+          isFull ? 'px-4 py-2.5' : 'px-3 py-2',
+        )}>
           {sellerTool !== 'chat' && (
             <button
               type="button"
@@ -357,14 +364,14 @@ export default function AssistantChat({
       <div
         ref={scrollRef}
         className={cn(
-          'flex-1 overflow-y-auto px-4 py-4 space-y-3',
-          isFull && 'px-6 md:px-8',
+          'flex-1 min-h-0 overflow-y-auto',
+          isFull ? 'px-6 md:px-8 py-4 space-y-3' : 'px-3 py-3 space-y-2.5',
         )}
       >
         {history.length === 0 && (
           <div className={cn(
-            'text-muted-foreground py-6 space-y-4',
-            isFull ? 'text-sm max-w-2xl mx-auto text-center' : 'text-xs text-center',
+            'text-muted-foreground space-y-3',
+            isFull ? 'text-sm max-w-2xl mx-auto text-center py-6' : 'text-xs text-center py-3',
           )}>
             <p className="leading-relaxed">{welcomeText}</p>
             {isBuyer && userContext?.availableProducts && userContext.availableProducts.length > 0 && (
@@ -393,7 +400,7 @@ export default function AssistantChat({
               </p>
             )}
             {isBuyer && (
-              <div className="flex flex-wrap justify-center gap-2 pt-2">
+              <div className={cn('flex flex-wrap justify-center gap-2', isFull ? 'pt-2' : 'pt-1')}>
                 {BUYER_SUGGESTION_KEYS.map(key => (
                   <button
                     key={key}
@@ -469,8 +476,8 @@ export default function AssistantChat({
 
       {/* Input area */}
       <div className={cn(
-        'shrink-0 border-t border-border p-4 space-y-2 bg-background',
-        isFull && 'px-6 md:px-8 pb-6',
+        'shrink-0 border-t border-border bg-background',
+        isFull ? 'p-4 space-y-2 px-6 md:px-8 pb-6' : 'p-3 space-y-1.5',
       )}>
         <div className={cn(isFull && 'max-w-3xl mx-auto w-full')}>
           {isSeller && sellerTool === 'crop' && (
@@ -578,7 +585,10 @@ export default function AssistantChat({
           )}
 
           {isBuyer && (
-            <p className="text-[11px] text-muted-foreground text-center pt-1">
+            <p className={cn(
+              'text-muted-foreground text-center',
+              isFull ? 'text-[11px] pt-1' : 'text-[10px] leading-snug',
+            )}>
               {t('assistant.buyerHint')}
             </p>
           )}

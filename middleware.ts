@@ -30,6 +30,8 @@ export const config = {
     '/admin/profile',
     '/supplier/products',
     '/supplier/orders',
+    '/buyer/orders',
+    '/purchases',
     '/supplier/products/restock/:path*',
     '/about',
   ],

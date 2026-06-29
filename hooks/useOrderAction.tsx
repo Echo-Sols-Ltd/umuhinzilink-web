@@ -1,6 +1,7 @@
 import { useOrder } from '@/contexts/OrderContext';
 import { orderService } from '@/services/orders';
 import { useWallet } from '@/contexts/WalletContext';
+import { useI18n } from '@/contexts/I18nContext';
 import { notify } from '@/lib/notify';
 import { Order, OrderStatus } from '@/types';
 import { OrderRequest } from '@/types';
@@ -16,6 +17,7 @@ export type CreateOrderResult = {
  */
 export default function useOrderAction() {
   const [loading, setLoading] = useState(false);
+  const { t } = useI18n();
   const { addOrder, updateOrder } = useOrder();
   const { payOrder: payWithWallet } = useWallet();
 
@@ -46,7 +48,7 @@ export default function useOrderAction() {
         return { order: newOrder, paid: false };
       }
 
-      const paid = await payWithWallet(newOrder.id);
+      const paid = await payWithWallet(newOrder.id, { quiet: true });
       if (paid) {
         try {
           const refreshed = await orderService.getOrderById(newOrder.id);
@@ -62,8 +64,8 @@ export default function useOrderAction() {
       }
 
       notify.warning(
-        'Order created but payment failed. Add funds to your wallet and pay from your orders page.',
-        'Payment required'
+        t('products.buyModal.done.paymentRequiredDesc'),
+        t('products.buyModal.done.orderPaymentRequired'),
       );
       return { order: newOrder, paid: false };
     } catch (err: unknown) {

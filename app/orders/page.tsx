@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { ROUTES } from '@/lib/routes';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Package, Eye, CheckCircle, XCircle,
     AlertCircle, Clock, TrendingUp, Wallet,
@@ -18,6 +18,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import { formatCurrency, formatDate } from '@/lib/localeFormat';
+import { notify } from '@/lib/notify';
 import { OrderStatus, Order, UserRole, isUnpaidOrder } from '@/types';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -78,8 +79,12 @@ function SkeletonRow({ columnCount }: { columnCount: number }) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-export default function OrdersPage() {
+function OrdersPageContent() {
     const { t, locale } = useI18n();
+    const searchParams = useSearchParams();
+    const paymentRequiredLanding = searchParams.get('payment') === 'required';
+    const highlightOrderId = searchParams.get('orderId');
+    const paymentBannerShownRef = useRef(false);
     const { user, loading: authLoading, isAuthenticated } = useAuth();
     const router = useRouter();
     const isSeller = user?.role === UserRole.SELLER;
@@ -93,7 +98,9 @@ export default function OrdersPage() {
     } = useOrder();
     const { loading: actionLoading, payOrder, cancelOrder } = useOrderAction();
 
-    const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>('ALL');
+    const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>(
+        paymentRequiredLanding ? OrderStatus.PENDING_PAYMENT : 'ALL',
+    );
     const [page, setPage] = useState(1);
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -126,8 +133,27 @@ export default function OrdersPage() {
     }, [page, userId, user?.role, isSeller, fetchOrders]);
 
     useEffect(() => {
+        if (!paymentRequiredLanding || paymentBannerShownRef.current || isSeller) return;
+        paymentBannerShownRef.current = true;
+        notify.warning(
+            t('ordersPage.paymentRequiredBanner.description'),
+            t('ordersPage.paymentRequiredBanner.title'),
+        );
+    }, [paymentRequiredLanding, isSeller, t]);
+
+    useEffect(() => {
+        if (paymentRequiredLanding && !isSeller) {
+            setStatusFilter(OrderStatus.PENDING_PAYMENT);
+        }
+    }, [paymentRequiredLanding, isSeller]);
+
+    useEffect(() => {
         setPage(1);
     }, [statusFilter, isSeller]);
+
+    const clearPaymentQuery = useCallback(() => {
+        router.replace(ROUTES.orders, { scroll: false });
+    }, [router]);
 
     const handleOpenOrder = (order: Order) => {
         setSelectedOrder(order);
@@ -203,7 +229,15 @@ export default function OrdersPage() {
         ];
 
     if (!authLoading && !isAuthenticated) {
-        return null;
+        return (
+            <AppLayout maxWidth="max-w-6xl">
+                <PageLoading
+                    fullScreen={false}
+                    label={t('ordersPage.loadingLabel')}
+                    description={t('ordersPage.loadingDescription')}
+                />
+            </AppLayout>
+        );
     }
 
     if (authLoading || user?.role === UserRole.ADMIN) {
@@ -231,6 +265,37 @@ export default function OrdersPage() {
                     </Link>
                 }
             />
+
+            {paymentRequiredLanding && !isSeller && (
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 p-4">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
+                        <div className="min-w-0">
+                            <p className="text-sm font-semibold text-foreground">
+                                {t('ordersPage.paymentRequiredBanner.title')}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                                {t('ordersPage.paymentRequiredBanner.description')}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <Link
+                            href={ROUTES.wallet}
+                            className="h-9 px-4 inline-flex items-center justify-center text-xs font-semibold rounded-xl bg-amber-600 text-white hover:bg-amber-700 transition-colors"
+                        >
+                            {t('ordersPage.paymentRequiredBanner.topUpWallet')}
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={clearPaymentQuery}
+                            className="h-9 px-3 text-xs font-medium rounded-xl border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 hover:bg-amber-100/80 dark:hover:bg-amber-950/50 transition-colors"
+                        >
+                            {t('ordersPage.detailsModal.close')}
+                        </button>
+                    </div>
+                </div>
+            )}
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -317,7 +382,11 @@ export default function OrdersPage() {
                                 ) : filtered.map(order => (
                                     <tr
                                         key={order.id}
-                                        className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                        className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${
+                                            highlightOrderId === order.id
+                                                ? 'bg-amber-50/80 dark:bg-amber-950/20 ring-1 ring-inset ring-amber-200 dark:ring-amber-900'
+                                                : ''
+                                        }`}>
 
                                         {/* Order number */}
                                         <td className="px-4 py-3">
@@ -466,5 +535,45 @@ export default function OrdersPage() {
                 loading={actionLoading}
             />
         </AppLayout>
+    );
+}
+
+export default function OrdersPage() {
+    const { t } = useI18n();
+
+    return (
+        <Suspense
+            fallback={(
+                <AppLayout maxWidth="max-w-6xl">
+                    <PageLoading
+                        fullScreen={false}
+                        label={t('ordersPage.loadingLabel')}
+                        description={t('ordersPage.loadingDescription')}
+                    />
+                </AppLayout>
+            )}
+        >
+            <OrdersPageContent />
+        </Suspense>
+    );
+}
+
+export default function OrdersPage() {
+    const { t } = useI18n();
+
+    return (
+        <Suspense
+            fallback={(
+                <AppLayout maxWidth="max-w-6xl">
+                    <PageLoading
+                        fullScreen={false}
+                        label={t('ordersPage.loadingLabel')}
+                        description={t('ordersPage.loadingDescription')}
+                    />
+                </AppLayout>
+            )}
+        >
+            <OrdersPageContent />
+        </Suspense>
     );
 }

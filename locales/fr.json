@@ -184,6 +184,11 @@
       "sellerHint": "Les commandes apparaîtront ici lorsque les acheteurs les passeront",
       "buyerHint": "Vos commandes apparaîtront ici après votre achat"
     },
+    "paymentRequiredBanner": {
+      "title": "Paiement requis",
+      "description": "Votre commande a été créée mais le paiement a échoué. Ajoutez des fonds à votre portefeuille, puis appuyez sur Payer ci-dessous.",
+      "topUpWallet": "Recharger le portefeuille"
+    },
     "actions": {
       "summary": "Résumé",
       "open": "Ouvrir",
