@@ -557,23 +557,3 @@ export default function OrdersPage() {
         </Suspense>
     );
 }
-
-export default function OrdersPage() {
-    const { t } = useI18n();
-
-    return (
-        <Suspense
-            fallback={(
-                <AppLayout maxWidth="max-w-6xl">
-                    <PageLoading
-                        fullScreen={false}
-                        label={t('ordersPage.loadingLabel')}
-                        description={t('ordersPage.loadingDescription')}
-                    />
-                </AppLayout>
-            )}
-        >
-            <OrdersPageContent />
-        </Suspense>
-    );
-}
