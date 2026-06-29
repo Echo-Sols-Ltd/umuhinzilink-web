@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ROUTES } from '@/lib/routes';
 import { Sprout, Home, ArrowLeft, Search, Wheat } from '@/lib/icons';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function NotFound() {
     const { t } = useI18n();
@@ -55,11 +56,12 @@ export default function NotFound() {
                     <div className="absolute inset-6 rounded-full bg-green-50 dark:bg-green-950/40 border border-green-100 dark:border-green-900 flex items-center justify-center">
                         <div className="text-center">
                             {/* Wilting wheat icon area */}
-                            <Wheat
-                                size={48}
-                                className="text-green-300 dark:text-green-700 mx-auto"
-                                style={{ transform: 'rotate(-15deg)' }}
-                            />
+                            <span className="inline-block mx-auto" style={{ transform: 'rotate(-15deg)' }}>
+                                <Wheat
+                                    size={48}
+                                    className="text-green-300 dark:text-green-700"
+                                />
+                            </span>
                         </div>
                     </div>
                     {/* 404 badge */}

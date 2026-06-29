@@ -27,6 +27,7 @@ import {
   UserX,
 } from '@/lib/icons';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useI18n } from '@/contexts/I18nContext';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
 import { AdminPages, User, UserRole } from '@/types';
 import { notify } from '@/lib/notify';

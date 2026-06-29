@@ -2,7 +2,12 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { defaultLocale, translate, type SupportedLocale } from '@/lib/i18n';
-import { getStoredLocale, LOCALE_CHANGE_EVENT, setStoredLocale } from '@/lib/language-switch';
+import {
+  getStoredLocale,
+  LOCALE_CHANGE_EVENT,
+  registerLocaleChangeListener,
+  setStoredLocale,
+} from '@/lib/language-switch';
 
 type I18nContextValue = {
   locale: SupportedLocale;
@@ -18,6 +23,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initial = getStoredLocale();
     setLocaleState(initial);
+    return registerLocaleChangeListener(setLocaleState);
   }, []);
 
   useEffect(() => {

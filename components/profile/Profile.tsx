@@ -135,6 +135,7 @@ export default function Profile({
   activeNegotiations,
   negotiationsLoading = false,
 }: ProfileProps) {
+  const { t } = useI18n();
   const initials =
     `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() || '?';
   const pendingNegotiations = activeNegotiations.filter(

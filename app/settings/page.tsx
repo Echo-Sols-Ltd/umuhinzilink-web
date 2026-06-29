@@ -13,7 +13,8 @@ import {
   Shield,
   ChevronRight,
   User,
-  Mail
+  Mail,
+  CreditCard,
 } from '@/lib/icons';
 
 const ROLE_MAP: Record<string, string> = {

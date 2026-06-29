@@ -112,7 +112,9 @@ export default function GoogleLogin({
         ? new ResizeObserver(scheduleRender)
         : null;
 
-    resizeObserver?.observe(container);
+    if (container) {
+      resizeObserver?.observe(container);
+    }
 
     return () => {
       cancelled = true;

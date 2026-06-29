@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { AlertTriangle, Home, LogOut } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { getDashboardRoute } from '@/lib/routes';
+import { useI18n } from '@/contexts/I18nContext';
 
 export default function Unauthorized() {
   const router = useRouter();

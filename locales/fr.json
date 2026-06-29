@@ -79,6 +79,20 @@
   },
   "nav": {
     "browse": "Parcourir",
+    "dashboard": "Tableau de bord",
+    "saved": "Enregistrés",
+    "addListing": "Ajouter une annonce",
+    "users": "Utilisateurs",
+    "orders": "Commandes",
+    "products": "Produits",
+    "wallets": "Portefeuilles",
+    "analytics": "Analytique",
+    "notifications": "Notifications",
+    "adminDashboard": "Tableau de bord admin",
+    "platformWallets": "Portefeuilles plateforme",
+    "adminSettings": "Paramètres admin",
+    "marketplace": "Marché",
+    "logOut": "Se déconnecter",
     "howItWorks": "Comment ça marche",
     "aiAssistant": "Assistant IA",
     "myOrders": "Mes commandes",
@@ -781,7 +795,8 @@
       "account": "Compte",
       "operations": "Opérations",
       "administration": "Administration",
-      "monitoring": "Surveillance"
+      "monitoring": "Surveillance",
+      "marketplace": "Marché"
     },
     "items": {
       "dashboard": "Tableau de bord",
@@ -821,7 +836,8 @@
       "governmentOfficial": "Fonctionnaire du gouverneur"
     },
     "user": {
-      "avatarAlt": "Avatar"
+      "avatarAlt": "Avatar",
+      "defaultName": "Utilisateur"
     },
     "actions": {
       "settings": "Paramètres",
@@ -949,14 +965,20 @@
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
       "description": "Entrez votre adresse e-mail et nous vous enverrons un code à 6 chiffres pour réinitialiser votre mot de passe.",
+      "heroTitle": "Réinitialisez votre mot de passe",
+      "heroSubtitle": {
+        "line1": "Entrez l'e-mail lié à votre compte",
+        "line2": "et nous vous enverrons un code sécurisé."
+      },
       "backToSignIn": "Retour à la connexion",
       "sending": "Envoi...",
       "sendResetCode": "Envoyer le code de réinitialisation",
       "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
       "submitted": {
         "title": "Vérifiez votre courrier électronique",
-        "description": "Nous avons envoyé un code de réinitialisation à 6 chiffres à {{email}}.",
-        "cta": "Cliquez ici pour réinitialiser votre mot de passe"
+        "description": "Si un compte existe pour {{email}}, nous avons envoyé un lien de réinitialisation.",
+        "inboxHint": "Consultez votre boîte de réception et vos spams pour le code à 6 chiffres.",
+        "cta": "Retour à la connexion"
       },
       "toast": {
         "resetCodeSent": {

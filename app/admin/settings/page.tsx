@@ -7,6 +7,7 @@ import {
   Save,
 } from '@/lib/icons';
 import AdminPageHeader from '@/components/layout/AdminPageHeader';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface SystemSettings {
   siteName: string;

@@ -185,6 +185,7 @@ export default function CreateProduct() {
 }
 
 function CreateProductForm() {
+    const { t } = useI18n();
     const { createProduct } = useProductAction();
     const [form, setForm] = useState<ProductRequest>({
         name: '',
