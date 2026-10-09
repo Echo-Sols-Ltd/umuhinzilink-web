@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { ROUTES } from '@/lib/routes';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
     Package, Eye, CheckCircle, XCircle,
     AlertCircle, Clock, TrendingUp, Wallet,
@@ -18,7 +18,10 @@ import AppLayout from '@/components/layout/AppLayout';
 import PageHeader from '@/components/layout/PageHeader';
 import PageLoading from '@/components/layout/PageLoading';
 import { formatCurrency, formatDate } from '@/lib/localeFormat';
-import { notify } from '@/lib/notify';
+import {
+    consumeOrdersPaymentRedirect,
+    parseLegacyOrdersPaymentQuery,
+} from '@/lib/ordersPaymentRedirect';
 import { OrderStatus, Order, UserRole, isUnpaidOrder } from '@/types';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -79,12 +82,8 @@ function SkeletonRow({ columnCount }: { columnCount: number }) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-function OrdersPageContent() {
+export default function OrdersPage() {
     const { t, locale } = useI18n();
-    const searchParams = useSearchParams();
-    const paymentRequiredLanding = searchParams.get('payment') === 'required';
-    const highlightOrderId = searchParams.get('orderId');
-    const paymentBannerShownRef = useRef(false);
     const { user, loading: authLoading, isAuthenticated } = useAuth();
     const router = useRouter();
     const isSeller = user?.role === UserRole.SELLER;
@@ -98,12 +97,29 @@ function OrdersPageContent() {
     } = useOrder();
     const { loading: actionLoading, payOrder, cancelOrder } = useOrderAction();
 
-    const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>(
-        paymentRequiredLanding ? OrderStatus.PENDING_PAYMENT : 'ALL',
-    );
+    const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>('ALL');
     const [page, setPage] = useState(1);
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [paymentRequiredLanding, setPaymentRequiredLanding] = useState(false);
+    const [highlightOrderId, setHighlightOrderId] = useState<string | null>(null);
+    const [paymentRedirectReady, setPaymentRedirectReady] = useState(false);
+
+    useEffect(() => {
+        const fromStorage = consumeOrdersPaymentRedirect();
+        const fromQuery = parseLegacyOrdersPaymentQuery();
+        const redirect = fromStorage.paymentRequired ? fromStorage : fromQuery;
+
+        if (redirect.paymentRequired) {
+            setPaymentRequiredLanding(true);
+            setHighlightOrderId(redirect.orderId);
+            setStatusFilter(OrderStatus.PENDING_PAYMENT);
+            if (fromQuery.paymentRequired) {
+                router.replace(ROUTES.orders, { scroll: false });
+            }
+        }
+        setPaymentRedirectReady(true);
+    }, [router]);
 
     const fetchOrders = useCallback((pageIndex: number) => {
         if (isSeller) {
@@ -116,7 +132,11 @@ function OrdersPageContent() {
         if (authLoading) return;
 
         if (!isAuthenticated) {
-            router.replace('/auth/signin?redirect=/orders');
+            const redirectPath =
+                typeof window !== 'undefined'
+                    ? `${window.location.pathname}${window.location.search}`
+                    : ROUTES.orders;
+            router.replace(`${ROUTES.signIn}?redirect=${encodeURIComponent(redirectPath)}`);
             return;
         }
 
@@ -133,27 +153,13 @@ function OrdersPageContent() {
     }, [page, userId, user?.role, isSeller, fetchOrders]);
 
     useEffect(() => {
-        if (!paymentRequiredLanding || paymentBannerShownRef.current || isSeller) return;
-        paymentBannerShownRef.current = true;
-        notify.warning(
-            t('ordersPage.paymentRequiredBanner.description'),
-            t('ordersPage.paymentRequiredBanner.title'),
-        );
-    }, [paymentRequiredLanding, isSeller, t]);
-
-    useEffect(() => {
-        if (paymentRequiredLanding && !isSeller) {
-            setStatusFilter(OrderStatus.PENDING_PAYMENT);
-        }
-    }, [paymentRequiredLanding, isSeller]);
-
-    useEffect(() => {
         setPage(1);
     }, [statusFilter, isSeller]);
 
     const clearPaymentQuery = useCallback(() => {
-        router.replace(ROUTES.orders, { scroll: false });
-    }, [router]);
+        setPaymentRequiredLanding(false);
+        setHighlightOrderId(null);
+    }, []);
 
     const handleOpenOrder = (order: Order) => {
         setSelectedOrder(order);
@@ -240,7 +246,7 @@ function OrdersPageContent() {
         );
     }
 
-    if (authLoading || user?.role === UserRole.ADMIN) {
+    if (authLoading || user?.role === UserRole.ADMIN || !paymentRedirectReady) {
         return (
             <AppLayout maxWidth="max-w-6xl">
                 <PageLoading
@@ -391,7 +397,7 @@ function OrdersPageContent() {
                                         {/* Order number */}
                                         <td className="px-4 py-3">
                                             <p className="font-bold text-foreground text-xs">
-                                                {order.orderNumber ?? '#' + order.id.slice(0, 6).toUpperCase()}
+                                                {order.orderNumber ?? (order.id ? `#${order.id.slice(0, 6).toUpperCase()}` : '—')}
                                             </p>
                                         </td>
 
@@ -428,7 +434,7 @@ function OrdersPageContent() {
                                         {/* Total */}
                                         <td className="px-4 py-3">
                                             <p className="text-xs font-bold text-green-700 dark:text-green-400">
-                                                {formatCurrency(order.totalPrice, locale)}
+                                                {formatCurrency(Number(order.totalPrice) || 0, locale)}
                                             </p>
                                         </td>
 
@@ -535,25 +541,5 @@ function OrdersPageContent() {
                 loading={actionLoading}
             />
         </AppLayout>
-    );
-}
-
-export default function OrdersPage() {
-    const { t } = useI18n();
-
-    return (
-        <Suspense
-            fallback={(
-                <AppLayout maxWidth="max-w-6xl">
-                    <PageLoading
-                        fullScreen={false}
-                        label={t('ordersPage.loadingLabel')}
-                        description={t('ordersPage.loadingDescription')}
-                    />
-                </AppLayout>
-            )}
-        >
-            <OrdersPageContent />
-        </Suspense>
     );
 }
