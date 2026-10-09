@@ -9,6 +9,7 @@ import {
 } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/lib/routes';
+import { setOrdersPaymentRedirect } from '@/lib/ordersPaymentRedirect';
 import { useI18n } from '@/contexts/I18nContext';
 import { formatCurrency } from '@/lib/localeFormat';
 import { cn, imageUrl } from '@/lib/utils';
@@ -190,13 +191,15 @@ export default function BuyModal({ product, onClose }: BuyModalProps) {
     };
 
     const handleGoToOrders = () => {
-        const target = paymentRequired
-            ? `${ROUTES.orders}?payment=required${createdOrderId ? `&orderId=${createdOrderId}` : ''}`
-            : createdOrderId
-                ? ROUTES.orderDetail(createdOrderId)
-                : ROUTES.orders;
+        if (paymentRequired) {
+            setOrdersPaymentRedirect(createdOrderId);
+        }
         onClose();
-        router.push(target);
+        if (!paymentRequired && createdOrderId) {
+            router.push(ROUTES.orderDetail(createdOrderId));
+            return;
+        }
+        router.push(ROUTES.orders);
     };
 
     const formatPrice = (amount: number) => formatCurrency(amount, locale);
