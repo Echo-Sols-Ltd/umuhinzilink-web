@@ -167,7 +167,12 @@ export function resolvePostAuthRoute(role?: UserRole | null, redirect?: string |
   const fallback = getDashboardRoute(role);
   if (!redirect) return fallback;
 
-  const path = redirect.trim();
+  let path = redirect.trim();
+  try {
+    path = decodeURIComponent(path);
+  } catch {
+    // keep raw redirect if not URI-encoded
+  }
   if (!path.startsWith('/') || path.startsWith('//') || path.startsWith('/auth/')) {
     return fallback;
   }
