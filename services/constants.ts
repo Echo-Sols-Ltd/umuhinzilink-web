@@ -1,6 +1,6 @@
 // API Configuration Constants
 
-const PROD_SERVER = 'https://api.umuhinzilink.echo-solution.com';
+const PROD_SERVER = 'https://umuhinzilink-monolith-latest.onrender.com';
 const DEV_SERVER = 'http://localhost:7022';
 
 export const API_CONFIG = {
